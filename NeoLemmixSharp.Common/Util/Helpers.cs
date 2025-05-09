@@ -7,6 +7,10 @@ namespace NeoLemmixSharp.Common.Util;
 
 public static class Helpers
 {
+    public const int Uint16NumberBufferLength = 5;
+    public const int Uint32NumberBufferLength = 10;
+    public const int Int32NumberBufferLength = Uint32NumberBufferLength + 1;
+
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rectangle CreateRectangle(Point pos, Size size) => new(pos.X, pos.Y, size.W, size.H);
@@ -25,7 +29,27 @@ public static class Helpers
         return item.HasValue ? 1 : 0;
     }
 
-    internal static bool TryFormatSpan(ReadOnlySpan<int> source, Span<char> destination, out int charsWritten)
+    public readonly ref struct FormatParameters(char openBracket, char separator, char closeBracket)
+    {
+        public readonly char OpenBracket = openBracket;
+        public readonly char Separator = separator;
+        public readonly char CloseBracket = closeBracket;
+    }
+
+    public static bool TryFormatSpan(
+        ReadOnlySpan<int> source,
+        Span<char> destination,
+        out int charsWritten)
+    {
+        var formatParameters = new FormatParameters('(', ',', ')');
+        return TryFormatSpan(source, destination, formatParameters, out charsWritten);
+    }
+
+    public static bool TryFormatSpan(
+        ReadOnlySpan<int> source,
+        Span<char> destination,
+        FormatParameters formatParameters,
+        out int charsWritten)
     {
         charsWritten = 0;
 
@@ -33,15 +57,15 @@ public static class Helpers
         {
             if (destination.Length < 2)
                 return false;
-            destination[charsWritten++] = '(';
-            destination[charsWritten++] = ')';
+            destination[charsWritten++] = formatParameters.OpenBracket;
+            destination[charsWritten++] = formatParameters.CloseBracket;
 
             return true;
         }
 
         if (destination.Length < 3 + source.Length)
             return false;
-        destination[charsWritten++] = '(';
+        destination[charsWritten++] = formatParameters.OpenBracket;
 
         var l = source.Length - 1;
         bool couldWriteInt;
@@ -55,7 +79,7 @@ public static class Helpers
 
             if (charsWritten == destination.Length)
                 return false;
-            destination[charsWritten++] = ',';
+            destination[charsWritten++] = formatParameters.Separator;
         }
 
         couldWriteInt = source[l].TryFormat(destination[charsWritten..], out di);
@@ -65,7 +89,7 @@ public static class Helpers
 
         if (charsWritten == destination.Length)
             return false;
-        destination[charsWritten++] = ')';
+        destination[charsWritten++] = formatParameters.CloseBracket;
 
         return true;
     }
@@ -85,6 +109,6 @@ public static class Helpers
         where TEnum : unmanaged, Enum
     {
         var typeName = typeof(TEnum).Name;
-        throw new ArgumentOutOfRangeException(nameof(rawValue), rawValue, $"Unknown {typeName} value!");
+        throw new ArgumentOutOfRangeException(nameof(rawValue), rawValue, $"Unknown {typeName} enum value!");
     }
 }

@@ -124,7 +124,7 @@ public static class NeoLemmixStyleHelpers
         foreach (var pieceAndFileLink in neoLemmixDataFileLinks)
         {
             if (pieceAndFileLink.CorrespondingDataFile is null)
-                throw new InvalidOperationException($"Could not locate NeoLemmix gadget data for gadget: {pieceAndFileLink.PieceName}");
+                throw new FileReadingException($"Could not locate NeoLemmix gadget data for gadget: {pieceAndFileLink.PieceName}");
 
             var gadgetArchetypeData = new NeoLemmixGadgetArchetypeData()
             {

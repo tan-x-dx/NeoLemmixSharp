@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.LevelIo.Writing;
 using System.Buffers;
@@ -14,7 +13,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
     private const byte Period = (byte)'.';
 
     private readonly byte[] _byteBuffer;
-    public Version Version { get; }
+    public FileFormatVersion Version { get; }
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIdentifiers;
 
     private int _position;
@@ -23,36 +22,40 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
     public int Position => _position;
     public bool MoreToRead => Position < FileSizeInBytes;
 
-    public RawFileDataReader(string filePath)
+    public RawFileDataReader(Stream stream)
     {
-        using (var fileStream = new FileStream(filePath, FileMode.Open))
-        {
-            var fileSizeInBytes = fileStream.Length;
-
-            FileReadingException.ReaderAssert(
-                fileSizeInBytes <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
-                LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
-
-            _byteBuffer = GC.AllocateUninitializedArray<byte>((int)fileSizeInBytes);
-
-            fileStream.ReadExactly(_byteBuffer);
-        }
+        _byteBuffer = ReadDataFromFile(stream);
 
         Version = ReadVersion();
         _sectionIdentifiers = ReadSectionIdentifiers();
     }
 
-    private Version ReadVersion()
+    private static byte[] ReadDataFromFile(Stream stream)
     {
-        int major = Read16BitUnsignedInteger();
-        AssertNextByteIsPeriod();
-        int minor = Read16BitUnsignedInteger();
-        AssertNextByteIsPeriod();
-        int build = Read16BitUnsignedInteger();
-        AssertNextByteIsPeriod();
-        int revision = Read16BitUnsignedInteger();
+        var fileSizeInBytes = stream.Length;
 
-        return new Version(major, minor, build, revision);
+        FileReadingException.ReaderAssert(
+            fileSizeInBytes <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
+            LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
+
+        var byteBuffer = new byte[(int)fileSizeInBytes];
+
+        stream.ReadExactly(byteBuffer);
+
+        return byteBuffer;
+    }
+
+    private FileFormatVersion ReadVersion()
+    {
+        ushort major = Read16BitUnsignedInteger();
+        AssertNextByteIsPeriod();
+        ushort minor = Read16BitUnsignedInteger();
+        AssertNextByteIsPeriod();
+        ushort build = Read16BitUnsignedInteger();
+        AssertNextByteIsPeriod();
+        ushort revision = Read16BitUnsignedInteger();
+
+        return new FileFormatVersion(major, minor, build, revision);
 
         void AssertNextByteIsPeriod()
         {
@@ -98,7 +101,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
         where T : unmanaged
     {
         var typeSize = sizeof(T);
-        FileReadingException.ReaderAssert(FileSizeInBytes - Position >= typeSize, "Reached end of file!");
+        FileReadingException.ReaderAssert(FileSizeInBytes - _position >= typeSize, "Reached end of file!");
 
         var result = Unsafe.ReadUnaligned<T>(ref _byteBuffer[_position]);
         _position += typeSize;
@@ -114,26 +117,12 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
 
     public ReadOnlySpan<byte> ReadBytes(int bufferSize)
     {
-        FileReadingException.ReaderAssert(FileSizeInBytes - Position >= bufferSize, "Reached end of file!");
+        FileReadingException.ReaderAssert(FileSizeInBytes - _position >= bufferSize, "Reached end of file!");
 
         var sourceSpan = new ReadOnlySpan<byte>(_byteBuffer, _position, bufferSize);
         _position += bufferSize;
 
         return sourceSpan;
-    }
-
-    public Color ReadArgbColor()
-    {
-        var bytes = ReadBytes(4);
-
-        return new Color(bytes[1], bytes[2], bytes[3], bytes[0]);
-    }
-
-    public Color ReadRgbColor()
-    {
-        var bytes = ReadBytes(3);
-
-        return new Color(bytes[0], bytes[1], bytes[2], (byte)0xff);
     }
 
     public bool TryLocateSpan(ReadOnlySpan<byte> bytesToLocate, out int index)

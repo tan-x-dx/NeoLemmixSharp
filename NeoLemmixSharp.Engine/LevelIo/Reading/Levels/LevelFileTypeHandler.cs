@@ -12,12 +12,12 @@ public static class LevelFileTypeHandler
         public readonly FileFormatType Format = format;
     }
 
-    private static readonly Dictionary<string, FileTypeAndFormat> FileTypeAndFormatLookup = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, FileTypeAndFormat> FileTypeAndFormatLookup = new(8, StringComparer.OrdinalIgnoreCase)
     {
         { DefaultFileExtensions.LevelFileExtension, new(FileType.Level, FileFormatType.Default) },
         { DefaultFileExtensions.LevelStyleExtension, new(FileType.Style, FileFormatType.Default) },
 
-        { NeoLemmixFileExtensions.LevelFileExtension, new(FileType.Level,FileFormatType.NeoLemmix) },
+        { NeoLemmixFileExtensions.LevelFileExtension, new(FileType.Level, FileFormatType.NeoLemmix) },
         { NeoLemmixFileExtensions.GadgetFileExtension, new(FileType.NeoLemmixGadget, FileFormatType.NeoLemmix) },
         { NeoLemmixFileExtensions.TerrainFileExtension, new(FileType.NeoLemmixTerrain, FileFormatType.NeoLemmix) },
         { NeoLemmixFileExtensions.ThemeFileExtension, new(FileType.Style, FileFormatType.NeoLemmix) },
@@ -25,7 +25,7 @@ public static class LevelFileTypeHandler
         { NeoLemmixFileExtensions.ReplayFileExtension, new(FileType.Replay, FileFormatType.NeoLemmix) }
     };
 
-    private static readonly Dictionary<string, Type> LevelFileExtensionLookup = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, Type> LevelFileExtensionLookup = new(2, StringComparer.OrdinalIgnoreCase)
     {
         { DefaultFileExtensions.LevelFileExtension, typeof(DefaultLevelReader) },
         { NeoLemmixFileExtensions.LevelFileExtension, typeof(NxlvLevelReader) }

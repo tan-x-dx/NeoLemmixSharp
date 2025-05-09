@@ -16,11 +16,6 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
     [Pure]
     public int DeltaX => 1 - (Id << 1);
 
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [DebuggerStepThrough]
-    public SpriteEffects AsSpriteEffects() => (SpriteEffects)Id;
-
     public FacingDirection(int id)
     {
         Id = id & 1;
@@ -37,6 +32,11 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
     public Orientation ConvertToRelativeOrientation(Orientation orientation) => orientation.Rotate((Id << 1) - 1);
 
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DebuggerStepThrough]
+    public SpriteEffects AsSpriteEffects() => (SpriteEffects)Id;
+
+    [Pure]
     int IIdEquatable<FacingDirection>.Id => Id;
 
     [Pure]
@@ -50,9 +50,16 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
     public override int GetHashCode() => Id;
     [Pure]
     [DebuggerStepThrough]
-    public override string ToString() => Id == EngineConstants.RightFacingDirectionId
-        ? EngineConstants.RightFacingDirectionName
-        : EngineConstants.LeftFacingDirectionName;
+    public override string ToString()
+    {
+        ReadOnlySpan<string> FacingDirectionNames =
+        [
+            EngineConstants.RightFacingDirectionName,
+            EngineConstants.LeftFacingDirectionName
+        ];
+
+        return FacingDirectionNames[Id & 1];
+    }
 
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {

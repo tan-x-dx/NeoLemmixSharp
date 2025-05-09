@@ -55,7 +55,7 @@ public sealed class DataReaderList : IDisposable
 
         _currentDataReader = TryGetWithSpan(firstToken);
         if (_currentDataReader is null)
-            throw new InvalidOperationException($"Could not find reader for line! [{firstToken}] line: \"{line}\"");
+            throw new FileReadingException($"Could not find reader for line! [{firstToken}] line: \"{line}\"");
 
         return _currentDataReader.BeginReading(line);
     }

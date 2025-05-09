@@ -114,7 +114,7 @@ public static class NxlvReadingHelpers
         ReadOnlySpan<char> firstToken,
         ReadOnlySpan<char> line)
     {
-        throw new InvalidOperationException(
+        throw new FileReadingException(
             $"Unknown token when parsing {identifierToken}: [{firstToken}] line: \"{line}\"");
     }
 
@@ -124,7 +124,7 @@ public static class NxlvReadingHelpers
         ReadOnlySpan<char> firstToken,
         ReadOnlySpan<char> line)
     {
-        throw new InvalidOperationException(
+        throw new FileReadingException(
             $"Unknown token when parsing {identifierToken}: [{firstToken}] line: \"{line}\"");
     }
 }

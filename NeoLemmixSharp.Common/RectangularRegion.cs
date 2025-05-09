@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -191,7 +192,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     [SkipLocalsInit]
     public override string ToString()
     {
-        Span<char> buffer = stackalloc char[(1 + 11 + 1 + 10 + 1) * 2];
+        Span<char> buffer = stackalloc char[(1 + Helpers.Int32NumberBufferLength + 1 + Helpers.Uint32NumberBufferLength + 1) * 2];
         TryFormat(buffer, out var charsWritten);
         return buffer[..charsWritten].ToString();
     }

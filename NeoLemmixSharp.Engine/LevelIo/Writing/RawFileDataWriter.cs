@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 
@@ -10,7 +9,7 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
     where TEnum : unmanaged, Enum
 {
     private const byte Period = (byte)'.';
-    private const int InitialDataCapacity = 1 << 11;
+    private const int InitialDataCapacity = 1 << 12;
 
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIntervals = new(new TPerfectHasher());
     private byte[] _mainDataByteBuffer = new byte[InitialDataCapacity];
@@ -20,8 +19,8 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
     private TEnum? _currentSectionIdentifier;
 
     public void WriteToFile(
-        string filePath,
-        Version version)
+        Stream stream,
+        FileFormatVersion version)
     {
         AssertCanWriteToFile();
 
@@ -35,23 +34,22 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
             _mainDataPosition + preamblePosition <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
             LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
 
-        using var fileStream = new FileStream(filePath, FileMode.Create);
-        fileStream.Write(new ReadOnlySpan<byte>(preambleDataByteBuffer, 0, preamblePosition));
-        fileStream.Write(new ReadOnlySpan<byte>(_mainDataByteBuffer, 0, _mainDataPosition));
+        stream.Write(new ReadOnlySpan<byte>(preambleDataByteBuffer, 0, preamblePosition));
+        stream.Write(new ReadOnlySpan<byte>(_mainDataByteBuffer, 0, _mainDataPosition));
     }
 
     private static void WriteVersion(
-        Version version,
+        FileFormatVersion version,
         ref byte[] preambleDataByteBuffer,
         ref int preamblePosition)
     {
-        WriteToByteBuffer((ushort)version.Major, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(version.Major, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer((ushort)version.Minor, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(version.Minor, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer((ushort)version.Build, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(version.Build, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer((ushort)version.Revision, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(version.Revision, ref preambleDataByteBuffer, ref preamblePosition);
     }
 
     private void WriteSectionIntervals(
@@ -130,20 +128,6 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         AssertWithinSection();
 
         WriteToByteBuffer(value, ref _mainDataByteBuffer, ref _mainDataPosition);
-    }
-
-    public void WriteArgbColor(Color color)
-    {
-        ReadOnlySpan<byte> colorBytes = [color.A, color.R, color.G, color.B];
-
-        Write(colorBytes);
-    }
-
-    public void WriteRgbColor(Color color)
-    {
-        ReadOnlySpan<byte> colorBytes = [color.R, color.G, color.B];
-
-        Write(colorBytes);
     }
 
     public void Write(ReadOnlySpan<byte> data)
