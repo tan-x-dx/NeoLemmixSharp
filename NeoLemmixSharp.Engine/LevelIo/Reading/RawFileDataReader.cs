@@ -22,18 +22,17 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
     public int Position => _position;
     public bool MoreToRead => Position < FileSizeInBytes;
 
-    public RawFileDataReader(string filePath)
+    public RawFileDataReader(Stream stream)
     {
-        _byteBuffer = ReadDataFromFile(filePath);
+        _byteBuffer = ReadDataFromFile(stream);
 
         Version = ReadVersion();
         _sectionIdentifiers = ReadSectionIdentifiers();
     }
 
-    private static byte[] ReadDataFromFile(string filePath)
+    private static byte[] ReadDataFromFile(Stream stream)
     {
-        using var fileStream = new FileStream(filePath, FileMode.Open);
-        var fileSizeInBytes = fileStream.Length;
+        var fileSizeInBytes = stream.Length;
 
         FileReadingException.ReaderAssert(
             fileSizeInBytes <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
@@ -41,7 +40,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
 
         var byteBuffer = new byte[(int)fileSizeInBytes];
 
-        fileStream.ReadExactly(byteBuffer);
+        stream.ReadExactly(byteBuffer);
 
         return byteBuffer;
     }

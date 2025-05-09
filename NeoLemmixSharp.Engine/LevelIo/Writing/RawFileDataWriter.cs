@@ -19,7 +19,7 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
     private TEnum? _currentSectionIdentifier;
 
     public void WriteToFile(
-        string filePath,
+        Stream stream,
         FileFormatVersion version)
     {
         AssertCanWriteToFile();
@@ -34,9 +34,8 @@ public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
             _mainDataPosition + preamblePosition <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
             LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
 
-        using var fileStream = new FileStream(filePath, FileMode.Create);
-        fileStream.Write(new ReadOnlySpan<byte>(preambleDataByteBuffer, 0, preamblePosition));
-        fileStream.Write(new ReadOnlySpan<byte>(_mainDataByteBuffer, 0, _mainDataPosition));
+        stream.Write(new ReadOnlySpan<byte>(preambleDataByteBuffer, 0, preamblePosition));
+        stream.Write(new ReadOnlySpan<byte>(_mainDataByteBuffer, 0, _mainDataPosition));
     }
 
     private static void WriteVersion(

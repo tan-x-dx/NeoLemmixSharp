@@ -93,7 +93,8 @@ public static class DefaultStyleHelpers
         if (!TryLocateStyleFile(files, out var styleFilePath))
             throw new FileReadingException($"Could not locate style file in folder: {styleFolderPath}");
 
-        var rawFileData = new RawStyleFileDataReader(styleFilePath);
+        using var fileStream = new FileStream(styleFilePath, FileMode.Open);
+        var rawFileData = new RawStyleFileDataReader(fileStream);
 
         ReadLevelDataFromStyle(levelData, rawFileData, styleGroup);
     }

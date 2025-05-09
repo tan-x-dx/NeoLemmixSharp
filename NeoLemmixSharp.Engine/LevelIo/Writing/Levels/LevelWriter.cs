@@ -26,7 +26,8 @@ public readonly ref struct LevelWriter
             WriteSection(writer, sectionWriter);
         }
 
-        writer.WriteToFile(filePath, _version);
+        using var fileStream = new FileStream(filePath, FileMode.Create);
+        writer.WriteToFile(fileStream, _version);
     }
 
     private void WriteSection(

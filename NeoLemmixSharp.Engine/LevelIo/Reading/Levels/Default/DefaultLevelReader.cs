@@ -12,7 +12,8 @@ public sealed class DefaultLevelReader : ILevelReader
 
     public DefaultLevelReader(string filePath)
     {
-        _rawFileData = new RawLevelFileDataReader(filePath);
+        using var fileStream = new FileStream(filePath, FileMode.Open);
+        _rawFileData = new RawLevelFileDataReader(fileStream);
     }
 
     public LevelData ReadLevel(GraphicsDevice graphicsDevice)
