@@ -13,5 +13,5 @@ public static class BackgroundTypeHelpers
 {
     private const int NumberOfEnumValues = 3;
 
-    public static BackgroundType GetEnumValue(int rawValue) => Helpers.GetEnumValue<BackgroundType>(rawValue, NumberOfEnumValues);
+    public static BackgroundType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<BackgroundType>(rawValue, NumberOfEnumValues);
 }

@@ -34,7 +34,7 @@ public readonly struct LevelFileSectionIdentifierHasher :
 
     public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 
-    public static LevelFileSectionIdentifier GetEnumValue(int rawValue) => Helpers.GetEnumValue<LevelFileSectionIdentifier>(rawValue, NumberOfEnumValues);
+    public static LevelFileSectionIdentifier GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LevelFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 
     public static ReadOnlySpan<byte> GetSectionIdentifierBytes(LevelFileSectionIdentifier sectionIdentifier)
     {

@@ -101,7 +101,7 @@ public sealed class GadgetDataSectionReader : LevelDataSectionReader
         int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
         while (numberOfProperties-- > 0)
         {
-            int rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
+            uint rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
             var gadgetProperty = GadgetPropertyHelpers.GetEnumValue(rawGadgetProperty);
             int propertyValue = rawFileData.Read32BitSignedInteger();
             result.AddProperty(gadgetProperty, propertyValue);

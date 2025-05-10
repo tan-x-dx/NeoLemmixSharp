@@ -78,7 +78,7 @@ public sealed class RawFileDataReader<TPerfectHasher, TEnum>
 
         while (i-- > 0)
         {
-            int rawIdentifier = Read8BitUnsignedInteger();
+            uint rawIdentifier = Read8BitUnsignedInteger();
             TEnum enumValue = TPerfectHasher.GetEnumValue(rawIdentifier);
             int sectionStart = Read32BitSignedInteger();
             int sectionLength = Read32BitSignedInteger();

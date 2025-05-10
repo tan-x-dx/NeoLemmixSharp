@@ -39,7 +39,7 @@ public sealed class SetLemmingStateAction : IGadgetAction
 
     private const int NumberOfEnumValues = 3;
 
-    public static SetStateType GetEnumValue(int rawValue) => Helpers.GetEnumValue<SetStateType>(rawValue, NumberOfEnumValues);
+    public static SetStateType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<SetStateType>(rawValue, NumberOfEnumValues);
 }
 
 public sealed class ZombieStateChanger : ILemmingStateChanger

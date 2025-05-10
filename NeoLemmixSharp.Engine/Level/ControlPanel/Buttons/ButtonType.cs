@@ -52,6 +52,6 @@ public static class ButtonTypeHelpers
         ButtonType.ClearPhysics => ButtonTypeSizePosition.TopHalf,
         ButtonType.Replay => ButtonTypeSizePosition.BottomHalf,
 
-        _ => Helpers.ThrowUnknownEnumValueException<ButtonType, ButtonTypeSizePosition>((int)type)
+        _ => Helpers.ThrowUnknownEnumValueException<ButtonType, ButtonTypeSizePosition>(type)
     };
 }

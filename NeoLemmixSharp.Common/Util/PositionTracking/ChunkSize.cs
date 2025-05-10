@@ -15,6 +15,6 @@ internal static class ChunkSizeHelpers
         ChunkSize.ChunkSize32 => (int)ChunkSize.ChunkSize32,
         ChunkSize.ChunkSize64 => (int)ChunkSize.ChunkSize64,
 
-        _ => Helpers.ThrowUnknownEnumValueException<ChunkSize, int>((int)chunkSize)
+        _ => Helpers.ThrowUnknownEnumValueException<ChunkSize, int>(chunkSize)
     };
 }

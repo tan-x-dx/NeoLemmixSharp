@@ -14,5 +14,5 @@ public static class HitBoxTypeHelpers
 {
     private const int NumberOfEnumValues = 4;
 
-    public static HitBoxType GetEnumValue(int rawValue) => Helpers.GetEnumValue<HitBoxType>(rawValue, NumberOfEnumValues);
+    public static HitBoxType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<HitBoxType>(rawValue, NumberOfEnumValues);
 }

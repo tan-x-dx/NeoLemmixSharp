@@ -18,5 +18,5 @@ public static class GadgetActionTypeHelpers
 {
     private const int NumberOfEnumValues = 7;
 
-    public static GadgetActionType GetEnumValue(int rawValue) => Helpers.GetEnumValue<GadgetActionType>(rawValue, NumberOfEnumValues);
+    public static GadgetActionType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetActionType>(rawValue, NumberOfEnumValues);
 }

@@ -28,7 +28,7 @@ public readonly struct StyleFileSectionIdentifierHasher :
 
     public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 
-    public static StyleFileSectionIdentifier GetEnumValue(int rawValue) => Helpers.GetEnumValue<StyleFileSectionIdentifier>(rawValue, NumberOfEnumValues);
+    public static StyleFileSectionIdentifier GetEnumValue(uint rawValue) => Helpers.GetEnumValue<StyleFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 
     public static ReadOnlySpan<byte> GetSectionIdentifierBytes(StyleFileSectionIdentifier sectionIdentifier)
     {

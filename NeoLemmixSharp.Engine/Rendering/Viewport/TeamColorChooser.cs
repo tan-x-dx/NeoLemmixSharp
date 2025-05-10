@@ -30,7 +30,7 @@ public abstract class TeamColorChooser
             ColorChooserType.GetFootColor => GetFootColor,
             ColorChooserType.GetPaintColor => GetPaintColor,
 
-            _ => Helpers.ThrowUnknownEnumValueException<ColorChooserType, TeamColorChooser>(rawValue)
+            _ => Helpers.ThrowUnknownEnumValueException<ColorChooserType, TeamColorChooser>(colorType)
         };
     }
 

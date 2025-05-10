@@ -93,7 +93,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
     {
         var rawBytes = rawFileData.ReadBytes(NumberOfBytesWrittenForBackgroundData);
 
-        int rawBackgroundType = rawBytes[0];
+        uint rawBackgroundType = rawBytes[0];
         var backgroundType = (BackgroundType)rawBackgroundType;
 
         levelData.LevelBackground = backgroundType switch
@@ -102,7 +102,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
             BackgroundType.SolidColorBackground => ReadSolidColorBackgroundData(rawBytes),
             BackgroundType.TextureBackground => ReadTextureBackgroundData(rawBytes),
 
-            _ => Helpers.ThrowUnknownEnumValueException<BackgroundType, BackgroundData>(rawBackgroundType)
+            _ => Helpers.ThrowUnknownEnumValueException<BackgroundType, BackgroundData>(backgroundType)
         };
 
         return;
