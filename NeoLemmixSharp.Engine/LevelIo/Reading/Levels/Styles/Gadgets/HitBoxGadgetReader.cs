@@ -9,7 +9,7 @@ using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles.Gadgets;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;
 
 public static class HitBoxGadgetReader
 {

@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles;
 
 public static class TerrainArchetypeReadingHelpers
 {

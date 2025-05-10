@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections;
+﻿using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Styles.Sections;
 using NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections;
 using NeoLemmixSharp.Engine.LevelIo.Writing.Styles.Sections;
@@ -37,7 +37,7 @@ public static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper>(1, equalityComparer)
         {
-            { new FileFormatVersion(1,0,0,0), new Reading.Levels.Default.Sections.Version1_0_0_0.VersionHelper() }
+            { new FileFormatVersion(1,0,0,0), new Reading.Levels.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
