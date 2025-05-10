@@ -8,14 +8,24 @@ namespace NeoLemmixSharp.Engine.LevelIo.Versions;
 
 public static class VersionHelper
 {
-    private static readonly Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> _levelWriterVersionHelpers = GetLevelWriterLookup();
-    private static readonly Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper> _levelReaderVersionHelpers = GetLevelReaderLookup();
-    private static readonly Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper> _styleWriterVersionHelpers = GetStyleWriterLookup();
-    private static readonly Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper> _styleReaderVersionHelpers = GetStyleReaderLookup();
+    private static readonly Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> _levelWriterVersionHelpers;
+    private static readonly Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper> _levelReaderVersionHelpers;
+    private static readonly Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper> _styleWriterVersionHelpers;
+    private static readonly Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper> _styleReaderVersionHelpers;
 
-    private static Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> GetLevelWriterLookup()
+    static VersionHelper()
     {
-        var result = new Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper>()
+        var equalityComparer = new FileFormatVersionEqualityComparer();
+
+        _levelWriterVersionHelpers = GetLevelWriterLookup(equalityComparer);
+        _levelReaderVersionHelpers = GetLevelReaderLookup(equalityComparer);
+        _styleWriterVersionHelpers = GetStyleWriterLookup(equalityComparer);
+        _styleReaderVersionHelpers = GetStyleReaderLookup(equalityComparer);
+    }
+
+    private static Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> GetLevelWriterLookup(FileFormatVersionEqualityComparer equalityComparer)
+    {
+        var result = new Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper>(1, equalityComparer)
         {
             { new FileFormatVersion(1,0,0,0), new Writing.Levels.Sections.Version1_0_0_0.VersionHelper() }
         };
@@ -23,9 +33,9 @@ public static class VersionHelper
         return result;
     }
 
-    private static Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper> GetLevelReaderLookup()
+    private static Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper> GetLevelReaderLookup(FileFormatVersionEqualityComparer equalityComparer)
     {
-        var result = new Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper>()
+        var result = new Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper>(1, equalityComparer)
         {
             { new FileFormatVersion(1,0,0,0), new Reading.Levels.Default.Sections.Version1_0_0_0.VersionHelper() }
         };
@@ -33,9 +43,9 @@ public static class VersionHelper
         return result;
     }
 
-    private static Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper> GetStyleWriterLookup()
+    private static Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper> GetStyleWriterLookup(FileFormatVersionEqualityComparer equalityComparer)
     {
-        var result = new Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper>()
+        var result = new Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper>(1, equalityComparer)
         {
             { new FileFormatVersion(1,0,0,0), new Writing.Styles.Sections.Version1_0_0_0.VersionHelper() }
         };
@@ -43,9 +53,9 @@ public static class VersionHelper
         return result;
     }
 
-    private static Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper> GetStyleReaderLookup()
+    private static Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper> GetStyleReaderLookup(FileFormatVersionEqualityComparer equalityComparer)
     {
-        var result = new Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper>()
+        var result = new Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper>(1, equalityComparer)
         {
             { new FileFormatVersion(1,0,0,0), new Reading.Styles.Sections.Version1_0_0_0.VersionHelper() }
         };
@@ -83,6 +93,12 @@ public static class VersionHelper
             return helper.GetStyleDataSectionReaders();
 
         return ThrowUnknownVersionException<StyleDataSectionReader>(version);
+    }
+
+    private sealed class FileFormatVersionEqualityComparer : IEqualityComparer<FileFormatVersion>
+    {
+        public bool Equals(FileFormatVersion x, FileFormatVersion y) => x.Equals(y);
+        public int GetHashCode([DisallowNull] FileFormatVersion obj) => obj.GetHashCode();
     }
 
     private sealed class UnknownVersionException : Exception
