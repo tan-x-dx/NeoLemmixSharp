@@ -15,5 +15,5 @@ public static class HitBoxBehaviourHelpers
 {
     private const int NumberOfEnumValues = 5;
 
-    public static HitBoxBehaviour GetEnumValue(int rawValue) => Helpers.GetEnumValue<HitBoxBehaviour>(rawValue, NumberOfEnumValues);
+    public static HitBoxBehaviour GetEnumValue(uint rawValue) => Helpers.GetEnumValue<HitBoxBehaviour>(rawValue, NumberOfEnumValues);
 }

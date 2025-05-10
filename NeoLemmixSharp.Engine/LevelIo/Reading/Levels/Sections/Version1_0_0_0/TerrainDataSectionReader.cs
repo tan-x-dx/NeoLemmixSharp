@@ -1,9 +1,10 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelIo.Data;
 using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
+using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class TerrainDataSectionReader : LevelDataSectionReader
 {

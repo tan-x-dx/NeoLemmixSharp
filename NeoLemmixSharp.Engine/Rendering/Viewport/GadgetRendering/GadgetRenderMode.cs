@@ -14,5 +14,5 @@ public static class GadgetRenderModeHelpers
 {
     private const int NumberOfEnumValues = 4;
 
-    public static GadgetRenderMode GetEnumValue(int rawValue) => Helpers.GetEnumValue<GadgetRenderMode>(rawValue, NumberOfEnumValues);
+    public static GadgetRenderMode GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetRenderMode>(rawValue, NumberOfEnumValues);
 }

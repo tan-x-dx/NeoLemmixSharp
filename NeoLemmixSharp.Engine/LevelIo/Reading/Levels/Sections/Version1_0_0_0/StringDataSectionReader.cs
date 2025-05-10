@@ -1,7 +1,8 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
 using System.Text;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class StringDataSectionReader : LevelDataSectionReader
 {

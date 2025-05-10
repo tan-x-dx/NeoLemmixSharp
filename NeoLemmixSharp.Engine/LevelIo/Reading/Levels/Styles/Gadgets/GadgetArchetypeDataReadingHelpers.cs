@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles.Gadgets;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;
 
 public static class GadgetArchetypeDataReadingHelpers
 {
@@ -52,7 +52,7 @@ public static class GadgetArchetypeDataReadingHelpers
             GadgetType.NotGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, gadgetType, LogicGateType.NotGate, rawFileData),
             GadgetType.XorGate => LogicGateGadgetReader.ReadGadgetArchetypeData(styleName, pieceName, gadgetType, LogicGateType.XorGate, rawFileData),
 
-            _ => Helpers.ThrowUnknownEnumValueException<GadgetType, GadgetArchetypeData>(rawGadgetType)
+            _ => Helpers.ThrowUnknownEnumValueException<GadgetType, GadgetArchetypeData>(gadgetType)
         };
 
         FileReadingException.AssertBytesMakeSense(

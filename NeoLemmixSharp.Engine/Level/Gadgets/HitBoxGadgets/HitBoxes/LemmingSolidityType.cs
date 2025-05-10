@@ -13,5 +13,5 @@ public static class LemmingSolidityTypeHelpers
 {
     private const int NumberOfEnumValues = 3;
 
-    public static LemmingSolidityType GetEnumValue(int rawValue) => Helpers.GetEnumValue<LemmingSolidityType>(rawValue, NumberOfEnumValues);
+    public static LemmingSolidityType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingSolidityType>(rawValue, NumberOfEnumValues);
 }

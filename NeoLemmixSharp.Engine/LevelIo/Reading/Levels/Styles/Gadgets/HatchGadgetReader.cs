@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles.Gadgets;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;
 
 public static class HatchGadgetReader
 {

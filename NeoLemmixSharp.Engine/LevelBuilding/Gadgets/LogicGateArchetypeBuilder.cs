@@ -30,7 +30,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             LogicGateType.NotGate => CreateNotGateGadget(gadgetSpriteBuilder, gadgetData),
             LogicGateType.XorGate => CreateXorGateGadget(gadgetSpriteBuilder, gadgetData),
 
-            _ => Helpers.ThrowUnknownEnumValueException<LogicGateType, GadgetBase>((int)LogicGateType)
+            _ => Helpers.ThrowUnknownEnumValueException<LogicGateType, GadgetBase>(LogicGateType)
         };
     }
 

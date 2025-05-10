@@ -23,7 +23,7 @@ public static class GadgetPropertyHelpers
 {
     private const int NumberOfEnumValues = 9;
 
-    public static GadgetProperty GetEnumValue(int rawValue) => Helpers.GetEnumValue<GadgetProperty>(rawValue, NumberOfEnumValues);
+    public static GadgetProperty GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetProperty>(rawValue, NumberOfEnumValues);
 }
 
 public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IBitBufferCreator<BitBuffer32>

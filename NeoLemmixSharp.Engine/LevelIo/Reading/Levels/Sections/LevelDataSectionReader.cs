@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.LevelIo.Data;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
 
 public abstract class LevelDataSectionReader
 {

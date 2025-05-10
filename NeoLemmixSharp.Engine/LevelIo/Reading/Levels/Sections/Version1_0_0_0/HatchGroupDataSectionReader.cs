@@ -1,7 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class HatchGroupDataSectionReader : LevelDataSectionReader
 {

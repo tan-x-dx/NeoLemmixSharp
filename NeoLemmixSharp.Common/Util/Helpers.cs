@@ -95,20 +95,21 @@ public static class Helpers
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static TEnum GetEnumValue<TEnum>(int rawValue, uint numberOfEnumValues)
+    public static TEnum GetEnumValue<TEnum>(uint rawValue, uint numberOfEnumValues)
         where TEnum : unmanaged, Enum
     {
-        if ((uint)rawValue < numberOfEnumValues)
-            return Unsafe.As<int, TEnum>(ref rawValue);
+        var enumValue = Unsafe.As<uint, TEnum>(ref rawValue);
+        if (rawValue < numberOfEnumValues)
+            return enumValue;
 
-        return ThrowUnknownEnumValueException<TEnum, TEnum>(rawValue);
+        return ThrowUnknownEnumValueException<TEnum, TEnum>(enumValue);
     }
 
     [DoesNotReturn]
-    public static TReturn ThrowUnknownEnumValueException<TEnum, TReturn>(int rawValue)
+    public static TReturn ThrowUnknownEnumValueException<TEnum, TReturn>(TEnum enumValue)
         where TEnum : unmanaged, Enum
     {
         var typeName = typeof(TEnum).Name;
-        throw new ArgumentOutOfRangeException(nameof(rawValue), rawValue, $"Unknown {typeName} enum value!");
+        throw new ArgumentOutOfRangeException(nameof(enumValue), enumValue, $"Unknown {typeName} enum value!");
     }
 }

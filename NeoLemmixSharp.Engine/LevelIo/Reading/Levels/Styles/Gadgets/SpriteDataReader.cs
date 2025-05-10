@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles.Gadgets;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;
 
 public readonly ref struct SpriteDataReader
 {

@@ -9,7 +9,7 @@ using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles.Gadgets;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;
 
 public static class HitBoxGadgetReader
 {
@@ -88,8 +88,8 @@ public static class HitBoxGadgetReader
 
     private static HitBoxData ReadHitBoxDatum(RawStyleFileDataReader rawFileData)
     {
-        int rawLemmingSolidityType = rawFileData.Read8BitUnsignedInteger();
-        int rawHitBoxBehaviour = rawFileData.Read8BitUnsignedInteger();
+        uint rawLemmingSolidityType = rawFileData.Read8BitUnsignedInteger();
+        uint rawHitBoxBehaviour = rawFileData.Read8BitUnsignedInteger();
 
         var actualLemmingSolidityType = LemmingSolidityTypeHelpers.GetEnumValue(rawLemmingSolidityType);
         var actualHitBoxBehaviour = HitBoxBehaviourHelpers.GetEnumValue(rawHitBoxBehaviour);
@@ -131,7 +131,7 @@ public static class HitBoxGadgetReader
 
         FileReadingException.ReaderAssert(rotNum == orientation.RotNum, "Hit box region data does not match expected orientation");
 
-        int rawHitBoxType = rawFileData.Read8BitUnsignedInteger();
+        uint rawHitBoxType = rawFileData.Read8BitUnsignedInteger();
         var actualHitBoxType = HitBoxTypeHelpers.GetEnumValue(rawHitBoxType);
 
         int numberOfPoints = rawFileData.Read16BitUnsignedInteger();

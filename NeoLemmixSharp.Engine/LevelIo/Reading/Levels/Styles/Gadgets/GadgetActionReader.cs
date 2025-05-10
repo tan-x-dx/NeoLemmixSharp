@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
 using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles.Gadgets;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;
 
 public static class GadgetActionReader
 {
@@ -32,7 +32,7 @@ public static class GadgetActionReader
         var i = 0;
         while (i < result.Length)
         {
-            int rawGadgetActionType = rawFileData.Read8BitUnsignedInteger();
+            uint rawGadgetActionType = rawFileData.Read8BitUnsignedInteger();
             var gadgetActionType = GadgetActionTypeHelpers.GetEnumValue(rawGadgetActionType);
 
             int miscData = rawFileData.Read32BitSignedInteger();
@@ -53,7 +53,7 @@ public static class GadgetActionReader
         GadgetActionType.AddLevelTime => CreateAddLevelTimeAction(miscData),
         GadgetActionType.SetGadgetState => SetGadgetStateAction(miscData),
 
-        _ => Helpers.ThrowUnknownEnumValueException<GadgetActionType, IGadgetAction>((int)gadgetActionType)
+        _ => Helpers.ThrowUnknownEnumValueException<GadgetActionType, IGadgetAction>(gadgetActionType)
     };
 
     private static SetLemmingStateAction CreateSetLemmingStateAction(int miscData)
@@ -61,7 +61,7 @@ public static class GadgetActionReader
         var stateChangerId = miscData & 0xffff;
         var stateChanger = new LemmingStateChangerHasher().UnHash(stateChangerId);
 
-        var rawSetStateType = miscData >>> 16;
+        var rawSetStateType = (uint)(miscData >>> 16);
         var setStateType = SetLemmingStateAction.GetEnumValue(rawSetStateType);
 
         return new SetLemmingStateAction(stateChanger, setStateType);

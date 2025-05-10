@@ -2,10 +2,11 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class LevelMetadataSectionReader : LevelDataSectionReader
 {
@@ -92,7 +93,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
     {
         var rawBytes = rawFileData.ReadBytes(NumberOfBytesWrittenForBackgroundData);
 
-        int rawBackgroundType = rawBytes[0];
+        uint rawBackgroundType = rawBytes[0];
         var backgroundType = (BackgroundType)rawBackgroundType;
 
         levelData.LevelBackground = backgroundType switch
@@ -101,7 +102,7 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
             BackgroundType.SolidColorBackground => ReadSolidColorBackgroundData(rawBytes),
             BackgroundType.TextureBackground => ReadTextureBackgroundData(rawBytes),
 
-            _ => Helpers.ThrowUnknownEnumValueException<BackgroundType, BackgroundData>(rawBackgroundType)
+            _ => Helpers.ThrowUnknownEnumValueException<BackgroundType, BackgroundData>(backgroundType)
         };
 
         return;

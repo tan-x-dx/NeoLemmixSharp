@@ -1,6 +1,7 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Versions;
+﻿using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
+using NeoLemmixSharp.Engine.LevelIo.Versions;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections.Version1_0_0_0;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class VersionHelper : ILevelDataSectionReaderVersionHelper
 {

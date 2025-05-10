@@ -1,12 +1,12 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles;
 
 public static class DefaultStyleHelpers
 {

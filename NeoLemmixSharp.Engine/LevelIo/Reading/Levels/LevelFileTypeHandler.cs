@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels;

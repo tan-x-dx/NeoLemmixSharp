@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Sections;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default.Styles;
+using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
+using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles;
 using NeoLemmixSharp.Engine.LevelIo.Versions;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Default;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels;
 
 public sealed class DefaultLevelReader : ILevelReader
 {
