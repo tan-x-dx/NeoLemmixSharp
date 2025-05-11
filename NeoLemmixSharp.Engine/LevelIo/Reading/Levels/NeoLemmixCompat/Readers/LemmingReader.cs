@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Readers;
@@ -63,7 +62,7 @@ public sealed class LemmingReader : NeoLemmixDataReader
 
     private void SetBlocker(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.InitialLemmingAction = BlockerAction.Instance;
+        _currentLemmingData!.InitialLemmingActionId = EngineConstants.BlockerActionId;
     }
 
     private void SetClimber(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -95,7 +94,7 @@ public sealed class LemmingReader : NeoLemmixDataReader
 
     private void SetShimmier(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.InitialLemmingAction = ShimmierAction.Instance;
+        _currentLemmingData!.InitialLemmingActionId = EngineConstants.ShimmierActionId;
     }
 
     private void SetSlider(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)

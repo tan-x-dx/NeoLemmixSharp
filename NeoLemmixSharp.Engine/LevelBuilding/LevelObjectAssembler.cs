@@ -3,19 +3,18 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.InteropServices;
-using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
-using NeoLemmixSharp.Engine.LevelIo.Data.Level;
-using NeoLemmixSharp.Engine.LevelIo.Data.Style;
-using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
-using NeoLemmixSharp.Engine.LevelIo.Data;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -23,8 +22,8 @@ public sealed class LevelObjectAssembler : IDisposable
 {
     private readonly LevelData _levelData;
 
-    private readonly List<Lemming> _lemmings = new();
-    private readonly List<GadgetBase> _gadgets = new();
+    private readonly List<Lemming> _lemmings = [];
+    private readonly List<GadgetBase> _gadgets = [];
     private readonly GadgetRendererBuilder _gadgetSpriteBuilder;
     private readonly Dictionary<StylePiecePair, GadgetArchetypeData> _gadgetArchetypeDataLookup;
 
@@ -76,7 +75,7 @@ public sealed class LevelObjectAssembler : IDisposable
                 _lemmings.Count,
                 Orientation.Down,
                 FacingDirection.Right,
-                NoneAction.Instance,
+                EngineConstants.NoneActionId,
                 EngineConstants.ClassicTeamId)
             {
                 AnchorPosition = new Point()
@@ -94,7 +93,7 @@ public sealed class LevelObjectAssembler : IDisposable
                     _lemmings.Count,
                     prototype.Orientation,
                     prototype.FacingDirection,
-                    prototype.InitialLemmingAction,
+                    prototype.InitialLemmingActionId,
                     prototype.TeamId)
                 {
                     AnchorPosition = prototype.Position

@@ -259,7 +259,13 @@ public static class EngineConstants
     public const int NumberOfLemmingActions = 34;
     public const int LongestActionNameLength = 11;
 
+    public static bool IsValidLemmingActionId(int lemmingActionId)
+    {
+        return (uint)lemmingActionId < NumberOfLemmingActions;
+    }
+
     public const string NoneActionName = "None";
+    public const int NoneActionId = -1;
 
     public const string WalkerActionName = "Walker";
     public const string WalkerActionSpriteFileName = "walker";
@@ -469,8 +475,15 @@ public static class EngineConstants
 
     #region Lemming Skill Constants
 
+    public static bool IsValidLemmingSkillId(int lemmingSkillId)
+    {
+        return (uint)lemmingSkillId < NumberOfLemmingSkills;
+    }
+
     public const int NumberOfLemmingSkills = 31;
+
     public const string NoneSkillName = "None";
+    public const int NoneSkillId = -1;
 
     public const string ClimberSkillName = "Climber";
     public const int ClimberSkillId = 0;

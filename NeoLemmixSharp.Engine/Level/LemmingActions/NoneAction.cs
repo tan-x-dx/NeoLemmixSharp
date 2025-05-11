@@ -12,7 +12,7 @@ public sealed class NoneAction : LemmingAction
 
     private NoneAction()
         : base(
-            -1,
+            EngineConstants.NoneActionId,
             EngineConstants.NoneActionName,
             string.Empty,
             1,
