@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Teams;
-using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.IO.Data.Level;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -35,7 +35,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
 
     private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData, int id)
     {
-        var lemmingSkill = skillSetData.Skill;
+        var lemmingSkill = LemmingSkill.AllItems[skillSetData.SkillId];
         var team = LevelScreen.TeamManager.AllItems[skillSetData.TeamId];
 
         return new SkillTrackingData(id, lemmingSkill, team, skillSetData.NumberOfSkills);

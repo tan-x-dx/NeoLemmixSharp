@@ -1,0 +1,20 @@
+﻿using NeoLemmixSharp.IO.Data.Style;
+
+namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
+
+public sealed class StringDataSectionReader : StyleDataSectionReader
+{
+    private readonly FileStringReader<StyleFileSectionIdentifierHasher, StyleFileSectionIdentifier> _stringReader;
+
+    public StringDataSectionReader(
+        List<string> stringIdLookup)
+        : base(StyleFileSectionIdentifier.StringDataSection, true)
+    {
+        _stringReader = new FileStringReader<StyleFileSectionIdentifierHasher, StyleFileSectionIdentifier>(stringIdLookup);
+    }
+
+    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData)
+    {
+        _stringReader.ReadSection(rawFileData);
+    }
+}

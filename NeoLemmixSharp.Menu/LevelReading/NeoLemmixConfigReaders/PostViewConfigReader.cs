@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Readers;
+﻿using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Menu.LevelPack;
 using static NeoLemmixSharp.Menu.LevelPack.PostViewMessageData;
 

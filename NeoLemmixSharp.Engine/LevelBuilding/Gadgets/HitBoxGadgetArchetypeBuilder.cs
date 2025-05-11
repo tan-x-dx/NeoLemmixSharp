@@ -6,9 +6,9 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
-using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
-using NeoLemmixSharp.Engine.LevelIo.Data.Style;
-using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
@@ -107,12 +107,12 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
                 gadgetData,
                 gadgetStateArchetypeData,
                 teamManager);
-            var animationController = SpriteData.CreateAnimationController(i, currentGadgetBounds);
+            //var animationController = SpriteData.CreateAnimationController(i, currentGadgetBounds);
 
             result[i] = new GadgetState(
                 hitBoxFilters,
                 hitBoxRegionLookup,
-                animationController);
+                null);
         }
 
         return result;
@@ -136,9 +136,10 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
                 solidityType,
                 hitBoxBehaviour,
                 criteria,
-                hitBoxData.OnLemmingEnterActions,
-                hitBoxData.OnLemmingPresentActions,
-                hitBoxData.OnLemmingExitActions);
+                [], //hitBoxData.OnLemmingEnterActions,
+                [], //hitBoxData.OnLemmingPresentActions,
+                []  //hitBoxData.OnLemmingExitActions
+                    );
         }
 
         return result;
@@ -150,10 +151,10 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         TeamManager teamManager)
     {
         var numberOfCriteria =
-            hitBoxData.AllowedActions.CountIfNotNull() +
-            hitBoxData.AllowedStates.CountIfNotNull() +
-            hitBoxData.AllowedOrientations.CountIfNotNull() +
-            hitBoxData.AllowedFacingDirection.CountIfNotNull() +
+            // hitBoxData.AllowedActions.CountIfNotNull() +
+            // hitBoxData.AllowedStates.CountIfNotNull() +
+            // hitBoxData.AllowedOrientations.CountIfNotNull() +
+            // hitBoxData.AllowedFacingDirection.CountIfNotNull() +
             (gadgetData.HasProperty(GadgetProperty.TeamId) ? 1 : 0);
 
         if (numberOfCriteria == 0)
@@ -163,44 +164,44 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         numberOfCriteria = 0;
 
-        if (hitBoxData.AllowedActions is not null)
-        {
-            var lemmingActionCriterion = new LemmingActionCriterion();
-            lemmingActionCriterion.RegisterActions(hitBoxData.AllowedActions);
-            result[numberOfCriteria++] = lemmingActionCriterion;
-        }
+        /* if (hitBoxData.AllowedActions is not null)
+         {
+             var lemmingActionCriterion = new LemmingActionCriterion();
+             lemmingActionCriterion.RegisterActions(hitBoxData.AllowedActions);
+             result[numberOfCriteria++] = lemmingActionCriterion;
+         }
 
-        if (hitBoxData.AllowedStates is not null)
-        {
-            result[numberOfCriteria++] = new LemmingStateCriterion(hitBoxData.AllowedStates);
-        }
+         if (hitBoxData.AllowedStates is not null)
+         {
+             result[numberOfCriteria++] = new LemmingStateCriterion(hitBoxData.AllowedStates);
+         }
 
-        if (hitBoxData.AllowedOrientations is not null)
-        {
-            var orientationFilter = new LemmingOrientationFilter();
-            var gadgetRotNum = gadgetData.Orientation.RotNum;
+         if (hitBoxData.AllowedOrientations is not null)
+         {
+             var orientationFilter = new LemmingOrientationFilter();
+             var gadgetRotNum = gadgetData.Orientation.RotNum;
 
-            foreach (var orientation in hitBoxData.AllowedOrientations)
-            {
-                var rotatedOrientation = new Orientation(orientation.RotNum + gadgetRotNum);
-                orientationFilter.RegisterOrientation(rotatedOrientation);
-            }
+             foreach (var orientation in hitBoxData.AllowedOrientations)
+             {
+                 var rotatedOrientation = new Orientation(orientation.RotNum + gadgetRotNum);
+                 orientationFilter.RegisterOrientation(rotatedOrientation);
+             }
 
-            result[numberOfCriteria++] = orientationFilter;
-        }
+             result[numberOfCriteria++] = orientationFilter;
+         }
 
-        if (hitBoxData.AllowedFacingDirection.HasValue)
-        {
-            var facingDirectionFilter = LemmingFacingDirectionCriterion.ForFacingDirection(hitBoxData.AllowedFacingDirection.Value);
-            result[numberOfCriteria++] = facingDirectionFilter;
-        }
+         if (hitBoxData.AllowedFacingDirection.HasValue)
+         {
+             var facingDirectionFilter = LemmingFacingDirectionCriterion.ForFacingDirection(hitBoxData.AllowedFacingDirection.Value);
+             result[numberOfCriteria++] = facingDirectionFilter;
+         }
 
-        if (gadgetData.TryGetProperty(GadgetProperty.TeamId, out var teamId))
-        {
-            var team = teamManager.AllItems[teamId];
-            var teamFilter = new LemmingTeamCriterion(team);
-            result[numberOfCriteria++] = teamFilter;
-        }
+         if (gadgetData.TryGetProperty(GadgetProperty.TeamId, out var teamId))
+         {
+             var team = teamManager.AllItems[teamId];
+             var teamFilter = new LemmingTeamCriterion(team);
+             result[numberOfCriteria++] = teamFilter;
+         }*/
 
         Debug.Assert(numberOfCriteria == result.Length);
 
