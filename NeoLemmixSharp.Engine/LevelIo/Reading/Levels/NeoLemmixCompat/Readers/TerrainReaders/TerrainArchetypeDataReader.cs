@@ -106,8 +106,8 @@ public sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 
     public TerrainArchetypeData CreateTerrainArchetypeData() => new()
     {
-        Style = _styleName,
-        TerrainPiece = _terrainPieceName,
+        StyleName = _styleName,
+        PieceName = _terrainPieceName,
 
         IsSteel = _isSteel,
         ResizeType = _resizeType,

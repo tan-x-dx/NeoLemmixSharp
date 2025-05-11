@@ -1,11 +1,13 @@
 ﻿using NeoLemmixSharp.Common;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Data.Style.Terrain;
 
+[DebuggerDisplay("{StyleName}:{PieceName}")]
 public sealed class TerrainArchetypeData : ITerrainArchetypeData
 {
-    public required StyleIdentifier Style { get; init; }
-    public required PieceIdentifier TerrainPiece { get; init; }
+    public required StyleIdentifier StyleName { get; init; }
+    public required PieceIdentifier PieceName { get; init; }
 
     public required bool IsSteel { get; init; }
     public required ResizeType ResizeType { get; init; }
@@ -17,11 +19,6 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     public required int NineSliceLeft { get; init; }
     public required int NineSliceTop { get; init; }
     public required int NineSliceRight { get; init; }
-
-    public override string ToString()
-    {
-        return $"{Style}:{TerrainPiece}";
-    }
 
     public bool IsTrivial()
     {
@@ -39,8 +36,8 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
        StyleIdentifier styleName,
        PieceIdentifier pieceName) => new()
        {
-           Style = styleName,
-           TerrainPiece = pieceName,
+           StyleName = styleName,
+           PieceName = pieceName,
 
            IsSteel = false,
            ResizeType = ResizeType.None,

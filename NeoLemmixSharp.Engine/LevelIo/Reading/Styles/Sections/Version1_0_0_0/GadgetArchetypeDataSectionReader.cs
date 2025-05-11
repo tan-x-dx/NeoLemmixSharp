@@ -29,6 +29,7 @@ public sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
             styleData.GadgetArchetypeData.Add(newGadgetArchetypeDatum.PieceName, newGadgetArchetypeDatum);
         }
     }
+
     private GadgetArchetypeData ReadNextGadgetArchetypeData(
         StyleIdentifier styleName,
         RawStyleFileDataReader rawFileData)

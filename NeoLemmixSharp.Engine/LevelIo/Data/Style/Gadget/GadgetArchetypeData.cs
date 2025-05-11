@@ -1,8 +1,10 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 
+[DebuggerDisplay("{StyleName}:{PieceName}")]
 public sealed class GadgetArchetypeData
 {
     public required StyleIdentifier StyleName { get; init; }

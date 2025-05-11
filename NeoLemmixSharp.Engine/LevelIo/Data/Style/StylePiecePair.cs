@@ -1,13 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Data.Style;
 
+[DebuggerDisplay("{StyleName}:{PieceName}")]
 public readonly struct StylePiecePair(StyleIdentifier styleName, PieceIdentifier pieceName) : IEquatable<StylePiecePair>
 {
     public readonly StyleIdentifier StyleName = styleName;
     public readonly PieceIdentifier PieceName = pieceName;
-
-    public override string ToString() => $"{StyleName}:{PieceName}";
 
     public bool Equals(StylePiecePair other) => StyleName.Equals(other.StyleName) &&
                                                 PieceName.Equals(other.PieceName);

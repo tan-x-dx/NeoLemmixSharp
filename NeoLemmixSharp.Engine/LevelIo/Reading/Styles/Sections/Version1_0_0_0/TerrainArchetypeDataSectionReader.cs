@@ -24,7 +24,7 @@ public sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         while (numberOfItemsInSection-- > 0)
         {
             var newTerrainArchetypeDatum = ReadNextTerrainArchetypeData(styleData.Identifier, rawFileData);
-            styleData.TerrainArchetypeData.Add(newTerrainArchetypeDatum.TerrainPiece, newTerrainArchetypeDatum);
+            styleData.TerrainArchetypeData.Add(newTerrainArchetypeDatum.PieceName, newTerrainArchetypeDatum);
         }
     }
 
@@ -81,8 +81,8 @@ public sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
 
         var newTerrainArchetypeData = new TerrainArchetypeData
         {
-            Style = styleName,
-            TerrainPiece = new PieceIdentifier(_stringIdLookup[pieceId]),
+            StyleName = styleName,
+            PieceName = new PieceIdentifier(_stringIdLookup[pieceId]),
 
             IsSteel = isSteel,
             ResizeType = resizeType,
