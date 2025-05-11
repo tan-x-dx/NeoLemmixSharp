@@ -103,8 +103,8 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            RecordString(terrainData.StyleIdentifier.ToString());
-            RecordString(terrainData.TerrainPiece.ToString());
+            RecordString(terrainData.StyleName.ToString());
+            RecordString(terrainData.PieceName.ToString());
         }
     }
 
@@ -116,8 +116,8 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
 
             foreach (var terrainData in levelData.AllTerrainData)
             {
-                RecordString(terrainData.StyleIdentifier.ToString());
-                RecordString(terrainData.TerrainPiece.ToString());
+                RecordString(terrainData.StyleName.ToString());
+                RecordString(terrainData.PieceName.ToString());
             }
         }
     }
@@ -126,8 +126,8 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         foreach (var gadgetData in levelData.AllGadgetData)
         {
-            RecordString(gadgetData.StyleIdentifier.ToString());
-            RecordString(gadgetData.GadgetPiece.ToString());
+            RecordString(gadgetData.StyleName.ToString());
+            RecordString(gadgetData.PieceName.ToString());
 
             foreach (var gadgetInputName in gadgetData.InputNames)
             {

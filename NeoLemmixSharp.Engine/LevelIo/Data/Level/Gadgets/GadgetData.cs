@@ -13,8 +13,8 @@ public sealed class GadgetData
 
     public required int Id { get; init; }
 
-    public required StyleIdentifier StyleIdentifier { get; init; }
-    public required PieceIdentifier GadgetPiece { get; init; }
+    public required StyleIdentifier StyleName { get; init; }
+    public required PieceIdentifier PieceName { get; init; }
 
     public required Point Position { get; init; }
     public required int InitialStateId { get; init; }
@@ -51,5 +51,5 @@ public sealed class GadgetData
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int>.Enumerator GetProperties() => _properties.GetEnumerator();
 
-    public StylePiecePair GetStylePiecePair() => new(StyleIdentifier, GadgetPiece);
+    public StylePiecePair GetStylePiecePair() => new(StyleName, PieceName);
 }

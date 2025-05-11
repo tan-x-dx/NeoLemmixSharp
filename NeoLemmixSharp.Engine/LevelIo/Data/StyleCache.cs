@@ -65,20 +65,20 @@ public static class StyleCache
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            result.Add(terrainData.StyleIdentifier);
+            result.Add(terrainData.StyleName);
         }
 
         foreach (var terrainGroupData in levelData.AllTerrainGroups)
         {
             foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
             {
-                result.Add(terrainData.StyleIdentifier);
+                result.Add(terrainData.StyleName);
             }
         }
 
         foreach (var gadgetData in levelData.AllGadgetData)
         {
-            result.Add(gadgetData.StyleIdentifier);
+            result.Add(gadgetData.StyleName);
         }
 
         return result;
@@ -183,12 +183,12 @@ public static class StyleCache
             if (exists)
                 return;
 
-            var terrainStyle = terrainData.StyleIdentifier;
+            var terrainStyle = terrainData.StyleName;
 
             if (!LoadedStyles.TryGetValue(terrainStyle, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
-            ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeData, terrainData.TerrainPiece, out exists);
+            ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeData, terrainData.PieceName, out exists);
             if (exists)
                 return;
 
@@ -215,12 +215,12 @@ public static class StyleCache
             if (exists)
                 return;
 
-            var gadgetStyle = gadgetData.StyleIdentifier;
+            var gadgetStyle = gadgetData.StyleName;
 
             if (!LoadedStyles.TryGetValue(gadgetStyle, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
-            gadgetArchetypeData = styleData.GadgetArchetypeData[gadgetData.GadgetPiece];
+            gadgetArchetypeData = styleData.GadgetArchetypeData[gadgetData.PieceName];
         }
     }
 }

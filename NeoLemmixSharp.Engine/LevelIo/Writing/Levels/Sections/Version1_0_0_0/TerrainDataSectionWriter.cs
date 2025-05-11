@@ -35,8 +35,8 @@ public sealed class TerrainDataSectionWriter : LevelDataSectionWriter
     {
         writer.Write(GetNumberOfBytesWritten(terrainData));
 
-        writer.Write(_stringIdLookup[terrainData.StyleIdentifier.ToString()]);
-        writer.Write(_stringIdLookup[terrainData.TerrainPiece.ToString()]);
+        writer.Write(_stringIdLookup[terrainData.StyleName.ToString()]);
+        writer.Write(_stringIdLookup[terrainData.PieceName.ToString()]);
 
         writer.Write((ushort)(terrainData.Position.X + LevelReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(terrainData.Position.Y + LevelReadWriteHelpers.PositionOffset));
