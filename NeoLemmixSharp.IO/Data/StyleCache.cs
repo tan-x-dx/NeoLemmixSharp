@@ -192,7 +192,9 @@ public static class StyleCache
             if (exists)
                 return;
 
-            terrainArchetypeDataForStyle = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(stylePiecePair);
+            terrainArchetypeDataForStyle = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(
+                stylePiecePair.StyleName,
+                stylePiecePair.PieceName);
             terrainArchetypeDataForLevel = terrainArchetypeDataForStyle;
         }
     }

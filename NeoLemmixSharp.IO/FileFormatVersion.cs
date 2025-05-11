@@ -29,7 +29,7 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
     [Pure]
     [DebuggerStepThrough]
     public bool Equals(FileFormatVersion other) => _upperBits == other._upperBits &&
-                                             _lowerBits == other._lowerBits;
+                                                   _lowerBits == other._lowerBits;
     [Pure]
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is FileFormatVersion other && Equals(other);

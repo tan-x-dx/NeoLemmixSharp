@@ -30,9 +30,6 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     }
 
     public static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
-       StylePiecePair stylePiecePair) => CreateTrivialTerrainArchetypeData(stylePiecePair.StyleName, stylePiecePair.PieceName);
-
-    public static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
        StyleIdentifier styleName,
        PieceIdentifier pieceName) => new()
        {
