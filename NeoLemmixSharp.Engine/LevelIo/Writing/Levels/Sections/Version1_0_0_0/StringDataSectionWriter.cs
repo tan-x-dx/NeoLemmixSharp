@@ -9,12 +9,10 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
 {
     private const int MaxStackByteBufferSize = 256;
 
-    public override bool IsNecessary => true;
-
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public StringDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelFileSectionIdentifier.StringDataSection)
+        : base(LevelFileSectionIdentifier.StringDataSection, true)
     {
         _stringIdLookup = stringIdLookup;
     }

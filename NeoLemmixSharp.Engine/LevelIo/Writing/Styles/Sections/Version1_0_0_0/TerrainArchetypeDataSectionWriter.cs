@@ -4,10 +4,8 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Styles.Sections.Version1_0_0_0;
 
 public sealed class TerrainArchetypeDataSectionReader : StyleDataSectionWriter
 {
-    public override bool IsNecessary { get; }
-
     public TerrainArchetypeDataSectionReader()
-        : base(StyleFileSectionIdentifier.TerrainArchetypeDataSection)
+        : base(StyleFileSectionIdentifier.TerrainArchetypeDataSection, false)
     {
     }
 

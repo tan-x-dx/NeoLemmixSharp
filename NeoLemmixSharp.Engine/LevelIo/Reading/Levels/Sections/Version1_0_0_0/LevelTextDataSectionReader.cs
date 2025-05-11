@@ -4,13 +4,12 @@ namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class LevelTextDataSectionReader : LevelDataSectionReader
 {
-    public override bool IsNecessary => false;
 
     private readonly List<string> _stringIdLookup;
 
     public LevelTextDataSectionReader(
         List<string> stringIdLookup)
-        : base(LevelFileSectionIdentifier.LevelTextDataSection)
+        : base(LevelFileSectionIdentifier.LevelTextDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }

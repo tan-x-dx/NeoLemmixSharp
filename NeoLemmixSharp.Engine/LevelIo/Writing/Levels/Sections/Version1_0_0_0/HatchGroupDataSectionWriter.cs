@@ -4,10 +4,8 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
 public sealed class HatchGroupDataSectionWriter : LevelDataSectionWriter
 {
-    public override bool IsNecessary => false;
-
     public HatchGroupDataSectionWriter()
-        : base(LevelFileSectionIdentifier.HatchGroupDataSection)
+        : base(LevelFileSectionIdentifier.HatchGroupDataSection, false)
     {
     }
 

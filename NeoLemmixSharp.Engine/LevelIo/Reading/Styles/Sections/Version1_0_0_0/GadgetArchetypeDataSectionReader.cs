@@ -10,10 +10,8 @@ public sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 {
     private readonly List<string> _stringIdLookup;
 
-    public override bool IsNecessary => false;
-
     public GadgetArchetypeDataSectionReader(List<string> stringIdLookup)
-        : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection)
+        : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }

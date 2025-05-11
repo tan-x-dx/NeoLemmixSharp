@@ -5,10 +5,8 @@ namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class HatchGroupDataSectionReader : LevelDataSectionReader
 {
-    public override bool IsNecessary => false;
-
     public HatchGroupDataSectionReader()
-        : base(LevelFileSectionIdentifier.HatchGroupDataSection)
+        : base(LevelFileSectionIdentifier.HatchGroupDataSection, false)
     {
     }
 

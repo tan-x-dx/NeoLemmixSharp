@@ -13,13 +13,11 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
         1 + // Enum specifier
         4; // Four bytes for actual data, padding with zeros where necessary
 
-    public override bool IsNecessary => true;
-
     private readonly List<string> _stringIdLookup;
 
     public LevelMetadataSectionReader(
         List<string> stringIdLookup)
-        : base(LevelFileSectionIdentifier.LevelMetadataSection)
+        : base(LevelFileSectionIdentifier.LevelMetadataSection, true)
     {
         _stringIdLookup = stringIdLookup;
     }

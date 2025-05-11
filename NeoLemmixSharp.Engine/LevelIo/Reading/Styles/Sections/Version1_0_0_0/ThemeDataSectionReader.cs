@@ -4,10 +4,8 @@ namespace NeoLemmixSharp.Engine.LevelIo.Reading.Styles.Sections.Version1_0_0_0;
 
 public sealed class ThemeDataSectionReader : StyleDataSectionReader
 {
-    public override bool IsNecessary { get; }
-
     public ThemeDataSectionReader(List<string> stringIdLookup)
-        : base(StyleFileSectionIdentifier.ThemeDataSection)
+        : base(StyleFileSectionIdentifier.ThemeDataSection, false)
     {
     }
 

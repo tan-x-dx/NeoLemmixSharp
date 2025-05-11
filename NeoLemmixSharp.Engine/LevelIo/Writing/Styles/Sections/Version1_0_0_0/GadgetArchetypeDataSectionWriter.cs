@@ -4,10 +4,8 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Styles.Sections.Version1_0_0_0;
 
 public sealed class GadgetArchetypeDataSectionWriter : StyleDataSectionWriter
 {
-    public override bool IsNecessary { get; }
-
     public GadgetArchetypeDataSectionWriter()
-        : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection)
+        : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection, false)
     {
     }
 

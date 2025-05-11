@@ -8,10 +8,8 @@ public sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
 {
     private readonly List<string> _stringIdLookup;
 
-    public override bool IsNecessary => false;
-
     public TerrainArchetypeDataSectionReader(List<string> stringIdLookup)
-        : base(StyleFileSectionIdentifier.TerrainArchetypeDataSection)
+        : base(StyleFileSectionIdentifier.TerrainArchetypeDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }

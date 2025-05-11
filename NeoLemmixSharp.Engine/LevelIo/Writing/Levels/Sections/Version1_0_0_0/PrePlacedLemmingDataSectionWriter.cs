@@ -5,10 +5,8 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
 public sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
 {
-    public override bool IsNecessary => false;
-
     public PrePlacedLemmingDataSectionWriter()
-        : base(LevelFileSectionIdentifier.PrePlacedLemmingDataSection)
+        : base(LevelFileSectionIdentifier.PrePlacedLemmingDataSection, false)
     {
     }
 

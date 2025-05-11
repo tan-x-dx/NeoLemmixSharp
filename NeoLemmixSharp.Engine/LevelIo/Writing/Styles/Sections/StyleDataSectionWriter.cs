@@ -5,11 +5,12 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Styles.Sections;
 public abstract class StyleDataSectionWriter
 {
     public StyleFileSectionIdentifier SectionIdentifier { get; }
-    public abstract bool IsNecessary { get; }
+    public bool IsNecessary { get; }
 
-    public StyleDataSectionWriter(StyleFileSectionIdentifier sectionIdentifier)
+    public StyleDataSectionWriter(StyleFileSectionIdentifier sectionIdentifier, bool isNecessary)
     {
         SectionIdentifier = sectionIdentifier;
+        IsNecessary = isNecessary;
     }
 
     public ReadOnlySpan<byte> GetSectionIdentifierBytes() => StyleFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);

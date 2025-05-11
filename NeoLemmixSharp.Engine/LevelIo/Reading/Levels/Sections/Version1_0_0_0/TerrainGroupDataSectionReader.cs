@@ -4,15 +4,13 @@ namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class TerrainGroupDataSectionReader : LevelDataSectionReader
 {
-    public override bool IsNecessary => false;
-
     private readonly List<string> _stringIdLookup;
     private readonly TerrainDataSectionReader _terrainDataComponentReader;
 
     public TerrainGroupDataSectionReader(
         List<string> stringIdLookup,
         TerrainDataSectionReader terrainDataComponentReader)
-        : base(LevelFileSectionIdentifier.TerrainGroupDataSection)
+        : base(LevelFileSectionIdentifier.TerrainGroupDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
         _terrainDataComponentReader = terrainDataComponentReader;

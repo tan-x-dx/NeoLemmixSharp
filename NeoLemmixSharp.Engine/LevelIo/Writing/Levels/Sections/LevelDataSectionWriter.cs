@@ -5,11 +5,12 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections;
 public abstract class LevelDataSectionWriter
 {
     public LevelFileSectionIdentifier SectionIdentifier { get; }
-    public abstract bool IsNecessary { get; }
+    public bool IsNecessary { get; }
 
-    public LevelDataSectionWriter(LevelFileSectionIdentifier sectionIdentifier)
+    public LevelDataSectionWriter(LevelFileSectionIdentifier sectionIdentifier, bool isNecessary)
     {
         SectionIdentifier = sectionIdentifier;
+        IsNecessary = isNecessary;
     }
 
     public ReadOnlySpan<byte> GetSectionIdentifierBytes() => LevelFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);

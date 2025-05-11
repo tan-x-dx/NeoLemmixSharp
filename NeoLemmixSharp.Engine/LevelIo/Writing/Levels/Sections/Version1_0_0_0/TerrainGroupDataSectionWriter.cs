@@ -4,15 +4,13 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
 public sealed class TerrainGroupDataSectionWriter : LevelDataSectionWriter
 {
-    public override bool IsNecessary => false;
-
     private readonly Dictionary<string, ushort> _stringIdLookup;
     private readonly TerrainDataSectionWriter _terrainDataComponentWriter;
 
     public TerrainGroupDataSectionWriter(
         Dictionary<string, ushort> stringIdLookup,
         TerrainDataSectionWriter terrainDataComponentWriter)
-        : base(LevelFileSectionIdentifier.TerrainGroupDataSection)
+        : base(LevelFileSectionIdentifier.TerrainGroupDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
         _terrainDataComponentWriter = terrainDataComponentWriter;

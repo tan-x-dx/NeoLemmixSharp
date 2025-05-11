@@ -12,10 +12,8 @@ public sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public override bool IsNecessary => false;
-
     public GadgetDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelFileSectionIdentifier.GadgetDataSection)
+        : base(LevelFileSectionIdentifier.GadgetDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
