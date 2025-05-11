@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;

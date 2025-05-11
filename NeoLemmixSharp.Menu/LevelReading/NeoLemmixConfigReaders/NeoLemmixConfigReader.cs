@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Reading.Levels;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat;
+﻿using NeoLemmixSharp.IO.Reading.Levels;
+using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 using NeoLemmixSharp.Menu.LevelPack;
 using System.Diagnostics.CodeAnalysis;
 

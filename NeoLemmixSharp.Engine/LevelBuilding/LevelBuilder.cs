@@ -17,12 +17,12 @@ using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+using NeoLemmixSharp.IO.Data;
+using NeoLemmixSharp.IO.Data.Level;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
@@ -82,7 +82,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
         var inputController = new LevelInputController();
 
-        var levelObjectiveManager = new LevelObjectiveManager(levelData.LevelObjectives, 0);
+        var levelObjectiveManager = new LevelObjectiveManager([]/*levelData.LevelObjectives*/, 0);
 
         var skillSetManager = new SkillSetManager(levelObjectiveManager.PrimaryLevelObjective);
         var levelCursor = new LevelCursor();
