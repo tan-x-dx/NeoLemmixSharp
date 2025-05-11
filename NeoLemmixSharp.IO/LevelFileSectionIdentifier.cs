@@ -39,7 +39,7 @@ internal readonly struct LevelFileSectionIdentifierHasher :
     public static ReadOnlySpan<byte> GetSectionIdentifierBytes(LevelFileSectionIdentifier sectionIdentifier)
     {
         var index = (int)sectionIdentifier;
-        index <<= 1;
+        index *= NumberOfBytesForLevelSectionIdentifier;
 
         return LevelDataSectionIdentifierBytes
             .Slice(index, NumberOfBytesForLevelSectionIdentifier);

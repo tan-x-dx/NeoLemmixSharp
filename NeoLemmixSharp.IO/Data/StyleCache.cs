@@ -16,7 +16,7 @@ namespace NeoLemmixSharp.IO.Data;
 
 public static class StyleCache
 {
-    private static readonly Dictionary<StyleIdentifier, StyleData> LoadedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
+    private static readonly Dictionary<StyleIdentifier, StyleData> CachedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
 
     public static void EnsureStylesAreLoadedForLevel(LevelData levelData)
     {
@@ -24,7 +24,7 @@ public static class StyleCache
 
         foreach (var style in allStyles)
         {
-            ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(LoadedStyles, style, out var exists);
+            ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(CachedStyles, style, out var exists);
 
             if (exists)
             {
@@ -34,28 +34,6 @@ public static class StyleCache
             {
                 styleData = LoadStyle(style);
             }
-        }
-    }
-
-    public static void CleanUpOldStyles()
-    {
-        var notUsedStyles = new List<StyleIdentifier>(EngineConstants.AssumedInitialStyleCapacity);
-
-        foreach (var kvp in LoadedStyles)
-        {
-            ref var numberOfLevelsSinceLastUsed = ref kvp.Value.NumberOfLevelsSinceLastUsed;
-
-            numberOfLevelsSinceLastUsed++;
-
-            if (numberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
-            {
-                notUsedStyles.Add(kvp.Key);
-            }
-        }
-
-        foreach (var style in notUsedStyles)
-        {
-            LoadedStyles.Remove(style);
         }
     }
 
@@ -86,13 +64,8 @@ public static class StyleCache
 
     private static StyleData LoadStyle(StyleIdentifier style)
     {
-        var styleFolderPath = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            style.ToString());
-
-        var files = Directory.GetFiles(styleFolderPath);
-        if (!TryLocateStyleFile(files, out var styleFilePath))
-            throw new FileReadingException($"Could not locate style file in folder: {styleFolderPath}");
+        if (!TryLocateStyleFile(style, out var styleFilePath))
+            throw new FileReadingException($"Could not locate style file for style: {style}");
 
         using var fileStream = new FileStream(styleFilePath, FileMode.Open);
         var rawFileData = new RawStyleFileDataReader(fileStream);
@@ -106,6 +79,31 @@ public static class StyleCache
         }
 
         return result;
+    }
+
+    private static bool TryLocateStyleFile(
+        StyleIdentifier style,
+        [MaybeNullWhen(false)] out string foundFilePath)
+    {
+        var styleFolderPath = Path.Combine(
+            RootDirectoryManager.StyleFolderDirectory,
+            style.ToString());
+
+        var files = Directory.GetFiles(styleFolderPath);
+
+        foreach (var file in files)
+        {
+            var fileExtension = Path.GetExtension(file.AsSpan());
+
+            if (fileExtension.Equals(DefaultFileExtensions.LevelStyleExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                foundFilePath = file;
+                return true;
+            }
+        }
+
+        foundFilePath = null;
+        return false;
     }
 
     private static void ReadSection(
@@ -124,7 +122,7 @@ public static class StyleCache
 
         rawFileData.SetReaderPosition(interval.Start);
 
-        var sectionIdentifierBytes = rawFileData.ReadBytes(LevelFileSectionIdentifierHasher.NumberOfBytesForLevelSectionIdentifier);
+        var sectionIdentifierBytes = rawFileData.ReadBytes(StyleFileSectionIdentifierHasher.NumberOfBytesForLevelSectionIdentifier);
 
         FileReadingException.ReaderAssert(
             sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),
@@ -135,25 +133,6 @@ public static class StyleCache
         FileReadingException.ReaderAssert(
             interval.Start + interval.Length == rawFileData.Position,
             "Byte reading mismatch!");
-    }
-
-    private static bool TryLocateStyleFile(
-        ReadOnlySpan<string> allFiles,
-        [MaybeNullWhen(false)] out string foundFilePath)
-    {
-        foreach (var file in allFiles)
-        {
-            var fileExtension = Path.GetExtension(file.AsSpan());
-
-            if (fileExtension.Equals(DefaultFileExtensions.LevelStyleExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                foundFilePath = file;
-                return true;
-            }
-        }
-
-        foundFilePath = null;
-        return false;
     }
 
     public static Dictionary<StylePiecePair, TerrainArchetypeData> GetAllTerrainArchetypeData(LevelData levelData)
@@ -184,7 +163,7 @@ public static class StyleCache
 
             var terrainStyle = terrainData.StyleName;
 
-            if (!LoadedStyles.TryGetValue(terrainStyle, out var styleData))
+            if (!CachedStyles.TryGetValue(terrainStyle, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
             ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeData, terrainData.PieceName, out exists);
@@ -216,10 +195,32 @@ public static class StyleCache
 
             var gadgetStyle = gadgetData.StyleName;
 
-            if (!LoadedStyles.TryGetValue(gadgetStyle, out var styleData))
+            if (!CachedStyles.TryGetValue(gadgetStyle, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
             gadgetArchetypeDataForLevel = styleData.GadgetArchetypeData[gadgetData.PieceName];
+        }
+    }
+
+    public static void CleanUpOldStyles()
+    {
+        var notUsedStyles = new List<StyleIdentifier>(EngineConstants.AssumedInitialStyleCapacity);
+
+        foreach (var kvp in CachedStyles)
+        {
+            ref var numberOfLevelsSinceLastUsed = ref kvp.Value.NumberOfLevelsSinceLastUsed;
+
+            numberOfLevelsSinceLastUsed++;
+
+            if (numberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
+            {
+                notUsedStyles.Add(kvp.Key);
+            }
+        }
+
+        foreach (var style in notUsedStyles)
+        {
+            CachedStyles.Remove(style);
         }
     }
 }

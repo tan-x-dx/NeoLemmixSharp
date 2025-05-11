@@ -131,6 +131,11 @@ public static class EngineConstants
     /// </summary>
     public const int AssumedNumberOfTerrainArchetypeDataInStyle = 64;
 
+    /// <summary>
+    /// Assumption: a style will probably define this number of unique terrain pieces or fewer
+    /// </summary>
+    public const int AssumedNumberOfGadgetArchetypeDataInStyle = 12;
+
     #endregion
 
     #region Replay Snapshot Constants

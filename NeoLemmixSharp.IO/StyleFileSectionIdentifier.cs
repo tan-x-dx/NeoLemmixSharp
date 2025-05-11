@@ -34,7 +34,7 @@ internal readonly struct StyleFileSectionIdentifierHasher :
     public static ReadOnlySpan<byte> GetSectionIdentifierBytes(StyleFileSectionIdentifier sectionIdentifier)
     {
         var index = (int)sectionIdentifier;
-        index <<= 1;
+        index *= NumberOfBytesForLevelSectionIdentifier;
 
         return StyleDataSectionIdentifierBytes
             .Slice(index, NumberOfBytesForLevelSectionIdentifier);
