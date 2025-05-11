@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data.Level.Terrain;
@@ -15,27 +16,7 @@ namespace NeoLemmixSharp.Engine.LevelIo.Data;
 
 public static class StyleCache
 {
-    /// <summary>
-    /// If a style has not been used for this many levels, remove it from the cache
-    /// </summary>
-    private const int NumberOfLevelsToKeepStyle = 4;
-
-    /// <summary>
-    /// Assumption: a level will probably depend on this number or fewer styles
-    /// </summary>
-    private const int AssumedInitialStyleCapacity = 6;
-
-    /// <summary>
-    /// Assumption: a level will probably have this number of unique terrain pieces or fewer
-    /// </summary>
-    private const int AssumedNumberOfTerrainArchetypeData = 32;
-
-    /// <summary>
-    /// Assumption: a level will probably have this number of unique gadget pieces or fewer
-    /// </summary>
-    private const int AssumedNumberOfGadgetArchetypeData = 16;
-
-    private static readonly Dictionary<StyleIdentifier, StyleData> LoadedStyles = new(AssumedInitialStyleCapacity * NumberOfLevelsToKeepStyle);
+    private static readonly Dictionary<StyleIdentifier, StyleData> LoadedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
 
     public static void EnsureStylesAreLoadedForLevel(LevelData levelData)
     {
@@ -66,7 +47,7 @@ public static class StyleCache
 
             numberOfLevelsSinceLastUsed++;
 
-            if (numberOfLevelsSinceLastUsed >= NumberOfLevelsToKeepStyle)
+            if (numberOfLevelsSinceLastUsed >= EngineConstants.NumberOfLevelsToKeepStyle)
             {
                 notUsedStyles.Add(kvp.Key);
             }
@@ -80,7 +61,7 @@ public static class StyleCache
 
     private static HashSet<StyleIdentifier> GetAllMentionedStyles(LevelData levelData)
     {
-        var result = new HashSet<StyleIdentifier>(AssumedInitialStyleCapacity);
+        var result = new HashSet<StyleIdentifier>(EngineConstants.AssumedInitialStyleCapacity);
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
@@ -177,7 +158,7 @@ public static class StyleCache
 
     public static Dictionary<StylePiecePair, TerrainArchetypeData> GetAllTerrainArchetypeData(LevelData levelData)
     {
-        var result = new Dictionary<StylePiecePair, TerrainArchetypeData>(AssumedNumberOfTerrainArchetypeData);
+        var result = new Dictionary<StylePiecePair, TerrainArchetypeData>(EngineConstants.AssumedNumberOfTerrainArchetypeData);
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
@@ -212,7 +193,7 @@ public static class StyleCache
 
     public static Dictionary<StylePiecePair, GadgetArchetypeData> GetAllGadgetArchetypeData(LevelData levelData)
     {
-        var result = new Dictionary<StylePiecePair, GadgetArchetypeData>(AssumedNumberOfGadgetArchetypeData);
+        var result = new Dictionary<StylePiecePair, GadgetArchetypeData>(EngineConstants.AssumedNumberOfGadgetArchetypeData);
 
         foreach (var gadgetData in levelData.AllGadgetData)
         {

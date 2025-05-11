@@ -6,16 +6,17 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
 using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Styles.Sections.Version1_0_0_0;
 
 public static class HitBoxGadgetReader
 {
     public static GadgetArchetypeData ReadGadgetArchetypeData(
-        string styleName,
-        string pieceName,
+        StyleIdentifier styleName,
+        PieceIdentifier pieceName,
         GadgetType gadgetType,
         RawStyleFileDataReader rawFileData)
     {

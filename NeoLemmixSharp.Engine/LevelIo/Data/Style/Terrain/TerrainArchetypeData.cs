@@ -4,8 +4,8 @@ namespace NeoLemmixSharp.Engine.LevelIo.Data.Style.Terrain;
 
 public sealed class TerrainArchetypeData : ITerrainArchetypeData
 {
-    public required string Style { get; init; }
-    public required string TerrainPiece { get; init; }
+    public required StyleIdentifier Style { get; init; }
+    public required PieceIdentifier TerrainPiece { get; init; }
 
     public required bool IsSteel { get; init; }
     public required ResizeType ResizeType { get; init; }
@@ -30,12 +30,14 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
             ResizeType != ResizeType.None ||
             DefaultWidth > 0 ||
             DefaultHeight > 0);
-
     }
 
     public static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
-       string styleName,
-       string pieceName) => new()
+       StylePiecePair stylePiecePair) => CreateTrivialTerrainArchetypeData(stylePiecePair.StyleName, stylePiecePair.PieceName);
+
+    public static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
+       StyleIdentifier styleName,
+       PieceIdentifier pieceName) => new()
        {
            Style = styleName,
            TerrainPiece = pieceName,

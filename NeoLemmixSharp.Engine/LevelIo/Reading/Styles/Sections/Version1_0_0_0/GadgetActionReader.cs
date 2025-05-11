@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
 using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;
+namespace NeoLemmixSharp.Engine.LevelIo.Reading.Styles.Sections.Version1_0_0_0;
 
 public static class GadgetActionReader
 {

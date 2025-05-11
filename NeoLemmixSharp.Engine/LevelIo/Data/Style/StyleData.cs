@@ -15,6 +15,6 @@ public sealed class StyleData
         Identifier = identifier;
     }
 
-    public Dictionary<PieceIdentifier, GadgetArchetypeData> GadgetArchetypeData { get; } = new();
-    public Dictionary<PieceIdentifier, TerrainArchetypeData> TerrainArchetypeData { get; } = new();
+    public Dictionary<PieceIdentifier, TerrainArchetypeData> TerrainArchetypeData { get; } = [];
+    public Dictionary<PieceIdentifier, GadgetArchetypeData> GadgetArchetypeData { get; } = [];
 }

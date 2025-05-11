@@ -5,8 +5,8 @@ namespace NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 
 public sealed class GadgetArchetypeData
 {
-    public required string StyleName { get; init; }
-    public required string PieceName { get; init; }
+    public required StyleIdentifier StyleName { get; init; }
+    public required PieceIdentifier PieceName { get; init; }
 
     public required GadgetType GadgetType { get; init; }
     public required ResizeType ResizeType { get; init; }

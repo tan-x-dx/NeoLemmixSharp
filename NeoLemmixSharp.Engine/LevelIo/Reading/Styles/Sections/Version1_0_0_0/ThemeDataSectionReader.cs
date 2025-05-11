@@ -6,7 +6,7 @@ public sealed class ThemeDataSectionReader : StyleDataSectionReader
 {
     public override bool IsNecessary { get; }
 
-    public ThemeDataSectionReader()
+    public ThemeDataSectionReader(List<string> stringIdLookup)
         : base(StyleFileSectionIdentifier.ThemeDataSection)
     {
     }
