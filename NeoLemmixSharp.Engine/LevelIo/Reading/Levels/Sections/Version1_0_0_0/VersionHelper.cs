@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
-using NeoLemmixSharp.Engine.LevelIo.Versions;
+﻿using NeoLemmixSharp.Engine.LevelIo.Versions;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 

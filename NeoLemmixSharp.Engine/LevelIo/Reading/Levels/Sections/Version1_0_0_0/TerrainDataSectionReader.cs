@@ -1,20 +1,19 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Terrain;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class TerrainDataSectionReader : LevelDataSectionReader
 {
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.TerrainDataSection;
-    public override bool IsNecessary => false;
 
     private readonly List<string> _stringIdLookup;
 
     public TerrainDataSectionReader(
         List<string> stringIdLookup)
+        : base(LevelFileSectionIdentifier.TerrainDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -79,8 +78,8 @@ public sealed class TerrainDataSectionReader : LevelDataSectionReader
         return new TerrainData
         {
             GroupName = null,
-            Style = _stringIdLookup[styleId],
-            TerrainPiece = _stringIdLookup[pieceId],
+            StyleName = new StyleIdentifier(_stringIdLookup[styleId]),
+            PieceName = new PieceIdentifier(_stringIdLookup[pieceId]),
 
             Position = new Point(x, y),
 
@@ -99,7 +98,7 @@ public sealed class TerrainDataSectionReader : LevelDataSectionReader
     private static Color ReadTerrainDataTintColor(RawLevelFileDataReader rawFileData)
     {
         var bytes = rawFileData.ReadBytes(3);
-        
+
         return LevelReadWriteHelpers.ReadRgbBytes(bytes);
     }
 }

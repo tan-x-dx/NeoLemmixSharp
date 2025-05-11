@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
@@ -12,10 +12,8 @@ public sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.GadgetDataSection;
-    public override bool IsNecessary => false;
-
     public GadgetDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelFileSectionIdentifier.GadgetDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -42,8 +40,8 @@ public sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write(GetNumberOfBytesWritten(gadgetData));
 
         writer.Write((ushort)gadgetData.Id);
-        writer.Write(_stringIdLookup[gadgetData.Style]);
-        writer.Write(_stringIdLookup[gadgetData.GadgetPiece]);
+        writer.Write(_stringIdLookup[gadgetData.StyleName.ToString()]);
+        writer.Write(_stringIdLookup[gadgetData.PieceName.ToString()]);
 
         writer.Write((ushort)(gadgetData.Position.X + LevelReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(gadgetData.Position.Y + LevelReadWriteHelpers.PositionOffset));

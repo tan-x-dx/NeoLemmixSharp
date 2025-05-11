@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -14,13 +13,11 @@ public sealed class LevelMetadataSectionReader : LevelDataSectionReader
         1 + // Enum specifier
         4; // Four bytes for actual data, padding with zeros where necessary
 
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.LevelMetadataSection;
-    public override bool IsNecessary => true;
-
     private readonly List<string> _stringIdLookup;
 
     public LevelMetadataSectionReader(
         List<string> stringIdLookup)
+        : base(LevelFileSectionIdentifier.LevelMetadataSection, true)
     {
         _stringIdLookup = stringIdLookup;
     }

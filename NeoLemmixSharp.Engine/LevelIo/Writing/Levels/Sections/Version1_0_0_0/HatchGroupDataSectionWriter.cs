@@ -1,11 +1,13 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Data;
+﻿using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
 public sealed class HatchGroupDataSectionWriter : LevelDataSectionWriter
 {
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.HatchGroupDataSection;
-    public override bool IsNecessary => false;
+    public HatchGroupDataSectionWriter()
+        : base(LevelFileSectionIdentifier.HatchGroupDataSection, false)
+    {
+    }
 
     public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {

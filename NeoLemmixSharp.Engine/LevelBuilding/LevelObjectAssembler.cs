@@ -3,33 +3,40 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Runtime.InteropServices;
-using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public sealed class LevelObjectAssembler : IDisposable
 {
-    private readonly List<Lemming> _lemmings = new();
-    private readonly List<GadgetBase> _gadgets = new();
-    private readonly GadgetRendererBuilder _gadgetSpriteBuilder;
+    private readonly LevelData _levelData;
 
-    public LevelObjectAssembler(GraphicsDevice graphicsDevice)
+    private readonly List<Lemming> _lemmings = [];
+    private readonly List<GadgetBase> _gadgets = [];
+    private readonly GadgetRendererBuilder _gadgetSpriteBuilder;
+    private readonly Dictionary<StylePiecePair, GadgetArchetypeData> _gadgetArchetypeDataLookup;
+
+    public LevelObjectAssembler(GraphicsDevice graphicsDevice, LevelData levelData)
     {
+        _levelData = levelData;
         _gadgetSpriteBuilder = new GadgetRendererBuilder(graphicsDevice);
+        _gadgetArchetypeDataLookup = StyleCache.GetAllGadgetArchetypeData(levelData);
     }
 
-    public static HatchGroup[] GetHatchGroups(LevelData levelData)
+    public HatchGroup[] GetHatchGroups()
     {
-        var allHatchGroupData = CollectionsMarshal.AsSpan(levelData.AllHatchGroupData);
+        var allHatchGroupData = CollectionsMarshal.AsSpan(_levelData.AllHatchGroupData);
 
         var result = new HatchGroup[allHatchGroupData.Length];
         var i = 0;
@@ -48,17 +55,17 @@ public sealed class LevelObjectAssembler : IDisposable
         return result;
     }
 
-    public Lemming[] GetLevelLemmings(LevelData levelData)
+    public Lemming[] GetLevelLemmings()
     {
-        var maxNumberOfClonedLemmings = levelData.MaxNumberOfClonedLemmings;
+        var maxNumberOfClonedLemmings = _levelData.MaxNumberOfClonedLemmings;
         var totalCapacity = maxNumberOfClonedLemmings +
-                            levelData.HatchLemmingData.Count +
-                            levelData.PrePlacedLemmingData.Count;
+                            _levelData.HatchLemmingData.Count +
+                            _levelData.PrePlacedLemmingData.Count;
 
         _lemmings.Capacity = totalCapacity;
 
-        var prePlacedLemmings = CollectionsMarshal.AsSpan(levelData.PrePlacedLemmingData);
-        var hatchLemmingData = CollectionsMarshal.AsSpan(levelData.HatchLemmingData);
+        var prePlacedLemmings = CollectionsMarshal.AsSpan(_levelData.PrePlacedLemmingData);
+        var hatchLemmingData = CollectionsMarshal.AsSpan(_levelData.HatchLemmingData);
         AddLemmings(prePlacedLemmings);
         AddLemmings(hatchLemmingData);
 
@@ -68,7 +75,7 @@ public sealed class LevelObjectAssembler : IDisposable
                 _lemmings.Count,
                 Orientation.Down,
                 FacingDirection.Right,
-                NoneAction.Instance,
+                EngineConstants.NoneActionId,
                 EngineConstants.ClassicTeamId)
             {
                 AnchorPosition = new Point()
@@ -86,7 +93,7 @@ public sealed class LevelObjectAssembler : IDisposable
                     _lemmings.Count,
                     prototype.Orientation,
                     prototype.FacingDirection,
-                    prototype.InitialLemmingAction,
+                    prototype.InitialLemmingActionId,
                     prototype.TeamId)
                 {
                     AnchorPosition = prototype.Position
@@ -100,17 +107,16 @@ public sealed class LevelObjectAssembler : IDisposable
     }
 
     public GadgetBase[] GetLevelGadgets(
-        LevelData levelData,
         LemmingManager lemmingHasher,
         TeamManager teamManager)
     {
-        var allGadgetData = CollectionsMarshal.AsSpan(levelData.AllGadgetData);
+        var allGadgetData = CollectionsMarshal.AsSpan(_levelData.AllGadgetData);
 
         _gadgets.Capacity = allGadgetData.Length;
 
         foreach (var prototype in allGadgetData)
         {
-            var gadgetArchetypeData = levelData.GadgetArchetypeData[prototype.GetStylePiecePair()];
+            var gadgetArchetypeData = _gadgetArchetypeDataLookup[prototype.GetStylePiecePair()];
 
             var gadget = GadgetBuilder.BuildGadget(_gadgetSpriteBuilder, gadgetArchetypeData, prototype, lemmingHasher, teamManager);
             _gadgets.Add(gadget);

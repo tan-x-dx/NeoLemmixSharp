@@ -1,17 +1,15 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
 public sealed class TerrainDataSectionWriter : LevelDataSectionWriter
 {
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.TerrainDataSection;
-    public override bool IsNecessary => false;
-
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public TerrainDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelFileSectionIdentifier.TerrainDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -27,21 +25,18 @@ public sealed class TerrainDataSectionWriter : LevelDataSectionWriter
     {
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            var terrainArchetypeData = levelData.TerrainArchetypeData[terrainData.GetStylePiecePair()];
-
-            WriteTerrainData(writer, terrainArchetypeData, terrainData);
+            WriteTerrainData(writer, terrainData);
         }
     }
 
     public void WriteTerrainData(
         RawLevelFileDataWriter writer,
-        TerrainArchetypeData terrainArchetypeData,
         TerrainData terrainData)
     {
         writer.Write(GetNumberOfBytesWritten(terrainData));
 
-        writer.Write(_stringIdLookup[terrainArchetypeData.Style]);
-        writer.Write(_stringIdLookup[terrainArchetypeData.TerrainPiece]);
+        writer.Write(_stringIdLookup[terrainData.StyleName.ToString()]);
+        writer.Write(_stringIdLookup[terrainData.PieceName.ToString()]);
 
         writer.Write((ushort)(terrainData.Position.X + LevelReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(terrainData.Position.Y + LevelReadWriteHelpers.PositionOffset));

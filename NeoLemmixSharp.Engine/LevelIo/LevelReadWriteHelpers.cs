@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Terrain;
 using NeoLemmixSharp.Engine.LevelIo.Reading;
 using NeoLemmixSharp.Engine.LevelIo.Writing;
 using System.Diagnostics;

@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Data;
+﻿using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
@@ -10,12 +10,10 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         1 + // Enum specifier
         4; // Four bytes for actual data, padding with zeros where necessary
 
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.LevelMetadataSection;
-    public override bool IsNecessary => true;
-
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public LevelMetadataSectionWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelFileSectionIdentifier.LevelMetadataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }

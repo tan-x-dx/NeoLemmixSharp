@@ -13,7 +13,7 @@ public sealed class NoneSkill : LemmingSkill
 
     private NoneSkill()
         : base(
-            -1,
+            EngineConstants.NoneSkillId,
             EngineConstants.NoneSkillName)
     {
     }

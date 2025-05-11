@@ -1,21 +1,19 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class GadgetDataSectionReader : LevelDataSectionReader
 {
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.GadgetDataSection;
-    public override bool IsNecessary => false;
-
     private readonly List<string> _stringIdLookup;
 
     public GadgetDataSectionReader(
         List<string> stringIdLookup)
+        : base(LevelFileSectionIdentifier.GadgetDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -60,8 +58,8 @@ public sealed class GadgetDataSectionReader : LevelDataSectionReader
         {
             Id = levelData.AllGadgetData.Count,
 
-            Style = _stringIdLookup[styleId],
-            GadgetPiece = _stringIdLookup[pieceId],
+            StyleName = new StyleIdentifier(_stringIdLookup[styleId]),
+            PieceName = new PieceIdentifier(_stringIdLookup[pieceId]),
 
             Position = new Point(x, y),
 

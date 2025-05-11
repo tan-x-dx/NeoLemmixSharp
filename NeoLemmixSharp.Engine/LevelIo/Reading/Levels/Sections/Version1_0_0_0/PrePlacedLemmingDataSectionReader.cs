@@ -1,16 +1,12 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
 {
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.PrePlacedLemmingDataSection;
-    public override bool IsNecessary => false;
-
     public PrePlacedLemmingDataSectionReader()
+        : base(LevelFileSectionIdentifier.PrePlacedLemmingDataSection, false)
     {
     }
 
@@ -42,10 +38,9 @@ public sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
         var dht = new DihedralTransformation(dhtByte);
 
         int teamId = rawFileData.Read8BitUnsignedInteger();
-        int initialActionId = rawFileData.Read8BitUnsignedInteger();
+        int initialLemmingActionId = rawFileData.Read8BitUnsignedInteger();
 
-        var initialLemmingAction = LemmingAction.GetActionOrDefault(initialActionId);
-        FileReadingException.ReaderAssert(initialLemmingAction != NoneAction.Instance, "Invalid initial action for lemming!");
+        FileReadingException.ReaderAssert(EngineConstants.IsValidLemmingActionId(initialLemmingActionId), "Invalid initial action for lemming!");
 
         return new LemmingData
         {
@@ -56,7 +51,7 @@ public sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
             FacingDirection = dht.FacingDirection,
 
             TeamId = teamId,
-            InitialLemmingAction = initialLemmingAction
+            InitialLemmingActionId = initialLemmingActionId
         };
     }
 }

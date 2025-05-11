@@ -7,6 +7,7 @@ namespace NeoLemmixSharp.Engine.LevelIo;
 
 public enum StyleFileSectionIdentifier
 {
+    StringDataSection,
     ThemeDataSection,
     TerrainArchetypeDataSection,
     GadgetArchetypeDataSection,
@@ -41,6 +42,7 @@ public readonly struct StyleFileSectionIdentifierHasher :
 
     private static ReadOnlySpan<byte> StyleDataSectionIdentifierBytes =>
     [
+        0x9B, 0x70,
         0x35, 0xBF,
         0x1A, 0x47,
         0x8C, 0x92

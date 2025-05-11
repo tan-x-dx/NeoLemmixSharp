@@ -1,11 +1,17 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Data;
+﻿using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
 
 public abstract class LevelDataSectionReader
 {
-    public abstract LevelFileSectionIdentifier SectionIdentifier { get; }
-    public abstract bool IsNecessary { get; }
+    public LevelFileSectionIdentifier SectionIdentifier { get; }
+    public bool IsNecessary { get; }
+
+    public LevelDataSectionReader(LevelFileSectionIdentifier sectionIdentifier, bool isNecessary)
+    {
+        SectionIdentifier = sectionIdentifier;
+        IsNecessary = isNecessary;
+    }
 
     public ReadOnlySpan<byte> GetSectionIdentifierBytes() => LevelFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
 

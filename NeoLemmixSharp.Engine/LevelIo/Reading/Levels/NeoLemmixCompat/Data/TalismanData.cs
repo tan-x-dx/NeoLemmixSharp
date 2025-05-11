@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using SkillLimitDictionary = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Engine.Level.Skills.LemmingSkill.LemmingSkillHasher, NeoLemmixSharp.Engine.Level.Skills.LemmingSkill.LemmingSkillBitBuffer, NeoLemmixSharp.Engine.Level.Skills.LemmingSkill, int>;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Data;

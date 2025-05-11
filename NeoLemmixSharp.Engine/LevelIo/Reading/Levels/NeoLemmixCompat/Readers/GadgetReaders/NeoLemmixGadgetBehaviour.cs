@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
+﻿using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Data;
 using System.Diagnostics.CodeAnalysis;
 

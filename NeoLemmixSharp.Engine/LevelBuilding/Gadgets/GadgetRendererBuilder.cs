@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Runtime.InteropServices;
 
@@ -16,7 +16,7 @@ public sealed class GadgetRendererBuilder : IDisposable
     public GadgetRendererBuilder(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
-        _gadgetTextures = new Dictionary<StylePiecePair, Texture2D>(new StylePiecePairEqualityComparer());
+        _gadgetTextures = new Dictionary<StylePiecePair, Texture2D>();
     }
 
     public GadgetRenderer? BuildStatefulGadgetRenderer(
@@ -61,9 +61,9 @@ public sealed class GadgetRendererBuilder : IDisposable
     {
         var rootFilePath = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
-            gadgetArchetypeBuilder.StyleName,
+            gadgetArchetypeBuilder.StyleName.ToString(),
             DefaultFileExtensions.GadgetFolderName,
-            gadgetArchetypeBuilder.PieceName);
+            gadgetArchetypeBuilder.PieceName.ToString());
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 

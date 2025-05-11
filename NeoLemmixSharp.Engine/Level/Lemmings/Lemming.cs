@@ -91,13 +91,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         int id,
         Orientation orientation,
         FacingDirection facingDirection,
-        LemmingAction currentAction,
+        int initialActionId,
         int teamId)
     {
         Id = id;
         Orientation = orientation;
         FacingDirection = facingDirection;
-        CurrentAction = currentAction;
+        CurrentAction = LemmingAction.GetActionOrDefault(initialActionId);
         State = new LemmingState(this, teamId);
         Renderer = new LemmingRenderer(this);
     }

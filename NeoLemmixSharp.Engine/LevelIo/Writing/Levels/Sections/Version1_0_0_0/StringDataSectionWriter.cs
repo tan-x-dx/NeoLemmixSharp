@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Data;
+﻿using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -9,12 +9,10 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
 {
     private const int MaxStackByteBufferSize = 256;
 
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.StringDataSection;
-    public override bool IsNecessary => true;
-
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public StringDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelFileSectionIdentifier.StringDataSection, true)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -67,10 +65,9 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
         RecordLevelMetadataStrings(levelData);
         RecordLevelTextMessageStrings(levelData);
         RecordLevelObjectiveStrings(levelData);
-        RecordTerrainArchetypeDataStrings(levelData);
+        RecordTerrainDataStrings(levelData);
         RecordTerrainGroupStrings(levelData);
-        RecordGadgetArchetypeDataStrings(levelData);
-        RecordGadgetStrings(levelData);
+        RecordGadgetDataStrings(levelData);
     }
 
     private void RecordLevelMetadataStrings(LevelData levelData)
@@ -102,12 +99,12 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
         }
     }
 
-    private void RecordTerrainArchetypeDataStrings(LevelData levelData)
+    private void RecordTerrainDataStrings(LevelData levelData)
     {
-        foreach (var (_, terrainArchetypeData) in levelData.TerrainArchetypeData)
+        foreach (var terrainData in levelData.AllTerrainData)
         {
-            RecordString(terrainArchetypeData.Style);
-            RecordString(terrainArchetypeData.TerrainPiece);
+            RecordString(terrainData.StyleName.ToString());
+            RecordString(terrainData.PieceName.ToString());
         }
     }
 
@@ -116,22 +113,22 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
         foreach (var terrainGroup in levelData.AllTerrainGroups)
         {
             RecordString(terrainGroup.GroupName!);
+
+            foreach (var terrainData in levelData.AllTerrainData)
+            {
+                RecordString(terrainData.StyleName.ToString());
+                RecordString(terrainData.PieceName.ToString());
+            }
         }
     }
 
-    private void RecordGadgetArchetypeDataStrings(LevelData levelData)
-    {
-        foreach (var (_, gadgetBuilder) in levelData.GadgetArchetypeData)
-        {
-            RecordString(gadgetBuilder.StyleName);
-            RecordString(gadgetBuilder.PieceName);
-        }
-    }
-
-    private void RecordGadgetStrings(LevelData levelData)
+    private void RecordGadgetDataStrings(LevelData levelData)
     {
         foreach (var gadgetData in levelData.AllGadgetData)
         {
+            RecordString(gadgetData.StyleName.ToString());
+            RecordString(gadgetData.PieceName.ToString());
+
             foreach (var gadgetInputName in gadgetData.InputNames)
             {
                 RecordString(gadgetInputName);
