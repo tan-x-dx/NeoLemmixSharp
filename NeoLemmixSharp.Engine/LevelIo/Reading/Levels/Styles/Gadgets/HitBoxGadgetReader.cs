@@ -5,8 +5,8 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;

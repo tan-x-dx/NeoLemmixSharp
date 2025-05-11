@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style.Terrain;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
+namespace NeoLemmixSharp.Engine.LevelIo.Data.Level.Terrain;
 
 public sealed class TerrainGroupData : ITerrainArchetypeData
 {

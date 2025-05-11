@@ -1,8 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
+namespace NeoLemmixSharp.Engine.LevelIo.Data.Style.Terrain;
 
 public sealed class TerrainArchetypeData : ITerrainArchetypeData
 {
@@ -19,8 +17,6 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     public required int NineSliceLeft { get; init; }
     public required int NineSliceTop { get; init; }
     public required int NineSliceRight { get; init; }
-
-    public ArrayWrapper2D<Color> TerrainPixelColorData { get; set; }
 
     public override string ToString()
     {

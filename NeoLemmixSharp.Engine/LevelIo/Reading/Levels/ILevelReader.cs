@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels;
 

@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels;
 

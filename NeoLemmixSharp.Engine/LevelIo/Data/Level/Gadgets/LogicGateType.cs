@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
+﻿namespace NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
 
 public enum LogicGateType
 {

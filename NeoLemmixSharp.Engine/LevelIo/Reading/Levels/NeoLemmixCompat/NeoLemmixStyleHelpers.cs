@@ -1,7 +1,8 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style.Terrain;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
@@ -11,7 +12,7 @@ namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat;
 
 public static class NeoLemmixStyleHelpers
 {
-    private readonly struct PieceAndFileLink(string pieceName, string? correspondingDataFile)
+   /* private readonly struct PieceAndFileLink(string pieceName, string? correspondingDataFile)
     {
         public readonly string PieceName = pieceName;
         public readonly string? CorrespondingDataFile = correspondingDataFile;
@@ -210,5 +211,5 @@ public static class NeoLemmixStyleHelpers
         FileReadingException.ReaderAssert(uniqueStyles.KeyCount > 0, "No styles specified");
 
         return uniqueStyles;
-    }
+    }*/
 }

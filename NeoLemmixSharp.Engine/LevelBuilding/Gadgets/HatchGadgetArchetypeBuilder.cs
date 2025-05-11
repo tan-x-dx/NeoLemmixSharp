@@ -4,15 +4,16 @@ using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 {
-    public required string StyleName { get; init; }
-    public required string PieceName { get; init; }
+    public required StyleIdentifier StyleName { get; init; }
+    public required PieceIdentifier PieceName { get; init; }
 
     public required Point SpawnPosition { get; init; }
 

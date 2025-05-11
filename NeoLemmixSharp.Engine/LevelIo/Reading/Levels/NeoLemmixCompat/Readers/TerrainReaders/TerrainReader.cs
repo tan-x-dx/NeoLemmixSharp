@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Terrain;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
 
@@ -134,8 +135,8 @@ public sealed class TerrainReader : NeoLemmixDataReader
         var newTerrainData = new TerrainData
         {
             GroupName = _currentTerrainData.GroupName,
-            Style = _currentTerrainData.Style ?? string.Empty,
-            TerrainPiece = _currentTerrainData.TerrainPiece,
+            Style = new StyleIdentifier(_currentTerrainData.Style),
+            TerrainPiece = new PieceIdentifier(_currentTerrainData.TerrainPiece),
 
             Position = new Point(_currentTerrainData.X, _currentTerrainData.Y),
 

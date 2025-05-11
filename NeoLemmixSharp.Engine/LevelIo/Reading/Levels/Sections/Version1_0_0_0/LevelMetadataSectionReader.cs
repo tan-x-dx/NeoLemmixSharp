@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;

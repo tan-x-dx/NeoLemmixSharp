@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;

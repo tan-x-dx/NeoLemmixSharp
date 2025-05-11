@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
+﻿using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
@@ -28,25 +27,6 @@ public sealed class TerrainGroupDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        foreach (var terrainGroup in levelData.AllTerrainGroups)
-        {
-            WriteTerrainGroupData(writer, levelData.TerrainArchetypeData, terrainGroup);
-        }
-    }
-
-    private void WriteTerrainGroupData(
-        RawLevelFileDataWriter writer,
-        Dictionary<StylePiecePair, TerrainArchetypeData> terrainArchetypeDataLookup,
-        TerrainGroupData terrainGroupData)
-    {
-        writer.Write(_stringIdLookup[terrainGroupData.GroupName!]);
-        writer.Write((ushort)terrainGroupData.AllBasicTerrainData.Count);
-
-        foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
-        {
-            var terrainArchetypeData = terrainArchetypeDataLookup[terrainData.GetStylePiecePair()];
-
-            _terrainDataComponentWriter.WriteTerrainData(writer, terrainArchetypeData, terrainData);
-        }
+        throw new NotImplementedException();
     }
 }

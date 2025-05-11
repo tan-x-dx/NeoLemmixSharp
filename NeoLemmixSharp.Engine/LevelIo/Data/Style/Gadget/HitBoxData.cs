@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
+namespace NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 
 public sealed class HitBoxData
 {

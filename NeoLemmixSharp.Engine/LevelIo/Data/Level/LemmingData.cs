@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Data;
+namespace NeoLemmixSharp.Engine.LevelIo.Data.Level;
 
 public sealed class LemmingData
 {

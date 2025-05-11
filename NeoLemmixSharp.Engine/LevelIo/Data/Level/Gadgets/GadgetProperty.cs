@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
+namespace NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
 
 public enum GadgetProperty
 {

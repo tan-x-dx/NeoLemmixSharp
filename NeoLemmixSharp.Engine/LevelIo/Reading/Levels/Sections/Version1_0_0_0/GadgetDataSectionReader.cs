@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.LevelIo.Data;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
@@ -60,8 +60,8 @@ public sealed class GadgetDataSectionReader : LevelDataSectionReader
         {
             Id = levelData.AllGadgetData.Count,
 
-            Style = _stringIdLookup[styleId],
-            GadgetPiece = _stringIdLookup[pieceId],
+            Style = new StyleIdentifier(_stringIdLookup[styleId]),
+            GadgetPiece = new PieceIdentifier(_stringIdLookup[pieceId]),
 
             Position = new Point(x, y),
 

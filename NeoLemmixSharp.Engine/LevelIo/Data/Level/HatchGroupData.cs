@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.LevelIo.Data;
+﻿namespace NeoLemmixSharp.Engine.LevelIo.Data.Level;
 
 public sealed class HatchGroupData
 {

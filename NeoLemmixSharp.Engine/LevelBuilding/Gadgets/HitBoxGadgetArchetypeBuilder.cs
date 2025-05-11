@@ -6,8 +6,9 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Teams;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
@@ -16,8 +17,8 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 {
-    public required string StyleName { get; init; }
-    public required string PieceName { get; init; }
+    public required StyleIdentifier StyleName { get; init; }
+    public required PieceIdentifier PieceName { get; init; }
 
     public required ResizeType ResizeType { get; init; }
     public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }

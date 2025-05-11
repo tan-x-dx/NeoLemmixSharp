@@ -1,13 +1,14 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
+namespace NeoLemmixSharp.Engine.LevelIo.Data.Level.Terrain;
 
 public sealed class TerrainData
 {
     public required string? GroupName { get; init; }
-    public required string Style { get; init; }
-    public required string TerrainPiece { get; init; }
+    public required StyleIdentifier Style { get; init; }
+    public required PieceIdentifier TerrainPiece { get; init; }
 
     public required Point Position { get; init; }
 

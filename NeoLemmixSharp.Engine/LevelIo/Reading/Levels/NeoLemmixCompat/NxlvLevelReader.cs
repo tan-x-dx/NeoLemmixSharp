@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
-using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
@@ -58,8 +58,8 @@ public sealed class NxlvLevelReader : ILevelReader
         ProcessLevelData();
         ProcessTalismans();
 
-        NeoLemmixStyleHelpers.ProcessTerrainArchetypeData(_levelData);
-        NeoLemmixStyleHelpers.ProcessGadgetArchetypeData(_levelData, _uniqueStringSet);
+       // NeoLemmixStyleHelpers.ProcessTerrainArchetypeData(_levelData);
+       // NeoLemmixStyleHelpers.ProcessGadgetArchetypeData(_levelData, _uniqueStringSet);
 
         NxlvCountHelpers.CalculateHatchCounts(_levelData, _levelDataReader, _gadgetReader);
 

@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;

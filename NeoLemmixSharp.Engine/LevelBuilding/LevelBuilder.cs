@@ -18,6 +18,7 @@ using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
@@ -26,11 +27,10 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRenderer>
+public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
-    private readonly LevelObjectAssembler _levelObjectAssembler;
 
     public LevelBuilder(
         ContentManager contentManager,
@@ -38,15 +38,17 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
-        _levelObjectAssembler = new LevelObjectAssembler(graphicsDevice);
     }
 
     public LevelScreen BuildLevel(LevelData levelData)
     {
+        StyleCache.EnsureStylesAreLoadedForLevel(levelData);
+        using var levelObjectAssembler = new LevelObjectAssembler(_graphicsDevice, levelData);
+
         var terrainBuilder = new TerrainBuilder(_graphicsDevice, levelData);
         terrainBuilder.BuildTerrain();
 
-        var lemmingSpriteBank = _levelObjectAssembler.GetLemmingSpriteBank();
+        var lemmingSpriteBank = levelObjectAssembler.GetLemmingSpriteBank();
 
         var levelParameters = levelData.LevelParameters;
         var controlPanelParameters = levelData.ControlParameters;
@@ -62,8 +64,8 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelDimensions.W);
         var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelDimensions.H);
 
-        var levelLemmings = _levelObjectAssembler.GetLevelLemmings(levelData);
-        var hatchGroups = LevelObjectAssembler.GetHatchGroups(levelData);
+        var levelLemmings = levelObjectAssembler.GetLevelLemmings();
+        var hatchGroups = levelObjectAssembler.GetHatchGroups();
         var lemmingManager = new LemmingManager(
             hatchGroups,
             levelLemmings,
@@ -71,11 +73,11 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
             levelData.PrePlacedLemmingData.Count,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-        var levelGadgets = _levelObjectAssembler.GetLevelGadgets(levelData, lemmingManager, teamManager);
+        var levelGadgets = levelObjectAssembler.GetLevelGadgets(lemmingManager, teamManager);
 
         foreach (var hatchGroup in hatchGroups)
         {
-            _levelObjectAssembler.SetHatchesForHatchGroup(hatchGroup);
+            levelObjectAssembler.SetHatchesForHatchGroup(hatchGroup);
         }
 
         var inputController = new LevelInputController();
@@ -106,13 +108,13 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
 
         var terrainManager = new TerrainManager(pixelData);
 
-        var gadgetSpriteBank = _levelObjectAssembler.GetGadgetSpriteBank();
-        var controlPanelSpriteBank = _levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
+        var gadgetSpriteBank = levelObjectAssembler.GetGadgetSpriteBank();
+        var controlPanelSpriteBank = levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
 
         var levelCursorSprite = GetLevelCursorSprite(levelCursor);
         var backgroundRenderer = GetBackgroundRenderer(levelData);
 
-        _levelObjectAssembler.GetLevelSprites(
+        levelObjectAssembler.GetLevelSprites(
             out var behindTerrainSprites,
             out var inFrontOfTerrainSprites,
             out var lemmingSprites);
@@ -246,10 +248,5 @@ public sealed class LevelBuilder : IDisposable, IComparer<IViewportObjectRendere
         if (y is null) return 1;
         if (x is null) return -1;
         return x.ItemId.CompareTo(y.ItemId);
-    }
-
-    public void Dispose()
-    {
-        _levelObjectAssembler.Dispose();
     }
 }

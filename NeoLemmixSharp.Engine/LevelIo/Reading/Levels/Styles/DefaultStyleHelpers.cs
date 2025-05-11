@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles.Gadgets;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Styles;
 
 public static class DefaultStyleHelpers
 {
-    private readonly struct PieceAndTypePair(string pieceName, StylePieceType pieceType)
+  /*  private readonly struct PieceAndTypePair(string pieceName, StylePieceType pieceType)
     {
         public readonly string PieceName = pieceName;
         public readonly StylePieceType PieceType = pieceType;
@@ -194,5 +194,5 @@ public static class DefaultStyleHelpers
             default:
                 throw new FileReadingException($"Unknown piece type byte: {pieceType:X}");
         }
-    }
+    }*/
 }

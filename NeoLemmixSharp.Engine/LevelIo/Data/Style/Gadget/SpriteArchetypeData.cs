@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
+namespace NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 
 public sealed class SpriteArchetypeData
 {

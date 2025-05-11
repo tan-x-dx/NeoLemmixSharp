@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
+namespace NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 
 public sealed class GadgetArchetypeData
 {

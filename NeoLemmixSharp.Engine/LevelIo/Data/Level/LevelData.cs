@@ -3,11 +3,10 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Objectives;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets;
-using NeoLemmixSharp.Engine.LevelIo.Data.Gadgets.ArchetypeData;
-using NeoLemmixSharp.Engine.LevelIo.Data.Terrain;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Gadgets;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level.Terrain;
 
-namespace NeoLemmixSharp.Engine.LevelIo.Data;
+namespace NeoLemmixSharp.Engine.LevelIo.Data.Level;
 
 public sealed class LevelData
 {
@@ -136,24 +135,15 @@ public sealed class LevelData
     public List<LemmingData> PrePlacedLemmingData { get; } = [];
     public List<LemmingData> HatchLemmingData { get; } = [];
 
-    public Dictionary<StylePiecePair, TerrainArchetypeData> TerrainArchetypeData { get; }
     public List<TerrainData> AllTerrainData { get; } = [];
     public List<TerrainGroupData> AllTerrainGroups { get; } = [];
     public List<HatchGroupData> AllHatchGroupData { get; } = [];
 
-    public Dictionary<StylePiecePair, GadgetArchetypeData> GadgetArchetypeData { get; }
     public List<GadgetData> AllGadgetData { get; } = [];
     public List<SketchData> AllSketchData { get; } = [];
 
     public List<string> PreTextLines { get; } = [];
     public List<string> PostTextLines { get; } = [];
-
-    public LevelData()
-    {
-        var comparer = new StylePiecePairEqualityComparer();
-        TerrainArchetypeData = new Dictionary<StylePiecePair, TerrainArchetypeData>(comparer);
-        GadgetArchetypeData = new Dictionary<StylePiecePair, GadgetArchetypeData>(comparer);
-    }
 
     public void AssertLevelDataIsValid()
     {

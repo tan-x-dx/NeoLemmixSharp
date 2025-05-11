@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Data;
+﻿using NeoLemmixSharp.Engine.LevelIo.Data.Level;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -67,10 +67,9 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
         RecordLevelMetadataStrings(levelData);
         RecordLevelTextMessageStrings(levelData);
         RecordLevelObjectiveStrings(levelData);
-        RecordTerrainArchetypeDataStrings(levelData);
+        RecordTerrainDataStrings(levelData);
         RecordTerrainGroupStrings(levelData);
-        RecordGadgetArchetypeDataStrings(levelData);
-        RecordGadgetStrings(levelData);
+        RecordGadgetDataStrings(levelData);
     }
 
     private void RecordLevelMetadataStrings(LevelData levelData)
@@ -102,12 +101,12 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
         }
     }
 
-    private void RecordTerrainArchetypeDataStrings(LevelData levelData)
+    private void RecordTerrainDataStrings(LevelData levelData)
     {
-        foreach (var (_, terrainArchetypeData) in levelData.TerrainArchetypeData)
+        foreach (var terrainData in levelData.AllTerrainData)
         {
-            RecordString(terrainArchetypeData.Style);
-            RecordString(terrainArchetypeData.TerrainPiece);
+            RecordString(terrainData.Style.ToString());
+            RecordString(terrainData.TerrainPiece.ToString());
         }
     }
 
@@ -116,22 +115,22 @@ public sealed class StringDataSectionWriter : LevelDataSectionWriter
         foreach (var terrainGroup in levelData.AllTerrainGroups)
         {
             RecordString(terrainGroup.GroupName!);
+
+            foreach (var terrainData in levelData.AllTerrainData)
+            {
+                RecordString(terrainData.Style.ToString());
+                RecordString(terrainData.TerrainPiece.ToString());
+            }
         }
     }
 
-    private void RecordGadgetArchetypeDataStrings(LevelData levelData)
-    {
-        foreach (var (_, gadgetBuilder) in levelData.GadgetArchetypeData)
-        {
-            RecordString(gadgetBuilder.StyleName);
-            RecordString(gadgetBuilder.PieceName);
-        }
-    }
-
-    private void RecordGadgetStrings(LevelData levelData)
+    private void RecordGadgetDataStrings(LevelData levelData)
     {
         foreach (var gadgetData in levelData.AllGadgetData)
         {
+            RecordString(gadgetData.Style.ToString());
+            RecordString(gadgetData.GadgetPiece.ToString());
+
             foreach (var gadgetInputName in gadgetData.InputNames)
             {
                 RecordString(gadgetInputName);

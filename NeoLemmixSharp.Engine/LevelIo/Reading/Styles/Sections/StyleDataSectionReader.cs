@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Data;
+﻿using NeoLemmixSharp.Engine.LevelIo.Data.Style;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Styles.Sections;
 
@@ -9,5 +9,5 @@ public abstract class StyleDataSectionReader
 
     public ReadOnlySpan<byte> GetSectionIdentifierBytes() => StyleFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
 
-    public abstract void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData);
+    public abstract void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData);
 }

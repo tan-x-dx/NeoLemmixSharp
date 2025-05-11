@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.LevelIo.Data;
+using NeoLemmixSharp.Engine.LevelBuilding;
+using NeoLemmixSharp.Engine.LevelIo.Data.Level;
+using NeoLemmixSharp.Engine.LevelIo.Reading.Levels;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Menu.Pages.LevelSelect;
-using NeoLemmixSharp.Engine.LevelBuilding;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels;
 
 namespace NeoLemmixSharp.Menu;
 
@@ -69,7 +69,6 @@ public sealed class MenuPageCreator
     public LevelStartPage? CreateLevelStartPage()
     {
         LevelStartPage? result = null;
-        LevelBuilder? levelBuilder = null;
         ILevelReader? levelReader = null;
         try
         {
@@ -78,7 +77,7 @@ public sealed class MenuPageCreator
 
             levelData.AssertLevelDataIsValid();
 
-            levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
+            var levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);
             result = new LevelStartPage(_inputController, levelScreen);
         }
@@ -91,7 +90,6 @@ public sealed class MenuPageCreator
         finally
         {
             levelReader?.Dispose();
-            levelBuilder?.Dispose();
         }
 
         return result;
@@ -100,12 +98,11 @@ public sealed class MenuPageCreator
     public LevelStartPage? CreateLevelStartPage(LevelData levelData)
     {
         LevelStartPage? result = null;
-        LevelBuilder? levelBuilder = null;
         try
         {
             levelData.AssertLevelDataIsValid();
 
-            levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
+            var levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);
             result = new LevelStartPage(_inputController, levelScreen);
         }
@@ -117,7 +114,6 @@ public sealed class MenuPageCreator
         }
         finally
         {
-            levelBuilder?.Dispose();
         }
 
         return result;
