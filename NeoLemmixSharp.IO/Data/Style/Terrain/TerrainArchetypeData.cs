@@ -20,6 +20,10 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     public required int NineSliceTop { get; init; }
     public required int NineSliceRight { get; init; }
 
+    internal TerrainArchetypeData()
+    {
+    }
+
     public bool IsTrivial()
     {
         return !(
@@ -29,7 +33,7 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
             DefaultHeight > 0);
     }
 
-    public static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
+    internal static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
        StyleIdentifier styleName,
        PieceIdentifier pieceName) => new()
        {

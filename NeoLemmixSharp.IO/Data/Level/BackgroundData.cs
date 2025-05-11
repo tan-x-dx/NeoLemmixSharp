@@ -8,4 +8,8 @@ public sealed class BackgroundData
     public required string BackgroundImageName { get; init; }
 
     public bool IsSolidColor => string.IsNullOrWhiteSpace(BackgroundImageName);
+
+    internal BackgroundData()
+    {
+    }
 }

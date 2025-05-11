@@ -7,11 +7,11 @@ namespace NeoLemmixSharp.IO.Data.Style;
 public sealed class StyleData
 {
     private int _numberOfLevelsSinceLastUsed;
-    public ref int NumberOfLevelsSinceLastUsed => ref _numberOfLevelsSinceLastUsed;
+    internal ref int NumberOfLevelsSinceLastUsed => ref _numberOfLevelsSinceLastUsed;
 
     public StyleIdentifier Identifier { get; }
 
-    public StyleData(StyleIdentifier identifier)
+    internal StyleData(StyleIdentifier identifier)
     {
         Identifier = identifier;
     }

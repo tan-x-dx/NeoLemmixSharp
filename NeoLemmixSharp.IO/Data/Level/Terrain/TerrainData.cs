@@ -22,5 +22,9 @@ public sealed class TerrainData
     public required int? Width { get; init; }
     public required int? Height { get; init; }
 
+    internal TerrainData()
+    {
+    }
+
     public StylePiecePair GetStylePiecePair() => new(StyleName, PieceName);
 }
