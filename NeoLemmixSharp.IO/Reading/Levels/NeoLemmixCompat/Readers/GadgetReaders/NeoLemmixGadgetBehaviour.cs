@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 
-public enum NeoLemmixGadgetBehaviour
+internal enum NeoLemmixGadgetBehaviour
 {
     None,
     Entrance,
@@ -31,7 +31,7 @@ public enum NeoLemmixGadgetBehaviour
     Background
 }
 
-public static class NeoLemmixGadgetBehaviourExtensions
+internal static class NeoLemmixGadgetBehaviourExtensions
 {
     public static bool IsOneWayArrows(this NeoLemmixGadgetBehaviour behaviour)
     {

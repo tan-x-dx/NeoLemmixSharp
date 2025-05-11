@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 
-public sealed class PrimaryAnimationReader : NeoLemmixDataReader
+internal sealed class PrimaryAnimationReader : NeoLemmixDataReader
 {
     private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
 

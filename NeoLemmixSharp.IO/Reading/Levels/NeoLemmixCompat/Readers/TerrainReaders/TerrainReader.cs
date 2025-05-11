@@ -5,7 +5,7 @@ using NeoLemmixSharp.IO.Data.Style;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
 
-public sealed class TerrainReader : NeoLemmixDataReader
+internal sealed class TerrainReader : NeoLemmixDataReader
 {
     private readonly UniqueStringSet _uniqueStringSet;
     private readonly List<TerrainData> _allTerrainData;

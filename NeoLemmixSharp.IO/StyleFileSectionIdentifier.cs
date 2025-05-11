@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.IO;
 
-public enum StyleFileSectionIdentifier
+internal enum StyleFileSectionIdentifier
 {
     StringDataSection,
     ThemeDataSection,
@@ -13,7 +13,7 @@ public enum StyleFileSectionIdentifier
     GadgetArchetypeDataSection,
 }
 
-public readonly struct StyleFileSectionIdentifierHasher :
+internal readonly struct StyleFileSectionIdentifierHasher :
     ISectionIdentifierHelper<StyleFileSectionIdentifier>
 {
     public const int NumberOfBytesForLevelSectionIdentifier = 2;

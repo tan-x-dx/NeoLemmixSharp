@@ -4,7 +4,7 @@ using NeoLemmixSharp.Common.Util.Collections;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
-public static class GadgetActionReader
+internal static class GadgetActionReader
 {
    /* public static void ReadGadgetActions(
         RawStyleFileDataReader rawFileData,

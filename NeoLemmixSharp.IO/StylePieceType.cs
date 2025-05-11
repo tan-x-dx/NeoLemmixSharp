@@ -1,12 +1,12 @@
 ﻿namespace NeoLemmixSharp.IO;
 
-public enum StylePieceType
+internal enum StylePieceType
 {
     Terrain = StyleFileSectionIdentifier.TerrainArchetypeDataSection,
     Gadget = StyleFileSectionIdentifier.GadgetArchetypeDataSection
 }
 
-public static class StylePieceTypeHelpers
+internal static class StylePieceTypeHelpers
 {
     public static StyleFileSectionIdentifier ToSectionIdentifier(this StylePieceType stylePieceType)
     {

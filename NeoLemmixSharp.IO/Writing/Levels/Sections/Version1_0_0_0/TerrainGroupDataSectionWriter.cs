@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
-public sealed class TerrainGroupDataSectionWriter : LevelDataSectionWriter
+internal sealed class TerrainGroupDataSectionWriter : LevelDataSectionWriter
 {
     private readonly Dictionary<string, ushort> _stringIdLookup;
     private readonly TerrainDataSectionWriter _terrainDataComponentWriter;

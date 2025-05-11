@@ -6,7 +6,7 @@ using NeoLemmixSharp.IO.Data.Style;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
-public sealed class GadgetDataSectionReader : LevelDataSectionReader
+internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 {
     private readonly List<string> _stringIdLookup;
 

@@ -4,7 +4,7 @@ using NeoLemmixSharp.IO.Data.Style.Terrain;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
-public sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
+internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
 {
     private readonly List<string> _stringIdLookup;
 

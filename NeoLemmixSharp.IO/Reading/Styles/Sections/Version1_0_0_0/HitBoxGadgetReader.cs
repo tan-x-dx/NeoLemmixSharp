@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
-public static class HitBoxGadgetReader
+internal static class HitBoxGadgetReader
 {
     public static GadgetArchetypeData ReadGadgetArchetypeData(
         StyleIdentifier styleName,

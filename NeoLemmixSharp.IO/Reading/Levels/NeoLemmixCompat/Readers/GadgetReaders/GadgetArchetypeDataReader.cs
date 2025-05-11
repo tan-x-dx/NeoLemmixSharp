@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 
-public sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
+internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
 {
     private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
     private readonly Dictionary<string, NeoLemmixGadgetBehaviour> _gadgetBehaviourLookup = new(34, StringComparer.OrdinalIgnoreCase)

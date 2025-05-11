@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Data.Level;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
-public sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
+internal sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
 {
     public PrePlacedLemmingDataSectionWriter()
         : base(LevelFileSectionIdentifier.PrePlacedLemmingDataSection, false)

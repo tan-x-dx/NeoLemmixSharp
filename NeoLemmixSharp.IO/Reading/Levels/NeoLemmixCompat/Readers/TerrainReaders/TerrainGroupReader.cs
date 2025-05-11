@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Data.Level.Terrain;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
 
-public sealed class TerrainGroupReader : NeoLemmixDataReader
+internal sealed class TerrainGroupReader : NeoLemmixDataReader
 {
     private readonly UniqueStringSet _uniqueStringSet;
 

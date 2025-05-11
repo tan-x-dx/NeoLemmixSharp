@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Reading;
 
-public sealed class FileReadingException : Exception
+internal sealed class FileReadingException : Exception
 {
     public FileReadingException(string message)
         : base(message)

@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections;
 
-public abstract class LevelDataSectionReader
+internal abstract class LevelDataSectionReader
 {
     public LevelFileSectionIdentifier SectionIdentifier { get; }
     public bool IsNecessary { get; }

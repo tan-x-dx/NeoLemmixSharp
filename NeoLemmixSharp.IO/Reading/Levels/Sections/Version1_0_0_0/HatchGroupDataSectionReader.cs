@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Data.Level;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
-public sealed class HatchGroupDataSectionReader : LevelDataSectionReader
+internal sealed class HatchGroupDataSectionReader : LevelDataSectionReader
 {
     public HatchGroupDataSectionReader()
         : base(LevelFileSectionIdentifier.HatchGroupDataSection, false)

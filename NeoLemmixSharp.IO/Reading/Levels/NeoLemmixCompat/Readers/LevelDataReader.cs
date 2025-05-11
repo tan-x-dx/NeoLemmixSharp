@@ -6,7 +6,7 @@ using NeoLemmixSharp.IO.Data.Level;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-public sealed class LevelDataReader : NeoLemmixDataReader
+internal sealed class LevelDataReader : NeoLemmixDataReader
 {
     private readonly UniqueStringSet _uniqueStringSet;
     private readonly LevelData _levelData;

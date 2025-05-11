@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
-public sealed class TerrainGroupDataSectionReader : LevelDataSectionReader
+internal sealed class TerrainGroupDataSectionReader : LevelDataSectionReader
 {
     private readonly List<string> _stringIdLookup;
     private readonly TerrainDataSectionReader _terrainDataComponentReader;

@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-public sealed class NeoLemmixTextReader : NeoLemmixDataReader
+internal sealed class NeoLemmixTextReader : NeoLemmixDataReader
 {
     private readonly UniqueStringSet _uniqueStringSet;
     private readonly List<string> _lines;

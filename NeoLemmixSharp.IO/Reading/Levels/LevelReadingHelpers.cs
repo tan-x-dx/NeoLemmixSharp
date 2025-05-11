@@ -4,7 +4,7 @@ using NeoLemmixSharp.IO.Data.Level.Gadgets;
 
 namespace NeoLemmixSharp.IO.Reading.Levels;
 
-public static class LevelReadingHelpers
+internal static class LevelReadingHelpers
 {
     public static int CalculateMaxNumberOfClonedLemmings(
         LevelData levelData)

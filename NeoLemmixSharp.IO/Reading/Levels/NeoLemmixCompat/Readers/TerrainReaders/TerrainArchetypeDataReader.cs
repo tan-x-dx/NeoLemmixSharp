@@ -4,7 +4,7 @@ using NeoLemmixSharp.IO.Data.Style.Terrain;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
 
-public sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
+internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 {
     private readonly StyleIdentifier _styleName;
     private readonly PieceIdentifier _terrainPieceName;

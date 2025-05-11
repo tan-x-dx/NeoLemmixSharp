@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
-public sealed class VersionHelper : IStyleDataSectionReaderVersionHelper
+internal sealed class VersionHelper : IStyleDataSectionReaderVersionHelper
 {
     public StyleDataSectionReader[] GetStyleDataSectionReaders()
     {

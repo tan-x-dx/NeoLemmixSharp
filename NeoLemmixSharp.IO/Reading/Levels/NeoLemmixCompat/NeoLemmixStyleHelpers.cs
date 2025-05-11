@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 
-public static class NeoLemmixStyleHelpers
+internal static class NeoLemmixStyleHelpers
 {
     /* private readonly struct PieceAndFileLink(string pieceName, string? correspondingDataFile)
      {

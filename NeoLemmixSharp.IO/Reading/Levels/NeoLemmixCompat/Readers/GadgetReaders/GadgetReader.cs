@@ -4,7 +4,7 @@ using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 
-public sealed class GadgetReader : NeoLemmixDataReader
+internal sealed class GadgetReader : NeoLemmixDataReader
 {
     private readonly UniqueStringSet _uniqueStringSet;
 

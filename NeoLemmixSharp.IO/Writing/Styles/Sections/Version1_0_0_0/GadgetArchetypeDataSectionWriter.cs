@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
-public sealed class GadgetArchetypeDataSectionWriter : StyleDataSectionWriter
+internal sealed class GadgetArchetypeDataSectionWriter : StyleDataSectionWriter
 {
     public GadgetArchetypeDataSectionWriter()
         : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection, false)

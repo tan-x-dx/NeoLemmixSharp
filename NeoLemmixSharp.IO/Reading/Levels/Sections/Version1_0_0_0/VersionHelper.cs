@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
-public sealed class VersionHelper : ILevelDataSectionReaderVersionHelper
+internal sealed class VersionHelper : ILevelDataSectionReaderVersionHelper
 {
     public LevelDataSectionReader[] GetLevelDataSectionReaders()
     {

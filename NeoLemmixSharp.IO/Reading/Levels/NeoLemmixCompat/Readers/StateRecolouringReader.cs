@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-public sealed class StateRecoloringReader : NeoLemmixDataReader
+internal sealed class StateRecoloringReader : NeoLemmixDataReader
 {
     // private readonly ThemeData _themeData = new();
 

@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.Versions;
 
-public static class VersionHelper
+internal static class VersionHelper
 {
     private static readonly Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> _levelWriterVersionHelpers = GetLevelWriterLookup();
     private static readonly Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper> _levelReaderVersionHelpers = GetLevelReaderLookup();
@@ -105,22 +105,22 @@ public static class VersionHelper
     private static T[] ThrowUnknownVersionException<T>(FileFormatVersion version) => throw new UnknownVersionException(version);
 }
 
-public interface ILevelDataSectionWriterVersionHelper
+internal interface ILevelDataSectionWriterVersionHelper
 {
     LevelDataSectionWriter[] GetLevelDataSectionWriters();
 }
 
-public interface ILevelDataSectionReaderVersionHelper
+internal interface ILevelDataSectionReaderVersionHelper
 {
     LevelDataSectionReader[] GetLevelDataSectionReaders();
 }
 
-public interface IStyleDataSectionWriterVersionHelper
+internal interface IStyleDataSectionWriterVersionHelper
 {
     StyleDataSectionWriter[] GetStyleDataSectionWriters();
 }
 
-public interface IStyleDataSectionReaderVersionHelper
+internal interface IStyleDataSectionReaderVersionHelper
 {
     StyleDataSectionReader[] GetStyleDataSectionReaders();
 }

@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-public sealed class TalismanReader : NeoLemmixDataReader
+internal sealed class TalismanReader : NeoLemmixDataReader
 {
     private readonly UniqueStringSet _uniqueStringSet;
     private TalismanData? _currentTalismanData;

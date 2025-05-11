@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 
-public sealed class NeoLemmixGadgetArchetypeData
+internal sealed class NeoLemmixGadgetArchetypeData
 {
     public required string Style { get; init; }
     public required string GadgetPiece { get; init; }

@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections;
 
-public abstract class StyleDataSectionWriter
+internal abstract class StyleDataSectionWriter
 {
     public StyleFileSectionIdentifier SectionIdentifier { get; }
     public bool IsNecessary { get; }

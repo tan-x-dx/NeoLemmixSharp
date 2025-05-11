@@ -4,7 +4,7 @@ using NeoLemmixSharp.IO.Data.Level.Gadgets;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
-public sealed class GadgetDataSectionWriter : LevelDataSectionWriter
+internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 {
     private const int NumberOfBytesForMainGadgetData = 13;
     private const int NumberOfBytesPerInputName = 2;

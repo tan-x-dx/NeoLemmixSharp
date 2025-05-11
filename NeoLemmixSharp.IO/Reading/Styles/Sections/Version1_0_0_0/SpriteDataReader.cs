@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
-public readonly ref struct SpriteDataReader
+internal readonly ref struct SpriteDataReader
 {
     public SpriteArchetypeData ReadSpriteData(RawStyleFileDataReader rawFileData, int expectedNumberOfGadgetStates)
     {
