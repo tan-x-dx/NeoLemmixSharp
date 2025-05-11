@@ -22,7 +22,7 @@ public readonly ref struct TerrainBuilder
     private readonly ArrayWrapper2D<PixelType> _terrainPixels;
 
     private readonly Dictionary<StylePiecePair, TerrainArchetypeData> _terrainArchetypeDataLookup;
-    private readonly Dictionary<StylePiecePair, ArrayWrapper2D<Color>> _colorDataLookup = new(EngineConstants.AssumedNumberOfTerrainArchetypeData);
+    private readonly Dictionary<StylePiecePair, ArrayWrapper2D<Color>> _colorDataLookup = new(EngineConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
 
     public TerrainBuilder(GraphicsDevice graphicsDevice, LevelData levelData)
     {
@@ -129,7 +129,7 @@ public readonly ref struct TerrainBuilder
         {
             if (terrainData.GroupName is null)
             {
-                var terrainArchetypeData = GetArchetypeDataForTerrainPiece(terrainData);
+                var terrainArchetypeData = _terrainArchetypeDataLookup[terrainData.GetStylePiecePair()];
 
                 if (terrainArchetypeData.ResizeType == ResizeType.None)
                 {
@@ -155,18 +155,6 @@ public readonly ref struct TerrainBuilder
                     targetData);
             }
         }
-    }
-
-    private TerrainArchetypeData GetArchetypeDataForTerrainPiece(TerrainData terrainData)
-    {
-        var stylePiecePair = terrainData.GetStylePiecePair();
-
-        ref var terrainArchetypeData = ref CollectionsMarshal.GetValueRefOrAddDefault(_terrainArchetypeDataLookup, stylePiecePair, out var exists);
-        if (exists)
-            return terrainArchetypeData!;
-
-        terrainArchetypeData = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(stylePiecePair);
-        return terrainArchetypeData;
     }
 
     private void DrawTerrainPiece(

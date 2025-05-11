@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.LevelIo.Data.Style.Gadget;
 using NeoLemmixSharp.Engine.LevelIo.Data.Style.Terrain;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Data.Style;
@@ -15,6 +16,6 @@ public sealed class StyleData
         Identifier = identifier;
     }
 
-    public Dictionary<PieceIdentifier, TerrainArchetypeData> TerrainArchetypeData { get; } = [];
+    public Dictionary<PieceIdentifier, TerrainArchetypeData> TerrainArchetypeData { get; } = new(EngineConstants.AssumedNumberOfTerrainArchetypeDataInStyle);
     public Dictionary<PieceIdentifier, GadgetArchetypeData> GadgetArchetypeData { get; } = [];
 }

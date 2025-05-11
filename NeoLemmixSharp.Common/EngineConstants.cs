@@ -119,12 +119,17 @@ public static class EngineConstants
     /// <summary>
     /// Assumption: a level will probably have this number of unique terrain pieces or fewer
     /// </summary>
-    public const int AssumedNumberOfTerrainArchetypeData = 32;
+    public const int AssumedNumberOfTerrainArchetypeDataInLevel = 32;
 
     /// <summary>
     /// Assumption: a level will probably have this number of unique gadget pieces or fewer
     /// </summary>
-    public const int AssumedNumberOfGadgetArchetypeData = 16;
+    public const int AssumedNumberOfGadgetArchetypeDataInLevel = 16;
+
+    /// <summary>
+    /// Assumption: a style will probably define this number of unique terrain pieces or fewer
+    /// </summary>
+    public const int AssumedNumberOfTerrainArchetypeDataInStyle = 64;
 
     #endregion
 

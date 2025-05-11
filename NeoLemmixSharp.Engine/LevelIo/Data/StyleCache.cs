@@ -158,7 +158,7 @@ public static class StyleCache
 
     public static Dictionary<StylePiecePair, TerrainArchetypeData> GetAllTerrainArchetypeData(LevelData levelData)
     {
-        var result = new Dictionary<StylePiecePair, TerrainArchetypeData>(EngineConstants.AssumedNumberOfTerrainArchetypeData);
+        var result = new Dictionary<StylePiecePair, TerrainArchetypeData>(EngineConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
@@ -177,7 +177,8 @@ public static class StyleCache
 
         void FetchTerrainArchetypeData(TerrainData terrainData)
         {
-            ref var terrainArchetypeData = ref CollectionsMarshal.GetValueRefOrAddDefault(result, terrainData.GetStylePiecePair(), out var exists);
+            var stylePiecePair = terrainData.GetStylePiecePair();
+            ref var terrainArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, stylePiecePair, out var exists);
 
             if (exists)
                 return;
@@ -187,13 +188,18 @@ public static class StyleCache
             if (!LoadedStyles.TryGetValue(terrainStyle, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
-            terrainArchetypeData = styleData.TerrainArchetypeData[terrainData.TerrainPiece];
+            ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeData, terrainData.TerrainPiece, out exists);
+            if (exists)
+                return;
+
+            terrainArchetypeDataForStyle = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(stylePiecePair);
+            terrainArchetypeDataForLevel = terrainArchetypeDataForStyle;
         }
     }
 
     public static Dictionary<StylePiecePair, GadgetArchetypeData> GetAllGadgetArchetypeData(LevelData levelData)
     {
-        var result = new Dictionary<StylePiecePair, GadgetArchetypeData>(EngineConstants.AssumedNumberOfGadgetArchetypeData);
+        var result = new Dictionary<StylePiecePair, GadgetArchetypeData>(EngineConstants.AssumedNumberOfGadgetArchetypeDataInLevel);
 
         foreach (var gadgetData in levelData.AllGadgetData)
         {
