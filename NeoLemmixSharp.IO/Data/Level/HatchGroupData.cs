@@ -6,4 +6,8 @@ public sealed class HatchGroupData
     public required int MaxSpawnInterval { get; init; }
     public required int InitialSpawnInterval { get; init; }
     public required int MinSpawnInterval { get; init; }
+
+    internal HatchGroupData()
+    {
+    }
 }

@@ -11,4 +11,8 @@ public sealed class TerrainGroupData : ITerrainArchetypeData
 
     public ArrayWrapper2D<Color> TerrainPixelColorData { get; set; }
     public bool IsSteel => false;
+
+    internal TerrainGroupData()
+    {
+    }
 }

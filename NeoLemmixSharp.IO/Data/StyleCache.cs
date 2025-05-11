@@ -39,7 +39,7 @@ public static class StyleCache
 
     public static void CleanUpOldStyles()
     {
-        var notUsedStyles = new List<StyleIdentifier>(8);
+        var notUsedStyles = new List<StyleIdentifier>(EngineConstants.AssumedInitialStyleCapacity);
 
         foreach (var kvp in LoadedStyles)
         {
@@ -47,7 +47,7 @@ public static class StyleCache
 
             numberOfLevelsSinceLastUsed++;
 
-            if (numberOfLevelsSinceLastUsed >= EngineConstants.NumberOfLevelsToKeepStyle)
+            if (numberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
             {
                 notUsedStyles.Add(kvp.Key);
             }
@@ -177,8 +177,7 @@ public static class StyleCache
 
         void FetchTerrainArchetypeData(TerrainData terrainData)
         {
-            var stylePiecePair = terrainData.GetStylePiecePair();
-            ref var terrainArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, stylePiecePair, out var exists);
+            ref var terrainArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, terrainData.GetStylePiecePair(), out var exists);
 
             if (exists)
                 return;
@@ -189,10 +188,10 @@ public static class StyleCache
                 throw new InvalidOperationException("Style not present in cache!");
 
             ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeData, terrainData.PieceName, out exists);
-            if (exists)
-                return;
-
-            terrainArchetypeDataForStyle = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(stylePiecePair);
+            if (!exists)
+            {
+                terrainArchetypeDataForStyle = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(terrainData.StyleName, terrainData.PieceName);
+            }
             terrainArchetypeDataForLevel = terrainArchetypeDataForStyle;
         }
     }
@@ -210,7 +209,7 @@ public static class StyleCache
 
         void FetchGadgetArchetypeData(GadgetData gadgetData)
         {
-            ref var gadgetArchetypeData = ref CollectionsMarshal.GetValueRefOrAddDefault(result, gadgetData.GetStylePiecePair(), out var exists);
+            ref var gadgetArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, gadgetData.GetStylePiecePair(), out var exists);
 
             if (exists)
                 return;
@@ -220,7 +219,7 @@ public static class StyleCache
             if (!LoadedStyles.TryGetValue(gadgetStyle, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
-            gadgetArchetypeData = styleData.GadgetArchetypeData[gadgetData.PieceName];
+            gadgetArchetypeDataForLevel = styleData.GadgetArchetypeData[gadgetData.PieceName];
         }
     }
 }

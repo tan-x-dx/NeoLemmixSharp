@@ -14,4 +14,8 @@ public sealed class GadgetArchetypeData
 
     public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
     public required SpriteArchetypeData SpriteData { get; init; }
+
+    internal GadgetArchetypeData()
+    {
+    }
 }
