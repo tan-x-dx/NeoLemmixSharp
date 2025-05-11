@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.IO;
 
-public enum LevelFileSectionIdentifier
+internal enum LevelFileSectionIdentifier
 {
     StringDataSection,
     LevelMetadataSection,
@@ -18,7 +18,7 @@ public enum LevelFileSectionIdentifier
     GadgetDataSection,
 }
 
-public readonly struct LevelFileSectionIdentifierHasher :
+internal readonly struct LevelFileSectionIdentifierHasher :
     ISectionIdentifierHelper<LevelFileSectionIdentifier>
 {
     public const int NumberOfBytesForLevelSectionIdentifier = 2;

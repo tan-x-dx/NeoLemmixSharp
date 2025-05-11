@@ -6,7 +6,7 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
-public sealed class TerrainDataSectionReader : LevelDataSectionReader
+internal sealed class TerrainDataSectionReader : LevelDataSectionReader
 {
 
     private readonly List<string> _stringIdLookup;

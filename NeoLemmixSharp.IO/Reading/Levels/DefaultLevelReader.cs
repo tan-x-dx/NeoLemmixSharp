@@ -5,7 +5,7 @@ using NeoLemmixSharp.IO.Versions;
 
 namespace NeoLemmixSharp.IO.Reading.Levels;
 
-public sealed class DefaultLevelReader : ILevelReader
+internal sealed class DefaultLevelReader : ILevelReader
 {
     private readonly RawLevelFileDataReader _rawFileData;
 

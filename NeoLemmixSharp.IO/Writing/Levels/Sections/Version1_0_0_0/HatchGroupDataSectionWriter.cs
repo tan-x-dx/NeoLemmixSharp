@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
-public sealed class HatchGroupDataSectionWriter : LevelDataSectionWriter
+internal sealed class HatchGroupDataSectionWriter : LevelDataSectionWriter
 {
     public HatchGroupDataSectionWriter()
         : base(LevelFileSectionIdentifier.HatchGroupDataSection, false)

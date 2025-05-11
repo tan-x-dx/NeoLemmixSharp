@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-public sealed class ShadesReader : NeoLemmixDataReader
+internal sealed class ShadesReader : NeoLemmixDataReader
 {
     private bool _inBlock;
 

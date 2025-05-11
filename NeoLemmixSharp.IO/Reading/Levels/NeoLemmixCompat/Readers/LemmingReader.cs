@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Data.Level;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-public sealed class LemmingReader : NeoLemmixDataReader
+internal sealed class LemmingReader : NeoLemmixDataReader
 {
     private readonly List<LemmingData> _prePlacedLemmingData;
     private LemmingData? _currentLemmingData;

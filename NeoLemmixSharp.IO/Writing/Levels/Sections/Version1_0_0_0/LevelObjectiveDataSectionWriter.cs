@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
-public sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
+internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 {
     private readonly Dictionary<string, ushort> _stringIdLookup;
 

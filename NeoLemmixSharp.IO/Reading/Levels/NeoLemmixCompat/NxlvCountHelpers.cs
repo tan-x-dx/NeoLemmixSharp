@@ -4,7 +4,7 @@ using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 
-public static class NxlvCountHelpers
+internal static class NxlvCountHelpers
 {
     private const int MaxStackallocSize = 64;
 

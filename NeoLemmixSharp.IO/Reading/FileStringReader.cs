@@ -3,7 +3,7 @@ using System.Text;
 
 namespace NeoLemmixSharp.IO.Reading;
 
-public readonly struct FileStringReader<TPerfectHasher, TEnum>(List<string> stringIdLookup)
+internal readonly struct FileStringReader<TPerfectHasher, TEnum>(List<string> stringIdLookup)
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {

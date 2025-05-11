@@ -8,7 +8,7 @@ using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 
-public sealed class NxlvLevelReader : ILevelReader
+internal sealed class NxlvLevelReader : ILevelReader
 {
     private readonly LevelData _levelData;
     private readonly UniqueStringSet _uniqueStringSet = new();

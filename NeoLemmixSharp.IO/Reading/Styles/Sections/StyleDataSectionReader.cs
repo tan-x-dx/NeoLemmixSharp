@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections;
 
-public abstract class StyleDataSectionReader
+internal abstract class StyleDataSectionReader
 {
     public StyleFileSectionIdentifier SectionIdentifier { get; }
     public bool IsNecessary { get; }

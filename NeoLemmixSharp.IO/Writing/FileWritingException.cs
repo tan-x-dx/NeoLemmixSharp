@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Writing;
 
-public sealed class FileWritingException : Exception
+internal sealed class FileWritingException : Exception
 {
     public FileWritingException(string message)
         : base(message)

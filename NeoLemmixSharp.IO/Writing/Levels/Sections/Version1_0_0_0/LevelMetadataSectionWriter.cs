@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
-public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
+internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
 {
     private const int NumberOfBytesForMainLevelData = 31;
     private const int NumberOfBytesWrittenForBackgroundData =

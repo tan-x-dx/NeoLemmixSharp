@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
-public sealed class LevelMetadataSectionReader : LevelDataSectionReader
+internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 {
     private const int NumberOfBytesWrittenForBackgroundData =
         1 + // Enum specifier

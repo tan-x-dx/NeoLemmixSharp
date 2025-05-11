@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
-public sealed class StringDataSectionWriter : LevelDataSectionWriter
+internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 {
     private const int MaxStackByteBufferSize = 256;
 

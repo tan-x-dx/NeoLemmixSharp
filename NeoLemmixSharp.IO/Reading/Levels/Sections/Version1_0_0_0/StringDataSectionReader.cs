@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
-public sealed class StringDataSectionReader : LevelDataSectionReader
+internal sealed class StringDataSectionReader : LevelDataSectionReader
 {
 
     private readonly FileStringReader<LevelFileSectionIdentifierHasher, LevelFileSectionIdentifier> _stringReader;

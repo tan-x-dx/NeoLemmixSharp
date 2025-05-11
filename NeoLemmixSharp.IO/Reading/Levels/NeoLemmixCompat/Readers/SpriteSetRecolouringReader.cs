@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-public sealed class SpriteSetRecoloringReader : NeoLemmixDataReader
+internal sealed class SpriteSetRecoloringReader : NeoLemmixDataReader
 {
     //private readonly LemmingSpriteSetRecoloring _lemmingSpriteSetRecoloring = new();
 

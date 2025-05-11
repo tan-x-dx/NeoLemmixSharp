@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading;
 
-public sealed class RawFileDataReader<TPerfectHasher, TEnum>
+internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {

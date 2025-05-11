@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections;
 
-public abstract class LevelDataSectionWriter
+internal abstract class LevelDataSectionWriter
 {
     public LevelFileSectionIdentifier SectionIdentifier { get; }
     public bool IsNecessary { get; }

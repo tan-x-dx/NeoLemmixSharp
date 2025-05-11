@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing;
 
-public sealed class RawFileDataWriter<TPerfectHasher, TEnum>
+internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {

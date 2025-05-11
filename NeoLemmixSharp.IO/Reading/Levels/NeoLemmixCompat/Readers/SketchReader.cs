@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Data.Level;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-public sealed class SketchReader : NeoLemmixDataReader
+internal sealed class SketchReader : NeoLemmixDataReader
 {
     private readonly List<SketchData> _allSketchData;
 

@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
-public sealed class VersionHelper : ILevelDataSectionWriterVersionHelper
+internal sealed class VersionHelper : ILevelDataSectionWriterVersionHelper
 {
     public LevelDataSectionWriter[] GetLevelDataSectionWriters()
     {

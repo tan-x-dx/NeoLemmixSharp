@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
-public sealed class ThemeDataSectionReader : StyleDataSectionWriter
+internal sealed class ThemeDataSectionReader : StyleDataSectionWriter
 {
     public ThemeDataSectionReader()
         : base(StyleFileSectionIdentifier.ThemeDataSection, false)
