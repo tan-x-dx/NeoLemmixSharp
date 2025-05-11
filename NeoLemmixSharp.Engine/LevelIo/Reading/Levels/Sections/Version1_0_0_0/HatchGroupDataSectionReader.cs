@@ -1,15 +1,14 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.LevelIo.Data.Level;
-using NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections;
 
 namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class HatchGroupDataSectionReader : LevelDataSectionReader
 {
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.HatchGroupDataSection;
     public override bool IsNecessary => false;
 
     public HatchGroupDataSectionReader()
+        : base(LevelFileSectionIdentifier.HatchGroupDataSection)
     {
     }
 

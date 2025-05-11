@@ -4,8 +4,13 @@ namespace NeoLemmixSharp.Engine.LevelIo.Reading.Styles.Sections;
 
 public abstract class StyleDataSectionReader
 {
-    public abstract StyleFileSectionIdentifier SectionIdentifier { get; }
+    public StyleFileSectionIdentifier SectionIdentifier { get; }
     public abstract bool IsNecessary { get; }
+
+    protected StyleDataSectionReader(StyleFileSectionIdentifier sectionIdentifier)
+    {
+        SectionIdentifier = sectionIdentifier;
+    }
 
     public ReadOnlySpan<byte> GetSectionIdentifierBytes() => StyleFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
 

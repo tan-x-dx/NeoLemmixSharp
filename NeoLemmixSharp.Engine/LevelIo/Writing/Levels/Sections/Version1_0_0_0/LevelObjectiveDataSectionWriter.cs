@@ -6,12 +6,12 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
 public sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 {
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.LevelObjectivesDataSection;
     public override bool IsNecessary => true;
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public LevelObjectiveDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelFileSectionIdentifier.LevelObjectivesDataSection)
     {
         _stringIdLookup = stringIdLookup;
     }

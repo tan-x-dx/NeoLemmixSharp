@@ -5,8 +5,12 @@ namespace NeoLemmixSharp.Engine.LevelIo.Writing.Levels.Sections.Version1_0_0_0;
 
 public sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
 {
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.PrePlacedLemmingDataSection;
     public override bool IsNecessary => false;
+
+    public PrePlacedLemmingDataSectionWriter()
+        : base(LevelFileSectionIdentifier.PrePlacedLemmingDataSection)
+    {
+    }
 
     public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {

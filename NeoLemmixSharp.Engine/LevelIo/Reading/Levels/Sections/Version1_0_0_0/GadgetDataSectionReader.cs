@@ -9,13 +9,13 @@ namespace NeoLemmixSharp.Engine.LevelIo.Reading.Levels.Sections.Version1_0_0_0;
 
 public sealed class GadgetDataSectionReader : LevelDataSectionReader
 {
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.GadgetDataSection;
     public override bool IsNecessary => false;
 
     private readonly List<string> _stringIdLookup;
 
     public GadgetDataSectionReader(
         List<string> stringIdLookup)
+        : base(LevelFileSectionIdentifier.GadgetDataSection)
     {
         _stringIdLookup = stringIdLookup;
     }

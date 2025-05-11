@@ -10,12 +10,12 @@ public sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         1 + // Enum specifier
         4; // Four bytes for actual data, padding with zeros where necessary
 
-    public override LevelFileSectionIdentifier SectionIdentifier => LevelFileSectionIdentifier.LevelMetadataSection;
     public override bool IsNecessary => true;
 
     private readonly Dictionary<string, ushort> _stringIdLookup;
 
     public LevelMetadataSectionWriter(Dictionary<string, ushort> stringIdLookup)
+        : base(LevelFileSectionIdentifier.LevelMetadataSection)
     {
         _stringIdLookup = stringIdLookup;
     }
