@@ -79,7 +79,7 @@ public sealed class TerrainDataSectionReader : LevelDataSectionReader
         return new TerrainData
         {
             GroupName = null,
-            Style = new StyleIdentifier(_stringIdLookup[styleId]),
+            StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),
             TerrainPiece = new PieceIdentifier(_stringIdLookup[pieceId]),
 
             Position = new Point(x, y),

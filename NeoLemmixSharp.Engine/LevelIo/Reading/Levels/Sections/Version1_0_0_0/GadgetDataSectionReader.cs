@@ -60,7 +60,7 @@ public sealed class GadgetDataSectionReader : LevelDataSectionReader
         {
             Id = levelData.AllGadgetData.Count,
 
-            Style = new StyleIdentifier(_stringIdLookup[styleId]),
+            StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),
             GadgetPiece = new PieceIdentifier(_stringIdLookup[pieceId]),
 
             Position = new Point(x, y),

@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.LevelIo.Data.Level.Terrain;
 public sealed class TerrainData
 {
     public required string? GroupName { get; init; }
-    public required StyleIdentifier Style { get; init; }
+    public required StyleIdentifier StyleIdentifier { get; init; }
     public required PieceIdentifier TerrainPiece { get; init; }
 
     public required Point Position { get; init; }
@@ -22,5 +22,5 @@ public sealed class TerrainData
     public required int? Width { get; init; }
     public required int? Height { get; init; }
 
-    public StylePiecePair GetStylePiecePair() => new(Style, TerrainPiece);
+    public StylePiecePair GetStylePiecePair() => new(StyleIdentifier, TerrainPiece);
 }

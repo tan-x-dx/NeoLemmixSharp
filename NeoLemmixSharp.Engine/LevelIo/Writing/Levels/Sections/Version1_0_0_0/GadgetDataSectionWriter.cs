@@ -42,7 +42,7 @@ public sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write(GetNumberOfBytesWritten(gadgetData));
 
         writer.Write((ushort)gadgetData.Id);
-        writer.Write(_stringIdLookup[gadgetData.Style.ToString()]);
+        writer.Write(_stringIdLookup[gadgetData.StyleIdentifier.ToString()]);
         writer.Write(_stringIdLookup[gadgetData.GadgetPiece.ToString()]);
 
         writer.Write((ushort)(gadgetData.Position.X + LevelReadWriteHelpers.PositionOffset));

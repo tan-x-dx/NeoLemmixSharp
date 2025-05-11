@@ -84,20 +84,20 @@ public static class StyleCache
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            result.Add(terrainData.Style);
+            result.Add(terrainData.StyleIdentifier);
         }
 
         foreach (var terrainGroupData in levelData.AllTerrainGroups)
         {
             foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
             {
-                result.Add(terrainData.Style);
+                result.Add(terrainData.StyleIdentifier);
             }
         }
 
         foreach (var gadgetData in levelData.AllGadgetData)
         {
-            result.Add(gadgetData.Style);
+            result.Add(gadgetData.StyleIdentifier);
         }
 
         return result;
@@ -201,12 +201,12 @@ public static class StyleCache
             if (exists)
                 return;
 
-            var terrainStyle = terrainData.Style;
+            var terrainStyle = terrainData.StyleIdentifier;
 
-            if (!LoadedStyles.TryGetValue(terrainStyle, out var style))
+            if (!LoadedStyles.TryGetValue(terrainStyle, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
-            terrainArchetypeData = style.TerrainArchetypeData[terrainData.TerrainPiece];
+            terrainArchetypeData = styleData.TerrainArchetypeData[terrainData.TerrainPiece];
         }
     }
 
@@ -228,12 +228,12 @@ public static class StyleCache
             if (exists)
                 return;
 
-            var gadgetStyle = gadgetData.Style;
+            var gadgetStyle = gadgetData.StyleIdentifier;
 
-            if (!LoadedStyles.TryGetValue(gadgetStyle, out var style))
+            if (!LoadedStyles.TryGetValue(gadgetStyle, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
-            gadgetArchetypeData = style.GadgetArchetypeData[gadgetData.GadgetPiece];
+            gadgetArchetypeData = styleData.GadgetArchetypeData[gadgetData.GadgetPiece];
         }
     }
 }

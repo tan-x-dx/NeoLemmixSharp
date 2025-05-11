@@ -20,8 +20,6 @@ public sealed class DefaultLevelReader : ILevelReader
         var levelData = ReadFile();
         levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(levelData);
 
-        //   DefaultStyleHelpers.ProcessStyleArchetypeData(levelData);
-
         return levelData;
     }
 
