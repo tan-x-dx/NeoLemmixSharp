@@ -16,7 +16,7 @@ internal enum StyleFileSectionIdentifier
 internal readonly struct StyleFileSectionIdentifierHasher :
     ISectionIdentifierHelper<StyleFileSectionIdentifier>
 {
-    public const int NumberOfBytesForLevelSectionIdentifier = 2;
+    public const int NumberOfBytesForStyleSectionIdentifier = 2;
 
     private const int NumberOfEnumValues = 3;
 
@@ -34,10 +34,10 @@ internal readonly struct StyleFileSectionIdentifierHasher :
     public static ReadOnlySpan<byte> GetSectionIdentifierBytes(StyleFileSectionIdentifier sectionIdentifier)
     {
         var index = (int)sectionIdentifier;
-        index *= NumberOfBytesForLevelSectionIdentifier;
+        index *= NumberOfBytesForStyleSectionIdentifier;
 
         return StyleDataSectionIdentifierBytes
-            .Slice(index, NumberOfBytesForLevelSectionIdentifier);
+            .Slice(index, NumberOfBytesForStyleSectionIdentifier);
     }
 
     private static ReadOnlySpan<byte> StyleDataSectionIdentifierBytes =>

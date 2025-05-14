@@ -80,7 +80,7 @@ internal readonly ref struct StyleReader
 
         _rawFileData.SetReaderPosition(interval.Start);
 
-        var sectionIdentifierBytes = _rawFileData.ReadBytes(StyleFileSectionIdentifierHasher.NumberOfBytesForLevelSectionIdentifier);
+        var sectionIdentifierBytes = _rawFileData.ReadBytes(StyleFileSectionIdentifierHasher.NumberOfBytesForStyleSectionIdentifier);
 
         FileReadingException.ReaderAssert(
             sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),
