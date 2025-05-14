@@ -41,15 +41,15 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        x -= LevelReadWriteHelpers.PositionOffset;
-        y -= LevelReadWriteHelpers.PositionOffset;
+        x -= ReadWriteHelpers.PositionOffset;
+        y -= ReadWriteHelpers.PositionOffset;
 
         int dhtByte = rawFileData.Read8BitUnsignedInteger();
-        LevelReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
+        ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
         int terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
-        var decipheredTerrainDataMisc = LevelReadWriteHelpers.DecodeTerrainDataMiscByte(terrainDataMiscByte);
+        var decipheredTerrainDataMisc = ReadWriteHelpers.DecodeTerrainDataMiscByte(terrainDataMiscByte);
 
         Color? tintColor = null;
         if (decipheredTerrainDataMisc.HasTintSpecified)
@@ -99,6 +99,6 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
     {
         var bytes = rawFileData.ReadBytes(3);
 
-        return LevelReadWriteHelpers.ReadRgbBytes(bytes);
+        return ReadWriteHelpers.ReadRgbBytes(bytes);
     }
 }

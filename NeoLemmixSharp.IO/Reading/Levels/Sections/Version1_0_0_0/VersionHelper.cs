@@ -6,7 +6,7 @@ internal sealed class VersionHelper : ILevelDataSectionReaderVersionHelper
 {
     public LevelDataSectionReader[] GetLevelDataSectionReaders()
     {
-        var stringIdLookup = new List<string>(LevelReadWriteHelpers.InitialStringListCapacity);
+        var stringIdLookup = new List<string>(ReadWriteHelpers.InitialStringListCapacity);
 
         var terrainComponentReader = new TerrainDataSectionReader(stringIdLookup);
         LevelDataSectionReader[] sectionReaders =

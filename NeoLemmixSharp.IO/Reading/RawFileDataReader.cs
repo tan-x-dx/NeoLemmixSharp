@@ -35,8 +35,8 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
         var fileSizeInBytes = stream.Length;
 
         FileReadingException.ReaderAssert(
-            fileSizeInBytes <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
-            LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
+            fileSizeInBytes <= ReadWriteHelpers.MaxAllowedFileSizeInBytes,
+            ReadWriteHelpers.FileSizeTooLargeExceptionMessage);
 
         var byteBuffer = new byte[(int)fileSizeInBytes];
 
@@ -91,7 +91,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
             result.Add(enumValue, interval);
         }
 
-        new LevelReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
+        new ReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
             .AssertSectionsAreContiguous(result);
 
         return result;

@@ -43,8 +43,8 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write(_stringIdLookup[gadgetData.StyleName.ToString()]);
         writer.Write(_stringIdLookup[gadgetData.PieceName.ToString()]);
 
-        writer.Write((ushort)(gadgetData.Position.X + LevelReadWriteHelpers.PositionOffset));
-        writer.Write((ushort)(gadgetData.Position.Y + LevelReadWriteHelpers.PositionOffset));
+        writer.Write((ushort)(gadgetData.Position.X + ReadWriteHelpers.PositionOffset));
+        writer.Write((ushort)(gadgetData.Position.Y + ReadWriteHelpers.PositionOffset));
         writer.Write((byte)DihedralTransformation.Encode(gadgetData.Orientation, gadgetData.FacingDirection));
 
         writer.Write((byte)gadgetData.InitialStateId);

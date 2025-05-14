@@ -40,11 +40,11 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        x -= LevelReadWriteHelpers.PositionOffset;
-        y -= LevelReadWriteHelpers.PositionOffset;
+        x -= ReadWriteHelpers.PositionOffset;
+        y -= ReadWriteHelpers.PositionOffset;
 
         int dhtByte = rawFileData.Read8BitUnsignedInteger();
-        LevelReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
+        ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
         int initialStateId = rawFileData.Read8BitUnsignedInteger();

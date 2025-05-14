@@ -31,8 +31,8 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         WriteSectionIntervals(ref preambleDataByteBuffer, ref preamblePosition);
 
         FileWritingException.WriterAssert(
-            _mainDataPosition + preamblePosition <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
-            LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
+            _mainDataPosition + preamblePosition <= ReadWriteHelpers.MaxAllowedFileSizeInBytes,
+            ReadWriteHelpers.FileSizeTooLargeExceptionMessage);
 
         stream.Write(new ReadOnlySpan<byte>(preambleDataByteBuffer, 0, preamblePosition));
         stream.Write(new ReadOnlySpan<byte>(_mainDataByteBuffer, 0, _mainDataPosition));
@@ -186,7 +186,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         FileWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot write to file - In middle of a section!");
         FileWritingException.WriterAssert(_sectionIntervals.Count > 0, "No sections written!");
 
-        new LevelReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
+        new ReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
             .AssertSectionsAreContiguous(_sectionIntervals);
     }
 }

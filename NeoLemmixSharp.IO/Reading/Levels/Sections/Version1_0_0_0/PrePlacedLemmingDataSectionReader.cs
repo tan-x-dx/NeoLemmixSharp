@@ -28,13 +28,13 @@ internal sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        x -= LevelReadWriteHelpers.PositionOffset;
-        y -= LevelReadWriteHelpers.PositionOffset;
+        x -= ReadWriteHelpers.PositionOffset;
+        y -= ReadWriteHelpers.PositionOffset;
 
         uint state = rawFileData.Read32BitUnsignedInteger();
 
         int dhtByte = rawFileData.Read8BitUnsignedInteger();
-        LevelReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
+        ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
         int teamId = rawFileData.Read8BitUnsignedInteger();

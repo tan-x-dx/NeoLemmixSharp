@@ -36,7 +36,7 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
         uint terrainArchetypeDataByte = rawFileData.Read8BitUnsignedInteger();
-        LevelReadWriteHelpers.DecodeTerrainArchetypeDataByte(
+        ReadWriteHelpers.DecodeTerrainArchetypeDataByte(
             terrainArchetypeDataByte,
             out var isSteel,
             out var resizeType);

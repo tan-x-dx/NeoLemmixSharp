@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO;
 
-internal static class LevelReadWriteHelpers
+internal static class ReadWriteHelpers
 {
     internal const int PositionOffset = 512;
 

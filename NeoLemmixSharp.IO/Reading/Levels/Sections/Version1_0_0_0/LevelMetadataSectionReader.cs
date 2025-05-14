@@ -61,13 +61,13 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         levelData.SetLevelHeight(levelHeight);
 
         int value = rawFileData.Read16BitUnsignedInteger();
-        if (value != LevelReadWriteHelpers.UnspecifiedLevelStartValue)
+        if (value != ReadWriteHelpers.UnspecifiedLevelStartValue)
         {
             levelData.LevelStartPositionX = value;
         }
 
         value = rawFileData.Read16BitUnsignedInteger();
-        if (value != LevelReadWriteHelpers.UnspecifiedLevelStartValue)
+        if (value != ReadWriteHelpers.UnspecifiedLevelStartValue)
         {
             levelData.LevelStartPositionY = value;
         }
@@ -117,7 +117,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
             return new BackgroundData
             {
-                Color = LevelReadWriteHelpers.ReadArgbBytes(rawBytes[1..]),
+                Color = ReadWriteHelpers.ReadArgbBytes(rawBytes[1..]),
                 BackgroundImageName = string.Empty
             };
         }
