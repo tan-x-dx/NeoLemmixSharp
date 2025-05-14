@@ -1,15 +1,11 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
-using NeoLemmixSharp.IO.Reading;
-using NeoLemmixSharp.IO.Reading.Styles.Sections;
-using NeoLemmixSharp.IO.Versions;
-using System.Diagnostics.CodeAnalysis;
+using NeoLemmixSharp.IO.Reading.Styles;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Data;
@@ -64,75 +60,7 @@ public static class StyleCache
 
     private static StyleData LoadStyle(StyleIdentifier style)
     {
-        if (!TryLocateStyleFile(style, out var styleFilePath))
-            throw new FileReadingException($"Could not locate style file for style: {style}");
-
-        using var fileStream = new FileStream(styleFilePath, FileMode.Open);
-        var rawFileData = new RawStyleFileDataReader(fileStream);
-
-        var sectionReaders = VersionHelper.GetStyleDataSectionReadersForVersion(rawFileData.Version);
-        var result = new StyleData(style);
-
-        foreach (var sectionReader in sectionReaders)
-        {
-            ReadSection(rawFileData, result, sectionReader);
-        }
-
-        return result;
-    }
-
-    private static bool TryLocateStyleFile(
-        StyleIdentifier style,
-        [MaybeNullWhen(false)] out string foundFilePath)
-    {
-        var styleFolderPath = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            style.ToString());
-
-        var files = Directory.GetFiles(styleFolderPath);
-
-        foreach (var file in files)
-        {
-            var fileExtension = Path.GetExtension(file.AsSpan());
-
-            if (fileExtension.Equals(DefaultFileExtensions.LevelStyleExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                foundFilePath = file;
-                return true;
-            }
-        }
-
-        foundFilePath = null;
-        return false;
-    }
-
-    private static void ReadSection(
-        RawStyleFileDataReader rawFileData,
-        StyleData result, StyleDataSectionReader sectionReader)
-    {
-        var sectionIdentifier = sectionReader.SectionIdentifier;
-
-        if (!rawFileData.TryGetSectionInterval(sectionIdentifier, out var interval))
-        {
-            FileReadingException.ReaderAssert(
-                !sectionReader.IsNecessary,
-                "No data for necessary section!");
-            return;
-        }
-
-        rawFileData.SetReaderPosition(interval.Start);
-
-        var sectionIdentifierBytes = rawFileData.ReadBytes(StyleFileSectionIdentifierHasher.NumberOfBytesForLevelSectionIdentifier);
-
-        FileReadingException.ReaderAssert(
-            sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),
-            "Section Identifier mismatch!");
-
-        sectionReader.ReadSection(rawFileData, result);
-
-        FileReadingException.ReaderAssert(
-            interval.Start + interval.Length == rawFileData.Position,
-            "Byte reading mismatch!");
+        return new StyleReader(style).LoadStyle();
     }
 
     public static Dictionary<StylePiecePair, TerrainArchetypeData> GetAllTerrainArchetypeData(LevelData levelData)
