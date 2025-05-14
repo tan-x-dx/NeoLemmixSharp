@@ -89,9 +89,7 @@ public static class StyleCache
             if (exists)
                 return;
 
-            var terrainStyle = terrainData.StyleName;
-
-            if (!CachedStyles.TryGetValue(terrainStyle, out var styleData))
+            if (!CachedStyles.TryGetValue(terrainData.StyleName, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
             ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeData, terrainData.PieceName, out exists);
@@ -121,9 +119,7 @@ public static class StyleCache
             if (exists)
                 return;
 
-            var gadgetStyle = gadgetData.StyleName;
-
-            if (!CachedStyles.TryGetValue(gadgetStyle, out var styleData))
+            if (!CachedStyles.TryGetValue(gadgetData.StyleName, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
             gadgetArchetypeDataForLevel = styleData.GadgetArchetypeData[gadgetData.PieceName];
