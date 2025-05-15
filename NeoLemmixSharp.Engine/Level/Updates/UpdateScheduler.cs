@@ -174,12 +174,9 @@ end;
             numberOfTicksToPerform = 1;
         }
 
-        switch (numberOfTicksToPerform)
+        while (numberOfTicksToPerform-- > 0)
         {
-            case 3: PerformOneTick(); goto case 2;
-            case 2: PerformOneTick(); goto case 1;
-            case 1: PerformOneTick(); break;
-            case 0: break;
+            PerformOneTick();
         }
     }
 
