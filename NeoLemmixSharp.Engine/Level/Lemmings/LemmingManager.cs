@@ -52,10 +52,10 @@ public sealed class LemmingManager :
     public int ScratchSpaceSize => _lemmingPositionHelper.ScratchSpaceSize;
 
     public LemmingManager(
-        HatchGroup[] hatchGroups,
         Lemming[] lemmings,
-        int totalNumberOfHatchLemmings,
         int numberOfPreplacedLemmings,
+        HatchGroup[] hatchGroups,
+        int totalNumberOfHatchLemmings,
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {

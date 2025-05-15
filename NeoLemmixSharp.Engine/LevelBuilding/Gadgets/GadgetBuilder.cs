@@ -9,7 +9,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 public static class GadgetBuilder
 {
     public static GadgetBase BuildGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData prototype,
         LemmingManager lemmingHasher,
