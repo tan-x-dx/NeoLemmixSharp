@@ -74,10 +74,10 @@ public readonly struct Orientation : IIdEquatable<Orientation>
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Orientation other) => this == other;
+    public bool Equals(Orientation other) => RotNum == other.RotNum;
     [Pure]
     [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Orientation other && this == other;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Orientation other && Equals(other);
     [Pure]
     [DebuggerStepThrough]
     public override int GetHashCode() => RotNum;
@@ -112,10 +112,10 @@ public readonly struct Orientation : IIdEquatable<Orientation>
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(Orientation first, Orientation second) => first.RotNum == second.RotNum;
+    public static bool operator ==(Orientation first, Orientation second) => first.Equals(second.RotNum);
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(Orientation first, Orientation second) => first.RotNum != second.RotNum;
+    public static bool operator !=(Orientation first, Orientation second) => !first.Equals(second.RotNum);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
