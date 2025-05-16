@@ -5,5 +5,5 @@ namespace NeoLemmixSharp.IO.Reading.Levels;
 
 public interface ILevelReader : IDisposable
 {
-    LevelData ReadLevel(GraphicsDevice graphicsDevice);
+    LevelData ReadLevel();
 }

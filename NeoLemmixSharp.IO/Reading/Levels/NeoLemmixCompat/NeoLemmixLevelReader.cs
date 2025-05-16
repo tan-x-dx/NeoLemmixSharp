@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
@@ -8,7 +7,7 @@ using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 
-internal sealed class NxlvLevelReader : ILevelReader
+internal readonly ref struct NeoLemmixLevelReader : ILevelReader
 {
     private readonly LevelData _levelData;
     private readonly UniqueStringSet _uniqueStringSet = new();
@@ -21,9 +20,9 @@ internal sealed class NxlvLevelReader : ILevelReader
 
     private readonly DataReaderList _dataReaderList;
 
-    public NxlvLevelReader(string filePath)
+    public NeoLemmixLevelReader(string filePath)
     {
-        _levelData = new LevelData();
+        _levelData = new LevelData { FileFormatType = FileFormats.FileFormatType.NeoLemmix };
 
         _levelDataReader = new LevelDataReader(_uniqueStringSet, _levelData);
         _skillSetReader = new SkillSetReader();
@@ -48,7 +47,7 @@ internal sealed class NxlvLevelReader : ILevelReader
         _dataReaderList = new DataReaderList(filePath, dataReaders);
     }
 
-    public LevelData ReadLevel(GraphicsDevice graphicsDevice)
+    public LevelData ReadLevel()
     {
         _dataReaderList.ReadFile();
 

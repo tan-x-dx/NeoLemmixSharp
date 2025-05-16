@@ -7,12 +7,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.Reading.Styles;
 
-internal readonly ref struct StyleReader
+internal readonly ref struct DefaultStyleReader : IStyleReader
 {
     private readonly StyleIdentifier _styleIdentifier;
     private readonly RawStyleFileDataReader _rawFileData;
 
-    internal StyleReader(StyleIdentifier style)
+    internal DefaultStyleReader(StyleIdentifier style)
     {
         if (!TryLocateStyleFile(style, out var styleFilePath))
             throw new FileReadingException($"Could not locate style file for style: {style}");
@@ -52,10 +52,10 @@ internal readonly ref struct StyleReader
         return new RawStyleFileDataReader(fileStream);
     }
 
-    internal StyleData LoadStyle()
+    public StyleData ReadStyle()
     {
         var sectionReaders = VersionHelper.GetStyleDataSectionReadersForVersion(_rawFileData.Version);
-        var result = new StyleData(_styleIdentifier);
+        var result = new StyleData(_styleIdentifier, FileFormatType.Default);
 
         foreach (var sectionReader in sectionReaders)
         {
@@ -92,5 +92,9 @@ internal readonly ref struct StyleReader
         FileReadingException.ReaderAssert(
             interval.Start + interval.Length == _rawFileData.Position,
             "Byte reading mismatch!");
+    }
+
+    public void Dispose()
+    {
     }
 }

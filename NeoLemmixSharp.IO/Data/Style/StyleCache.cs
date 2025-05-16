@@ -4,22 +4,22 @@ using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
-using NeoLemmixSharp.IO.Reading.Styles;
+using NeoLemmixSharp.IO.FileFormats;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Data.Style;
 
 public static class StyleCache
 {
-    private static readonly Dictionary<StyleIdentifier, StyleData> CachedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
+    private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
 
     public static void EnsureStylesAreLoadedForLevel(LevelData levelData)
     {
-        var allStyles = GetAllMentionedStyles(levelData);
+        var allMentionedStyleFormatPairs = GetAllMentionedStyles(levelData);
 
-        foreach (var style in allStyles)
+        foreach (var styleFormatPair in allMentionedStyleFormatPairs)
         {
-            ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(CachedStyles, style, out var exists);
+            ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(CachedStyles, styleFormatPair, out var exists);
 
             if (exists)
             {
@@ -27,39 +27,34 @@ public static class StyleCache
             }
             else
             {
-                styleData = LoadStyle(style);
+                styleData = FileTypeHandler.ReadStyle(styleFormatPair);
             }
         }
     }
 
-    private static HashSet<StyleIdentifier> GetAllMentionedStyles(LevelData levelData)
+    private static HashSet<StyleFormatPair> GetAllMentionedStyles(LevelData levelData)
     {
-        var result = new HashSet<StyleIdentifier>(EngineConstants.AssumedInitialStyleCapacity);
+        var result = new HashSet<StyleFormatPair>(EngineConstants.AssumedInitialStyleCapacity);
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            result.Add(terrainData.StyleName);
+            result.Add(new StyleFormatPair(terrainData.StyleName, levelData.FileFormatType));
         }
 
         foreach (var terrainGroupData in levelData.AllTerrainGroups)
         {
             foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
             {
-                result.Add(terrainData.StyleName);
+                result.Add(new StyleFormatPair(terrainData.StyleName, levelData.FileFormatType));
             }
         }
 
         foreach (var gadgetData in levelData.AllGadgetData)
         {
-            result.Add(gadgetData.StyleName);
+            result.Add(new StyleFormatPair(gadgetData.StyleName, levelData.FileFormatType));
         }
 
         return result;
-    }
-
-    private static StyleData LoadStyle(StyleIdentifier style)
-    {
-        return new StyleReader(style).LoadStyle();
     }
 
     public static Dictionary<StylePiecePair, TerrainArchetypeData> GetAllTerrainArchetypeData(LevelData levelData)
@@ -88,7 +83,9 @@ public static class StyleCache
             if (exists)
                 return;
 
-            if (!CachedStyles.TryGetValue(terrainData.StyleName, out var styleData))
+            var key = new StyleFormatPair(terrainData.StyleName, levelData.FileFormatType);
+
+            if (!CachedStyles.TryGetValue(key, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
             ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeData, terrainData.PieceName, out exists);
@@ -118,7 +115,9 @@ public static class StyleCache
             if (exists)
                 return;
 
-            if (!CachedStyles.TryGetValue(gadgetData.StyleName, out var styleData))
+            var key = new StyleFormatPair(gadgetData.StyleName, levelData.FileFormatType);
+
+            if (!CachedStyles.TryGetValue(key, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
             gadgetArchetypeDataForLevel = styleData.GadgetArchetypeData[gadgetData.PieceName];
@@ -127,7 +126,7 @@ public static class StyleCache
 
     public static void CleanUpOldStyles()
     {
-        var notUsedStyles = new List<StyleIdentifier>(EngineConstants.AssumedInitialStyleCapacity);
+        var notUsedStylesFormatPairs = new List<StyleFormatPair>(EngineConstants.AssumedInitialStyleCapacity);
 
         foreach (var kvp in CachedStyles)
         {
@@ -137,13 +136,13 @@ public static class StyleCache
 
             if (numberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
             {
-                notUsedStyles.Add(kvp.Key);
+                notUsedStylesFormatPairs.Add(kvp.Key);
             }
         }
 
-        foreach (var style in notUsedStyles)
+        foreach (var styleFormatPair in notUsedStylesFormatPairs)
         {
-            CachedStyles.Remove(style);
+            CachedStyles.Remove(styleFormatPair);
         }
     }
 }

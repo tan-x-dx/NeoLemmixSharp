@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
+using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Data.Level;
 
@@ -20,6 +21,8 @@ public sealed class LevelData
     public string LevelAuthor { get; set; } = string.Empty;
     public ulong LevelId { get; set; }
     public ulong Version { get; set; }
+
+    public required FileFormatType FileFormatType { get; init; }
 
     public void SetLevelWidth(int value)
     {
