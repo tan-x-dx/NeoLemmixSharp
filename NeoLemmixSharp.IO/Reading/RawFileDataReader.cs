@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Writing;
-using System.Buffers;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading;
@@ -10,8 +9,6 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
-    private const byte Period = (byte)'.';
-
     private readonly byte[] _byteBuffer;
     public FileFormatVersion Version { get; }
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIdentifiers;
@@ -60,8 +57,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
         void AssertNextByteIsPeriod()
         {
             int nextByteValue = Read8BitUnsignedInteger();
-
-            FileReadingException.ReaderAssert(nextByteValue == Period, "Version not in correct format");
+            FileReadingException.ReaderAssert(nextByteValue == ReadWriteHelpers.Period, "Version not in correct format");
         }
     }
 
@@ -119,37 +115,10 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
     {
         FileReadingException.ReaderAssert(FileSizeInBytes - _position >= bufferSize, "Reached end of file!");
 
-        var sourceSpan = new ReadOnlySpan<byte>(_byteBuffer, _position, bufferSize);
+        var result = new ReadOnlySpan<byte>(_byteBuffer, _position, bufferSize);
         _position += bufferSize;
 
-        return sourceSpan;
-    }
-
-    public bool TryLocateSpan(ReadOnlySpan<byte> bytesToLocate, out int index)
-    {
-        var bytesToSearch = new ReadOnlySpan<byte>(_byteBuffer);
-        index = bytesToSearch.IndexOfAny(SearchValues.Create(bytesToLocate));
-        return index >= 0;
-    }
-
-    public bool TryLocateSpanWithinSection(
-        TEnum sectionIdentifier,
-        ReadOnlySpan<byte> bytesToLocate,
-        out int index)
-    {
-        if (!_sectionIdentifiers.TryGetValue(sectionIdentifier, out var interval))
-        {
-            index = -1;
-            return false;
-        }
-
-        var bytesToSearch = new ReadOnlySpan<byte>(_byteBuffer, interval.Start, interval.Length);
-        index = bytesToSearch.IndexOfAny(SearchValues.Create(bytesToLocate));
-        if (index < 0)
-            return false;
-
-        index += interval.Start;
-        return true;
+        return result;
     }
 
     public void SetReaderPosition(int position)

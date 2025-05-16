@@ -8,7 +8,6 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
-    private const byte Period = (byte)'.';
     private const int InitialDataCapacity = 1 << 12;
 
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIntervals = new(new TPerfectHasher());
@@ -44,11 +43,11 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         ref int preamblePosition)
     {
         WriteToByteBuffer(version.Major, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(ReadWriteHelpers.Period, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(version.Minor, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(ReadWriteHelpers.Period, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(version.Build, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(ReadWriteHelpers.Period, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(version.Revision, ref preambleDataByteBuffer, ref preamblePosition);
     }
 

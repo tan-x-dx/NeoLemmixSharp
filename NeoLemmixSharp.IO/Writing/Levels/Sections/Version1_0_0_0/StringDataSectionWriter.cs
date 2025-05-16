@@ -29,31 +29,33 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        var utf8Encoding = Encoding.UTF8;
-        var bufferSize = CalculateBufferSize(utf8Encoding);
+        var bufferSize = CalculateBufferSize();
 
         Span<byte> buffer = bufferSize > MaxStackByteBufferSize
             ? new byte[bufferSize]
             : stackalloc byte[bufferSize];
 
-        foreach (var (stringToWrite, id) in _stringIdLookup.OrderBy(kvp => kvp.Value))
+        foreach (var kvp in _stringIdLookup.OrderBy(kvp => kvp.Value))
         {
+            var stringToWrite = kvp.Key;
+            var id = kvp.Value;
+
             writer.Write(id);
 
-            var byteCount = utf8Encoding.GetBytes(stringToWrite, buffer);
+            var byteCount = Encoding.UTF8.GetBytes(stringToWrite, buffer);
 
             writer.Write((ushort)byteCount);
             writer.Write(buffer[..byteCount]);
         }
     }
 
-    private int CalculateBufferSize(Encoding utf8Encoding)
+    private int CalculateBufferSize()
     {
         var maxBufferSize = 0;
 
         foreach (var kvp in _stringIdLookup)
         {
-            maxBufferSize = Math.Max(maxBufferSize, utf8Encoding.GetByteCount(kvp.Key));
+            maxBufferSize = Math.Max(maxBufferSize, Encoding.UTF8.GetByteCount(kvp.Key));
         }
 
         return maxBufferSize;
@@ -62,6 +64,8 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     private void GenerateStringIdLookup(
         LevelData levelData)
     {
+        FileWritingException.WriterAssert(_stringIdLookup.Count == 0, "Expected string id lookup to be empty!");
+
         RecordLevelMetadataStrings(levelData);
         RecordLevelTextMessageStrings(levelData);
         RecordLevelObjectiveStrings(levelData);
@@ -141,7 +145,8 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
         if (string.IsNullOrEmpty(s))
             return;
 
-        // Ids start at 1, therefore can use value of zero as "Not found"
+        // IDs start at 1, ID 0 is associated with the empty string
+        // We don't serialise the empty string though
         var nextStringId = (ushort)(1 + _stringIdLookup.Count);
 
         ref var correspondingStringId = ref CollectionsMarshal.GetValueRefOrAddDefault(_stringIdLookup, s, out var exists);

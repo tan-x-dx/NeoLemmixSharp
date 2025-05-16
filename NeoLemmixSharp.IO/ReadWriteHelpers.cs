@@ -11,6 +11,8 @@ namespace NeoLemmixSharp.IO;
 
 internal static class ReadWriteHelpers
 {
+    internal const byte Period = (byte)'.';
+
     internal const int PositionOffset = 512;
 
     internal const int InitialStringListCapacity = 32;
@@ -30,14 +32,22 @@ internal static class ReadWriteHelpers
 
             intervals.Sort(this);
 
-            for (var i = 0; i < intervals.Length - 1; i++)
-            {
-                var firstInterval = intervals[i];
-                var secondInterval = intervals[i + 1];
+            var firstInterval = intervals[0];
 
-                if (firstInterval.Start + firstInterval.Length != secondInterval.Start)
-                    throw new InvalidOperationException("Sections are not contiguous!");
+            for (var i = 1; i < intervals.Length; i++)
+            {
+                var secondInterval = intervals[i];
+
+                AssertSectionsAreContiguous(firstInterval, secondInterval);
+
+                firstInterval = secondInterval;
             }
+        }
+
+        private static void AssertSectionsAreContiguous(Interval firstInterval, Interval secondInterval)
+        {
+            if (firstInterval.Start + firstInterval.Length != secondInterval.Start)
+                throw new InvalidOperationException("Sections are not contiguous!");
         }
 
         int IComparer<Interval>.Compare(Interval x, Interval y)
