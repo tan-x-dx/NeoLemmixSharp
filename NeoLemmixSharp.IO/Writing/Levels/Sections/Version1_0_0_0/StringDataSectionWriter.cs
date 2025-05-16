@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.FileFormats;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;

@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.FileFormats;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 

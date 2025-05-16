@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 

@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Writing;
 using System.Diagnostics.Contracts;
 
-namespace NeoLemmixSharp.IO;
+namespace NeoLemmixSharp.IO.FileFormats;
 
 internal enum StyleFileSectionIdentifier
 {

@@ -2,6 +2,7 @@
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.FileFormats;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;

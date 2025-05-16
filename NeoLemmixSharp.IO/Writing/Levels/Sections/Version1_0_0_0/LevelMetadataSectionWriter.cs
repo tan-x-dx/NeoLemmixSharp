@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.FileFormats;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;

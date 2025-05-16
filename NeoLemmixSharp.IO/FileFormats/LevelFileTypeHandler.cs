@@ -1,7 +1,8 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Reading.Levels;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 
-namespace NeoLemmixSharp.IO.Reading.Levels;
+namespace NeoLemmixSharp.IO.FileFormats;
 
 public static class LevelFileTypeHandler
 {

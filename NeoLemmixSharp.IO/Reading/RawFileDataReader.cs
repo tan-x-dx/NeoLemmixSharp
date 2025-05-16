@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Writing;
 using System.Runtime.CompilerServices;
 
