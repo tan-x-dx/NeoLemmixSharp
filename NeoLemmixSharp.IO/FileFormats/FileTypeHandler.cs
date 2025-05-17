@@ -55,7 +55,7 @@ public static class FileTypeHandler
             throw new ArgumentException($"File extension not recognised: {fileExtension}");
 
         if (typeAndFormat.Type != FileType.Level)
-            throw new ArgumentException($"File path is not for a level: {filePath} -> {typeAndFormat.Type}");
+            throw new ArgumentException($"File path does not point to a level: {filePath} -> {typeAndFormat.Type}");
 
         return typeAndFormat.Format switch
         {
