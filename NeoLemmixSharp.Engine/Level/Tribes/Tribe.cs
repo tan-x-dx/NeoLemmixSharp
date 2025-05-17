@@ -4,9 +4,9 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.Engine.Level.Teams;
+namespace NeoLemmixSharp.Engine.Level.Tribes;
 
-public sealed class Team : IIdEquatable<Team>
+public sealed class Tribe : IIdEquatable<Tribe>
 {
     public readonly int Id;
     public readonly Color HairColor;
@@ -21,7 +21,7 @@ public sealed class Team : IIdEquatable<Team>
     public readonly Color PaintColor;
     public readonly LemmingSpriteBank SpriteBank;
 
-    public Team(
+    public Tribe(
         int id,
         LemmingSpriteBank spriteBank)
     {
@@ -41,15 +41,15 @@ public sealed class Team : IIdEquatable<Team>
         SpriteBank = spriteBank;
     }
 
-    int IIdEquatable<Team>.Id => Id;
+    int IIdEquatable<Tribe>.Id => Id;
     [DebuggerStepThrough]
-    public bool Equals(Team? other) => Id == (other?.Id ?? -1);
+    public bool Equals(Tribe? other) => Id == (other?.Id ?? -1);
     [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Team other && Id == other.Id;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Tribe other && Id == other.Id;
     [DebuggerStepThrough]
     public override int GetHashCode() => Id;
     [DebuggerStepThrough]
-    public static bool operator ==(Team left, Team right) => left.Id == right.Id;
+    public static bool operator ==(Tribe left, Tribe right) => left.Id == right.Id;
     [DebuggerStepThrough]
-    public static bool operator !=(Team left, Team right) => left.Id != right.Id;
+    public static bool operator !=(Tribe left, Tribe right) => left.Id != right.Id;
 }

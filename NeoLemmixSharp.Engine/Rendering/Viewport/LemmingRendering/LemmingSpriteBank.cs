@@ -1,21 +1,21 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingSpriteBank : IDisposable
 {
     private readonly LemmingActionSprite[] _actionSprites;
-    private readonly TeamColorData[] _teamColorData;
+    private readonly TribeColorData[] _tribeColorData;
 
-    public LemmingSpriteBank(LemmingActionSprite[] actionSprites, TeamColorData[] teamColorData)
+    public LemmingSpriteBank(LemmingActionSprite[] actionSprites, TribeColorData[] tribeColorData)
     {
         _actionSprites = actionSprites;
-        _teamColorData = teamColorData;
+        _tribeColorData = tribeColorData;
     }
 
-    public TeamColorData GetColorData(int id) => _teamColorData[id];
+    public TribeColorData GetColorData(int id) => _tribeColorData[id];
 
     public LemmingActionSprite GetActionSprite(LemmingAction lemmingAction)
     {

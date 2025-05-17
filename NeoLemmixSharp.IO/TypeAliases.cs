@@ -1,4 +1,4 @@
-﻿global using RawLevelFileDataReader = NeoLemmixSharp.IO.Reading.RawFileDataReader<NeoLemmixSharp.IO.LevelFileSectionIdentifierHasher, NeoLemmixSharp.IO.LevelFileSectionIdentifier>;
-global using RawStyleFileDataReader = NeoLemmixSharp.IO.Reading.RawFileDataReader<NeoLemmixSharp.IO.StyleFileSectionIdentifierHasher, NeoLemmixSharp.IO.StyleFileSectionIdentifier>;
-global using RawLevelFileDataWriter = NeoLemmixSharp.IO.Writing.RawFileDataWriter<NeoLemmixSharp.IO.LevelFileSectionIdentifierHasher, NeoLemmixSharp.IO.LevelFileSectionIdentifier>;
-global using RawStyleFileDataWriter = NeoLemmixSharp.IO.Writing.RawFileDataWriter<NeoLemmixSharp.IO.StyleFileSectionIdentifierHasher, NeoLemmixSharp.IO.StyleFileSectionIdentifier>;
+﻿global using RawLevelFileDataReader = NeoLemmixSharp.IO.Reading.RawFileDataReader<NeoLemmixSharp.IO.FileFormats.LevelFileSectionIdentifierHasher, NeoLemmixSharp.IO.FileFormats.LevelFileSectionIdentifier>;
+global using RawStyleFileDataReader = NeoLemmixSharp.IO.Reading.RawFileDataReader<NeoLemmixSharp.IO.FileFormats.StyleFileSectionIdentifierHasher, NeoLemmixSharp.IO.FileFormats.StyleFileSectionIdentifier>;
+global using RawLevelFileDataWriter = NeoLemmixSharp.IO.Writing.RawFileDataWriter<NeoLemmixSharp.IO.FileFormats.LevelFileSectionIdentifierHasher, NeoLemmixSharp.IO.FileFormats.LevelFileSectionIdentifier>;
+global using RawStyleFileDataWriter = NeoLemmixSharp.IO.Writing.RawFileDataWriter<NeoLemmixSharp.IO.FileFormats.StyleFileSectionIdentifierHasher, NeoLemmixSharp.IO.FileFormats.StyleFileSectionIdentifier>;

@@ -67,7 +67,7 @@ internal readonly ref struct SpriteDataReader
 
         /*   var animationLayerParameters = ReadAnimationLayerParameters(rawFileData);
            int rawColorChooser = rawFileData.Read8BitUnsignedInteger();
-           var teamColorChooser = TeamColorChooser.GetTeamColorChooser(rawColorChooser);
+           var tribeColorChooser = TribeColorChooser.GetTribeColorChooser(rawColorChooser);
 
            int initialFrame = rawFileData.Read8BitUnsignedInteger();
            int nextGadgetState = rawFileData.Read8BitUnsignedInteger();
@@ -79,7 +79,7 @@ internal readonly ref struct SpriteDataReader
                InitialFrame = initialFrame,
                NextGadgetState = nextGadgetState - 1,
 
-               ColorChooser = teamColorChooser,
+               ColorChooser = tribeColorChooser,
 
                NineSliceData = null!
            };*/

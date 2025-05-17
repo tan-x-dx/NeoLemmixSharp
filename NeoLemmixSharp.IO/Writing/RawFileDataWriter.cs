@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.IO.FileFormats;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing;
@@ -8,7 +9,6 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
-    private const byte Period = (byte)'.';
     private const int InitialDataCapacity = 1 << 12;
 
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIntervals = new(new TPerfectHasher());
@@ -31,8 +31,8 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         WriteSectionIntervals(ref preambleDataByteBuffer, ref preamblePosition);
 
         FileWritingException.WriterAssert(
-            _mainDataPosition + preamblePosition <= LevelReadWriteHelpers.MaxAllowedFileSizeInBytes,
-            LevelReadWriteHelpers.FileSizeTooLargeExceptionMessage);
+            _mainDataPosition + preamblePosition <= ReadWriteHelpers.MaxAllowedFileSizeInBytes,
+            ReadWriteHelpers.FileSizeTooLargeExceptionMessage);
 
         stream.Write(new ReadOnlySpan<byte>(preambleDataByteBuffer, 0, preamblePosition));
         stream.Write(new ReadOnlySpan<byte>(_mainDataByteBuffer, 0, _mainDataPosition));
@@ -44,11 +44,11 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         ref int preamblePosition)
     {
         WriteToByteBuffer(version.Major, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(ReadWriteHelpers.Period, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(version.Minor, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(ReadWriteHelpers.Period, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(version.Build, ref preambleDataByteBuffer, ref preamblePosition);
-        WriteToByteBuffer(Period, ref preambleDataByteBuffer, ref preamblePosition);
+        WriteToByteBuffer(ReadWriteHelpers.Period, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(version.Revision, ref preambleDataByteBuffer, ref preamblePosition);
     }
 
@@ -186,7 +186,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         FileWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot write to file - In middle of a section!");
         FileWritingException.WriterAssert(_sectionIntervals.Count > 0, "No sections written!");
 
-        new LevelReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
+        new ReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
             .AssertSectionsAreContiguous(_sectionIntervals);
     }
 }

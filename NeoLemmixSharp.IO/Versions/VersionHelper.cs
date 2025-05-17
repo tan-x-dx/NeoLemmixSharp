@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.IO.Reading.Levels.Sections;
+﻿using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Reading.Levels.Sections;
 using NeoLemmixSharp.IO.Reading.Styles.Sections;
 using NeoLemmixSharp.IO.Writing.Levels.Sections;
 using NeoLemmixSharp.IO.Writing.Styles.Sections;
@@ -55,34 +56,34 @@ internal static class VersionHelper
 
     public static LevelDataSectionWriter[] GetLevelDataSectionWritersForVersion(FileFormatVersion version)
     {
-        if (_levelWriterVersionHelpers.TryGetValue(version, out var helper))
-            return helper.GetLevelDataSectionWriters();
+        if (!_levelWriterVersionHelpers.TryGetValue(version, out var helper))
+            ThrowUnknownVersionException(version);
 
-        return ThrowUnknownVersionException<LevelDataSectionWriter>(version);
+        return helper.GetLevelDataSectionWriters();
     }
 
     public static LevelDataSectionReader[] GetLevelDataSectionReadersForVersion(FileFormatVersion version)
     {
-        if (_levelReaderVersionHelpers.TryGetValue(version, out var helper))
-            return helper.GetLevelDataSectionReaders();
+        if (!_levelReaderVersionHelpers.TryGetValue(version, out var helper))
+            ThrowUnknownVersionException(version);
 
-        return ThrowUnknownVersionException<LevelDataSectionReader>(version);
+        return helper.GetLevelDataSectionReaders();
     }
 
     public static StyleDataSectionWriter[] GetStyleDataSectionWritersForVersion(FileFormatVersion version)
     {
-        if (_styleWriterVersionHelpers.TryGetValue(version, out var helper))
-            return helper.GetStyleDataSectionWriters();
+        if (!_styleWriterVersionHelpers.TryGetValue(version, out var helper))
+            ThrowUnknownVersionException(version);
 
-        return ThrowUnknownVersionException<StyleDataSectionWriter>(version);
+        return helper.GetStyleDataSectionWriters();
     }
 
     public static StyleDataSectionReader[] GetStyleDataSectionReadersForVersion(FileFormatVersion version)
     {
-        if (_styleReaderVersionHelpers.TryGetValue(version, out var helper))
-            return helper.GetStyleDataSectionReaders();
+        if (!_styleReaderVersionHelpers.TryGetValue(version, out var helper))
+            ThrowUnknownVersionException(version);
 
-        return ThrowUnknownVersionException<StyleDataSectionReader>(version);
+        return helper.GetStyleDataSectionReaders();
     }
 
     private sealed class UnknownVersionException : Exception
@@ -102,7 +103,7 @@ internal static class VersionHelper
     }
 
     [DoesNotReturn]
-    private static T[] ThrowUnknownVersionException<T>(FileFormatVersion version) => throw new UnknownVersionException(version);
+    private static void ThrowUnknownVersionException(FileFormatVersion version) => throw new UnknownVersionException(version);
 }
 
 internal interface ILevelDataSectionWriterVersionHelper

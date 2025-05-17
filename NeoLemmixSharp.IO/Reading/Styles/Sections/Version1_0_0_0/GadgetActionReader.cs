@@ -74,12 +74,12 @@ internal static class GadgetActionReader
         var rawSkillId = miscData & 0x0f;
         var skill = new LemmingSkill.LemmingSkillHasher().UnHash(rawSkillId);
 
-        var rawTeamId = (miscData >>> 4) & 0x0f;
-        int? teamId = (rawTeamId & 1) != 0 ? (rawTeamId >>> 1) : null;
+        var rawTribeId = (miscData >>> 4) & 0x0f;
+        int? tribeId = (rawTribeId & 1) != 0 ? (rawTribeId >>> 1) : null;
         var value = (miscData >>> 7) & 0x7f;
         var isDelta = ((miscData >>> 8) & 1) != 0;
 
-        return new SkillCountModifierAction(skill, value, teamId, isDelta);
+        return new SkillCountModifierAction(skill, value, tribeId, isDelta);
     }
 
     private static ForceFacingDirectionAction CreateForceFacingDirectionAction(int miscData)

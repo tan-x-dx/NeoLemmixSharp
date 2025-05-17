@@ -78,7 +78,7 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
 
         var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(
             previouslyRecordedSkillAssignment.SkillId,
-            previouslyRecordedSkillAssignment.TeamId);
+            previouslyRecordedSkillAssignment.TribeId);
 
         if (skillTrackingData is null)
             throw new InvalidOperationException("Null skill tracking data in replay!");
@@ -89,7 +89,7 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
     private static void ValidateLemmingReplayAction(Lemming lemming, in SkillAssignmentData previouslyRecordedSkillAssignment)
     {
         if (lemming.AnchorPosition == previouslyRecordedSkillAssignment.LemmingPosition &&
-            lemming.State.TeamAffiliation.Id == previouslyRecordedSkillAssignment.TeamId &&
+            lemming.State.TribeAffiliation.Id == previouslyRecordedSkillAssignment.TribeId &&
             lemming.Orientation.RotNum == previouslyRecordedSkillAssignment.LemmingOrientationRotNum &&
             lemming.FacingDirection.Id == previouslyRecordedSkillAssignment.LemmingFacingDirectionId)
             return;

@@ -349,7 +349,7 @@ public sealed class LevelControlPanel : IInitialisable
 
         var skillTrackingData = skillSetManager.GetSkillTrackingData(skillTrackingDataId);
 
-        LevelScreen.LevelCursor.SetSelectedTeam(skillTrackingData?.Team);
+        LevelScreen.LevelCursor.SetSelectedTribe(skillTrackingData?.Tribe);
     }
 
     public void UpdateSkillCount(SkillTrackingData skillTrackingData)

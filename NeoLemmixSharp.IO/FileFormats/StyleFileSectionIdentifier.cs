@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Writing;
 using System.Diagnostics.Contracts;
 
-namespace NeoLemmixSharp.IO;
+namespace NeoLemmixSharp.IO.FileFormats;
 
 internal enum StyleFileSectionIdentifier
 {
@@ -16,7 +16,7 @@ internal enum StyleFileSectionIdentifier
 internal readonly struct StyleFileSectionIdentifierHasher :
     ISectionIdentifierHelper<StyleFileSectionIdentifier>
 {
-    public const int NumberOfBytesForLevelSectionIdentifier = 2;
+    public const int NumberOfBytesForStyleSectionIdentifier = 2;
 
     private const int NumberOfEnumValues = 3;
 
@@ -34,10 +34,10 @@ internal readonly struct StyleFileSectionIdentifierHasher :
     public static ReadOnlySpan<byte> GetSectionIdentifierBytes(StyleFileSectionIdentifier sectionIdentifier)
     {
         var index = (int)sectionIdentifier;
-        index <<= 1;
+        index *= NumberOfBytesForStyleSectionIdentifier;
 
         return StyleDataSectionIdentifierBytes
-            .Slice(index, NumberOfBytesForLevelSectionIdentifier);
+            .Slice(index, NumberOfBytesForStyleSectionIdentifier);
     }
 
     private static ReadOnlySpan<byte> StyleDataSectionIdentifierBytes =>

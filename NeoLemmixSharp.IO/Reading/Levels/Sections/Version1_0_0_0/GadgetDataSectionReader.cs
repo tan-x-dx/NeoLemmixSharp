@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
@@ -40,11 +41,11 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
-        x -= LevelReadWriteHelpers.PositionOffset;
-        y -= LevelReadWriteHelpers.PositionOffset;
+        x -= ReadWriteHelpers.PositionOffset;
+        y -= ReadWriteHelpers.PositionOffset;
 
         int dhtByte = rawFileData.Read8BitUnsignedInteger();
-        LevelReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
+        ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
@@ -99,7 +100,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         while (numberOfProperties-- > 0)
         {
             uint rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
-            var gadgetProperty = GadgetPropertyHelpers.GetEnumValue(rawGadgetProperty);
+            var gadgetProperty = GadgetPropertyHasher.GetEnumValue(rawGadgetProperty);
             int propertyValue = rawFileData.Read32BitSignedInteger();
             result.AddProperty(gadgetProperty, propertyValue);
         }

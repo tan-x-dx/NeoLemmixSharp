@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Reading.Levels;
+using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.Ui.Data;
 
 namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
@@ -26,13 +26,11 @@ public sealed class LevelEntry : LevelBrowserEntry
         _filePath = filePath;
     }
 
-    public void LoadLevelData(GraphicsDevice graphicsDevice)
+    public void LoadLevelData()
     {
-        ILevelReader? levelReader = null;
         try
         {
-            levelReader = LevelFileTypeHandler.GetLevelReaderForFile(_filePath);
-            LevelData = levelReader.ReadLevel(graphicsDevice);
+            LevelData = FileTypeHandler.ReadLevel(_filePath);
         }
         catch
         {
@@ -42,7 +40,6 @@ public sealed class LevelEntry : LevelBrowserEntry
         }
         finally
         {
-            levelReader?.Dispose();
         }
     }
 

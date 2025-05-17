@@ -44,7 +44,7 @@ public readonly struct AnimationLayerArchetypeData
     /*   public required AnimationLayerParameters AnimationLayerParameters { get; init; }
        public required int InitialFrame { get; init; }
        public required int NextGadgetState { get; init; }
-       public required TeamColorChooser ColorChooser { get; init; }
+       public required TribeColorChooser ColorChooser { get; init; }
        public required NineSliceDataThing[] NineSliceData { get; init; }
 
        public AnimationLayer CreateAnimationBehaviour()

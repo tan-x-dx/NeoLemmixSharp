@@ -6,7 +6,7 @@ internal sealed class VersionHelper : IStyleDataSectionReaderVersionHelper
 {
     public StyleDataSectionReader[] GetStyleDataSectionReaders()
     {
-        var stringIdLookup = new List<string>(LevelReadWriteHelpers.InitialStringListCapacity);
+        var stringIdLookup = new List<string>(ReadWriteHelpers.InitialStringListCapacity);
 
         StyleDataSectionReader[] sectionReaders =
         [

@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.IO.Data.Level.Gadgets;
 public enum GadgetProperty
 {
     HatchGroupId,
-    TeamId,
+    TribeId,
     SkillId,
     Width,
     Height,
@@ -19,16 +19,11 @@ public enum GadgetProperty
     IsFastForwards
 }
 
-public static class GadgetPropertyHelpers
-{
-    private const int NumberOfEnumValues = 9;
-
-    public static GadgetProperty GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetProperty>(rawValue, NumberOfEnumValues);
-}
-
 public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IBitBufferCreator<BitBuffer32>
 {
-    public int NumberOfItems => 10;
+    private const int NumberOfEnumValues = 10;
+
+    public int NumberOfItems => NumberOfEnumValues;
 
     [Pure]
     public int Hash(GadgetProperty item) => (int)item;
@@ -43,4 +38,6 @@ public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IB
     public static BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetPropertyHasher());
 
     public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
+
+    public static GadgetProperty GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetProperty>(rawValue, NumberOfEnumValues);
 }

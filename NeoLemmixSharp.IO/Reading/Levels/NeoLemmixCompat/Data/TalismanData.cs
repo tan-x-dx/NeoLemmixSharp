@@ -56,7 +56,7 @@ public sealed class TalismanData
                 {
                     Skill = originalSkillSetDatum.Skill,
                     NumberOfSkills = skillLimit,
-                    TeamId = originalSkillSetDatum.TeamId
+                    TribeId = originalSkillSetDatum.TribeId
                 });
             }
             else

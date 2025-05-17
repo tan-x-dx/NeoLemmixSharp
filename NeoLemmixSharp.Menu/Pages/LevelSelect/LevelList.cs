@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Data;
 using Color = Microsoft.Xna.Framework.Color;
@@ -144,7 +143,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
             {
                 if (levelEntry.IsLoading)
                 {
-                    levelEntry.LoadLevelData(IGameWindow.Instance.GraphicsDevice);
+                    levelEntry.LoadLevelData();
                     _numberOfLevelsLoaded++;
                     break;
                 }

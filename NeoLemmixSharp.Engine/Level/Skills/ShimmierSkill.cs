@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -80,14 +79,17 @@ public sealed class ShimmierSkill : LemmingSkill
 
     public override void AssignToLemming(Lemming lemming)
     {
-        LemmingAction nextAction = lemming.CurrentAction == ClimberAction.Instance ||
-                                   lemming.CurrentAction == SliderAction.Instance ||
-                                   lemming.CurrentAction == JumperAction.Instance ||
-                                   lemming.CurrentAction == DehoisterAction.Instance
-            ? ShimmierAction.Instance
-            : ReacherAction.Instance;
-
-        nextAction.TransitionLemmingToAction(lemming, false);
+        if (lemming.CurrentAction.Id is EngineConstants.ClimberActionId or
+                                        EngineConstants.SliderActionId or
+                                        EngineConstants.JumperActionId or
+                                        EngineConstants.DehoisterActionId)
+        {
+            ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
+        }
+        else
+        {
+            ReacherAction.Instance.TransitionLemmingToAction(lemming, false);
+        }
     }
 
     protected override LemmingActionSet ActionsThatCanBeAssigned()

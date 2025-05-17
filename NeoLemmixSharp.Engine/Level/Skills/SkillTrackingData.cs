@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -9,16 +9,16 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible<SkillSetSnapsho
 {
     public int SkillTrackingDataId { get; }
     public LemmingSkill Skill { get; }
-    public Team Team { get; }
+    public Tribe Tribe { get; }
     public int SkillCount { get; private set; }
 
     public bool IsInfinite => SkillCount == EngineConstants.InfiniteSkillCount;
 
-    public SkillTrackingData(int skillTrackingDataId, LemmingSkill skill, Team team, int skillCount)
+    public SkillTrackingData(int skillTrackingDataId, LemmingSkill skill, Tribe tribe, int skillCount)
     {
         SkillTrackingDataId = skillTrackingDataId;
         Skill = skill;
-        Team = team;
+        Tribe = tribe;
         SetSkillCount(skillCount);
     }
 
@@ -43,7 +43,7 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible<SkillSetSnapsho
     public bool CanAssignToLemming(Lemming lemming)
     {
         return lemming.State.CanHaveSkillsAssigned &&
-               Team == lemming.State.TeamAffiliation &&
+               Tribe == lemming.State.TribeAffiliation &&
                Skill.CanAssignToLemming(lemming);
     }
 

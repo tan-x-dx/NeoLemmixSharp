@@ -13,16 +13,16 @@ using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
-using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Style;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
@@ -43,41 +43,41 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
     public LevelScreen BuildLevel(LevelData levelData)
     {
         StyleCache.EnsureStylesAreLoadedForLevel(levelData);
-        using var levelObjectAssembler = new LevelObjectAssembler(_graphicsDevice, levelData);
 
         var terrainBuilder = new TerrainBuilder(_graphicsDevice, levelData);
         terrainBuilder.BuildTerrain();
 
-        var lemmingSpriteBank = levelObjectAssembler.GetLemmingSpriteBank();
-
         var levelParameters = levelData.LevelParameters;
         var controlPanelParameters = levelData.ControlParameters;
-
-        var teamManager = GetTeamManager(
-            levelData,
-            lemmingSpriteBank);
-
-        levelData.HorizontalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
-        levelData.VerticalBoundaryBehaviour = BoundaryBehaviourType.Wrap;
 
         var levelDimensions = levelData.LevelDimensions;
         var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelDimensions.W);
         var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelDimensions.H);
 
-        var levelLemmings = levelObjectAssembler.GetLevelLemmings();
-        var hatchGroups = levelObjectAssembler.GetHatchGroups();
+        var gadgetBuilder = new GadgetBuilder(levelData);
+        var lemmingBuilder = new LemmingBuilder(levelData);
+
+        var levelLemmings = lemmingBuilder.GetLevelLemmings();
+        var hatchGroups = gadgetBuilder.GetHatchGroups();
+
         var lemmingManager = new LemmingManager(
-            hatchGroups,
             levelLemmings,
-            levelData.HatchLemmingData.Count,
             levelData.PrePlacedLemmingData.Count,
+            hatchGroups,
+            levelData.HatchLemmingData.Count,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-        var levelGadgets = levelObjectAssembler.GetLevelGadgets(lemmingManager, teamManager);
+
+        var lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
+        var lemmingSpriteBank = lemmingSpriteBankBuilder.GetLemmingSpriteBank();
+        var tribeManager = GetTribeManager(levelData, lemmingSpriteBank);
+        var levelGadgets = gadgetBuilder.GetLevelGadgets(lemmingManager, tribeManager);
+
+        using var levelSpriteBuilder = new LevelSpriteBuilder(_graphicsDevice, levelGadgets, levelLemmings);
 
         foreach (var hatchGroup in hatchGroups)
         {
-            levelObjectAssembler.SetHatchesForHatchGroup(hatchGroup);
+            gadgetBuilder.SetHatchesForHatchGroup(hatchGroup);
         }
 
         var inputController = new LevelInputController();
@@ -108,13 +108,13 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
         var terrainManager = new TerrainManager(pixelData);
 
-        var gadgetSpriteBank = levelObjectAssembler.GetGadgetSpriteBank();
-        var controlPanelSpriteBank = levelObjectAssembler.GetControlPanelSpriteBank(_contentManager);
+        var gadgetSpriteBank = levelSpriteBuilder.GetGadgetSpriteBank();
+        var controlPanelSpriteBank = levelSpriteBuilder.GetControlPanelSpriteBank(_contentManager);
 
         var levelCursorSprite = GetLevelCursorSprite(levelCursor);
         var backgroundRenderer = GetBackgroundRenderer(levelData);
 
-        levelObjectAssembler.GetLevelSprites(
+        levelSpriteBuilder.GetLevelSprites(
             out var behindTerrainSprites,
             out var inFrontOfTerrainSprites,
             out var lemmingSprites);
@@ -149,7 +149,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             terrainPainter,
             lemmingManager,
             gadgetManager,
-            teamManager,
+            tribeManager,
             skillSetManager,
             levelObjectiveManager,
             controlPanel,
@@ -166,17 +166,17 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         return result;
     }
 
-    private static TeamManager GetTeamManager(LevelData levelData, LemmingSpriteBank lemmingSpriteBank)
+    private static TribeManager GetTribeManager(LevelData levelData, LemmingSpriteBank lemmingSpriteBank)
     {
-        var numberOfTeams = levelData.NumberOfTeams;
+        var numberOfTribes = levelData.NumberOfTribes;
 
-        var teams = new Team[numberOfTeams];
-        for (var i = 0; i < teams.Length; i++)
+        var tribes = new Tribe[numberOfTribes];
+        for (var i = 0; i < tribes.Length; i++)
         {
-            teams[i] = new Team(i, lemmingSpriteBank);
+            tribes[i] = new Tribe(i, lemmingSpriteBank);
         }
 
-        return new TeamManager(teams);
+        return new TribeManager(tribes);
     }
 
     private static LevelTimer CreateLevelTimer(LevelObjectiveManager levelObjectiveManager)

@@ -22,16 +22,19 @@ public interface IBitBufferCreator<TBuffer>
     void CreateBitBuffer(out TBuffer buffer);
 }
 
+[InlineArray(BitBuffer32Length)]
 public struct BitBuffer32 : IBitBuffer
 {
+    private const int BitBuffer32Length = 1;
+
     private uint _0;
 
-    public readonly int Length => 1;
+    public readonly int Length => BitBuffer32Length;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, 1);
+    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, BitBuffer32Length);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, 1);
+    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, BitBuffer32Length);
 }
 
 public readonly struct ArrayBitBuffer : IBitBuffer

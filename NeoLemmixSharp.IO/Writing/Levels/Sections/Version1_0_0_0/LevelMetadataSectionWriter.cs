@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.FileFormats;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
@@ -58,8 +59,8 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         var levelDimensions = levelData.LevelDimensions;
         writer.Write((ushort)levelDimensions.W);
         writer.Write((ushort)levelDimensions.H);
-        writer.Write((ushort)(levelData.LevelStartPositionX ?? LevelReadWriteHelpers.UnspecifiedLevelStartValue));
-        writer.Write((ushort)(levelData.LevelStartPositionY ?? LevelReadWriteHelpers.UnspecifiedLevelStartValue));
+        writer.Write((ushort)(levelData.LevelStartPositionX ?? ReadWriteHelpers.UnspecifiedLevelStartValue));
+        writer.Write((ushort)(levelData.LevelStartPositionY ?? ReadWriteHelpers.UnspecifiedLevelStartValue));
 
         var boundaryByte = GetBoundaryBehaviourByte(levelData);
         writer.Write(boundaryByte);
@@ -90,7 +91,7 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         else if (backgroundData.IsSolidColor)
         {
             rawBytes[0] = (byte)BackgroundType.SolidColorBackground;
-            LevelReadWriteHelpers.WriteArgbBytes(backgroundData.Color, rawBytes[1..]);
+            ReadWriteHelpers.WriteArgbBytes(backgroundData.Color, rawBytes[1..]);
         }
         else
         {

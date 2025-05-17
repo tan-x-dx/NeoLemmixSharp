@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.IO.Reading.Levels;
+﻿namespace NeoLemmixSharp.IO.FileFormats;
 
 public enum FileFormatType
 {

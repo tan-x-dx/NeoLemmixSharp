@@ -5,7 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.IO;
+namespace NeoLemmixSharp.IO.FileFormats;
 
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(ushort))]
 public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEquatable<FileFormatVersion>

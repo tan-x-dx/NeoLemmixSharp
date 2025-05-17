@@ -2,12 +2,12 @@
 
 public readonly struct LemmingStateSnapshotData
 {
-    public readonly int TeamId;
+    public readonly int TribeId;
     public readonly uint StateData;
 
-    public LemmingStateSnapshotData(int teamId, uint stateData)
+    public LemmingStateSnapshotData(int tribeId, uint stateData)
     {
-        TeamId = teamId;
+        TribeId = tribeId;
         StateData = stateData;
     }
 }

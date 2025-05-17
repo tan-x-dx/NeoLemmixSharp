@@ -9,35 +9,45 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO;
 
-internal static class LevelReadWriteHelpers
+internal static class ReadWriteHelpers
 {
-    public const int PositionOffset = 512;
+    internal const byte Period = (byte)'.';
 
-    public const int InitialStringListCapacity = 32;
+    internal const int PositionOffset = 512;
 
-    public const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
-    public const string FileSizeTooLargeExceptionMessage = "File too large! Max file size is 64Mb";
+    internal const int InitialStringListCapacity = 32;
 
-    public sealed class SectionIdentifierComparer<TPerfectHasher, TEnum> : IComparer<Interval>
+    internal const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
+    internal const string FileSizeTooLargeExceptionMessage = "File too large! Max file size is 64Mb";
+
+    internal sealed class SectionIdentifierComparer<TPerfectHasher, TEnum> : IComparer<Interval>
         where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
         where TEnum : unmanaged, Enum
     {
         [SkipLocalsInit]
-        public void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> result)
+        internal void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> result)
         {
             Span<Interval> intervals = stackalloc Interval[result.Count];
             result.CopyValuesTo(intervals);
 
             intervals.Sort(this);
 
-            for (var i = 0; i < intervals.Length - 1; i++)
-            {
-                var firstInterval = intervals[i];
-                var secondInterval = intervals[i + 1];
+            var firstInterval = intervals[0];
 
-                if (firstInterval.Start + firstInterval.Length != secondInterval.Start)
-                    throw new InvalidOperationException("Sections are not contiguous!");
+            for (var i = 1; i < intervals.Length; i++)
+            {
+                var secondInterval = intervals[i];
+
+                AssertSectionsAreContiguous(firstInterval, secondInterval);
+
+                firstInterval = secondInterval;
             }
+        }
+
+        private static void AssertSectionsAreContiguous(Interval firstInterval, Interval secondInterval)
+        {
+            if (firstInterval.Start + firstInterval.Length != secondInterval.Start)
+                throw new InvalidOperationException("Sections are not contiguous!");
         }
 
         int IComparer<Interval>.Compare(Interval x, Interval y)
@@ -48,7 +58,7 @@ internal static class LevelReadWriteHelpers
 
     #region Level Data Read/Write Stuff
 
-    public const int UnspecifiedLevelStartValue = 5000;
+    internal const int UnspecifiedLevelStartValue = 5000;
 
     #endregion
 
@@ -62,13 +72,13 @@ internal static class LevelReadWriteHelpers
 
     #region Level Objectives Data Read/Write Stuff
 
-    public const int NumberOfBytesForMainLevelObjectiveData = 7;
-    public const int NumberOfBytesPerSkillSetDatum = 3;
-    public const int NumberOfBytesPerRequirementsDatum = 4;
+    internal const int NumberOfBytesForMainLevelObjectiveData = 7;
+    internal const int NumberOfBytesPerSkillSetDatum = 3;
+    internal const int NumberOfBytesPerRequirementsDatum = 4;
 
-    public const byte SaveRequirementId = 0x01;
-    public const byte TimeRequirementId = 0x02;
-    public const byte BasicSkillSetRequirementId = 0x03;
+    internal const byte SaveRequirementId = 0x01;
+    internal const byte TimeRequirementId = 0x02;
+    internal const byte BasicSkillSetRequirementId = 0x03;
 
     #endregion
 
@@ -84,9 +94,9 @@ internal static class LevelReadWriteHelpers
     private const int TerrainDataResizeWidthBitShift = 3;
     private const int TerrainDataResizeHeightBitShift = 4;
 
-    public const int NumberOfBytesForMainTerrainData = 9;
+    internal const int NumberOfBytesForMainTerrainData = 9;
 
-    public static byte EncodeTerrainArchetypeDataByte(TerrainData terrainData)
+    internal static byte EncodeTerrainArchetypeDataByte(TerrainData terrainData)
     {
         var miscDataBits = (terrainData.Erase ? 1 << TerrainDataEraseBitShift : 0) |
                            (terrainData.NoOverwrite ? 1 << TerrainDataNoOverwriteBitShift : 0) |
@@ -97,7 +107,7 @@ internal static class LevelReadWriteHelpers
         return (byte)miscDataBits;
     }
 
-    public static DecodedTerrainDataMisc DecodeTerrainDataMiscByte(int terrainDataMiscByte)
+    internal static DecodedTerrainDataMisc DecodeTerrainDataMiscByte(int terrainDataMiscByte)
     {
         var erase = ((terrainDataMiscByte >>> TerrainDataEraseBitShift) & 1) != 0;
         var noOverwrite = ((terrainDataMiscByte >>> TerrainDataNoOverwriteBitShift) & 1) != 0;
@@ -113,13 +123,13 @@ internal static class LevelReadWriteHelpers
             hasHeightSpecified);
     }
 
-    public readonly ref struct DecodedTerrainDataMisc(bool erase, bool noOverwrite, bool hasTintSpecified, bool hasWidthSpecified, bool hasHeightSpecified)
+    internal readonly ref struct DecodedTerrainDataMisc(bool erase, bool noOverwrite, bool hasTintSpecified, bool hasWidthSpecified, bool hasHeightSpecified)
     {
-        public readonly bool Erase = erase;
-        public readonly bool NoOverwrite = noOverwrite;
-        public readonly bool HasTintSpecified = hasTintSpecified;
-        public readonly bool HasWidthSpecified = hasWidthSpecified;
-        public readonly bool HasHeightSpecified = hasHeightSpecified;
+        internal readonly bool Erase = erase;
+        internal readonly bool NoOverwrite = noOverwrite;
+        internal readonly bool HasTintSpecified = hasTintSpecified;
+        internal readonly bool HasWidthSpecified = hasWidthSpecified;
+        internal readonly bool HasHeightSpecified = hasHeightSpecified;
     }
 
     #endregion
@@ -134,7 +144,7 @@ internal static class LevelReadWriteHelpers
 
     #region Terrain Archetype Data Read/Write Stuff
 
-    public static uint EncodeTerrainArchetypeDataByte(
+    internal static uint EncodeTerrainArchetypeDataByte(
         bool isSteel,
         ResizeType resizeType)
     {
@@ -145,7 +155,7 @@ internal static class LevelReadWriteHelpers
         return result;
     }
 
-    public static void DecodeTerrainArchetypeDataByte(
+    internal static void DecodeTerrainArchetypeDataByte(
         uint byteValue,
         out bool isSteel,
         out ResizeType resizeType)
@@ -163,7 +173,7 @@ internal static class LevelReadWriteHelpers
     private const int GadgetArchetypeDataAllowedOrientationsBitShift = 2;
     private const int GadgetArchetypeDataAllowedFacingDirectionBitShift = 3;
 
-    public static uint EncodeGadgetArchetypeDataFilterByte(
+    internal static uint EncodeGadgetArchetypeDataFilterByte(
         DecodedGadgetArchetypeDataHitBoxFilter hitBoxFilter)
     {
         var filterByte = (hitBoxFilter.HasAllowedActions ? 1 << GadgetArchetypeDataAllowedActionsBitShift : 0) |
@@ -174,7 +184,7 @@ internal static class LevelReadWriteHelpers
         return (byte)filterByte;
     }
 
-    public static DecodedGadgetArchetypeDataHitBoxFilter DecodeGadgetArchetypeDataFilterByte(
+    internal static DecodedGadgetArchetypeDataHitBoxFilter DecodeGadgetArchetypeDataFilterByte(
         uint byteValue)
     {
         var hasAllowedActions = ((byteValue >>> GadgetArchetypeDataAllowedActionsBitShift) & 1) != 0;
@@ -185,24 +195,24 @@ internal static class LevelReadWriteHelpers
         return new DecodedGadgetArchetypeDataHitBoxFilter(hasAllowedActions, hasAllowedStates, hasAllowedOrientations, hasAllowedFacingDirection);
     }
 
-    public readonly ref struct DecodedGadgetArchetypeDataHitBoxFilter(bool hasAllowedActions, bool hasAllowedStates, bool hasAllowedOrientations, bool hasAllowedFacingDirection)
+    internal readonly ref struct DecodedGadgetArchetypeDataHitBoxFilter(bool hasAllowedActions, bool hasAllowedStates, bool hasAllowedOrientations, bool hasAllowedFacingDirection)
     {
-        public readonly bool HasAllowedActions = hasAllowedActions;
-        public readonly bool HasAllowedStates = hasAllowedStates;
-        public readonly bool HasAllowedOrientations = hasAllowedOrientations;
-        public readonly bool HasAllowedFacingDirection = hasAllowedFacingDirection;
+        internal readonly bool HasAllowedActions = hasAllowedActions;
+        internal readonly bool HasAllowedStates = hasAllowedStates;
+        internal readonly bool HasAllowedOrientations = hasAllowedOrientations;
+        internal readonly bool HasAllowedFacingDirection = hasAllowedFacingDirection;
     }
 
     #endregion
 
-    public static void AssertDihedralTransformationByteMakesSense(int dhtByte)
+    internal static void AssertDihedralTransformationByteMakesSense(int dhtByte)
     {
         const int upperBitsMask = ~7;
 
         FileReadingException.ReaderAssert((dhtByte & upperBitsMask) == 0, "Read suspicious dihedral transformation byte!");
     }
 
-    public static void WriteArgbBytes(Color color, Span<byte> bytes)
+    internal static void WriteArgbBytes(Color color, Span<byte> bytes)
     {
         Debug.Assert(bytes.Length == 4);
         bytes[0] = color.A;
@@ -211,7 +221,7 @@ internal static class LevelReadWriteHelpers
         bytes[3] = color.B;
     }
 
-    public static void WriteRgbBytes(Color color, Span<byte> bytes)
+    internal static void WriteRgbBytes(Color color, Span<byte> bytes)
     {
         Debug.Assert(bytes.Length == 3);
         bytes[0] = color.R;
@@ -219,13 +229,13 @@ internal static class LevelReadWriteHelpers
         bytes[2] = color.B;
     }
 
-    public static Color ReadArgbBytes(ReadOnlySpan<byte> bytes)
+    internal static Color ReadArgbBytes(ReadOnlySpan<byte> bytes)
     {
         Debug.Assert(bytes.Length == 4);
         return new Color(alpha: bytes[0], r: bytes[1], g: bytes[2], b: bytes[3]);
     }
 
-    public static Color ReadRgbBytes(ReadOnlySpan<byte> bytes)
+    internal static Color ReadRgbBytes(ReadOnlySpan<byte> bytes)
     {
         const byte alphaByte = 0xff;
         Debug.Assert(bytes.Length == 3);

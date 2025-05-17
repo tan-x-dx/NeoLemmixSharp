@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Writing;
 using System.Diagnostics.Contracts;
 
-namespace NeoLemmixSharp.IO;
+namespace NeoLemmixSharp.IO.FileFormats;
 
 internal enum LevelFileSectionIdentifier
 {
@@ -39,7 +39,7 @@ internal readonly struct LevelFileSectionIdentifierHasher :
     public static ReadOnlySpan<byte> GetSectionIdentifierBytes(LevelFileSectionIdentifier sectionIdentifier)
     {
         var index = (int)sectionIdentifier;
-        index <<= 1;
+        index *= NumberOfBytesForLevelSectionIdentifier;
 
         return LevelDataSectionIdentifierBytes
             .Slice(index, NumberOfBytesForLevelSectionIdentifier);

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
@@ -65,7 +66,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
     {
         writer.Write((byte)skillSetData.Skill.Id);
         writer.Write((byte)skillSetData.NumberOfSkills);
-        writer.Write((byte)skillSetData.TeamId);
+        writer.Write((byte)skillSetData.TribeId);
     }
 
     private static void WriteRequirements(

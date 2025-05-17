@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Reading.Levels;
+using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Menu.Pages.LevelSelect;
 
@@ -69,11 +69,9 @@ public sealed class MenuPageCreator
     public LevelStartPage? CreateLevelStartPage()
     {
         LevelStartPage? result = null;
-        ILevelReader? levelReader = null;
         try
         {
-            levelReader = LevelFileTypeHandler.GetLevelReaderForFile(LevelToLoadFilepath);
-            var levelData = levelReader.ReadLevel(_graphicsDevice);
+            var levelData = FileTypeHandler.ReadLevel(LevelToLoadFilepath);
 
             levelData.AssertLevelDataIsValid();
 
@@ -89,7 +87,7 @@ public sealed class MenuPageCreator
         }
         finally
         {
-            levelReader?.Dispose();
+            //levelReader?.Dispose();
         }
 
         return result;

@@ -52,8 +52,8 @@ public static class EngineConstants
     public const string RightOrientationName = "Right";
     public const float RightOrientationRotationAngle = MathF.PI * 0.5f;
 
-    public const int MaxNumberOfTeams = 6;
-    public const int ClassicTeamId = 0;
+    public const int MaxNumberOfTribes = 6;
+    public const int ClassicTribeId = 0;
 
     public const int InfiniteSkillCount = 100;
 
@@ -130,6 +130,11 @@ public static class EngineConstants
     /// Assumption: a style will probably define this number of unique terrain pieces or fewer
     /// </summary>
     public const int AssumedNumberOfTerrainArchetypeDataInStyle = 64;
+
+    /// <summary>
+    /// Assumption: a style will probably define this number of unique terrain pieces or fewer
+    /// </summary>
+    public const int AssumedNumberOfGadgetArchetypeDataInStyle = 12;
 
     #endregion
 

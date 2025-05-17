@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 public sealed class AnimationLayer
 {
     private readonly AnimationLayerParameters _animationLayerParameters;
-    private readonly TeamColorChooser _colorChooser;
+    private readonly TribeColorChooser _colorChooser;
     private readonly NineSliceDataThing[] _nineSliceData;
 
     private readonly int _nextGadgetState;
@@ -19,7 +19,7 @@ public sealed class AnimationLayer
 
     public AnimationLayer(
         AnimationLayerParameters animationLayerParameters,
-        TeamColorChooser colorChooser,
+        TribeColorChooser colorChooser,
         NineSliceDataThing[] nineSliceData,
         int initialFrame,
         int nextGadgetState)

@@ -8,7 +8,7 @@ public readonly struct SkillAssignmentData : ITickOrderedData
 {
     public readonly int Tick;
     public readonly int SkillId;
-    public readonly int TeamId;
+    public readonly int TribeId;
 
     public readonly int LemmingId;
     public readonly Point LemmingPosition;
@@ -24,7 +24,7 @@ public readonly struct SkillAssignmentData : ITickOrderedData
     {
         Tick = tick;
         SkillId = lemmingSkill.Id;
-        TeamId = lemming.State.TeamAffiliation.Id;
+        TribeId = lemming.State.TribeAffiliation.Id;
 
         LemmingId = lemming.Id;
         LemmingPosition = lemming.AnchorPosition;

@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
@@ -25,7 +25,7 @@ public sealed class LevelCursor
 
     public LevelCursor()
     {
-        SetSelectedTeam(null);
+        SetSelectedTribe(null);
     }
 
     public void Tick()
@@ -79,9 +79,9 @@ public sealed class LevelCursor
         LevelScreen.LemmingManager.GetAllLemmingsNearRegion(scratchSpaceSpan, levelRegion, out result);
     }
 
-    public void SetSelectedTeam(Team? team)
+    public void SetSelectedTribe(Tribe? tribe)
     {
-        if (team is null)
+        if (tribe is null)
         {
             Color1 = EngineConstants.CursorColor1;
             Color2 = EngineConstants.CursorColor2;
@@ -90,9 +90,9 @@ public sealed class LevelCursor
             return;
         }
 
-        Color1 = team.HairColor;
-        Color2 = team.BodyColor;
-        Color3 = team.SkinColor;
+        Color1 = tribe.HairColor;
+        Color2 = tribe.BodyColor;
+        Color3 = tribe.SkinColor;
     }
 
     private void CheckLemming(Lemming lemming)
@@ -144,7 +144,7 @@ public sealed class LevelCursor
         }
 
         return NewCandidateHasMoreRelevantState(previousCandidate, newCandidate) ||
-               NewCandidateHasMoreRelevantTeam(previousCandidate, newCandidate) ||
+               NewCandidateHasMoreRelevantTribe(previousCandidate, newCandidate) ||
                NewCandidateHasHigherActionPriority(previousCandidate, newCandidate) ||
                NewCandidateIsCloserToCursorCentre(newCandidate);
     }
@@ -155,7 +155,7 @@ public sealed class LevelCursor
                (previousCandidate.State.IsZombie && !newCandidate.State.IsZombie);
     }
 
-    private static bool NewCandidateHasMoreRelevantTeam(Lemming previousCandidate, Lemming newCandidate)
+    private static bool NewCandidateHasMoreRelevantTribe(Lemming previousCandidate, Lemming newCandidate)
     {
         var skillTrackingDataId = LevelScreen.LevelControlPanel.SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
 
@@ -163,10 +163,10 @@ public sealed class LevelCursor
         if (skillTrackingData is null)
             return false;
 
-        var previousCandidateMatchesTeam = previousCandidate.State.TeamAffiliation == skillTrackingData.Team;
-        var newCandidateMatchesTeam = newCandidate.State.TeamAffiliation == skillTrackingData.Team;
+        var previousCandidateMatchesTribe = previousCandidate.State.TribeAffiliation == skillTrackingData.Tribe;
+        var newCandidateMatchesTribe = newCandidate.State.TribeAffiliation == skillTrackingData.Tribe;
 
-        return newCandidateMatchesTeam && !previousCandidateMatchesTeam;
+        return newCandidateMatchesTribe && !previousCandidateMatchesTribe;
     }
 
     private static bool NewCandidateHasHigherActionPriority(Lemming previousCandidate, Lemming newCandidate)

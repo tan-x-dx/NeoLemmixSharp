@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.IO.Data.Level;
+﻿using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Reading.Levels.Sections;
 using NeoLemmixSharp.IO.Versions;
 
 namespace NeoLemmixSharp.IO.Reading.Levels;
 
-internal sealed class DefaultLevelReader : ILevelReader
+internal readonly ref struct DefaultLevelReader : ILevelReader
 {
     private readonly RawLevelFileDataReader _rawFileData;
 
@@ -15,7 +15,7 @@ internal sealed class DefaultLevelReader : ILevelReader
         _rawFileData = new RawLevelFileDataReader(fileStream);
     }
 
-    public LevelData ReadLevel(GraphicsDevice graphicsDevice)
+    public LevelData ReadLevel()
     {
         var levelData = ReadFile();
         levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(levelData);
@@ -25,7 +25,7 @@ internal sealed class DefaultLevelReader : ILevelReader
 
     private LevelData ReadFile()
     {
-        var result = new LevelData();
+        var result = new LevelData { FileFormatType = FileFormatType.Default };
 
         var version = _rawFileData.Version;
 

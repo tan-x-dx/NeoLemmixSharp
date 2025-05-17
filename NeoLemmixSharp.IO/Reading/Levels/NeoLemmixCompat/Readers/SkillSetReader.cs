@@ -52,7 +52,7 @@ internal sealed class SkillSetReader : NeoLemmixDataReader
         {
             Skill = skill,
             NumberOfSkills = amount,
-            TeamId = EngineConstants.ClassicTeamId
+            TribeId = EngineConstants.ClassicTribeId
         };
 
         SkillSetData.Add(skillSetDatum);*/
