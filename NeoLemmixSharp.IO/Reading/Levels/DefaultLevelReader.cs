@@ -9,7 +9,7 @@ internal readonly ref struct DefaultLevelReader : ILevelReader
 {
     private readonly RawLevelFileDataReader _rawFileData;
 
-    public DefaultLevelReader(string filePath)
+    internal DefaultLevelReader(string filePath)
     {
         using var fileStream = new FileStream(filePath, FileMode.Open);
         _rawFileData = new RawLevelFileDataReader(fileStream);

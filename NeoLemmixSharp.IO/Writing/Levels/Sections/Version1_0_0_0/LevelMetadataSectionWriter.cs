@@ -28,19 +28,12 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        writer.Write(GetNumberOfBytesWrittenForLevelData(levelData));
-
         WriteLevelStringData(writer, levelData);
         writer.Write(levelData.LevelId);
         writer.Write(levelData.Version);
 
         WriteLevelDimensionData(writer, levelData);
         WriteLevelBackgroundData(writer, levelData);
-    }
-
-    private static ushort GetNumberOfBytesWrittenForLevelData(LevelData levelData)
-    {
-        return NumberOfBytesForMainLevelData + NumberOfBytesWrittenForBackgroundData;
     }
 
     private void WriteLevelStringData(

@@ -32,9 +32,6 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
     private GadgetData ReadNextGadgetData(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
-        int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
-        int initialPosition = rawFileData.Position;
-
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
@@ -74,12 +71,6 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
         ReadInputNames(rawFileData, inputNames, numberOfInputNames);
         ReadProperties(rawFileData, result);
-
-        FileReadingException.AssertBytesMakeSense(
-            rawFileData.Position,
-            initialPosition,
-            numberOfBytesToRead,
-            "gadget data");
 
         return result;
     }

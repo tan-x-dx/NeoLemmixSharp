@@ -28,9 +28,6 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         FileReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
-        int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
-        int initialPosition = rawFileData.Position;
-
         int stringId = rawFileData.Read16BitUnsignedInteger();
         levelData.LevelTitle = _stringIdLookup[stringId];
 
@@ -45,12 +42,6 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         ReadLevelDimensionData(rawFileData, levelData);
         ReadBackgroundData(rawFileData, levelData);
-
-        FileReadingException.AssertBytesMakeSense(
-            rawFileData.Position,
-            initialPosition,
-            numberOfBytesToRead,
-            "level data section");
     }
 
     private static void ReadLevelDimensionData(RawLevelFileDataReader rawFileData, LevelData levelData)

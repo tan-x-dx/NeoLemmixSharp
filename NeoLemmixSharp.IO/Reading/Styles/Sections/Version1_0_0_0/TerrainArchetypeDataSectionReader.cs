@@ -31,9 +31,6 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         StyleIdentifier styleName,
         RawStyleFileDataReader rawFileData)
     {
-        int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
-        int initialPosition = rawFileData.Position;
-
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
         uint terrainArchetypeDataByte = rawFileData.Read8BitUnsignedInteger();
@@ -71,12 +68,6 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
                 nineSliceTop = rawFileData.Read8BitUnsignedInteger();
             }
         }
-
-        FileReadingException.AssertBytesMakeSense(
-            rawFileData.Position,
-            initialPosition,
-            numberOfBytesToRead,
-            "terrain archetype data section");
 
         var newTerrainArchetypeData = new TerrainArchetypeData
         {

@@ -33,9 +33,6 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
 
     private TerrainData ReadNextTerrainData(RawLevelFileDataReader rawFileData)
     {
-        int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
-        int initialPosition = rawFileData.Position;
-
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
@@ -69,12 +66,6 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         {
             height = rawFileData.Read16BitUnsignedInteger();
         }
-
-        FileReadingException.AssertBytesMakeSense(
-            rawFileData.Position,
-            initialPosition,
-            numberOfBytesToRead,
-            "terrain data");
 
         return new TerrainData
         {

@@ -32,9 +32,6 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         StyleIdentifier styleName,
         RawStyleFileDataReader rawFileData)
     {
-        int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
-        int initialPosition = rawFileData.Position;
-
         int pieceId = rawFileData.Read16BitUnsignedInteger();
         var pieceName = new PieceIdentifier(_stringIdLookup[pieceId]);
 
@@ -55,12 +52,6 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
             _ => Helpers.ThrowUnknownEnumValueException<GadgetType, GadgetArchetypeData>(gadgetType)
         };
-
-        FileReadingException.AssertBytesMakeSense(
-            rawFileData.Position,
-            initialPosition,
-            numberOfBytesToRead,
-            "gadget archetype data section");
 
         return result;
     }
