@@ -16,5 +16,5 @@ internal abstract class StyleDataSectionReader
 
     public ReadOnlySpan<byte> GetSectionIdentifierBytes() => StyleFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
 
-    public abstract void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData);
+    public abstract void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection);
 }

@@ -16,9 +16,8 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData)
+    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         styleData.GadgetArchetypeData.EnsureCapacity(numberOfItemsInSection);
 
         while (numberOfItemsInSection-- > 0)

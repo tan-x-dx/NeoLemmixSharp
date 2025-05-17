@@ -22,9 +22,8 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         FileReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
 
         int stringId = rawFileData.Read16BitUnsignedInteger();

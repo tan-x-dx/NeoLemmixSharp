@@ -18,9 +18,8 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         levelData.AllGadgetData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)

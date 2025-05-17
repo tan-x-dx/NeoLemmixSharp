@@ -5,12 +5,12 @@ using NeoLemmixSharp.IO.Writing.Levels.Sections;
 
 namespace NeoLemmixSharp.IO.Writing.Levels;
 
-public readonly ref struct LevelWriter
+public readonly ref struct DefaultLevelWriter
 {
     private readonly LevelData _levelData;
     private readonly FileFormatVersion _version;
 
-    public LevelWriter(LevelData levelData, FileFormatVersion version)
+    public DefaultLevelWriter(LevelData levelData, FileFormatVersion version)
     {
         _levelData = levelData;
         _version = version;

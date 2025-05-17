@@ -11,9 +11,8 @@ internal sealed class HatchGroupDataSectionReader : LevelDataSectionReader
     {
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         levelData.AllHatchGroupData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)

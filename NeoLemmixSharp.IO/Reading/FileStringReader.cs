@@ -9,15 +9,13 @@ internal readonly struct FileStringReader<TPerfectHasher, TEnum>(StringIdLookup 
 {
     private readonly StringIdLookup _stringIdLookup = stringIdLookup;
 
-    public void ReadSection(RawFileDataReader<TPerfectHasher, TEnum> rawFileData)
+    public void ReadSection(RawFileDataReader<TPerfectHasher, TEnum> rawFileData, int numberOfItemsInSection)
     {
-        int numberOfItems = rawFileData.Read16BitUnsignedInteger();
-
         FileReadingException.ReaderAssert(_stringIdLookup.Count == 0, "Expected string lookup to be empty!");
-        _stringIdLookup.SetCapacity(numberOfItems + 1);
+        _stringIdLookup.SetCapacity(numberOfItemsInSection + 1);
         _stringIdLookup.Add(string.Empty);
 
-        while (numberOfItems-- > 0)
+        while (numberOfItemsInSection-- > 0)
         {
             var actualString = ReadString(rawFileData);
 

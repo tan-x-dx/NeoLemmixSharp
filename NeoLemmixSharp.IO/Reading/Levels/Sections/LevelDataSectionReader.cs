@@ -16,5 +16,5 @@ internal abstract class LevelDataSectionReader
 
     public ReadOnlySpan<byte> GetSectionIdentifierBytes() => LevelFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
 
-    public abstract void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData);
+    public abstract void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection);
 }

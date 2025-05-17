@@ -57,7 +57,9 @@ internal readonly ref struct DefaultLevelReader : ILevelReader
             sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),
             "Section Identifier mismatch!");
 
-        sectionReader.ReadSection(_rawFileData, result);
+        int numberOfItemsInSection = _rawFileData.Read16BitUnsignedInteger();
+
+        sectionReader.ReadSection(_rawFileData, result, numberOfItemsInSection);
 
         FileReadingException.ReaderAssert(
             interval.Start + interval.Length == _rawFileData.Position,

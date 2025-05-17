@@ -14,10 +14,8 @@ internal sealed class LevelTextDataSectionReader : LevelDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
-
         ReadTextLines(rawFileData, levelData.PreTextLines);
 
         ReadTextLines(rawFileData, levelData.PostTextLines);

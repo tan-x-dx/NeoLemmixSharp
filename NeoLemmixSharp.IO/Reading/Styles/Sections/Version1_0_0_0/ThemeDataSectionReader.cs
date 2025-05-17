@@ -10,7 +10,7 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader
     {
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData)
+    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
     {
         throw new NotImplementedException();
     }

@@ -15,9 +15,8 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData)
+    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         styleData.TerrainArchetypeData.EnsureCapacity(numberOfItemsInSection);
 
         while (numberOfItemsInSection-- > 0)

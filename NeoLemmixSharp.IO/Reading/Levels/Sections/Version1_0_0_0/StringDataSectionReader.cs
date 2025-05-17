@@ -14,8 +14,8 @@ internal sealed class StringDataSectionReader : LevelDataSectionReader
         _stringReader = new FileStringReader<LevelFileSectionIdentifierHasher, LevelFileSectionIdentifier>(stringIdLookup);
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
     {
-        _stringReader.ReadSection(rawFileData);
+        _stringReader.ReadSection(rawFileData, numberOfItemsInSection);
     }
 }
