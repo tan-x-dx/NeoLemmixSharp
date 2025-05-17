@@ -31,13 +31,13 @@ internal readonly ref struct DefaultStyleReader : IStyleReader
 
         var files = Directory.GetFiles(styleFolderPath);
 
-        foreach (var file in files)
+        foreach (var filePath in files)
         {
-            var fileExtension = Path.GetExtension(file.AsSpan());
+            var fileExtension = Path.GetExtension(filePath.AsSpan());
 
             if (fileExtension.Equals(DefaultFileExtensions.LevelStyleExtension, StringComparison.OrdinalIgnoreCase))
             {
-                foundFilePath = file;
+                foundFilePath = filePath;
                 return true;
             }
         }
