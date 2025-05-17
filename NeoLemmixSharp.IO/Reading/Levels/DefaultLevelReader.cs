@@ -41,9 +41,7 @@ internal readonly ref struct DefaultLevelReader : ILevelReader
 
     private void ReadSection(LevelData result, LevelDataSectionReader sectionReader)
     {
-        var sectionIdentifier = sectionReader.SectionIdentifier;
-
-        if (!_rawFileData.TryGetSectionInterval(sectionIdentifier, out var interval))
+        if (!_rawFileData.TryGetSectionInterval(sectionReader.SectionIdentifier, out var interval))
         {
             FileReadingException.ReaderAssert(
                 !sectionReader.IsNecessary,

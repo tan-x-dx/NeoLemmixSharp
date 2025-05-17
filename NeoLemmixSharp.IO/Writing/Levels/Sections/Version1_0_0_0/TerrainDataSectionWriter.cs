@@ -7,9 +7,9 @@ namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
 {
-    private readonly Dictionary<string, ushort> _stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup;
 
-    public TerrainDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
+    public TerrainDataSectionWriter(StringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.TerrainDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
@@ -36,8 +36,8 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
     {
         writer.Write(GetNumberOfBytesWritten(terrainData));
 
-        writer.Write(_stringIdLookup[terrainData.StyleName.ToString()]);
-        writer.Write(_stringIdLookup[terrainData.PieceName.ToString()]);
+        writer.Write(_stringIdLookup.GetStringId(terrainData.StyleName.ToString()));
+        writer.Write(_stringIdLookup.GetStringId(terrainData.PieceName.ToString()));
 
         writer.Write((ushort)(terrainData.Position.X + ReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(terrainData.Position.Y + ReadWriteHelpers.PositionOffset));

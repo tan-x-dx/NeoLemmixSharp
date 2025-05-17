@@ -69,9 +69,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader
         StyleData result,
         StyleDataSectionReader sectionReader)
     {
-        var sectionIdentifier = sectionReader.SectionIdentifier;
-
-        if (!_rawFileData.TryGetSectionInterval(sectionIdentifier, out var interval))
+        if (!_rawFileData.TryGetSectionInterval(sectionReader.SectionIdentifier, out var interval))
         {
             FileReadingException.ReaderAssert(
                 !sectionReader.IsNecessary,

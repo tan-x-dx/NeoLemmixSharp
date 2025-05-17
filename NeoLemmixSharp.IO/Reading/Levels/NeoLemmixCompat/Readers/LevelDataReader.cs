@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Style;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
@@ -104,7 +105,7 @@ internal sealed class LevelDataReader : NeoLemmixDataReader
 
     private void SetTheme(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelData.LevelTheme = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
+        _levelData.LevelTheme = new StyleIdentifier(_uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]));
     }
 
     private void SetBackground(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

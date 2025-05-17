@@ -3,18 +3,18 @@ using System.Text;
 
 namespace NeoLemmixSharp.IO.Reading;
 
-internal readonly struct FileStringReader<TPerfectHasher, TEnum>(List<string> stringIdLookup)
+internal readonly struct FileStringReader<TPerfectHasher, TEnum>(StringIdLookup stringIdLookup)
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
-    private readonly List<string> _stringIdLookup = stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup = stringIdLookup;
 
     public void ReadSection(RawFileDataReader<TPerfectHasher, TEnum> rawFileData)
     {
         int numberOfItems = rawFileData.Read16BitUnsignedInteger();
 
-        FileReadingException.ReaderAssert(_stringIdLookup.Count == 0, "Expected string list to be empty!");
-        _stringIdLookup.Capacity = numberOfItems + 1;
+        FileReadingException.ReaderAssert(_stringIdLookup.Count == 0, "Expected string lookup to be empty!");
+        _stringIdLookup.SetCapacity(numberOfItems + 1);
         _stringIdLookup.Add(string.Empty);
 
         while (numberOfItems-- > 0)

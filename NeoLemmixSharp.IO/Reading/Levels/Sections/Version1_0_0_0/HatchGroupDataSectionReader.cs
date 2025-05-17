@@ -43,5 +43,4 @@ internal sealed class HatchGroupDataSectionReader : LevelDataSectionReader
             InitialSpawnInterval = initialSpawnInterval
         };
     }
-
 }

@@ -11,9 +11,9 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
     private const int NumberOfBytesPerInputName = 2;
     private const int NumberOfBytesPerGadgetProperty = 5;
 
-    private readonly Dictionary<string, ushort> _stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup;
 
-    public GadgetDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
+    public GadgetDataSectionWriter(StringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.GadgetDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
@@ -41,8 +41,8 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write(GetNumberOfBytesWritten(gadgetData));
 
         writer.Write((ushort)gadgetData.Id);
-        writer.Write(_stringIdLookup[gadgetData.StyleName.ToString()]);
-        writer.Write(_stringIdLookup[gadgetData.PieceName.ToString()]);
+        writer.Write(_stringIdLookup.GetStringId(gadgetData.StyleName.ToString()));
+        writer.Write(_stringIdLookup.GetStringId(gadgetData.PieceName.ToString()));
 
         writer.Write((ushort)(gadgetData.Position.X + ReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(gadgetData.Position.Y + ReadWriteHelpers.PositionOffset));
@@ -54,7 +54,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write((byte)gadgetData.InputNames.Length);
         foreach (var inputName in gadgetData.InputNames)
         {
-            writer.Write(_stringIdLookup[inputName]);
+            writer.Write(_stringIdLookup.GetStringId(inputName));
         }
 
         var gadgetPropertyEnumerator = gadgetData.GetProperties();

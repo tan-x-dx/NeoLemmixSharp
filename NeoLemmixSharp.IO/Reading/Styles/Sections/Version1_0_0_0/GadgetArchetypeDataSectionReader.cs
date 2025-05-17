@@ -8,9 +8,9 @@ namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
 internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 {
-    private readonly List<string> _stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup;
 
-    public GadgetArchetypeDataSectionReader(List<string> stringIdLookup)
+    public GadgetArchetypeDataSectionReader(StringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection, false)
     {
         _stringIdLookup = stringIdLookup;

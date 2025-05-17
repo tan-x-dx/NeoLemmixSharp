@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
+using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Data.Level;
@@ -129,7 +130,7 @@ public sealed class LevelData
         }
     }
 
-    public string LevelTheme { get; set; } = null!;
+    public StyleIdentifier LevelTheme { get; set; }
     public BackgroundData? LevelBackground { get; set; }
 
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }

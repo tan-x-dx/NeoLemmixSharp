@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.FileFormats;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -14,10 +15,10 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         1 + // Enum specifier
         4; // Four bytes for actual data, padding with zeros where necessary
 
-    private readonly List<string> _stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup;
 
     public LevelMetadataSectionReader(
-        List<string> stringIdLookup)
+        StringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelMetadataSection, true)
     {
         _stringIdLookup = stringIdLookup;
@@ -35,7 +36,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         levelData.LevelAuthor = _stringIdLookup[stringId];
 
         stringId = rawFileData.Read16BitUnsignedInteger();
-        levelData.LevelTheme = _stringIdLookup[stringId];
+        levelData.LevelTheme = new StyleIdentifier(_stringIdLookup[stringId]);
 
         levelData.LevelId = rawFileData.Read64BitUnsignedInteger();
         levelData.Version = rawFileData.Read64BitUnsignedInteger();

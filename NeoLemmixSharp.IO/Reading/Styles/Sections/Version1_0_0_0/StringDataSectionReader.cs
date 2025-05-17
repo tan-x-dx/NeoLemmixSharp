@@ -8,7 +8,7 @@ internal sealed class StringDataSectionReader : StyleDataSectionReader
     private readonly FileStringReader<StyleFileSectionIdentifierHasher, StyleFileSectionIdentifier> _stringReader;
 
     public StringDataSectionReader(
-        List<string> stringIdLookup)
+        StringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.StringDataSection, true)
     {
         _stringReader = new FileStringReader<StyleFileSectionIdentifierHasher, StyleFileSectionIdentifier>(stringIdLookup);
