@@ -66,7 +66,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
     {
         writer.Write((byte)skillSetData.Skill.Id);
         writer.Write((byte)skillSetData.NumberOfSkills);
-        writer.Write((byte)skillSetData.TeamId);
+        writer.Write((byte)skillSetData.TribeId);
     }
 
     private static void WriteRequirements(

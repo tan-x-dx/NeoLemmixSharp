@@ -35,7 +35,7 @@ internal sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
         writer.Write(lemmingData.State);
 
         writer.Write((byte)DihedralTransformation.Encode(lemmingData.Orientation, lemmingData.FacingDirection));
-        writer.Write((byte)lemmingData.TeamId);
+        writer.Write((byte)lemmingData.TribeId);
         writer.Write((byte)lemmingData.InitialLemmingActionId);
     }
 }

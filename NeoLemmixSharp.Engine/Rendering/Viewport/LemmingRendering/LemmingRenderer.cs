@@ -54,7 +54,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             return;
         }
 
-        var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
+        var spriteBank = _lemming.State.TribeAffiliation.SpriteBank;
 
         _actionSprite = spriteBank.GetActionSprite(_lemming.CurrentAction);
 
@@ -70,7 +70,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         if (!_lemming.State.IsActive)
             return;
 
-        var spriteBank = _lemming.State.TeamAffiliation.SpriteBank;
+        var spriteBank = _lemming.State.TribeAffiliation.SpriteBank;
 
         _actionSprite = spriteBank.GetActionSprite(_lemming.CurrentAction);
 

@@ -69,7 +69,7 @@ internal readonly ref struct NeoLemmixLevelReader : ILevelReader
 
     private void ProcessLevelData()
     {
-        _levelData.NumberOfTeams = 1;
+        _levelData.NumberOfTribes = 1;
 
         /*  var objectiveRequirementsList = new List<IObjectiveRequirement>
           {

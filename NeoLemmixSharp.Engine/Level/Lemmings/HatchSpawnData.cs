@@ -1,12 +1,12 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class HatchSpawnData
 {
-    private readonly Team _team;
+    private readonly Tribe _tribe;
     private readonly uint _rawStateData;
     private readonly FacingDirection _facingDirection;
 
@@ -16,14 +16,14 @@ public sealed class HatchSpawnData
 
     public HatchSpawnData(
         int hatchGroupId,
-        Team team,
+        Tribe tribe,
         uint rawStateData,
         Orientation orientation,
         FacingDirection facingDirection,
         int lemmingsToRelease)
     {
         HatchGroupId = hatchGroupId;
-        _team = team;
+        _tribe = tribe;
         _rawStateData = rawStateData;
         Orientation = orientation;
         _facingDirection = facingDirection;
@@ -32,7 +32,7 @@ public sealed class HatchSpawnData
 
     public void InitialiseLemming(Lemming lemming)
     {
-        lemming.SetRawDataFromOther(_team, _rawStateData, Orientation, _facingDirection);
+        lemming.SetRawDataFromOther(_tribe, _rawStateData, Orientation, _facingDirection);
 
         FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         lemming.InitialFall = lemming.CurrentAction == FallerAction.Instance; // could be a walker if eg. spawned inside terrain

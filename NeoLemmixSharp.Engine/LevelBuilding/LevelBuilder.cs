@@ -13,9 +13,9 @@ using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
@@ -70,8 +70,8 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
         var lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
         var lemmingSpriteBank = lemmingSpriteBankBuilder.GetLemmingSpriteBank();
-        var teamManager = GetTeamManager(levelData, lemmingSpriteBank);
-        var levelGadgets = gadgetBuilder.GetLevelGadgets(lemmingManager, teamManager);
+        var tribeManager = GetTribeManager(levelData, lemmingSpriteBank);
+        var levelGadgets = gadgetBuilder.GetLevelGadgets(lemmingManager, tribeManager);
 
         using var levelSpriteBuilder = new LevelSpriteBuilder(_graphicsDevice, levelGadgets, levelLemmings);
 
@@ -149,7 +149,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             terrainPainter,
             lemmingManager,
             gadgetManager,
-            teamManager,
+            tribeManager,
             skillSetManager,
             levelObjectiveManager,
             controlPanel,
@@ -166,17 +166,17 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         return result;
     }
 
-    private static TeamManager GetTeamManager(LevelData levelData, LemmingSpriteBank lemmingSpriteBank)
+    private static TribeManager GetTribeManager(LevelData levelData, LemmingSpriteBank lemmingSpriteBank)
     {
-        var numberOfTeams = levelData.NumberOfTeams;
+        var numberOfTribes = levelData.NumberOfTribes;
 
-        var teams = new Team[numberOfTeams];
-        for (var i = 0; i < teams.Length; i++)
+        var tribes = new Tribe[numberOfTribes];
+        for (var i = 0; i < tribes.Length; i++)
         {
-            teams[i] = new Team(i, lemmingSpriteBank);
+            tribes[i] = new Tribe(i, lemmingSpriteBank);
         }
 
-        return new TeamManager(teams);
+        return new TribeManager(tribes);
     }
 
     private static LevelTimer CreateLevelTimer(LevelObjectiveManager levelObjectiveManager)

@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Objectives;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -36,9 +36,9 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     private static SkillTrackingData CreateFromSkillSetData(SkillSetData skillSetData, int id)
     {
         var lemmingSkill = LemmingSkill.AllItems[skillSetData.SkillId];
-        var team = LevelScreen.TeamManager.AllItems[skillSetData.TeamId];
+        var tribe = LevelScreen.TribeManager.AllItems[skillSetData.TribeId];
 
-        return new SkillTrackingData(id, lemmingSkill, team, skillSetData.NumberOfSkills);
+        return new SkillTrackingData(id, lemmingSkill, tribe, skillSetData.NumberOfSkills);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
             result &= skillTrackingData.Skill.IsClassicSkill() && // only classic skills
-                      skillTrackingData.Team.Id == EngineConstants.ClassicTeamId; // only classic team
+                      skillTrackingData.Tribe.Id == EngineConstants.ClassicTribeId; // only classic tribe
         }
 
         return result;
@@ -108,24 +108,24 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         return _skillTrackingDataList[skillDataId];
     }
 
-    public SkillTrackingData? GetSkillTrackingData(int skillId, int teamId)
+    public SkillTrackingData? GetSkillTrackingData(int skillId, int tribeId)
     {
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
             if (skillTrackingData.Skill.Id == skillId &&
-               skillTrackingData.Team.Id == teamId)
+               skillTrackingData.Tribe.Id == tribeId)
                 return skillTrackingData;
         }
 
         return null;
     }
 
-    public void SetSkillCount(LemmingSkill lemmingSkill, Team? team, int value, bool isDelta)
+    public void SetSkillCount(LemmingSkill lemmingSkill, Tribe? tribe, int value, bool isDelta)
     {
         foreach (var skillTrackingData in AllItems)
         {
             if (skillTrackingData.Skill != lemmingSkill ||
-                (team is not null && skillTrackingData.Team != team))
+                (tribe is not null && skillTrackingData.Tribe != tribe))
                 continue;
 
             if (isDelta)
@@ -145,9 +145,9 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         if (x == null) return -1;
         if (y == null) return 1;
 
-        var teamComparison = x.Team.Id.CompareTo(y.Team.Id);
-        if (teamComparison != 0)
-            return teamComparison;
+        var tribeComparison = x.Tribe.Id.CompareTo(y.Tribe.Id);
+        if (tribeComparison != 0)
+            return tribeComparison;
 
         var skillComparison = x.Skill.Id.CompareTo(y.Skill.Id);
         return skillComparison;

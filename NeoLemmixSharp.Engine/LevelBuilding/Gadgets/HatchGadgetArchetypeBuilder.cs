@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -23,10 +23,10 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
-        TeamManager teamManager)
+        TribeManager tribeManager)
     {
         var hatchGadgetId = gadgetData.GetProperty(GadgetProperty.HatchGroupId);
-        var teamId = gadgetData.GetProperty(GadgetProperty.TeamId);
+        var tribeId = gadgetData.GetProperty(GadgetProperty.TribeId);
         var rawLemmingState = (uint)gadgetData.GetProperty(GadgetProperty.RawLemmingState);
         var lemmingCount = gadgetData.GetProperty(GadgetProperty.Count);
 
@@ -48,7 +48,7 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         var hatchSpawnData = new HatchSpawnData(
             hatchGadgetId,
-            teamManager.AllItems[teamId],
+            tribeManager.AllItems[tribeId],
             rawLemmingState,
             gadgetData.Orientation,
             gadgetData.FacingDirection,

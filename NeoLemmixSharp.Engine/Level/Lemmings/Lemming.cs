@@ -6,8 +6,8 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
-using NeoLemmixSharp.Engine.Level.Teams;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using System.Diagnostics;
@@ -92,13 +92,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         Orientation orientation,
         FacingDirection facingDirection,
         int initialActionId,
-        int teamId)
+        int tribeId)
     {
         Id = id;
         Orientation = orientation;
         FacingDirection = facingDirection;
         CurrentAction = LemmingAction.GetActionOrDefault(initialActionId);
-        State = new LemmingState(this, teamId);
+        State = new LemmingState(this, tribeId);
         Renderer = new LemmingRenderer(this);
     }
 
@@ -108,7 +108,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         Orientation = Orientation.Down;
         FacingDirection = FacingDirection.Right;
         CurrentAction = NoneAction.Instance;
-        State = new LemmingState(this, EngineConstants.ClassicTeamId);
+        State = new LemmingState(this, EngineConstants.ClassicTribeId);
         Renderer = new LemmingRenderer(this);
     }
 
@@ -505,10 +505,10 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
 
-    public void SetRawDataFromOther(Team team, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
+    public void SetRawDataFromOther(Tribe tribe, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
     {
         State.SetRawDataFromOther(rawStateData);
-        State.TeamAffiliation = team;
+        State.TribeAffiliation = tribe;
         Orientation = orientation;
         FacingDirection = facingDirection;
     }

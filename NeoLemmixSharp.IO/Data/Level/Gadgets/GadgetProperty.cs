@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.IO.Data.Level.Gadgets;
 public enum GadgetProperty
 {
     HatchGroupId,
-    TeamId,
+    TribeId,
     SkillId,
     Width,
     Height,

@@ -9,17 +9,17 @@ public sealed class LemmingActionLayerRenderer
     private readonly Texture2D _texture;
 
     private readonly int _layerOffsetX;
-    private readonly TeamColorChooser _colorChooser;
+    private readonly TribeColorChooser _colorChooser;
 
     public LemmingActionLayerRenderer(Texture2D texture)
-        : this(texture, 0, TeamColorChooser.JustWhite)
+        : this(texture, 0, TribeColorChooser.JustWhite)
     {
     }
 
     public LemmingActionLayerRenderer(
         Texture2D texture,
         int layerOffsetX,
-        TeamColorChooser colorChooser)
+        TribeColorChooser colorChooser)
     {
         _texture = texture;
         _layerOffsetX = layerOffsetX;

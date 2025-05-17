@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -18,5 +18,5 @@ public interface IGadgetArchetypeBuilder
         GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
-        TeamManager teamManager);
+        TribeManager tribeManager);
 }

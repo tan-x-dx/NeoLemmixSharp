@@ -5,7 +5,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -29,11 +29,11 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
-        TeamManager teamManager)
+        TribeManager tribeManager)
     {
         var currentGadgetBounds = GetGadgetBounds(gadgetData);
         var resizeType = GetResizeTypeForGadgetOrientation(gadgetData);
-        var gadgetStates = GetGadgetStates(gadgetData, currentGadgetBounds, teamManager);
+        var gadgetStates = GetGadgetStates(gadgetData, currentGadgetBounds, tribeManager);
         var initialStateIndex = gadgetData.InitialStateId;
 
         var lemmingTracker = new LemmingTracker(lemmingManager);
@@ -90,7 +90,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     private GadgetState[] GetGadgetStates(
         GadgetData gadgetData,
         GadgetBounds currentGadgetBounds,
-        TeamManager teamManager)
+        TribeManager tribeManager)
     {
         var result = new GadgetState[AllGadgetStateData.Length];
 
@@ -106,7 +106,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             var hitBoxFilters = CreateHitBoxFilters(
                 gadgetData,
                 gadgetStateArchetypeData,
-                teamManager);
+                tribeManager);
             //var animationController = SpriteData.CreateAnimationController(i, currentGadgetBounds);
 
             result[i] = new GadgetState(
@@ -121,7 +121,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     private static LemmingHitBoxFilter[] CreateHitBoxFilters(
         GadgetData gadgetData,
         GadgetStateArchetypeData gadgetStateArchetypeData,
-        TeamManager teamManager)
+        TribeManager tribeManager)
     {
         var result = new LemmingHitBoxFilter[gadgetStateArchetypeData.HitBoxData.Length];
 
@@ -130,7 +130,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             var hitBoxData = gadgetStateArchetypeData.HitBoxData[i];
             var solidityType = hitBoxData.SolidityType;
             var hitBoxBehaviour = hitBoxData.HitBoxBehaviour;
-            var criteria = GetLemmingCriteria(gadgetData, hitBoxData, teamManager);
+            var criteria = GetLemmingCriteria(gadgetData, hitBoxData, tribeManager);
 
             result[i] = new LemmingHitBoxFilter(
                 solidityType,
@@ -148,14 +148,14 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     private static ILemmingCriterion[] GetLemmingCriteria(
         GadgetData gadgetData,
         HitBoxData hitBoxData,
-        TeamManager teamManager)
+        TribeManager tribeManager)
     {
         var numberOfCriteria =
             // hitBoxData.AllowedActions.CountIfNotNull() +
             // hitBoxData.AllowedStates.CountIfNotNull() +
             // hitBoxData.AllowedOrientations.CountIfNotNull() +
             // hitBoxData.AllowedFacingDirection.CountIfNotNull() +
-            (gadgetData.HasProperty(GadgetProperty.TeamId) ? 1 : 0);
+            (gadgetData.HasProperty(GadgetProperty.TribeId) ? 1 : 0);
 
         if (numberOfCriteria == 0)
             return [];
@@ -196,11 +196,11 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
              result[numberOfCriteria++] = facingDirectionFilter;
          }
 
-         if (gadgetData.TryGetProperty(GadgetProperty.TeamId, out var teamId))
+         if (gadgetData.TryGetProperty(GadgetProperty.TribeId, out var tribeId))
          {
-             var team = teamManager.AllItems[teamId];
-             var teamFilter = new LemmingTeamCriterion(team);
-             result[numberOfCriteria++] = teamFilter;
+             var tribe = tribeManager.AllItems[tribeId];
+             var tribeFilter = new LemmingTribeCriterion(tribe);
+             result[numberOfCriteria++] = tribeFilter;
          }*/
 
         Debug.Assert(numberOfCriteria == result.Length);

@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.Updates;
 public sealed class UpdateScheduler : IInitialisable
 {
     private LemmingSkill _queuedSkill = NoneSkill.Instance;
-    private int _queuedSkillTeamId;
+    private int _queuedSkillTribeId;
     private Lemming? _queuedSkillLemming;
 
     private UpdateState _updateState;
@@ -265,7 +265,7 @@ end;
     {
         _queuedSkill = lemmingSkill;
         _queuedSkillLemming = lemming;
-        _queuedSkillTeamId = lemming.State.TeamAffiliation.Id;
+        _queuedSkillTribeId = lemming.State.TribeAffiliation.Id;
         _queuedSkillFrame = EngineConstants.EngineTicksPerSecond - 1;
     }
 
@@ -292,7 +292,7 @@ end;
 
         var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(
             _queuedSkill.Id,
-            _queuedSkillTeamId);
+            _queuedSkillTribeId);
 
         if (skillTrackingData is not null &&
             LemmingCanBeTicked(_queuedSkillLemming) &&

@@ -35,7 +35,7 @@ public ref struct LemmingBuilder
                 Orientation.Down,
                 FacingDirection.Right,
                 EngineConstants.NoneActionId,
-                EngineConstants.ClassicTeamId)
+                EngineConstants.ClassicTribeId)
             {
                 AnchorPosition = new Point()
             };
@@ -54,7 +54,7 @@ public ref struct LemmingBuilder
                 prototype.Orientation,
                 prototype.FacingDirection,
                 prototype.InitialLemmingActionId,
-                prototype.TeamId)
+                prototype.TribeId)
             {
                 AnchorPosition = prototype.Position
             };

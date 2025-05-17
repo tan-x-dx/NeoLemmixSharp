@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using System.Numerics;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshotData>
 {
     private readonly Lemming _lemming;
-    private int _teamId;
+    private int _tribeId;
 
     private uint _states;
 
@@ -243,59 +243,59 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
         }
     }
 
-    public Team TeamAffiliation
+    public Tribe TribeAffiliation
     {
-        get => LevelScreen.TeamManager.AllItems[_teamId];
+        get => LevelScreen.TribeManager.AllItems[_tribeId];
         set
         {
-            _teamId = value.Id;
+            _tribeId = value.Id;
             UpdateHairAndBodyColors();
             UpdateSkinColor();
-            PaintColor = LevelScreen.TeamManager.AllItems[_teamId].PaintColor;
+            PaintColor = LevelScreen.TribeManager.AllItems[_tribeId].PaintColor;
         }
     }
 
-    public LemmingState(Lemming lemming, int teamId)
+    public LemmingState(Lemming lemming, int tribeId)
     {
         _lemming = lemming;
-        _teamId = teamId;
+        _tribeId = tribeId;
     }
 
     private void UpdateHairAndBodyColors()
     {
-        var team = LevelScreen.TeamManager.AllItems[_teamId];
+        var tribe = LevelScreen.TribeManager.AllItems[_tribeId];
 
         if (HasPermanentSkill)
         {
-            HairColor = team.PermanentSkillHairColor;
+            HairColor = tribe.PermanentSkillHairColor;
             BodyColor = IsNeutral
-                ? team.NeutralBodyColor
-                : team.PermanentSkillBodyColor;
+                ? tribe.NeutralBodyColor
+                : tribe.PermanentSkillBodyColor;
         }
         else
         {
-            HairColor = team.HairColor;
+            HairColor = tribe.HairColor;
             BodyColor = IsNeutral
-                ? team.NeutralBodyColor
-                : team.BodyColor;
+                ? tribe.NeutralBodyColor
+                : tribe.BodyColor;
         }
     }
 
     private void UpdateSkinColor()
     {
-        var team = LevelScreen.TeamManager.AllItems[_teamId];
+        var tribe = LevelScreen.TribeManager.AllItems[_tribeId];
 
         SkinColor = IsZombie
-            ? team.ZombieSkinColor
-            : team.SkinColor;
+            ? tribe.ZombieSkinColor
+            : tribe.SkinColor;
 
         if (IsAcidLemming)
         {
-            FootColor = team.AcidLemmingFootColor;
+            FootColor = tribe.AcidLemmingFootColor;
         }
         else if (IsWaterLemming)
         {
-            FootColor = team.WaterLemmingFootColor;
+            FootColor = tribe.WaterLemmingFootColor;
         }
         else
         {
@@ -305,7 +305,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public void SetRawDataFromOther(LemmingState otherLemmingState)
     {
-        _teamId = otherLemmingState._teamId;
+        _tribeId = otherLemmingState._tribeId;
         _states = otherLemmingState._states;
         UpdateHairAndBodyColors();
         UpdateSkinColor();
@@ -320,7 +320,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public void SetFromSnapshotData(in LemmingStateSnapshotData lemmingStateSnapshotData)
     {
-        _teamId = lemmingStateSnapshotData.TeamId;
+        _tribeId = lemmingStateSnapshotData.TribeId;
         _states = lemmingStateSnapshotData.StateData;
         UpdateHairAndBodyColors();
         UpdateSkinColor();
@@ -328,6 +328,6 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     public void WriteToSnapshotData(out LemmingStateSnapshotData data)
     {
-        data = new LemmingStateSnapshotData(_teamId, _states);
+        data = new LemmingStateSnapshotData(_tribeId, _states);
     }
 }

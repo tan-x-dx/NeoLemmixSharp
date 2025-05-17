@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -46,7 +46,7 @@ public ref struct GadgetBuilder
 
     public GadgetBase[] GetLevelGadgets(
         LemmingManager lemmingHasher,
-        TeamManager teamManager)
+        TribeManager tribeManager)
     {
         var allGadgetData = CollectionsMarshal.AsSpan(_levelData.AllGadgetData);
 
@@ -54,7 +54,7 @@ public ref struct GadgetBuilder
         {
             var gadgetArchetypeData = _gadgetArchetypeDataLookup[prototype.GetStylePiecePair()];
 
-            var gadget = Gadgets.GadgetBuilder.BuildGadget(gadgetArchetypeData, prototype, lemmingHasher, teamManager);
+            var gadget = Gadgets.GadgetBuilder.BuildGadget(gadgetArchetypeData, prototype, lemmingHasher, tribeManager);
             _gadgetList.Add(gadget);
         }
 

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace NeoLemmixSharp.Engine.Level.Teams;
+namespace NeoLemmixSharp.Engine.Level.Tribes;
 
-public sealed class TeamColorData
+public sealed class TribeColorData
 {
     public required Color HairColor { get; init; }
     public required Color PermanentSkillHairColor { get; init; }

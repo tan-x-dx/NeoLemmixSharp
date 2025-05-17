@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 
@@ -12,7 +12,7 @@ public static class GadgetBuilder
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData prototype,
         LemmingManager lemmingHasher,
-        TeamManager teamManager)
+        TribeManager tribeManager)
     {
         throw new NotImplementedException();
     }

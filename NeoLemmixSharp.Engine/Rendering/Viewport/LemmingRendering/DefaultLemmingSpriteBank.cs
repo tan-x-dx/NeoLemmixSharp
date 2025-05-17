@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Teams;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
@@ -56,9 +56,9 @@ public static class DefaultLemmingSpriteBank
         CreateFourLayerSprite(RotateCounterclockwiseAction.Instance, new Point(2, 10));
         CreateFourLayerSprite(RotateHalfAction.Instance, new Point(2, 10));
 
-        var teamColorData = GenerateDefaultTeamColorData();
+        var tribeColorData = GenerateDefaultTribeColorData();
 
-        DefaultLemmingSprites = new LemmingSpriteBank(actionSprites, teamColorData);
+        DefaultLemmingSprites = new LemmingSpriteBank(actionSprites, tribeColorData);
 
         return;
 
@@ -89,10 +89,10 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0, TeamColorChooser.GetHairColor),
-                        new(t, s.W, TeamColorChooser.GetSkinColor),
-                        new(t, s.W * 2, TeamColorChooser.GetFootColor),
-                        new(t, s.W * 3, TeamColorChooser.GetBodyColor)
+                        new(t, 0, TribeColorChooser.GetHairColor),
+                        new(t, s.W, TribeColorChooser.GetSkinColor),
+                        new(t, s.W * 2, TribeColorChooser.GetFootColor),
+                        new(t, s.W * 3, TribeColorChooser.GetBodyColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -109,11 +109,11 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0, TeamColorChooser.GetHairColor),
-                        new(t, s.W, TeamColorChooser.GetSkinColor),
-                        new(t, s.W * 2, TeamColorChooser.GetFootColor),
-                        new(t, s.W * 3, TeamColorChooser.GetBodyColor),
-                        new(t, s.W * 4, TeamColorChooser.GetPaintColor)
+                        new(t, 0, TribeColorChooser.GetHairColor),
+                        new(t, s.W, TribeColorChooser.GetSkinColor),
+                        new(t, s.W * 2, TribeColorChooser.GetFootColor),
+                        new(t, s.W * 3, TribeColorChooser.GetBodyColor),
+                        new(t, s.W * 4, TribeColorChooser.GetPaintColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -131,10 +131,10 @@ public static class DefaultLemmingSpriteBank
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
                         new(t),
-                        new(t, s.W, TeamColorChooser.GetHairColor),
-                        new(t, s.W * 2, TeamColorChooser.GetSkinColor),
-                        new(t, s.W * 3, TeamColorChooser.GetFootColor),
-                        new(t, s.W * 4, TeamColorChooser.GetBodyColor)
+                        new(t, s.W, TribeColorChooser.GetHairColor),
+                        new(t, s.W * 2, TribeColorChooser.GetSkinColor),
+                        new(t, s.W * 3, TribeColorChooser.GetFootColor),
+                        new(t, s.W * 4, TribeColorChooser.GetBodyColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -152,11 +152,11 @@ public static class DefaultLemmingSpriteBank
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
                         new(t),
-                        new(t, s.W, TeamColorChooser.GetHairColor),
-                        new(t, s.W * 2, TeamColorChooser.GetSkinColor),
-                        new(t, s.W * 3, TeamColorChooser.GetFootColor),
-                        new(t, s.W * 4, TeamColorChooser.GetBodyColor),
-                        new(t, s.W * 5, TeamColorChooser.GetPaintColor)
+                        new(t, s.W, TribeColorChooser.GetHairColor),
+                        new(t, s.W * 2, TribeColorChooser.GetSkinColor),
+                        new(t, s.W * 3, TribeColorChooser.GetFootColor),
+                        new(t, s.W * 4, TribeColorChooser.GetBodyColor),
+                        new(t, s.W * 5, TribeColorChooser.GetPaintColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -196,9 +196,9 @@ public static class DefaultLemmingSpriteBank
         actionSprites[action.Id] = spriteLayerGenerator(texture, anchorPoint, spriteSize);
     }
 
-    private static TeamColorData[] GenerateDefaultTeamColorData()
+    private static TribeColorData[] GenerateDefaultTribeColorData()
     {
-        var result = new TeamColorData[EngineConstants.MaxNumberOfTeams];
+        var result = new TribeColorData[EngineConstants.MaxNumberOfTribes];
 
         var defaultSkinColor = new Color(0xF0, 0xD0, 0xD0);
         var defaultAcidLemmingFootColor = new Color(0x00, 0xF0, 0x00);
@@ -208,109 +208,109 @@ public static class DefaultLemmingSpriteBank
 
         var defaultPaintColor = new Color(0xff, 0x00, 0xff);
 
-        var team0HairColor = new Color(0x04, 0xB0, 0x00);
-        var team0BodyColor = new Color(0x40, 0x44, 0xDF);
+        var tribe0HairColor = new Color(0x04, 0xB0, 0x00);
+        var tribe0BodyColor = new Color(0x40, 0x44, 0xDF);
 
-        var team1HairColor = new Color(0x00, 0xB0, 0xA9);
-        var team1BodyColor = new Color(0xD5, 0x3F, 0xDE);
+        var tribe1HairColor = new Color(0x00, 0xB0, 0xA9);
+        var tribe1BodyColor = new Color(0xD5, 0x3F, 0xDE);
 
-        var team2HairColor = new Color(0x00, 0x04, 0xB0);
-        var team2BodyColor = new Color(0xDE, 0x3F, 0x46);
+        var tribe2HairColor = new Color(0x00, 0x04, 0xB0);
+        var tribe2BodyColor = new Color(0xDE, 0x3F, 0x46);
 
-        var team3HairColor = new Color(0xAD, 0x00, 0xB0);
-        var team3BodyColor = new Color(0xDE, 0xD1, 0x3F);
+        var tribe3HairColor = new Color(0xAD, 0x00, 0xB0);
+        var tribe3BodyColor = new Color(0xDE, 0xD1, 0x3F);
 
-        var team4HairColor = new Color(0xB0, 0x00, 0x00);
-        var team4BodyColor = new Color(0x4A, 0xDE, 0x3F);
+        var tribe4HairColor = new Color(0xB0, 0x00, 0x00);
+        var tribe4BodyColor = new Color(0x4A, 0xDE, 0x3F);
 
-        var team5HairColor = new Color(0xB0, 0xA9, 0x00);
-        var team5BodyColor = new Color(0x3F, 0xDE, 0xD5);
+        var tribe5HairColor = new Color(0xB0, 0xA9, 0x00);
+        var tribe5BodyColor = new Color(0x3F, 0xDE, 0xD5);
 
-        result[0] = new TeamColorData
+        result[0] = new TribeColorData
         {
-            HairColor = team0HairColor,
-            PermanentSkillHairColor = team0BodyColor,
+            HairColor = tribe0HairColor,
+            PermanentSkillHairColor = tribe0BodyColor,
             SkinColor = defaultSkinColor,
             AcidLemmingFootColor = defaultAcidLemmingFootColor,
             WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
-            BodyColor = team0BodyColor,
-            PermanentSkillBodyColor = team0HairColor,
+            BodyColor = tribe0BodyColor,
+            PermanentSkillBodyColor = tribe0HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
 
             PaintColor = defaultPaintColor
         };
 
-        result[1] = new TeamColorData
+        result[1] = new TribeColorData
         {
-            HairColor = team1HairColor,
-            PermanentSkillHairColor = team1BodyColor,
+            HairColor = tribe1HairColor,
+            PermanentSkillHairColor = tribe1BodyColor,
             SkinColor = defaultSkinColor,
             AcidLemmingFootColor = defaultAcidLemmingFootColor,
             WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
-            BodyColor = team1BodyColor,
-            PermanentSkillBodyColor = team1HairColor,
+            BodyColor = tribe1BodyColor,
+            PermanentSkillBodyColor = tribe1HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
 
             PaintColor = defaultPaintColor
         };
 
-        result[2] = new TeamColorData
+        result[2] = new TribeColorData
         {
-            HairColor = team2HairColor,
-            PermanentSkillHairColor = team2BodyColor,
+            HairColor = tribe2HairColor,
+            PermanentSkillHairColor = tribe2BodyColor,
             SkinColor = defaultSkinColor,
             AcidLemmingFootColor = defaultAcidLemmingFootColor,
             WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
-            BodyColor = team2BodyColor,
-            PermanentSkillBodyColor = team2HairColor,
+            BodyColor = tribe2BodyColor,
+            PermanentSkillBodyColor = tribe2HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
 
             PaintColor = defaultPaintColor
         };
 
-        result[3] = new TeamColorData
+        result[3] = new TribeColorData
         {
-            HairColor = team3HairColor,
-            PermanentSkillHairColor = team3BodyColor,
+            HairColor = tribe3HairColor,
+            PermanentSkillHairColor = tribe3BodyColor,
             SkinColor = defaultSkinColor,
             AcidLemmingFootColor = defaultAcidLemmingFootColor,
             WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
-            BodyColor = team3BodyColor,
-            PermanentSkillBodyColor = team3HairColor,
+            BodyColor = tribe3BodyColor,
+            PermanentSkillBodyColor = tribe3HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
 
             PaintColor = defaultPaintColor
         };
 
-        result[4] = new TeamColorData
+        result[4] = new TribeColorData
         {
-            HairColor = team4HairColor,
-            PermanentSkillHairColor = team4BodyColor,
+            HairColor = tribe4HairColor,
+            PermanentSkillHairColor = tribe4BodyColor,
             SkinColor = defaultSkinColor,
             AcidLemmingFootColor = defaultAcidLemmingFootColor,
             WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
-            BodyColor = team4BodyColor,
-            PermanentSkillBodyColor = team4HairColor,
+            BodyColor = tribe4BodyColor,
+            PermanentSkillBodyColor = tribe4HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
 
             PaintColor = defaultPaintColor
         };
 
-        result[5] = new TeamColorData
+        result[5] = new TribeColorData
         {
-            HairColor = team5HairColor,
-            PermanentSkillHairColor = team5BodyColor,
+            HairColor = tribe5HairColor,
+            PermanentSkillHairColor = tribe5BodyColor,
             SkinColor = defaultSkinColor,
             AcidLemmingFootColor = defaultAcidLemmingFootColor,
             WaterLemmingFootColor = defaultWaterLemmingFootColor,
             ZombieSkinColor = defaultZombieSkinColor,
-            BodyColor = team5BodyColor,
-            PermanentSkillBodyColor = team5HairColor,
+            BodyColor = tribe5BodyColor,
+            PermanentSkillBodyColor = tribe5HairColor,
             NeutralBodyColor = defaultNeutralBodyColor,
 
             PaintColor = defaultPaintColor

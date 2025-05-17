@@ -15,7 +15,7 @@ public sealed class LevelData
     private int? _levelStartPositionX;
     private int? _levelStartPositionY;
     private int _maxNumberOfClonedLemmings = -1;
-    private int _numberOfTeams = -1;
+    private int _numberOfTribes = -1;
 
     public string LevelTitle { get; set; } = string.Empty;
     public string LevelAuthor { get; set; } = string.Empty;
@@ -110,17 +110,17 @@ public sealed class LevelData
         }
     }
 
-    public int NumberOfTeams
+    public int NumberOfTribes
     {
-        get => _numberOfTeams;
+        get => _numberOfTribes;
         set
         {
             if (value <= 0)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Number of teams must be greater than zero!");
-            if (value > EngineConstants.MaxNumberOfTeams)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Too many teams!");
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Number of tribes must be greater than zero!");
+            if (value > EngineConstants.MaxNumberOfTribes)
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Too many tribes!");
 
-            _numberOfTeams = value;
+            _numberOfTribes = value;
         }
     }
 
@@ -162,7 +162,7 @@ public sealed class LevelData
         if (_levelWidth < 0) return "Level width not set!";
         if (_levelHeight < 0) return "Level height not set!";
         if (_maxNumberOfClonedLemmings < 0) return "Cloner counts not evaluated!";
-        if (_numberOfTeams < 0) return "Number of teams not set!";
+        if (_numberOfTribes < 0) return "Number of tribes not set!";
         if (PrePlacedLemmingData.Count == 0 && HatchLemmingData.Count == 0) return "Number of lemmings is invalid!";
         if (LevelTitle.Length == 0) return "Level title not set!";
         if (LevelAuthor.Length == 0) return "Level author not set!";
