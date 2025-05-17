@@ -11,12 +11,11 @@ internal sealed class VersionHelper : ILevelDataSectionWriterVersionHelper
 
         LevelDataSectionWriter[] sectionWriters =
         [
-            // StringDataSectionWriter needs to be first as it will populate the stringIdLookup!
             new StringDataSectionWriter(stringIdLookup),
-
             new LevelMetadataSectionWriter(stringIdLookup),
-            new LevelTextDataSectionWriter(stringIdLookup),
+            new LevelMessageDataSectionWriter(stringIdLookup),
             new LevelObjectiveDataSectionWriter(stringIdLookup),
+            new TribeDataSectionWriter(stringIdLookup),
             new HatchGroupDataSectionWriter(),
             new PrePlacedLemmingDataSectionWriter(),
             terrainSectionWriter,

@@ -3,11 +3,11 @@ using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
-internal sealed class LevelTextDataSectionReader : LevelDataSectionReader
+internal sealed class LevelMessageDataSectionReader : LevelDataSectionReader
 {
     private readonly StringIdLookup _stringIdLookup;
 
-    public LevelTextDataSectionReader(
+    public LevelMessageDataSectionReader(
         StringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelTextDataSection, false)
     {

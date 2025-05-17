@@ -10,8 +10,9 @@ internal enum LevelFileSectionIdentifier
     StringDataSection,
     LevelMetadataSection,
     LevelTextDataSection,
-    HatchGroupDataSection,
     LevelObjectivesDataSection,
+    TribeDataSection,
+    HatchGroupDataSection,
     PrePlacedLemmingDataSection,
     TerrainDataSection,
     TerrainGroupDataSection,
@@ -23,7 +24,7 @@ internal readonly struct LevelFileSectionIdentifierHasher :
 {
     public const int NumberOfBytesForLevelSectionIdentifier = 2;
 
-    private const int NumberOfEnumValues = 9;
+    private const int NumberOfEnumValues = 10;
 
     public int NumberOfItems => NumberOfEnumValues;
 

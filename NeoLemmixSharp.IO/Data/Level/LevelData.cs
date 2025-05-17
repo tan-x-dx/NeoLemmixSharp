@@ -5,6 +5,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Data.Level;
@@ -116,20 +117,6 @@ public sealed class LevelData
         }
     }
 
-    public int NumberOfTribes
-    {
-        get => _numberOfTribes;
-        set
-        {
-            if (value <= 0)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Number of tribes must be greater than zero!");
-            if (value > EngineConstants.MaxNumberOfTribes)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Too many tribes!");
-
-            _numberOfTribes = value;
-        }
-    }
-
     public StyleIdentifier LevelTheme { get; set; }
     public BackgroundData? LevelBackground { get; set; }
 
@@ -142,6 +129,7 @@ public sealed class LevelData
 
     public List<LemmingData> PrePlacedLemmingData { get; } = [];
     public List<LemmingData> HatchLemmingData { get; } = [];
+    public List<TribeIdentifier> TribeIdentifiers { get; } = [];
 
     public List<TerrainData> AllTerrainData { get; } = [];
     public List<TerrainGroupData> AllTerrainGroups { get; } = [];

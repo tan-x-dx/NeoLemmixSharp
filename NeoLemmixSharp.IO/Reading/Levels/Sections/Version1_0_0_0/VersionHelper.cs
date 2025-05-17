@@ -11,12 +11,11 @@ internal sealed class VersionHelper : ILevelDataSectionReaderVersionHelper
         var terrainComponentReader = new TerrainDataSectionReader(stringIdLookup);
         LevelDataSectionReader[] sectionReaders =
         [
-            // Always process string data first
             new StringDataSectionReader(stringIdLookup),
-
             new LevelMetadataSectionReader(stringIdLookup),
-            new LevelTextDataSectionReader(stringIdLookup),
+            new LevelMessageDataSectionReader(stringIdLookup),
             new LevelObjectiveDataSectionReader(stringIdLookup),
+            new TribeDataSectionReader(stringIdLookup),
             new HatchGroupDataSectionReader(),
             new PrePlacedLemmingDataSectionReader(),
             terrainComponentReader,

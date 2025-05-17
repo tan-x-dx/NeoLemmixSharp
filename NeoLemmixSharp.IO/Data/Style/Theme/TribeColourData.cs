@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace NeoLemmixSharp.Engine.Level.Tribes;
+namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
 public sealed class TribeColorData
 {

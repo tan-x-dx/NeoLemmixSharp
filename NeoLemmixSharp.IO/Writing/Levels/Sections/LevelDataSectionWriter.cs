@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections;
 
-internal abstract class LevelDataSectionWriter
+internal abstract class LevelDataSectionWriter : IComparable<LevelDataSectionWriter>
 {
     public LevelFileSectionIdentifier SectionIdentifier { get; }
     public bool IsNecessary { get; }
@@ -19,4 +19,12 @@ internal abstract class LevelDataSectionWriter
     public abstract ushort CalculateNumberOfItemsInSection(LevelData levelData);
 
     public abstract void WriteSection(RawLevelFileDataWriter writer, LevelData levelData);
+
+    public int CompareTo(LevelDataSectionWriter? other)
+    {
+        if (other == null) return 1;
+        if (ReferenceEquals(this, other)) return 0;
+
+        return SectionIdentifier.CompareTo(other.SectionIdentifier);
+    }
 }

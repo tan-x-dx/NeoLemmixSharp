@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections;
 
-internal abstract class LevelDataSectionReader
+internal abstract class LevelDataSectionReader : IComparable<LevelDataSectionReader>
 {
     public LevelFileSectionIdentifier SectionIdentifier { get; }
     public bool IsNecessary { get; }
@@ -17,4 +17,12 @@ internal abstract class LevelDataSectionReader
     public ReadOnlySpan<byte> GetSectionIdentifierBytes() => LevelFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
 
     public abstract void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection);
+
+    public int CompareTo(LevelDataSectionReader? other)
+    {
+        if (other == null) return 1;
+        if (ReferenceEquals(this, other)) return 0;
+
+        return SectionIdentifier.CompareTo(other.SectionIdentifier);
+    }
 }
