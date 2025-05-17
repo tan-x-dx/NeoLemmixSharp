@@ -22,7 +22,12 @@ public sealed class LevelData
     public ulong LevelId { get; set; }
     public ulong Version { get; set; }
 
-    public required FileFormatType FileFormatType { get; init; }
+    public FileFormatType FileFormatType { get; }
+
+    public LevelData(FileFormatType fileFormatType)
+    {
+        FileFormatType = fileFormatType;
+    }
 
     public void SetLevelWidth(int value)
     {

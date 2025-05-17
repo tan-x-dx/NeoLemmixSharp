@@ -25,7 +25,7 @@ internal readonly ref struct DefaultLevelReader : ILevelReader
 
     private LevelData ReadFile()
     {
-        var result = new LevelData { FileFormatType = FileFormatType.Default };
+        var result = new LevelData(FileFormatType.Default);
 
         var version = _rawFileData.Version;
 

@@ -22,7 +22,7 @@ internal readonly ref struct NeoLemmixLevelReader : ILevelReader
 
     public NeoLemmixLevelReader(string filePath)
     {
-        _levelData = new LevelData { FileFormatType = FileFormats.FileFormatType.NeoLemmix };
+        _levelData = new LevelData(FileFormats.FileFormatType.NeoLemmix);
 
         _levelDataReader = new LevelDataReader(_uniqueStringSet, _levelData);
         _skillSetReader = new SkillSetReader();
