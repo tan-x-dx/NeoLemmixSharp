@@ -4,12 +4,20 @@ namespace NeoLemmixSharp.IO.Data.Level;
 
 public sealed class BackgroundData
 {
-    public required Color Color { get; init; }
-    public required string BackgroundImageName { get; init; }
+    public Color Color { get; }
+    public string BackgroundImageName { get; }
 
     public bool IsSolidColor => string.IsNullOrWhiteSpace(BackgroundImageName);
 
-    internal BackgroundData()
+    internal BackgroundData(Color color)
     {
+        Color = color;
+        BackgroundImageName = string.Empty;
+    }
+
+    internal BackgroundData(string backgroundImageName)
+    {
+        Color = Color.Black;
+        BackgroundImageName = backgroundImageName;
     }
 }

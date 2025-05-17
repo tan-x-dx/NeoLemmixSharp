@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Level;
@@ -178,10 +177,6 @@ internal sealed class LevelDataReader : NeoLemmixDataReader
 
     private BackgroundData ParseBackgroundData(ReadOnlySpan<char> backgroundToken)
     {
-        return new BackgroundData
-        {
-            Color = Color.Black,
-            BackgroundImageName = _uniqueStringSet.GetUniqueStringInstance(backgroundToken)
-        };
+        return new BackgroundData(_uniqueStringSet.GetUniqueStringInstance(backgroundToken));
     }
 }

@@ -1,10 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.BoundaryBehaviours;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.FileFormats;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
@@ -83,7 +81,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
     {
         var rawBytes = rawFileData.ReadBytes(NumberOfBytesWrittenForBackgroundData);
 
-        uint rawBackgroundType = rawBytes[0];
+        int rawBackgroundType = rawBytes[0];
         var backgroundType = (BackgroundType)rawBackgroundType;
 
         levelData.LevelBackground = backgroundType switch
@@ -92,39 +90,26 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
             BackgroundType.SolidColorBackground => ReadSolidColorBackgroundData(rawBytes),
             BackgroundType.TextureBackground => ReadTextureBackgroundData(rawBytes),
 
-            _ => Helpers.ThrowUnknownEnumValueException<BackgroundType, BackgroundData>(backgroundType)
+            _ => Helpers.ThrowUnknownEnumValueException<BackgroundType, BackgroundData?>(backgroundType)
         };
 
         return;
 
         static BackgroundData? ReadNoBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            Debug.Assert(rawBytes.Length == 5);
-
             return null;
         }
 
         static BackgroundData ReadSolidColorBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            Debug.Assert(rawBytes.Length == 5);
-
-            return new BackgroundData
-            {
-                Color = ReadWriteHelpers.ReadArgbBytes(rawBytes[1..]),
-                BackgroundImageName = string.Empty
-            };
+            return new BackgroundData(ReadWriteHelpers.ReadArgbBytes(rawBytes[1..]));
         }
 
         BackgroundData ReadTextureBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            Debug.Assert(rawBytes.Length == 5);
             ushort backgroundStringId = Unsafe.ReadUnaligned<ushort>(in rawBytes[1]);
 
-            return new BackgroundData
-            {
-                Color = Color.Black,
-                BackgroundImageName = _stringIdLookup[backgroundStringId]
-            };
+            return new BackgroundData(_stringIdLookup[backgroundStringId]);
         }
     }
 }

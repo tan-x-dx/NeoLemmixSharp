@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics.Contracts;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace NeoLemmixSharp.IO.Writing;
@@ -30,6 +31,7 @@ internal readonly struct StringIdLookup
         }
     }
 
+    [Pure]
     internal ushort GetStringId(string? s)
     {
         if (string.IsNullOrEmpty(s))
@@ -44,6 +46,7 @@ internal readonly struct StringIdLookup
     internal IEnumerable<KeyValuePair<string, ushort>> OrderedPairs => _lookup
         .OrderBy(x => x.Value);
 
+    [Pure]
     internal int CalculateBufferSize()
     {
         var maxBufferSize = 0;

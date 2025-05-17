@@ -51,8 +51,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
         }
     }
 
-    private void GenerateStringIdLookup(
-        LevelData levelData)
+    private void GenerateStringIdLookup(LevelData levelData)
     {
         FileWritingException.WriterAssert(_stringIdLookup.Count == 0, "Expected string id lookup to be empty!");
 
@@ -68,6 +67,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         _stringIdLookup.RecordString(levelData.LevelTitle);
         _stringIdLookup.RecordString(levelData.LevelAuthor);
+        _stringIdLookup.RecordString(levelData.LevelTheme.ToString());
 
         HandleBackgroundString(levelData);
     }
