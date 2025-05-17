@@ -48,8 +48,8 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
     [DebuggerStepThrough]
     public int CompareTo(FileFormatVersion value)
     {
-        return _upperBits != value._upperBits ? _upperBits > value._upperBits ? 1 : -1 :
-               _lowerBits != value._lowerBits ? _lowerBits > value._lowerBits ? 1 : -1 :
+        return _upperBits != value._upperBits ? (_upperBits > value._upperBits ? 1 : -1) :
+               _lowerBits != value._lowerBits ? (_lowerBits > value._lowerBits ? 1 : -1) :
                0;
     }
 

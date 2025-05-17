@@ -59,22 +59,17 @@ public static class FileTypeHandler
 
         return typeAndFormat.Format switch
         {
-            FileFormatType.Default => ReadDefaultFormatLevel(filePath),
-            FileFormatType.NeoLemmix => ReadNeoLemmixFormatLevel(filePath),
+            FileFormatType.Default => ReadLevel<DefaultLevelReader>(filePath),
+            FileFormatType.NeoLemmix => ReadLevel<NeoLemmixLevelReader>(filePath),
 
             _ => Helpers.ThrowUnknownEnumValueException<FileFormatType, LevelData>(typeAndFormat.Format)
         };
     }
 
-    private static LevelData ReadDefaultFormatLevel(string filePath)
+    private static LevelData ReadLevel<TReaderType>(string filePath)
+        where TReaderType : ILevelReader<TReaderType>, allows ref struct
     {
-        using var reader = new DefaultLevelReader(filePath);
-        return reader.ReadLevel();
-    }
-
-    private static LevelData ReadNeoLemmixFormatLevel(string filePath)
-    {
-        using var reader = new NeoLemmixLevelReader(filePath);
+        using var reader = TReaderType.Create(filePath);
         return reader.ReadLevel();
     }
 
@@ -82,22 +77,17 @@ public static class FileTypeHandler
     {
         return styleFormatPair.FileFormatType switch
         {
-            FileFormatType.Default => ReadDefaultFormatStyle(styleFormatPair.StyleIdentifier),
-            FileFormatType.NeoLemmix => ReadNeoLemmixFormatStyle(styleFormatPair.StyleIdentifier),
+            FileFormatType.Default => ReadStyle<DefaultStyleReader>(styleFormatPair.StyleIdentifier),
+            FileFormatType.NeoLemmix => ReadStyle<NeoLemmixStyleReader>(styleFormatPair.StyleIdentifier),
 
             _ => Helpers.ThrowUnknownEnumValueException<FileFormatType, StyleData>(styleFormatPair.FileFormatType)
         };
     }
 
-    private static StyleData ReadDefaultFormatStyle(StyleIdentifier styleIdentifier)
+    private static StyleData ReadStyle<TReaderType>(StyleIdentifier styleIdentifier)
+        where TReaderType : IStyleReader<TReaderType>, allows ref struct
     {
-        using var reader = new DefaultStyleReader(styleIdentifier);
-        return reader.ReadStyle();
-    }
-
-    private static StyleData ReadNeoLemmixFormatStyle(StyleIdentifier styleIdentifier)
-    {
-        using var reader = new NeoLemmixStyleReader(styleIdentifier);
+        using var reader = TReaderType.Create(styleIdentifier);
         return reader.ReadStyle();
     }
 }

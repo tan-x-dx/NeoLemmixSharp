@@ -4,10 +4,11 @@ using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 
-internal readonly ref struct NeoLemmixLevelReader : ILevelReader
+internal readonly ref struct NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelReader>
 {
     private readonly LevelData _levelData;
     private readonly UniqueStringSet _uniqueStringSet = new();
@@ -20,7 +21,10 @@ internal readonly ref struct NeoLemmixLevelReader : ILevelReader
 
     private readonly DataReaderList _dataReaderList;
 
-    public NeoLemmixLevelReader(string filePath)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static NeoLemmixLevelReader Create(string filePath) => new(filePath);
+
+    private NeoLemmixLevelReader(string filePath)
     {
         _levelData = new LevelData(FileFormats.FileFormatType.NeoLemmix);
 

@@ -4,15 +4,19 @@ using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Reading.Styles.Sections;
 using NeoLemmixSharp.IO.Versions;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles;
 
-internal readonly ref struct DefaultStyleReader : IStyleReader
+internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReader>
 {
     private readonly StyleIdentifier _styleIdentifier;
     private readonly RawStyleFileDataReader _rawFileData;
 
-    internal DefaultStyleReader(StyleIdentifier style)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DefaultStyleReader Create(StyleIdentifier styleIdentifier) => new(styleIdentifier);
+
+    private DefaultStyleReader(StyleIdentifier style)
     {
         if (!TryLocateStyleFile(style, out var styleFilePath))
             throw new FileReadingException($"Could not locate style file for style: {style}");

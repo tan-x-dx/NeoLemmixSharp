@@ -2,14 +2,18 @@
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Reading.Levels.Sections;
 using NeoLemmixSharp.IO.Versions;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Levels;
 
-internal readonly ref struct DefaultLevelReader : ILevelReader
+internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReader>
 {
     private readonly RawLevelFileDataReader _rawFileData;
 
-    internal DefaultLevelReader(string filePath)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DefaultLevelReader Create(string filePath) => new(filePath);
+
+    private DefaultLevelReader(string filePath)
     {
         using var fileStream = new FileStream(filePath, FileMode.Open);
         _rawFileData = new RawLevelFileDataReader(fileStream);

@@ -1,10 +1,14 @@
 ﻿using NeoLemmixSharp.IO.Data.Style;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat;
 
-internal readonly ref struct NeoLemmixStyleReader : IStyleReader
+internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleReader>
 {
-    public NeoLemmixStyleReader(StyleIdentifier styleIdentifier)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static NeoLemmixStyleReader Create(StyleIdentifier styleIdentifier) => new(styleIdentifier);
+
+    private NeoLemmixStyleReader(StyleIdentifier styleIdentifier)
     {
 
     }
