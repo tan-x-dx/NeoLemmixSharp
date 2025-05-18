@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Data.Style;
@@ -19,6 +20,7 @@ internal sealed class StyleData
         FileFormatType = fileFormatType;
     }
 
+    internal ThemeData ThemeData { get; set; } = null!;
     internal Dictionary<PieceIdentifier, TerrainArchetypeData> TerrainArchetypeData { get; } = new(EngineConstants.AssumedNumberOfTerrainArchetypeDataInStyle);
     internal Dictionary<PieceIdentifier, GadgetArchetypeData> GadgetArchetypeData { get; } = new(EngineConstants.AssumedNumberOfGadgetArchetypeDataInStyle);
 }

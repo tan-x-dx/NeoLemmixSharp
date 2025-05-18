@@ -12,17 +12,16 @@ namespace NeoLemmixSharp.IO.Data.Level;
 
 public sealed class LevelData
 {
+    public string LevelTitle { get; set; } = string.Empty;
+    public string LevelAuthor { get; set; } = string.Empty;
+    public ulong LevelId { get; set; }
+    public ulong Version { get; set; }
+
     private int _levelWidth = -1;
     private int _levelHeight = -1;
     private int? _levelStartPositionX;
     private int? _levelStartPositionY;
     private int _maxNumberOfClonedLemmings = -1;
-    private int _numberOfTribes = -1;
-
-    public string LevelTitle { get; set; } = string.Empty;
-    public string LevelAuthor { get; set; } = string.Empty;
-    public ulong LevelId { get; set; }
-    public ulong Version { get; set; }
 
     public FileFormatType FileFormatType { get; }
 
@@ -156,7 +155,10 @@ public sealed class LevelData
         if (_levelWidth < 0) return "Level width not set!";
         if (_levelHeight < 0) return "Level height not set!";
         if (_maxNumberOfClonedLemmings < 0) return "Cloner counts not evaluated!";
-        if (_numberOfTribes < 0) return "Number of tribes not set!";
+
+        if (TribeIdentifiers.Count == 0) return "Level tribes not set!";
+        if (TribeIdentifiers.Count != TribeIdentifiers.Distinct().Count()) return "Non-unique tribes specified!";
+
         if (PrePlacedLemmingData.Count == 0 && HatchLemmingData.Count == 0) return "Number of lemmings is invalid!";
         if (LevelTitle.Length == 0) return "Level title not set!";
         if (LevelAuthor.Length == 0) return "Level author not set!";

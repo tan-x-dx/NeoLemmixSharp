@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util.PositionTracking;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
@@ -264,6 +265,7 @@ public static class EngineConstants
     public const int NumberOfLemmingActions = 34;
     public const int LongestActionNameLength = 11;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsValidLemmingActionId(int lemmingActionId)
     {
         return (uint)lemmingActionId < NumberOfLemmingActions;
@@ -480,6 +482,7 @@ public static class EngineConstants
 
     #region Lemming Skill Constants
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsValidLemmingSkillId(int lemmingSkillId)
     {
         return (uint)lemmingSkillId < NumberOfLemmingSkills;
