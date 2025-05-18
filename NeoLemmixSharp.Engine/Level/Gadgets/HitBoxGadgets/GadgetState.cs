@@ -3,7 +3,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
-using System.Runtime.CompilerServices;
 using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
@@ -34,36 +33,34 @@ public sealed class GadgetState
         return EmptyHitBoxRegion.Instance;
     }
 
-    [SkipLocalsInit]
-    public unsafe RectangularRegion GetMininmumBoundingBoxForAllHitBoxes(Point offset)
+    public RectangularRegion GetMininmumBoundingBoxForAllHitBoxes(Point offset)
     {
         if (_hitBoxLookup.Count == 0)
             return new RectangularRegion(offset);
 
-        var x0 = int.MaxValue;
-        var y0 = int.MaxValue;
-        var x1 = int.MinValue;
-        var y1 = int.MinValue;
+        var x = int.MaxValue;
+        var y = int.MaxValue;
+        var w = int.MinValue;
+        var h = int.MinValue;
 
         foreach (var kvp in _hitBoxLookup)
         {
             var hitBoxBounds = kvp.Value.CurrentBounds;
             var bottomRight = hitBoxBounds.GetBottomRight();
 
-            x0 = Math.Min(x0, hitBoxBounds.X);
-            y0 = Math.Min(y0, hitBoxBounds.Y);
-            x1 = Math.Max(x1, bottomRight.X);
-            y1 = Math.Max(y1, bottomRight.Y);
+            x = Math.Min(x, hitBoxBounds.X);
+            y = Math.Min(y, hitBoxBounds.Y);
+            w = Math.Max(w, bottomRight.X);
+            h = Math.Max(h, bottomRight.Y);
         }
 
-        x1 += 1 - x0;
-        y1 += 1 - y0;
+        w += 1 - x;
+        h += 1 - y;
 
-        x0 += offset.X;
-        y0 += offset.Y;
+        x += offset.X;
+        y += offset.Y;
 
-        int* p = stackalloc int[4] { x0, y0, x1, y1 };
-        return *(RectangularRegion*)p;
+        return new RectangularRegion(new Point(x, y), new Size(w, h));
     }
 
     public void OnTransitionTo()
