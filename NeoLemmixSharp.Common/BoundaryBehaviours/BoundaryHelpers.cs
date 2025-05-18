@@ -1,18 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
 public static class BoundaryHelpers
 {
-    [DoesNotReturn]
-    private static BoundaryBehaviour ThrowUnknownBoundaryBehaviourException(BoundaryBehaviourType boundaryBehaviourType)
-    {
-        throw new ArgumentOutOfRangeException(
-            nameof(boundaryBehaviourType),
-            boundaryBehaviourType,
-            "Unknown boundary behaviour type");
-    }
-
     public static BoundaryBehaviour GetHorizontalBoundaryBehaviour(
         this BoundaryBehaviourType boundaryBehaviourType,
         int levelWidth)
@@ -23,7 +14,7 @@ public static class BoundaryHelpers
                 boundaryBehaviourType,
                 levelWidth);
 
-        return ThrowUnknownBoundaryBehaviourException(boundaryBehaviourType);
+        return Helpers.ThrowUnknownEnumValueException<BoundaryBehaviourType, BoundaryBehaviour>(boundaryBehaviourType);
     }
 
     public static BoundaryBehaviour GetVerticalBoundaryBehaviour(
@@ -36,6 +27,6 @@ public static class BoundaryHelpers
                 boundaryBehaviourType,
                 levelHeight);
 
-        return ThrowUnknownBoundaryBehaviourException(boundaryBehaviourType);
+        return Helpers.ThrowUnknownEnumValueException<BoundaryBehaviourType, BoundaryBehaviour>(boundaryBehaviourType);
     }
 }
