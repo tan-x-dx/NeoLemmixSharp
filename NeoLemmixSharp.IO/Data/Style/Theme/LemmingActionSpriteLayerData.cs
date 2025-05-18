@@ -1,9 +1,7 @@
-﻿using Color = Microsoft.Xna.Framework.Color;
+﻿namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
-namespace NeoLemmixSharp.IO.Data.Style.Theme;
-
-public readonly struct LemmingActionSpriteLayerData(int layer, Color color)
+public readonly struct LemmingActionSpriteLayerData(int layer, LemmingActionSpriteLayerColorType colorType)
 {
     public readonly int Layer = layer;
-    public readonly Color Color = color;
+    public readonly LemmingActionSpriteLayerColorType ColorType = colorType;
 }

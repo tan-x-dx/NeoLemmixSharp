@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 
 namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
@@ -6,21 +7,25 @@ internal sealed class ThemeData
 {
     public string SpriteFolder { get; set; }
 
-    private readonly LemmingActionSpriteData[] _lemmingActionSpriteData = new LemmingActionSpriteData[EngineConstants.MaxNumberOfTribes * EngineConstants.NumberOfLemmingActions];
+    private readonly LemmingActionSpriteData[] _lemmingActionSpriteData = new LemmingActionSpriteData[EngineConstants.NumberOfLemmingActions];
+    private readonly TribeColorData[] _tribeColorData = new TribeColorData[EngineConstants.MaxNumberOfTribes];
 
-    public LemmingActionSpriteData GetLemmingActionSpriteData(int tribeId, int lemmingActionId)
+    public Color Mask { get; set; }
+    public Color Minimap { get; set; }
+    public Color Background { get; set; }
+    public Color OneWayArrows { get; set; }
+    public Color PickupBorder { get; set; }
+    public Color PickupInside { get; set; }
+
+    public LemmingActionSpriteData GetLemmingActionSpriteData(int lemmingActionId)
     {
-        AssertIdsAreValid(tribeId, lemmingActionId);
+        AssertActionIdIsValid(lemmingActionId);
 
-        var index = (tribeId * EngineConstants.NumberOfLemmingActions) + lemmingActionId;
-        return _lemmingActionSpriteData[index];
+        return _lemmingActionSpriteData[lemmingActionId];
     }
 
-    private static void AssertIdsAreValid(int tribeId, int lemmingActionId)
+    private static void AssertActionIdIsValid(int lemmingActionId)
     {
-        if ((uint)tribeId >= EngineConstants.MaxNumberOfTribes)
-            throw new InvalidOperationException($"Invalid tribe ID: {tribeId}");
-
         if (!EngineConstants.IsValidLemmingActionId(lemmingActionId))
             throw new InvalidOperationException($"Invalid lemming action ID: {lemmingActionId}");
     }

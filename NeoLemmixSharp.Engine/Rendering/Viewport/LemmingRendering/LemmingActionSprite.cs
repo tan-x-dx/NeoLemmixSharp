@@ -55,7 +55,7 @@ public sealed class LemmingActionSprite : IDisposable
         {
             layerRenderer.RenderLayer(
                 spriteBatch,
-                lemming,
+                lemming.State,
                 sourceRectangle,
                 destinationRectangle,
                 rotationAngle,

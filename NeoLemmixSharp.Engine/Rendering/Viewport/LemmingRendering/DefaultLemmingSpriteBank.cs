@@ -72,7 +72,7 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t)
+                        new(t, s.W * 0, LemmingActionSpriteLayerColorType.TrueColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -89,10 +89,10 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0, TribeColorChooser.GetHairColor),
-                        new(t, s.W, TribeColorChooser.GetSkinColor),
-                        new(t, s.W * 2, TribeColorChooser.GetFootColor),
-                        new(t, s.W * 3, TribeColorChooser.GetBodyColor)
+                        new(t, s.W * 0, LemmingActionSpriteLayerColorType.LemmingHairColor),
+                        new(t, s.W * 1, LemmingActionSpriteLayerColorType.LemmingSkinColor),
+                        new(t, s.W * 2, LemmingActionSpriteLayerColorType.LemmingFootColor),
+                        new(t, s.W * 3, LemmingActionSpriteLayerColorType.LemmingBodyColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -109,11 +109,11 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t, 0, TribeColorChooser.GetHairColor),
-                        new(t, s.W, TribeColorChooser.GetSkinColor),
-                        new(t, s.W * 2, TribeColorChooser.GetFootColor),
-                        new(t, s.W * 3, TribeColorChooser.GetBodyColor),
-                        new(t, s.W * 4, TribeColorChooser.GetPaintColor)
+                        new(t, s.W * 0, LemmingActionSpriteLayerColorType.LemmingHairColor),
+                        new(t, s.W * 1, LemmingActionSpriteLayerColorType.LemmingSkinColor),
+                        new(t, s.W * 2, LemmingActionSpriteLayerColorType.LemmingFootColor),
+                        new(t, s.W * 3, LemmingActionSpriteLayerColorType.LemmingBodyColor),
+                        new(t, s.W * 4, LemmingActionSpriteLayerColorType.TribePaintColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -130,11 +130,11 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t),
-                        new(t, s.W, TribeColorChooser.GetHairColor),
-                        new(t, s.W * 2, TribeColorChooser.GetSkinColor),
-                        new(t, s.W * 3, TribeColorChooser.GetFootColor),
-                        new(t, s.W * 4, TribeColorChooser.GetBodyColor)
+                        new(t, s.W * 0, LemmingActionSpriteLayerColorType.TrueColor),
+                        new(t, s.W * 1, LemmingActionSpriteLayerColorType.LemmingHairColor),
+                        new(t, s.W * 2, LemmingActionSpriteLayerColorType.LemmingSkinColor),
+                        new(t, s.W * 3, LemmingActionSpriteLayerColorType.LemmingFootColor),
+                        new(t, s.W * 4, LemmingActionSpriteLayerColorType.LemmingBodyColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
@@ -151,12 +151,12 @@ public static class DefaultLemmingSpriteBank
                 {
                     var layerRenderers = new LemmingActionLayerRenderer[]
                     {
-                        new(t),
-                        new(t, s.W, TribeColorChooser.GetHairColor),
-                        new(t, s.W * 2, TribeColorChooser.GetSkinColor),
-                        new(t, s.W * 3, TribeColorChooser.GetFootColor),
-                        new(t, s.W * 4, TribeColorChooser.GetBodyColor),
-                        new(t, s.W * 5, TribeColorChooser.GetPaintColor)
+                        new(t, s.W * 0, LemmingActionSpriteLayerColorType.TrueColor),
+                        new(t, s.W * 1, LemmingActionSpriteLayerColorType.LemmingHairColor),
+                        new(t, s.W * 2, LemmingActionSpriteLayerColorType.LemmingSkinColor),
+                        new(t, s.W * 3, LemmingActionSpriteLayerColorType.LemmingFootColor),
+                        new(t, s.W * 4, LemmingActionSpriteLayerColorType.LemmingBodyColor),
+                        new(t, s.W * 5, LemmingActionSpriteLayerColorType.TribePaintColor)
                     };
 
                     return new LemmingActionSprite(t, p, s, layerRenderers);
