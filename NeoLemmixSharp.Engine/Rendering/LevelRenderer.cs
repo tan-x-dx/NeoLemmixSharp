@@ -113,24 +113,24 @@ public sealed class LevelRenderer :
         var horizontalBoundary = LevelScreen.HorizontalBoundaryBehaviour;
         var verticalBoundary = LevelScreen.VerticalBoundaryBehaviour;
 
-        var horizontalRenderIntervals = horizontalBoundary.GetRenderIntervals();
-        var verticalRenderIntervals = verticalBoundary.GetRenderIntervals();
+        var horizontalViewportRenderIntervals = horizontalBoundary.GetRenderViewPortIntervals();
+        var verticalViewPortRenderIntervals = verticalBoundary.GetRenderViewPortIntervals();
 
-        foreach (var horizontalRenderInterval in horizontalRenderIntervals)
+        foreach (var horizontalViewPortRenderInterval in horizontalViewportRenderIntervals)
         {
-            foreach (var verticalRenderInterval in verticalRenderIntervals)
+            foreach (var verticalViewPortRenderInterval in verticalViewPortRenderIntervals)
             {
-                var p = new Point(horizontalRenderInterval.ViewPortStart, verticalRenderInterval.ViewPortStart);
-                var s = new Size(horizontalRenderInterval.ViewPortLength, verticalRenderInterval.ViewPortLength);
+                var p = new Point(horizontalViewPortRenderInterval.ViewPortStart, verticalViewPortRenderInterval.ViewPortStart);
+                var s = new Size(horizontalViewPortRenderInterval.ViewPortLength, verticalViewPortRenderInterval.ViewPortLength);
                 var region = new RectangularRegion(p, s);
 
                 _spriteSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, region, out var rendererSet);
 
                 var viewportClip = new Rectangle(
-                    horizontalRenderInterval.ViewPortStart,
-                    verticalRenderInterval.ViewPortStart,
-                    horizontalRenderInterval.ViewPortLength,
-                    verticalRenderInterval.ViewPortLength);
+                    horizontalViewPortRenderInterval.ViewPortStart,
+                    verticalViewPortRenderInterval.ViewPortStart,
+                    horizontalViewPortRenderInterval.ViewPortLength,
+                    verticalViewPortRenderInterval.ViewPortLength);
 
                 var horizontalViewportClip = new ClipInterval(viewportClip.X, viewportClip.Width, 0);
                 var verticalViewportClip = new ClipInterval(viewportClip.Y, viewportClip.Height, 0);
@@ -157,10 +157,10 @@ public sealed class LevelRenderer :
 
                     var projectionX = horizontalClipIntersection.Start +
                                       horizontalClipIntersection.Offset +
-                                      horizontalRenderInterval.Offset;
+                                      horizontalViewPortRenderInterval.Offset;
                     var projectionY = verticalClipIntersection.Start +
                                       verticalClipIntersection.Offset +
-                                      verticalRenderInterval.Offset;
+                                      verticalViewPortRenderInterval.Offset;
 
                     renderer.RenderAtPosition(
                         spriteBatch,

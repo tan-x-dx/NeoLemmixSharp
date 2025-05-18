@@ -338,7 +338,7 @@ public sealed class BoundaryBehaviour
     }
 
     [Pure]
-    public ReadOnlySpan<ViewPortRenderInterval> GetRenderIntervals() => MemoryMarshal.CreateReadOnlySpan(
+    public ReadOnlySpan<ViewPortRenderInterval> GetRenderViewPortIntervals() => MemoryMarshal.CreateReadOnlySpan(
         ref Unsafe.As<ViewPortRenderIntervalBuffer, ViewPortRenderInterval>(ref _viewPortRenderIntervals), _viewPortSpanLength);
 
     [Pure]
