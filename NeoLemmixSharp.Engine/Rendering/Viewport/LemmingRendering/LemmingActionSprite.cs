@@ -42,14 +42,17 @@ public sealed class LemmingActionSprite : IDisposable
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
     {
-        var dht = new DihedralTransformation(lemming.Orientation, lemming.FacingDirection);
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+
+        var dht = new DihedralTransformation(orientation, facingDirection);
         var offset = dht.Transform(AnchorPoint, SpriteSize);
 
         destinationRectangle.X += offset.X;
         destinationRectangle.Y += offset.Y;
 
-        var rotationAngle = lemming.Orientation.GetRotationAngle();
-        var spriteEffects = lemming.FacingDirection.AsSpriteEffects();
+        var rotationAngle = orientation.GetRotationAngle();
+        var spriteEffects = facingDirection.AsSpriteEffects();
 
         foreach (var layerRenderer in _renderers)
         {
