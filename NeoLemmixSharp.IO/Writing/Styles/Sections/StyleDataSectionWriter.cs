@@ -23,8 +23,7 @@ internal abstract class StyleDataSectionWriter : IComparable<StyleDataSectionWri
     public int CompareTo(StyleDataSectionWriter? other)
     {
         if (other == null) return 1;
-        if (ReferenceEquals(this, other)) return 0;
 
-        return SectionIdentifier.CompareTo(other.SectionIdentifier);
+        return (int)SectionIdentifier - (int)other.SectionIdentifier;
     }
 }
