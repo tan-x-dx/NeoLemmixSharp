@@ -8,17 +8,16 @@ namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
 internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 {
-    private readonly List<string> _stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup;
 
-    public GadgetArchetypeDataSectionReader(List<string> stringIdLookup)
+    public GadgetArchetypeDataSectionReader(StringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData)
+    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         styleData.GadgetArchetypeData.EnsureCapacity(numberOfItemsInSection);
 
         while (numberOfItemsInSection-- > 0)
@@ -32,9 +31,6 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         StyleIdentifier styleName,
         RawStyleFileDataReader rawFileData)
     {
-        int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
-        int initialPosition = rawFileData.Position;
-
         int pieceId = rawFileData.Read16BitUnsignedInteger();
         var pieceName = new PieceIdentifier(_stringIdLookup[pieceId]);
 
@@ -55,12 +51,6 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
             _ => Helpers.ThrowUnknownEnumValueException<GadgetType, GadgetArchetypeData>(gadgetType)
         };
-
-        FileReadingException.AssertBytesMakeSense(
-            rawFileData.Position,
-            initialPosition,
-            numberOfBytesToRead,
-            "gadget archetype data section");
 
         return result;
     }

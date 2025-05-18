@@ -34,7 +34,10 @@ public static class StyleCache
 
     private static HashSet<StyleFormatPair> GetAllMentionedStyles(LevelData levelData)
     {
-        var result = new HashSet<StyleFormatPair>(EngineConstants.AssumedInitialStyleCapacity);
+        var result = new HashSet<StyleFormatPair>(EngineConstants.AssumedInitialStyleCapacity)
+        {
+            new(levelData.LevelTheme, levelData.FileFormatType)
+        };
 
         foreach (var terrainData in levelData.AllTerrainData)
         {

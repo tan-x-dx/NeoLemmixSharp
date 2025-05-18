@@ -4,25 +4,31 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
+using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Data.Level;
 
 public sealed class LevelData
 {
-    private int _levelWidth = -1;
-    private int _levelHeight = -1;
-    private int? _levelStartPositionX;
-    private int? _levelStartPositionY;
-    private int _maxNumberOfClonedLemmings = -1;
-    private int _numberOfTribes = -1;
-
     public string LevelTitle { get; set; } = string.Empty;
     public string LevelAuthor { get; set; } = string.Empty;
     public ulong LevelId { get; set; }
     public ulong Version { get; set; }
 
-    public required FileFormatType FileFormatType { get; init; }
+    private int _levelWidth = -1;
+    private int _levelHeight = -1;
+    private int? _levelStartPositionX;
+    private int? _levelStartPositionY;
+    private int _maxNumberOfClonedLemmings = -1;
+
+    public FileFormatType FileFormatType { get; }
+
+    public LevelData(FileFormatType fileFormatType)
+    {
+        FileFormatType = fileFormatType;
+    }
 
     public void SetLevelWidth(int value)
     {
@@ -110,21 +116,7 @@ public sealed class LevelData
         }
     }
 
-    public int NumberOfTribes
-    {
-        get => _numberOfTribes;
-        set
-        {
-            if (value <= 0)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Number of tribes must be greater than zero!");
-            if (value > EngineConstants.MaxNumberOfTribes)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Too many tribes!");
-
-            _numberOfTribes = value;
-        }
-    }
-
-    public string LevelTheme { get; set; } = null!;
+    public StyleIdentifier LevelTheme { get; set; }
     public BackgroundData? LevelBackground { get; set; }
 
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }
@@ -136,6 +128,7 @@ public sealed class LevelData
 
     public List<LemmingData> PrePlacedLemmingData { get; } = [];
     public List<LemmingData> HatchLemmingData { get; } = [];
+    public List<TribeIdentifier> TribeIdentifiers { get; } = [];
 
     public List<TerrainData> AllTerrainData { get; } = [];
     public List<TerrainGroupData> AllTerrainGroups { get; } = [];
@@ -162,7 +155,10 @@ public sealed class LevelData
         if (_levelWidth < 0) return "Level width not set!";
         if (_levelHeight < 0) return "Level height not set!";
         if (_maxNumberOfClonedLemmings < 0) return "Cloner counts not evaluated!";
-        if (_numberOfTribes < 0) return "Number of tribes not set!";
+
+        if (TribeIdentifiers.Count == 0) return "Level tribes not set!";
+        if (TribeIdentifiers.Count != TribeIdentifiers.Distinct().Count()) return "Non-unique tribes specified!";
+
         if (PrePlacedLemmingData.Count == 0 && HatchLemmingData.Count == 0) return "Number of lemmings is invalid!";
         if (LevelTitle.Length == 0) return "Level title not set!";
         if (LevelAuthor.Length == 0) return "Level author not set!";

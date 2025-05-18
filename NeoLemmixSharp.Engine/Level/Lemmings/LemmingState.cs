@@ -285,9 +285,11 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
     {
         var tribe = LevelScreen.TribeManager.AllItems[_tribeId];
 
-        SkinColor = IsZombie
+        var skinColor = IsZombie
             ? tribe.ZombieSkinColor
             : tribe.SkinColor;
+
+        SkinColor = skinColor;
 
         if (IsAcidLemming)
         {
@@ -299,7 +301,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
         }
         else
         {
-            FootColor = SkinColor;
+            FootColor = skinColor;
         }
     }
 

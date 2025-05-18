@@ -189,31 +189,31 @@ public sealed class BoundaryBehaviour
     }
 
     [Pure]
-    public unsafe bool IntervalsOverlap(Interval l1, Interval l2)
+    public unsafe bool IntervalsOverlap(Interval i1, Interval i2)
     {
-        int* startPointer = (int*)&l1;
-        startPointer[0] = Normalise(startPointer[0]);
+        int* startPointer = (int*)&i1;
+        *startPointer = Normalise(*startPointer);
 
-        startPointer = (int*)&l2;
-        startPointer[0] = Normalise(startPointer[0]);
+        startPointer = (int*)&i2;
+        *startPointer = Normalise(*startPointer);
 
         // If it works, it always works
-        if (l1.Start < l1.Start + l1.Length &&
-            l1.Start < l2.Start + l2.Length)
+        if (i2.Start < i1.Start + i1.Length &&
+            i1.Start < i2.Start + i2.Length)
             return true;
 
         // If it doesn't work, it certainly doesn't work for void
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
-        startPointer[0] += _levelLength;
-        if (l1.Start < l1.Start + l1.Length &&
-            l1.Start < l2.Start + l2.Length)
+        *startPointer += _levelLength;
+        if (i2.Start < i1.Start + i1.Length &&
+            i1.Start < i2.Start + i2.Length)
             return true;
 
-        startPointer[0] -= (_levelLength << 1);
-        return l1.Start < l1.Start + l1.Length &&
-               l1.Start < l2.Start + l2.Length;
+        *startPointer -= (_levelLength << 1);
+        return i2.Start < i1.Start + i1.Length &&
+               i1.Start < i2.Start + i2.Length;
     }
 
     [Pure]
@@ -338,7 +338,7 @@ public sealed class BoundaryBehaviour
     }
 
     [Pure]
-    public ReadOnlySpan<ViewPortRenderInterval> GetRenderIntervals() => MemoryMarshal.CreateReadOnlySpan(
+    public ReadOnlySpan<ViewPortRenderInterval> GetRenderViewPortIntervals() => MemoryMarshal.CreateReadOnlySpan(
         ref Unsafe.As<ViewPortRenderIntervalBuffer, ViewPortRenderInterval>(ref _viewPortRenderIntervals), _viewPortSpanLength);
 
     [Pure]

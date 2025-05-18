@@ -9,18 +9,17 @@ namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
 internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 {
-    private readonly List<string> _stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup;
 
     public GadgetDataSectionReader(
-        List<string> stringIdLookup)
+        StringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.GadgetDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         levelData.AllGadgetData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
@@ -32,9 +31,6 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
     private GadgetData ReadNextGadgetData(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
-        int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
-        int initialPosition = rawFileData.Position;
-
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
@@ -74,12 +70,6 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
         ReadInputNames(rawFileData, inputNames, numberOfInputNames);
         ReadProperties(rawFileData, result);
-
-        FileReadingException.AssertBytesMakeSense(
-            rawFileData.Position,
-            initialPosition,
-            numberOfBytesToRead,
-            "gadget data");
 
         return result;
     }

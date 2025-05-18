@@ -1,9 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.BoundaryBehaviours;
+﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.FileFormats;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
@@ -14,22 +13,18 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         1 + // Enum specifier
         4; // Four bytes for actual data, padding with zeros where necessary
 
-    private readonly List<string> _stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup;
 
     public LevelMetadataSectionReader(
-        List<string> stringIdLookup)
+        StringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelMetadataSection, true)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         FileReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
-
-        int numberOfBytesToRead = rawFileData.Read16BitUnsignedInteger();
-        int initialPosition = rawFileData.Position;
 
         int stringId = rawFileData.Read16BitUnsignedInteger();
         levelData.LevelTitle = _stringIdLookup[stringId];
@@ -38,19 +33,13 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         levelData.LevelAuthor = _stringIdLookup[stringId];
 
         stringId = rawFileData.Read16BitUnsignedInteger();
-        levelData.LevelTheme = _stringIdLookup[stringId];
+        levelData.LevelTheme = new StyleIdentifier(_stringIdLookup[stringId]);
 
         levelData.LevelId = rawFileData.Read64BitUnsignedInteger();
         levelData.Version = rawFileData.Read64BitUnsignedInteger();
 
         ReadLevelDimensionData(rawFileData, levelData);
         ReadBackgroundData(rawFileData, levelData);
-
-        FileReadingException.AssertBytesMakeSense(
-            rawFileData.Position,
-            initialPosition,
-            numberOfBytesToRead,
-            "level data section");
     }
 
     private static void ReadLevelDimensionData(RawLevelFileDataReader rawFileData, LevelData levelData)
@@ -91,7 +80,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
     {
         var rawBytes = rawFileData.ReadBytes(NumberOfBytesWrittenForBackgroundData);
 
-        uint rawBackgroundType = rawBytes[0];
+        int rawBackgroundType = rawBytes[0];
         var backgroundType = (BackgroundType)rawBackgroundType;
 
         levelData.LevelBackground = backgroundType switch
@@ -100,39 +89,26 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
             BackgroundType.SolidColorBackground => ReadSolidColorBackgroundData(rawBytes),
             BackgroundType.TextureBackground => ReadTextureBackgroundData(rawBytes),
 
-            _ => Helpers.ThrowUnknownEnumValueException<BackgroundType, BackgroundData>(backgroundType)
+            _ => Helpers.ThrowUnknownEnumValueException<BackgroundType, BackgroundData?>(backgroundType)
         };
 
         return;
 
         static BackgroundData? ReadNoBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            Debug.Assert(rawBytes.Length == 5);
-
             return null;
         }
 
         static BackgroundData ReadSolidColorBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            Debug.Assert(rawBytes.Length == 5);
-
-            return new BackgroundData
-            {
-                Color = ReadWriteHelpers.ReadArgbBytes(rawBytes[1..]),
-                BackgroundImageName = string.Empty
-            };
+            return new BackgroundData(ReadWriteHelpers.ReadArgbBytes(rawBytes[1..]));
         }
 
         BackgroundData ReadTextureBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            Debug.Assert(rawBytes.Length == 5);
             ushort backgroundStringId = Unsafe.ReadUnaligned<ushort>(in rawBytes[1]);
 
-            return new BackgroundData
-            {
-                Color = Color.Black,
-                BackgroundImageName = _stringIdLookup[backgroundStringId]
-            };
+            return new BackgroundData(_stringIdLookup[backgroundStringId]);
         }
     }
 }

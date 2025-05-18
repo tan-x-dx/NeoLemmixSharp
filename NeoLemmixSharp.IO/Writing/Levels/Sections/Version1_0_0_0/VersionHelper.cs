@@ -6,17 +6,16 @@ internal sealed class VersionHelper : ILevelDataSectionWriterVersionHelper
 {
     public LevelDataSectionWriter[] GetLevelDataSectionWriters()
     {
-        var stringIdLookup = new Dictionary<string, ushort>(ReadWriteHelpers.InitialStringListCapacity);
+        var stringIdLookup = new StringIdLookup();
         var terrainSectionWriter = new TerrainDataSectionWriter(stringIdLookup);
 
         LevelDataSectionWriter[] sectionWriters =
         [
-            // StringDataSectionWriter needs to be first as it will populate the stringIdLookup!
             new StringDataSectionWriter(stringIdLookup),
-
             new LevelMetadataSectionWriter(stringIdLookup),
-            new LevelTextDataSectionWriter(stringIdLookup),
+            new LevelMessageDataSectionWriter(stringIdLookup),
             new LevelObjectiveDataSectionWriter(stringIdLookup),
+            new TribeDataSectionWriter(stringIdLookup),
             new HatchGroupDataSectionWriter(),
             new PrePlacedLemmingDataSectionWriter(),
             terrainSectionWriter,

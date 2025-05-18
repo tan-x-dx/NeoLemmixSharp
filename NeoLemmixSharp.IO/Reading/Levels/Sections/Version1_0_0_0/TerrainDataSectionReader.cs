@@ -10,18 +10,17 @@ namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 internal sealed class TerrainDataSectionReader : LevelDataSectionReader
 {
 
-    private readonly List<string> _stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup;
 
     public TerrainDataSectionReader(
-        List<string> stringIdLookup)
+        StringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.TerrainDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData)
+    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         levelData.AllTerrainData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
@@ -33,9 +32,6 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
 
     private TerrainData ReadNextTerrainData(RawLevelFileDataReader rawFileData)
     {
-        int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
-        int initialPosition = rawFileData.Position;
-
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
@@ -69,12 +65,6 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         {
             height = rawFileData.Read16BitUnsignedInteger();
         }
-
-        FileReadingException.AssertBytesMakeSense(
-            rawFileData.Position,
-            initialPosition,
-            numberOfBytesToRead,
-            "terrain data");
 
         return new TerrainData
         {

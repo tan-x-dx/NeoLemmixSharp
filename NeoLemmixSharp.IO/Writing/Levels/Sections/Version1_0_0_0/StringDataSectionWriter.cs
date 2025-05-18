@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
@@ -10,9 +9,9 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 {
     private const int MaxStackByteBufferSize = 256;
 
-    private readonly Dictionary<string, ushort> _stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup;
 
-    public StringDataSectionWriter(Dictionary<string, ushort> stringIdLookup)
+    public StringDataSectionWriter(StringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.StringDataSection, true)
     {
         _stringIdLookup = stringIdLookup;
@@ -30,13 +29,15 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        var bufferSize = CalculateBufferSize();
+        var bufferSize = _stringIdLookup.CalculateBufferSize();
+
+        FileWritingException.WriterAssert(bufferSize < ushort.MaxValue, "Cannot serialize a string larger than 65535 bytes!");
 
         Span<byte> buffer = bufferSize > MaxStackByteBufferSize
             ? new byte[bufferSize]
             : stackalloc byte[bufferSize];
 
-        foreach (var kvp in _stringIdLookup.OrderBy(kvp => kvp.Value))
+        foreach (var kvp in _stringIdLookup.OrderedPairs)
         {
             var stringToWrite = kvp.Key;
             var id = kvp.Value;
@@ -50,20 +51,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
         }
     }
 
-    private int CalculateBufferSize()
-    {
-        var maxBufferSize = 0;
-
-        foreach (var kvp in _stringIdLookup)
-        {
-            maxBufferSize = Math.Max(maxBufferSize, Encoding.UTF8.GetByteCount(kvp.Key));
-        }
-
-        return maxBufferSize;
-    }
-
-    private void GenerateStringIdLookup(
-        LevelData levelData)
+    private void GenerateStringIdLookup(LevelData levelData)
     {
         FileWritingException.WriterAssert(_stringIdLookup.Count == 0, "Expected string id lookup to be empty!");
 
@@ -77,8 +65,9 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 
     private void RecordLevelMetadataStrings(LevelData levelData)
     {
-        RecordString(levelData.LevelTitle);
-        RecordString(levelData.LevelAuthor);
+        _stringIdLookup.RecordString(levelData.LevelTitle);
+        _stringIdLookup.RecordString(levelData.LevelAuthor);
+        _stringIdLookup.RecordString(levelData.LevelTheme.ToString());
 
         HandleBackgroundString(levelData);
     }
@@ -87,12 +76,12 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         foreach (var text in levelData.PreTextLines)
         {
-            RecordString(text);
+            _stringIdLookup.RecordString(text);
         }
 
         foreach (var text in levelData.PostTextLines)
         {
-            RecordString(text);
+            _stringIdLookup.RecordString(text);
         }
     }
 
@@ -100,7 +89,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         /*foreach (var levelObjective in levelData.LevelObjectives)
         {
-            RecordString(levelObjective.LevelObjectiveTitle);
+            _stringIdLookup. RecordString(levelObjective.LevelObjectiveTitle);
         }*/
     }
 
@@ -108,8 +97,8 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            RecordString(terrainData.StyleName.ToString());
-            RecordString(terrainData.PieceName.ToString());
+            _stringIdLookup.RecordString(terrainData.StyleName.ToString());
+            _stringIdLookup.RecordString(terrainData.PieceName.ToString());
         }
     }
 
@@ -117,12 +106,12 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         foreach (var terrainGroup in levelData.AllTerrainGroups)
         {
-            RecordString(terrainGroup.GroupName!);
+            _stringIdLookup.RecordString(terrainGroup.GroupName!);
 
             foreach (var terrainData in levelData.AllTerrainData)
             {
-                RecordString(terrainData.StyleName.ToString());
-                RecordString(terrainData.PieceName.ToString());
+                _stringIdLookup.RecordString(terrainData.StyleName.ToString());
+                _stringIdLookup.RecordString(terrainData.PieceName.ToString());
             }
         }
     }
@@ -131,29 +120,13 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         foreach (var gadgetData in levelData.AllGadgetData)
         {
-            RecordString(gadgetData.StyleName.ToString());
-            RecordString(gadgetData.PieceName.ToString());
+            _stringIdLookup.RecordString(gadgetData.StyleName.ToString());
+            _stringIdLookup.RecordString(gadgetData.PieceName.ToString());
 
             foreach (var gadgetInputName in gadgetData.InputNames)
             {
-                RecordString(gadgetInputName);
+                _stringIdLookup.RecordString(gadgetInputName);
             }
-        }
-    }
-
-    private void RecordString(string? s)
-    {
-        if (string.IsNullOrEmpty(s))
-            return;
-
-        // IDs start at 1, ID 0 is associated with the empty string
-        // We don't serialise the empty string though
-        var nextStringId = (ushort)(1 + _stringIdLookup.Count);
-
-        ref var correspondingStringId = ref CollectionsMarshal.GetValueRefOrAddDefault(_stringIdLookup, s, out var exists);
-        if (!exists)
-        {
-            correspondingStringId = nextStringId;
         }
     }
 
@@ -164,6 +137,6 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
         if (backgroundData is null || backgroundData.IsSolidColor)
             return;
 
-        RecordString(backgroundData.BackgroundImageName);
+        _stringIdLookup.RecordString(backgroundData.BackgroundImageName);
     }
 }

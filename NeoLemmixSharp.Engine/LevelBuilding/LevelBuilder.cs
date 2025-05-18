@@ -168,7 +168,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
     private static TribeManager GetTribeManager(LevelData levelData, LemmingSpriteBank lemmingSpriteBank)
     {
-        var numberOfTribes = levelData.NumberOfTribes;
+        var numberOfTribes = levelData.TribeIdentifiers.Count;
 
         var tribes = new Tribe[numberOfTribes];
         for (var i = 0; i < tribes.Length; i++)

@@ -4,15 +4,19 @@ using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Reading.Styles.Sections;
 using NeoLemmixSharp.IO.Versions;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles;
 
-internal readonly ref struct DefaultStyleReader : IStyleReader
+internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReader>
 {
     private readonly StyleIdentifier _styleIdentifier;
     private readonly RawStyleFileDataReader _rawFileData;
 
-    internal DefaultStyleReader(StyleIdentifier style)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static DefaultStyleReader Create(StyleIdentifier styleIdentifier) => new(styleIdentifier);
+
+    private DefaultStyleReader(StyleIdentifier style)
     {
         if (!TryLocateStyleFile(style, out var styleFilePath))
             throw new FileReadingException($"Could not locate style file for style: {style}");
@@ -31,13 +35,13 @@ internal readonly ref struct DefaultStyleReader : IStyleReader
 
         var files = Directory.GetFiles(styleFolderPath);
 
-        foreach (var file in files)
+        foreach (var filePath in files)
         {
-            var fileExtension = Path.GetExtension(file.AsSpan());
+            var fileExtension = Path.GetExtension(filePath.AsSpan());
 
             if (fileExtension.Equals(DefaultFileExtensions.LevelStyleExtension, StringComparison.OrdinalIgnoreCase))
             {
-                foundFilePath = file;
+                foundFilePath = filePath;
                 return true;
             }
         }
@@ -69,9 +73,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader
         StyleData result,
         StyleDataSectionReader sectionReader)
     {
-        var sectionIdentifier = sectionReader.SectionIdentifier;
-
-        if (!_rawFileData.TryGetSectionInterval(sectionIdentifier, out var interval))
+        if (!_rawFileData.TryGetSectionInterval(sectionReader.SectionIdentifier, out var interval))
         {
             FileReadingException.ReaderAssert(
                 !sectionReader.IsNecessary,
@@ -87,7 +89,9 @@ internal readonly ref struct DefaultStyleReader : IStyleReader
             sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),
             "Section Identifier mismatch!");
 
-        sectionReader.ReadSection(_rawFileData, result);
+        int numberOfItemsInSection = _rawFileData.Read16BitUnsignedInteger();
+
+        sectionReader.ReadSection(_rawFileData, result, numberOfItemsInSection);
 
         FileReadingException.ReaderAssert(
             interval.Start + interval.Length == _rawFileData.Position,

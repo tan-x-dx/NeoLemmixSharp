@@ -59,7 +59,9 @@ internal static class VersionHelper
         if (!_levelWriterVersionHelpers.TryGetValue(version, out var helper))
             ThrowUnknownVersionException(version);
 
-        return helper.GetLevelDataSectionWriters();
+        var result = helper.GetLevelDataSectionWriters();
+        Array.Sort(result);
+        return result;
     }
 
     public static LevelDataSectionReader[] GetLevelDataSectionReadersForVersion(FileFormatVersion version)
@@ -67,7 +69,9 @@ internal static class VersionHelper
         if (!_levelReaderVersionHelpers.TryGetValue(version, out var helper))
             ThrowUnknownVersionException(version);
 
-        return helper.GetLevelDataSectionReaders();
+        var result = helper.GetLevelDataSectionReaders();
+        Array.Sort(result);
+        return result;
     }
 
     public static StyleDataSectionWriter[] GetStyleDataSectionWritersForVersion(FileFormatVersion version)
@@ -75,7 +79,9 @@ internal static class VersionHelper
         if (!_styleWriterVersionHelpers.TryGetValue(version, out var helper))
             ThrowUnknownVersionException(version);
 
-        return helper.GetStyleDataSectionWriters();
+        var result = helper.GetStyleDataSectionWriters();
+        Array.Sort(result);
+        return result;
     }
 
     public static StyleDataSectionReader[] GetStyleDataSectionReadersForVersion(FileFormatVersion version)
@@ -83,7 +89,9 @@ internal static class VersionHelper
         if (!_styleReaderVersionHelpers.TryGetValue(version, out var helper))
             ThrowUnknownVersionException(version);
 
-        return helper.GetStyleDataSectionReaders();
+        var result = helper.GetStyleDataSectionReaders();
+        Array.Sort(result);
+        return result;
     }
 
     private sealed class UnknownVersionException : Exception

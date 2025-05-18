@@ -6,15 +6,10 @@ namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
 {
-    private const int NumberOfBytesForMainLevelData = 31;
-    private const int NumberOfBytesWrittenForBackgroundData =
-        1 + // Enum specifier
-        4; // Four bytes for actual data, padding with zeros where necessary
+    private readonly StringIdLookup _stringIdLookup;
 
-    private readonly Dictionary<string, ushort> _stringIdLookup;
-
-    public LevelMetadataSectionWriter(Dictionary<string, ushort> stringIdLookup)
-        : base(LevelFileSectionIdentifier.LevelMetadataSection, false)
+    public LevelMetadataSectionWriter(StringIdLookup stringIdLookup)
+        : base(LevelFileSectionIdentifier.LevelMetadataSection, true)
     {
         _stringIdLookup = stringIdLookup;
     }
@@ -28,8 +23,6 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        writer.Write(GetNumberOfBytesWrittenForLevelData(levelData));
-
         WriteLevelStringData(writer, levelData);
         writer.Write(levelData.LevelId);
         writer.Write(levelData.Version);
@@ -38,18 +31,13 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         WriteLevelBackgroundData(writer, levelData);
     }
 
-    private static ushort GetNumberOfBytesWrittenForLevelData(LevelData levelData)
-    {
-        return NumberOfBytesForMainLevelData + NumberOfBytesWrittenForBackgroundData;
-    }
-
     private void WriteLevelStringData(
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        writer.Write(_stringIdLookup.GetValueOrDefault(levelData.LevelTitle));
-        writer.Write(_stringIdLookup.GetValueOrDefault(levelData.LevelAuthor));
-        writer.Write(_stringIdLookup.GetValueOrDefault(levelData.LevelTheme));
+        writer.Write(_stringIdLookup.GetStringId(levelData.LevelTitle));
+        writer.Write(_stringIdLookup.GetStringId(levelData.LevelAuthor));
+        writer.Write(_stringIdLookup.GetStringId(levelData.LevelTheme.ToString()));
     }
 
     private static void WriteLevelDimensionData(
@@ -96,7 +84,7 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         else
         {
             rawBytes[0] = (byte)BackgroundType.TextureBackground;
-            ushort backgroundStringId = _stringIdLookup[backgroundData.BackgroundImageName];
+            ushort backgroundStringId = _stringIdLookup.GetStringId(backgroundData.BackgroundImageName);
             Unsafe.WriteUnaligned(ref rawBytes[1], backgroundStringId);
         }
 

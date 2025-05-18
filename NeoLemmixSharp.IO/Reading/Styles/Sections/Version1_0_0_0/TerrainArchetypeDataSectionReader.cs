@@ -7,17 +7,16 @@ namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
 internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
 {
-    private readonly List<string> _stringIdLookup;
+    private readonly StringIdLookup _stringIdLookup;
 
-    public TerrainArchetypeDataSectionReader(List<string> stringIdLookup)
+    public TerrainArchetypeDataSectionReader(StringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.TerrainArchetypeDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData)
+    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
     {
-        int numberOfItemsInSection = rawFileData.Read16BitUnsignedInteger();
         styleData.TerrainArchetypeData.EnsureCapacity(numberOfItemsInSection);
 
         while (numberOfItemsInSection-- > 0)
@@ -31,9 +30,6 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         StyleIdentifier styleName,
         RawStyleFileDataReader rawFileData)
     {
-        int numberOfBytesToRead = rawFileData.Read8BitUnsignedInteger();
-        int initialPosition = rawFileData.Position;
-
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
         uint terrainArchetypeDataByte = rawFileData.Read8BitUnsignedInteger();
@@ -71,12 +67,6 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
                 nineSliceTop = rawFileData.Read8BitUnsignedInteger();
             }
         }
-
-        FileReadingException.AssertBytesMakeSense(
-            rawFileData.Position,
-            initialPosition,
-            numberOfBytesToRead,
-            "terrain archetype data section");
 
         var newTerrainArchetypeData = new TerrainArchetypeData
         {

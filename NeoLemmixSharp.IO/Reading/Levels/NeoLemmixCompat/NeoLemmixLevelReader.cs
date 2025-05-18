@@ -1,13 +1,16 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 
-internal readonly ref struct NeoLemmixLevelReader : ILevelReader
+internal readonly ref struct NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelReader>
 {
     private readonly LevelData _levelData;
     private readonly UniqueStringSet _uniqueStringSet = new();
@@ -20,9 +23,12 @@ internal readonly ref struct NeoLemmixLevelReader : ILevelReader
 
     private readonly DataReaderList _dataReaderList;
 
-    public NeoLemmixLevelReader(string filePath)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static NeoLemmixLevelReader Create(string filePath) => new(filePath);
+
+    private NeoLemmixLevelReader(string filePath)
     {
-        _levelData = new LevelData { FileFormatType = FileFormats.FileFormatType.NeoLemmix };
+        _levelData = new LevelData(FileFormats.FileFormatType.NeoLemmix);
 
         _levelDataReader = new LevelDataReader(_uniqueStringSet, _levelData);
         _skillSetReader = new SkillSetReader();
@@ -69,7 +75,8 @@ internal readonly ref struct NeoLemmixLevelReader : ILevelReader
 
     private void ProcessLevelData()
     {
-        _levelData.NumberOfTribes = 1;
+        _levelData.TribeIdentifiers.Capacity = 1;
+        _levelData.TribeIdentifiers.Add(new TribeIdentifier(_levelData.LevelTheme, EngineConstants.ClassicTribeId));
 
         /*  var objectiveRequirementsList = new List<IObjectiveRequirement>
           {

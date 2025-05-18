@@ -5,12 +5,15 @@ namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
 internal sealed class ThemeDataSectionReader : StyleDataSectionReader
 {
-    public ThemeDataSectionReader(List<string> stringIdLookup)
+    private readonly StringIdLookup _stringIdLookup;
+
+    public ThemeDataSectionReader(StringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.ThemeDataSection, false)
     {
+        _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData)
+    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
     {
         throw new NotImplementedException();
     }
