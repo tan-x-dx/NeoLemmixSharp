@@ -126,32 +126,31 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
     {
         var seconds = elapsedSeconds % 60;
         var secondsUnits = seconds % 10;
-        Span<char> timerCharBufferSpan = _timerCharBuffer;
-        timerCharBufferSpan[5] = TextRenderingHelpers.DigitToChar(secondsUnits);
+        _timerCharBuffer[5] = TextRenderingHelpers.DigitToChar(secondsUnits);
 
         if (partialUpdate && secondsUnits != secondUnitsTest)
             return;
 
         var secondsTens = seconds / 10;
-        timerCharBufferSpan[4] = TextRenderingHelpers.DigitToChar(secondsTens);
+        _timerCharBuffer[4] = TextRenderingHelpers.DigitToChar(secondsTens);
 
         if (partialUpdate && secondsTens != secondTensTest)
             return;
 
         var minutes = elapsedSeconds / 60;
         var minutesUnits = minutes % 10;
-        timerCharBufferSpan[2] = TextRenderingHelpers.DigitToChar(minutesUnits);
+        _timerCharBuffer[2] = TextRenderingHelpers.DigitToChar(minutesUnits);
 
         if (partialUpdate && minutesUnits != minutesUnitsTest)
             return;
 
         var minutesTens = (minutes / 10) % 10;
-        timerCharBufferSpan[1] = TextRenderingHelpers.DigitToChar(minutesTens);
+        _timerCharBuffer[1] = TextRenderingHelpers.DigitToChar(minutesTens);
 
         if (partialUpdate && minutesTens != minutesTensTest)
             return;
 
-        timerCharBufferSpan[0] = minutes < 100
+        _timerCharBuffer[0] = minutes < 100
             ? ' '
             : TextRenderingHelpers.DigitToChar(minutes / 100);
     }
