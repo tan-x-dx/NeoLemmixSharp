@@ -7,7 +7,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 public sealed class AnimationLayer
 {
     private readonly AnimationLayerParameters _animationLayerParameters;
-    private readonly TribeColorChooser _colorChooser;
     private readonly NineSliceDataThing[] _nineSliceData;
 
     private readonly int _nextGadgetState;
@@ -19,13 +18,11 @@ public sealed class AnimationLayer
 
     public AnimationLayer(
         AnimationLayerParameters animationLayerParameters,
-        TribeColorChooser colorChooser,
         NineSliceDataThing[] nineSliceData,
         int initialFrame,
         int nextGadgetState)
     {
         _animationLayerParameters = animationLayerParameters;
-        _colorChooser = colorChooser;
         _nineSliceData = nineSliceData;
         _currentFrame = initialFrame;
         _nextGadgetState = nextGadgetState;
@@ -49,7 +46,7 @@ public sealed class AnimationLayer
     {
         for (var i = 0; i < _nineSliceData.Length; i++)
         {
-            _nineSliceData[i].Render(_currentFrame, spriteBatch, texture, _colorChooser, null, sourceRectangle, destinationRectangle);
+            _nineSliceData[i].Render(_currentFrame, spriteBatch, texture, null, sourceRectangle, destinationRectangle);
         }
     }
 }

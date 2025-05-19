@@ -15,7 +15,6 @@ public sealed class NineSliceDataThing
         int currentFrame,
         SpriteBatch spriteBatch,
         Texture2D texture,
-        TribeColorChooser tribeColorChooser,
         Tribe? tribe,
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
