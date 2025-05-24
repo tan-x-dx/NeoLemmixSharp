@@ -22,7 +22,7 @@ public ref struct LemmingBuilder
         _lemmingList = new ArrayListWrapper<Lemming>(totalCapacity);
     }
 
-    public Lemming[] GetLevelLemmings()
+    public Lemming[] BuildLevelLemmings()
     {
         AddLemmings(CollectionsMarshal.AsSpan(_levelData.PrePlacedLemmingData));
         AddLemmings(CollectionsMarshal.AsSpan(_levelData.HatchLemmingData));

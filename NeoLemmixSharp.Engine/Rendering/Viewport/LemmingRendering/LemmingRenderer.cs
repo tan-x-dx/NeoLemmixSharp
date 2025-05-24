@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
 using Color = Microsoft.Xna.Framework.Color;
@@ -47,36 +48,34 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public void UpdateLemmingState(bool shouldRender)
     {
+        var levelScreenRenderer = LevelScreenRenderer.Instance.LevelRenderer;
         if (!shouldRender)
         {
-            LevelScreenRenderer.Instance.LevelRenderer.DeregisterSpriteForRendering(this);
+            levelScreenRenderer.DeregisterSpriteForRendering(this);
 
             return;
         }
 
-        var spriteBank = _lemming.State.TribeAffiliation.SpriteBank;
-
-        _actionSprite = spriteBank.GetActionSprite(_lemming);
+        _actionSprite = LevelScreen.LemmingSpriteBank.GetActionSprite(_lemming);
 
         UpdatePosition();
 
-        LevelScreenRenderer.Instance.LevelRenderer.RegisterSpriteForRendering(this);
+        levelScreenRenderer.RegisterSpriteForRendering(this);
     }
 
     public void ResetPosition()
     {
-        LevelScreenRenderer.Instance.LevelRenderer.DeregisterSpriteForRendering(this);
+        var levelScreenRenderer = LevelScreenRenderer.Instance.LevelRenderer;
+        levelScreenRenderer.DeregisterSpriteForRendering(this);
 
         if (!_lemming.State.IsActive)
             return;
 
-        var spriteBank = _lemming.State.TribeAffiliation.SpriteBank;
-
-        _actionSprite = spriteBank.GetActionSprite(_lemming);
+        _actionSprite = LevelScreen.LemmingSpriteBank.GetActionSprite(_lemming);
 
         UpdatePosition();
 
-        LevelScreenRenderer.Instance.LevelRenderer.RegisterSpriteForRendering(this);
+        levelScreenRenderer.RegisterSpriteForRendering(this);
     }
 
     public void SetDisplayTimer(bool displayTimer)

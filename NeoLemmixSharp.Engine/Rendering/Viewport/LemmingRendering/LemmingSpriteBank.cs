@@ -45,5 +45,7 @@ public sealed class LemmingSpriteBank : IDisposable
         {
             DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<LemmingActionSprite>(kvp.Value.ActionSprites));
         }
+
+        _lookupData.Clear();
     }
 }

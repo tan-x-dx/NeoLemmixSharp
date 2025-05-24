@@ -14,7 +14,7 @@ public readonly ref struct LemmingSpriteBankBuilder(GraphicsDevice graphicsDevic
 {
     private readonly GraphicsDevice _graphicsDevice = graphicsDevice;
 
-    public LemmingSpriteBank GetLemmingSpriteBank(LevelData levelData)
+    public LemmingSpriteBank BuildLemmingSpriteBank(LevelData levelData)
     {
         var listLookup = new ListLookup<StyleIdentifier, SpriteBankData>(EngineConstants.MaxNumberOfTribes);
 
@@ -49,7 +49,7 @@ public readonly ref struct LemmingSpriteBankBuilder(GraphicsDevice graphicsDevic
             lemmingActionSprites[i] = CreateLemmingActionSprite(spriteDirectory, themeData.LemmingActionSpriteData[i]);
         }
 
-        Span<TribeColorData> tribeColorDataSpan = themeData.TribeColorData;
+        ReadOnlySpan<TribeColorData> tribeColorDataSpan = themeData.TribeColorData;
 
         return new SpriteBankData(
             lemmingActionSprites,

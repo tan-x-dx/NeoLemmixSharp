@@ -23,7 +23,7 @@ public ref struct GadgetBuilder
         _gadgetList = new ArrayListWrapper<GadgetBase>(levelData.AllGadgetData.Count);
     }
 
-    public readonly HatchGroup[] GetHatchGroups()
+    public readonly HatchGroup[] BuildHatchGroups()
     {
         var allHatchGroupData = CollectionsMarshal.AsSpan(_levelData.AllHatchGroupData);
 
@@ -44,7 +44,7 @@ public ref struct GadgetBuilder
         return result;
     }
 
-    public GadgetBase[] GetLevelGadgets(
+    public GadgetBase[] BuildLevelGadgets(
         LemmingManager lemmingHasher,
         TribeManager tribeManager)
     {

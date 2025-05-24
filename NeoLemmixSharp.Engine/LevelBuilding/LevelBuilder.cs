@@ -54,11 +54,11 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelDimensions.W);
         var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelDimensions.H);
 
-        var gadgetBuilder = new GadgetBuilder(levelData);
         var lemmingBuilder = new LemmingBuilder(levelData);
+        var levelLemmings = lemmingBuilder.BuildLevelLemmings();
 
-        var levelLemmings = lemmingBuilder.GetLevelLemmings();
-        var hatchGroups = gadgetBuilder.GetHatchGroups();
+        var gadgetBuilder = new GadgetBuilder(levelData);
+        var hatchGroups = gadgetBuilder.BuildHatchGroups();
 
         var lemmingManager = new LemmingManager(
             levelLemmings,
@@ -69,9 +69,9 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             verticalBoundaryBehaviour);
 
         var lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder(_graphicsDevice);
-        var lemmingSpriteBank = lemmingSpriteBankBuilder.GetLemmingSpriteBank(levelData);
-        var tribeManager = GetTribeManager(levelData, lemmingSpriteBank);
-        var levelGadgets = gadgetBuilder.GetLevelGadgets(lemmingManager, tribeManager);
+        var lemmingSpriteBank = lemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
+        var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
+        var levelGadgets = gadgetBuilder.BuildLevelGadgets(lemmingManager, tribeManager);
 
         using var levelSpriteBuilder = new LevelSpriteBuilder(_graphicsDevice, levelGadgets, levelLemmings);
 
@@ -86,7 +86,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
         var skillSetManager = new SkillSetManager(levelObjectiveManager.PrimaryLevelObjective);
         var levelCursor = new LevelCursor();
-        var levelTimer = CreateLevelTimer(levelObjectiveManager);
+        var levelTimer = BuildLevelTimer(levelObjectiveManager);
 
         var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, lemmingManager, skillSetManager);
         // Need to call this here instead of initialising in LevelScreen
@@ -111,8 +111,8 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var gadgetSpriteBank = levelSpriteBuilder.GetGadgetSpriteBank();
         var controlPanelSpriteBank = levelSpriteBuilder.GetControlPanelSpriteBank(_contentManager);
 
-        var levelCursorSprite = GetLevelCursorSprite(levelCursor);
-        var backgroundRenderer = GetBackgroundRenderer(levelData);
+        var levelCursorSprite = BuildLevelCursorSprite(levelCursor);
+        var backgroundRenderer = BuildBackgroundRenderer(levelData);
 
         levelSpriteBuilder.GetLevelSprites(
             out var behindTerrainSprites,
@@ -159,6 +159,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             inputController,
             levelViewport,
             rewindManager,
+            lemmingSpriteBank,
             levelScreenRenderer);
 
         GC.Collect(2, GCCollectionMode.Forced);
@@ -166,7 +167,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         return result;
     }
 
-    private static TribeManager GetTribeManager(LevelData levelData, LemmingSpriteBank lemmingSpriteBank)
+    private static TribeManager BuildTribeManager(LevelData levelData, LemmingSpriteBank lemmingSpriteBank)
     {
         var numberOfTribes = levelData.TribeIdentifiers.Count;
 
@@ -180,7 +181,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         return new TribeManager(tribes);
     }
 
-    private static LevelTimer CreateLevelTimer(LevelObjectiveManager levelObjectiveManager)
+    private static LevelTimer BuildLevelTimer(LevelObjectiveManager levelObjectiveManager)
     {
         var primaryObjective = levelObjectiveManager.PrimaryLevelObjective;
         foreach (var requirement in primaryObjective.Requirements)
@@ -192,7 +193,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         return LevelTimer.CreateCountUpTimer();
     }
 
-    private static IBackgroundRenderer GetBackgroundRenderer(LevelData levelData)
+    private static IBackgroundRenderer BuildBackgroundRenderer(LevelData levelData)
     {
         var backgroundData = levelData.LevelBackground;
         if (backgroundData is null)
@@ -235,7 +236,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         return result;
     }
 
-    private static LevelCursorSprite GetLevelCursorSprite(LevelCursor levelCursor)
+    private static LevelCursorSprite BuildLevelCursorSprite(LevelCursor levelCursor)
     {
         return new LevelCursorSprite(
             levelCursor,

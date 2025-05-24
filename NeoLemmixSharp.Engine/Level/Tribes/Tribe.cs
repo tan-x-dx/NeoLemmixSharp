@@ -10,7 +10,6 @@ public sealed class Tribe : IIdEquatable<Tribe>
 {
     public readonly int Id;
     public readonly TribeColorData ColorData;
-    public readonly LemmingSpriteBank SpriteBank;
     public readonly TribeIdentifier TribeIdentifier;
 
     public Tribe(
@@ -20,7 +19,6 @@ public sealed class Tribe : IIdEquatable<Tribe>
     {
         Id = id;
         ColorData = spriteBank.GetColorData(tribeIdentifier);
-        SpriteBank = spriteBank;
         TribeIdentifier = tribeIdentifier;
     }
 
