@@ -9,9 +9,9 @@ public readonly ref struct BitArrayEnumerable<TPerfectHasher, T>
 {
     public static BitArrayEnumerable<TPerfectHasher, T> Empty => default;
 
-    private readonly TPerfectHasher _hasher;
     private readonly ReadOnlySpan<uint> _bits;
     public readonly int Count;
+    private readonly TPerfectHasher _hasher;
 
     internal BitArrayEnumerable(TPerfectHasher hasher, ReadOnlySpan<uint> bits, int count)
     {
