@@ -18,6 +18,8 @@ internal sealed class TribeDataSectionReader : LevelDataSectionReader
 
     public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
     {
+        FileReadingException.ReaderAssert(numberOfItemsInSection <= EngineConstants.MaxNumberOfTribes, "Too many tribes specified!");
+
         levelData.TribeIdentifiers.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)

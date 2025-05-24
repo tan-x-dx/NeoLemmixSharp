@@ -58,7 +58,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
 
     public StyleData ReadStyle()
     {
-        var sectionReaders = VersionHelper.GetStyleDataSectionReadersForVersion(_rawFileData.Version);
+        var sectionReaders = VersionHelper.GetStyleDataSectionReadersForVersion(_rawFileData.FileFormatVersion);
         var result = new StyleData(_styleIdentifier, FileFormatType.Default);
 
         foreach (var sectionReader in sectionReaders)
