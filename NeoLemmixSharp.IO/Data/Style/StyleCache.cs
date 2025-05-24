@@ -4,6 +4,7 @@ using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 using System.Runtime.InteropServices;
 
@@ -11,7 +12,27 @@ namespace NeoLemmixSharp.IO.Data.Style;
 
 public static class StyleCache
 {
+    internal static readonly StyleFormatPair DefaultStyleFormatPair = new(
+        new StyleIdentifier(EngineConstants.DefaultStyleIdentifier),
+        FileFormatType.Default);
+
     private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
+    private static StyleData DefaultStyleData { get; set; } = null!;
+
+    public static void Initialise()
+    {
+        if (DefaultStyleData is not null)
+            throw new InvalidOperationException($"Cannot initialise {nameof(StyleCache)} more than once!");
+
+        DefaultStyleData =
+#if DEBUG
+            DefaultStyleGenerator.GenerateDefaultStyle();
+#else
+            FileTypeHandler.ReadStyle(DefaultStyleFormatPair);
+#endif
+
+        CachedStyles.Add(DefaultStyleFormatPair, DefaultStyleData);
+    }
 
     public static void EnsureStylesAreLoadedForLevel(LevelData levelData)
     {
@@ -127,6 +148,11 @@ public static class StyleCache
         }
     }
 
+    public static ThemeData GetThemeData(StyleFormatPair styleFormatPair)
+    {
+        return CachedStyles[styleFormatPair].ThemeData;
+    }
+
     public static void CleanUpOldStyles()
     {
         var notUsedStylesFormatPairs = new List<StyleFormatPair>(EngineConstants.AssumedInitialStyleCapacity);
@@ -145,6 +171,9 @@ public static class StyleCache
 
         foreach (var styleFormatPair in notUsedStylesFormatPairs)
         {
+            if (DefaultStyleFormatPair.Equals(styleFormatPair))
+                continue;
+
             CachedStyles.Remove(styleFormatPair);
         }
     }

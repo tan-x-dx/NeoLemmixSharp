@@ -31,9 +31,9 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
     {
         var result = new LevelData(FileFormatType.Default);
 
-        var version = _rawFileData.Version;
+        var fileFormatVersion = _rawFileData.FileFormatVersion;
 
-        var sectionReaders = VersionHelper.GetLevelDataSectionReadersForVersion(version);
+        var sectionReaders = VersionHelper.GetLevelDataSectionReadersForVersion(fileFormatVersion);
 
         foreach (var sectionReader in sectionReaders)
         {

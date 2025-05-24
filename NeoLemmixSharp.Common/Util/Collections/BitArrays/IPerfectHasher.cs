@@ -20,7 +20,12 @@ public interface IPerfectHasher<T> : IComparer<T>
         if (x is null) return -1;
         if (y is null) return 1;
 
-        return Hash(x) - Hash(y);
+        var hashX = Hash(x);
+        var hashY = Hash(y);
+
+        var gt = (hashX > hashY) ? 1 : 0;
+        var lt = (hashX < hashY) ? 1 : 0;
+        return gt - lt;
     }
 }
 

@@ -20,6 +20,12 @@ internal sealed class StyleData
         FileFormatType = fileFormatType;
     }
 
+    internal StyleData(StyleFormatPair styleFormatPair)
+    {
+        Identifier = styleFormatPair.StyleIdentifier;
+        FileFormatType = styleFormatPair.FileFormatType;
+    }
+
     internal ThemeData ThemeData { get; set; } = null!;
     internal Dictionary<PieceIdentifier, TerrainArchetypeData> TerrainArchetypeData { get; } = new(EngineConstants.AssumedNumberOfTerrainArchetypeDataInStyle);
     internal Dictionary<PieceIdentifier, GadgetArchetypeData> GadgetArchetypeData { get; } = new(EngineConstants.AssumedNumberOfGadgetArchetypeDataInStyle);

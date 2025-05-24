@@ -5,6 +5,7 @@ public static class DefaultFileExtensions
     public const string LevelFileExtension = ".ullv";
     public const string LevelStyleExtension = ".ulst";
 
+    public const string LemmingsFolderName = "lemmings";
     public const string LevelFolderName = "levels";
     public const string MusicFolderName = "music";
     public const string ReplayFolderName = "Replay";

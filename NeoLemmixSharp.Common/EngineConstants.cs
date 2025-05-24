@@ -23,6 +23,8 @@ public static class EngineConstants
 
     public const Keys FullscreenKey = Keys.F12;
 
+    public const string DefaultStyleIdentifier = "default";
+
     #endregion
 
     #region Engine Constants

@@ -24,8 +24,8 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         LevelData levelData)
     {
         WriteLevelStringData(writer, levelData);
-        writer.Write(levelData.LevelId);
-        writer.Write(levelData.Version);
+        writer.Write(levelData.LevelId.LevelId);
+        writer.Write(levelData.Version.Version);
 
         WriteLevelDimensionData(writer, levelData);
         WriteLevelBackgroundData(writer, levelData);
@@ -58,7 +58,7 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
     {
         var horizontalData = (int)levelData.HorizontalBoundaryBehaviour;
         var verticalData = (int)levelData.VerticalBoundaryBehaviour;
-        var combined = verticalData << 1 | horizontalData;
+        var combined = (verticalData << 1) | horizontalData;
 
         return (byte)combined;
     }

@@ -11,7 +11,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
     where TEnum : unmanaged, Enum
 {
     private readonly byte[] _byteBuffer;
-    public FileFormatVersion Version { get; }
+    public FileFormatVersion FileFormatVersion { get; }
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIdentifiers;
 
     private int _position;
@@ -24,7 +24,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
     {
         _byteBuffer = ReadDataFromFile(stream);
 
-        Version = ReadVersion();
+        FileFormatVersion = ReadVersion();
         _sectionIdentifiers = ReadSectionIdentifiers();
     }
 

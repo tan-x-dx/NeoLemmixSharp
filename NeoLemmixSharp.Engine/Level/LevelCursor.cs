@@ -3,6 +3,7 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using System.Runtime.CompilerServices;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -19,9 +20,9 @@ public sealed class LevelCursor
 
     public Lemming? CurrentlyHighlightedLemming { get; private set; }
 
-    public Microsoft.Xna.Framework.Color Color1 { get; private set; }
-    public Microsoft.Xna.Framework.Color Color2 { get; private set; }
-    public Microsoft.Xna.Framework.Color Color3 { get; private set; }
+    public Color Color1 { get; private set; }
+    public Color Color2 { get; private set; }
+    public Color Color3 { get; private set; }
 
     public LevelCursor()
     {
@@ -90,9 +91,9 @@ public sealed class LevelCursor
             return;
         }
 
-        Color1 = tribe.HairColor;
-        Color2 = tribe.BodyColor;
-        Color3 = tribe.SkinColor;
+        Color1 = tribe.ColorData.HairColor;
+        Color2 = tribe.ColorData.BodyColor;
+        Color3 = tribe.ColorData.SkinColor;
     }
 
     private void CheckLemming(Lemming lemming)

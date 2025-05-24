@@ -52,7 +52,9 @@ internal static class ReadWriteHelpers
 
         int IComparer<Interval>.Compare(Interval x, Interval y)
         {
-            return x.Start.CompareTo(y.Start);
+            int gt = (x.Start > y.Start) ? 1 : 0;
+            int lt = (x.Start < y.Start) ? 1 : 0;
+            return gt - lt;
         }
     }
 

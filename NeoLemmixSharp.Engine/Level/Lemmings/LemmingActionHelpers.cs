@@ -132,8 +132,7 @@ public static class LemmingActionHelpers
     }
 
     [Pure]
-    // Do not SkipLocalsInit
-    public static unsafe Point GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static Point GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (gadgetsNearLemming.Count == 0)
             return new Point();
@@ -141,8 +140,7 @@ public static class LemmingActionHelpers
         var lemmingOrientation = lemming.Orientation;
         var lemmingOrientationRotNum = lemmingOrientation.RotNum;
 
-        // Use raw stack pointers to eliminate bounds checks
-        int* p = stackalloc int[EngineConstants.NumberOfOrientations];
+        Span<int> deltas = [0, 0, 0, 0];
 
         var anchorPosition = lemming.AnchorPosition;
         var footPosition = lemming.FootPosition;
@@ -170,15 +168,15 @@ public static class LemmingActionHelpers
             if (firstMatchingFilter is null || firstMatchingFilter.HitBoxBehaviour != HitBoxBehaviour.Updraft)
                 continue;
 
-            var deltaRotNum = (gadget.Orientation.RotNum - lemmingOrientationRotNum) & 3;
-            p[deltaRotNum] = 1;
+            var deltaRotNum = gadget.Orientation.RotNum - lemmingOrientationRotNum;
+            deltas[deltaRotNum & 3] = 1;
         }
 
-        var dx = p[EngineConstants.RightOrientationRotNum] -
-                 p[EngineConstants.LeftOrientationRotNum];
+        var dx = deltas[EngineConstants.RightOrientationRotNum] -
+                 deltas[EngineConstants.LeftOrientationRotNum];
 
-        var dy = p[EngineConstants.UpOrientationRotNum] -
-                 p[EngineConstants.DownOrientationRotNum];
+        var dy = deltas[EngineConstants.UpOrientationRotNum] -
+                 deltas[EngineConstants.DownOrientationRotNum];
 
         return new Point(dx, dy);
     }

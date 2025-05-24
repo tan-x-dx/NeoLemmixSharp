@@ -84,12 +84,14 @@ internal sealed class LevelDataReader : NeoLemmixDataReader
 
     private void SetId(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelData.LevelId = NxlvReadingHelpers.ParseHex<ulong>(secondToken);
+        var id = NxlvReadingHelpers.ParseHex<ulong>(secondToken);
+        _levelData.LevelId = new LevelIdentifier(id);
     }
 
     private void SetVersion(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelData.Version = NxlvReadingHelpers.ParseHex<ulong>(secondToken);
+        var version = NxlvReadingHelpers.ParseHex<ulong>(secondToken);
+        _levelData.Version = new LevelVersion(version);
     }
 
     private void SetStartX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

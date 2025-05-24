@@ -14,6 +14,7 @@ using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.Rendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.IO.Data.Level;
 using System.Diagnostics.Contracts;
 using System.Reflection;
@@ -43,6 +44,7 @@ public sealed class LevelScreen : IBaseScreen
     private readonly LevelInputController _levelInputController;
     private readonly Viewport _levelViewport;
     private readonly RewindManager _rewindManager;
+    private readonly LemmingSpriteBank _lemmingSpriteBank;
     private readonly LevelScreenRenderer _levelScreenRenderer;
 
     public static BoundaryBehaviour HorizontalBoundaryBehaviour => _instance._horizontalBoundaryBehaviour;
@@ -62,6 +64,7 @@ public sealed class LevelScreen : IBaseScreen
     public static LevelTimer LevelTimer => _instance._levelTimer;
     public static LevelInputController LevelInputController => _instance._levelInputController;
     public static RewindManager RewindManager => _instance._rewindManager;
+    public static LemmingSpriteBank LemmingSpriteBank => _instance._lemmingSpriteBank;
     public static Viewport LevelViewport => _instance._levelViewport;
 
     [Pure]
@@ -125,6 +128,7 @@ public sealed class LevelScreen : IBaseScreen
         LevelInputController levelInputController,
         Viewport levelViewport,
         RewindManager rewindManager,
+        LemmingSpriteBank lemmingSpriteBank,
         LevelScreenRenderer levelScreenRenderer)
     {
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
@@ -144,6 +148,7 @@ public sealed class LevelScreen : IBaseScreen
         _levelInputController = levelInputController;
         _levelViewport = levelViewport;
         _rewindManager = rewindManager;
+        _lemmingSpriteBank = lemmingSpriteBank;
         _levelScreenRenderer = levelScreenRenderer;
         ScreenTitle = levelData.LevelTitle;
 

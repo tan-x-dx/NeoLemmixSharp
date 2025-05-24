@@ -30,9 +30,8 @@ internal sealed class LevelMessageDataSectionReader : LevelDataSectionReader
     {
         int numberOfTextItems = rawFileData.Read8BitUnsignedInteger();
         collection.Capacity = numberOfTextItems;
-        int i = numberOfTextItems;
 
-        while (i-- > 0)
+        while (numberOfTextItems-- > 0)
         {
             int stringId = rawFileData.Read16BitUnsignedInteger();
             collection.Add(_stringIdLookup[stringId]);

@@ -31,7 +31,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         var bufferSize = _stringIdLookup.CalculateBufferSize();
 
-        FileWritingException.WriterAssert(bufferSize < ushort.MaxValue, "Cannot serialize a string larger than 65535 bytes!");
+        FileWritingException.WriterAssert(bufferSize <= ushort.MaxValue, "Cannot serialize a string larger than 65535 bytes!");
 
         Span<byte> buffer = bufferSize > MaxStackByteBufferSize
             ? new byte[bufferSize]

@@ -24,7 +24,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
     public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
     {
-        FileReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level data item!");
+        FileReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level metadata item!");
 
         int stringId = rawFileData.Read16BitUnsignedInteger();
         levelData.LevelTitle = _stringIdLookup[stringId];
@@ -35,8 +35,8 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         stringId = rawFileData.Read16BitUnsignedInteger();
         levelData.LevelTheme = new StyleIdentifier(_stringIdLookup[stringId]);
 
-        levelData.LevelId = rawFileData.Read64BitUnsignedInteger();
-        levelData.Version = rawFileData.Read64BitUnsignedInteger();
+        levelData.LevelId = new LevelIdentifier(rawFileData.Read64BitUnsignedInteger());
+        levelData.Version = new LevelVersion(rawFileData.Read64BitUnsignedInteger());
 
         ReadLevelDimensionData(rawFileData, levelData);
         ReadBackgroundData(rawFileData, levelData);
