@@ -7,6 +7,7 @@ public ref struct LemmingSpriteBankBuilder
 
     public LemmingSpriteBank GetLemmingSpriteBank()
     {
-        return DefaultLemmingSpriteBank.DefaultLemmingSprites;
+        return null!;
+    //    return DefaultLemmingSpriteBank.DefaultLemmingSprites;
     }
 }

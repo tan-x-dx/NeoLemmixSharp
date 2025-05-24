@@ -56,7 +56,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
         var spriteBank = _lemming.State.TribeAffiliation.SpriteBank;
 
-        _actionSprite = spriteBank.GetActionSprite(_lemming.CurrentAction);
+        _actionSprite = spriteBank.GetActionSprite(_lemming);
 
         UpdatePosition();
 
@@ -72,7 +72,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
         var spriteBank = _lemming.State.TribeAffiliation.SpriteBank;
 
-        _actionSprite = spriteBank.GetActionSprite(_lemming.CurrentAction);
+        _actionSprite = spriteBank.GetActionSprite(_lemming);
 
         UpdatePosition();
 

@@ -15,7 +15,7 @@ public sealed class LemmingActionSprite : IDisposable
         var data = new[] { 0U };
         texture.SetData(data);
 
-        Empty = new LemmingActionSprite(texture, new Point(), new Size(), Array.Empty<LemmingActionLayerRenderer>());
+        Empty = new LemmingActionSprite(texture, default, default, []);
     }
 
     private readonly LemmingActionLayerRenderer[] _renderers;

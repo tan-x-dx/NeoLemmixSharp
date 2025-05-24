@@ -251,7 +251,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
             _tribeId = value.Id;
             UpdateHairAndBodyColors();
             UpdateSkinColor();
-            PaintColor = LevelScreen.TribeManager.AllItems[_tribeId].PaintColor;
+            PaintColor = LevelScreen.TribeManager.AllItems[_tribeId].ColorData.PaintColor;
         }
     }
 
@@ -263,7 +263,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     private void UpdateHairAndBodyColors()
     {
-        var tribe = LevelScreen.TribeManager.AllItems[_tribeId];
+        var tribe = LevelScreen.TribeManager.AllItems[_tribeId].ColorData;
 
         if (HasPermanentSkill)
         {
@@ -283,7 +283,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     private void UpdateSkinColor()
     {
-        var tribe = LevelScreen.TribeManager.AllItems[_tribeId];
+        var tribe = LevelScreen.TribeManager.AllItems[_tribeId].ColorData;
 
         var skinColor = IsZombie
             ? tribe.ZombieSkinColor

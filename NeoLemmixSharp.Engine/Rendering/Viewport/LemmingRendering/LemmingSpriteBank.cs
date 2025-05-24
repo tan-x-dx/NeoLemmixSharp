@@ -1,33 +1,55 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 public sealed class LemmingSpriteBank : IDisposable
 {
-    private readonly LemmingActionSprite[] _actionSprites;
-    private readonly TribeColorData[] _tribeColorData;
+    private readonly ListLookup<StyleIdentifier, SpriteBankData> _lookupData;
 
-    public LemmingSpriteBank(LemmingActionSprite[] actionSprites, TribeColorData[] tribeColorData)
+    public LemmingSpriteBank(ListLookup<StyleIdentifier, SpriteBankData> lookupData)
     {
-        _actionSprites = actionSprites;
-        _tribeColorData = tribeColorData;
+        _lookupData = lookupData;
     }
 
-    public TribeColorData GetColorData(int id) => _tribeColorData[id];
-
-    public LemmingActionSprite GetActionSprite(LemmingAction lemmingAction)
+    public ref readonly TribeColorData GetColorData(TribeIdentifier tribeIdentifier)
     {
-        var id = lemmingAction.Id;
-        if ((uint)id < (uint)_actionSprites.Length)
-            return _actionSprites[id];
+        var spriteBankData = _lookupData[tribeIdentifier.StyleIdentifier];
+
+        return ref spriteBankData.TribeColorData[tribeIdentifier.ThemeTribeId];
+    }
+
+    public LemmingActionSprite GetActionSprite(Lemming lemming)
+    {
+        var actionSprites = GetActionSprites(lemming);
+
+        var id = lemming.CurrentAction.Id;
+        if ((uint)id < (uint)actionSprites.Length)
+            return actionSprites[id];
 
         return LemmingActionSprite.Empty;
     }
 
+    private LemmingActionSprite[] GetActionSprites(Lemming lemming)
+    {
+        var styleIdentifier = lemming.State.TribeAffiliation.TribeIdentifier.StyleIdentifier;
+        return _lookupData[styleIdentifier].ActionSprites;
+    }
+
     public void Dispose()
     {
-        DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<LemmingActionSprite>(_actionSprites));
+        foreach (var kvp in _lookupData)
+        {
+            DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<LemmingActionSprite>(kvp.Value.ActionSprites));
+        }
+    }
+
+    public readonly struct SpriteBankData(LemmingActionSprite[] actionSprites, TribeColorData[] tribeColorData)
+    {
+        public readonly LemmingActionSprite[] ActionSprites = actionSprites;
+        public readonly TribeColorData[] TribeColorData = tribeColorData;
     }
 }

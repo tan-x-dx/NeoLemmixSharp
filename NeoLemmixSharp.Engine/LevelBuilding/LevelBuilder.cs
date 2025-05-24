@@ -173,7 +173,8 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var tribes = new Tribe[numberOfTribes];
         for (var i = 0; i < tribes.Length; i++)
         {
-            tribes[i] = new Tribe(i, lemmingSpriteBank);
+            var tribeIdentifier = levelData.TribeIdentifiers[i];
+            tribes[i] = new Tribe(i, lemmingSpriteBank, tribeIdentifier);
         }
 
         return new TribeManager(tribes);

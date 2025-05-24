@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common.Util.Identity;
+﻿using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
@@ -9,36 +9,19 @@ namespace NeoLemmixSharp.Engine.Level.Tribes;
 public sealed class Tribe : IIdEquatable<Tribe>
 {
     public readonly int Id;
-    public readonly Color HairColor;
-    public readonly Color PermanentSkillHairColor;
-    public readonly Color SkinColor;
-    public readonly Color AcidLemmingFootColor;
-    public readonly Color WaterLemmingFootColor;
-    public readonly Color ZombieSkinColor;
-    public readonly Color BodyColor;
-    public readonly Color PermanentSkillBodyColor;
-    public readonly Color NeutralBodyColor;
-    public readonly Color PaintColor;
+    public readonly TribeColorData ColorData;
     public readonly LemmingSpriteBank SpriteBank;
+    public readonly TribeIdentifier TribeIdentifier;
 
     public Tribe(
         int id,
-        LemmingSpriteBank spriteBank)
+        LemmingSpriteBank spriteBank,
+        TribeIdentifier tribeIdentifier)
     {
         Id = id;
-
-        var colorData = spriteBank.GetColorData(id);
-        HairColor = colorData.HairColor;
-        PermanentSkillHairColor = colorData.PermanentSkillHairColor;
-        SkinColor = colorData.SkinColor;
-        AcidLemmingFootColor = colorData.AcidLemmingFootColor;
-        WaterLemmingFootColor = colorData.WaterLemmingFootColor;
-        ZombieSkinColor = colorData.ZombieSkinColor;
-        BodyColor = colorData.BodyColor;
-        PermanentSkillBodyColor = colorData.PermanentSkillBodyColor;
-        NeutralBodyColor = colorData.NeutralBodyColor;
-        PaintColor = colorData.PaintColor;
+        ColorData = spriteBank.GetColorData(tribeIdentifier);
         SpriteBank = spriteBank;
+        TribeIdentifier = tribeIdentifier;
     }
 
     int IIdEquatable<Tribe>.Id => Id;

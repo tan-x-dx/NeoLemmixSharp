@@ -11,7 +11,27 @@ namespace NeoLemmixSharp.IO.Data.Style;
 
 public static class StyleCache
 {
+    internal static readonly StyleFormatPair DefaultStyleFormatPair = new(
+        new StyleIdentifier(EngineConstants.DefaultStyleIdentifier),
+        FileFormatType.Default);
+
     private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
+    private static StyleData DefaultStyleData { get; set; } = null!;
+
+    public static void Initialise()
+    {
+        if (DefaultStyleData is not null)
+            throw new InvalidOperationException($"Cannot initialise {nameof(StyleCache)} more than once!");
+
+        DefaultStyleData =
+#if DEBUG
+            DefaultStyleGenerator.GenerateDefaultStyle();
+#else
+            FileTypeHandler.ReadStyle(DefaultStyleFormatPair);
+#endif
+
+        CachedStyles.Add(DefaultStyleFormatPair, DefaultStyleData);
+    }
 
     public static void EnsureStylesAreLoadedForLevel(LevelData levelData)
     {
@@ -145,6 +165,9 @@ public static class StyleCache
 
         foreach (var styleFormatPair in notUsedStylesFormatPairs)
         {
+            if (DefaultStyleFormatPair.Equals(styleFormatPair))
+                continue;
+
             CachedStyles.Remove(styleFormatPair);
         }
     }

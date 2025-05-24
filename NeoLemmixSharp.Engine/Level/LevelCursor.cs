@@ -90,9 +90,9 @@ public sealed class LevelCursor
             return;
         }
 
-        Color1 = tribe.HairColor;
-        Color2 = tribe.BodyColor;
-        Color3 = tribe.SkinColor;
+        Color1 = tribe.ColorData.HairColor;
+        Color2 = tribe.ColorData.BodyColor;
+        Color3 = tribe.ColorData.SkinColor;
     }
 
     private void CheckLemming(Lemming lemming)
