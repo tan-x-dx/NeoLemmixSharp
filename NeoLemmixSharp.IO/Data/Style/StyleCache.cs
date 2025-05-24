@@ -4,6 +4,7 @@ using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 using System.Runtime.InteropServices;
 
@@ -145,6 +146,11 @@ public static class StyleCache
 
             gadgetArchetypeDataForLevel = styleData.GadgetArchetypeData[gadgetData.PieceName];
         }
+    }
+
+    public static ThemeData GetThemeData(StyleFormatPair styleFormatPair)
+    {
+        return CachedStyles[styleFormatPair].ThemeData;
     }
 
     public static void CleanUpOldStyles()

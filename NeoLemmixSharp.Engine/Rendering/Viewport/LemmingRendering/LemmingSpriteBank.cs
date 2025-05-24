@@ -46,10 +46,4 @@ public sealed class LemmingSpriteBank : IDisposable
             DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<LemmingActionSprite>(kvp.Value.ActionSprites));
         }
     }
-
-    public readonly struct SpriteBankData(LemmingActionSprite[] actionSprites, TribeColorData[] tribeColorData)
-    {
-        public readonly LemmingActionSprite[] ActionSprites = actionSprites;
-        public readonly TribeColorData[] TribeColorData = tribeColorData;
-    }
 }

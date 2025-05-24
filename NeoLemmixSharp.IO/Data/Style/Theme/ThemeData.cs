@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
-internal sealed class ThemeData
+public sealed class ThemeData
 {
     public required StyleIdentifier StyleIdentifier { get; init; }
 

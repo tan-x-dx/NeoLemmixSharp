@@ -6,7 +6,6 @@ using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;

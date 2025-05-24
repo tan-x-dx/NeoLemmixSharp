@@ -11,6 +11,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
     private int _size;
 
     public int Count => _size;
+    public int Capacity => _data.Length;
 
     public ListLookup(int capacity)
     {
