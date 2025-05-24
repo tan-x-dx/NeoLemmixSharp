@@ -14,8 +14,8 @@ public sealed class LevelData
 {
     public string LevelTitle { get; set; } = string.Empty;
     public string LevelAuthor { get; set; } = string.Empty;
-    public ulong LevelId { get; set; }
-    public ulong Version { get; set; }
+    public LevelIdentifier LevelId { get; set; }
+    public LevelVersion Version { get; set; }
 
     private int _levelWidth = -1;
     private int _levelHeight = -1;
