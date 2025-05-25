@@ -68,8 +68,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        var lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
-        var lemmingSpriteBank = lemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
+        var lemmingSpriteBank = LemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
         var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
         var levelGadgets = gadgetBuilder.BuildLevelGadgets(lemmingManager, tribeManager);
 
@@ -81,7 +80,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         }
 
         var inputController = new LevelInputController();
-
         var levelObjectiveManager = new LevelObjectiveManager([]/*levelData.LevelObjectives*/, 0);
 
         var skillSetManager = new SkillSetManager(levelObjectiveManager.PrimaryLevelObjective);
@@ -93,7 +91,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-
         var levelViewport = new Level.Viewport();
 
         var terrainTexture = terrainBuilder.GetTerrainTexture();
@@ -103,9 +100,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var terrainRenderer = new TerrainRenderer(terrainTexture);
 
         var rewindManager = new RewindManager(lemmingManager, gadgetManager, skillSetManager);
-
         var updateScheduler = new UpdateScheduler();
-
         var terrainManager = new TerrainManager(pixelData);
 
         var gadgetSpriteBank = levelSpriteBuilder.GetGadgetSpriteBank();

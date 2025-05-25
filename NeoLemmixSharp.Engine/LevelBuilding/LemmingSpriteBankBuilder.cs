@@ -11,9 +11,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public readonly ref struct LemmingSpriteBankBuilder
+public static class LemmingSpriteBankBuilder
 {
-    public LemmingSpriteBank BuildLemmingSpriteBank(LevelData levelData)
+    public static LemmingSpriteBank BuildLemmingSpriteBank(LevelData levelData)
     {
         var listLookup = new ListLookup<StyleIdentifier, SpriteBankData>(EngineConstants.MaxNumberOfTribes);
 
@@ -33,7 +33,7 @@ public readonly ref struct LemmingSpriteBankBuilder
         return new LemmingSpriteBank(listLookup);
     }
 
-    private SpriteBankData CreateSpriteBankData(
+    private static SpriteBankData CreateSpriteBankData(
         ThemeData themeData)
     {
         var lemmingActionSprites = new LemmingActionSprite[EngineConstants.NumberOfLemmingActions];
@@ -58,7 +58,7 @@ public readonly ref struct LemmingSpriteBankBuilder
             tribeColorDataSpan.ToArray());
     }
 
-    private LemmingActionSprite CreateLemmingActionSprite(
+    private static LemmingActionSprite CreateLemmingActionSprite(
         ThemeData themeData,
         string spriteDirectory,
         LemmingActionSpriteData lemmingActionSpriteData)
