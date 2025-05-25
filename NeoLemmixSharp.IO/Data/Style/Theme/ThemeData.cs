@@ -16,17 +16,11 @@ public sealed class ThemeData
     public required Color PickupInside { get; init; }
 
     public LemmingActionSpriteDataBuffer LemmingActionSpriteData = new();
-    public TribeColorDataBuffer TribeColorData = new();
+    public TribeColorData[] TribeColorData { get; } = new TribeColorData[EngineConstants.MaxNumberOfTribes];
 
     [InlineArray(EngineConstants.NumberOfLemmingActions)]
     public struct LemmingActionSpriteDataBuffer
     {
         private LemmingActionSpriteData _0;
-    }
-
-    [InlineArray(EngineConstants.MaxNumberOfTribes)]
-    public struct TribeColorDataBuffer
-    {
-        private TribeColorData _0;
     }
 }

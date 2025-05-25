@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Theme;
@@ -10,11 +11,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public readonly ref struct LemmingSpriteBankBuilder(GraphicsDevice graphicsDevice)
+public static class LemmingSpriteBankBuilder
 {
-    private readonly GraphicsDevice _graphicsDevice = graphicsDevice;
-
-    public LemmingSpriteBank BuildLemmingSpriteBank(LevelData levelData)
+    public static LemmingSpriteBank BuildLemmingSpriteBank(LevelData levelData)
     {
         var listLookup = new ListLookup<StyleIdentifier, SpriteBankData>(EngineConstants.MaxNumberOfTribes);
 
@@ -34,7 +33,7 @@ public readonly ref struct LemmingSpriteBankBuilder(GraphicsDevice graphicsDevic
         return new LemmingSpriteBank(listLookup);
     }
 
-    private SpriteBankData CreateSpriteBankData(
+    private static SpriteBankData CreateSpriteBankData(
         ThemeData themeData)
     {
         var lemmingActionSprites = new LemmingActionSprite[EngineConstants.NumberOfLemmingActions];
@@ -46,21 +45,23 @@ public readonly ref struct LemmingSpriteBankBuilder(GraphicsDevice graphicsDevic
 
         for (var i = 0; i < EngineConstants.NumberOfLemmingActions; i++)
         {
-            lemmingActionSprites[i] = CreateLemmingActionSprite(spriteDirectory, themeData.LemmingActionSpriteData[i]);
+            lemmingActionSprites[i] = CreateLemmingActionSprite(
+                themeData,
+                spriteDirectory,
+                themeData.LemmingActionSpriteData[i]);
         }
-
-        ReadOnlySpan<TribeColorData> tribeColorDataSpan = themeData.TribeColorData;
 
         return new SpriteBankData(
             lemmingActionSprites,
-            tribeColorDataSpan.ToArray());
+            themeData.TribeColorData);
     }
 
-    private LemmingActionSprite CreateLemmingActionSprite(
+    private static LemmingActionSprite CreateLemmingActionSprite(
+        ThemeData themeData,
         string spriteDirectory,
         LemmingActionSpriteData lemmingActionSpriteData)
     {
-        var lemmingActionData = Helpers.GetLemmingActionDataFromId(lemmingActionSpriteData.LemmingActionId);
+        var lemmingActionData = LemmingActionHelpers.GetLemmingActionDataFromId(lemmingActionSpriteData.LemmingActionId);
 
         var spriteFilePath = Path.Combine(
             spriteDirectory,
@@ -68,7 +69,11 @@ public readonly ref struct LemmingSpriteBankBuilder(GraphicsDevice graphicsDevic
 
         var pngPath = Path.ChangeExtension(spriteFilePath, "png");
 
-        var spriteTexture = Texture2D.FromFile(_graphicsDevice, pngPath);
+        var spriteTexture = TextureCache.GetOrLoadTexture(
+            pngPath,
+            themeData.StyleIdentifier,
+            new PieceIdentifier(lemmingActionData.LemmingActionFileName),
+            TextureType.LemmingSprite);
 
         var spriteSize = DetermineSpriteSize(
             lemmingActionData.LemmingActionFileName,

@@ -48,6 +48,9 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             isFastForward = false;
         }
 
+        return null;
+
+        /*
         return new HitBoxGadget(
             resizeType,
             lemmingTracker,
@@ -60,7 +63,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             CurrentGadgetBounds = currentGadgetBounds,
 
             IsFastForward = isFastForward
-        };
+        };*/
     }
 
     private GadgetBounds GetGadgetBounds(GadgetData gadgetData)

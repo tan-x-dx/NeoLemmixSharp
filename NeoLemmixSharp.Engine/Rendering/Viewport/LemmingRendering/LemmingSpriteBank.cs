@@ -1,12 +1,11 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
-public sealed class LemmingSpriteBank : IDisposable
+public sealed class LemmingSpriteBank
 {
     private readonly ListLookup<StyleIdentifier, SpriteBankData> _lookupData;
 
@@ -37,15 +36,5 @@ public sealed class LemmingSpriteBank : IDisposable
     {
         var styleIdentifier = lemming.State.TribeAffiliation.TribeIdentifier.StyleIdentifier;
         return _lookupData[styleIdentifier].ActionSprites;
-    }
-
-    public void Dispose()
-    {
-        foreach (var kvp in _lookupData)
-        {
-            DisposableHelperMethods.DisposeOfAll(new ReadOnlySpan<LemmingActionSprite>(kvp.Value.ActionSprites));
-        }
-
-        _lookupData.Clear();
     }
 }

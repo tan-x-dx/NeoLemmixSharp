@@ -1,13 +1,10 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetStateChanger : GadgetBase
+public sealed class GadgetStateChanger : FunctionalGadget<GadgetStateChanger.StateChangerGadgetInput>
 {
-    private readonly AnimationController _inactiveAnimationController;
-    private readonly AnimationController _activeAnimationController;
     private readonly HitBoxGadget _gadget;
 
     private readonly int _newState;
@@ -16,27 +13,22 @@ public sealed class GadgetStateChanger : GadgetBase
     private bool _signal;
 
     public GadgetStateChanger(
-        AnimationController inactiveAnimationController,
-        AnimationController activeAnimationController,
+        GadgetState state0,
+        GadgetState state1,
+        bool startActive,
         string inputName,
         HitBoxGadget gadget,
         int newState)
-        : base(1)
+        : base(state0, state1, startActive, 1)
     {
-        _inactiveAnimationController = inactiveAnimationController;
-        _activeAnimationController = activeAnimationController;
-        CurrentAnimationController = _inactiveAnimationController;
-
         _gadget = gadget;
         _newState = newState;
 
         RegisterInput(new StateChangerGadgetInput(inputName, this));
     }
 
-    public override void Tick()
+    protected override void OnTick()
     {
-        CurrentAnimationController.Tick();
-
         if (_signal && !_previousSignal)
         {
             _gadget.SetNextState(_newState);
@@ -45,7 +37,9 @@ public sealed class GadgetStateChanger : GadgetBase
         _previousSignal = _signal;
     }
 
-    private sealed class StateChangerGadgetInput : GadgetInput
+    protected override void OnChangeStates() { }
+
+    public sealed class StateChangerGadgetInput : GadgetInput
     {
         private readonly GadgetStateChanger _gadget;
 
@@ -59,9 +53,9 @@ public sealed class GadgetStateChanger : GadgetBase
         {
             _gadget._signal = signal;
 
-            _gadget.CurrentAnimationController = signal
-                ? _gadget._activeAnimationController
-                : _gadget._inactiveAnimationController;
+            //    _gadget.CurrentAnimationController = signal
+            //        ? _gadget._activeAnimationController
+            //       : _gadget._inactiveAnimationController;
         }
     }
 }

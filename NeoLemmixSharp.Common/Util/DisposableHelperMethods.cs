@@ -27,9 +27,9 @@ public static class DisposableHelperMethods
         where TKey : notnull
         where TValue : class, IDisposable
     {
-        foreach (var (_, value) in dictionary)
+        foreach (var kvp in dictionary)
         {
-            value.Dispose();
+            kvp.Value.Dispose();
         }
 
         dictionary.Clear();

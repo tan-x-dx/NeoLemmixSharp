@@ -17,17 +17,17 @@ public static class ArrayWrapperHelpers
         return new ArrayWrapper2D<Color>(data, size);
     }
 
-    public static ArrayWrapper2D<Color> Trim(this ArrayWrapper2D<Color> data)
+    public static ArrayWrapper2D<Color> Trim(in ArrayWrapper2D<Color> data)
     {
-        var minX = GetMinXTrim(data);
+        var minX = GetMinXTrim(in data);
 
         // If first value is negative, then the data is completely blank
         if (minX < 0)
-            return new ArrayWrapper2D<Color>([], new Size());        
+            return new ArrayWrapper2D<Color>([], new Size());
 
-        var minY = GetMinYTrim(data);
-        var maxX = GetMaxXTrim(data);
-        var maxY = GetMaxYTrim(data);
+        var minY = GetMinYTrim(in data);
+        var maxX = GetMaxXTrim(in data);
+        var maxY = GetMaxYTrim(in data);
 
         var subRegion = new RectangularRegion(
             new Point(minX, minY),
@@ -36,7 +36,7 @@ public static class ArrayWrapperHelpers
         return new ArrayWrapper2D<Color>(data.Array, data.Size, subRegion);
     }
 
-    private static int GetMinXTrim(ArrayWrapper2D<Color> data)
+    private static int GetMinXTrim(in ArrayWrapper2D<Color> data)
     {
         for (var x = 0; x < data.Size.W; x++)
         {
@@ -53,7 +53,7 @@ public static class ArrayWrapperHelpers
         return -1;
     }
 
-    private static int GetMinYTrim(ArrayWrapper2D<Color> data)
+    private static int GetMinYTrim(in ArrayWrapper2D<Color> data)
     {
         for (var y = 0; y < data.Size.H; y++)
         {
@@ -70,7 +70,7 @@ public static class ArrayWrapperHelpers
         return -1;
     }
 
-    private static int GetMaxXTrim(ArrayWrapper2D<Color> data)
+    private static int GetMaxXTrim(in ArrayWrapper2D<Color> data)
     {
         for (var x = data.Size.W - 1; x >= 0; x--)
         {
@@ -87,7 +87,7 @@ public static class ArrayWrapperHelpers
         return -1;
     }
 
-    private static int GetMaxYTrim(ArrayWrapper2D<Color> data)
+    private static int GetMaxYTrim(in ArrayWrapper2D<Color> data)
     {
         for (var y = data.Size.H - 1; y >= 0; y--)
         {

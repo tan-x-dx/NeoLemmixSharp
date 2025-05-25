@@ -1,13 +1,11 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetMover : GadgetBase
+public sealed class GadgetMover : FunctionalGadget<GadgetMover.GadgetMoverInput>
 {
-    private readonly AnimationController _inactiveAnimationController;
-    private readonly AnimationController _activeAnimationController;
     private readonly IMoveableGadget[] _gadgets;
 
     private readonly int _tickDelay;
@@ -18,19 +16,16 @@ public sealed class GadgetMover : GadgetBase
     private int _tickCount;
 
     public GadgetMover(
-        AnimationController inactiveAnimationController,
-        AnimationController activeAnimationController,
+        GadgetState state0,
+        GadgetState state1,
+        bool startActive,
         string inputName,
         IMoveableGadget[] gadgets,
         int tickDelay,
         int dx,
         int dy)
-        : base(1)
+        : base(state0, state1, startActive, 1)
     {
-        _inactiveAnimationController = inactiveAnimationController;
-        _activeAnimationController = activeAnimationController;
-        CurrentAnimationController = _inactiveAnimationController;
-
         _tickDelay = tickDelay;
         _gadgets = gadgets;
         _dx = dx;
@@ -39,10 +34,8 @@ public sealed class GadgetMover : GadgetBase
         RegisterInput(new GadgetMoverInput(inputName, this));
     }
 
-    public override void Tick()
+    protected override void OnTick()
     {
-        CurrentAnimationController.Tick();
-
         if (!_active)
             return;
 
@@ -60,7 +53,9 @@ public sealed class GadgetMover : GadgetBase
         }
     }
 
-    private sealed class GadgetMoverInput : GadgetInput
+    protected override void OnChangeStates() { }
+
+    public sealed class GadgetMoverInput : GadgetInput
     {
         private readonly GadgetMover _gadget;
 
@@ -73,16 +68,15 @@ public sealed class GadgetMover : GadgetBase
         public override void OnRegistered()
         {
             _gadget._active = false;
-            _gadget.CurrentAnimationController = _gadget._inactiveAnimationController;
         }
 
         public override void ReactToSignal(bool signal)
         {
             _gadget._active = signal;
 
-            _gadget.CurrentAnimationController = signal
-                ? _gadget._activeAnimationController
-                : _gadget._inactiveAnimationController;
+            //    _gadget.CurrentAnimationController = signal
+            //        ? _gadget._activeAnimationController
+            //        : _gadget._inactiveAnimationController;
         }
     }
 }

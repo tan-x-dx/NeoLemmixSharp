@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style;
@@ -13,7 +14,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public readonly ref struct TerrainBuilder
 {
-    private readonly GraphicsDevice _graphicsDevice;
     private readonly LevelData _levelData;
 
     private readonly RenderTarget2D _terrainTexture;
@@ -25,20 +25,23 @@ public readonly ref struct TerrainBuilder
 
     public TerrainBuilder(GraphicsDevice graphicsDevice, LevelData levelData)
     {
-        _graphicsDevice = graphicsDevice;
         _levelData = levelData;
 
         var terrainDimensions = levelData.LevelDimensions;
 
         _terrainTexture = new RenderTarget2D(
-            _graphicsDevice,
+            graphicsDevice,
             terrainDimensions.W,
             terrainDimensions.H,
             false,
-            _graphicsDevice.PresentationParameters.BackBufferFormat,
+            graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24,
             8,
             RenderTargetUsage.DiscardContents);
+
+        _terrainTexture.Name = levelData.LevelTitle;
+
+        TextureCache.CacheShortLivedTexture(_terrainTexture);
 
         var rawPixels = new PixelType[terrainDimensions.Area()];
         _terrainPixels = new ArrayWrapper2D<PixelType>(rawPixels, terrainDimensions);
@@ -59,7 +62,7 @@ public readonly ref struct TerrainBuilder
 
         var textureData = new ArrayWrapper2D<Color>(_terrainColors.Array, _levelData.LevelDimensions);
 
-        DrawTerrainPieces(_levelData.AllTerrainData, textureData);
+        DrawTerrainPieces(_levelData.AllTerrainData, in textureData);
         _terrainTexture.SetData(_terrainColors.Array);
     }
 
@@ -115,14 +118,14 @@ public readonly ref struct TerrainBuilder
 
         DrawTerrainPieces(
             terrainGroupData.AllBasicTerrainData,
-            terrainPixelColorData);
+            in terrainPixelColorData);
 
-        terrainGroupData.TerrainPixelColorData = terrainPixelColorData.Trim();
+        terrainGroupData.TerrainPixelColorData = ArrayWrapperHelpers.Trim(in terrainPixelColorData);
     }
 
     private void DrawTerrainPieces(
         List<TerrainData> terrainDataList,
-        ArrayWrapper2D<Color> targetData)
+        in ArrayWrapper2D<Color> targetData)
     {
         foreach (var terrainData in terrainDataList)
         {
@@ -135,14 +138,14 @@ public readonly ref struct TerrainBuilder
                     DrawTerrainPiece(
                         terrainData,
                         terrainArchetypeData,
-                        targetData);
+                        in targetData);
                 }
                 else
                 {
                     DrawResizeableTerrainPiece(
                         terrainData,
                         terrainArchetypeData,
-                        targetData);
+                        in targetData);
                 }
             }
             else
@@ -151,7 +154,7 @@ public readonly ref struct TerrainBuilder
                 DrawTerrainPiece(
                     terrainData,
                     textureGroup,
-                    targetData);
+                    in targetData);
             }
         }
     }
@@ -159,7 +162,7 @@ public readonly ref struct TerrainBuilder
     private void DrawTerrainPiece(
         TerrainData terrainData,
         ITerrainArchetypeData terrainArchetypeData,
-        ArrayWrapper2D<Color> targetPixelColorData)
+        in ArrayWrapper2D<Color> targetPixelColorData)
     {
         var sourcePixelColorData = _colorDataLookup[terrainData.GetStylePiecePair()];
 
@@ -195,7 +198,7 @@ public readonly ref struct TerrainBuilder
     private void ChangePixel(
         TerrainData terrainData,
         ITerrainArchetypeData terrainArchetypeData,
-        ArrayWrapper2D<Color> targetPixelColorData,
+        in ArrayWrapper2D<Color> targetPixelColorData,
         Color sourcePixelColor,
         Point p0)
     {
@@ -245,7 +248,7 @@ public readonly ref struct TerrainBuilder
     private void DrawResizeableTerrainPiece(
         TerrainData terrainData,
         TerrainArchetypeData terrainArchetypeData,
-        ArrayWrapper2D<Color> targetPixelColorData)
+        in ArrayWrapper2D<Color> targetPixelColorData)
     {
 
     }
@@ -306,7 +309,11 @@ public readonly ref struct TerrainBuilder
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
-        using var mainTexture = Texture2D.FromFile(_graphicsDevice, pngPath);
+        var mainTexture = TextureCache.GetOrLoadTexture(
+            pngPath,
+            terrainData.StyleName,
+            terrainData.PieceName,
+            TextureType.TerrainSprite);
         colorData = ArrayWrapperHelpers.GetPixelColorDataFromTexture(mainTexture);
     }
 }

@@ -17,6 +17,7 @@ using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Level.Updates;
+using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
@@ -54,11 +55,9 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelDimensions.W);
         var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelDimensions.H);
 
-        var lemmingBuilder = new LemmingBuilder(levelData);
-        var levelLemmings = lemmingBuilder.BuildLevelLemmings();
+        var levelLemmings = new LemmingBuilder(levelData).BuildLevelLemmings();
 
-        var gadgetBuilder = new GadgetBuilder(levelData);
-        var hatchGroups = gadgetBuilder.BuildHatchGroups();
+        var hatchGroups = HatchGroupBuilder.BuildHatchGroups(levelData);
 
         var lemmingManager = new LemmingManager(
             levelLemmings,
@@ -68,20 +67,17 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        var lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder(_graphicsDevice);
-        var lemmingSpriteBank = lemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
+        var lemmingSpriteBank = LemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
         var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
-        var levelGadgets = gadgetBuilder.BuildLevelGadgets(lemmingManager, tribeManager);
 
-        using var levelSpriteBuilder = new LevelSpriteBuilder(_graphicsDevice, levelGadgets, levelLemmings);
+        var levelGadgets = new GadgetBuilder(levelData).BuildLevelGadgets(lemmingManager, tribeManager);
 
         foreach (var hatchGroup in hatchGroups)
         {
-            gadgetBuilder.SetHatchesForHatchGroup(hatchGroup);
+            HatchGroupBuilder.SetHatchesForHatchGroup(hatchGroup, levelGadgets);
         }
 
         var inputController = new LevelInputController();
-
         var levelObjectiveManager = new LevelObjectiveManager([]/*levelData.LevelObjectives*/, 0);
 
         var skillSetManager = new SkillSetManager(levelObjectiveManager.PrimaryLevelObjective);
@@ -93,7 +89,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-
         var levelViewport = new Level.Viewport();
 
         var terrainTexture = terrainBuilder.GetTerrainTexture();
@@ -103,18 +98,16 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var terrainRenderer = new TerrainRenderer(terrainTexture);
 
         var rewindManager = new RewindManager(lemmingManager, gadgetManager, skillSetManager);
-
         var updateScheduler = new UpdateScheduler();
-
         var terrainManager = new TerrainManager(pixelData);
 
-        var gadgetSpriteBank = levelSpriteBuilder.GetGadgetSpriteBank();
-        var controlPanelSpriteBank = levelSpriteBuilder.GetControlPanelSpriteBank(_contentManager);
+        var viewportObjectRendererBuilder = new ViewportObjectRendererBuilder(levelGadgets, levelLemmings);
+        var controlPanelSpriteBank = viewportObjectRendererBuilder.GetControlPanelSpriteBank(_contentManager);
 
         var levelCursorSprite = BuildLevelCursorSprite(levelCursor);
         var backgroundRenderer = BuildBackgroundRenderer(levelData);
 
-        levelSpriteBuilder.GetLevelSprites(
+        viewportObjectRendererBuilder.GetLevelSprites(
             out var behindTerrainSprites,
             out var inFrontOfTerrainSprites,
             out var lemmingSprites);
@@ -137,7 +130,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             levelRenderer,
             levelCursorSprite,
             lemmingSpriteBank,
-            gadgetSpriteBank,
             controlPanelSpriteBank);
 
         var result = new LevelScreen(
@@ -249,6 +241,12 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         if (ReferenceEquals(x, y)) return 0;
         if (y is null) return 1;
         if (x is null) return -1;
-        return x.ItemId.CompareTo(y.ItemId);
+
+        var idX = x.ItemId;
+        var idY = y.ItemId;
+
+        var gt = (idX > idY) ? 1 : 0;
+        var lt = (idX < idY) ? 1 : 0;
+        return gt - lt;
     }
 }

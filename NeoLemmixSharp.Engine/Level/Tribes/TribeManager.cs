@@ -14,7 +14,7 @@ public sealed class TribeManager :
     public TribeManager(Tribe[] tribes)
     {
         _tribes = tribes;
-        this.ValidateUniqueIds(new ReadOnlySpan<Tribe>(_tribes));
+        this.AssertUniqueIds(new ReadOnlySpan<Tribe>(_tribes));
         Array.Sort(_tribes, this);
     }
 

@@ -21,7 +21,7 @@ internal static class LogicGateGadgetReader
             ResizeType = Common.ResizeType.None,
 
             AllGadgetStateData = [],
-            SpriteData = null!
+            AllGadgetInputs = []
         };
     }
 }

@@ -1,30 +1,23 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
-public abstract class AdditiveLogicGateGadget : GadgetBase,
+public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGateGadget.AdditiveGateGadgetInput>,
     IPerfectHasher<AdditiveLogicGateGadget.AdditiveGateGadgetInput>,
     IBitBufferCreator<ArrayBitBuffer>
 {
-    private readonly AnimationController _inactiveAnimationController;
-    private readonly AnimationController _activeAnimationController;
     private readonly BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput> _set;
     private readonly int _numberOfInputs;
 
-    public GadgetOutput Output { get; } = new();
-
     protected AdditiveLogicGateGadget(
-        AnimationController inactiveAnimationController,
-        AnimationController activeAnimationController,
+        GadgetState state0,
+        GadgetState state1,
+        bool startActive,
         ReadOnlySpan<string> inputNames)
-        : base(inputNames.Length)
+        : base(state0, state1, startActive, inputNames.Length)
     {
-        _inactiveAnimationController = inactiveAnimationController;
-        _activeAnimationController = activeAnimationController;
-        CurrentAnimationController = inactiveAnimationController;
-
         _numberOfInputs = inputNames.Length;
         _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput>(this, false);
 
@@ -35,7 +28,8 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         }
     }
 
-    public sealed override void Tick() => CurrentAnimationController.Tick();
+    protected sealed override void OnTick() { }
+    protected sealed override void OnChangeStates() { }
 
     private void ReactToSignal(AdditiveGateGadgetInput input, bool signal)
     {
@@ -46,16 +40,13 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
             return;
 
         var isActive = EvaluateInputCount(_set.Count, _numberOfInputs);
-        Output.SetSignal(isActive);
-
-        CurrentAnimationController = isActive
-            ? _activeAnimationController
-            : _inactiveAnimationController;
+        SetNextState(isActive ? 1 : 0);
+        ChangeStates();
     }
 
     protected abstract bool EvaluateInputCount(int numberOfTrueInputs, int numberOfInputs);
 
-    private sealed class AdditiveGateGadgetInput : GadgetInput
+    public sealed class AdditiveGateGadgetInput : GadgetInput
     {
         public readonly int Id;
         private readonly AdditiveLogicGateGadget _gadget;
@@ -82,10 +73,11 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
 public sealed class AndGateGadget : AdditiveLogicGateGadget
 {
     public AndGateGadget(
-        AnimationController inactiveAnimationController,
-        AnimationController activeAnimationController,
+        GadgetState state0,
+        GadgetState state1,
+        bool startActive,
         ReadOnlySpan<string> inputNames)
-        : base(inactiveAnimationController, activeAnimationController, inputNames)
+        : base(state0, state1, startActive, inputNames)
     {
     }
 
@@ -98,10 +90,11 @@ public sealed class AndGateGadget : AdditiveLogicGateGadget
 public sealed class OrGateGadget : AdditiveLogicGateGadget
 {
     public OrGateGadget(
-        AnimationController inactiveAnimationController,
-        AnimationController activeAnimationController,
+        GadgetState state0,
+        GadgetState state1,
+        bool startActive,
         ReadOnlySpan<string> inputNames)
-        : base(inactiveAnimationController, activeAnimationController, inputNames)
+        : base(state0, state1, startActive, inputNames)
     {
     }
 

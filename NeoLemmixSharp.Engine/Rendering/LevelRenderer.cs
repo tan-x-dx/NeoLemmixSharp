@@ -35,7 +35,8 @@ public sealed class LevelRenderer :
     private RenderTarget2D _levelRenderTarget;
     private bool _disposed;
 
-    public LevelRenderer(GraphicsDevice graphicsDevice,
+    public LevelRenderer(
+        GraphicsDevice graphicsDevice,
         List<IViewportObjectRenderer> orderedSprites,
         IBackgroundRenderer backgroundRenderer,
         BoundaryBehaviour horizontalBoundaryBehaviour,

@@ -12,8 +12,10 @@ namespace NeoLemmixSharp.IO.Data.Style;
 
 public static class StyleCache
 {
+    internal static readonly StyleIdentifier DefaultStyleIdentifier = new(EngineConstants.DefaultStyleIdentifier);
+
     internal static readonly StyleFormatPair DefaultStyleFormatPair = new(
-        new StyleIdentifier(EngineConstants.DefaultStyleIdentifier),
+        DefaultStyleIdentifier,
         FileFormatType.Default);
 
     private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
@@ -85,16 +87,16 @@ public static class StyleCache
     {
         var result = new Dictionary<StylePiecePair, TerrainArchetypeData>(EngineConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
 
-        foreach (var terrainData in levelData.AllTerrainData)
+        foreach (var prototype in levelData.AllTerrainData)
         {
-            FetchTerrainArchetypeData(terrainData);
+            FetchTerrainArchetypeData(prototype);
         }
 
         foreach (var terrainGroup in levelData.AllTerrainGroups)
         {
-            foreach (var terrainData in terrainGroup.AllBasicTerrainData)
+            foreach (var prototype in terrainGroup.AllBasicTerrainData)
             {
-                FetchTerrainArchetypeData(terrainData);
+                FetchTerrainArchetypeData(prototype);
             }
         }
 
@@ -125,9 +127,9 @@ public static class StyleCache
     {
         var result = new Dictionary<StylePiecePair, GadgetArchetypeData>(EngineConstants.AssumedNumberOfGadgetArchetypeDataInLevel);
 
-        foreach (var gadgetData in levelData.AllGadgetData)
+        foreach (var prototype in levelData.AllGadgetData)
         {
-            FetchGadgetArchetypeData(gadgetData);
+            FetchGadgetArchetypeData(prototype);
         }
 
         return result;

@@ -57,7 +57,7 @@ public sealed class InputController :
 
     public void ValidateInputActions()
     {
-        this.ValidateUniqueIds<InputController, InputAction>(CollectionsMarshal.AsSpan(_inputActions));
+        this.AssertUniqueIds<InputController, InputAction>(CollectionsMarshal.AsSpan(_inputActions));
         _inputActions.Sort(this);
     }
 

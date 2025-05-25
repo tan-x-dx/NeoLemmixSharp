@@ -68,7 +68,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
         Debug.Assert(result.Length == EngineConstants.NumberOfLemmingSkills);
 
         var hasher = new LemmingSkillHasher();
-        hasher.ValidateUniqueIds(new ReadOnlySpan<LemmingSkill>(result));
+        hasher.AssertUniqueIds(new ReadOnlySpan<LemmingSkill>(result));
         Array.Sort(result, hasher);
 
         return result;

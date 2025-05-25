@@ -1,9 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Diagnostics.CodeAnalysis;
@@ -12,8 +10,16 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
-    private readonly SimpleList<GadgetInput> _inputs;
-    private AnimationController _currentAnimationController;
+    private readonly GadgetState[] _states;
+
+    private GadgetState _currentState;
+    private GadgetState _previousState;
+
+    private int _currentStateIndex;
+    private int _nextStateIndex;
+
+    public GadgetState CurrentState => _currentState;
+    public AnimationController CurrentAnimationController => _currentState.AnimationController;
 
     public required GadgetBounds CurrentGadgetBounds { protected get; init; }
 
@@ -21,52 +27,63 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public required Orientation Orientation { get; init; }
     public required bool IsFastForward { get; init; }
 
-    public AnimationController CurrentAnimationController
-    {
-        get => _currentAnimationController;
-        protected set
-        {
-            if (_currentAnimationController == value)
-                return;
-
-            _currentAnimationController = value;
-            value.OnTransitionTo();
-        }
-    }
-
     public Point Position => CurrentGadgetBounds.Position;
     public Size Size => CurrentGadgetBounds.Size;
 
     public GadgetRenderer Renderer { get; internal set; }
 
-    protected GadgetBase(int expectedNumberOfInputs)
+    public GadgetBase(
+        GadgetState[] states,
+        int initialStateIndex)
     {
-        _inputs = new SimpleList<GadgetInput>(expectedNumberOfInputs);
+        _states = states;
+
+        _currentStateIndex = initialStateIndex;
+        _currentState = _states[initialStateIndex];
+        _previousState = _currentState;
     }
 
-    protected void RegisterInput(GadgetInput gadgetInput)
+    public void SetNextState(int stateIndex)
     {
-        _inputs.Add(gadgetInput);
+        _nextStateIndex = stateIndex;
     }
 
-    public bool TryGetInputWithName(string inputName, [MaybeNullWhen(false)] out GadgetInput gadgetInput)
+    public void Tick()
     {
-        var span = _inputs.AsReadOnlySpan();
-        for (var i = 0; i < _inputs.Count; i++)
+        OnTick();
+
+        if (_currentStateIndex == _nextStateIndex)
         {
-            var input = span[i];
-            if (string.Equals(input.InputName, inputName))
-            {
-                gadgetInput = input;
-                return true;
-            }
+            CurrentState.Tick(this);
         }
-
-        gadgetInput = null;
-        return false;
+        else
+        {
+            ChangeStates();
+        }
     }
 
-    public abstract void Tick();
+    protected abstract void OnTick();
+
+    protected void ChangeStates()
+    {
+        _currentStateIndex = _nextStateIndex;
+
+        _previousState = _currentState;
+
+        _currentState = _states[_currentStateIndex];
+
+        _previousState.OnTransitionFrom();
+        _currentState.OnTransitionTo();
+
+        OnChangeStates();
+    }
+
+    protected abstract void OnChangeStates();
+
+    protected void UpdatePreviousState()
+    {
+        _previousState = _currentState;
+    }
 
     public bool Equals(GadgetBase? other) => Id == (other?.Id ?? -1);
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBase other && Id == other.Id;

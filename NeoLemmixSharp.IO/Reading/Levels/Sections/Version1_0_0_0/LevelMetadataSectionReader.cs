@@ -9,10 +9,6 @@ namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
 internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 {
-    private const int NumberOfBytesWrittenForBackgroundData =
-        1 + // Enum specifier
-        4; // Four bytes for actual data, padding with zeros where necessary
-
     private readonly StringIdLookup _stringIdLookup;
 
     public LevelMetadataSectionReader(
@@ -78,6 +74,10 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
     private void ReadBackgroundData(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
+        const int NumberOfBytesWrittenForBackgroundData =
+            1 + // Enum specifier
+            4; // Four bytes for actual data, padding with zeros where necessary
+
         var rawBytes = rawFileData.ReadBytes(NumberOfBytesWrittenForBackgroundData);
 
         int rawBackgroundType = rawBytes[0];

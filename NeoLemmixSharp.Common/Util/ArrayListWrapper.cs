@@ -12,6 +12,7 @@ public ref struct ArrayListWrapper<T>
     public ArrayListWrapper(int capacity)
     {
         _array = CollectionsHelper.GetArrayForSize<T>(capacity);
+        _size = 0;
     }
 
     public readonly int Length => _array.Length;

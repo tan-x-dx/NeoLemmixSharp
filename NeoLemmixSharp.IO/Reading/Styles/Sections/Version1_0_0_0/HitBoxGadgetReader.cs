@@ -21,8 +21,6 @@ internal static class HitBoxGadgetReader
 
         var gadgetStateData = ReadStateData(rawFileData);
 
-        var spriteData = new SpriteDataReader().ReadSpriteData(rawFileData, gadgetStateData.Length);
-
         var result = new GadgetArchetypeData
         {
             StyleName = styleName,
@@ -32,7 +30,7 @@ internal static class HitBoxGadgetReader
             ResizeType = resizeType,
 
             AllGadgetStateData = gadgetStateData,
-            SpriteData = spriteData
+            AllGadgetInputs = []
         };
 
         return result;
@@ -47,6 +45,8 @@ internal static class HitBoxGadgetReader
         var result = new GadgetStateArchetypeData[numberOfGadgetStates];
         var i = 0;
 
+        var spriteData = new SpriteDataReader().ReadSpriteData(rawFileData, -1);
+
         while (i < result.Length)
         {
             int offsetX = rawFileData.Read8BitUnsignedInteger();
@@ -59,7 +59,9 @@ internal static class HitBoxGadgetReader
             {
                 HitBoxOffset = new Point(offsetX, offsetY),
                 HitBoxData = hitBoxData,
-                RegionData = regionData
+                RegionData = regionData,
+
+                SpriteData = spriteData
             };
         }
 
