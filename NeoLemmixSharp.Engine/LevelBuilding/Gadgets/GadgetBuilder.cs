@@ -39,6 +39,7 @@ public ref struct GadgetBuilder
 
         return _gadgetList.GetArray();
     }
+
     public static GadgetBase BuildGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData prototype,

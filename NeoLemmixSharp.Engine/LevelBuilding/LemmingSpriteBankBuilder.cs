@@ -51,11 +51,9 @@ public static class LemmingSpriteBankBuilder
                 themeData.LemmingActionSpriteData[i]);
         }
 
-        ReadOnlySpan<TribeColorData> tribeColorDataSpan = themeData.TribeColorData;
-
         return new SpriteBankData(
             lemmingActionSprites,
-            tribeColorDataSpan.ToArray());
+            themeData.TribeColorData);
     }
 
     private static LemmingActionSprite CreateLemmingActionSprite(
