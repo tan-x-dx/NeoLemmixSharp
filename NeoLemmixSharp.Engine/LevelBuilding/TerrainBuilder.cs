@@ -39,6 +39,8 @@ public readonly ref struct TerrainBuilder
             8,
             RenderTargetUsage.DiscardContents);
 
+        _terrainTexture.Name = levelData.LevelTitle;
+
         TextureCache.CacheShortLivedTexture(_terrainTexture);
 
         var rawPixels = new PixelType[terrainDimensions.Area()];

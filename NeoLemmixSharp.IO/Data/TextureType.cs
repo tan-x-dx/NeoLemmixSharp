@@ -4,6 +4,5 @@ public enum TextureType
 {
     LemmingSprite,
     GadgetSprite,
-    TerrainSprite,
-    LevelSprite
+    TerrainSprite
 }

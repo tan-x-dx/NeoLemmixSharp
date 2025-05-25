@@ -63,12 +63,16 @@ public static class TextureCache
 
         ref var textureUsageData = ref CollectionsMarshal.GetValueRefOrAddDefault(LongLivedCachedTextures, key, out var exists);
 
-        var texture = exists
-            ? textureUsageData.Texture
-            : LoadTexture(filePath);
+        if (exists)
+        {
+            textureUsageData!.NumberOfLevelsSinceLastUsed = 0;
+            return textureUsageData.Texture;
+        }
 
-        textureUsageData = new TextureUsageData(texture, 0);
-        return texture;
+        var newTexture = LoadTexture(filePath);
+        textureUsageData = new TextureUsageData(newTexture, 0);
+
+        return newTexture;
     }
 
     private static Texture2D LoadTexture(string filePath)
@@ -91,6 +95,32 @@ public static class TextureCache
         DisposableHelperMethods.DisposeOfAll(ShortLivedTextures);
     }
 
+    public static void CleanUpOldTextures()
+    {
+        var notUsedTextureTypeKeys = new List<TextureTypeKey>(LongLivedCachedTextures.Count);
+
+        foreach (var kvp in LongLivedCachedTextures)
+        {
+            ref var numberOfLevelsSinceLastUsed = ref kvp.Value.NumberOfLevelsSinceLastUsed;
+
+            numberOfLevelsSinceLastUsed++;
+
+            if (numberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
+            {
+                notUsedTextureTypeKeys.Add(kvp.Key);
+            }
+        }
+
+        foreach (var textureTypeKey in notUsedTextureTypeKeys)
+        {
+            if (StyleCache.DefaultStyleIdentifier.Equals(textureTypeKey.StyleIdentifier))
+                continue;
+
+            LongLivedCachedTextures[textureTypeKey].Dispose();
+            LongLivedCachedTextures.Remove(textureTypeKey);
+        }
+    }
+
     private readonly struct TextureTypeKey(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier, TextureType textureType) : IEquatable<TextureTypeKey>
     {
         public readonly StyleIdentifier StyleIdentifier = styleIdentifier;
@@ -107,35 +137,11 @@ public static class TextureCache
         public static bool operator !=(TextureTypeKey left, TextureTypeKey right) => !left.Equals(right);
     }
 
-    private readonly struct TextureUsageData(Texture2D texture, int numberOfLevelsSinceLastUsed)
+    private sealed class TextureUsageData(Texture2D texture, int numberOfLevelsSinceLastUsed) : IDisposable
     {
         public readonly Texture2D Texture = texture;
-        public readonly int NumberOfLevelsSinceLastUsed = numberOfLevelsSinceLastUsed;
-    }
+        public int NumberOfLevelsSinceLastUsed = numberOfLevelsSinceLastUsed;
 
-    public static void CleanUpOldTextures()
-    {
-        var notUsedTextureTypeKeys = new List<TextureTypeKey>(LongLivedTextureCacheCapacity);
-
-        foreach (var kvp in LongLivedCachedTextures)
-        {
-            var numberOfLevelsSinceLastUsed = kvp.Value.NumberOfLevelsSinceLastUsed;
-
-            numberOfLevelsSinceLastUsed++;
-
-            if (numberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
-            {
-                notUsedTextureTypeKeys.Add(kvp.Key);
-            }
-        }
-
-        foreach (var textureTypeKey in notUsedTextureTypeKeys)
-        {
-            if (StyleCache.DefaultStyleIdentifier.Equals(textureTypeKey.StyleIdentifier))
-                continue;
-
-            LongLivedCachedTextures[textureTypeKey].Texture.Dispose();
-            LongLivedCachedTextures.Remove(textureTypeKey);
-        }
+        public void Dispose() => Texture.Dispose();
     }
 }
