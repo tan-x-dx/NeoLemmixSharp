@@ -63,7 +63,7 @@ public readonly ref struct LemmingSpriteBankBuilder
         string spriteDirectory,
         LemmingActionSpriteData lemmingActionSpriteData)
     {
-        var lemmingActionData = Helpers.GetLemmingActionDataFromId(lemmingActionSpriteData.LemmingActionId);
+        var lemmingActionData = LemmingActionHelpers.GetLemmingActionDataFromId(lemmingActionSpriteData.LemmingActionId);
 
         var spriteFilePath = Path.Combine(
             spriteDirectory,
