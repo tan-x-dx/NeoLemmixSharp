@@ -1,9 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Diagnostics.CodeAnalysis;
@@ -12,7 +10,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
-    private readonly SimpleList<GadgetInput> _inputs;
     private AnimationController _currentAnimationController;
 
     public required GadgetBounds CurrentGadgetBounds { protected get; init; }
@@ -38,33 +35,6 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public Size Size => CurrentGadgetBounds.Size;
 
     public GadgetRenderer Renderer { get; internal set; }
-
-    protected GadgetBase(int expectedNumberOfInputs)
-    {
-        _inputs = new SimpleList<GadgetInput>(expectedNumberOfInputs);
-    }
-
-    protected void RegisterInput(GadgetInput gadgetInput)
-    {
-        _inputs.Add(gadgetInput);
-    }
-
-    public bool TryGetInputWithName(string inputName, [MaybeNullWhen(false)] out GadgetInput gadgetInput)
-    {
-        var span = _inputs.AsReadOnlySpan();
-        for (var i = 0; i < _inputs.Count; i++)
-        {
-            var input = span[i];
-            if (string.Equals(input.InputName, inputName))
-            {
-                gadgetInput = input;
-                return true;
-            }
-        }
-
-        gadgetInput = null;
-        return false;
-    }
 
     public abstract void Tick();
 

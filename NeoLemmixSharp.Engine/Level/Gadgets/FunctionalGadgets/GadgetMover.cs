@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetMover : GadgetBase
+public sealed class GadgetMover : FunctionalGadget
 {
     private readonly AnimationController _inactiveAnimationController;
     private readonly AnimationController _activeAnimationController;

@@ -37,7 +37,6 @@ public sealed class HitBoxGadget : GadgetBase,
         LemmingTracker lemmingTracker,
         GadgetState[] states,
         int initialStateIndex)
-        : base(0)
     {
         _lemmingTracker = lemmingTracker;
         _states = states;

@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetResizer : GadgetBase
+public sealed class GadgetResizer : FunctionalGadget
 {
     private readonly AnimationController _inactiveAnimationController;
     private readonly AnimationController _activeAnimationController;

@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
-public abstract class AdditiveLogicGateGadget : GadgetBase,
+public abstract class AdditiveLogicGateGadget : FunctionalGadget,
     IPerfectHasher<AdditiveLogicGateGadget.AdditiveGateGadgetInput>,
     IBitBufferCreator<ArrayBitBuffer>
 {

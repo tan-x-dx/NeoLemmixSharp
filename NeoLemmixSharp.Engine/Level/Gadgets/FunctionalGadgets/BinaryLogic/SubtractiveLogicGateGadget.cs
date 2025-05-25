@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
-public abstract class SubtractiveLogicGateGadget : GadgetBase
+public abstract class SubtractiveLogicGateGadget : FunctionalGadget
 {
     private readonly AnimationController _inactiveAnimationController;
     private readonly AnimationController _activeAnimationController;

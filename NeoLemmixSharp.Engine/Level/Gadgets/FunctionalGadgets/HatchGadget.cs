@@ -14,7 +14,6 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
         HatchSpawnData hatchSpawnData,
         Point spawnPointOffset,
         AnimationController animationController)
-        : base(0)
     {
         SpawnPointOffset = spawnPointOffset;
         HatchSpawnData = hatchSpawnData;

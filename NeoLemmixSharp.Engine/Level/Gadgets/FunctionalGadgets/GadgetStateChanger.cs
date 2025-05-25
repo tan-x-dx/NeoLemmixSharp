@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetStateChanger : GadgetBase
+public sealed class GadgetStateChanger : FunctionalGadget
 {
     private readonly AnimationController _inactiveAnimationController;
     private readonly AnimationController _activeAnimationController;
