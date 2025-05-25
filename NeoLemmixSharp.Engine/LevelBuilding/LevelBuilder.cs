@@ -101,14 +101,13 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var updateScheduler = new UpdateScheduler();
         var terrainManager = new TerrainManager(pixelData);
 
-        using var levelSpriteBuilder = new LevelSpriteBuilder(levelGadgets, levelLemmings);
-        var gadgetSpriteBank = levelSpriteBuilder.GetGadgetSpriteBank();
-        var controlPanelSpriteBank = levelSpriteBuilder.GetControlPanelSpriteBank(_contentManager);
+        var viewportObjectRendererBuilder = new ViewportObjectRendererBuilder(levelGadgets, levelLemmings);
+        var controlPanelSpriteBank = viewportObjectRendererBuilder.GetControlPanelSpriteBank(_contentManager);
 
         var levelCursorSprite = BuildLevelCursorSprite(levelCursor);
         var backgroundRenderer = BuildBackgroundRenderer(levelData);
 
-        levelSpriteBuilder.GetLevelSprites(
+        viewportObjectRendererBuilder.GetLevelSprites(
             out var behindTerrainSprites,
             out var inFrontOfTerrainSprites,
             out var lemmingSprites);
@@ -131,7 +130,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             levelRenderer,
             levelCursorSprite,
             lemmingSpriteBank,
-            gadgetSpriteBank,
             controlPanelSpriteBank);
 
         var result = new LevelScreen(

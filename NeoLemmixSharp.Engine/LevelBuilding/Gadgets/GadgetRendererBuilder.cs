@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
-public sealed class GadgetRendererBuilder : IDisposable
+public sealed class GadgetRendererBuilder
 {
     private readonly Dictionary<StylePiecePair, Texture2D> _gadgetTextures = [];
 
@@ -78,22 +78,5 @@ public sealed class GadgetRendererBuilder : IDisposable
 
         if (textureDimensions != expectedTextureDimensions)
             throw new InvalidOperationException("Sprite dimensions are invalid!");
-    }
-
-    public GadgetSpriteBank BuildGadgetSpriteBank()
-    {
-        var textureArray = new Texture2D[_gadgetTextures.Count];
-        var i = 0;
-        foreach (var (_, gadgetTexture) in _gadgetTextures)
-        {
-            textureArray[i++] = gadgetTexture;
-        }
-
-        return new GadgetSpriteBank(textureArray);
-    }
-
-    public void Dispose()
-    {
-        _gadgetTextures.Clear();
     }
 }

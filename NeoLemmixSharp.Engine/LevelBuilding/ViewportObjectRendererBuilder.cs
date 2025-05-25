@@ -1,25 +1,21 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public readonly ref struct LevelSpriteBuilder : IDisposable
+public readonly ref struct ViewportObjectRendererBuilder
 {
-    private readonly GadgetRendererBuilder _gadgetSpriteBuilder;
     private readonly GadgetBase[] _gadgets;
     private readonly Lemming[] _lemmings;
 
-    public LevelSpriteBuilder(
+    public ViewportObjectRendererBuilder(
         GadgetBase[] gadgets,
         Lemming[] lemmings)
     {
-        _gadgetSpriteBuilder = new GadgetRendererBuilder();
         _gadgets = gadgets;
         _lemmings = lemmings;
     }
@@ -53,18 +49,8 @@ public readonly ref struct LevelSpriteBuilder : IDisposable
         }
     }
 
-    public GadgetSpriteBank GetGadgetSpriteBank()
-    {
-        return _gadgetSpriteBuilder.BuildGadgetSpriteBank();
-    }
-
     public ControlPanelSpriteBank GetControlPanelSpriteBank(ContentManager contentManager)
     {
         return ControlPanelSpriteBankBuilder.BuildControlPanelSpriteBank(contentManager);
-    }
-
-    public void Dispose()
-    {
-        _gadgetSpriteBuilder.Dispose();
     }
 }

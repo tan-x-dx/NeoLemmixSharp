@@ -6,7 +6,6 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Rendering;
@@ -18,7 +17,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
     private readonly GraphicsDevice _graphicsDevice;
 
     private readonly LemmingSpriteBank _lemmingSpriteBank;
-    private readonly GadgetSpriteBank _gadgetSpriteBank;
 
     private readonly LevelRenderer _levelRenderer;
     private readonly ControlPanelRenderer _controlPanelRenderer;
@@ -36,13 +34,11 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         LevelRenderer levelRenderer,
         LevelCursorSprite levelCursorSprite,
         LemmingSpriteBank lemmingSpriteBank,
-        GadgetSpriteBank gadgetSpriteBank,
         ControlPanelSpriteBank controlPanelSpriteBank)
     {
         _graphicsDevice = graphicsDevice;
 
         _lemmingSpriteBank = lemmingSpriteBank;
-        _gadgetSpriteBank = gadgetSpriteBank;
 
         _levelRenderer = levelRenderer;
 
@@ -95,8 +91,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         DisposableHelperMethods.DisposeOf(ref _depthStencilState);
         _levelRenderer.Dispose();
         _controlPanelRenderer.Dispose();
-        _lemmingSpriteBank.Dispose();
-        _gadgetSpriteBank.Dispose();
 
         Instance = null!;
 

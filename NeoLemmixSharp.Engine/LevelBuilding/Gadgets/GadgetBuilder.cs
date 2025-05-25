@@ -45,6 +45,42 @@ public ref struct GadgetBuilder
         LemmingManager lemmingHasher,
         TribeManager tribeManager)
     {
+        switch (gadgetArchetypeData.GadgetType)
+        {
+            case GadgetType.HitBoxGadget:
+                break;
+            case GadgetType.HatchGadget:
+                break;
+            case GadgetType.GadgetMover:
+                break;
+            case GadgetType.GadgetResizer:
+                break;
+            case GadgetType.GadgetStateChanger:
+                break;
+            case GadgetType.AndGate:
+                break;
+            case GadgetType.OrGate:
+                break;
+            case GadgetType.NotGate:
+                break;
+            case GadgetType.XorGate:
+                break;
+
+            default:
+                break;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
         throw new NotImplementedException();
     }
 }
