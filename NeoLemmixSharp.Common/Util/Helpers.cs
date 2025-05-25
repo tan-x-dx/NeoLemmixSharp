@@ -17,14 +17,14 @@ public static class Helpers
 
     [Pure]
     public static int CountIfNotNull<T>(this T? item)
-    where T : class
+        where T : class
     {
         return item is not null ? 1 : 0;
     }
 
     [Pure]
     public static int CountIfNotNull<T>(this T? item)
-    where T : struct
+        where T : struct
     {
         return item.HasValue ? 1 : 0;
     }
@@ -37,19 +37,19 @@ public static class Helpers
     }
 
     public static bool TryFormatSpan(
-    ReadOnlySpan<int> source,
-    Span<char> destination,
-    out int charsWritten)
+        ReadOnlySpan<int> source,
+        Span<char> destination,
+        out int charsWritten)
     {
         var formatParameters = new FormatParameters('(', ',', ')');
         return TryFormatSpan(source, destination, formatParameters, out charsWritten);
     }
 
     public static bool TryFormatSpan(
-    ReadOnlySpan<int> source,
-    Span<char> destination,
-    FormatParameters formatParameters,
-    out int charsWritten)
+        ReadOnlySpan<int> source,
+        Span<char> destination,
+        FormatParameters formatParameters,
+        out int charsWritten)
     {
         charsWritten = 0;
 
@@ -96,7 +96,7 @@ public static class Helpers
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TEnum GetEnumValue<TEnum>(uint rawValue, uint numberOfEnumValues)
-    where TEnum : unmanaged, Enum
+        where TEnum : unmanaged, Enum
     {
         var enumValue = Unsafe.As<uint, TEnum>(ref rawValue);
         if (rawValue < numberOfEnumValues)
@@ -107,7 +107,7 @@ public static class Helpers
 
     [DoesNotReturn]
     public static TReturn ThrowUnknownEnumValueException<TEnum, TReturn>(TEnum enumValue)
-    where TEnum : unmanaged, Enum
+        where TEnum : unmanaged, Enum
     {
         var typeName = typeof(TEnum).Name;
         throw new ArgumentOutOfRangeException(nameof(enumValue), enumValue, $"Unknown {typeName} enum value!");
@@ -121,40 +121,40 @@ public static class Helpers
     {
         var result = new Dictionary<string, int>(EngineConstants.NumberOfLemmingActions, StringComparer.OrdinalIgnoreCase)
         {
-            [EngineConstants.WalkerActionName] = EngineConstants.WalkerActionId,
-            [EngineConstants.ClimberActionName] = EngineConstants.ClimberActionId,
-            [EngineConstants.FloaterActionName] = EngineConstants.FloaterActionId,
-            [EngineConstants.BlockerActionName] = EngineConstants.BlockerActionId,
-            [EngineConstants.BuilderActionName] = EngineConstants.BuilderActionId,
-            [EngineConstants.BasherActionName] = EngineConstants.BasherActionId,
-            [EngineConstants.MinerActionName] = EngineConstants.MinerActionId,
-            [EngineConstants.DiggerActionName] = EngineConstants.DiggerActionId,
-            [EngineConstants.PlatformerActionName] = EngineConstants.PlatformerActionId,
-            [EngineConstants.StackerActionName] = EngineConstants.StackerActionId,
-            [EngineConstants.FencerActionName] = EngineConstants.FencerActionId,
-            [EngineConstants.GliderActionName] = EngineConstants.GliderActionId,
-            [EngineConstants.JumperActionName] = EngineConstants.JumperActionId,
-            [EngineConstants.SwimmerActionName] = EngineConstants.SwimmerActionId,
-            [EngineConstants.ShimmierActionName] = EngineConstants.ShimmierActionId,
-            [EngineConstants.LasererActionName] = EngineConstants.LasererActionId,
-            [EngineConstants.SliderActionName] = EngineConstants.SliderActionId,
-            [EngineConstants.FallerActionName] = EngineConstants.FallerActionId,
-            [EngineConstants.AscenderActionName] = EngineConstants.AscenderActionId,
-            [EngineConstants.ShruggerActionName] = EngineConstants.ShruggerActionId,
-            [EngineConstants.DrownerActionName] = EngineConstants.DrownerActionId,
-            [EngineConstants.HoisterActionName] = EngineConstants.HoisterActionId,
-            [EngineConstants.DehoisterActionName] = EngineConstants.DehoisterActionId,
-            [EngineConstants.ReacherActionName] = EngineConstants.ReacherActionId,
-            [EngineConstants.DisarmerActionName] = EngineConstants.DisarmerActionId,
-            [EngineConstants.ExiterActionName] = EngineConstants.ExiterActionId,
-            [EngineConstants.ExploderActionName] = EngineConstants.ExploderActionId,
-            [EngineConstants.OhNoerActionName] = EngineConstants.OhNoerActionId,
-            [EngineConstants.SplatterActionName] = EngineConstants.SplatterActionId,
-            [EngineConstants.StonerActionName] = EngineConstants.StonerActionId,
-            [EngineConstants.VaporiserActionName] = EngineConstants.VaporiserActionId,
-            [EngineConstants.RotateClockwiseActionName] = EngineConstants.RotateClockwiseActionId,
-            [EngineConstants.RotateCounterclockwiseActionName] = EngineConstants.RotateCounterclockwiseActionId,
-            [EngineConstants.RotateHalfActionName] = EngineConstants.RotateHalfActionId
+            [EngineConstants.WalkerActionSpriteFileName] = EngineConstants.WalkerActionId,
+            [EngineConstants.ClimberActionSpriteFileName] = EngineConstants.ClimberActionId,
+            [EngineConstants.FloaterActionSpriteFileName] = EngineConstants.FloaterActionId,
+            [EngineConstants.BlockerActionSpriteFileName] = EngineConstants.BlockerActionId,
+            [EngineConstants.BuilderActionSpriteFileName] = EngineConstants.BuilderActionId,
+            [EngineConstants.BasherActionSpriteFileName] = EngineConstants.BasherActionId,
+            [EngineConstants.MinerActionSpriteFileName] = EngineConstants.MinerActionId,
+            [EngineConstants.DiggerActionSpriteFileName] = EngineConstants.DiggerActionId,
+            [EngineConstants.PlatformerActionSpriteFileName] = EngineConstants.PlatformerActionId,
+            [EngineConstants.StackerActionSpriteFileName] = EngineConstants.StackerActionId,
+            [EngineConstants.FencerActionSpriteFileName] = EngineConstants.FencerActionId,
+            [EngineConstants.GliderActionSpriteFileName] = EngineConstants.GliderActionId,
+            [EngineConstants.JumperActionSpriteFileName] = EngineConstants.JumperActionId,
+            [EngineConstants.SwimmerActionSpriteFileName] = EngineConstants.SwimmerActionId,
+            [EngineConstants.ShimmierActionSpriteFileName] = EngineConstants.ShimmierActionId,
+            [EngineConstants.LasererActionSpriteFileName] = EngineConstants.LasererActionId,
+            [EngineConstants.SliderActionSpriteFileName] = EngineConstants.SliderActionId,
+            [EngineConstants.FallerActionSpriteFileName] = EngineConstants.FallerActionId,
+            [EngineConstants.AscenderActionSpriteFileName] = EngineConstants.AscenderActionId,
+            [EngineConstants.ShruggerActionSpriteFileName] = EngineConstants.ShruggerActionId,
+            [EngineConstants.DrownerActionSpriteFileName] = EngineConstants.DrownerActionId,
+            [EngineConstants.HoisterActionSpriteFileName] = EngineConstants.HoisterActionId,
+            [EngineConstants.DehoisterActionSpriteFileName] = EngineConstants.DehoisterActionId,
+            [EngineConstants.ReacherActionSpriteFileName] = EngineConstants.ReacherActionId,
+            [EngineConstants.DisarmerActionSpriteFileName] = EngineConstants.DisarmerActionId,
+            [EngineConstants.ExiterActionSpriteFileName] = EngineConstants.ExiterActionId,
+            [EngineConstants.ExploderActionSpriteFileName] = EngineConstants.ExploderActionId,
+            [EngineConstants.OhNoerActionSpriteFileName] = EngineConstants.OhNoerActionId,
+            [EngineConstants.SplatterActionSpriteFileName] = EngineConstants.SplatterActionId,
+            [EngineConstants.StonerActionSpriteFileName] = EngineConstants.StonerActionId,
+            [EngineConstants.VaporiserActionSpriteFileName] = EngineConstants.VaporiserActionId,
+            [EngineConstants.RotateClockwiseActionSpriteFileName] = EngineConstants.RotateClockwiseActionId,
+            [EngineConstants.RotateCounterclockwiseActionSpriteFileName] = EngineConstants.RotateCounterclockwiseActionId,
+            [EngineConstants.RotateHalfActionSpriteFileName] = EngineConstants.RotateHalfActionId
         };
 
         if (result.Count != EngineConstants.NumberOfLemmingActions)
