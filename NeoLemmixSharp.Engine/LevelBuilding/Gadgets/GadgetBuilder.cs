@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level;
@@ -23,27 +22,6 @@ public ref struct GadgetBuilder
         _gadgetList = new ArrayListWrapper<GadgetBase>(levelData.AllGadgetData.Count);
     }
 
-    public readonly HatchGroup[] BuildHatchGroups()
-    {
-        var allHatchGroupData = CollectionsMarshal.AsSpan(_levelData.AllHatchGroupData);
-
-        var result = new HatchGroup[allHatchGroupData.Length];
-
-        for (var i = 0; i < allHatchGroupData.Length; i++)
-        {
-            var prototype = allHatchGroupData[i];
-            var hatchGroup = new HatchGroup(
-                i,
-                prototype.MinSpawnInterval,
-                prototype.MaxSpawnInterval,
-                prototype.InitialSpawnInterval);
-
-            result[i] = hatchGroup;
-        }
-
-        return result;
-    }
-
     public GadgetBase[] BuildLevelGadgets(
         LemmingManager lemmingHasher,
         TribeManager tribeManager)
@@ -59,22 +37,5 @@ public ref struct GadgetBuilder
         }
 
         return _gadgetList.GetArray();
-    }
-
-    public readonly void SetHatchesForHatchGroup(HatchGroup hatchGroup)
-    {
-        var hatches = new List<HatchGadget>();
-
-        var gadgetSpan = _gadgetList.AsSpan();
-        foreach (var gadget in gadgetSpan)
-        {
-            if (gadget is HatchGadget hatch &&
-                hatch.HatchSpawnData.HatchGroupId == hatchGroup.Id)
-            {
-                hatches.Add(hatch);
-            }
-        }
-
-        hatchGroup.SetHatches(hatches.ToArray());
     }
 }

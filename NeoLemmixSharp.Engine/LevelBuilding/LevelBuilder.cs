@@ -55,11 +55,9 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelDimensions.W);
         var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelDimensions.H);
 
-        var lemmingBuilder = new LemmingBuilder(levelData);
-        var levelLemmings = lemmingBuilder.BuildLevelLemmings();
+        var levelLemmings = new LemmingBuilder(levelData).BuildLevelLemmings();
 
-        var gadgetBuilder = new GadgetBuilder(levelData);
-        var hatchGroups = gadgetBuilder.BuildHatchGroups();
+        var hatchGroups = HatchGroupBuilder.BuildHatchGroups(levelData);
 
         var lemmingManager = new LemmingManager(
             levelLemmings,
@@ -71,13 +69,12 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
         var lemmingSpriteBank = LemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
         var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
-        var levelGadgets = gadgetBuilder.BuildLevelGadgets(lemmingManager, tribeManager);
 
-        using var levelSpriteBuilder = new LevelSpriteBuilder(levelGadgets, levelLemmings);
+        var levelGadgets = new GadgetBuilder(levelData).BuildLevelGadgets(lemmingManager, tribeManager);
 
         foreach (var hatchGroup in hatchGroups)
         {
-            gadgetBuilder.SetHatchesForHatchGroup(hatchGroup);
+            HatchGroupBuilder.SetHatchesForHatchGroup(hatchGroup, levelGadgets);
         }
 
         var inputController = new LevelInputController();
@@ -104,6 +101,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var updateScheduler = new UpdateScheduler();
         var terrainManager = new TerrainManager(pixelData);
 
+        using var levelSpriteBuilder = new LevelSpriteBuilder(levelGadgets, levelLemmings);
         var gadgetSpriteBank = levelSpriteBuilder.GetGadgetSpriteBank();
         var controlPanelSpriteBank = levelSpriteBuilder.GetControlPanelSpriteBank(_contentManager);
 
