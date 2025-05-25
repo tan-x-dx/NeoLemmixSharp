@@ -61,13 +61,13 @@ public sealed class LemmingManager :
     {
         if (hatchGroups.Length > 0)
         {
-            this.ValidateUniqueIds(new ReadOnlySpan<HatchGroup>(hatchGroups));
+            this.AssertUniqueIds(new ReadOnlySpan<HatchGroup>(hatchGroups));
             Array.Sort(hatchGroups, this);
         }
         _hatchGroups = hatchGroups;
 
         _lemmings = lemmings;
-        this.ValidateUniqueIds(new ReadOnlySpan<Lemming>(_lemmings));
+        this.AssertUniqueIds(new ReadOnlySpan<Lemming>(_lemmings));
         Array.Sort(_lemmings, this);
 
         _lemmingPositionHelper = new LemmingSpacialHashGrid(

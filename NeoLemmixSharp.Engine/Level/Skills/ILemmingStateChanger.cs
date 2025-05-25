@@ -51,7 +51,7 @@ public interface ILemmingStateChanger
             throw new Exception($"Number of ILemmingStateChangers is actually {result.Length}! Update {nameof(NumberOfStateChangers)}!");
 
         var hasher = new LemmingStateChangerHasher();
-        hasher.ValidateUniqueIds(new ReadOnlySpan<ILemmingStateChanger>(result));
+        hasher.AssertUniqueIds(new ReadOnlySpan<ILemmingStateChanger>(result));
         Array.Sort(result, hasher);
 
         return result;

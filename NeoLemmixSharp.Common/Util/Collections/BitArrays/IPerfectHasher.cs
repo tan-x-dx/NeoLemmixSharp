@@ -31,7 +31,7 @@ public interface IPerfectHasher<T> : IComparer<T>
 
 public static class PerfectHasherHelperMethods
 {
-    public static void ValidateUniqueIds<TPerfectHasher, T>(
+    public static void AssertUniqueIds<TPerfectHasher, T>(
         this TPerfectHasher hasher,
         ReadOnlySpan<T> items)
         where TPerfectHasher : IPerfectHasher<T>

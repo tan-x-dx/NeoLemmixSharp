@@ -32,7 +32,7 @@ public sealed class GadgetManager :
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allGadgets = allGadgets;
-        this.ValidateUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
+        this.AssertUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
         Array.Sort(_allGadgets, this);
 
         // 1 spacial hash grid + 1 gadget set
