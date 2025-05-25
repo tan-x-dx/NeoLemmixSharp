@@ -13,7 +13,7 @@ public sealed class GadgetArchetypeData
     public required ResizeType ResizeType { get; init; }
 
     public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
-    public required SpriteArchetypeData SpriteData { get; init; }
+    public required GadgetInputData[] AllGadgetInputs { get; init; }
 
     internal GadgetArchetypeData()
     {
