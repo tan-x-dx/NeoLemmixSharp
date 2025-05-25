@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
@@ -59,6 +58,8 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
                -1,
                Array.Empty<GadgetStateAnimationBehaviour>());*/
 
+        return null;
+        /*
         var result = new HatchGadget(
             hatchSpawnData,
             spawnPointOffset,
@@ -74,6 +75,6 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         //  gadgetRenderer?.SetGadget(result);
 
-        return result;
+        return result;*/
     }
 }

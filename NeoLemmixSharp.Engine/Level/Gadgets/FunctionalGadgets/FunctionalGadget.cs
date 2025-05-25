@@ -1,29 +1,35 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public abstract class FunctionalGadget : GadgetBase
+public abstract class FunctionalGadget<TInput> : GadgetBase
+    where TInput : GadgetInput
 {
-    private readonly SimpleList<GadgetInput> _inputs;
+    private readonly TInput[] _inputs;
+    private int _gadgetIndex;
 
-    protected FunctionalGadget(int expectedNumberOfInputs)
+    protected FunctionalGadget(
+        GadgetState state0,
+        GadgetState state1,
+        bool startActive,
+        int expectedNumberOfInputs)
+        : base([state0, state1], startActive ? 1 : 0)
     {
-        _inputs = new SimpleList<GadgetInput>(expectedNumberOfInputs);
+        _inputs = new TInput[expectedNumberOfInputs];
     }
 
-    protected void RegisterInput(GadgetInput gadgetInput)
+    protected void RegisterInput(TInput gadgetInput)
     {
-        _inputs.Add(gadgetInput);
+        _inputs[_gadgetIndex++] = gadgetInput;
     }
 
-    public bool TryGetInputWithName(string inputName, [MaybeNullWhen(false)] out GadgetInput gadgetInput)
+    public bool TryGetInputWithName(string inputName, [MaybeNullWhen(false)] out TInput gadgetInput)
     {
-        var span = _inputs.AsReadOnlySpan();
-        for (var i = 0; i < _inputs.Count; i++)
+        for (var i = 0; i < _gadgetIndex; i++)
         {
-            var input = span[i];
+            var input = _inputs[i];
             if (string.Equals(input.InputName, inputName))
             {
                 gadgetInput = input;

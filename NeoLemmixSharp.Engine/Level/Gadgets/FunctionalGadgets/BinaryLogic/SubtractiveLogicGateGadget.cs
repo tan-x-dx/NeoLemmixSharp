@@ -1,46 +1,37 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
-public abstract class SubtractiveLogicGateGadget : FunctionalGadget
+public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveLogicGateGadget.SubtractiveLogicGateGadgetInput>
 {
-    private readonly AnimationController _inactiveAnimationController;
-    private readonly AnimationController _activeAnimationController;
-
-    public GadgetOutput Output { get; } = new();
     private bool _shouldTick;
 
     protected SubtractiveLogicGateGadget(
-        AnimationController inactiveAnimationController,
-        AnimationController activeAnimationController,
+        GadgetState state0,
+        GadgetState state1,
+        bool startActive,
         int expectedNumberOfInputs)
-        : base(expectedNumberOfInputs)
+        : base(state0, state1, startActive, expectedNumberOfInputs)
     {
-        _inactiveAnimationController = inactiveAnimationController;
-        _activeAnimationController = activeAnimationController;
     }
 
-    public sealed override void Tick()
+    protected sealed override void OnTick()
     {
-        CurrentAnimationController.Tick();
-
         if (!_shouldTick)
             return;
 
         _shouldTick = false;
 
         var isActive = EvaluateInputs();
-        Output.SetSignal(isActive);
-
-        CurrentAnimationController = isActive
-            ? _activeAnimationController
-            : _inactiveAnimationController;
+        SetNextState(isActive ? 1 : 0);
     }
+
+    protected sealed override void OnChangeStates() { }
 
     protected abstract bool EvaluateInputs();
 
-    protected sealed class SubtractiveLogicGateGadgetInput : GadgetInput
+    public sealed class SubtractiveLogicGateGadgetInput : GadgetInput
     {
         private readonly SubtractiveLogicGateGadget _gadget;
 
@@ -65,10 +56,11 @@ public sealed class NotGateGadget : SubtractiveLogicGateGadget
     private readonly SubtractiveLogicGateGadgetInput _input;
 
     public NotGateGadget(
-        AnimationController inactiveAnimationController,
-        AnimationController activeAnimationController,
+        GadgetState state0,
+        GadgetState state1,
+        bool startActive,
         string inputName)
-        : base(inactiveAnimationController, activeAnimationController, 1)
+        : base(state0, state1, startActive, 1)
     {
         _input = new SubtractiveLogicGateGadgetInput(inputName, this);
         RegisterInput(_input);
@@ -86,11 +78,12 @@ public sealed class XorGateGadget : SubtractiveLogicGateGadget
     private readonly SubtractiveLogicGateGadgetInput _input2;
 
     public XorGateGadget(
-        AnimationController inactiveAnimationController,
-        AnimationController activeAnimationController,
+        GadgetState state0,
+        GadgetState state1,
+        bool startActive,
         string input1Name,
         string input2Name)
-        : base(inactiveAnimationController, activeAnimationController, 2)
+        : base(state0, state1, startActive, 2)
     {
         _input1 = new SubtractiveLogicGateGadgetInput(input1Name, this);
         _input2 = new SubtractiveLogicGateGadgetInput(input2Name, this);

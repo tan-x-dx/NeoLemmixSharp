@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -11,17 +11,18 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
     public Point SpawnPointOffset { get; }
 
     public HatchGadget(
+        GadgetState[] states,
+        int initialStateIndex,
         HatchSpawnData hatchSpawnData,
-        Point spawnPointOffset,
-        AnimationController animationController)
+        Point spawnPointOffset)
+        : base(states, initialStateIndex)
     {
         SpawnPointOffset = spawnPointOffset;
         HatchSpawnData = hatchSpawnData;
-
-        CurrentAnimationController = animationController;
     }
 
-    public override void Tick() => CurrentAnimationController.Tick();
+    protected override void OnTick() { }
+    protected override void OnChangeStates() { }
 
     public bool CanReleaseLemmings()
     {

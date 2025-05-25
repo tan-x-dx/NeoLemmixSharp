@@ -1,13 +1,10 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetResizer : FunctionalGadget
+public sealed class GadgetResizer : FunctionalGadget<GadgetResizer.GadgetResizerInput>
 {
-    private readonly AnimationController _inactiveAnimationController;
-    private readonly AnimationController _activeAnimationController;
     private readonly HitBoxGadget[] _gadgets;
 
     private readonly int _tickDelay;
@@ -18,19 +15,16 @@ public sealed class GadgetResizer : FunctionalGadget
     private int _tickCount;
 
     public GadgetResizer(
-        AnimationController inactiveAnimationController,
-        AnimationController activeAnimationController,
+        GadgetState state0,
+        GadgetState state1,
+        bool startActive,
         string inputName,
         HitBoxGadget[] gadgets,
         int tickDelay,
         int dw,
         int dh)
-        : base(1)
+        : base(state0, state1, startActive, 1)
     {
-        _inactiveAnimationController = inactiveAnimationController;
-        _activeAnimationController = activeAnimationController;
-        CurrentAnimationController = _inactiveAnimationController;
-
         _tickDelay = tickDelay;
         _gadgets = gadgets;
         _dw = dw;
@@ -39,10 +33,8 @@ public sealed class GadgetResizer : FunctionalGadget
         RegisterInput(new GadgetResizerInput(inputName, this));
     }
 
-    public override void Tick()
+    protected override void OnTick()
     {
-        CurrentAnimationController.Tick();
-
         if (!_active)
             return;
 
@@ -60,7 +52,9 @@ public sealed class GadgetResizer : FunctionalGadget
         }
     }
 
-    private sealed class GadgetResizerInput : GadgetInput
+    protected override void OnChangeStates() { }
+
+    public sealed class GadgetResizerInput : GadgetInput
     {
         private readonly GadgetResizer _gadget;
 
@@ -73,16 +67,16 @@ public sealed class GadgetResizer : FunctionalGadget
         public override void OnRegistered()
         {
             _gadget._active = false;
-            _gadget.CurrentAnimationController = _gadget._inactiveAnimationController;
+            //    _gadget.CurrentAnimationController = _gadget._inactiveAnimationController;
         }
 
         public override void ReactToSignal(bool signal)
         {
             _gadget._active = signal;
 
-            _gadget.CurrentAnimationController = signal
-                ? _gadget._activeAnimationController
-                : _gadget._inactiveAnimationController;
+            //    _gadget.CurrentAnimationController = signal
+            //        ? _gadget._activeAnimationController
+            //        : _gadget._inactiveAnimationController;
         }
     }
 }

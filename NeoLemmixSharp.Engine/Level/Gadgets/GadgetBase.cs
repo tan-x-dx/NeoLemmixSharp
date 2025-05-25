@@ -10,7 +10,16 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
-    private AnimationController _currentAnimationController;
+    private readonly GadgetState[] _states;
+
+    private GadgetState _currentState;
+    private GadgetState _previousState;
+
+    private int _currentStateIndex;
+    private int _nextStateIndex;
+
+    public GadgetState CurrentState => _currentState;
+    public AnimationController CurrentAnimationController => _currentState.AnimationController;
 
     public required GadgetBounds CurrentGadgetBounds { protected get; init; }
 
@@ -18,25 +27,63 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public required Orientation Orientation { get; init; }
     public required bool IsFastForward { get; init; }
 
-    public AnimationController CurrentAnimationController
-    {
-        get => _currentAnimationController;
-        protected set
-        {
-            if (_currentAnimationController == value)
-                return;
-
-            _currentAnimationController = value;
-            value.OnTransitionTo();
-        }
-    }
-
     public Point Position => CurrentGadgetBounds.Position;
     public Size Size => CurrentGadgetBounds.Size;
 
     public GadgetRenderer Renderer { get; internal set; }
 
-    public abstract void Tick();
+    public GadgetBase(
+        GadgetState[] states,
+        int initialStateIndex)
+    {
+        _states = states;
+
+        _currentStateIndex = initialStateIndex;
+        _currentState = _states[initialStateIndex];
+        _previousState = _currentState;
+    }
+
+    public void SetNextState(int stateIndex)
+    {
+        _nextStateIndex = stateIndex;
+    }
+
+    public void Tick()
+    {
+        OnTick();
+
+        if (_currentStateIndex == _nextStateIndex)
+        {
+            CurrentState.Tick(this);
+        }
+        else
+        {
+            ChangeStates();
+        }
+    }
+
+    protected abstract void OnTick();
+
+    protected void ChangeStates()
+    {
+        _currentStateIndex = _nextStateIndex;
+
+        _previousState = _currentState;
+
+        _currentState = _states[_currentStateIndex];
+
+        _previousState.OnTransitionFrom();
+        _currentState.OnTransitionTo();
+
+        OnChangeStates();
+    }
+
+    protected abstract void OnChangeStates();
+
+    protected void UpdatePreviousState()
+    {
+        _previousState = _currentState;
+    }
 
     public bool Equals(GadgetBase? other) => Id == (other?.Id ?? -1);
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBase other && Id == other.Id;

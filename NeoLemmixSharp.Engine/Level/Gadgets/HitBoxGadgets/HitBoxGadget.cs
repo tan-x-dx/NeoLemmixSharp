@@ -17,69 +17,30 @@ public sealed class HitBoxGadget : GadgetBase,
 #pragma warning restore CS0660, CS0661, CA1067
 {
     private readonly LemmingTracker _lemmingTracker;
-    private readonly GadgetState[] _states;
-
-    private GadgetState _currentState;
-    private GadgetState _previousState;
-
-    private int _currentStateIndex;
-    private int _nextStateIndex;
-
-    public GadgetState CurrentState => _currentState;
-
     // The below properties refer to the positions of the hitboxes, not the gadget itself
-    public RectangularRegion CurrentBounds => _currentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
+    public RectangularRegion CurrentBounds => CurrentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
 
     public ResizeType ResizeType { get; }
 
     public HitBoxGadget(
-        ResizeType resizeType,
-        LemmingTracker lemmingTracker,
         GadgetState[] states,
-        int initialStateIndex)
+        int initialStateIndex,
+        ResizeType resizeType,
+        LemmingTracker lemmingTracker)
+        : base(states, initialStateIndex)
     {
         _lemmingTracker = lemmingTracker;
-        _states = states;
-
-        _currentStateIndex = initialStateIndex;
-        _currentState = _states[initialStateIndex];
-        CurrentAnimationController = _currentState.AnimationController;
-        _previousState = _currentState;
 
         ResizeType = resizeType;
     }
 
-    public void SetNextState(int stateIndex)
-    {
-        _nextStateIndex = stateIndex;
-    }
-
-    public override void Tick()
+    protected override void OnTick()
     {
         _lemmingTracker.Tick();
-
-        if (_currentStateIndex == _nextStateIndex)
-        {
-            CurrentState.Tick(this);
-        }
-        else
-        {
-            ChangeStates();
-        }
     }
 
-    private void ChangeStates()
+    protected override void OnChangeStates()
     {
-        _currentStateIndex = _nextStateIndex;
-
-        _previousState = _currentState;
-
-        _currentState = _states[_currentStateIndex];
-
-        _previousState.OnTransitionFrom();
-        _currentState.OnTransitionTo();
-        CurrentAnimationController = _currentState.AnimationController;
-
         // Changing states may change hitbox positions 
         // Force a position update to accommodate this
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
@@ -87,7 +48,7 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public bool ContainsPoint(Orientation orientation, Point levelPosition)
     {
-        return _currentState
+        return CurrentState
             .HitBoxFor(orientation)
             .ContainsPoint(levelPosition - CurrentGadgetBounds.Position);
     }
@@ -95,7 +56,7 @@ public sealed class HitBoxGadget : GadgetBase,
     public bool ContainsEitherPoint(Orientation orientation, Point p1, Point p2)
     {
         var offset = CurrentGadgetBounds.Position;
-        var hitBox = _currentState.HitBoxFor(orientation);
+        var hitBox = CurrentState.HitBoxFor(orientation);
         return hitBox.ContainsEitherPoint(p1 - offset, p2 - offset);
     }
 
@@ -130,7 +91,7 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public void Move(int dx, int dy)
     {
-        _previousState = _currentState;
+        UpdatePreviousState();
 
         var delta = new Point(dx, dy);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(CurrentGadgetBounds.Position + delta);
@@ -139,7 +100,7 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public void SetPosition(int x, int y)
     {
-        _previousState = _currentState;
+        UpdatePreviousState();
 
         var newPosition = new Point(x, y);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(newPosition);
@@ -151,7 +112,7 @@ public sealed class HitBoxGadget : GadgetBase,
         if (ResizeType == ResizeType.None)
             return;
 
-        _previousState = _currentState;
+        UpdatePreviousState();
 
         if (ResizeType.CanResizeHorizontally())
             CurrentGadgetBounds.Width += dw;
@@ -167,7 +128,7 @@ public sealed class HitBoxGadget : GadgetBase,
         if (ResizeType == ResizeType.None)
             return;
 
-        _previousState = _currentState;
+        UpdatePreviousState();
 
         if (ResizeType.CanResizeHorizontally())
             CurrentGadgetBounds.Width = w;

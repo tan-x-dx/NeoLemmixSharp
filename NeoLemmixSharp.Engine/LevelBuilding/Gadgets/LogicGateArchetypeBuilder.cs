@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
@@ -42,6 +41,9 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         if (gadgetData.InputNames.Length < 2)
             throw new ArgumentException("Expected at least 2 inputs!");
 
+        return null;
+
+        /*
         return new AndGateGadget(null, null, gadgetData.InputNames)
         {
             Id = gadgetData.Id,
@@ -50,7 +52,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             CurrentGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
-        };
+        };*/
     }
 
     private static OrGateGadget CreateOrGateGadget(
@@ -60,6 +62,9 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         if (gadgetData.InputNames.Length < 2)
             throw new ArgumentException("Expected at least 2 inputs!");
 
+        return null;
+
+        /*
         return new OrGateGadget(null, null, gadgetData.InputNames)
         {
             Id = gadgetData.Id,
@@ -68,7 +73,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             CurrentGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
-        };
+        };*/
     }
 
     private static NotGateGadget CreateNotGateGadget(
@@ -78,6 +83,9 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         if (gadgetData.InputNames.Length != 1)
             throw new InvalidOperationException("Expected precisely ONE input name!");
 
+        return null;
+
+        /*
         var inputName = gadgetData.InputNames[0];
         return new NotGateGadget(null, null, inputName)
         {
@@ -87,7 +95,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             CurrentGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
-        };
+        };*/
     }
 
     private static XorGateGadget CreateXorGateGadget(
@@ -97,6 +105,9 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         if (gadgetData.InputNames.Length != 2)
             throw new InvalidOperationException("Expected precisely TWO input names!");
 
+        return null;
+
+        /*
         var inputName1 = gadgetData.InputNames[0];
         var inputName2 = gadgetData.InputNames[1];
         return new XorGateGadget(null, null, inputName1, inputName2)
@@ -107,6 +118,6 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
             CurrentGadgetBounds = new GadgetBounds(),
 
             IsFastForward = true
-        };
+        };*/
     }
 }

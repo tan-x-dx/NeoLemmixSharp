@@ -69,7 +69,7 @@ public sealed class GadgetState
         _stateSelectedOutput.SetSignal(true);
     }
 
-    public void Tick(HitBoxGadget parentGadget)
+    public void Tick(GadgetBase parentGadget)
     {
         AnimationController.Tick();
 
