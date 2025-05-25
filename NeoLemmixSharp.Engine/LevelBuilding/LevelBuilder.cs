@@ -68,12 +68,12 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        var lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder(_graphicsDevice);
+        var lemmingSpriteBankBuilder = new LemmingSpriteBankBuilder();
         var lemmingSpriteBank = lemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
         var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
         var levelGadgets = gadgetBuilder.BuildLevelGadgets(lemmingManager, tribeManager);
 
-        using var levelSpriteBuilder = new LevelSpriteBuilder(_graphicsDevice, levelGadgets, levelLemmings);
+        using var levelSpriteBuilder = new LevelSpriteBuilder(levelGadgets, levelLemmings);
 
         foreach (var hatchGroup in hatchGroups)
         {

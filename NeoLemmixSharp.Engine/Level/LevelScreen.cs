@@ -15,6 +15,7 @@ using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using System.Diagnostics.Contracts;
 using System.Reflection;
@@ -214,6 +215,8 @@ public sealed class LevelScreen : IBaseScreen
                 disposable.Dispose();
             }
         }
+
+        TextureCache.DisposeOfShortLivedTextures();
 
         _instance = null!;
     }

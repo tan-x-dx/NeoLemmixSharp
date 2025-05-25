@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
@@ -17,11 +16,10 @@ public readonly ref struct LevelSpriteBuilder : IDisposable
     private readonly Lemming[] _lemmings;
 
     public LevelSpriteBuilder(
-        GraphicsDevice graphicsDevice,
         GadgetBase[] gadgets,
         Lemming[] lemmings)
     {
-        _gadgetSpriteBuilder = new GadgetRendererBuilder(graphicsDevice);
+        _gadgetSpriteBuilder = new GadgetRendererBuilder();
         _gadgets = gadgets;
         _lemmings = lemmings;
     }

@@ -12,8 +12,10 @@ namespace NeoLemmixSharp.IO.Data.Style;
 
 public static class StyleCache
 {
+    internal static readonly StyleIdentifier DefaultStyleIdentifier = new(EngineConstants.DefaultStyleIdentifier);
+
     internal static readonly StyleFormatPair DefaultStyleFormatPair = new(
-        new StyleIdentifier(EngineConstants.DefaultStyleIdentifier),
+        DefaultStyleIdentifier,
         FileFormatType.Default);
 
     private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);

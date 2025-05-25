@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
 using System.Runtime.InteropServices;
@@ -10,14 +11,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public sealed class GadgetRendererBuilder : IDisposable
 {
-    private readonly GraphicsDevice _graphicsDevice;
-    private readonly Dictionary<StylePiecePair, Texture2D> _gadgetTextures;
-
-    public GadgetRendererBuilder(GraphicsDevice graphicsDevice)
-    {
-        _graphicsDevice = graphicsDevice;
-        _gadgetTextures = new Dictionary<StylePiecePair, Texture2D>();
-    }
+    private readonly Dictionary<StylePiecePair, Texture2D> _gadgetTextures = [];
 
     public GadgetRenderer? BuildStatefulGadgetRenderer(
         IGadgetArchetypeBuilder gadgetArchetypeBuilder,
@@ -57,7 +51,7 @@ public sealed class GadgetRendererBuilder : IDisposable
         }
     }
 
-    private Texture2D LoadSprite(IGadgetArchetypeBuilder gadgetArchetypeBuilder)
+    private static Texture2D LoadSprite(IGadgetArchetypeBuilder gadgetArchetypeBuilder)
     {
         var rootFilePath = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
@@ -67,7 +61,11 @@ public sealed class GadgetRendererBuilder : IDisposable
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
-        return Texture2D.FromFile(_graphicsDevice, pngPath);
+        return TextureCache.GetOrLoadTexture(
+            pngPath,
+            gadgetArchetypeBuilder.StyleName,
+            gadgetArchetypeBuilder.PieceName,
+            TextureType.GadgetSprite);
     }
 
     private static void AssertSpriteDimensionsMakeSense(IGadgetArchetypeBuilder gadgetArchetypeBuilder, Size textureDimensions)

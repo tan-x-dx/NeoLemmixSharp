@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style;
@@ -13,7 +14,6 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 
 public readonly ref struct TerrainBuilder
 {
-    private readonly GraphicsDevice _graphicsDevice;
     private readonly LevelData _levelData;
 
     private readonly RenderTarget2D _terrainTexture;
@@ -25,20 +25,21 @@ public readonly ref struct TerrainBuilder
 
     public TerrainBuilder(GraphicsDevice graphicsDevice, LevelData levelData)
     {
-        _graphicsDevice = graphicsDevice;
         _levelData = levelData;
 
         var terrainDimensions = levelData.LevelDimensions;
 
         _terrainTexture = new RenderTarget2D(
-            _graphicsDevice,
+            graphicsDevice,
             terrainDimensions.W,
             terrainDimensions.H,
             false,
-            _graphicsDevice.PresentationParameters.BackBufferFormat,
+            graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24,
             8,
             RenderTargetUsage.DiscardContents);
+
+        TextureCache.CacheShortLivedTexture(_terrainTexture);
 
         var rawPixels = new PixelType[terrainDimensions.Area()];
         _terrainPixels = new ArrayWrapper2D<PixelType>(rawPixels, terrainDimensions);
@@ -306,7 +307,11 @@ public readonly ref struct TerrainBuilder
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
-        using var mainTexture = Texture2D.FromFile(_graphicsDevice, pngPath);
+        var mainTexture = TextureCache.GetOrLoadTexture(
+            pngPath,
+            terrainData.StyleName,
+            terrainData.PieceName,
+            TextureType.TerrainSprite);
         colorData = ArrayWrapperHelpers.GetPixelColorDataFromTexture(mainTexture);
     }
 }

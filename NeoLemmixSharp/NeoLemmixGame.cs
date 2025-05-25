@@ -7,6 +7,7 @@ using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.Menu;
 using NeoLemmixSharp.Ui.Data;
@@ -106,6 +107,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         UiSprites.Initialise(Content);
 
         StyleCache.Initialise();
+        TextureCache.Initialise(GraphicsDevice);
 
         var menuScreen = new MenuScreen(
             Content,
