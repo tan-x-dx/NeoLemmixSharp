@@ -18,7 +18,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper>(1)
         {
-            [new FileFormatVersion(1,0,0,0)] = new Writing.Levels.Sections.Version1_0_0_0.VersionHelper()
+            [new FileFormatVersion(1, 0, 0, 0)] = new Writing.Levels.Sections.Version1_0_0_0.VersionHelper()
         };
 
         return result;
@@ -28,7 +28,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper>(1)
         {
-            [new FileFormatVersion(1,0,0,0)] = new Reading.Levels.Sections.Version1_0_0_0.VersionHelper()
+            [new FileFormatVersion(1, 0, 0, 0)] = new Reading.Levels.Sections.Version1_0_0_0.VersionHelper()
         };
 
         return result;
@@ -38,7 +38,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper>(1)
         {
-            [new FileFormatVersion(1,0,0,0)] = new Writing.Styles.Sections.Version1_0_0_0.VersionHelper()
+            [new FileFormatVersion(1, 0, 0, 0)] = new Writing.Styles.Sections.Version1_0_0_0.VersionHelper()
         };
 
         return result;
@@ -48,7 +48,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper>(1)
         {
-            [new FileFormatVersion(1,0,0,0)] = new Reading.Styles.Sections.Version1_0_0_0.VersionHelper()
+            [new FileFormatVersion(1, 0, 0, 0)] = new Reading.Styles.Sections.Version1_0_0_0.VersionHelper()
         };
 
         return result;
@@ -94,6 +94,9 @@ internal static class VersionHelper
         return result;
     }
 
+    [DoesNotReturn]
+    private static void ThrowUnknownVersionException(FileFormatVersion version) => throw new UnknownVersionException(version);
+
     private sealed class UnknownVersionException : Exception
     {
         public FileFormatVersion FileVersion { get; }
@@ -109,27 +112,4 @@ internal static class VersionHelper
             return $"Unknown version number: {version}";
         }
     }
-
-    [DoesNotReturn]
-    private static void ThrowUnknownVersionException(FileFormatVersion version) => throw new UnknownVersionException(version);
-}
-
-internal interface ILevelDataSectionWriterVersionHelper
-{
-    LevelDataSectionWriter[] GetLevelDataSectionWriters();
-}
-
-internal interface ILevelDataSectionReaderVersionHelper
-{
-    LevelDataSectionReader[] GetLevelDataSectionReaders();
-}
-
-internal interface IStyleDataSectionWriterVersionHelper
-{
-    StyleDataSectionWriter[] GetStyleDataSectionWriters();
-}
-
-internal interface IStyleDataSectionReaderVersionHelper
-{
-    StyleDataSectionReader[] GetStyleDataSectionReaders();
 }
