@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.IO.Data.Style.Gadget;
+﻿using NeoLemmixSharp.IO.Data.Level.Gadgets;
+
+namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 
 public readonly struct GadgetActionData(GadgetActionType gadgetActionType, int miscData)
 {

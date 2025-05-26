@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
@@ -136,80 +137,119 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             var hitBoxBehaviour = hitBoxData.HitBoxBehaviour;
             var criteria = GetLemmingCriteria(gadgetData, hitBoxData, tribeManager);
 
+            GadgetActionBuilder.ReadGadgetActions(
+                hitBoxData,
+                out var onLemmingEnterActions,
+                out var onLemmingPresentActions,
+                out var onLemmingExitActions);
+
             result[i] = new LemmingHitBoxFilter(
                 solidityType,
                 hitBoxBehaviour,
                 criteria,
-                [], //hitBoxData.OnLemmingEnterActions,
-                [], //hitBoxData.OnLemmingPresentActions,
-                []  //hitBoxData.OnLemmingExitActions
-                    );
+                onLemmingEnterActions,
+                onLemmingPresentActions,
+                onLemmingExitActions);
         }
 
         return result;
     }
 
-    private static ILemmingCriterion[] GetLemmingCriteria(
+    private static LemmingCriterion[] GetLemmingCriteria(
         GadgetData gadgetData,
         HitBoxData hitBoxData,
         TribeManager tribeManager)
     {
         var numberOfCriteria =
-            // hitBoxData.AllowedActions.CountIfNotNull() +
-            // hitBoxData.AllowedStates.CountIfNotNull() +
-            // hitBoxData.AllowedOrientations.CountIfNotNull() +
-            // hitBoxData.AllowedFacingDirection.CountIfNotNull() +
+            (hitBoxData.AllowedLemmingActionIds.Length > 0 ? 1 : 0) +
+            (hitBoxData.AllowedLemmingStateIds.Length > 0 ? 1 : 0) +
+            (hitBoxData.AllowedLemmingActionIds.Length > 0 ? 1 : 0) +
+            (hitBoxData.AllowedLemmingOrientationIds != 0 ? 1 : 0) +
+            (hitBoxData.AllowedFacingDirectionId != 0 ? 1 : 0) +
             (gadgetData.HasProperty(GadgetProperty.TribeId) ? 1 : 0);
 
         if (numberOfCriteria == 0)
             return [];
 
-        var result = new ILemmingCriterion[numberOfCriteria];
+        var result = new LemmingCriterion[numberOfCriteria];
 
         numberOfCriteria = 0;
 
-        /* if (hitBoxData.AllowedActions is not null)
-         {
-             var lemmingActionCriterion = new LemmingActionCriterion();
-             lemmingActionCriterion.RegisterActions(hitBoxData.AllowedActions);
-             result[numberOfCriteria++] = lemmingActionCriterion;
-         }
+        if (hitBoxData.AllowedLemmingActionIds.Length > 0)
+            result[numberOfCriteria++] = CreateLemmingActionCriterion(hitBoxData);
 
-         if (hitBoxData.AllowedStates is not null)
-         {
-             result[numberOfCriteria++] = new LemmingStateCriterion(hitBoxData.AllowedStates);
-         }
+        if (hitBoxData.AllowedLemmingStateIds.Length > 0)
+            result[numberOfCriteria++] = CreateLemmingStateCriterion(hitBoxData);
 
-         if (hitBoxData.AllowedOrientations is not null)
-         {
-             var orientationFilter = new LemmingOrientationFilter();
-             var gadgetRotNum = gadgetData.Orientation.RotNum;
+        if (hitBoxData.AllowedLemmingOrientationIds != 0)
+            result[numberOfCriteria++] = CreateOrientationCriterion(gadgetData, hitBoxData);
 
-             foreach (var orientation in hitBoxData.AllowedOrientations)
-             {
-                 var rotatedOrientation = new Orientation(orientation.RotNum + gadgetRotNum);
-                 orientationFilter.RegisterOrientation(rotatedOrientation);
-             }
+        if (hitBoxData.AllowedFacingDirectionId != 0)
+            result[numberOfCriteria++] = CreateFacingDirectionCriterion(hitBoxData);
 
-             result[numberOfCriteria++] = orientationFilter;
-         }
-
-         if (hitBoxData.AllowedFacingDirection.HasValue)
-         {
-             var facingDirectionFilter = LemmingFacingDirectionCriterion.ForFacingDirection(hitBoxData.AllowedFacingDirection.Value);
-             result[numberOfCriteria++] = facingDirectionFilter;
-         }
-
-         if (gadgetData.TryGetProperty(GadgetProperty.TribeId, out var tribeId))
-         {
-             var tribe = tribeManager.AllItems[tribeId];
-             var tribeFilter = new LemmingTribeCriterion(tribe);
-             result[numberOfCriteria++] = tribeFilter;
-         }*/
+        if (gadgetData.TryGetProperty(GadgetProperty.TribeId, out var tribeId))
+            result[numberOfCriteria++] = CreateTribeCriterion(tribeManager, tribeId);
 
         Debug.Assert(numberOfCriteria == result.Length);
 
+        Array.Sort(result);
+
         return result;
+    }
+
+    private static LemmingActionCriterion CreateLemmingActionCriterion(
+        HitBoxData hitBoxData)
+    {
+        var lemmingActionCriterion = new LemmingActionCriterion();
+        lemmingActionCriterion.RegisterActions(hitBoxData.AllowedLemmingActionIds);
+        return lemmingActionCriterion;
+    }
+
+    private static LemmingStateCriterion CreateLemmingStateCriterion(
+        HitBoxData hitBoxData)
+    {
+        var stateChangerSet = ILemmingStateChanger.CreateBitArraySet();
+        stateChangerSet.ReadFrom(hitBoxData.AllowedLemmingStateIds);
+        var lemmingStateCriteria = new LemmingStateCriterion(stateChangerSet);
+        return lemmingStateCriteria;
+    }
+
+    private static LemmingOrientationCriterion CreateOrientationCriterion(
+        GadgetData gadgetData,
+        HitBoxData hitBoxData)
+    {
+        var orientationCriterion = new LemmingOrientationCriterion();
+        var gadgetRotNum = gadgetData.Orientation.RotNum;
+
+        var orientationSet = Orientation.CreateBitArraySet();
+        uint orientationData = hitBoxData.AllowedLemmingOrientationIds;
+        orientationData &= (1 << EngineConstants.NumberOfOrientations) - 1;
+        orientationSet.ReadFrom(new ReadOnlySpan<uint>(ref orientationData));
+
+        foreach (var orientation in orientationSet)
+        {
+            var rotatedOrientation = new Orientation(orientation.RotNum + gadgetRotNum);
+            orientationCriterion.RegisterOrientation(rotatedOrientation);
+        }
+
+        return orientationCriterion;
+    }
+
+    private static LemmingFacingDirectionCriterion CreateFacingDirectionCriterion(
+        HitBoxData hitBoxData)
+    {
+        var facingDirection = new FacingDirection(hitBoxData.AllowedFacingDirectionId);
+        var facingDirectionCriterion = LemmingFacingDirectionCriterion.ForFacingDirection(facingDirection);
+        return facingDirectionCriterion;
+    }
+
+    private static LemmingTribeCriterion CreateTribeCriterion(
+        TribeManager tribeManager,
+        int tribeId)
+    {
+        var tribe = tribeManager.AllItems[tribeId];
+        var tribeFilter = new LemmingTribeCriterion(tribe);
+        return tribeFilter;
     }
 
     private OrientationToHitBoxRegionLookup CreateHitBoxRegionLookup(

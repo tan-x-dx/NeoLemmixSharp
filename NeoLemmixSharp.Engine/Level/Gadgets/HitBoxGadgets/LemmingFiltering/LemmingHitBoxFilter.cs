@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
 public sealed class LemmingHitBoxFilter
 {
-    private readonly ILemmingCriterion[] _criteria;
+    private readonly LemmingCriterion[] _criteria;
     private readonly GadgetAction[] _onLemmingEnterActions;
     private readonly GadgetAction[] _onLemmingPresentActions;
     private readonly GadgetAction[] _onLemmingExitActions;
@@ -22,7 +22,7 @@ public sealed class LemmingHitBoxFilter
     public LemmingHitBoxFilter(
         LemmingSolidityType lemmingSolidityType,
         HitBoxBehaviour hitBoxBehaviour,
-        ILemmingCriterion[] criteria,
+        LemmingCriterion[] criteria,
         GadgetAction[] onLemmingEnterActions,
         GadgetAction[] onLemmingPresentActions,
         GadgetAction[] onLemmingExitActions)

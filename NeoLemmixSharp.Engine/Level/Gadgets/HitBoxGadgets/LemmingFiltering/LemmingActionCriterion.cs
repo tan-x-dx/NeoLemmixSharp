@@ -1,19 +1,25 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
-public sealed class LemmingActionCriterion : ILemmingCriterion
+public sealed class LemmingActionCriterion : LemmingCriterion
 {
     private LemmingAction.LemmingActionBitBuffer _lemmingActionBits;
 
-    public void RegisterActions(LemmingActionSet actions)
+    public LemmingActionCriterion()
+        : base(LemmingCriteria.LemmingAction)
     {
-        actions.WriteTo(_lemmingActionBits);
     }
 
-    public bool LemmingMatchesCriteria(Lemming lemming)
+    public void RegisterActions(uint[] actionIds)
+    {
+     //   actions.WriteTo(_lemmingActionBits);
+    }
+
+    public override bool LemmingMatchesCriteria(Lemming lemming)
     {
         ReadOnlySpan<uint> bits = _lemmingActionBits;
         var actionComparer = new LemmingAction.LemmingActionHasher();

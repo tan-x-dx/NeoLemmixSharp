@@ -1,20 +1,22 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
-public sealed class LemmingStateCriterion : ILemmingCriterion
+public sealed class LemmingStateCriterion : LemmingCriterion
 {
     private readonly ILemmingStateChanger[] _allowedLemmingStates;
 
     public LemmingStateCriterion(StateChangerSet allowedStates)
+        :base(LemmingCriteria.LemmingState)
     {
         Debug.Assert(allowedStates.Count > 0);
         _allowedLemmingStates = allowedStates.ToArray();
     }
 
-    public bool LemmingMatchesCriteria(Lemming lemming)
+    public override bool LemmingMatchesCriteria(Lemming lemming)
     {
         foreach (var lemmingState in _allowedLemmingStates)
         {
