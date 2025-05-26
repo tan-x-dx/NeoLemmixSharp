@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -22,7 +23,7 @@ public sealed class GadgetData
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }
 
-    public required string[] InputNames { get; init; }
+    public required GadgetInputData[] InputNames { get; init; }
 
     public int NumberOfGadgetProperties => _properties.Count;
 

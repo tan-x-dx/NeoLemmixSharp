@@ -1,19 +1,20 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
-public sealed class LemmingMoverAction : IGadgetAction
+public sealed class LemmingMoverAction : GadgetAction
 {
     private readonly Point _deltaPosition;
-    public GadgetActionType ActionType => GadgetActionType.LemmingMover;
 
     public LemmingMoverAction(Point deltaPosition)
+        : base(GadgetActionType.LemmingMover)
     {
         _deltaPosition = deltaPosition;
     }
 
-    public void PerformAction(Lemming lemming)
+    public override void PerformAction(Lemming lemming)
     {
         ref var lemmingPosition = ref lemming.AnchorPosition;
         lemmingPosition += _deltaPosition;

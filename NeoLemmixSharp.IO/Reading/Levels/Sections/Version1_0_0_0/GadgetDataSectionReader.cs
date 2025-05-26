@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
@@ -47,8 +48,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
         var renderMode = GadgetRenderModeHelpers.GetEnumValue(rawFileData.Read8BitUnsignedInteger());
 
-        int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
-        var inputNames = CollectionsHelper.GetArrayForSize<string>(numberOfInputNames);
+        var inputNames = ReadInputNames(rawFileData);
 
         var result = new GadgetData
         {
@@ -68,20 +68,27 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             InputNames = inputNames
         };
 
-        ReadInputNames(rawFileData, inputNames, numberOfInputNames);
+
         ReadProperties(rawFileData, result);
 
         return result;
     }
 
-    private void ReadInputNames(RawLevelFileDataReader rawFileData, string[] inputNames, int numberOfInputNames)
+    private GadgetInputData[] ReadInputNames(RawLevelFileDataReader rawFileData)
     {
+        int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
+
+        var result = CollectionsHelper.GetArrayForSize<GadgetInputData>(numberOfInputNames);
+
         var i = 0;
         while (i < numberOfInputNames)
         {
             int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
-            inputNames[i++] = _stringIdLookup[inputNameStringId];
+            var inputName = _stringIdLookup[inputNameStringId];
+            result[i++] = new GadgetInputData(inputName);
         }
+
+        return result;
     }
 
     private static void ReadProperties(RawLevelFileDataReader rawFileData, GadgetData result)

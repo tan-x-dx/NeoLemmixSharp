@@ -1,18 +1,19 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
-public sealed class AdditionalTimeAction : IGadgetAction
+public sealed class AdditionalTimeAction : GadgetAction
 {
     private readonly int _additionalSeconds;
-    public GadgetActionType ActionType => GadgetActionType.AddLevelTime;
 
     public AdditionalTimeAction(int additionalSeconds)
+        : base(GadgetActionType.AddLevelTime)
     {
         _additionalSeconds = additionalSeconds;
     }
 
-    public void PerformAction(Lemming lemming)
+    public override void PerformAction(Lemming lemming)
     {
         LevelScreen.LevelTimer.AddAdditionalSeconds(_additionalSeconds);
     }

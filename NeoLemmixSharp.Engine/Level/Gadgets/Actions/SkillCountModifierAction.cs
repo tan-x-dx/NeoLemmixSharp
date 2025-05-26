@@ -1,17 +1,18 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
-public sealed class SkillCountModifierAction : IGadgetAction
+public sealed class SkillCountModifierAction : GadgetAction
 {
     private readonly LemmingSkill _skill;
     private readonly int _value;
     private readonly int? _tribeId;
     private readonly bool _isDelta;
-    public GadgetActionType ActionType => GadgetActionType.ChangeSkillCount;
 
     public SkillCountModifierAction(LemmingSkill skill, int value, int? tribeId, bool isDelta)
+        : base(GadgetActionType.ChangeSkillCount)
     {
         _skill = skill;
         _value = value;
@@ -19,7 +20,7 @@ public sealed class SkillCountModifierAction : IGadgetAction
         _isDelta = isDelta;
     }
 
-    public void PerformAction(Lemming lemming)
+    public override void PerformAction(Lemming lemming)
     {
         var tribe = LevelScreen.TribeManager.GetTribeForId(_tribeId);
         LevelScreen.SkillSetManager.SetSkillCount(_skill, tribe, _value, _isDelta);

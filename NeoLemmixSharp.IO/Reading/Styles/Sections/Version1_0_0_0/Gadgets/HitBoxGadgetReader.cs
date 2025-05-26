@@ -4,9 +4,10 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
+namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
 
 internal static class HitBoxGadgetReader
 {
@@ -45,7 +46,7 @@ internal static class HitBoxGadgetReader
         var result = new GadgetStateArchetypeData[numberOfGadgetStates];
         var i = 0;
 
-        var spriteData = new SpriteDataReader().ReadSpriteData(rawFileData, -1);
+        var spriteData = new GadgetSpriteDataReader().ReadSpriteData(rawFileData, -1);
 
         while (i < result.Length)
         {

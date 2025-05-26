@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 
 public enum GadgetActionType
 {

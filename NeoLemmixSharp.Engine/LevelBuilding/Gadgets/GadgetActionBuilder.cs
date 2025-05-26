@@ -1,45 +1,42 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
 
-namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
-internal static class GadgetActionReader
+public static class GadgetActionBuilder
 {
-   /* public static void ReadGadgetActions(
-        RawStyleFileDataReader rawFileData,
-        out IGadgetAction[] onLemmingEnterActions,
-        out IGadgetAction[] onLemmingPresentActions,
-        out IGadgetAction[] onLemmingExitActions)
+    public static void ReadGadgetActions(
+        HitBoxData hitBoxData,
+        out GadgetAction[] onLemmingEnterActions,
+        out GadgetAction[] onLemmingPresentActions,
+        out GadgetAction[] onLemmingExitActions)
     {
-        onLemmingEnterActions = ReadGadgetActionSection(rawFileData, 0);
-        onLemmingPresentActions = ReadGadgetActionSection(rawFileData, 1);
-        onLemmingExitActions = ReadGadgetActionSection(rawFileData, 2);
+        onLemmingEnterActions = ReadGadgetActionSection(hitBoxData.OnLemmingEnterActions);
+        onLemmingPresentActions = ReadGadgetActionSection(hitBoxData.OnLemmingPresentActions);
+        onLemmingExitActions = ReadGadgetActionSection(hitBoxData.OnLemmingExitActions);
     }
 
-    private static IGadgetAction[] ReadGadgetActionSection(RawStyleFileDataReader rawFileData, int expectedIdentifierByte)
+    private static GadgetAction[] ReadGadgetActionSection(GadgetActionData[] gadgetActions)
     {
-        int identifierByte = rawFileData.Read8BitUnsignedInteger();
-        FileReadingException.ReaderAssert(identifierByte == expectedIdentifierByte, "Invalid gadget action byte");
+        var result = CollectionsHelper.GetArrayForSize<GadgetAction>(gadgetActions.Length);
 
-        int numberOfItemsInSection = rawFileData.Read8BitUnsignedInteger();
-        var result = CollectionsHelper.GetArrayForSize<IGadgetAction>(numberOfItemsInSection);
-
-        var i = 0;
-        while (i < result.Length)
+        for (int i = 0; i < result.Length; i++)
         {
-            uint rawGadgetActionType = rawFileData.Read8BitUnsignedInteger();
-            var gadgetActionType = GadgetActionTypeHelpers.GetEnumValue(rawGadgetActionType);
-
-            int miscData = rawFileData.Read32BitSignedInteger();
-
-            result[i++] = CreateGadgetAction(gadgetActionType, miscData);
+            var gadgetAction = gadgetActions[i];
+            result[i] = CreateGadgetAction(gadgetAction.GadgetActionType, gadgetAction.MiscData);
         }
 
         return result;
     }
 
-    private static IGadgetAction CreateGadgetAction(GadgetActionType gadgetActionType, int miscData) => gadgetActionType switch
+    private static GadgetAction CreateGadgetAction(GadgetActionType gadgetActionType, int miscData) => gadgetActionType switch
     {
         GadgetActionType.SetLemmingState => CreateSetLemmingStateAction(miscData),
         GadgetActionType.SetLemmingAction => CreateSetLemmingActionAction(miscData),
@@ -49,7 +46,7 @@ internal static class GadgetActionReader
         GadgetActionType.AddLevelTime => CreateAddLevelTimeAction(miscData),
         GadgetActionType.SetGadgetState => SetGadgetStateAction(miscData),
 
-        _ => Helpers.ThrowUnknownEnumValueException<GadgetActionType, IGadgetAction>(gadgetActionType)
+        _ => Helpers.ThrowUnknownEnumValueException<GadgetActionType, GadgetAction>(gadgetActionType)
     };
 
     private static SetLemmingStateAction CreateSetLemmingStateAction(int miscData)
@@ -107,5 +104,5 @@ internal static class GadgetActionReader
         var stateIndex = miscData >>> 16;
 
         return new StateTransitionAction(gadgetId, stateIndex);
-    }*/
+    }
 }

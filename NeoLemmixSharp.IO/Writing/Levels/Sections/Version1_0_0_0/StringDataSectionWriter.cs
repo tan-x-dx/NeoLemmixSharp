@@ -125,7 +125,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 
             foreach (var gadgetInputName in gadgetData.InputNames)
             {
-                _stringIdLookup.RecordString(gadgetInputName);
+                _stringIdLookup.RecordString(gadgetInputName.ToString());
             }
         }
     }

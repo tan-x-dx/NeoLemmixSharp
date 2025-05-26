@@ -54,7 +54,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write((byte)gadgetData.InputNames.Length);
         foreach (var inputName in gadgetData.InputNames)
         {
-            writer.Write(_stringIdLookup.GetStringId(inputName));
+            writer.Write(_stringIdLookup.GetStringId(inputName.ToString()));
         }
 
         var gadgetPropertyEnumerator = gadgetData.GetProperties();

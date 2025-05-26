@@ -72,7 +72,7 @@ public sealed class HitBoxGadget : GadgetBase,
         }
     }
 
-    private ReadOnlySpan<IGadgetAction> GetActionsToPerformOnLemming(
+    private ReadOnlySpan<GadgetAction> GetActionsToPerformOnLemming(
         LemmingHitBoxFilter activeFilter,
         Lemming lemming)
     {
@@ -80,12 +80,12 @@ public sealed class HitBoxGadget : GadgetBase,
 
         return trackingStatus switch
         {
-            TrackingStatus.Absent => ReadOnlySpan<IGadgetAction>.Empty,
+            TrackingStatus.Absent => ReadOnlySpan<GadgetAction>.Empty,
             TrackingStatus.JustAdded => activeFilter.OnLemmingEnterActions,
             TrackingStatus.JustRemoved => activeFilter.OnLemmingExitActions,
             TrackingStatus.StillPresent => activeFilter.OnLemmingPresentActions,
 
-            _ => ReadOnlySpan<IGadgetAction>.Empty
+            _ => ReadOnlySpan<GadgetAction>.Empty
         };
     }
 
