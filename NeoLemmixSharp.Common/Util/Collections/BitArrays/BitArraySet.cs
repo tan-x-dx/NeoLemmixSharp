@@ -82,27 +82,32 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
     public void WriteTo(Span<uint> destination)
     {
-        if (destination.Length != _bits.Length)
-            throw new ArgumentException("Destination buffer wrong size!");
+        if (destination.Length < _bits.Length)
+            throw new ArgumentException("Destination buffer too small!");
         _bits.AsReadOnlySpan().CopyTo(destination);
     }
 
     public void ReadFrom(ReadOnlySpan<uint> source)
     {
-        if (source.Length != _bits.Length)
-            throw new ArgumentException("Source buffer wrong size!");
+        if (source.Length > _bits.Length)
+            throw new ArgumentException("Source buffer too big!");
 
-        var upperIntNumberOfItems = _hasher.NumberOfItems & BitArrayHelpers.Mask;
-
-        if (upperIntNumberOfItems != 0)
+        if (source.Length == _bits.Length)
         {
-            var lastInt = source[^1];
-            var i = (1U << upperIntNumberOfItems) - 1U;
-            if ((lastInt & ~i) != 0U)
-                throw new ArgumentException("Upper bits set outside of valid range");
+            var upperIntNumberOfItems = _hasher.NumberOfItems & BitArrayHelpers.Mask;
+
+            if (upperIntNumberOfItems != 0)
+            {
+                var lastInt = source[^1];
+                var i = (1U << upperIntNumberOfItems) - 1U;
+                if ((lastInt & ~i) != 0U)
+                    throw new ArgumentException("Upper bits set outside of valid range");
+            }
         }
 
-        source.CopyTo(_bits.AsSpan());
+        var destSpan = _bits.AsSpan();
+        destSpan.Clear();
+        source.CopyTo(destSpan);
         _popCount = BitArrayHelpers.GetPopCount(source);
     }
 
