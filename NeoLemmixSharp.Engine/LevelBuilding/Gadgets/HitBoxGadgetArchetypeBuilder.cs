@@ -175,17 +175,17 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
         numberOfCriteria = 0;
 
-        if (hitBoxData.AllowedLemmingActionIds.Length > 0)
-            result[numberOfCriteria++] = CreateLemmingActionCriterion(hitBoxData);
-
-        if (hitBoxData.AllowedLemmingStateIds.Length > 0)
-            result[numberOfCriteria++] = CreateLemmingStateCriterion(hitBoxData);
-
         if (hitBoxData.AllowedLemmingOrientationIds != 0)
             result[numberOfCriteria++] = CreateOrientationCriterion(gadgetData, hitBoxData);
 
         if (hitBoxData.AllowedFacingDirectionId != 0)
             result[numberOfCriteria++] = CreateFacingDirectionCriterion(hitBoxData);
+
+        if (hitBoxData.AllowedLemmingActionIds.Length > 0)
+            result[numberOfCriteria++] = CreateLemmingActionCriterion(hitBoxData);
+
+        if (hitBoxData.AllowedLemmingStateIds.Length > 0)
+            result[numberOfCriteria++] = CreateLemmingStateCriterion(hitBoxData);
 
         if (gadgetData.TryGetProperty(GadgetProperty.TribeId, out var tribeId))
             result[numberOfCriteria++] = CreateTribeCriterion(tribeManager, tribeId);
