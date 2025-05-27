@@ -6,6 +6,7 @@ namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 [DebuggerDisplay("{StyleName}:{PieceName}")]
 public sealed class GadgetArchetypeData
 {
+    public required string GadgetName { get; init; }
     public required StyleIdentifier StyleName { get; init; }
     public required PieceIdentifier PieceName { get; init; }
 

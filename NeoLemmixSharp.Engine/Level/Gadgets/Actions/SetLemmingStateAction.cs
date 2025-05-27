@@ -1,23 +1,24 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
-public sealed class SetLemmingStateAction : IGadgetAction
+public sealed class SetLemmingStateAction : GadgetAction
 {
     private readonly ILemmingStateChanger _lemmingStateChanger;
     private readonly SetStateType _type;
-    public GadgetActionType ActionType => GadgetActionType.SetLemmingState;
 
     public SetLemmingStateAction(ILemmingStateChanger lemmingStateChanger, SetStateType type)
+        : base(GadgetActionType.SetLemmingState)
     {
         _lemmingStateChanger = lemmingStateChanger;
         _type = type;
     }
 
-    public void PerformAction(Lemming lemming)
+    public override void PerformAction(Lemming lemming)
     {
         var lemmingState = lemming.State;
 

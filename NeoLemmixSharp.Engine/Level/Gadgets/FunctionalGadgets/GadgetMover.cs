@@ -16,6 +16,7 @@ public sealed class GadgetMover : FunctionalGadget<GadgetMover.GadgetMoverInput>
     private int _tickCount;
 
     public GadgetMover(
+        string gadgetName,
         GadgetState state0,
         GadgetState state1,
         bool startActive,
@@ -24,7 +25,7 @@ public sealed class GadgetMover : FunctionalGadget<GadgetMover.GadgetMoverInput>
         int tickDelay,
         int dx,
         int dy)
-        : base(state0, state1, startActive, 1)
+        : base(gadgetName, state0, state1, startActive, 1)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;

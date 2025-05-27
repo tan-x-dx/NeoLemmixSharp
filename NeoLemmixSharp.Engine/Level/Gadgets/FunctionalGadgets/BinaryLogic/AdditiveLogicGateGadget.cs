@@ -12,11 +12,12 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
     private readonly int _numberOfInputs;
 
     protected AdditiveLogicGateGadget(
+        string gadgetName,
         GadgetState state0,
         GadgetState state1,
         bool startActive,
         ReadOnlySpan<string> inputNames)
-        : base(state0, state1, startActive, inputNames.Length)
+        : base(gadgetName, state0, state1, startActive, inputNames.Length)
     {
         _numberOfInputs = inputNames.Length;
         _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput>(this, false);
@@ -73,11 +74,12 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
 public sealed class AndGateGadget : AdditiveLogicGateGadget
 {
     public AndGateGadget(
+        string gadgetName,
         GadgetState state0,
         GadgetState state1,
         bool startActive,
         ReadOnlySpan<string> inputNames)
-        : base(state0, state1, startActive, inputNames)
+        : base(gadgetName, state0, state1, startActive, inputNames)
     {
     }
 
@@ -90,11 +92,12 @@ public sealed class AndGateGadget : AdditiveLogicGateGadget
 public sealed class OrGateGadget : AdditiveLogicGateGadget
 {
     public OrGateGadget(
+        string gadgetName,
         GadgetState state0,
         GadgetState state1,
         bool startActive,
         ReadOnlySpan<string> inputNames)
-        : base(state0, state1, startActive, inputNames)
+        : base(gadgetName, state0, state1, startActive, inputNames)
     {
     }
 

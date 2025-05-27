@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.IO.Versions;
+﻿using NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
+using NeoLemmixSharp.IO.Versions;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
@@ -10,7 +11,6 @@ internal sealed class VersionHelper : IStyleDataSectionReaderVersionHelper
 
         StyleDataSectionReader[] sectionReaders =
         [
-            // Always process string data first
             new StringDataSectionReader(stringIdLookup),
 
             new ThemeDataSectionReader(stringIdLookup),

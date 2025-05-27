@@ -11,11 +11,12 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
     public Point SpawnPointOffset { get; }
 
     public HatchGadget(
+        string gadgetName,
         GadgetState[] states,
         int initialStateIndex,
         HatchSpawnData hatchSpawnData,
         Point spawnPointOffset)
-        : base(states, initialStateIndex)
+        : base(gadgetName, states, initialStateIndex)
     {
         SpawnPointOffset = spawnPointOffset;
         HatchSpawnData = hatchSpawnData;

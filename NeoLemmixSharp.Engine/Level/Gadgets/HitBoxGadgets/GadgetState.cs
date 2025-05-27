@@ -3,24 +3,29 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using System.Diagnostics;
 using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class GadgetState
 {
+    private readonly string _stateName;
+
     private readonly GadgetOutput _stateSelectedOutput = new();
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
-    private readonly OrientationToHitBoxRegionLookup _hitBoxLookup;
+    private readonly OrientationToHitBoxRegionLookup? _hitBoxLookup;
 
     public AnimationController AnimationController { get; }
     public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
 
     public GadgetState(
+        string stateName,
         LemmingHitBoxFilter[] lemmingHitBoxFilters,
-        OrientationToHitBoxRegionLookup hitBoxLookup,
+        OrientationToHitBoxRegionLookup? hitBoxLookup,
         AnimationController animationController)
     {
+        _stateName = stateName;
         _lemmingHitBoxFilters = lemmingHitBoxFilters;
         _hitBoxLookup = hitBoxLookup;
         AnimationController = animationController;
@@ -28,14 +33,18 @@ public sealed class GadgetState
 
     public IHitBoxRegion HitBoxFor(Orientation orientation)
     {
-        if (_hitBoxLookup.TryGetValue(orientation, out var hitBoxRegion))
+        Debug.Assert(_hitBoxLookup != null);
+
+        if (_hitBoxLookup!.TryGetValue(orientation, out var hitBoxRegion))
             return hitBoxRegion;
         return EmptyHitBoxRegion.Instance;
     }
 
     public RectangularRegion GetMininmumBoundingBoxForAllHitBoxes(Point offset)
     {
-        if (_hitBoxLookup.Count == 0)
+        Debug.Assert(_hitBoxLookup != null);
+
+        if (_hitBoxLookup!.Count == 0)
             return new RectangularRegion(offset);
 
         var x = int.MaxValue;
@@ -84,4 +93,6 @@ public sealed class GadgetState
     {
         _stateSelectedOutput.SetSignal(false);
     }
+
+    public override string ToString() => _stateName;
 }

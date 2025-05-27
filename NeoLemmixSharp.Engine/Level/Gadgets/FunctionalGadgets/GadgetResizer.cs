@@ -15,6 +15,7 @@ public sealed class GadgetResizer : FunctionalGadget<GadgetResizer.GadgetResizer
     private int _tickCount;
 
     public GadgetResizer(
+        string gadgetName,
         GadgetState state0,
         GadgetState state1,
         bool startActive,
@@ -23,7 +24,7 @@ public sealed class GadgetResizer : FunctionalGadget<GadgetResizer.GadgetResizer
         int tickDelay,
         int dw,
         int dh)
-        : base(state0, state1, startActive, 1)
+        : base(gadgetName, state0, state1, startActive, 1)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;

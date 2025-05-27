@@ -165,9 +165,7 @@ internal static class DefaultStyleGenerator
             tribe0BodyColor,
             tribe0HairColor,
             defaultNeutralBodyColor,
-
-            defaultPaintColor
-        );
+            defaultPaintColor);
 
         themeData.TribeColorData[1] = new TribeColorData(
             tribe1HairColor,
@@ -179,12 +177,9 @@ internal static class DefaultStyleGenerator
             tribe1BodyColor,
             tribe1HairColor,
             defaultNeutralBodyColor,
+            defaultPaintColor);
 
-            defaultPaintColor
-        );
-
-        themeData.TribeColorData[2] = new TribeColorData
-        (
+        themeData.TribeColorData[2] = new TribeColorData(
             tribe2HairColor,
             tribe2BodyColor,
             defaultSkinColor,
@@ -194,12 +189,9 @@ internal static class DefaultStyleGenerator
             tribe2BodyColor,
             tribe2HairColor,
             defaultNeutralBodyColor,
+            defaultPaintColor);
 
-            defaultPaintColor
-        );
-
-        themeData.TribeColorData[3] = new TribeColorData
-        (
+        themeData.TribeColorData[3] = new TribeColorData(
             tribe3HairColor,
             tribe3BodyColor,
             defaultSkinColor,
@@ -209,12 +201,9 @@ internal static class DefaultStyleGenerator
             tribe3BodyColor,
             tribe3HairColor,
             defaultNeutralBodyColor,
+            defaultPaintColor);
 
-            defaultPaintColor
-        );
-
-        themeData.TribeColorData[4] = new TribeColorData
-        (
+        themeData.TribeColorData[4] = new TribeColorData(
             tribe4HairColor,
             tribe4BodyColor,
             defaultSkinColor,
@@ -224,12 +213,9 @@ internal static class DefaultStyleGenerator
             tribe4BodyColor,
             tribe4HairColor,
             defaultNeutralBodyColor,
+            defaultPaintColor);
 
-            defaultPaintColor
-        );
-
-        themeData.TribeColorData[5] = new TribeColorData
-        (
+        themeData.TribeColorData[5] = new TribeColorData(
             tribe5HairColor,
             tribe5BodyColor,
             defaultSkinColor,
@@ -239,8 +225,6 @@ internal static class DefaultStyleGenerator
             tribe5BodyColor,
             tribe5HairColor,
             defaultNeutralBodyColor,
-
-            defaultPaintColor
-        );
+            defaultPaintColor);
     }
 }

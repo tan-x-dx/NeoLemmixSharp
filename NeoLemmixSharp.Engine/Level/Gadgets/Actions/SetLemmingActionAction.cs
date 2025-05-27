@@ -1,19 +1,20 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
-public sealed class SetLemmingActionAction : IGadgetAction
+public sealed class SetLemmingActionAction : GadgetAction
 {
     private readonly LemmingAction _action;
-    public GadgetActionType ActionType => GadgetActionType.SetLemmingAction;
 
     public SetLemmingActionAction(LemmingAction action)
+        : base(GadgetActionType.SetLemmingAction)
     {
         _action = action;
     }
 
-    public void PerformAction(Lemming lemming)
+    public override void PerformAction(Lemming lemming)
     {
         _action.TransitionLemmingToAction(lemming, false);
     }

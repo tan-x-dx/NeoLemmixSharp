@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
@@ -34,6 +35,8 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
+        int overrideNameId = rawFileData.Read16BitUnsignedInteger();
+
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
@@ -47,12 +50,12 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
         var renderMode = GadgetRenderModeHelpers.GetEnumValue(rawFileData.Read8BitUnsignedInteger());
 
-        int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
-        var inputNames = CollectionsHelper.GetArrayForSize<string>(numberOfInputNames);
+        var inputNames = ReadOverrideInputNames(rawFileData);
 
         var result = new GadgetData
         {
             Id = levelData.AllGadgetData.Count,
+            OverrideName = _stringIdLookup[overrideNameId],
 
             StyleName = new StyleIdentifier(_stringIdLookup[styleId]),
             PieceName = new PieceIdentifier(_stringIdLookup[pieceId]),
@@ -65,23 +68,29 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             Orientation = dht.Orientation,
             FacingDirection = dht.FacingDirection,
 
-            InputNames = inputNames
+            OverrideInputNames = inputNames
         };
 
-        ReadInputNames(rawFileData, inputNames, numberOfInputNames);
+
         ReadProperties(rawFileData, result);
 
         return result;
     }
 
-    private void ReadInputNames(RawLevelFileDataReader rawFileData, string[] inputNames, int numberOfInputNames)
+    private GadgetInputData[] ReadOverrideInputNames(RawLevelFileDataReader rawFileData)
     {
-        var i = 0;
-        while (i < numberOfInputNames)
+        int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
+
+        var result = CollectionsHelper.GetArrayForSize<GadgetInputData>(numberOfInputNames);
+
+        for (var i = 0; i < result.Length; i++)
         {
             int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
-            inputNames[i++] = _stringIdLookup[inputNameStringId];
+            var inputName = _stringIdLookup[inputNameStringId];
+            result[i] = new GadgetInputData(inputName);
         }
+
+        return result;
     }
 
     private static void ReadProperties(RawLevelFileDataReader rawFileData, GadgetData result)

@@ -163,7 +163,12 @@ internal static class ReadWriteHelpers
         out ResizeType resizeType)
     {
         isSteel = ((byteValue >>> 2) & 1U) != 0U;
-        resizeType = (ResizeType)(byteValue & 3U);
+        resizeType = DecodeResizeType(byteValue);
+    }
+
+    internal static ResizeType DecodeResizeType(uint byteValue)
+    {
+        return (ResizeType)(byteValue & 3U);
     }
 
     #endregion

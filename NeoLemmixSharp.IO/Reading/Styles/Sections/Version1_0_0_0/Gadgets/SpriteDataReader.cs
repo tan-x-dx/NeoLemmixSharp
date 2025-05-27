@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 
-namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
+namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
 
 internal readonly ref struct SpriteDataReader
 {

@@ -7,25 +7,25 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
 public sealed class LemmingHitBoxFilter
 {
-    private readonly ILemmingCriterion[] _criteria;
-    private readonly IGadgetAction[] _onLemmingEnterActions;
-    private readonly IGadgetAction[] _onLemmingPresentActions;
-    private readonly IGadgetAction[] _onLemmingExitActions;
+    private readonly LemmingCriterion[] _criteria;
+    private readonly GadgetAction[] _onLemmingEnterActions;
+    private readonly GadgetAction[] _onLemmingPresentActions;
+    private readonly GadgetAction[] _onLemmingExitActions;
 
     public LemmingSolidityType LemmingSolidityType { get; }
     public HitBoxBehaviour HitBoxBehaviour { get; }
 
-    public ReadOnlySpan<IGadgetAction> OnLemmingEnterActions => new(_onLemmingEnterActions);
-    public ReadOnlySpan<IGadgetAction> OnLemmingPresentActions => new(_onLemmingPresentActions);
-    public ReadOnlySpan<IGadgetAction> OnLemmingExitActions => new(_onLemmingExitActions);
+    public ReadOnlySpan<GadgetAction> OnLemmingEnterActions => new(_onLemmingEnterActions);
+    public ReadOnlySpan<GadgetAction> OnLemmingPresentActions => new(_onLemmingPresentActions);
+    public ReadOnlySpan<GadgetAction> OnLemmingExitActions => new(_onLemmingExitActions);
 
     public LemmingHitBoxFilter(
         LemmingSolidityType lemmingSolidityType,
         HitBoxBehaviour hitBoxBehaviour,
-        ILemmingCriterion[] criteria,
-        IGadgetAction[] onLemmingEnterActions,
-        IGadgetAction[] onLemmingPresentActions,
-        IGadgetAction[] onLemmingExitActions)
+        LemmingCriterion[] criteria,
+        GadgetAction[] onLemmingEnterActions,
+        GadgetAction[] onLemmingPresentActions,
+        GadgetAction[] onLemmingExitActions)
     {
         LemmingSolidityType = lemmingSolidityType;
         HitBoxBehaviour = hitBoxBehaviour;
