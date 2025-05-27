@@ -10,6 +10,8 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class GadgetState
 {
+    private readonly string _stateName;
+
     private readonly GadgetOutput _stateSelectedOutput = new();
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
     private readonly OrientationToHitBoxRegionLookup? _hitBoxLookup;
@@ -18,10 +20,12 @@ public sealed class GadgetState
     public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
 
     public GadgetState(
+        string stateName,
         LemmingHitBoxFilter[] lemmingHitBoxFilters,
         OrientationToHitBoxRegionLookup? hitBoxLookup,
         AnimationController animationController)
     {
+        _stateName = stateName;
         _lemmingHitBoxFilters = lemmingHitBoxFilters;
         _hitBoxLookup = hitBoxLookup;
         AnimationController = animationController;
@@ -89,4 +93,6 @@ public sealed class GadgetState
     {
         _stateSelectedOutput.SetSignal(false);
     }
+
+    public override string ToString() => _stateName;
 }

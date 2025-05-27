@@ -23,11 +23,12 @@ public sealed class HitBoxGadget : GadgetBase,
     public ResizeType ResizeType { get; }
 
     public HitBoxGadget(
+        string gadgetName,
         GadgetState[] states,
         int initialStateIndex,
         ResizeType resizeType,
         LemmingTracker lemmingTracker)
-        : base(states, initialStateIndex)
+        : base(gadgetName, states, initialStateIndex)
     {
         _lemmingTracker = lemmingTracker;
 

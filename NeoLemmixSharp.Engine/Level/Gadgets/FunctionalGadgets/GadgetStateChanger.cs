@@ -13,13 +13,14 @@ public sealed class GadgetStateChanger : FunctionalGadget<GadgetStateChanger.Sta
     private bool _signal;
 
     public GadgetStateChanger(
+        string gadgetName,
         GadgetState state0,
         GadgetState state1,
         bool startActive,
         string inputName,
         HitBoxGadget gadget,
         int newState)
-        : base(state0, state1, startActive, 1)
+        : base(gadgetName, state0, state1, startActive, 1)
     {
         _gadget = gadget;
         _newState = newState;

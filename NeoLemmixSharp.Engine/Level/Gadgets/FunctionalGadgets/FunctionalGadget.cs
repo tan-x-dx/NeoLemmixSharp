@@ -11,11 +11,12 @@ public abstract class FunctionalGadget<TInput> : GadgetBase
     private int _gadgetIndex;
 
     protected FunctionalGadget(
+        string gadgetName,
         GadgetState state0,
         GadgetState state1,
         bool startActive,
         int expectedNumberOfInputs)
-        : base([state0, state1], startActive ? 1 : 0)
+        : base(gadgetName, [state0, state1], startActive ? 1 : 0)
     {
         _inputs = new TInput[expectedNumberOfInputs];
     }

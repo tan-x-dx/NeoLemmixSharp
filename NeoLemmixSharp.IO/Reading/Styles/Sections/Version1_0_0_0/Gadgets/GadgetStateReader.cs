@@ -10,14 +10,18 @@ namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
 internal readonly ref struct GadgetStateReader
 {
     private readonly RawStyleFileDataReader _rawFileData;
+    private readonly StringIdLookup _stringIdLookup;
 
-    internal GadgetStateReader(RawStyleFileDataReader rawFileData)
+    internal GadgetStateReader(RawStyleFileDataReader rawFileData, StringIdLookup stringIdLookup)
     {
         _rawFileData = rawFileData;
+        _stringIdLookup = stringIdLookup;
     }
 
     internal GadgetStateArchetypeData ReadStateData()
     {
+        int stateNameId = _rawFileData.Read16BitUnsignedInteger();
+
         int offsetX = _rawFileData.Read16BitUnsignedInteger();
         int offsetY = _rawFileData.Read16BitUnsignedInteger();
 
@@ -27,6 +31,7 @@ internal readonly ref struct GadgetStateReader
 
         var result = new GadgetStateArchetypeData
         {
+            StateName = _stringIdLookup[stateNameId],
             HitBoxOffset = new Point(offsetX, offsetY),
             HitBoxData = hitBoxData,
             RegionData = regionData,

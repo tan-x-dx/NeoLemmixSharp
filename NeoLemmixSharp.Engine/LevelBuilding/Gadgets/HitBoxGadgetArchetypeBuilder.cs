@@ -118,6 +118,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             //var animationController = SpriteData.CreateAnimationController(i, currentGadgetBounds);
 
             result[i] = new GadgetState(
+                gadgetStateArchetypeData.StateName,
                 hitBoxFilters,
                 hitBoxRegionLookup,
                 null);
