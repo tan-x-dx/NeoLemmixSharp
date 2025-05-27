@@ -69,13 +69,21 @@ public static class GadgetActionBuilder
 
     private static SkillCountModifierAction CreateSkillCountModifierAction(int miscData)
     {
-        var rawSkillId = miscData & 0x0f;
+        // 16 bits for skill id
+        var rawSkillId = miscData & 0xffff;
         var skill = new LemmingSkill.LemmingSkillHasher().UnHash(rawSkillId);
 
-        var rawTribeId = (miscData >>> 4) & 0x0f;
+        // 4 bits for tribe data
+        // lower 1 bit is "do we care about tribes at all"
+        // upper 3 bits is tribe id assuming we do indeed care about tribes
+        var rawTribeId = (miscData >>> 16) & 0x0f;
         int? tribeId = (rawTribeId & 1) != 0 ? (rawTribeId >>> 1) : null;
-        var value = (miscData >>> 7) & 0x7f;
-        var isDelta = ((miscData >>> 8) & 1) != 0;
+
+        // 7 bits for numerical value (gets clamped between 0 and 100)
+        var value = (miscData >>> 20) & 0x7f;
+
+        // 1 bit for isDelta
+        var isDelta = ((miscData >>> 27) & 1) != 0;
 
         return new SkillCountModifierAction(skill, value, tribeId, isDelta);
     }
@@ -88,8 +96,8 @@ public static class GadgetActionBuilder
 
     private static LemmingMoverAction CreateLemmingMoverAction(int miscData)
     {
-        var dx = (miscData & 0xffff) - 0x10000;
-        var dy = (miscData >>> 16) - 0x10000;
+        var dx = (miscData & 0xffff) - 0x7fff;
+        var dy = (miscData >>> 16) - 0x7fff;
 
         return new LemmingMoverAction(new Point(dx, dy));
     }
