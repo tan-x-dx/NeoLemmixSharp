@@ -38,7 +38,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
-        if (gadgetData.InputNames.Length < 2)
+        if (gadgetData.OverrideInputNames.Length < 2)
             throw new ArgumentException("Expected at least 2 inputs!");
 
         return null;
@@ -59,7 +59,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
-        if (gadgetData.InputNames.Length < 2)
+        if (gadgetData.OverrideInputNames.Length < 2)
             throw new ArgumentException("Expected at least 2 inputs!");
 
         return null;
@@ -80,7 +80,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
-        if (gadgetData.InputNames.Length != 1)
+        if (gadgetData.OverrideInputNames.Length != 1)
             throw new InvalidOperationException("Expected precisely ONE input name!");
 
         return null;
@@ -102,7 +102,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
         GadgetRendererBuilder gadgetSpriteBuilder,
         GadgetData gadgetData)
     {
-        if (gadgetData.InputNames.Length != 2)
+        if (gadgetData.OverrideInputNames.Length != 2)
             throw new InvalidOperationException("Expected precisely TWO input names!");
 
         return null;

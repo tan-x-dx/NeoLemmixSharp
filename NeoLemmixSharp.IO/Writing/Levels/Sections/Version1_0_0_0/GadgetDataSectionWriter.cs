@@ -51,8 +51,8 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write((byte)gadgetData.InitialStateId);
         writer.Write((byte)gadgetData.GadgetRenderMode);
 
-        writer.Write((byte)gadgetData.InputNames.Length);
-        foreach (var inputName in gadgetData.InputNames)
+        writer.Write((byte)gadgetData.OverrideInputNames.Length);
+        foreach (var inputName in gadgetData.OverrideInputNames)
         {
             writer.Write(_stringIdLookup.GetStringId(inputName.ToString()));
         }
@@ -70,7 +70,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
     private static ushort GetNumberOfBytesWritten(GadgetData gadgetData)
     {
         var result = NumberOfBytesForMainGadgetData;
-        result += 1 + NumberOfBytesPerInputName * gadgetData.InputNames.Length;
+        result += 1 + NumberOfBytesPerInputName * gadgetData.OverrideInputNames.Length;
         result += NumberOfBytesPerGadgetProperty * gadgetData.NumberOfGadgetProperties;
 
         return (ushort)result;

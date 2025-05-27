@@ -67,24 +67,29 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         var result = CollectionsHelper.GetArrayForSize<GadgetInputData>(numberOfInputNames);
 
-        for (var i = 0; i < numberOfInputNames; i++)
+        for (var i = 0; i < result.Length; i++)
         {
-            int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
-            var inputName = _stringIdLookup[inputNameStringId];
-            result[i] = new GadgetInputData(inputName);
+            result[i] = ReadGadgetInputName(rawFileData);
         }
 
         return result;
     }
 
+    private GadgetInputData ReadGadgetInputName(RawStyleFileDataReader rawFileData)
+    {
+        int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
+        var inputName = _stringIdLookup[inputNameStringId];
+        return new GadgetInputData(inputName);
+    }
+
     private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader rawFileData)
     {
-        int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
+        var gadgetStateReader = new GadgetStateReader(rawFileData, _stringIdLookup);
 
+        int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
         var result = CollectionsHelper.GetArrayForSize<GadgetStateArchetypeData>(numberOfGadgetStates);
 
-        var gadgetStateReader = new GadgetStateReader(rawFileData, _stringIdLookup);
-        for (var i = 0; i < numberOfGadgetStates; i++)
+        for (var i = 0; i < result.Length; i++)
         {
             result[i] = gadgetStateReader.ReadStateData();
         }

@@ -35,6 +35,8 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
+        int overrideNameId = rawFileData.Read16BitUnsignedInteger();
+
         int x = rawFileData.Read16BitUnsignedInteger();
         int y = rawFileData.Read16BitUnsignedInteger();
 
@@ -48,11 +50,12 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         int initialStateId = rawFileData.Read8BitUnsignedInteger();
         var renderMode = GadgetRenderModeHelpers.GetEnumValue(rawFileData.Read8BitUnsignedInteger());
 
-        var inputNames = ReadInputNames(rawFileData);
+        var inputNames = ReadOverrideInputNames(rawFileData);
 
         var result = new GadgetData
         {
             Id = levelData.AllGadgetData.Count,
+            OverrideName = _stringIdLookup[overrideNameId],
 
             StyleName = new StyleIdentifier(_stringIdLookup[styleId]),
             PieceName = new PieceIdentifier(_stringIdLookup[pieceId]),
@@ -65,7 +68,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             Orientation = dht.Orientation,
             FacingDirection = dht.FacingDirection,
 
-            InputNames = inputNames
+            OverrideInputNames = inputNames
         };
 
 
@@ -74,18 +77,17 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         return result;
     }
 
-    private GadgetInputData[] ReadInputNames(RawLevelFileDataReader rawFileData)
+    private GadgetInputData[] ReadOverrideInputNames(RawLevelFileDataReader rawFileData)
     {
         int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
 
         var result = CollectionsHelper.GetArrayForSize<GadgetInputData>(numberOfInputNames);
 
-        var i = 0;
-        while (i < numberOfInputNames)
+        for (var i = 0; i < result.Length; i++)
         {
             int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
             var inputName = _stringIdLookup[inputNameStringId];
-            result[i++] = new GadgetInputData(inputName);
+            result[i] = new GadgetInputData(inputName);
         }
 
         return result;
