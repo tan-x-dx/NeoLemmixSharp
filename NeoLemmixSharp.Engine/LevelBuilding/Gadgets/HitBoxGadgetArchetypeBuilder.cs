@@ -252,8 +252,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         static LemmingFacingDirectionCriterion CreateFacingDirectionCriterion(
             HitBoxData hitBoxData)
         {
-            var facingDirection = new FacingDirection(hitBoxData.AllowedFacingDirectionId);
-            var facingDirectionCriterion = LemmingFacingDirectionCriterion.ForFacingDirection(facingDirection);
+            var facingDirectionCriterion = LemmingFacingDirectionCriterion.ForFacingDirection(hitBoxData.AllowedFacingDirectionId);
             return facingDirectionCriterion;
         }
 

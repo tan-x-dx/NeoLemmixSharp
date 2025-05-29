@@ -90,14 +90,13 @@ public static class GadgetActionBuilder
 
     private static ForceFacingDirectionAction CreateForceFacingDirectionAction(int miscData)
     {
-        var facingDirection = new FacingDirection(miscData);
-        return new ForceFacingDirectionAction(facingDirection);
+        return ForceFacingDirectionAction.ForFacingDirection(miscData);
     }
 
     private static LemmingMoverAction CreateLemmingMoverAction(int miscData)
     {
-        var dx = (miscData & 0xffff) - 0x7fff;
-        var dy = (miscData >>> 16) - 0x7fff;
+        var dx = (short)(miscData & 0xffff);
+        var dy = (short)(miscData >>> 16);
 
         return new LemmingMoverAction(new Point(dx, dy));
     }
