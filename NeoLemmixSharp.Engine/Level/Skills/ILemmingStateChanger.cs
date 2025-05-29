@@ -66,7 +66,7 @@ public interface ILemmingStateChanger
     [Pure]
     bool IsApplied(LemmingState lemmingState);
 
-    public static StateChangerSet CreateBitArraySet() => new(new LemmingStateChangerHasher(), false);
+    public static StateChangerSet CreateBitArraySet() => new(new LemmingStateChangerHasher());
 
     public readonly struct LemmingStateChangerHasher : IPerfectHasher<ILemmingStateChanger>, IBitBufferCreator<BitBuffer32>
     {

@@ -32,7 +32,7 @@ public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IB
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BitArraySet<GadgetPropertyHasher, BitBuffer32, GadgetProperty> CreateBitArraySet(bool fullSet = false) => new(new GadgetPropertyHasher(), fullSet);
+    public static BitArraySet<GadgetPropertyHasher, BitBuffer32, GadgetProperty> CreateBitArraySet() => new(new GadgetPropertyHasher());
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetPropertyHasher());

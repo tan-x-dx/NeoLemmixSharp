@@ -38,7 +38,7 @@ public sealed class SpacialHashGrid<TPerfectHasher, T>
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
         _bitArraySize = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        _allTrackedItems = new BitArraySet<TPerfectHasher, ArrayBitBuffer, T>(_hasher, false);
+        _allTrackedItems = new BitArraySet<TPerfectHasher, ArrayBitBuffer, T>(_hasher);
 
         _chunkSizeBitShift = chunkSize.GetChunkSizeBitShift();
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;

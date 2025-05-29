@@ -18,7 +18,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     private int _popCount;
     private readonly TPerfectHasher _hasher;
 
-    public BitArraySet(TPerfectHasher hasher, bool fullSet)
+    public BitArraySet(TPerfectHasher hasher)
     {
         _hasher = hasher;
         _hasher.CreateBitBuffer(out _bits);
@@ -26,18 +26,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 
-        var span = _bits.AsSpan();
-        if (fullSet)
-        {
-            BitArrayHelpers.PopulateBitArray(span, numberOfItems);
-        }
-        else
-        {
-            span.Clear();
-        }
-
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
-        Debug.Assert(_popCount == 0 || _popCount == numberOfItems);
     }
 
     public int Length => _bits.Length;

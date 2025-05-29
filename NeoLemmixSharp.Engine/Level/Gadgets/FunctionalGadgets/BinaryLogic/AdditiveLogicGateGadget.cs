@@ -20,7 +20,7 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
         : base(gadgetName, state0, state1, startActive, inputNames.Length)
     {
         _numberOfInputs = inputNames.Length;
-        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput>(this, false);
+        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput>(this);
 
         for (var i = 0; i < inputNames.Length; i++)
         {

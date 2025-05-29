@@ -33,8 +33,8 @@ public sealed class InputController :
 
     public InputController()
     {
-        _pressedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this, false);
-        _releasedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this, false);
+        _pressedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
+        _releasedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
 
         LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
         RightMouseButtonAction = CreateInputAction("Right Mouse Button");

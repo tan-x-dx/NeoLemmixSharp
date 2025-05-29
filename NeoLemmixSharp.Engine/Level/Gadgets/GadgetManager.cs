@@ -48,7 +48,7 @@ public sealed class GadgetManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _fastForwardGadgets = new GadgetSet(this, false);
+        _fastForwardGadgets = new GadgetSet(this);
     }
 
     public int ScratchSpaceSize => _gadgetPositionHelper.ScratchSpaceSize;

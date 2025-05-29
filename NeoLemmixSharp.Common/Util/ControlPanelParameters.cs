@@ -31,7 +31,7 @@ public readonly struct ControlPanelParameterHasher : IPerfectHasher<ControlPanel
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BitArraySet<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters> CreateBitArraySet(bool fullSet = false) => new(new ControlPanelParameterHasher(), fullSet);
+    public static BitArraySet<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters> CreateBitArraySet() => new(new ControlPanelParameterHasher());
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new ControlPanelParameterHasher());

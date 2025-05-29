@@ -229,7 +229,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LemmingActionSet CreateBitArraySet(bool fullSet = false) => new(new LemmingActionHasher(), fullSet);
+    public static LemmingActionSet CreateBitArraySet() => new(new LemmingActionHasher());
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LemmingActionHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingActionHasher());
