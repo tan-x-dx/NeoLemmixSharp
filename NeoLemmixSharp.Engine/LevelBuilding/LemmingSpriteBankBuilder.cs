@@ -61,7 +61,7 @@ public static class LemmingSpriteBankBuilder
         string spriteDirectory,
         LemmingActionSpriteData lemmingActionSpriteData)
     {
-        var lemmingActionData = LemmingActionHelpers.GetLemmingActionDataFromId(lemmingActionSpriteData.LemmingActionId);
+        var lemmingActionData = LemmingActionConstants.GetLemmingActionDataFromId(lemmingActionSpriteData.LemmingActionId);
 
         var spriteFilePath = Path.Combine(
             spriteDirectory,
@@ -124,8 +124,8 @@ public static class LemmingSpriteBankBuilder
         int numberToDivideBy)
     {
         throw new InvalidOperationException(
-            $"Error loading sprite data! File:{spriteFileName}. " +
-            $"File {widthOrHeight} must be a multiple of {numberToDivideBy}, actually was {texturelength}");
+            $"Error loading sprite data! File: {spriteFileName}. " +
+            $"File {widthOrHeight} must be divisible by {numberToDivideBy}, actually is {texturelength}");
     }
 
     private static LemmingActionLayerRenderer CreateLemmingActionLayerRenderer(

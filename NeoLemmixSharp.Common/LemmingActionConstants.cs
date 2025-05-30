@@ -219,4 +219,121 @@ public static class LemmingActionConstants
     public const int RotateHalfActionId = 33;
     public const int RotateHalfAnimationFrames = 15;
     public const int MaxRotateHalfPhysicsFrames = 15;
+
+    private static readonly Dictionary<string, int> LemmingActionNameToIdLookup = GenerateLemmingActionNameToIdLookup();
+
+    private static Dictionary<string, int> GenerateLemmingActionNameToIdLookup()
+    {
+        var result = new Dictionary<string, int>(NumberOfLemmingActions, StringComparer.OrdinalIgnoreCase)
+        {
+            [WalkerActionSpriteFileName] = WalkerActionId,
+            [ClimberActionSpriteFileName] = ClimberActionId,
+            [FloaterActionSpriteFileName] = FloaterActionId,
+            [BlockerActionSpriteFileName] = BlockerActionId,
+            [BuilderActionSpriteFileName] = BuilderActionId,
+            [BasherActionSpriteFileName] = BasherActionId,
+            [MinerActionSpriteFileName] = MinerActionId,
+            [DiggerActionSpriteFileName] = DiggerActionId,
+            [PlatformerActionSpriteFileName] = PlatformerActionId,
+            [StackerActionSpriteFileName] = StackerActionId,
+            [FencerActionSpriteFileName] = FencerActionId,
+            [GliderActionSpriteFileName] = GliderActionId,
+            [JumperActionSpriteFileName] = JumperActionId,
+            [SwimmerActionSpriteFileName] = SwimmerActionId,
+            [ShimmierActionSpriteFileName] = ShimmierActionId,
+            [LasererActionSpriteFileName] = LasererActionId,
+            [SliderActionSpriteFileName] = SliderActionId,
+            [FallerActionSpriteFileName] = FallerActionId,
+            [AscenderActionSpriteFileName] = AscenderActionId,
+            [ShruggerActionSpriteFileName] = ShruggerActionId,
+            [DrownerActionSpriteFileName] = DrownerActionId,
+            [HoisterActionSpriteFileName] = HoisterActionId,
+            [DehoisterActionSpriteFileName] = DehoisterActionId,
+            [ReacherActionSpriteFileName] = ReacherActionId,
+            [DisarmerActionSpriteFileName] = DisarmerActionId,
+            [ExiterActionSpriteFileName] = ExiterActionId,
+            [ExploderActionSpriteFileName] = ExploderActionId,
+            [OhNoerActionSpriteFileName] = OhNoerActionId,
+            [SplatterActionSpriteFileName] = SplatterActionId,
+            [StonerActionSpriteFileName] = StonerActionId,
+            [VaporiserActionSpriteFileName] = VaporiserActionId,
+            [RotateClockwiseActionSpriteFileName] = RotateClockwiseActionId,
+            [RotateCounterclockwiseActionSpriteFileName] = RotateCounterclockwiseActionId,
+            [RotateHalfActionSpriteFileName] = RotateHalfActionId
+        };
+
+        if (result.Count != NumberOfLemmingActions)
+            throw new Exception("Need to update this collection with new actions!");
+
+        return result;
+    }
+
+    public static int GetLemmingActionIdFromName(string lemmingActionName)
+    {
+        return LemmingActionNameToIdLookup[lemmingActionName];
+    }
+
+    private static readonly LemmingActionLookupData[] LemmingActionIdToStringLookup = GenerateLemmingActionIdToStringLookup();
+
+    private static LemmingActionLookupData[] GenerateLemmingActionIdToStringLookup()
+    {
+        var result = new LemmingActionLookupData[NumberOfLemmingActions];
+        var count = 0;
+
+        SetData(WalkerActionId, WalkerActionName, WalkerActionSpriteFileName, WalkerAnimationFrames);
+        SetData(ClimberActionId, ClimberActionName, ClimberActionSpriteFileName, ClimberAnimationFrames);
+        SetData(FloaterActionId, FloaterActionName, FloaterActionSpriteFileName, FloaterAnimationFrames);
+        SetData(BlockerActionId, BlockerActionName, BlockerActionSpriteFileName, BlockerAnimationFrames);
+        SetData(BuilderActionId, BuilderActionName, BuilderActionSpriteFileName, BuilderAnimationFrames);
+        SetData(BasherActionId, BasherActionName, BasherActionSpriteFileName, BasherAnimationFrames);
+        SetData(MinerActionId, MinerActionName, MinerActionSpriteFileName, MinerAnimationFrames);
+        SetData(DiggerActionId, DiggerActionName, DiggerActionSpriteFileName, DiggerAnimationFrames);
+        SetData(PlatformerActionId, PlatformerActionName, PlatformerActionSpriteFileName, PlatformerAnimationFrames);
+        SetData(StackerActionId, StackerActionName, StackerActionSpriteFileName, StackerAnimationFrames);
+        SetData(FencerActionId, FencerActionName, FencerActionSpriteFileName, FencerAnimationFrames);
+        SetData(GliderActionId, GliderActionName, GliderActionSpriteFileName, GliderAnimationFrames);
+        SetData(JumperActionId, JumperActionName, JumperActionSpriteFileName, JumperAnimationFrames);
+        SetData(SwimmerActionId, SwimmerActionName, SwimmerActionSpriteFileName, SwimmerAnimationFrames);
+        SetData(ShimmierActionId, ShimmierActionName, ShimmierActionSpriteFileName, ShimmierAnimationFrames);
+        SetData(LasererActionId, LasererActionName, LasererActionSpriteFileName, LasererAnimationFrames);
+        SetData(SliderActionId, SliderActionName, SliderActionSpriteFileName, SliderAnimationFrames);
+        SetData(FallerActionId, FallerActionName, FallerActionSpriteFileName, FallerAnimationFrames);
+        SetData(AscenderActionId, AscenderActionName, AscenderActionSpriteFileName, AscenderAnimationFrames);
+        SetData(ShruggerActionId, ShruggerActionName, ShruggerActionSpriteFileName, ShruggerAnimationFrames);
+        SetData(DrownerActionId, DrownerActionName, DrownerActionSpriteFileName, DrownerAnimationFrames);
+        SetData(HoisterActionId, HoisterActionName, HoisterActionSpriteFileName, HoisterAnimationFrames);
+        SetData(DehoisterActionId, DehoisterActionName, DehoisterActionSpriteFileName, DehoisterAnimationFrames);
+        SetData(ReacherActionId, ReacherActionName, ReacherActionSpriteFileName, ReacherAnimationFrames);
+        SetData(DisarmerActionId, DisarmerActionName, DisarmerActionSpriteFileName, DisarmerAnimationFrames);
+        SetData(ExiterActionId, ExiterActionName, ExiterActionSpriteFileName, ExiterAnimationFrames);
+        SetData(ExploderActionId, ExploderActionName, ExploderActionSpriteFileName, ExploderAnimationFrames);
+        SetData(OhNoerActionId, OhNoerActionName, OhNoerActionSpriteFileName, OhNoerAnimationFrames);
+        SetData(SplatterActionId, SplatterActionName, SplatterActionSpriteFileName, SplatterAnimationFrames);
+        SetData(StonerActionId, StonerActionName, StonerActionSpriteFileName, StonerAnimationFrames);
+        SetData(VaporiserActionId, VaporiserActionName, VaporiserActionSpriteFileName, VaporiserAnimationFrames);
+        SetData(RotateClockwiseActionId, RotateClockwiseActionName, RotateClockwiseActionSpriteFileName, RotateClockwiseAnimationFrames);
+        SetData(RotateCounterclockwiseActionId, RotateCounterclockwiseActionName, RotateCounterclockwiseActionSpriteFileName, RotateCounterclockwiseAnimationFrames);
+        SetData(RotateHalfActionId, RotateHalfActionName, RotateHalfActionSpriteFileName, RotateHalfAnimationFrames);
+
+        if (count != NumberOfLemmingActions)
+            throw new Exception("Need to update this collection with new actions!");
+
+        return result;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void SetData(int index, string lemmingActionName, string lemmingActionFileName, int numberOfAnimationFrames)
+        {
+            result[index] = new LemmingActionLookupData(lemmingActionName, lemmingActionFileName, numberOfAnimationFrames);
+            count++;
+        }
+    }
+
+    public static LemmingActionLookupData GetLemmingActionDataFromId(int lemmingActionId) => LemmingActionIdToStringLookup[lemmingActionId];
+
+    public readonly struct LemmingActionLookupData(string lemmingActionName, string lemmingActionFileName, int numberOfAnimationFrames)
+    {
+        public readonly string LemmingActionName = lemmingActionName;
+        public readonly string LemmingActionFileName = lemmingActionFileName;
+        public readonly int NumberOfAnimationFrames = numberOfAnimationFrames;
+    }
 }
