@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 

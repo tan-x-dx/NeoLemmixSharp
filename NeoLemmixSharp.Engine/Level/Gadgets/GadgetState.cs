@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using System.Diagnostics;
 using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public sealed class GadgetState
 {

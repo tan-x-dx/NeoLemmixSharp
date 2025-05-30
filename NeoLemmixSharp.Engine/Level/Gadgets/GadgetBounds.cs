@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public sealed class GadgetBounds : IRectangularBounds
 {

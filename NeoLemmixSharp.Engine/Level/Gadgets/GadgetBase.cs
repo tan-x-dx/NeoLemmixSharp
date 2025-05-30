@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Diagnostics.CodeAnalysis;
