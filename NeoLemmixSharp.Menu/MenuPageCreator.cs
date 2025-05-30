@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.Menu.Pages;
@@ -81,6 +82,8 @@ public sealed class MenuPageCreator
         }
         catch (Exception ex)
         {
+            TextureCache.DisposeOfShortLivedTextures();
+
             var exceptionWindow = new ExceptionViewer(_inputController, ex);
 
             exceptionWindow.Initialise();
@@ -106,6 +109,8 @@ public sealed class MenuPageCreator
         }
         catch (Exception ex)
         {
+            TextureCache.DisposeOfShortLivedTextures();
+
             var exceptionWindow = new ExceptionViewer(_inputController, ex);
 
             exceptionWindow.Initialise();
