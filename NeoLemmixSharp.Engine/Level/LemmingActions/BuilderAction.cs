@@ -12,11 +12,11 @@ public sealed class BuilderAction : LemmingAction
 
     private BuilderAction()
         : base(
-            EngineConstants.BuilderActionId,
-            EngineConstants.BuilderActionName,
-            EngineConstants.BuilderActionSpriteFileName,
-            EngineConstants.BuilderAnimationFrames,
-            EngineConstants.MaxBuilderPhysicsFrames,
+            LemmingActionConstants.BuilderActionId,
+            LemmingActionConstants.BuilderActionName,
+            LemmingActionConstants.BuilderActionSpriteFileName,
+            LemmingActionConstants.BuilderAnimationFrames,
+            LemmingActionConstants.MaxBuilderPhysicsFrames,
             EngineConstants.NonPermanentSkillPriority)
     {
     }

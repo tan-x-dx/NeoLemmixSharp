@@ -9,11 +9,11 @@ public sealed class DisarmerAction : LemmingAction
 
     private DisarmerAction()
         : base(
-            EngineConstants.DisarmerActionId,
-            EngineConstants.DisarmerActionName,
-            EngineConstants.DisarmerActionSpriteFileName,
-            EngineConstants.DisarmerAnimationFrames,
-            EngineConstants.MaxDisarmerPhysicsFrames,
+            LemmingActionConstants.DisarmerActionId,
+            LemmingActionConstants.DisarmerActionName,
+            LemmingActionConstants.DisarmerActionSpriteFileName,
+            LemmingActionConstants.DisarmerAnimationFrames,
+            LemmingActionConstants.MaxDisarmerPhysicsFrames,
             EngineConstants.PermanentSkillPriority)
     {
     }

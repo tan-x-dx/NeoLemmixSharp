@@ -17,7 +17,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     private static readonly LemmingActionSet AirborneActions = GetAirborneActions();
     private static readonly LemmingActionSet OneTimeActions = GetOneTimeActions();
 
-    public const int NumberOfItems = EngineConstants.NumberOfLemmingActions;
+    public const int NumberOfItems = LemmingActionConstants.NumberOfLemmingActions;
     public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
 
     private static LemmingAction[] RegisterAllLemmingActions()
@@ -65,7 +65,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
             RotateHalfAction.Instance
         };
 
-        Debug.Assert(result.Length == EngineConstants.NumberOfLemmingActions);
+        Debug.Assert(result.Length == LemmingActionConstants.NumberOfLemmingActions);
 
         var hasher = new LemmingActionHasher();
         hasher.AssertUniqueIds(new ReadOnlySpan<LemmingAction>(result));
@@ -181,9 +181,9 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
         Lemming lemming,
         bool turnAround)
     {
-        if (lemming.CurrentAction.Id == EngineConstants.BlockerActionId &&
-            Id != EngineConstants.BlockerActionId &&
-            Id != EngineConstants.OhNoerActionId)
+        if (lemming.CurrentAction.Id == LemmingActionConstants.BlockerActionId &&
+            Id != LemmingActionConstants.BlockerActionId &&
+            Id != LemmingActionConstants.OhNoerActionId)
         {
             // Need to de-register blocker from LemmingManager
             // when transitioning from a blocker. Exceptions are for
@@ -237,7 +237,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     public readonly struct LemmingActionHasher : IPerfectHasher<LemmingAction>, IBitBufferCreator<LemmingActionBitBuffer>
     {
         [Pure]
-        public int NumberOfItems => EngineConstants.NumberOfLemmingActions;
+        public int NumberOfItems => LemmingActionConstants.NumberOfLemmingActions;
         [Pure]
         public int Hash(LemmingAction item) => item.Id;
         [Pure]
@@ -249,7 +249,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     [InlineArray(LemmingActionBitBufferLength)]
     public struct LemmingActionBitBuffer : IBitBuffer
     {
-        private const int LemmingActionBitBufferLength = (EngineConstants.NumberOfLemmingActions + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
+        private const int LemmingActionBitBufferLength = (LemmingActionConstants.NumberOfLemmingActions + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
 
         private uint _0;
 

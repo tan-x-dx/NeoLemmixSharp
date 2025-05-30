@@ -13,11 +13,11 @@ public sealed class FallerAction : LemmingAction
 
     private FallerAction()
         : base(
-            EngineConstants.FallerActionId,
-            EngineConstants.FallerActionName,
-            EngineConstants.FallerActionSpriteFileName,
-            EngineConstants.FallerAnimationFrames,
-            EngineConstants.MaxFallerPhysicsFrames,
+            LemmingActionConstants.FallerActionId,
+            LemmingActionConstants.FallerActionName,
+            LemmingActionConstants.FallerActionSpriteFileName,
+            LemmingActionConstants.FallerAnimationFrames,
+            LemmingActionConstants.MaxFallerPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }
@@ -155,9 +155,9 @@ public sealed class FallerAction : LemmingAction
 
         return currentActionId switch
         {
-            EngineConstants.WalkerActionId or EngineConstants.BasherActionId => 3,
-            EngineConstants.MinerActionId or EngineConstants.DiggerActionId => 0,
-            EngineConstants.BlockerActionId or EngineConstants.JumperActionId or EngineConstants.LasererActionId => -1,
+            LemmingActionConstants.WalkerActionId or LemmingActionConstants.BasherActionId => 3,
+            LemmingActionConstants.MinerActionId or LemmingActionConstants.DiggerActionId => 0,
+            LemmingActionConstants.BlockerActionId or LemmingActionConstants.JumperActionId or LemmingActionConstants.LasererActionId => -1,
             _ => 1
         };
     }

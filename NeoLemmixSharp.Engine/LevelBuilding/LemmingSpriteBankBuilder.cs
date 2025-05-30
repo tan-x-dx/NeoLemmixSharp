@@ -36,14 +36,14 @@ public static class LemmingSpriteBankBuilder
     private static SpriteBankData CreateSpriteBankData(
         ThemeData themeData)
     {
-        var lemmingActionSprites = new LemmingActionSprite[EngineConstants.NumberOfLemmingActions];
+        var lemmingActionSprites = new LemmingActionSprite[LemmingActionConstants.NumberOfLemmingActions];
 
         var spriteDirectory = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
             themeData.StyleIdentifier.ToString(),
             DefaultFileExtensions.LemmingsFolderName);
 
-        for (var i = 0; i < EngineConstants.NumberOfLemmingActions; i++)
+        for (var i = 0; i < LemmingActionConstants.NumberOfLemmingActions; i++)
         {
             lemmingActionSprites[i] = CreateLemmingActionSprite(
                 themeData,

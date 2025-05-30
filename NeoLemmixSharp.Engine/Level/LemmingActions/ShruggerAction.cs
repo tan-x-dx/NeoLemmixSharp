@@ -9,11 +9,11 @@ public sealed class ShruggerAction : LemmingAction
 
     private ShruggerAction()
         : base(
-            EngineConstants.ShruggerActionId,
-            EngineConstants.ShruggerActionName,
-            EngineConstants.ShruggerActionSpriteFileName,
-            EngineConstants.ShruggerAnimationFrames,
-            EngineConstants.MaxShruggerPhysicsFrames,
+            LemmingActionConstants.ShruggerActionId,
+            LemmingActionConstants.ShruggerActionName,
+            LemmingActionConstants.ShruggerActionSpriteFileName,
+            LemmingActionConstants.ShruggerAnimationFrames,
+            LemmingActionConstants.MaxShruggerPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

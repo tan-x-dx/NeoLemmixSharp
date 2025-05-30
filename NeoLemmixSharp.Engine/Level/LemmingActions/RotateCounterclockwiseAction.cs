@@ -10,11 +10,11 @@ public sealed class RotateCounterclockwiseAction : LemmingAction
 
     private RotateCounterclockwiseAction()
         : base(
-            EngineConstants.RotateCounterclockwiseActionId,
-            EngineConstants.RotateCounterclockwiseActionName,
-            EngineConstants.RotateCounterclockwiseActionSpriteFileName,
-            EngineConstants.RotateCounterclockwiseAnimationFrames,
-            EngineConstants.MaxRotateCounterclockwisePhysicsFrames,
+            LemmingActionConstants.RotateCounterclockwiseActionId,
+            LemmingActionConstants.RotateCounterclockwiseActionName,
+            LemmingActionConstants.RotateCounterclockwiseActionSpriteFileName,
+            LemmingActionConstants.RotateCounterclockwiseAnimationFrames,
+            LemmingActionConstants.MaxRotateCounterclockwisePhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

@@ -9,11 +9,11 @@ public sealed class DrownerAction : LemmingAction
 
     private DrownerAction()
         : base(
-            EngineConstants.DrownerActionId,
-            EngineConstants.DrownerActionName,
-            EngineConstants.DrownerActionSpriteFileName,
-            EngineConstants.DrownerAnimationFrames,
-            EngineConstants.MaxDrownerPhysicsFrames,
+            LemmingActionConstants.DrownerActionId,
+            LemmingActionConstants.DrownerActionName,
+            LemmingActionConstants.DrownerActionSpriteFileName,
+            LemmingActionConstants.DrownerAnimationFrames,
+            LemmingActionConstants.MaxDrownerPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

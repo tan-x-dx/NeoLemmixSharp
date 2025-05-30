@@ -8,45 +8,46 @@ public static class LemmingActionHelpers
 
     private static Dictionary<string, int> GenerateLemmingActionNameToIdLookup()
     {
-        var result = new Dictionary<string, int>(EngineConstants.NumberOfLemmingActions, StringComparer.OrdinalIgnoreCase)
+        var result = new Dictionary<string, int>(LemmingActionConstants.NumberOfLemmingActions, StringComparer.OrdinalIgnoreCase)
         {
-            [EngineConstants.WalkerActionSpriteFileName] = EngineConstants.WalkerActionId,
-            [EngineConstants.ClimberActionSpriteFileName] = EngineConstants.ClimberActionId,
-            [EngineConstants.FloaterActionSpriteFileName] = EngineConstants.FloaterActionId,
-            [EngineConstants.BlockerActionSpriteFileName] = EngineConstants.BlockerActionId,
-            [EngineConstants.BuilderActionSpriteFileName] = EngineConstants.BuilderActionId,
-            [EngineConstants.BasherActionSpriteFileName] = EngineConstants.BasherActionId,
-            [EngineConstants.MinerActionSpriteFileName] = EngineConstants.MinerActionId,
-            [EngineConstants.DiggerActionSpriteFileName] = EngineConstants.DiggerActionId,
-            [EngineConstants.PlatformerActionSpriteFileName] = EngineConstants.PlatformerActionId,
-            [EngineConstants.StackerActionSpriteFileName] = EngineConstants.StackerActionId,
-            [EngineConstants.FencerActionSpriteFileName] = EngineConstants.FencerActionId,
-            [EngineConstants.GliderActionSpriteFileName] = EngineConstants.GliderActionId,
-            [EngineConstants.JumperActionSpriteFileName] = EngineConstants.JumperActionId,
-            [EngineConstants.SwimmerActionSpriteFileName] = EngineConstants.SwimmerActionId,
-            [EngineConstants.ShimmierActionSpriteFileName] = EngineConstants.ShimmierActionId,
-            [EngineConstants.LasererActionSpriteFileName] = EngineConstants.LasererActionId,
-            [EngineConstants.SliderActionSpriteFileName] = EngineConstants.SliderActionId,
-            [EngineConstants.FallerActionSpriteFileName] = EngineConstants.FallerActionId,
-            [EngineConstants.AscenderActionSpriteFileName] = EngineConstants.AscenderActionId,
-            [EngineConstants.ShruggerActionSpriteFileName] = EngineConstants.ShruggerActionId,
-            [EngineConstants.DrownerActionSpriteFileName] = EngineConstants.DrownerActionId,
-            [EngineConstants.HoisterActionSpriteFileName] = EngineConstants.HoisterActionId,
-            [EngineConstants.DehoisterActionSpriteFileName] = EngineConstants.DehoisterActionId,
-            [EngineConstants.ReacherActionSpriteFileName] = EngineConstants.ReacherActionId,
-            [EngineConstants.DisarmerActionSpriteFileName] = EngineConstants.DisarmerActionId,
-            [EngineConstants.ExiterActionSpriteFileName] = EngineConstants.ExiterActionId,
-            [EngineConstants.ExploderActionSpriteFileName] = EngineConstants.ExploderActionId,
-            [EngineConstants.OhNoerActionSpriteFileName] = EngineConstants.OhNoerActionId,
-            [EngineConstants.SplatterActionSpriteFileName] = EngineConstants.SplatterActionId,
-            [EngineConstants.StonerActionSpriteFileName] = EngineConstants.StonerActionId,
-            [EngineConstants.VaporiserActionSpriteFileName] = EngineConstants.VaporiserActionId,
-            [EngineConstants.RotateClockwiseActionSpriteFileName] = EngineConstants.RotateClockwiseActionId,
-            [EngineConstants.RotateCounterclockwiseActionSpriteFileName] = EngineConstants.RotateCounterclockwiseActionId,
-            [EngineConstants.RotateHalfActionSpriteFileName] = EngineConstants.RotateHalfActionId
+            [LemmingActionConstants.WalkerActionSpriteFileName] = LemmingActionConstants.WalkerActionId,
+            [LemmingActionConstants.ClimberActionSpriteFileName] = LemmingActionConstants.ClimberActionId,
+            [LemmingActionConstants.FloaterActionSpriteFileName] = LemmingActionConstants.FloaterActionId,
+            [LemmingActionConstants.BlockerActionSpriteFileName] = LemmingActionConstants.BlockerActionId,
+            [LemmingActionConstants.BuilderActionSpriteFileName] = LemmingActionConstants.BuilderActionId,
+            [LemmingActionConstants.BasherActionSpriteFileName] = LemmingActionConstants.BasherActionId,
+            [LemmingActionConstants.MinerActionSpriteFileName] = LemmingActionConstants.MinerActionId,
+            [LemmingActionConstants.DiggerActionSpriteFileName] = LemmingActionConstants.DiggerActionId,
+            [LemmingActionConstants.PlatformerActionSpriteFileName] = LemmingActionConstants.PlatformerActionId,
+            [LemmingActionConstants.StackerActionSpriteFileName] = LemmingActionConstants.StackerActionId,
+            [LemmingActionConstants.FencerActionSpriteFileName] = LemmingActionConstants.FencerActionId,
+            [LemmingActionConstants.GliderActionSpriteFileName] = LemmingActionConstants.GliderActionId,
+            [LemmingActionConstants.JumperActionSpriteFileName] = LemmingActionConstants.JumperActionId,
+            [LemmingActionConstants.SwimmerActionSpriteFileName] = LemmingActionConstants.SwimmerActionId,
+            [LemmingActionConstants.ShimmierActionSpriteFileName] = LemmingActionConstants.ShimmierActionId,
+            [LemmingActionConstants.LasererActionSpriteFileName] = LemmingActionConstants.LasererActionId,
+            [LemmingActionConstants.SliderActionSpriteFileName] = LemmingActionConstants.SliderActionId,
+            [LemmingActionConstants.FallerActionSpriteFileName] = LemmingActionConstants.FallerActionId,
+            [LemmingActionConstants.AscenderActionSpriteFileName] = LemmingActionConstants.AscenderActionId,
+            [LemmingActionConstants.ShruggerActionSpriteFileName] = LemmingActionConstants.ShruggerActionId,
+            [LemmingActionConstants.DrownerActionSpriteFileName] = LemmingActionConstants.DrownerActionId,
+            [LemmingActionConstants.HoisterActionSpriteFileName] = LemmingActionConstants.HoisterActionId,
+            [LemmingActionConstants.DehoisterActionSpriteFileName] = LemmingActionConstants.DehoisterActionId,
+            [LemmingActionConstants.ReacherActionSpriteFileName] = LemmingActionConstants.ReacherActionId,
+            [LemmingActionConstants.DisarmerActionSpriteFileName] = LemmingActionConstants.DisarmerActionId,
+            [LemmingActionConstants.ExiterActionSpriteFileName] = LemmingActionConstants.ExiterActionId,
+            [LemmingActionConstants.ExploderActionSpriteFileName] = LemmingActionConstants.ExploderActionId,
+            [LemmingActionConstants.OhNoerActionSpriteFileName] = LemmingActionConstants.OhNoerActionId,
+            [LemmingActionConstants.SplatterActionSpriteFileName] = LemmingActionConstants.SplatterActionId,
+            [LemmingActionConstants.StonerActionSpriteFileName] = LemmingActionConstants.StonerActionId,
+            [LemmingActionConstants.VaporiserActionSpriteFileName] = LemmingActionConstants.VaporiserActionId,
+            [LemmingActionConstants.RotateClockwiseActionSpriteFileName] = LemmingActionConstants.RotateClockwiseActionId,
+            [LemmingActionConstants.RotateCounterclockwiseActionSpriteFileName] = LemmingActionConstants.RotateCounterclockwiseActionId,
+            [LemmingActionConstants.RotateHalfActionSpriteFileName] = LemmingActionConstants
+.RotateHalfActionId
         };
 
-        if (result.Count != EngineConstants.NumberOfLemmingActions)
+        if (result.Count != LemmingActionConstants.NumberOfLemmingActions)
             throw new Exception("Need to update this collection with new actions!");
 
         return result;
@@ -61,45 +62,45 @@ public static class LemmingActionHelpers
 
     private static LemmingActionLookupData[] GenerateLemmingActionIdToStringLookup()
     {
-        var result = new LemmingActionLookupData[EngineConstants.NumberOfLemmingActions];
+        var result = new LemmingActionLookupData[LemmingActionConstants.NumberOfLemmingActions];
         var count = 0;
 
-        SetData(EngineConstants.WalkerActionId, EngineConstants.WalkerActionName, EngineConstants.WalkerActionSpriteFileName, EngineConstants.WalkerAnimationFrames);
-        SetData(EngineConstants.ClimberActionId, EngineConstants.ClimberActionName, EngineConstants.ClimberActionSpriteFileName, EngineConstants.ClimberAnimationFrames);
-        SetData(EngineConstants.FloaterActionId, EngineConstants.FloaterActionName, EngineConstants.FloaterActionSpriteFileName, EngineConstants.FloaterAnimationFrames);
-        SetData(EngineConstants.BlockerActionId, EngineConstants.BlockerActionName, EngineConstants.BlockerActionSpriteFileName, EngineConstants.BlockerAnimationFrames);
-        SetData(EngineConstants.BuilderActionId, EngineConstants.BuilderActionName, EngineConstants.BuilderActionSpriteFileName, EngineConstants.BuilderAnimationFrames);
-        SetData(EngineConstants.BasherActionId, EngineConstants.BasherActionName, EngineConstants.BasherActionSpriteFileName, EngineConstants.BasherAnimationFrames);
-        SetData(EngineConstants.MinerActionId, EngineConstants.MinerActionName, EngineConstants.MinerActionSpriteFileName, EngineConstants.MinerAnimationFrames);
-        SetData(EngineConstants.DiggerActionId, EngineConstants.DiggerActionName, EngineConstants.DiggerActionSpriteFileName, EngineConstants.DiggerAnimationFrames);
-        SetData(EngineConstants.PlatformerActionId, EngineConstants.PlatformerActionName, EngineConstants.PlatformerActionSpriteFileName, EngineConstants.PlatformerAnimationFrames);
-        SetData(EngineConstants.StackerActionId, EngineConstants.StackerActionName, EngineConstants.StackerActionSpriteFileName, EngineConstants.StackerAnimationFrames);
-        SetData(EngineConstants.FencerActionId, EngineConstants.FencerActionName, EngineConstants.FencerActionSpriteFileName, EngineConstants.FencerAnimationFrames);
-        SetData(EngineConstants.GliderActionId, EngineConstants.GliderActionName, EngineConstants.GliderActionSpriteFileName, EngineConstants.GliderAnimationFrames);
-        SetData(EngineConstants.JumperActionId, EngineConstants.JumperActionName, EngineConstants.JumperActionSpriteFileName, EngineConstants.JumperAnimationFrames);
-        SetData(EngineConstants.SwimmerActionId, EngineConstants.SwimmerActionName, EngineConstants.SwimmerActionSpriteFileName, EngineConstants.SwimmerAnimationFrames);
-        SetData(EngineConstants.ShimmierActionId, EngineConstants.ShimmierActionName, EngineConstants.ShimmierActionSpriteFileName, EngineConstants.ShimmierAnimationFrames);
-        SetData(EngineConstants.LasererActionId, EngineConstants.LasererActionName, EngineConstants.LasererActionSpriteFileName, EngineConstants.LasererAnimationFrames);
-        SetData(EngineConstants.SliderActionId, EngineConstants.SliderActionName, EngineConstants.SliderActionSpriteFileName, EngineConstants.SliderAnimationFrames);
-        SetData(EngineConstants.FallerActionId, EngineConstants.FallerActionName, EngineConstants.FallerActionSpriteFileName, EngineConstants.FallerAnimationFrames);
-        SetData(EngineConstants.AscenderActionId, EngineConstants.AscenderActionName, EngineConstants.AscenderActionSpriteFileName, EngineConstants.AscenderAnimationFrames);
-        SetData(EngineConstants.ShruggerActionId, EngineConstants.ShruggerActionName, EngineConstants.ShruggerActionSpriteFileName, EngineConstants.ShruggerAnimationFrames);
-        SetData(EngineConstants.DrownerActionId, EngineConstants.DrownerActionName, EngineConstants.DrownerActionSpriteFileName, EngineConstants.DrownerAnimationFrames);
-        SetData(EngineConstants.HoisterActionId, EngineConstants.HoisterActionName, EngineConstants.HoisterActionSpriteFileName, EngineConstants.HoisterAnimationFrames);
-        SetData(EngineConstants.DehoisterActionId, EngineConstants.DehoisterActionName, EngineConstants.DehoisterActionSpriteFileName, EngineConstants.DehoisterAnimationFrames);
-        SetData(EngineConstants.ReacherActionId, EngineConstants.ReacherActionName, EngineConstants.ReacherActionSpriteFileName, EngineConstants.ReacherAnimationFrames);
-        SetData(EngineConstants.DisarmerActionId, EngineConstants.DisarmerActionName, EngineConstants.DisarmerActionSpriteFileName, EngineConstants.DisarmerAnimationFrames);
-        SetData(EngineConstants.ExiterActionId, EngineConstants.ExiterActionName, EngineConstants.ExiterActionSpriteFileName, EngineConstants.ExiterAnimationFrames);
-        SetData(EngineConstants.ExploderActionId, EngineConstants.ExploderActionName, EngineConstants.ExploderActionSpriteFileName, EngineConstants.ExploderAnimationFrames);
-        SetData(EngineConstants.OhNoerActionId, EngineConstants.OhNoerActionName, EngineConstants.OhNoerActionSpriteFileName, EngineConstants.OhNoerAnimationFrames);
-        SetData(EngineConstants.SplatterActionId, EngineConstants.SplatterActionName, EngineConstants.SplatterActionSpriteFileName, EngineConstants.SplatterAnimationFrames);
-        SetData(EngineConstants.StonerActionId, EngineConstants.StonerActionName, EngineConstants.StonerActionSpriteFileName, EngineConstants.StonerAnimationFrames);
-        SetData(EngineConstants.VaporiserActionId, EngineConstants.VaporiserActionName, EngineConstants.VaporiserActionSpriteFileName, EngineConstants.VaporiserAnimationFrames);
-        SetData(EngineConstants.RotateClockwiseActionId, EngineConstants.RotateClockwiseActionName, EngineConstants.RotateClockwiseActionSpriteFileName, EngineConstants.RotateClockwiseAnimationFrames);
-        SetData(EngineConstants.RotateCounterclockwiseActionId, EngineConstants.RotateCounterclockwiseActionName, EngineConstants.RotateCounterclockwiseActionSpriteFileName, EngineConstants.RotateCounterclockwiseAnimationFrames);
-        SetData(EngineConstants.RotateHalfActionId, EngineConstants.RotateHalfActionName, EngineConstants.RotateHalfActionSpriteFileName, EngineConstants.RotateHalfAnimationFrames);
+        SetData(LemmingActionConstants.WalkerActionId, LemmingActionConstants.WalkerActionName, LemmingActionConstants.WalkerActionSpriteFileName, LemmingActionConstants.WalkerAnimationFrames);
+        SetData(LemmingActionConstants.ClimberActionId, LemmingActionConstants.ClimberActionName, LemmingActionConstants.ClimberActionSpriteFileName, LemmingActionConstants.ClimberAnimationFrames);
+        SetData(LemmingActionConstants.FloaterActionId, LemmingActionConstants.FloaterActionName, LemmingActionConstants.FloaterActionSpriteFileName, LemmingActionConstants.FloaterAnimationFrames);
+        SetData(LemmingActionConstants.BlockerActionId, LemmingActionConstants.BlockerActionName, LemmingActionConstants.BlockerActionSpriteFileName, LemmingActionConstants.BlockerAnimationFrames);
+        SetData(LemmingActionConstants.BuilderActionId, LemmingActionConstants.BuilderActionName, LemmingActionConstants.BuilderActionSpriteFileName, LemmingActionConstants.BuilderAnimationFrames);
+        SetData(LemmingActionConstants.BasherActionId, LemmingActionConstants.BasherActionName, LemmingActionConstants.BasherActionSpriteFileName, LemmingActionConstants.BasherAnimationFrames);
+        SetData(LemmingActionConstants.MinerActionId, LemmingActionConstants.MinerActionName, LemmingActionConstants.MinerActionSpriteFileName, LemmingActionConstants.MinerAnimationFrames);
+        SetData(LemmingActionConstants.DiggerActionId, LemmingActionConstants.DiggerActionName, LemmingActionConstants.DiggerActionSpriteFileName, LemmingActionConstants.DiggerAnimationFrames);
+        SetData(LemmingActionConstants.PlatformerActionId, LemmingActionConstants.PlatformerActionName, LemmingActionConstants.PlatformerActionSpriteFileName, LemmingActionConstants.PlatformerAnimationFrames);
+        SetData(LemmingActionConstants.StackerActionId, LemmingActionConstants.StackerActionName, LemmingActionConstants.StackerActionSpriteFileName, LemmingActionConstants.StackerAnimationFrames);
+        SetData(LemmingActionConstants.FencerActionId, LemmingActionConstants.FencerActionName, LemmingActionConstants.FencerActionSpriteFileName, LemmingActionConstants.FencerAnimationFrames);
+        SetData(LemmingActionConstants.GliderActionId, LemmingActionConstants.GliderActionName, LemmingActionConstants.GliderActionSpriteFileName, LemmingActionConstants.GliderAnimationFrames);
+        SetData(LemmingActionConstants.JumperActionId, LemmingActionConstants.JumperActionName, LemmingActionConstants.JumperActionSpriteFileName, LemmingActionConstants.JumperAnimationFrames);
+        SetData(LemmingActionConstants.SwimmerActionId, LemmingActionConstants.SwimmerActionName, LemmingActionConstants.SwimmerActionSpriteFileName, LemmingActionConstants.SwimmerAnimationFrames);
+        SetData(LemmingActionConstants.ShimmierActionId, LemmingActionConstants.ShimmierActionName, LemmingActionConstants.ShimmierActionSpriteFileName, LemmingActionConstants.ShimmierAnimationFrames);
+        SetData(LemmingActionConstants.LasererActionId, LemmingActionConstants.LasererActionName, LemmingActionConstants.LasererActionSpriteFileName, LemmingActionConstants.LasererAnimationFrames);
+        SetData(LemmingActionConstants.SliderActionId, LemmingActionConstants.SliderActionName, LemmingActionConstants.SliderActionSpriteFileName, LemmingActionConstants.SliderAnimationFrames);
+        SetData(LemmingActionConstants.FallerActionId, LemmingActionConstants.FallerActionName, LemmingActionConstants.FallerActionSpriteFileName, LemmingActionConstants.FallerAnimationFrames);
+        SetData(LemmingActionConstants.AscenderActionId, LemmingActionConstants.AscenderActionName, LemmingActionConstants.AscenderActionSpriteFileName, LemmingActionConstants.AscenderAnimationFrames);
+        SetData(LemmingActionConstants.ShruggerActionId, LemmingActionConstants.ShruggerActionName, LemmingActionConstants.ShruggerActionSpriteFileName, LemmingActionConstants.ShruggerAnimationFrames);
+        SetData(LemmingActionConstants.DrownerActionId, LemmingActionConstants.DrownerActionName, LemmingActionConstants.DrownerActionSpriteFileName, LemmingActionConstants.DrownerAnimationFrames);
+        SetData(LemmingActionConstants.HoisterActionId, LemmingActionConstants.HoisterActionName, LemmingActionConstants.HoisterActionSpriteFileName, LemmingActionConstants.HoisterAnimationFrames);
+        SetData(LemmingActionConstants.DehoisterActionId, LemmingActionConstants.DehoisterActionName, LemmingActionConstants.DehoisterActionSpriteFileName, LemmingActionConstants.DehoisterAnimationFrames);
+        SetData(LemmingActionConstants.ReacherActionId, LemmingActionConstants.ReacherActionName, LemmingActionConstants.ReacherActionSpriteFileName, LemmingActionConstants.ReacherAnimationFrames);
+        SetData(LemmingActionConstants.DisarmerActionId, LemmingActionConstants.DisarmerActionName, LemmingActionConstants.DisarmerActionSpriteFileName, LemmingActionConstants.DisarmerAnimationFrames);
+        SetData(LemmingActionConstants.ExiterActionId, LemmingActionConstants.ExiterActionName, LemmingActionConstants.ExiterActionSpriteFileName, LemmingActionConstants.ExiterAnimationFrames);
+        SetData(LemmingActionConstants.ExploderActionId, LemmingActionConstants.ExploderActionName, LemmingActionConstants.ExploderActionSpriteFileName, LemmingActionConstants.ExploderAnimationFrames);
+        SetData(LemmingActionConstants.OhNoerActionId, LemmingActionConstants.OhNoerActionName, LemmingActionConstants.OhNoerActionSpriteFileName, LemmingActionConstants.OhNoerAnimationFrames);
+        SetData(LemmingActionConstants.SplatterActionId, LemmingActionConstants.SplatterActionName, LemmingActionConstants.SplatterActionSpriteFileName, LemmingActionConstants.SplatterAnimationFrames);
+        SetData(LemmingActionConstants.StonerActionId, LemmingActionConstants.StonerActionName, LemmingActionConstants.StonerActionSpriteFileName, LemmingActionConstants.StonerAnimationFrames);
+        SetData(LemmingActionConstants.VaporiserActionId, LemmingActionConstants.VaporiserActionName, LemmingActionConstants.VaporiserActionSpriteFileName, LemmingActionConstants.VaporiserAnimationFrames);
+        SetData(LemmingActionConstants.RotateClockwiseActionId, LemmingActionConstants.RotateClockwiseActionName, LemmingActionConstants.RotateClockwiseActionSpriteFileName, LemmingActionConstants.RotateClockwiseAnimationFrames);
+        SetData(LemmingActionConstants.RotateCounterclockwiseActionId, LemmingActionConstants.RotateCounterclockwiseActionName, LemmingActionConstants.RotateCounterclockwiseActionSpriteFileName, LemmingActionConstants.RotateCounterclockwiseAnimationFrames);
+        SetData(LemmingActionConstants.RotateHalfActionId, LemmingActionConstants.RotateHalfActionName, LemmingActionConstants.RotateHalfActionSpriteFileName, LemmingActionConstants.RotateHalfAnimationFrames);
 
-        if (count != EngineConstants.NumberOfLemmingActions)
+        if (count != LemmingActionConstants.NumberOfLemmingActions)
             throw new Exception("Need to update this collection with new actions!");
 
         return result;

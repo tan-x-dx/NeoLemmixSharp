@@ -12,11 +12,11 @@ public sealed class BlockerAction : LemmingAction
 
     private BlockerAction()
         : base(
-            EngineConstants.BlockerActionId,
-            EngineConstants.BlockerActionName,
-            EngineConstants.BlockerActionSpriteFileName,
-            EngineConstants.BlockerAnimationFrames,
-            EngineConstants.MaxBlockerPhysicsFrames,
+            LemmingActionConstants.BlockerActionId,
+            LemmingActionConstants.BlockerActionName,
+            LemmingActionConstants.BlockerActionSpriteFileName,
+            LemmingActionConstants.BlockerAnimationFrames,
+            LemmingActionConstants.MaxBlockerPhysicsFrames,
             EngineConstants.NonPermanentSkillPriority)
     {
     }

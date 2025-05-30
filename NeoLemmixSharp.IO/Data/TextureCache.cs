@@ -35,7 +35,7 @@ public static class TextureCache
             StyleCache.DefaultStyleIdentifier.ToString(),
             DefaultFileExtensions.LemmingsFolderName);
 
-        for (var i = 0; i < EngineConstants.NumberOfLemmingActions; i++)
+        for (var i = 0; i < LemmingActionConstants.NumberOfLemmingActions; i++)
         {
             var lemmingActionData = LemmingActionHelpers.GetLemmingActionDataFromId(i);
             var pieceIdentifier = new PieceIdentifier(lemmingActionData.LemmingActionFileName);

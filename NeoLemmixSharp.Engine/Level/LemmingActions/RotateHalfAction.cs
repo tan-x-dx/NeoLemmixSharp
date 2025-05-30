@@ -10,11 +10,11 @@ public sealed class RotateHalfAction : LemmingAction
 
     private RotateHalfAction()
         : base(
-            EngineConstants.RotateHalfActionId,
-            EngineConstants.RotateHalfActionName,
-            EngineConstants.RotateHalfActionSpriteFileName,
-            EngineConstants.RotateHalfAnimationFrames,
-            EngineConstants.MaxRotateHalfPhysicsFrames,
+            LemmingActionConstants.RotateHalfActionId,
+            LemmingActionConstants.RotateHalfActionName,
+            LemmingActionConstants.RotateHalfActionSpriteFileName,
+            LemmingActionConstants.RotateHalfAnimationFrames,
+            LemmingActionConstants.MaxRotateHalfPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

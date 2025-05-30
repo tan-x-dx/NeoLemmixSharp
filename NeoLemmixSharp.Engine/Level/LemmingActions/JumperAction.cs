@@ -32,11 +32,11 @@ public sealed class JumperAction : LemmingAction
 
     private JumperAction()
         : base(
-            EngineConstants.JumperActionId,
-            EngineConstants.JumperActionName,
-            EngineConstants.JumperActionSpriteFileName,
-            EngineConstants.JumperAnimationFrames,
-            EngineConstants.MaxJumperPhysicsFrames,
+            LemmingActionConstants.JumperActionId,
+            LemmingActionConstants.JumperActionName,
+            LemmingActionConstants.JumperActionSpriteFileName,
+            LemmingActionConstants.JumperAnimationFrames,
+            LemmingActionConstants.MaxJumperPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

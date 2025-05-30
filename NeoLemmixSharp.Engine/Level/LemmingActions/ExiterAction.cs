@@ -9,11 +9,11 @@ public sealed class ExiterAction : LemmingAction
 
     private ExiterAction()
         : base(
-            EngineConstants.ExiterActionId,
-            EngineConstants.ExiterActionName,
-            EngineConstants.ExiterActionSpriteFileName,
-            EngineConstants.ExiterAnimationFrames,
-            EngineConstants.MaxExiterPhysicsFrames,
+            LemmingActionConstants.ExiterActionId,
+            LemmingActionConstants.ExiterActionName,
+            LemmingActionConstants.ExiterActionSpriteFileName,
+            LemmingActionConstants.ExiterAnimationFrames,
+            LemmingActionConstants.MaxExiterPhysicsFrames,
             EngineConstants.NoPriority)
     {
     }

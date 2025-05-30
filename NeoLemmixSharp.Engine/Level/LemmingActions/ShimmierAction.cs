@@ -12,11 +12,11 @@ public sealed class ShimmierAction : LemmingAction
 
     private ShimmierAction()
         : base(
-            EngineConstants.ShimmierActionId,
-            EngineConstants.ShimmierActionName,
-            EngineConstants.ShimmierActionSpriteFileName,
-            EngineConstants.ShimmierAnimationFrames,
-            EngineConstants.MaxShimmierPhysicsFrames,
+            LemmingActionConstants.ShimmierActionId,
+            LemmingActionConstants.ShimmierActionName,
+            LemmingActionConstants.ShimmierActionSpriteFileName,
+            LemmingActionConstants.ShimmierAnimationFrames,
+            LemmingActionConstants.MaxShimmierPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

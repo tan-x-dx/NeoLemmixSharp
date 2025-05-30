@@ -12,18 +12,18 @@ public sealed class StackerAction : LemmingAction
 
     private StackerAction()
         : base(
-            EngineConstants.StackerActionId,
-            EngineConstants.StackerActionName,
-            EngineConstants.StackerActionSpriteFileName,
-            EngineConstants.StackerAnimationFrames,
-            EngineConstants.MaxStackerPhysicsFrames,
+            LemmingActionConstants.StackerActionId,
+            LemmingActionConstants.StackerActionName,
+            LemmingActionConstants.StackerActionSpriteFileName,
+            LemmingActionConstants.StackerAnimationFrames,
+            LemmingActionConstants.MaxStackerPhysicsFrames,
             EngineConstants.NonPermanentSkillPriority)
     {
     }
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        if (lemming.PhysicsFrame == EngineConstants.StackerAnimationFrames - 1)
+        if (lemming.PhysicsFrame == LemmingActionConstants.StackerAnimationFrames - 1)
         {
             lemming.PlacedBrick = LayStackBrick(in gadgetsNearLemming, lemming);
             return true;

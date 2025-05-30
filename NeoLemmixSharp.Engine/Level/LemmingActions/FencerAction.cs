@@ -14,11 +14,11 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
 
     private FencerAction()
         : base(
-            EngineConstants.FencerActionId,
-            EngineConstants.FencerActionName,
-            EngineConstants.FencerActionSpriteFileName,
-            EngineConstants.FencerAnimationFrames,
-            EngineConstants.MaxFencerPhysicsFrames,
+            LemmingActionConstants.FencerActionId,
+            LemmingActionConstants.FencerActionName,
+            LemmingActionConstants.FencerActionSpriteFileName,
+            LemmingActionConstants.FencerAnimationFrames,
+            LemmingActionConstants.MaxFencerPhysicsFrames,
             EngineConstants.NonPermanentSkillPriority)
     {
     }

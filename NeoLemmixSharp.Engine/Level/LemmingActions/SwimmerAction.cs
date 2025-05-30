@@ -14,11 +14,11 @@ public sealed class SwimmerAction : LemmingAction
 
     private SwimmerAction()
         : base(
-            EngineConstants.SwimmerActionId,
-            EngineConstants.SwimmerActionName,
-            EngineConstants.SwimmerActionSpriteFileName,
-            EngineConstants.SwimmerAnimationFrames,
-            EngineConstants.MaxSwimmerPhysicsFrames,
+            LemmingActionConstants.SwimmerActionId,
+            LemmingActionConstants.SwimmerActionName,
+            LemmingActionConstants.SwimmerActionSpriteFileName,
+            LemmingActionConstants.SwimmerAnimationFrames,
+            LemmingActionConstants.MaxSwimmerPhysicsFrames,
             EngineConstants.PermanentSkillPriority)
     {
     }
