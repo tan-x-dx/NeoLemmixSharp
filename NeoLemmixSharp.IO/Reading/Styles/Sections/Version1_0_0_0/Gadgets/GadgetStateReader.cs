@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
@@ -126,6 +127,8 @@ internal readonly ref struct GadgetStateReader
         var sourceBytes = _rawFileData.ReadBytes(numberOfBytesToRead);
         var destBytes = MemoryMarshal.Cast<uint, byte>(result);
         sourceBytes.CopyTo(destBytes);
+
+        FileReadingException.ReaderAssert(BitArrayHelpers.GetPopCount(result) > 0, "No bits set when reading bit sequence!");
 
         return result;
     }

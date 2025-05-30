@@ -280,6 +280,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
             IHitBoxRegion hitBoxRegion = item.HitBoxType switch
             {
+                // Given the above check, we should never hit this case, but it's here for completeness
                 HitBoxType.Empty => EmptyHitBoxRegion.Instance,
                 HitBoxType.ResizableRectangular => CreateResizableRectangularHitBoxRegion(hitBoxGadgetBounds, item.HitBoxDefinitionData),
                 HitBoxType.Rectangular => CreateRectangularHitBoxRegion(gadgetData, item.HitBoxDefinitionData),
