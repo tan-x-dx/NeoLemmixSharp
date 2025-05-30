@@ -29,11 +29,11 @@ public ref struct ArrayListWrapper<T>
             return;
         }
 
-        ThrowOutOfCapacityException();
+        ThrowReachedCapacityException();
     }
 
     [DoesNotReturn]
-    private static void ThrowOutOfCapacityException() => throw new InvalidOperationException("This array is full!");
+    private static void ThrowReachedCapacityException() => throw new InvalidOperationException("This array is full!");
 
     public readonly Span<T> AsSpan() => new(_array, 0, _size);
 
