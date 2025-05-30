@@ -10,8 +10,8 @@ public sealed class ClimberSkill : LemmingSkill, ILemmingStateChanger
 
     private ClimberSkill()
         : base(
-            EngineConstants.ClimberSkillId,
-            EngineConstants.ClimberSkillName)
+            LemmingSkillConstants.ClimberSkillId,
+            LemmingSkillConstants.ClimberSkillName)
     {
     }
 

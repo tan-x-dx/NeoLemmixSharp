@@ -10,8 +10,8 @@ public sealed class BlockerSkill : LemmingSkill
 
     private BlockerSkill()
         : base(
-            EngineConstants.BlockerSkillId,
-            EngineConstants.BlockerSkillName)
+            LemmingSkillConstants.BlockerSkillId,
+            LemmingSkillConstants.BlockerSkillName)
     {
     }
 

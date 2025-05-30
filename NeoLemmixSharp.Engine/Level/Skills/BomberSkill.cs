@@ -11,8 +11,8 @@ public sealed class BomberSkill : LemmingSkill
 
     private BomberSkill()
         : base(
-            EngineConstants.BomberSkillId,
-            EngineConstants.BomberSkillName)
+            LemmingSkillConstants.BomberSkillId,
+            LemmingSkillConstants.BomberSkillName)
     {
     }
 

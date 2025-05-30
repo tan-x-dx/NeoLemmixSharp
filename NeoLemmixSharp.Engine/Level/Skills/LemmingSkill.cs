@@ -19,7 +19,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();
     private static readonly LemmingSkillSet PermanentSkills = GetPermanentSkills();
 
-    public const int NumberOfItems = EngineConstants.NumberOfLemmingSkills;
+    public const int NumberOfItems = LemmingSkillConstants.NumberOfLemmingSkills;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
     public static BitArrayEnumerable<LemmingSkillHasher, LemmingSkill> AllClassicSkills => ClassicSkills.AsEnumerable();
 
@@ -65,7 +65,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
             FastForwardSkill.Instance
         };
 
-        Debug.Assert(result.Length == EngineConstants.NumberOfLemmingSkills);
+        Debug.Assert(result.Length == LemmingSkillConstants.NumberOfLemmingSkills);
 
         var hasher = new LemmingSkillHasher();
         hasher.AssertUniqueIds(new ReadOnlySpan<LemmingSkill>(result));
@@ -217,7 +217,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     public readonly struct LemmingSkillHasher : IPerfectHasher<LemmingSkill>, IBitBufferCreator<LemmingSkillBitBuffer>
     {
         [Pure]
-        public int NumberOfItems => EngineConstants.NumberOfLemmingSkills;
+        public int NumberOfItems => LemmingSkillConstants.NumberOfLemmingSkills;
         [Pure]
         public int Hash(LemmingSkill item) => item.Id;
         [Pure]
@@ -229,7 +229,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
     [InlineArray(LemmingSkillBitBufferLength)]
     public struct LemmingSkillBitBuffer : IBitBuffer
     {
-        private const int LemmingSkillBitBufferLength = (EngineConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
+        private const int LemmingSkillBitBufferLength = (LemmingSkillConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
 
         private uint _0;
 

@@ -127,8 +127,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         if (numberOfActions != LemmingActionConstants.NumberOfLemmingActions)
             throw new Exception($"Number of LemmingActions is actually {numberOfActions}! Update {nameof(LemmingActionConstants.NumberOfLemmingActions)}!");
 
-        if (numberOfSkills != EngineConstants.NumberOfLemmingSkills)
-            throw new Exception($"Number of LemmingSkills is actually {numberOfSkills}! Update {nameof(EngineConstants.NumberOfLemmingSkills)}!");
+        if (numberOfSkills != LemmingSkillConstants.NumberOfLemmingSkills)
+            throw new Exception($"Number of LemmingSkills is actually {numberOfSkills}! Update {nameof(LemmingSkillConstants.NumberOfLemmingSkills)}!");
     }
 
     /// <summary>

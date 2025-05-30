@@ -10,8 +10,8 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingStateChanger
 
     private FastForwardSkill()
         : base(
-            EngineConstants.FastForwardSkillId,
-            EngineConstants.FastForwardSkillName)
+            LemmingSkillConstants.FastForwardSkillId,
+            LemmingSkillConstants.FastForwardSkillName)
     {
     }
 

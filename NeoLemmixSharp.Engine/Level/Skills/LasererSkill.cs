@@ -10,8 +10,8 @@ public sealed class LasererSkill : LemmingSkill
 
     private LasererSkill()
         : base(
-            EngineConstants.LasererSkillId,
-            EngineConstants.LasererSkillName)
+            LemmingSkillConstants.LasererSkillId,
+            LemmingSkillConstants.LasererSkillName)
     {
     }
 

@@ -10,8 +10,8 @@ public sealed class RotateToDownSkill : LemmingSkill
 
     private RotateToDownSkill()
         : base(
-            EngineConstants.RotateToDownSkillId,
-            EngineConstants.RotateToDownSkillName)
+            LemmingSkillConstants.RotateToDownSkillId,
+            LemmingSkillConstants.RotateToDownSkillName)
     {
     }
 

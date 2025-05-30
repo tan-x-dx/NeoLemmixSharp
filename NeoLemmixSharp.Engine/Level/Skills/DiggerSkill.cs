@@ -12,8 +12,8 @@ public sealed class DiggerSkill : LemmingSkill
 
     private DiggerSkill()
         : base(
-            EngineConstants.DiggerSkillId,
-            EngineConstants.DiggerSkillName)
+            LemmingSkillConstants.DiggerSkillId,
+            LemmingSkillConstants.DiggerSkillName)
     {
     }
 

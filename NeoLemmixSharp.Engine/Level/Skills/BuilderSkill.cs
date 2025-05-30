@@ -10,8 +10,8 @@ public sealed class BuilderSkill : LemmingSkill
 
     private BuilderSkill()
         : base(
-            EngineConstants.BuilderSkillId,
-            EngineConstants.BuilderSkillName)
+            LemmingSkillConstants.BuilderSkillId,
+            LemmingSkillConstants.BuilderSkillName)
     {
     }
 

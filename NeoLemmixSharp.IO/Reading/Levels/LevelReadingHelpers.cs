@@ -15,7 +15,7 @@ internal static class LevelReadingHelpers
         {
             if (gadgetDatum.TryGetProperty(GadgetProperty.SkillId, out var skillId))
             {
-                if (skillId == EngineConstants.ClonerSkillId)
+                if (skillId == LemmingSkillConstants.ClonerSkillId)
                 {
                     numberOfClonerSkillPickups += gadgetDatum.GetProperty(GadgetProperty.Count);
                 }
