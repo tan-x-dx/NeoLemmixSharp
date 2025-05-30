@@ -76,25 +76,21 @@ public readonly struct ArrayWrapper2D<T> : IEquatable<ArrayWrapper2D<T>>
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(ArrayWrapper2D<T> other) => this == other;
+    public bool Equals(ArrayWrapper2D<T> other) => ReferenceEquals(_data, other._data) &&
+                                                   _arrayDimensions == other._arrayDimensions &&
+                                                   _subRegion == other._subRegion;
     [Pure]
     [DebuggerStepThrough]
-    public override bool Equals(object? obj) => obj is ArrayWrapper2D<T> other && this == other;
+    public override bool Equals(object? obj) => obj is ArrayWrapper2D<T> other && Equals(other);
     [Pure]
     [DebuggerStepThrough]
     public override int GetHashCode() => HashCode.Combine(_arrayDimensions, _subRegion);
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(ArrayWrapper2D<T> left, ArrayWrapper2D<T> right) =>
-        ReferenceEquals(left._data, right._data) &&
-        left._arrayDimensions == right._arrayDimensions &&
-        left._subRegion == right._subRegion;
+    public static bool operator ==(ArrayWrapper2D<T> left, ArrayWrapper2D<T> right) => left.Equals(right);
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(ArrayWrapper2D<T> left, ArrayWrapper2D<T> right) =>
-        !ReferenceEquals(left._data, right._data) ||
-        left._arrayDimensions != right._arrayDimensions ||
-        left._subRegion != right._subRegion;
+    public static bool operator !=(ArrayWrapper2D<T> left, ArrayWrapper2D<T> right) => !left.Equals(right);
 
     public static void CopyTo(
         in ArrayWrapper2D<T> source,

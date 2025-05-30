@@ -66,14 +66,14 @@ public readonly ref struct TerrainBuilder
         _terrainTexture.SetData(_terrainColors.Array);
     }
 
-    public ArrayWrapper2D<Color> GetTerrainColors()
+    public void GetTerrainColors(out ArrayWrapper2D<Color> terrainColorData)
     {
-        return _terrainColors;
+        terrainColorData = _terrainColors;
     }
 
-    public ArrayWrapper2D<PixelType> GetPixelData()
+    public void GetPixelData(out ArrayWrapper2D<PixelType> terrainPixelData)
     {
-        return _terrainPixels;
+        terrainPixelData = _terrainPixels;
     }
 
     public RenderTarget2D GetTerrainTexture()
