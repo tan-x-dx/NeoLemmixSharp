@@ -15,7 +15,7 @@ public static class TextureCache
 
     private static GraphicsDevice GraphicsDevice { get; set; } = null!;
 
-    private static readonly Dictionary<TextureTypeKey, TextureUsageData> LongLivedCachedTextures = new(LongLivedTextureCacheCapacity);
+    private static readonly Dictionary<TextureTypeKey, TextureUsageData> LongLivedTextures = new(LongLivedTextureCacheCapacity);
     private static readonly Dictionary<string, Texture2D> ShortLivedTextures = new(ShortLivedTextureCacheCapacity);
 
     public static void Initialise(GraphicsDevice graphicsDevice)
@@ -62,7 +62,7 @@ public static class TextureCache
     {
         var key = new TextureTypeKey(styleIdentifier, pieceIdentifier, textureType);
 
-        ref var textureUsageData = ref CollectionsMarshal.GetValueRefOrAddDefault(LongLivedCachedTextures, key, out var exists);
+        ref var textureUsageData = ref CollectionsMarshal.GetValueRefOrAddDefault(LongLivedTextures, key, out var exists);
 
         var texture = exists
             ? textureUsageData.Texture
@@ -95,11 +95,11 @@ public static class TextureCache
 
     public static void CleanUpOldTextures()
     {
-        var notUsedTextureTypeKeys = new SimpleList<TextureTypeKey>(LongLivedCachedTextures.Count);
+        var notUsedTextureTypeKeys = new SimpleList<TextureTypeKey>(LongLivedTextures.Count);
 
-        foreach (var key in LongLivedCachedTextures.Keys)
+        foreach (var key in LongLivedTextures.Keys)
         {
-            ref var usageData = ref CollectionsMarshal.GetValueRefOrNullRef(LongLivedCachedTextures, key);
+            ref var usageData = ref CollectionsMarshal.GetValueRefOrNullRef(LongLivedTextures, key);
             usageData = usageData.IncrementTimeSinceLastUsage();
 
             if (usageData.NumberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
@@ -113,8 +113,8 @@ public static class TextureCache
             if (StyleCache.DefaultStyleIdentifier.Equals(textureTypeKey.StyleIdentifier))
                 continue;
 
-            LongLivedCachedTextures[textureTypeKey].Dispose();
-            LongLivedCachedTextures.Remove(textureTypeKey);
+            LongLivedTextures[textureTypeKey].Dispose();
+            LongLivedTextures.Remove(textureTypeKey);
         }
     }
 
