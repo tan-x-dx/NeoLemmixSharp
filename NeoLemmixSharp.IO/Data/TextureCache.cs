@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Style;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -63,16 +64,13 @@ public static class TextureCache
 
         ref var textureUsageData = ref CollectionsMarshal.GetValueRefOrAddDefault(LongLivedCachedTextures, key, out var exists);
 
-        if (exists)
-        {
-            textureUsageData!.NumberOfLevelsSinceLastUsed = 0;
-            return textureUsageData.Texture;
-        }
+        var texture = exists
+            ? textureUsageData.Texture
+            : LoadTexture(filePath);
 
-        var newTexture = LoadTexture(filePath);
-        textureUsageData = new TextureUsageData(newTexture, 0);
+        textureUsageData = new TextureUsageData(texture, 0);
 
-        return newTexture;
+        return texture;
     }
 
     private static Texture2D LoadTexture(string filePath)
@@ -97,21 +95,20 @@ public static class TextureCache
 
     public static void CleanUpOldTextures()
     {
-        var notUsedTextureTypeKeys = new List<TextureTypeKey>(LongLivedCachedTextures.Count);
+        var notUsedTextureTypeKeys = new SimpleList<TextureTypeKey>(LongLivedCachedTextures.Count);
 
-        foreach (var kvp in LongLivedCachedTextures)
+        foreach (var key in LongLivedCachedTextures.Keys)
         {
-            ref var numberOfLevelsSinceLastUsed = ref kvp.Value.NumberOfLevelsSinceLastUsed;
+            ref var usageData = ref CollectionsMarshal.GetValueRefOrNullRef(LongLivedCachedTextures, key);
+            usageData = usageData.IncrementTimeSinceLastUsage();
 
-            numberOfLevelsSinceLastUsed++;
-
-            if (numberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
+            if (usageData.NumberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
             {
-                notUsedTextureTypeKeys.Add(kvp.Key);
+                notUsedTextureTypeKeys.Add(key);
             }
         }
 
-        foreach (var textureTypeKey in notUsedTextureTypeKeys)
+        foreach (var textureTypeKey in notUsedTextureTypeKeys.AsReadOnlySpan())
         {
             if (StyleCache.DefaultStyleIdentifier.Equals(textureTypeKey.StyleIdentifier))
                 continue;
@@ -137,11 +134,13 @@ public static class TextureCache
         public static bool operator !=(TextureTypeKey left, TextureTypeKey right) => !left.Equals(right);
     }
 
-    private sealed class TextureUsageData(Texture2D texture, int numberOfLevelsSinceLastUsed) : IDisposable
+    private readonly struct TextureUsageData(Texture2D texture, int numberOfLevelsSinceLastUsed) : IDisposable
     {
         public readonly Texture2D Texture = texture;
-        public int NumberOfLevelsSinceLastUsed = numberOfLevelsSinceLastUsed;
+        public readonly int NumberOfLevelsSinceLastUsed = numberOfLevelsSinceLastUsed;
 
         public void Dispose() => Texture.Dispose();
+
+        public TextureUsageData IncrementTimeSinceLastUsage() => new(Texture, NumberOfLevelsSinceLastUsed + 1);
     }
 }
