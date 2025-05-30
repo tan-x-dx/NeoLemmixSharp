@@ -16,20 +16,16 @@ public readonly struct Interval : IEquatable<Interval>
         Length = Math.Max(length, 0);
     }
 
-    public bool Equals(Interval other) => this == other;
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Interval other && this == other;
+    public bool Equals(Interval other) => Start == other.Start &&
+                                          Length == other.Length;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Interval other && Equals(other);
     public override int GetHashCode() =>
         5120813 * Start +
         1646497 * Length +
         8002627;
 
-    public static bool operator ==(Interval left, Interval right) =>
-        left.Start == right.Start &&
-        left.Length == right.Length;
-
-    public static bool operator !=(Interval left, Interval right) =>
-        left.Start != right.Start ||
-        left.Length != right.Length;
+    public static bool operator ==(Interval left, Interval right) => left.Equals(right);
+    public static bool operator !=(Interval left, Interval right) => !left.Equals(right);
 
     [SkipLocalsInit]
     public override string ToString()

@@ -159,26 +159,20 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(RectangularRegion left, RectangularRegion right) =>
-        left.X == right.X &&
-        left.Y == right.Y &&
-        left.W == right.W &&
-        left.H == right.H;
+    public static bool operator ==(RectangularRegion left, RectangularRegion right) => left.Equals(right);
+    [Pure]
+    [DebuggerStepThrough]
+    public static bool operator !=(RectangularRegion left, RectangularRegion right) => !left.Equals(right);
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(RectangularRegion left, RectangularRegion right) =>
-        left.X != right.X ||
-        left.Y != right.Y ||
-        left.W != right.W ||
-        left.H != right.H;
+    public bool Equals(RectangularRegion other) => X == other.X &&
+                                                   Y == other.Y &&
+                                                   W == other.W &&
+                                                   H == other.H;
 
     [Pure]
-    [DebuggerStepThrough]
-    public bool Equals(RectangularRegion other) => this == other;
-
-    [Pure]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is RectangularRegion other && this == other;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is RectangularRegion other && Equals(other);
 
     [Pure]
     public override int GetHashCode() =>
