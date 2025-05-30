@@ -32,28 +32,28 @@ public sealed class MenuPageCreator
     private static string GetLevelFilePath()
     {
         var file =
-             // "levels\\tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
-             // "levels\\rotation test.nxlv";
-             // "levels\\render test.nxlv";
-             "levels\\Foo.nxlv";
-        // "levels\\object test 2.nxlv";
-        // "levels\\hatch count test.nxlv";
-        // "levels\\lemming_count_test.nxlv";
-        // "levels\\test foo.nxlv";
-        // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
-        // "levels\\Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
-        // "levels\\Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
-        // "levels\\LemRunner\\Industry\\TheNightShift.nxlv";
-        // "levels\\Amiga Lemmings\\Lemmings\\Tricky\\04_Here's_one_I_prepared_earlier.nxlv";
-        // "levels\\IntegralLemmingsV5\\Alpha\\TheseLemmingsAndThoseLemmings.nxlv";
-        // "levels\\CuttingItClose.nxlv";
-        // "levels\\scrollTest.nxlv";
-        // "levels\\LemRunner\\Mona\\ACaeloUsqueAdCentrum.nxlv";
-        // "levels\\groupTest.nxlv";
-        // "levels\\eraseTest.nxlv";
-        // "levels\\Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
+             // "tanxdx_TheTreacheryOfLemmings_R3V1.nxlv";
+             // "rotation test.nxlv";
+             // "render test.nxlv";
+             "Foo.nxlv";
+        // "object test 2.nxlv";
+        // "hatch count test.nxlv";
+        // "lemming_count_test.nxlv";
+        // "test foo.nxlv";
+        // "Amiga Lemmings\\Oh No! More Lemmings\\Tame\\02_Rent-a-Lemming.nxlv";
+        // "Amiga Lemmings\\Oh No! More Lemmings\\Tame\\05_Snuggle_up_to_a_Lemming.nxlv";
+        // "Amiga Lemmings\\Lemmings\\Tricky\\05_Careless_clicking_costs_lives.nxlv";
+        // "LemRunner\\Industry\\TheNightShift.nxlv";
+        // "Amiga Lemmings\\Lemmings\\Tricky\\04_Here's_one_I_prepared_earlier.nxlv";
+        // "IntegralLemmingsV5\\Alpha\\TheseLemmingsAndThoseLemmings.nxlv";
+        // "CuttingItClose.nxlv";
+        // "scrollTest.nxlv";
+        // "LemRunner\\Mona\\ACaeloUsqueAdCentrum.nxlv";
+        // "groupTest.nxlv";
+        // "eraseTest.nxlv";
+        // "Amiga Lemmings\\Lemmings\\Fun\\19_Take_good_care_of_my_Lemmings.nxlv";
 
-        return Path.Combine(RootDirectoryManager.RootDirectory, file);
+        return Path.Combine(RootDirectoryManager.LevelFolderDirectory, file);
     }
 
     public MainPage CreateMainPage()
