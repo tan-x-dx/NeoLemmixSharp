@@ -62,7 +62,7 @@ internal sealed class TerrainReader : NeoLemmixDataReader
 
     private void SetPiece(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var item = _uniqueStringSet.GetUniqueStringInstance(secondToken);
+        var item = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
 
         if (_settingDataForGroup)
         {
