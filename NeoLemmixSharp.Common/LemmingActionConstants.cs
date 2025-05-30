@@ -4,6 +4,12 @@ namespace NeoLemmixSharp.Common;
 
 public static class LemmingActionConstants
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsValidLemmingActionId(int lemmingActionId)
+    {
+        return (uint)lemmingActionId < NumberOfLemmingActions;
+    }
+
     public const int NumberOfLemmingActions = 34;
     public const int LongestActionNameLength = 11;
 
@@ -213,10 +219,4 @@ public static class LemmingActionConstants
     public const int RotateHalfActionId = 33;
     public const int RotateHalfAnimationFrames = 15;
     public const int MaxRotateHalfPhysicsFrames = 15;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsValidLemmingActionId(int lemmingActionId)
-    {
-        return (uint)lemmingActionId < NumberOfLemmingActions;
-    }
 }
