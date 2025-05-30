@@ -120,7 +120,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]
-    public static BitArraySet<OrientationHasher, BitBuffer32, Orientation> CreateBitArraySet(bool fullSet = false) => new(new OrientationHasher(), fullSet);
+    public static BitArraySet<OrientationHasher, BitBuffer32, Orientation> CreateBitArraySet() => new(new OrientationHasher());
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]

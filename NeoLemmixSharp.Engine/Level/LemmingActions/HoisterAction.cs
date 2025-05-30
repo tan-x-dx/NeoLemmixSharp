@@ -10,11 +10,11 @@ public sealed class HoisterAction : LemmingAction
 
     private HoisterAction()
         : base(
-            EngineConstants.HoisterActionId,
-            EngineConstants.HoisterActionName,
-            EngineConstants.HoisterActionSpriteFileName,
-            EngineConstants.HoisterAnimationFrames,
-            EngineConstants.MaxHoisterPhysicsFrames,
+            LemmingActionConstants.HoisterActionId,
+            LemmingActionConstants.HoisterActionName,
+            LemmingActionConstants.HoisterActionSpriteFileName,
+            LemmingActionConstants.HoisterAnimationFrames,
+            LemmingActionConstants.MaxHoisterPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

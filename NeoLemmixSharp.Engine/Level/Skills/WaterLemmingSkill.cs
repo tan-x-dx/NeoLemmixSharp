@@ -10,8 +10,8 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingStateChanger
 
     private WaterLemmingSkill()
         : base(
-            EngineConstants.WaterLemmingSkillId,
-            EngineConstants.WaterLemmingSkillName)
+            LemmingSkillConstants.WaterLemmingSkillId,
+            LemmingSkillConstants.WaterLemmingSkillName)
     {
     }
 

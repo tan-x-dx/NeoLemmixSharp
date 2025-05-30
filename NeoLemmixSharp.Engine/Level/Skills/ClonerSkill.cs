@@ -11,8 +11,8 @@ public sealed class ClonerSkill : LemmingSkill
 
     private ClonerSkill()
         : base(
-            EngineConstants.ClonerSkillId,
-            EngineConstants.ClonerSkillName)
+            LemmingSkillConstants.ClonerSkillId,
+            LemmingSkillConstants.ClonerSkillName)
     {
     }
 

@@ -10,8 +10,8 @@ public sealed class AcidLemmingSkill : LemmingSkill, ILemmingStateChanger
 
     private AcidLemmingSkill()
         : base(
-            EngineConstants.AcidLemmingSkillId,
-            EngineConstants.AcidLemmingSkillName)
+            LemmingSkillConstants.AcidLemmingSkillId,
+            LemmingSkillConstants.AcidLemmingSkillName)
     {
     }
 

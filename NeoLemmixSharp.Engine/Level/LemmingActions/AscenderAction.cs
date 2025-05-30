@@ -11,11 +11,11 @@ public sealed class AscenderAction : LemmingAction
 
     private AscenderAction()
         : base(
-            EngineConstants.AscenderActionId,
-            EngineConstants.AscenderActionName,
-            EngineConstants.AscenderActionSpriteFileName,
-            EngineConstants.AscenderAnimationFrames,
-            EngineConstants.MaxAscenderPhysicsFrames,
+            LemmingActionConstants.AscenderActionId,
+            LemmingActionConstants.AscenderActionName,
+            LemmingActionConstants.AscenderActionSpriteFileName,
+            LemmingActionConstants.AscenderAnimationFrames,
+            LemmingActionConstants.MaxAscenderPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

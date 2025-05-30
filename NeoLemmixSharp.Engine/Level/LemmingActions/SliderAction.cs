@@ -13,11 +13,11 @@ public sealed class SliderAction : LemmingAction
 
     private SliderAction()
         : base(
-            EngineConstants.SliderActionId,
-            EngineConstants.SliderActionName,
-            EngineConstants.SliderActionSpriteFileName,
-            EngineConstants.SliderAnimationFrames,
-            EngineConstants.MaxSliderPhysicsFrames,
+            LemmingActionConstants.SliderActionId,
+            LemmingActionConstants.SliderActionName,
+            LemmingActionConstants.SliderActionSpriteFileName,
+            LemmingActionConstants.SliderAnimationFrames,
+            LemmingActionConstants.MaxSliderPhysicsFrames,
             EngineConstants.PermanentSkillPriority)
     {
     }

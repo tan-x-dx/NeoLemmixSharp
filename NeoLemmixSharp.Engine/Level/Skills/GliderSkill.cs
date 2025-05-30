@@ -10,8 +10,8 @@ public sealed class GliderSkill : LemmingSkill, ILemmingStateChanger
 
     private GliderSkill()
         : base(
-            EngineConstants.GliderSkillId,
-            EngineConstants.GliderSkillName)
+            LemmingSkillConstants.GliderSkillId,
+            LemmingSkillConstants.GliderSkillName)
     {
     }
 

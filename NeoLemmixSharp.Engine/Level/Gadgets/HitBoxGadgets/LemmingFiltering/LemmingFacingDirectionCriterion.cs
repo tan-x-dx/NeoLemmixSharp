@@ -9,8 +9,9 @@ public sealed class LemmingFacingDirectionCriterion : LemmingCriterion
     private static readonly LemmingFacingDirectionCriterion MustFaceRight = new(FacingDirection.Right);
     private static readonly LemmingFacingDirectionCriterion MustFaceLeft = new(FacingDirection.Left);
 
-    public static LemmingFacingDirectionCriterion ForFacingDirection(FacingDirection facingDirection)
+    public static LemmingFacingDirectionCriterion ForFacingDirection(int facingDirectionId)
     {
+        var facingDirection = new FacingDirection(facingDirectionId);
         return facingDirection == FacingDirection.Right
             ? MustFaceRight
             : MustFaceLeft;

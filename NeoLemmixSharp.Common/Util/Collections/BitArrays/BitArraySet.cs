@@ -18,7 +18,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     private int _popCount;
     private readonly TPerfectHasher _hasher;
 
-    public BitArraySet(TPerfectHasher hasher, bool fullSet)
+    public BitArraySet(TPerfectHasher hasher)
     {
         _hasher = hasher;
         _hasher.CreateBitBuffer(out _bits);
@@ -26,18 +26,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 
-        var span = _bits.AsSpan();
-        if (fullSet)
-        {
-            BitArrayHelpers.PopulateBitArray(span, numberOfItems);
-        }
-        else
-        {
-            span.Clear();
-        }
-
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
-        Debug.Assert(_popCount == 0 || _popCount == numberOfItems);
     }
 
     public int Length => _bits.Length;
@@ -82,17 +71,19 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
     public void WriteTo(Span<uint> destination)
     {
-        if (destination.Length < _bits.Length)
+        var sourceSpan = _bits.AsReadOnlySpan();
+        if (destination.Length < sourceSpan.Length)
             throw new ArgumentException("Destination buffer too small!");
-        _bits.AsReadOnlySpan().CopyTo(destination);
+        sourceSpan.CopyTo(destination);
     }
 
     public void ReadFrom(ReadOnlySpan<uint> source)
     {
-        if (source.Length > _bits.Length)
+        var destSpan = _bits.AsSpan();
+        if (source.Length > destSpan.Length)
             throw new ArgumentException("Source buffer too big!");
 
-        if (source.Length == _bits.Length)
+        if (source.Length == destSpan.Length)
         {
             var upperIntNumberOfItems = _hasher.NumberOfItems & BitArrayHelpers.Mask;
 
@@ -105,7 +96,6 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
             }
         }
 
-        var destSpan = _bits.AsSpan();
         destSpan.Clear();
         source.CopyTo(destSpan);
         _popCount = BitArrayHelpers.GetPopCount(source);

@@ -13,8 +13,8 @@ public sealed class MinerSkill : LemmingSkill
 
     private MinerSkill()
         : base(
-            EngineConstants.MinerSkillId,
-            EngineConstants.MinerSkillName)
+            LemmingSkillConstants.MinerSkillId,
+            LemmingSkillConstants.MinerSkillName)
     {
     }
 

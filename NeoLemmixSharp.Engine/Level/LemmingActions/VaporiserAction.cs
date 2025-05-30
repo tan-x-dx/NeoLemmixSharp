@@ -9,11 +9,11 @@ public sealed class VaporiserAction : LemmingAction
 
     private VaporiserAction()
         : base(
-            EngineConstants.VaporiserActionId,
-            EngineConstants.VaporiserActionName,
-            EngineConstants.VaporiserActionSpriteFileName,
-            EngineConstants.VaporiserAnimationFrames,
-            EngineConstants.MaxVaporizerPhysicsFrames,
+            LemmingActionConstants.VaporiserActionId,
+            LemmingActionConstants.VaporiserActionName,
+            LemmingActionConstants.VaporiserActionSpriteFileName,
+            LemmingActionConstants.VaporiserAnimationFrames,
+            LemmingActionConstants.MaxVaporizerPhysicsFrames,
             EngineConstants.NoPriority)
     {
     }

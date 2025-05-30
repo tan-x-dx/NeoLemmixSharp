@@ -12,8 +12,8 @@ public sealed class NoneAction : LemmingAction
 
     private NoneAction()
         : base(
-            EngineConstants.NoneActionId,
-            EngineConstants.NoneActionName,
+            LemmingActionConstants.NoneActionId,
+            LemmingActionConstants.NoneActionName,
             string.Empty,
             1,
             1,

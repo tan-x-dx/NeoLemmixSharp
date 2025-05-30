@@ -1,9 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -15,6 +13,7 @@ using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
 
@@ -193,10 +192,10 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         static int CalculateNumberOfCriteria(GadgetData gadgetData, HitBoxData hitBoxData)
         {
             return (hitBoxData.AllowedLemmingOrientationIds != 0 ? 1 : 0) +
-                        (hitBoxData.AllowedFacingDirectionId != 0 ? 1 : 0) +
-                        (hitBoxData.AllowedLemmingActionIds.Length > 0 ? 1 : 0) +
-                        (hitBoxData.AllowedLemmingStateIds.Length > 0 ? 1 : 0) +
-                        (gadgetData.HasProperty(GadgetProperty.TribeId) ? 1 : 0);
+                   (hitBoxData.AllowedFacingDirectionId != 0 ? 1 : 0) +
+                   (hitBoxData.AllowedLemmingActionIds.Length > 0 ? 1 : 0) +
+                   (hitBoxData.AllowedLemmingStateIds.Length > 0 ? 1 : 0) +
+                   (gadgetData.HasProperty(GadgetProperty.TribeId) ? 1 : 0);
         }
 
         static LemmingActionCriterion CreateLemmingActionCriterion(
@@ -217,6 +216,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             return lemmingStateCriteria;
         }
 
+        [SkipLocalsInit]
         static LemmingOrientationCriterion CreateOrientationCriterion(
            GadgetData gadgetData,
            HitBoxData hitBoxData)
@@ -227,24 +227,31 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
             uint orientationData = hitBoxData.AllowedLemmingOrientationIds;
             orientationData &= OrientationBitMask;
-            var sourceSpan = new ReadOnlySpan<uint>(ref orientationData);
-            var enumerable = new BitArrayEnumerable<Orientation.OrientationHasher, Orientation>(new Orientation.OrientationHasher(), sourceSpan);
+            var orientationSet = Orientation.CreateBitArraySet();
+            orientationSet.ReadFrom(new ReadOnlySpan<uint>(ref orientationData));
 
-            var rotatedOrientationSet = Orientation.CreateBitArraySet();
-            foreach (var orientation in enumerable)
+            Span<Orientation> tempRotations = stackalloc Orientation[orientationSet.Count];
+            var i = 0;
+
+            foreach (var orientation in orientationSet)
             {
                 var rotatedOrientation = new Orientation(orientation.RotNum + gadgetRotNum);
-                rotatedOrientationSet.Add(rotatedOrientation);
+                tempRotations[i++] = rotatedOrientation;
             }
 
-            return new LemmingOrientationCriterion(rotatedOrientationSet);
+            orientationSet.Clear();
+            foreach (var rotatedOrientation in tempRotations)
+            {
+                orientationSet.Add(rotatedOrientation);
+            }
+
+            return new LemmingOrientationCriterion(orientationSet);
         }
 
         static LemmingFacingDirectionCriterion CreateFacingDirectionCriterion(
             HitBoxData hitBoxData)
         {
-            var facingDirection = new FacingDirection(hitBoxData.AllowedFacingDirectionId);
-            var facingDirectionCriterion = LemmingFacingDirectionCriterion.ForFacingDirection(facingDirection);
+            var facingDirectionCriterion = LemmingFacingDirectionCriterion.ForFacingDirection(hitBoxData.AllowedFacingDirectionId);
             return facingDirectionCriterion;
         }
 
@@ -273,6 +280,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
             IHitBoxRegion hitBoxRegion = item.HitBoxType switch
             {
+                // Given the above check, we should never hit this case, but it's here for completeness
                 HitBoxType.Empty => EmptyHitBoxRegion.Instance,
                 HitBoxType.ResizableRectangular => CreateResizableRectangularHitBoxRegion(hitBoxGadgetBounds, item.HitBoxDefinitionData),
                 HitBoxType.Rectangular => CreateRectangularHitBoxRegion(gadgetData, item.HitBoxDefinitionData),
@@ -291,7 +299,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             ReadOnlySpan<Point> hitBoxRegionData)
         {
             if (hitBoxRegionData.Length != 2)
-                throw new InvalidOperationException("Expected exactly two points of data");
+                ThrowInvalidHitBoxRegionDataException();
 
             var transformationData = new DihedralTransformation.TransformationData(gadgetData.Orientation, gadgetData.FacingDirection, SpriteData.BaseSpriteSize);
 
@@ -325,7 +333,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             ReadOnlySpan<Point> hitBoxRegionData)
         {
             if (hitBoxRegionData.Length != 2)
-                throw new InvalidOperationException("Expected data of length 2");
+                ThrowInvalidHitBoxRegionDataException();
 
             var transformationData = new DihedralTransformation.TransformationData(gadgetData.Orientation, gadgetData.FacingDirection, SpriteData.BaseSpriteSize);
 
@@ -334,5 +342,11 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
             return new ResizableRectangularHitBoxRegion(hitBoxGadgetBounds, p0.X, p0.Y, p1.X, p1.Y);
         }
+    }
+
+    [DoesNotReturn]
+    private static void ThrowInvalidHitBoxRegionDataException()
+    {
+        throw new InvalidOperationException("Expected exactly two points of data");
     }
 }

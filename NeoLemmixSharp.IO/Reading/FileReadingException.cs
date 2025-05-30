@@ -14,6 +14,6 @@ internal sealed class FileReadingException : Exception
         if (condition)
             return;
 
-        throw new FileReadingException($"Assertion failure occurred when reading level file. Details: [{details}]");
+        throw new FileReadingException($"Assertion failure occurred when reading file. Details: [{details}]");
     }
 }

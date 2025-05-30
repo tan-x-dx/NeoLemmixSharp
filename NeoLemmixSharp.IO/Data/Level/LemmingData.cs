@@ -9,7 +9,7 @@ public sealed class LemmingData
     public Orientation Orientation { get; set; } = Orientation.Down;
     public FacingDirection FacingDirection { get; set; } = FacingDirection.Right;
     public int TribeId { get; set; } = EngineConstants.ClassicTribeId;
-    public int InitialLemmingActionId { get; set; } = EngineConstants.WalkerActionId;
+    public int InitialLemmingActionId { get; set; } = LemmingActionConstants.WalkerActionId;
 
     internal LemmingData()
     {

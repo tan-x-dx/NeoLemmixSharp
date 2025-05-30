@@ -11,11 +11,11 @@ public sealed class ClimberAction : LemmingAction
 
     private ClimberAction()
         : base(
-            EngineConstants.ClimberActionId,
-            EngineConstants.ClimberActionName,
-            EngineConstants.ClimberActionSpriteFileName,
-            EngineConstants.ClimberAnimationFrames,
-            EngineConstants.MaxClimberPhysicsFrames,
+            LemmingActionConstants.ClimberActionId,
+            LemmingActionConstants.ClimberActionName,
+            LemmingActionConstants.ClimberActionSpriteFileName,
+            LemmingActionConstants.ClimberAnimationFrames,
+            LemmingActionConstants.MaxClimberPhysicsFrames,
             EngineConstants.PermanentSkillPriority)
     {
     }

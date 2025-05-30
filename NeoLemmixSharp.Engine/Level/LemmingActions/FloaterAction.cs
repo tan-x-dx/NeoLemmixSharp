@@ -13,11 +13,11 @@ public sealed class FloaterAction : LemmingAction
 
     private FloaterAction()
         : base(
-            EngineConstants.FloaterActionId,
-            EngineConstants.FloaterActionName,
-            EngineConstants.FloaterActionSpriteFileName,
-            EngineConstants.FloaterAnimationFrames,
-            EngineConstants.MaxFloaterPhysicsFrames,
+            LemmingActionConstants.FloaterActionId,
+            LemmingActionConstants.FloaterActionName,
+            LemmingActionConstants.FloaterActionSpriteFileName,
+            LemmingActionConstants.FloaterAnimationFrames,
+            LemmingActionConstants.MaxFloaterPhysicsFrames,
             EngineConstants.PermanentSkillPriority)
     {
     }

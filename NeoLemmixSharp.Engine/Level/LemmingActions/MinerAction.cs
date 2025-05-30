@@ -14,11 +14,11 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
     private MinerAction()
         : base(
-            EngineConstants.MinerActionId,
-            EngineConstants.MinerActionName,
-            EngineConstants.MinerActionSpriteFileName,
-            EngineConstants.MinerAnimationFrames,
-            EngineConstants.MaxMinerPhysicsFrames,
+            LemmingActionConstants.MinerActionId,
+            LemmingActionConstants.MinerActionName,
+            LemmingActionConstants.MinerActionSpriteFileName,
+            LemmingActionConstants.MinerAnimationFrames,
+            LemmingActionConstants.MaxMinerPhysicsFrames,
             EngineConstants.NonPermanentSkillPriority)
     {
     }

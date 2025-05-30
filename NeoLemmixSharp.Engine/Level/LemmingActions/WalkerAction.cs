@@ -12,11 +12,11 @@ public sealed class WalkerAction : LemmingAction
 
     private WalkerAction()
         : base(
-            EngineConstants.WalkerActionId,
-            EngineConstants.WalkerActionName,
-            EngineConstants.WalkerActionSpriteFileName,
-            EngineConstants.WalkerAnimationFrames,
-            EngineConstants.MaxWalkerPhysicsFrames,
+            LemmingActionConstants.WalkerActionId,
+            LemmingActionConstants.WalkerActionName,
+            LemmingActionConstants.WalkerActionSpriteFileName,
+            LemmingActionConstants.WalkerAnimationFrames,
+            LemmingActionConstants.MaxWalkerPhysicsFrames,
             EngineConstants.WalkerMovementPriority)
     {
     }

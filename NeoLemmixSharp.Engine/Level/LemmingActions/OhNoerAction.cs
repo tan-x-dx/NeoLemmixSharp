@@ -11,11 +11,11 @@ public sealed class OhNoerAction : LemmingAction
 
     private OhNoerAction()
         : base(
-            EngineConstants.OhNoerActionId,
-            EngineConstants.OhNoerActionName,
-            EngineConstants.OhNoerActionSpriteFileName,
-            EngineConstants.OhNoerAnimationFrames,
-            EngineConstants.MaxOhNoerPhysicsFrames,
+            LemmingActionConstants.OhNoerActionId,
+            LemmingActionConstants.OhNoerActionName,
+            LemmingActionConstants.OhNoerActionSpriteFileName,
+            LemmingActionConstants.OhNoerAnimationFrames,
+            LemmingActionConstants.MaxOhNoerPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

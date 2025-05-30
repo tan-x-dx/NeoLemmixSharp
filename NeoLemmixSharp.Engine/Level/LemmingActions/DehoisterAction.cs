@@ -11,11 +11,11 @@ public sealed class DehoisterAction : LemmingAction
 
     private DehoisterAction()
         : base(
-            EngineConstants.DehoisterActionId,
-            EngineConstants.DehoisterActionName,
-            EngineConstants.DehoisterActionSpriteFileName,
-            EngineConstants.DehoisterAnimationFrames,
-            EngineConstants.MaxDehoisterPhysicsFrames,
+            LemmingActionConstants.DehoisterActionId,
+            LemmingActionConstants.DehoisterActionName,
+            LemmingActionConstants.DehoisterActionSpriteFileName,
+            LemmingActionConstants.DehoisterAnimationFrames,
+            LemmingActionConstants.MaxDehoisterPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

@@ -27,7 +27,7 @@ public readonly struct LevelParameterHasher : IPerfectHasher<LevelParameters>, I
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BitArraySet<LevelParameterHasher, BitBuffer32, LevelParameters> CreateBitArraySet(bool fullSet = false) => new(new LevelParameterHasher(), fullSet);
+    public static BitArraySet<LevelParameterHasher, BitBuffer32, LevelParameters> CreateBitArraySet() => new(new LevelParameterHasher());
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LevelParameterHasher, BitBuffer32, LevelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new LevelParameterHasher());

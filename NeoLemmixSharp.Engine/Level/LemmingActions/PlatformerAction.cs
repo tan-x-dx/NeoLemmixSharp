@@ -11,11 +11,11 @@ public sealed class PlatformerAction : LemmingAction
 
     private PlatformerAction()
         : base(
-            EngineConstants.PlatformerActionId,
-            EngineConstants.PlatformerActionName,
-            EngineConstants.PlatformerActionSpriteFileName,
-            EngineConstants.PlatformerAnimationFrames,
-            EngineConstants.MaxPlatformerPhysicsFrames,
+            LemmingActionConstants.PlatformerActionId,
+            LemmingActionConstants.PlatformerActionName,
+            LemmingActionConstants.PlatformerActionSpriteFileName,
+            LemmingActionConstants.PlatformerAnimationFrames,
+            LemmingActionConstants.MaxPlatformerPhysicsFrames,
             EngineConstants.NonPermanentSkillPriority)
     {
     }

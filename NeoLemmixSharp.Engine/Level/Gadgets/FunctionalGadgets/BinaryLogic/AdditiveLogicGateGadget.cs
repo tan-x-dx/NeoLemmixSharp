@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
@@ -20,7 +19,7 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
         : base(gadgetName, state0, state1, startActive, inputNames.Length)
     {
         _numberOfInputs = inputNames.Length;
-        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput>(this, false);
+        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput>(this);
 
         for (var i = 0; i < inputNames.Length; i++)
         {

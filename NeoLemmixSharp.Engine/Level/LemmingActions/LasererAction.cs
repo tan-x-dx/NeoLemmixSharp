@@ -60,11 +60,11 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
     private LasererAction()
         : base(
-            EngineConstants.LasererActionId,
-            EngineConstants.LasererActionName,
-            EngineConstants.LasererActionSpriteFileName,
-            EngineConstants.LasererAnimationFrames,
-            EngineConstants.MaxLasererPhysicsFrames,
+            LemmingActionConstants.LasererActionId,
+            LemmingActionConstants.LasererActionName,
+            LemmingActionConstants.LasererActionSpriteFileName,
+            LemmingActionConstants.LasererAnimationFrames,
+            LemmingActionConstants.MaxLasererPhysicsFrames,
             EngineConstants.NonPermanentSkillPriority)
     {
     }

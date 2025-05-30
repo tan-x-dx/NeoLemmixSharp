@@ -10,11 +10,11 @@ public sealed class StonerAction : LemmingAction
 
     private StonerAction()
         : base(
-            EngineConstants.StonerActionId,
-            EngineConstants.StonerActionName,
-            EngineConstants.StonerActionSpriteFileName,
-            EngineConstants.StonerAnimationFrames,
-            EngineConstants.MaxStonerPhysicsFrames,
+            LemmingActionConstants.StonerActionId,
+            LemmingActionConstants.StonerActionName,
+            LemmingActionConstants.StonerActionSpriteFileName,
+            LemmingActionConstants.StonerAnimationFrames,
+            LemmingActionConstants.MaxStonerPhysicsFrames,
             EngineConstants.NoPriority)
     {
     }

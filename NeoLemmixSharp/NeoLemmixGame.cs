@@ -124,11 +124,11 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         var numberOfActions = LemmingAction.AllItems.Length;
         var numberOfSkills = LemmingSkill.AllItems.Length;
 
-        if (numberOfActions != EngineConstants.NumberOfLemmingActions)
-            throw new Exception($"Number of LemmingActions is actually {numberOfActions}! Update {nameof(EngineConstants.NumberOfLemmingActions)}!");
+        if (numberOfActions != LemmingActionConstants.NumberOfLemmingActions)
+            throw new Exception($"Number of LemmingActions is actually {numberOfActions}! Update {nameof(LemmingActionConstants.NumberOfLemmingActions)}!");
 
-        if (numberOfSkills != EngineConstants.NumberOfLemmingSkills)
-            throw new Exception($"Number of LemmingSkills is actually {numberOfSkills}! Update {nameof(EngineConstants.NumberOfLemmingSkills)}!");
+        if (numberOfSkills != LemmingSkillConstants.NumberOfLemmingSkills)
+            throw new Exception($"Number of LemmingSkills is actually {numberOfSkills}! Update {nameof(LemmingSkillConstants.NumberOfLemmingSkills)}!");
     }
 
     /// <summary>
@@ -152,8 +152,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
             actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, action.LemmingActionName.Length);
         }
 
-        if (actualMaxActionNameLength != EngineConstants.LongestActionNameLength)
-            throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(EngineConstants.LongestActionNameLength)}!");
+        if (actualMaxActionNameLength != LemmingActionConstants.LongestActionNameLength)
+            throw new Exception($"Longest action name length is actually {actualMaxActionNameLength}! Update {nameof(LemmingActionConstants.LongestActionNameLength)}!");
     }
 
     public void SetScreen(IBaseScreen screen)

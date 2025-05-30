@@ -36,14 +36,14 @@ public static class LemmingSpriteBankBuilder
     private static SpriteBankData CreateSpriteBankData(
         ThemeData themeData)
     {
-        var lemmingActionSprites = new LemmingActionSprite[EngineConstants.NumberOfLemmingActions];
+        var lemmingActionSprites = new LemmingActionSprite[LemmingActionConstants.NumberOfLemmingActions];
 
         var spriteDirectory = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
             themeData.StyleIdentifier.ToString(),
             DefaultFileExtensions.LemmingsFolderName);
 
-        for (var i = 0; i < EngineConstants.NumberOfLemmingActions; i++)
+        for (var i = 0; i < LemmingActionConstants.NumberOfLemmingActions; i++)
         {
             lemmingActionSprites[i] = CreateLemmingActionSprite(
                 themeData,
@@ -61,7 +61,7 @@ public static class LemmingSpriteBankBuilder
         string spriteDirectory,
         LemmingActionSpriteData lemmingActionSpriteData)
     {
-        var lemmingActionData = LemmingActionHelpers.GetLemmingActionDataFromId(lemmingActionSpriteData.LemmingActionId);
+        var lemmingActionData = LemmingActionConstants.GetLemmingActionDataFromId(lemmingActionSpriteData.LemmingActionId);
 
         var spriteFilePath = Path.Combine(
             spriteDirectory,
@@ -124,8 +124,8 @@ public static class LemmingSpriteBankBuilder
         int numberToDivideBy)
     {
         throw new InvalidOperationException(
-            $"Error loading sprite data! File:{spriteFileName}. " +
-            $"File {widthOrHeight} must be a multiple of {numberToDivideBy}, actually was {texturelength}");
+            $"Error loading sprite data! File: {spriteFileName}. " +
+            $"File {widthOrHeight} must be divisible by {numberToDivideBy}, actually is {texturelength}");
     }
 
     private static LemmingActionLayerRenderer CreateLemmingActionLayerRenderer(

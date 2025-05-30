@@ -13,11 +13,11 @@ public sealed class GliderAction : LemmingAction
 
     private GliderAction()
         : base(
-            EngineConstants.GliderActionId,
-            EngineConstants.GliderActionName,
-            EngineConstants.GliderActionSpriteFileName,
-            EngineConstants.GliderAnimationFrames,
-            EngineConstants.MaxGliderPhysicsFrames,
+            LemmingActionConstants.GliderActionId,
+            LemmingActionConstants.GliderActionName,
+            LemmingActionConstants.GliderActionSpriteFileName,
+            LemmingActionConstants.GliderAnimationFrames,
+            LemmingActionConstants.MaxGliderPhysicsFrames,
             EngineConstants.PermanentSkillPriority)
     {
     }

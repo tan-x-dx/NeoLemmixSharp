@@ -18,7 +18,7 @@ public sealed class ThemeData
     public LemmingActionSpriteDataBuffer LemmingActionSpriteData = new();
     public TribeColorData[] TribeColorData { get; } = new TribeColorData[EngineConstants.MaxNumberOfTribes];
 
-    [InlineArray(EngineConstants.NumberOfLemmingActions)]
+    [InlineArray(LemmingActionConstants.NumberOfLemmingActions)]
     public struct LemmingActionSpriteDataBuffer
     {
         private LemmingActionSpriteData _0;

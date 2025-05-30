@@ -12,11 +12,11 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
 
     private ExploderAction()
         : base(
-            EngineConstants.ExploderActionId,
-            EngineConstants.ExploderActionName,
-            EngineConstants.ExploderActionSpriteFileName,
-            EngineConstants.ExploderAnimationFrames,
-            EngineConstants.MaxExploderPhysicsFrames,
+            LemmingActionConstants.ExploderActionId,
+            LemmingActionConstants.ExploderActionName,
+            LemmingActionConstants.ExploderActionSpriteFileName,
+            LemmingActionConstants.ExploderAnimationFrames,
+            LemmingActionConstants.MaxExploderPhysicsFrames,
             EngineConstants.NoPriority)
     {
     }

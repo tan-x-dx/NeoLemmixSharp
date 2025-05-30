@@ -13,8 +13,8 @@ public sealed class WalkerSkill : LemmingSkill
 
     private WalkerSkill()
         : base(
-            EngineConstants.WalkerSkillId,
-            EngineConstants.WalkerSkillName)
+            LemmingSkillConstants.WalkerSkillId,
+            LemmingSkillConstants.WalkerSkillName)
     {
     }
 

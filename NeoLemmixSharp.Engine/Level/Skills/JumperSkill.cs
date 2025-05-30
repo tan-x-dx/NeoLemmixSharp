@@ -10,8 +10,8 @@ public sealed class JumperSkill : LemmingSkill
 
     private JumperSkill()
         : base(
-            EngineConstants.JumperSkillId,
-            EngineConstants.JumperSkillName)
+            LemmingSkillConstants.JumperSkillId,
+            LemmingSkillConstants.JumperSkillName)
     {
     }
 

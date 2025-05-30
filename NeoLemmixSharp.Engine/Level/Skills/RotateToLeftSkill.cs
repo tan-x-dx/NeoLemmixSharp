@@ -10,8 +10,8 @@ public sealed class RotateToLeftSkill : LemmingSkill
 
     private RotateToLeftSkill()
         : base(
-            EngineConstants.RotateToLeftSkillId,
-            EngineConstants.RotateToLeftSkillName)
+            LemmingSkillConstants.RotateToLeftSkillId,
+            LemmingSkillConstants.RotateToLeftSkillName)
     {
     }
 

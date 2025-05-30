@@ -9,11 +9,11 @@ public sealed class SplatterAction : LemmingAction
 
     private SplatterAction()
         : base(
-            EngineConstants.SplatterActionId,
-            EngineConstants.SplatterActionName,
-            EngineConstants.SplatterActionSpriteFileName,
-            EngineConstants.SplatterAnimationFrames,
-            EngineConstants.MaxSplatterPhysicsFrames,
+            LemmingActionConstants.SplatterActionId,
+            LemmingActionConstants.SplatterActionName,
+            LemmingActionConstants.SplatterActionSpriteFileName,
+            LemmingActionConstants.SplatterAnimationFrames,
+            LemmingActionConstants.MaxSplatterPhysicsFrames,
             EngineConstants.NoPriority)
     {
     }

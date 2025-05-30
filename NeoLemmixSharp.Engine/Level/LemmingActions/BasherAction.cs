@@ -14,11 +14,11 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
     private BasherAction()
         : base(
-            EngineConstants.BasherActionId,
-            EngineConstants.BasherActionName,
-            EngineConstants.BasherActionSpriteFileName,
-            EngineConstants.BasherAnimationFrames,
-            EngineConstants.MaxBasherPhysicsFrames,
+            LemmingActionConstants.BasherActionId,
+            LemmingActionConstants.BasherActionName,
+            LemmingActionConstants.BasherActionSpriteFileName,
+            LemmingActionConstants.BasherAnimationFrames,
+            LemmingActionConstants.MaxBasherPhysicsFrames,
             EngineConstants.NonPermanentSkillPriority)
     {
     }

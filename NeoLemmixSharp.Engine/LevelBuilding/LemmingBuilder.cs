@@ -34,7 +34,7 @@ public ref struct LemmingBuilder
                 _lemmingList.Count,
                 Orientation.Down,
                 FacingDirection.Right,
-                EngineConstants.NoneActionId,
+                LemmingActionConstants.NoneActionId,
                 EngineConstants.ClassicTribeId)
             {
                 AnchorPosition = new Point()

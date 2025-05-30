@@ -11,8 +11,8 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
 
     private SwimmerSkill()
         : base(
-            EngineConstants.SwimmerSkillId,
-            EngineConstants.SwimmerSkillName)
+            LemmingSkillConstants.SwimmerSkillId,
+            LemmingSkillConstants.SwimmerSkillName)
     {
     }
 

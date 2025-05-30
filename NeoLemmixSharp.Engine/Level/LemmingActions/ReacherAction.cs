@@ -16,11 +16,11 @@ public sealed class ReacherAction : LemmingAction
 
     private ReacherAction()
         : base(
-            EngineConstants.ReacherActionId,
-            EngineConstants.ReacherActionName,
-            EngineConstants.ReacherActionSpriteFileName,
-            EngineConstants.ReacherAnimationFrames,
-            EngineConstants.MaxReacherPhysicsFrames,
+            LemmingActionConstants.ReacherActionId,
+            LemmingActionConstants.ReacherActionName,
+            LemmingActionConstants.ReacherActionSpriteFileName,
+            LemmingActionConstants.ReacherAnimationFrames,
+            LemmingActionConstants.MaxReacherPhysicsFrames,
             EngineConstants.NonWalkerMovementPriority)
     {
     }

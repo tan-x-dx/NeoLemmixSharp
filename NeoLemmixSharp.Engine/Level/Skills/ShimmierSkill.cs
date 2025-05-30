@@ -13,8 +13,8 @@ public sealed class ShimmierSkill : LemmingSkill
 
     private ShimmierSkill()
         : base(
-            EngineConstants.ShimmierSkillId,
-            EngineConstants.ShimmierSkillName)
+            LemmingSkillConstants.ShimmierSkillId,
+            LemmingSkillConstants.ShimmierSkillName)
     {
     }
 
@@ -79,10 +79,10 @@ public sealed class ShimmierSkill : LemmingSkill
 
     public override void AssignToLemming(Lemming lemming)
     {
-        if (lemming.CurrentAction.Id is EngineConstants.ClimberActionId or
-                                        EngineConstants.SliderActionId or
-                                        EngineConstants.JumperActionId or
-                                        EngineConstants.DehoisterActionId)
+        if (lemming.CurrentAction.Id is LemmingActionConstants.ClimberActionId or
+                                        LemmingActionConstants.SliderActionId or
+                                        LemmingActionConstants.JumperActionId or
+                                        LemmingActionConstants.DehoisterActionId)
         {
             ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
         }

@@ -14,11 +14,11 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
     private DiggerAction()
         : base(
-            EngineConstants.DiggerActionId,
-            EngineConstants.DiggerActionName,
-            EngineConstants.DiggerActionSpriteFileName,
-            EngineConstants.DiggerAnimationFrames,
-            EngineConstants.MaxDiggerPhysicsFrames,
+            LemmingActionConstants.DiggerActionId,
+            LemmingActionConstants.DiggerActionName,
+            LemmingActionConstants.DiggerActionSpriteFileName,
+            LemmingActionConstants.DiggerAnimationFrames,
+            LemmingActionConstants.MaxDiggerPhysicsFrames,
             EngineConstants.NonPermanentSkillPriority)
     {
     }
