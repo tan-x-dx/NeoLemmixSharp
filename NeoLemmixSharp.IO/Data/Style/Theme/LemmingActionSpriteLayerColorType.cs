@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.IO.Data.Style.Theme;
+﻿using NeoLemmixSharp.Common.Util;
+
+namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
 public enum LemmingActionSpriteLayerColorType
 {
@@ -8,4 +10,11 @@ public enum LemmingActionSpriteLayerColorType
     LemmingBodyColor,
     LemmingFootColor,
     TribePaintColor
+}
+
+public static class LemmingActionSpriteLayerColorTypeHelpers
+{
+    private const int NumberOfEnumValues = 6;
+
+    public static LemmingActionSpriteLayerColorType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingActionSpriteLayerColorType>(rawValue, NumberOfEnumValues);
 }

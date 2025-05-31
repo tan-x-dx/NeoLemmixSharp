@@ -23,7 +23,7 @@ internal static class DefaultStyleGenerator
     {
         var result = new ThemeData
         {
-            StyleIdentifier = StyleCache.DefaultStyleFormatPair.StyleIdentifier,
+            StyleIdentifier = StyleCache.DefaultStyleIdentifier,
 
             Mask = new Color(),
             Minimap = new Color(),

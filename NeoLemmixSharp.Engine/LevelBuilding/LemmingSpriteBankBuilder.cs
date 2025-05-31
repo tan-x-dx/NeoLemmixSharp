@@ -33,8 +33,7 @@ public static class LemmingSpriteBankBuilder
         return new LemmingSpriteBank(listLookup);
     }
 
-    private static SpriteBankData CreateSpriteBankData(
-        ThemeData themeData)
+    private static SpriteBankData CreateSpriteBankData(ThemeData themeData)
     {
         var lemmingActionSprites = new LemmingActionSprite[LemmingActionConstants.NumberOfLemmingActions];
 

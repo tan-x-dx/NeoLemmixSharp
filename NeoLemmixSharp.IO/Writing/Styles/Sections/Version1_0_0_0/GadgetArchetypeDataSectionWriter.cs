@@ -5,9 +5,12 @@ namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
 internal sealed class GadgetArchetypeDataSectionWriter : StyleDataSectionWriter
 {
-    public GadgetArchetypeDataSectionWriter()
+    private readonly StringIdLookup _stringIdLookup;
+
+    public GadgetArchetypeDataSectionWriter(StringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection, false)
     {
+        _stringIdLookup = stringIdLookup;
     }
 
     public override ushort CalculateNumberOfItemsInSection(StyleData styleData)

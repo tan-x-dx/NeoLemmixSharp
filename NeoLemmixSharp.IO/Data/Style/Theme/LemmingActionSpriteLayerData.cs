@@ -1,7 +1,15 @@
-﻿namespace NeoLemmixSharp.IO.Data.Style.Theme;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public readonly struct LemmingActionSpriteLayerData(int layer, LemmingActionSpriteLayerColorType colorType)
+namespace NeoLemmixSharp.IO.Data.Style.Theme;
+
+public readonly struct LemmingActionSpriteLayerData(int layer, LemmingActionSpriteLayerColorType colorType) : IEquatable<LemmingActionSpriteLayerData>
 {
     public readonly int Layer = layer;
     public readonly LemmingActionSpriteLayerColorType ColorType = colorType;
+
+    public bool Equals(LemmingActionSpriteLayerData other) => Layer == other.Layer && ColorType == other.ColorType;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingActionSpriteLayerData other && Equals(other);
+    public override int GetHashCode() => HashCode.Combine(Layer, ColorType);
+    public static bool operator ==(LemmingActionSpriteLayerData left, LemmingActionSpriteLayerData right) => left.Equals(right);
+    public static bool operator !=(LemmingActionSpriteLayerData left, LemmingActionSpriteLayerData right) => !left.Equals(right);
 }

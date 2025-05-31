@@ -16,7 +16,7 @@ public static class StyleCache
     internal static readonly StyleFormatPair DefaultStyleFormatPair = new(DefaultStyleIdentifier, FileFormatType.Default);
 
     private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
-    private static StyleData DefaultStyleData { get; set; } = null!;
+    internal static StyleData DefaultStyleData { get; set; } = null!;
 
     public static void Initialise()
     {

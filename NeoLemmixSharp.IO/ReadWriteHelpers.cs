@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Reading;
 using NeoLemmixSharp.IO.Writing;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO;
 
@@ -109,7 +109,7 @@ internal static class ReadWriteHelpers
         return (byte)miscDataBits;
     }
 
-    internal static DecodedTerrainDataMisc DecodeTerrainDataMiscByte(int terrainDataMiscByte)
+    internal static DecodedTerrainDataMisc DecodeTerrainDataMiscByte(uint terrainDataMiscByte)
     {
         var erase = ((terrainDataMiscByte >>> TerrainDataEraseBitShift) & 1) != 0;
         var noOverwrite = ((terrainDataMiscByte >>> TerrainDataNoOverwriteBitShift) & 1) != 0;
