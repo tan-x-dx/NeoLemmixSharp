@@ -26,24 +26,8 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
     {
         var themeData = styleData.ThemeData;
 
-        if (StyleCache.DefaultStyleIdentifier.Equals(themeData.StyleIdentifier))
-        {
-            writer.Write((byte)0);
-            return;
-        }
-
-        writer.Write((byte)1);
-
-        WriteThemeData(writer, themeData);
-    }
-
-    private void WriteThemeData(RawStyleFileDataWriter writer, ThemeData themeData)
-    {
-        writer.Write(_stringIdLookup.GetStringId(themeData.StyleIdentifier.ToString()));
-
         WriteColorData(writer, themeData);
-        WriteLemmingActionSpriteData(writer, themeData);
-        WriteTribeColorData(writer, themeData.TribeColorData);
+        WriteLemmingSpriteData(writer, themeData.LemmingSpriteData);
     }
 
     private static void WriteColorData(RawStyleFileDataWriter writer, ThemeData themeData)
@@ -65,7 +49,23 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
         }
     }
 
-    private void WriteLemmingActionSpriteData(RawStyleFileDataWriter writer, ThemeData themeData)
+    private void WriteLemmingSpriteData(RawStyleFileDataWriter writer, LemmingSpriteData lemmingSpriteData)
+    {
+        // If this style uses the default lemming sprites, then just write a zero
+        if (StyleCache.DefaultStyleIdentifier.Equals(lemmingSpriteData.StyleIdentifier))
+        {
+            writer.Write((byte)0);
+            return;
+        }
+
+        writer.Write((byte)1);
+        writer.Write(_stringIdLookup.GetStringId(lemmingSpriteData.StyleIdentifier.ToString()));
+
+        WriteLemmingActionSpriteData(writer, lemmingSpriteData);
+        WriteTribeColorData(writer, lemmingSpriteData.TribeColorData);
+    }
+
+    private void WriteLemmingActionSpriteData(RawStyleFileDataWriter writer, LemmingSpriteData lemmingSpriteData)
     {
         var lemmingActionSpriteLayerDataLookup = GetSpriteLayerLookup();
 
@@ -80,7 +80,7 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
         {
             var result = new Dictionary<LemmingActionSpriteLayerData[], int>(8, this);
 
-            foreach (var x in themeData.LemmingActionSpriteData)
+            foreach (var x in lemmingSpriteData.LemmingActionSpriteData)
             {
                 var count = result.Count;
 
@@ -111,7 +111,7 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
 
         void WriteLemmingActionSpriteData()
         {
-            ReadOnlySpan<LemmingActionSpriteData> lemmingActionSpriteDataSpan = themeData.LemmingActionSpriteData;
+            ReadOnlySpan<LemmingActionSpriteData> lemmingActionSpriteDataSpan = lemmingSpriteData.LemmingActionSpriteData;
 
             for (var i = 0; i < lemmingActionSpriteDataSpan.Length; i++)
             {
