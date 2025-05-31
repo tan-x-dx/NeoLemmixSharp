@@ -1,14 +1,10 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 {
-    private const int MaxStackByteBufferSize = 256;
-
     private readonly StringIdLookup _stringIdLookup;
 
     public StringDataSectionWriter(StringIdLookup stringIdLookup)
@@ -19,39 +15,19 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 
     public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
-        GenerateStringIdLookup(levelData);
+        PopulateStringIdLookup(levelData);
 
         return (ushort)_stringIdLookup.Count;
     }
 
-    [SkipLocalsInit]
     public override void WriteSection(
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        var bufferSize = _stringIdLookup.CalculateBufferSize();
-
-        FileWritingException.WriterAssert(bufferSize <= ushort.MaxValue, "Cannot serialize a string larger than 65535 bytes!");
-
-        Span<byte> buffer = bufferSize > MaxStackByteBufferSize
-            ? new byte[bufferSize]
-            : stackalloc byte[bufferSize];
-
-        foreach (var kvp in _stringIdLookup.OrderedPairs)
-        {
-            var stringToWrite = kvp.Key;
-            var id = kvp.Value;
-
-            writer.Write(id);
-
-            var byteCount = Encoding.UTF8.GetBytes(stringToWrite, buffer);
-
-            writer.Write((ushort)byteCount);
-            writer.Write(buffer[..byteCount]);
-        }
+        _stringIdLookup.WriteStrings(writer);
     }
 
-    private void GenerateStringIdLookup(LevelData levelData)
+    private void PopulateStringIdLookup(LevelData levelData)
     {
         FileWritingException.WriterAssert(_stringIdLookup.Count == 0, "Expected string id lookup to be empty!");
 

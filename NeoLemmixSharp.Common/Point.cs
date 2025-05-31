@@ -22,15 +22,14 @@ public readonly struct Point : IEquatable<Point>
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(Point left, Point right) =>
-        left.X == right.X &&
-        left.Y == right.Y;
-
-    [Pure]
+    public bool Equals(Point other) => X == other.X &&
+                                       Y == other.Y;
     [DebuggerStepThrough]
-    public static bool operator !=(Point left, Point right) =>
-        left.X != right.X ||
-        left.Y != right.Y;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Point other && Equals(other);
+    [DebuggerStepThrough]
+    public override int GetHashCode() => 3790121 * X +
+                                         2885497 * Y +
+                                         1088251;
 
     [Pure]
     [DebuggerStepThrough]
@@ -44,13 +43,10 @@ public readonly struct Point : IEquatable<Point>
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Point other) => this == other;
+    public static bool operator ==(Point left, Point right) => left.Equals(right);
+    [Pure]
     [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Point other && this == other;
-    [DebuggerStepThrough]
-    public override int GetHashCode() => 3790121 * X +
-                                         2885497 * Y +
-                                         1088251;
+    public static bool operator !=(Point left, Point right) => !left.Equals(right);
 
     [SkipLocalsInit]
     public override string ToString()

@@ -33,31 +33,32 @@ public static class LemmingSpriteBankBuilder
         return new LemmingSpriteBank(listLookup);
     }
 
-    private static SpriteBankData CreateSpriteBankData(
-        ThemeData themeData)
+    private static SpriteBankData CreateSpriteBankData(ThemeData themeData)
     {
+        var lemmingSpriteData = themeData.LemmingSpriteData;
+
         var lemmingActionSprites = new LemmingActionSprite[LemmingActionConstants.NumberOfLemmingActions];
 
         var spriteDirectory = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
-            themeData.StyleIdentifier.ToString(),
+            lemmingSpriteData.LemmingSpriteStyleIdentifier.ToString(),
             DefaultFileExtensions.LemmingsFolderName);
 
         for (var i = 0; i < LemmingActionConstants.NumberOfLemmingActions; i++)
         {
             lemmingActionSprites[i] = CreateLemmingActionSprite(
-                themeData,
+                lemmingSpriteData,
                 spriteDirectory,
-                themeData.LemmingActionSpriteData[i]);
+                lemmingSpriteData.LemmingActionSpriteData[i]);
         }
 
         return new SpriteBankData(
             lemmingActionSprites,
-            themeData.TribeColorData);
+            lemmingSpriteData.TribeColorData.ToArray());
     }
 
     private static LemmingActionSprite CreateLemmingActionSprite(
-        ThemeData themeData,
+        LemmingSpriteData lemmingSpriteData,
         string spriteDirectory,
         LemmingActionSpriteData lemmingActionSpriteData)
     {
@@ -71,7 +72,7 @@ public static class LemmingSpriteBankBuilder
 
         var spriteTexture = TextureCache.GetOrLoadTexture(
             pngPath,
-            themeData.StyleIdentifier,
+            lemmingSpriteData.LemmingSpriteStyleIdentifier,
             new PieceIdentifier(lemmingActionData.LemmingActionFileName),
             TextureType.LemmingSprite);
 

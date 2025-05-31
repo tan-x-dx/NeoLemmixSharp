@@ -16,7 +16,7 @@ public static class StyleCache
     internal static readonly StyleFormatPair DefaultStyleFormatPair = new(DefaultStyleIdentifier, FileFormatType.Default);
 
     private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
-    private static StyleData DefaultStyleData { get; set; } = null!;
+    internal static StyleData DefaultStyleData { get; set; } = null!;
 
     public static void Initialise()
     {
@@ -39,17 +39,24 @@ public static class StyleCache
 
         foreach (var styleFormatPair in allMentionedStyleFormatPairs)
         {
-            ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(CachedStyles, styleFormatPair, out var exists);
-
-            if (exists)
-            {
-                styleData!.NumberOfLevelsSinceLastUsed = 0;
-            }
-            else
-            {
-                styleData = FileTypeHandler.ReadStyle(styleFormatPair);
-            }
+            GetOrLoadStyleData(styleFormatPair);
         }
+    }
+
+    internal static StyleData GetOrLoadStyleData(StyleFormatPair styleFormatPair)
+    {
+        ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(CachedStyles, styleFormatPair, out var exists);
+
+        if (exists)
+        {
+            styleData!.NumberOfLevelsSinceLastUsed = 0;
+        }
+        else
+        {
+            styleData = FileTypeHandler.ReadStyle(styleFormatPair);
+        }
+
+        return styleData;
     }
 
     private static HashSet<StyleFormatPair> GetAllMentionedStyles(LevelData levelData)

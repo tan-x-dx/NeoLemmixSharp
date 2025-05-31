@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
@@ -18,39 +19,33 @@ public static class TextureCache
     private static readonly Dictionary<TextureTypeKey, TextureUsageData> LongLivedTextures = new(LongLivedTextureCacheCapacity);
     private static readonly Dictionary<string, Texture2D> ShortLivedTextures = new(ShortLivedTextureCacheCapacity);
 
-    public static void Initialise(GraphicsDevice graphicsDevice)
+    public static void Initialise(
+        ContentManager contentManager,
+        GraphicsDevice graphicsDevice)
     {
         if (GraphicsDevice is not null)
             throw new InvalidOperationException($"Cannot initialise {nameof(TextureCache)} more than once!");
 
         GraphicsDevice = graphicsDevice;
 
-        LoadDefaultTextures();
+        LoadDefaultTextures(contentManager);
     }
 
-    private static void LoadDefaultTextures()
+    private static void LoadDefaultTextures(ContentManager contentManager)
     {
-        var spriteDirectory = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            StyleCache.DefaultStyleIdentifier.ToString(),
-            DefaultFileExtensions.LemmingsFolderName);
+        const string SpritesFolder = "sprites/lemming/";
 
         for (var i = 0; i < LemmingActionConstants.NumberOfLemmingActions; i++)
         {
             var lemmingActionData = LemmingActionConstants.GetLemmingActionDataFromId(i);
             var pieceIdentifier = new PieceIdentifier(lemmingActionData.LemmingActionFileName);
 
-            var spriteFilePath = Path.Combine(
-                spriteDirectory,
-                lemmingActionData.LemmingActionFileName);
+            var spriteName = SpritesFolder + lemmingActionData.LemmingActionFileName;
 
-            var pngPath = Path.ChangeExtension(spriteFilePath, "png");
+            var sprite = contentManager.Load<Texture2D>(spriteName);
+            var key = new TextureTypeKey(StyleCache.DefaultStyleIdentifier, pieceIdentifier, TextureType.LemmingSprite);
 
-            GetOrLoadTexture(
-                pngPath,
-                StyleCache.DefaultStyleIdentifier,
-                pieceIdentifier,
-                TextureType.LemmingSprite);
+            LongLivedTextures.Add(key, new TextureUsageData(sprite));
         }
     }
 
@@ -68,7 +63,7 @@ public static class TextureCache
             ? textureUsageData.Texture
             : LoadTexture(filePath);
 
-        textureUsageData = new TextureUsageData(texture, 0);
+        textureUsageData = new TextureUsageData(texture);
 
         return texture;
     }
@@ -97,14 +92,17 @@ public static class TextureCache
     {
         var notUsedTextureTypeKeys = new SimpleList<TextureTypeKey>(LongLivedTextures.Count);
 
-        foreach (var key in LongLivedTextures.Keys)
+        foreach (var textureTypeKey in LongLivedTextures.Keys)
         {
-            ref var usageData = ref CollectionsMarshal.GetValueRefOrNullRef(LongLivedTextures, key);
+            if (StyleCache.DefaultStyleIdentifier.Equals(textureTypeKey.StyleIdentifier))
+                continue;
+
+            ref var usageData = ref CollectionsMarshal.GetValueRefOrNullRef(LongLivedTextures, textureTypeKey);
             usageData = usageData.IncrementTimeSinceLastUsage();
 
             if (usageData.NumberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
             {
-                notUsedTextureTypeKeys.Add(key);
+                notUsedTextureTypeKeys.Add(textureTypeKey);
             }
         }
 
@@ -134,10 +132,21 @@ public static class TextureCache
         public static bool operator !=(TextureTypeKey left, TextureTypeKey right) => !left.Equals(right);
     }
 
-    private readonly struct TextureUsageData(Texture2D texture, int numberOfLevelsSinceLastUsed) : IDisposable
+    private readonly struct TextureUsageData : IDisposable
     {
-        public readonly Texture2D Texture = texture;
-        public readonly int NumberOfLevelsSinceLastUsed = numberOfLevelsSinceLastUsed;
+        public readonly Texture2D Texture;
+        public readonly int NumberOfLevelsSinceLastUsed;
+
+        public TextureUsageData(Texture2D texture)
+        {
+            Texture = texture;
+        }
+
+        private TextureUsageData(Texture2D texture, int numberOfLevelsSinceLastUsed)
+        {
+            Texture = texture;
+            NumberOfLevelsSinceLastUsed = numberOfLevelsSinceLastUsed;
+        }
 
         public void Dispose() => Texture.Dispose();
 

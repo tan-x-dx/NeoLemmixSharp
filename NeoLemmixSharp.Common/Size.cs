@@ -38,7 +38,7 @@ public readonly struct Size : IEquatable<Size>
         ArgumentOutOfRangeException.ThrowIfNegative(widthScaleFactor, nameof(widthScaleFactor));
         ArgumentOutOfRangeException.ThrowIfNegative(heightScaleFactor, nameof(heightScaleFactor));
 
-        return new(W * widthScaleFactor, H * heightScaleFactor, 0);
+        return new Size(W * widthScaleFactor, H * heightScaleFactor, 0);
     }
 
     [Pure]
@@ -68,24 +68,24 @@ public readonly struct Size : IEquatable<Size>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int GetIndexOfPoint(Point p) => W * p.Y + p.X;
 
+    [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(Size left, Size right) =>
-        left.W == right.W &&
-        left.H == right.H;
-
+    public bool Equals(Size other) => W == other.W &&
+                                      H == other.H;
+    [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(Size left, Size right) =>
-        left.W != right.W ||
-        left.H != right.H;
-
-    [DebuggerStepThrough]
-    public bool Equals(Size other) => this == other;
-    [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && this == other;
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && Equals(other);
+    [Pure]
     [DebuggerStepThrough]
     public override int GetHashCode() => 8322929 * W +
                                          5282777 * H +
                                          4685531;
+    [Pure]
+    [DebuggerStepThrough]
+    public static bool operator ==(Size left, Size right) => left.Equals(right);
+    [Pure]
+    [DebuggerStepThrough]
+    public static bool operator !=(Size left, Size right) => !left.Equals(right);
 
     [SkipLocalsInit]
     public override string ToString()

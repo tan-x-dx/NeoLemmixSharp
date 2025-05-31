@@ -8,8 +8,7 @@ namespace NeoLemmixSharp.IO.Data.Style;
 
 internal sealed class StyleData
 {
-    private int _numberOfLevelsSinceLastUsed;
-    internal ref int NumberOfLevelsSinceLastUsed => ref _numberOfLevelsSinceLastUsed;
+    internal int NumberOfLevelsSinceLastUsed;
 
     internal StyleIdentifier Identifier { get; }
     internal FileFormatType FileFormatType { get; }
@@ -18,12 +17,6 @@ internal sealed class StyleData
     {
         Identifier = identifier;
         FileFormatType = fileFormatType;
-    }
-
-    internal StyleData(StyleFormatPair styleFormatPair)
-    {
-        Identifier = styleFormatPair.StyleIdentifier;
-        FileFormatType = styleFormatPair.FileFormatType;
     }
 
     internal ThemeData ThemeData { get; set; } = null!;

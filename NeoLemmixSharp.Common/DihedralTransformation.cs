@@ -173,7 +173,8 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
-    public bool Equals(DihedralTransformation other) => this == other;
+    public bool Equals(DihedralTransformation other) => Orientation.Equals(other.Orientation) &&
+                                                        FacingDirection.Equals(other.FacingDirection);
 
     [Pure]
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -188,12 +189,8 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
     [Pure]
-    public static bool operator ==(DihedralTransformation left, DihedralTransformation right) =>
-        left.Orientation == right.Orientation &&
-        left.FacingDirection == right.FacingDirection;
+    public static bool operator ==(DihedralTransformation left, DihedralTransformation right) => left.Equals(right);
 
     [Pure]
-    public static bool operator !=(DihedralTransformation left, DihedralTransformation right) =>
-        left.Orientation != right.Orientation ||
-        left.FacingDirection != right.FacingDirection;
+    public static bool operator !=(DihedralTransformation left, DihedralTransformation right) => !left.Equals(right);
 }

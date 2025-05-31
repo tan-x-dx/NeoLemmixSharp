@@ -45,25 +45,25 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
-        int terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
+        uint terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = ReadWriteHelpers.DecodeTerrainDataMiscByte(terrainDataMiscByte);
 
-        Color? tintColor = null;
-        if (decipheredTerrainDataMisc.HasTintSpecified)
+        Color? tintColor = ReadTerrainDataTintColor(rawFileData);
+        if (!decipheredTerrainDataMisc.HasTintSpecified)
         {
-            tintColor = ReadTerrainDataTintColor(rawFileData);
+            tintColor = null;
         }
 
-        int? width = null;
-        if (decipheredTerrainDataMisc.HasWidthSpecified)
+        int? width = rawFileData.Read16BitUnsignedInteger();
+        if (!decipheredTerrainDataMisc.HasWidthSpecified)
         {
-            width = rawFileData.Read16BitUnsignedInteger();
+            width = null;
         }
 
-        int? height = null;
-        if (decipheredTerrainDataMisc.HasHeightSpecified)
+        int? height = rawFileData.Read16BitUnsignedInteger();
+        if (!decipheredTerrainDataMisc.HasHeightSpecified)
         {
-            height = rawFileData.Read16BitUnsignedInteger();
+            height = null;
         }
 
         return new TerrainData

@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common;
 
@@ -330,6 +331,7 @@ public static class LemmingActionConstants
 
     public static LemmingActionLookupData GetLemmingActionDataFromId(int lemmingActionId) => LemmingActionIdToStringLookup[lemmingActionId];
 
+    [DebuggerDisplay("{LemmingActionName}")]
     public readonly struct LemmingActionLookupData(string lemmingActionName, string lemmingActionFileName, int numberOfAnimationFrames)
     {
         public readonly string LemmingActionName = lemmingActionName;

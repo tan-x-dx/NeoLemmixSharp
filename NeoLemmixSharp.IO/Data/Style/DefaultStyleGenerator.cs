@@ -11,7 +11,7 @@ internal static class DefaultStyleGenerator
     {
         var themeData = GenerateDefaultThemeData();
 
-        var result = new StyleData(StyleCache.DefaultStyleFormatPair)
+        var result = new StyleData(StyleCache.DefaultStyleIdentifier, FileFormats.FileFormatType.Default)
         {
             ThemeData = themeData
         };
@@ -21,26 +21,28 @@ internal static class DefaultStyleGenerator
 
     private static ThemeData GenerateDefaultThemeData()
     {
+        var lemmingSpriteData = SetUpActionSpriteData();
+        SetUpTribeColorData(lemmingSpriteData);
+
         var result = new ThemeData
         {
-            StyleIdentifier = StyleCache.DefaultStyleFormatPair.StyleIdentifier,
-
             Mask = new Color(),
             Minimap = new Color(),
             Background = new Color(),
             OneWayArrows = new Color(),
             PickupBorder = new Color(),
             PickupInside = new Color(),
-        };
 
-        SetUpActionSpriteData(result);
-        SetUpTribeColorData(result);
+            LemmingSpriteData = lemmingSpriteData
+        };
 
         return result;
     }
 
-    private static void SetUpActionSpriteData(ThemeData themeData)
+    private static LemmingSpriteData SetUpActionSpriteData()
     {
+        var lemmingSpriteData = new LemmingSpriteData(StyleCache.DefaultStyleIdentifier);
+
         LemmingActionSpriteLayerData[] oneLayerTrueColor =
         [
             new LemmingActionSpriteLayerData(0, LemmingActionSpriteLayerColorType.TrueColor)
@@ -113,12 +115,12 @@ internal static class DefaultStyleGenerator
         SetLemmingActionSpriteData(LemmingActionConstants.RotateCounterclockwiseActionId, new Point(2, 10), fourLayers);
         SetLemmingActionSpriteData(LemmingActionConstants.RotateHalfActionId, new Point(2, 10), fourLayers);
 
-        return;
+        return lemmingSpriteData;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void SetLemmingActionSpriteData(int lemmingActionId, Point anchorPoint, LemmingActionSpriteLayerData[] layers)
         {
-            themeData.LemmingActionSpriteData[lemmingActionId] = new LemmingActionSpriteData
+            lemmingSpriteData._lemmingActionSpriteData[lemmingActionId] = new LemmingActionSpriteData
             {
                 LemmingActionId = lemmingActionId,
                 AnchorPoint = anchorPoint,
@@ -127,7 +129,7 @@ internal static class DefaultStyleGenerator
         }
     }
 
-    private static void SetUpTribeColorData(ThemeData themeData)
+    private static void SetUpTribeColorData(LemmingSpriteData lemmingSpriteData)
     {
         var defaultSkinColor = new Color(0xF0, 0xD0, 0xD0);
         var defaultAcidLemmingFootColor = new Color(0x00, 0xF0, 0x00);
@@ -155,7 +157,7 @@ internal static class DefaultStyleGenerator
         var tribe5HairColor = new Color(0xB0, 0xA9, 0x00);
         var tribe5BodyColor = new Color(0x3F, 0xDE, 0xD5);
 
-        themeData.TribeColorData[0] = new TribeColorData(
+        lemmingSpriteData._tribeColorData[0] = new TribeColorData(
             tribe0HairColor,
             tribe0BodyColor,
             defaultSkinColor,
@@ -167,7 +169,7 @@ internal static class DefaultStyleGenerator
             defaultNeutralBodyColor,
             defaultPaintColor);
 
-        themeData.TribeColorData[1] = new TribeColorData(
+        lemmingSpriteData._tribeColorData[1] = new TribeColorData(
             tribe1HairColor,
             tribe1BodyColor,
             defaultSkinColor,
@@ -179,7 +181,7 @@ internal static class DefaultStyleGenerator
             defaultNeutralBodyColor,
             defaultPaintColor);
 
-        themeData.TribeColorData[2] = new TribeColorData(
+        lemmingSpriteData._tribeColorData[2] = new TribeColorData(
             tribe2HairColor,
             tribe2BodyColor,
             defaultSkinColor,
@@ -191,7 +193,7 @@ internal static class DefaultStyleGenerator
             defaultNeutralBodyColor,
             defaultPaintColor);
 
-        themeData.TribeColorData[3] = new TribeColorData(
+        lemmingSpriteData._tribeColorData[3] = new TribeColorData(
             tribe3HairColor,
             tribe3BodyColor,
             defaultSkinColor,
@@ -203,7 +205,7 @@ internal static class DefaultStyleGenerator
             defaultNeutralBodyColor,
             defaultPaintColor);
 
-        themeData.TribeColorData[4] = new TribeColorData(
+        lemmingSpriteData._tribeColorData[4] = new TribeColorData(
             tribe4HairColor,
             tribe4BodyColor,
             defaultSkinColor,
@@ -215,7 +217,7 @@ internal static class DefaultStyleGenerator
             defaultNeutralBodyColor,
             defaultPaintColor);
 
-        themeData.TribeColorData[5] = new TribeColorData(
+        lemmingSpriteData._tribeColorData[5] = new TribeColorData(
             tribe5HairColor,
             tribe5BodyColor,
             defaultSkinColor,

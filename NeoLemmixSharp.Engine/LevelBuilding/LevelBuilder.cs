@@ -92,9 +92,9 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var levelViewport = new Level.Viewport();
 
         var terrainTexture = terrainBuilder.GetTerrainTexture();
-        var pixelData = terrainBuilder.GetPixelData();
-        var terrainColorData = terrainBuilder.GetTerrainColors();
-        var terrainPainter = new TerrainPainter(terrainTexture, pixelData, terrainColorData);
+        terrainBuilder.GetPixelData(out var pixelData);
+        terrainBuilder.GetTerrainColors(out var terrainColorData);
+        var terrainPainter = new TerrainPainter(terrainTexture, in pixelData, in terrainColorData);
         var terrainRenderer = new TerrainRenderer(terrainTexture);
 
         var rewindManager = new RewindManager(lemmingManager, gadgetManager, skillSetManager);

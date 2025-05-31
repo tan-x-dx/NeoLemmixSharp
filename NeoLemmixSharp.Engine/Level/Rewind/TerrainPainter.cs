@@ -19,8 +19,8 @@ public sealed class TerrainPainter
 
     public TerrainPainter(
         Texture2D terrainTexture,
-        ArrayWrapper2D<PixelType> terrainPixelTypes,
-        ArrayWrapper2D<Color> terrainColors)
+        in ArrayWrapper2D<PixelType> terrainPixelTypes,
+        in ArrayWrapper2D<Color> terrainColors)
     {
         _terrainTexture = terrainTexture;
         _terrainPixelTypes = terrainPixelTypes;
