@@ -39,7 +39,7 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
     private void RecordThemeDataStrings(StyleData styleData)
     {
         _stringIdLookup.RecordString(styleData.Identifier.ToString());
-        _stringIdLookup.RecordString(styleData.ThemeData.LemmingSpriteData.StyleIdentifier.ToString());
+        _stringIdLookup.RecordString(styleData.ThemeData.LemmingSpriteData.LemmingSpriteStyleIdentifier.ToString());
     }
 
     private void RecordTerrainArchetypeDataStrings(StyleData styleData)

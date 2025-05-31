@@ -27,7 +27,7 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
         var themeData = styleData.ThemeData;
 
         WriteColorData(writer, themeData);
-        WriteLemmingSpriteData(writer, themeData.LemmingSpriteData);
+        WriteLemmingSpriteData(writer, styleData.Identifier, themeData.LemmingSpriteData);
     }
 
     private static void WriteColorData(RawStyleFileDataWriter writer, ThemeData themeData)
@@ -49,20 +49,16 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
         }
     }
 
-    private void WriteLemmingSpriteData(RawStyleFileDataWriter writer, LemmingSpriteData lemmingSpriteData)
+    private void WriteLemmingSpriteData(RawStyleFileDataWriter writer, StyleIdentifier originalStyleIdentifier, LemmingSpriteData lemmingSpriteData)
     {
-        // If this style uses the default lemming sprites, then just write a zero
-        if (StyleCache.DefaultStyleIdentifier.Equals(lemmingSpriteData.StyleIdentifier))
+        writer.Write(_stringIdLookup.GetStringId(lemmingSpriteData.LemmingSpriteStyleIdentifier.ToString()));
+
+        if (lemmingSpriteData.LemmingSpriteStyleIdentifier == originalStyleIdentifier)
         {
-            writer.Write((byte)0);
-            return;
+            WriteLemmingActionSpriteData(writer, lemmingSpriteData);
         }
 
-        writer.Write((byte)1);
-        writer.Write(_stringIdLookup.GetStringId(lemmingSpriteData.StyleIdentifier.ToString()));
-
-        WriteLemmingActionSpriteData(writer, lemmingSpriteData);
-        WriteTribeColorData(writer, lemmingSpriteData.TribeColorData);
+        WriteTribeColorData(writer, lemmingSpriteData._tribeColorData);
     }
 
     private void WriteLemmingActionSpriteData(RawStyleFileDataWriter writer, LemmingSpriteData lemmingSpriteData)
@@ -80,11 +76,11 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
         {
             var result = new Dictionary<LemmingActionSpriteLayerData[], int>(8, this);
 
-            foreach (var x in lemmingSpriteData.LemmingActionSpriteData)
+            foreach (var lemmingActionSprite in lemmingSpriteData.LemmingActionSpriteData)
             {
                 var count = result.Count;
 
-                ref var id = ref CollectionsMarshal.GetValueRefOrAddDefault(result, x.Layers, out var exists);
+                ref var id = ref CollectionsMarshal.GetValueRefOrAddDefault(result, lemmingActionSprite.Layers, out var exists);
                 if (!exists)
                 {
                     id = count;
@@ -111,7 +107,7 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
 
         void WriteLemmingActionSpriteData()
         {
-            ReadOnlySpan<LemmingActionSpriteData> lemmingActionSpriteDataSpan = lemmingSpriteData.LemmingActionSpriteData;
+            var lemmingActionSpriteDataSpan = lemmingSpriteData.LemmingActionSpriteData;
 
             for (var i = 0; i < lemmingActionSpriteDataSpan.Length; i++)
             {
@@ -173,7 +169,7 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
 
         for (var i = 0; i < x.Length; i++)
         {
-            if (!x[i].Equals(y[i]))
+            if (x[i] != (y[i]))
                 return false;
         }
 

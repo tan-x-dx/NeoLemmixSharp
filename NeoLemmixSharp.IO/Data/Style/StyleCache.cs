@@ -39,17 +39,24 @@ public static class StyleCache
 
         foreach (var styleFormatPair in allMentionedStyleFormatPairs)
         {
-            ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(CachedStyles, styleFormatPair, out var exists);
-
-            if (exists)
-            {
-                styleData!.NumberOfLevelsSinceLastUsed = 0;
-            }
-            else
-            {
-                styleData = FileTypeHandler.ReadStyle(styleFormatPair);
-            }
+            GetOrLoadStyleData(styleFormatPair);
         }
+    }
+
+    internal static StyleData GetOrLoadStyleData(StyleFormatPair styleFormatPair)
+    {
+        ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(CachedStyles, styleFormatPair, out var exists);
+
+        if (exists)
+        {
+            styleData!.NumberOfLevelsSinceLastUsed = 0;
+        }
+        else
+        {
+            styleData = FileTypeHandler.ReadStyle(styleFormatPair);
+        }
+
+        return styleData;
     }
 
     private static HashSet<StyleFormatPair> GetAllMentionedStyles(LevelData levelData)

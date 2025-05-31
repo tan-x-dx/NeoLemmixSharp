@@ -41,7 +41,7 @@ public static class LemmingSpriteBankBuilder
 
         var spriteDirectory = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
-            lemmingSpriteData.StyleIdentifier.ToString(),
+            lemmingSpriteData.LemmingSpriteStyleIdentifier.ToString(),
             DefaultFileExtensions.LemmingsFolderName);
 
         for (var i = 0; i < LemmingActionConstants.NumberOfLemmingActions; i++)
@@ -54,7 +54,7 @@ public static class LemmingSpriteBankBuilder
 
         return new SpriteBankData(
             lemmingActionSprites,
-            lemmingSpriteData.TribeColorData);
+            lemmingSpriteData.TribeColorData.ToArray());
     }
 
     private static LemmingActionSprite CreateLemmingActionSprite(
@@ -72,7 +72,7 @@ public static class LemmingSpriteBankBuilder
 
         var spriteTexture = TextureCache.GetOrLoadTexture(
             pngPath,
-            lemmingSpriteData.StyleIdentifier,
+            lemmingSpriteData.LemmingSpriteStyleIdentifier,
             new PieceIdentifier(lemmingActionData.LemmingActionFileName),
             TextureType.LemmingSprite);
 
