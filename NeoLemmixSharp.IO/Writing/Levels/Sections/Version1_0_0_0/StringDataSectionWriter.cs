@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
@@ -16,12 +15,11 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 
     public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
-        GenerateStringIdLookup(levelData);
+        PopulateStringIdLookup(levelData);
 
         return (ushort)_stringIdLookup.Count;
     }
 
-    [SkipLocalsInit]
     public override void WriteSection(
         RawLevelFileDataWriter writer,
         LevelData levelData)
@@ -29,7 +27,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
         _stringIdLookup.WriteStrings(writer);
     }
 
-    private void GenerateStringIdLookup(LevelData levelData)
+    private void PopulateStringIdLookup(LevelData levelData)
     {
         FileWritingException.WriterAssert(_stringIdLookup.Count == 0, "Expected string id lookup to be empty!");
 

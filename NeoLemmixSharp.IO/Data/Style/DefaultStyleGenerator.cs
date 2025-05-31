@@ -11,7 +11,7 @@ internal static class DefaultStyleGenerator
     {
         var themeData = GenerateDefaultThemeData();
 
-        var result = new StyleData(StyleCache.DefaultStyleFormatPair)
+        var result = new StyleData(StyleCache.DefaultStyleIdentifier, FileFormats.FileFormatType.Default)
         {
             ThemeData = themeData
         };

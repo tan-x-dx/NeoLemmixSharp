@@ -24,7 +24,7 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     {
     }
 
-    public bool IsTrivial()
+    internal bool IsTrivial()
     {
         return !(
             IsSteel ||

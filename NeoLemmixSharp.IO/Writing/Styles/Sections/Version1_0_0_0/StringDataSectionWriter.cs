@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.FileFormats;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
@@ -16,12 +15,11 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
 
     public override ushort CalculateNumberOfItemsInSection(StyleData styleData)
     {
-        GenerateStringIdLookup(styleData);
+        PopulateStringIdLookup(styleData);
 
         return (ushort)_stringIdLookup.Count;
     }
 
-    [SkipLocalsInit]
     public override void WriteSection(
         RawStyleFileDataWriter writer,
         StyleData levelData)
@@ -29,10 +27,47 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
         _stringIdLookup.WriteStrings(writer);
     }
 
-    private void GenerateStringIdLookup(StyleData styleData)
+    private void PopulateStringIdLookup(StyleData styleData)
     {
         FileWritingException.WriterAssert(_stringIdLookup.Count == 0, "Expected string id lookup to be empty!");
 
+        RecordThemeDataStrings(styleData);
+        RecordTerrainArchetypeDataStrings(styleData);
+        RecordGadgetArchetypeDataStrings(styleData);
+    }
 
+    private void RecordThemeDataStrings(StyleData styleData)
+    {
+        _stringIdLookup.RecordString(styleData.Identifier.ToString());
+        _stringIdLookup.RecordString(styleData.ThemeData.LemmingSpriteData.StyleIdentifier.ToString());
+    }
+
+    private void RecordTerrainArchetypeDataStrings(StyleData styleData)
+    {
+        foreach (var kvp in styleData.TerrainArchetypeData)
+        {
+            var pieceIdentifier = kvp.Key;
+            _stringIdLookup.RecordString(pieceIdentifier.ToString());
+        }
+    }
+
+    private void RecordGadgetArchetypeDataStrings(StyleData styleData)
+    {
+        foreach (var kvp in styleData.GadgetArchetypeData)
+        {
+            var pieceIdentifier = kvp.Key;
+            var gadgetArchetypeDatum = kvp.Value;
+            _stringIdLookup.RecordString(pieceIdentifier.ToString());
+
+            foreach (var gadgetInputData in gadgetArchetypeDatum.AllGadgetInputs)
+            {
+                _stringIdLookup.RecordString(gadgetInputData.ToString());
+            }
+
+            foreach (var gadgetStateData in gadgetArchetypeDatum.AllGadgetStateData)
+            {
+                _stringIdLookup.RecordString(gadgetStateData.StateName);
+            }
+        }
     }
 }

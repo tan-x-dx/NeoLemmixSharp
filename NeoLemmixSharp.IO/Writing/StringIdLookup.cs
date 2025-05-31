@@ -42,19 +42,6 @@ internal readonly struct StringIdLookup
         return _lookup[s];
     }
 
-    [Pure]
-    private int CalculateBufferSize()
-    {
-        var maxBufferSize = 0;
-
-        foreach (var kvp in _lookup)
-        {
-            maxBufferSize = Math.Max(maxBufferSize, Encoding.UTF8.GetByteCount(kvp.Key));
-        }
-
-        return maxBufferSize;
-    }
-
     [SkipLocalsInit]
     internal void WriteStrings<TPerfectHasher, TEnum>(RawFileDataWriter<TPerfectHasher, TEnum> writer)
         where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
@@ -80,5 +67,18 @@ internal readonly struct StringIdLookup
             writer.Write((ushort)byteCount);
             writer.Write(buffer[..byteCount]);
         }
+    }
+
+    [Pure]
+    private int CalculateBufferSize()
+    {
+        var maxBufferSize = 0;
+
+        foreach (var kvp in _lookup)
+        {
+            maxBufferSize = Math.Max(maxBufferSize, Encoding.UTF8.GetByteCount(kvp.Key));
+        }
+
+        return maxBufferSize;
     }
 }
