@@ -11,7 +11,7 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
     private readonly StringIdLookup _stringIdLookup;
 
     public ThemeDataSectionReader(StringIdLookup stringIdLookup)
-        : base(StyleFileSectionIdentifier.ThemeDataSection, false)
+        : base(StyleFileSectionIdentifier.ThemeDataSection, true)
     {
         _stringIdLookup = stringIdLookup;
     }
