@@ -107,11 +107,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         UiSprites.Initialise(Content);
 
         StyleCache.Initialise();
-        TextureCache.Initialise(GraphicsDevice);
+        TextureCache.Initialise(Content, GraphicsDevice);
 
-        var menuScreen = new MenuScreen(
-            Content,
-            GraphicsDevice);
+        var menuScreen = new MenuScreen(Content, GraphicsDevice);
         SetScreen(menuScreen);
     }
 
