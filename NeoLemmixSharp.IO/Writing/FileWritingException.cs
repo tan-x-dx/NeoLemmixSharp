@@ -14,6 +14,6 @@ internal sealed class FileWritingException : Exception
         if (condition)
             return;
 
-        throw new FileWritingException($"Error occurred when writing file. Details: [{details}]");
+        throw new FileWritingException($"Assertion failure occurred when writing file. Details: [{details}]");
     }
 }

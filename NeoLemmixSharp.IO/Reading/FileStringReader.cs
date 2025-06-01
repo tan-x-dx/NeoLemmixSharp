@@ -9,7 +9,7 @@ internal readonly struct FileStringReader<TPerfectHasher, TEnum>(StringIdLookup 
 {
     private readonly StringIdLookup _stringIdLookup = stringIdLookup;
 
-    public void ReadSection(RawFileDataReader<TPerfectHasher, TEnum> rawFileData, int numberOfItemsInSection)
+    internal void ReadSection(RawFileDataReader<TPerfectHasher, TEnum> rawFileData, int numberOfItemsInSection)
     {
         FileReadingException.ReaderAssert(_stringIdLookup.Count == 0, "Expected string lookup to be empty!");
         _stringIdLookup.SetCapacity(numberOfItemsInSection + 1);
