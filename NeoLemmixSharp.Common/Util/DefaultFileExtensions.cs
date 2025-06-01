@@ -3,7 +3,7 @@
 public static class DefaultFileExtensions
 {
     public const string LevelFileExtension = ".ullv";
-    public const string LevelStyleExtension = ".ulst";
+    public const string StyleFileExtension = ".ulst";
 
     public const string LemmingsFolderName = "lemmings";
     public const string LevelFolderName = "levels";
