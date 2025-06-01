@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
-public enum LemmingActionSpriteLayerColorType
+public enum TribeSpriteLayerColorType
 {
     TrueColor,
     LemmingHairColor,
@@ -16,5 +16,5 @@ public static class LemmingActionSpriteLayerColorTypeHelpers
 {
     private const int NumberOfEnumValues = 6;
 
-    public static LemmingActionSpriteLayerColorType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingActionSpriteLayerColorType>(rawValue, NumberOfEnumValues);
+    public static TribeSpriteLayerColorType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<TribeSpriteLayerColorType>(rawValue, NumberOfEnumValues);
 }

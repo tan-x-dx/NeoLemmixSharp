@@ -2,10 +2,10 @@
 
 namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
-public readonly struct LemmingActionSpriteLayerData(int layer, LemmingActionSpriteLayerColorType colorType) : IEquatable<LemmingActionSpriteLayerData>
+public readonly struct LemmingActionSpriteLayerData(int layer, TribeSpriteLayerColorType colorType) : IEquatable<LemmingActionSpriteLayerData>
 {
     public readonly int Layer = layer;
-    public readonly LemmingActionSpriteLayerColorType ColorType = colorType;
+    public readonly TribeSpriteLayerColorType ColorType = colorType;
 
     public bool Equals(LemmingActionSpriteLayerData other) => Layer == other.Layer && ColorType == other.ColorType;
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingActionSpriteLayerData other && Equals(other);

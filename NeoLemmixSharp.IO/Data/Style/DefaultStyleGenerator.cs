@@ -45,39 +45,39 @@ internal static class DefaultStyleGenerator
 
         LemmingActionSpriteLayerData[] oneLayerTrueColor =
         [
-            new LemmingActionSpriteLayerData(0, LemmingActionSpriteLayerColorType.TrueColor)
+            new LemmingActionSpriteLayerData(0, TribeSpriteLayerColorType.TrueColor)
         ];
         LemmingActionSpriteLayerData[] fourLayers =
         [
-            new LemmingActionSpriteLayerData(0, LemmingActionSpriteLayerColorType.LemmingHairColor),
-            new LemmingActionSpriteLayerData(1, LemmingActionSpriteLayerColorType.LemmingSkinColor),
-            new LemmingActionSpriteLayerData(2, LemmingActionSpriteLayerColorType.LemmingBodyColor),
-            new LemmingActionSpriteLayerData(3, LemmingActionSpriteLayerColorType.LemmingFootColor)
+            new LemmingActionSpriteLayerData(0, TribeSpriteLayerColorType.LemmingHairColor),
+            new LemmingActionSpriteLayerData(1, TribeSpriteLayerColorType.LemmingSkinColor),
+            new LemmingActionSpriteLayerData(2, TribeSpriteLayerColorType.LemmingBodyColor),
+            new LemmingActionSpriteLayerData(3, TribeSpriteLayerColorType.LemmingFootColor)
         ];
         LemmingActionSpriteLayerData[] fiveLayers =
         [
-            new LemmingActionSpriteLayerData(0, LemmingActionSpriteLayerColorType.LemmingHairColor),
-            new LemmingActionSpriteLayerData(1, LemmingActionSpriteLayerColorType.LemmingSkinColor),
-            new LemmingActionSpriteLayerData(2, LemmingActionSpriteLayerColorType.LemmingBodyColor),
-            new LemmingActionSpriteLayerData(3, LemmingActionSpriteLayerColorType.LemmingFootColor),
-            new LemmingActionSpriteLayerData(4, LemmingActionSpriteLayerColorType.TribePaintColor)
+            new LemmingActionSpriteLayerData(0, TribeSpriteLayerColorType.LemmingHairColor),
+            new LemmingActionSpriteLayerData(1, TribeSpriteLayerColorType.LemmingSkinColor),
+            new LemmingActionSpriteLayerData(2, TribeSpriteLayerColorType.LemmingBodyColor),
+            new LemmingActionSpriteLayerData(3, TribeSpriteLayerColorType.LemmingFootColor),
+            new LemmingActionSpriteLayerData(4, TribeSpriteLayerColorType.TribePaintColor)
         ];
         LemmingActionSpriteLayerData[] fiveLayersTrueColor =
         [
-            new LemmingActionSpriteLayerData(0, LemmingActionSpriteLayerColorType.TrueColor),
-            new LemmingActionSpriteLayerData(1, LemmingActionSpriteLayerColorType.LemmingHairColor),
-            new LemmingActionSpriteLayerData(2, LemmingActionSpriteLayerColorType.LemmingSkinColor),
-            new LemmingActionSpriteLayerData(3, LemmingActionSpriteLayerColorType.LemmingBodyColor),
-            new LemmingActionSpriteLayerData(4, LemmingActionSpriteLayerColorType.LemmingFootColor)
+            new LemmingActionSpriteLayerData(0, TribeSpriteLayerColorType.TrueColor),
+            new LemmingActionSpriteLayerData(1, TribeSpriteLayerColorType.LemmingHairColor),
+            new LemmingActionSpriteLayerData(2, TribeSpriteLayerColorType.LemmingSkinColor),
+            new LemmingActionSpriteLayerData(3, TribeSpriteLayerColorType.LemmingBodyColor),
+            new LemmingActionSpriteLayerData(4, TribeSpriteLayerColorType.LemmingFootColor)
         ];
         LemmingActionSpriteLayerData[] sixLayersTrueColor =
         [
-            new LemmingActionSpriteLayerData(0, LemmingActionSpriteLayerColorType.TrueColor),
-            new LemmingActionSpriteLayerData(1, LemmingActionSpriteLayerColorType.LemmingHairColor),
-            new LemmingActionSpriteLayerData(2, LemmingActionSpriteLayerColorType.LemmingSkinColor),
-            new LemmingActionSpriteLayerData(3, LemmingActionSpriteLayerColorType.LemmingBodyColor),
-            new LemmingActionSpriteLayerData(4, LemmingActionSpriteLayerColorType.LemmingFootColor),
-            new LemmingActionSpriteLayerData(5, LemmingActionSpriteLayerColorType.TribePaintColor)
+            new LemmingActionSpriteLayerData(0, TribeSpriteLayerColorType.TrueColor),
+            new LemmingActionSpriteLayerData(1, TribeSpriteLayerColorType.LemmingHairColor),
+            new LemmingActionSpriteLayerData(2, TribeSpriteLayerColorType.LemmingSkinColor),
+            new LemmingActionSpriteLayerData(3, TribeSpriteLayerColorType.LemmingBodyColor),
+            new LemmingActionSpriteLayerData(4, TribeSpriteLayerColorType.LemmingFootColor),
+            new LemmingActionSpriteLayerData(5, TribeSpriteLayerColorType.TribePaintColor)
         ];
 
         SetLemmingActionSpriteData(LemmingActionConstants.WalkerActionId, new Point(2, 10), fourLayers);
