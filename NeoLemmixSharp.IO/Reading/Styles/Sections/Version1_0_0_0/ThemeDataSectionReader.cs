@@ -113,7 +113,7 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
             {
                 int layer = rawFileData.Read8BitUnsignedInteger();
                 uint rawLayerColorTypeData = rawFileData.Read8BitUnsignedInteger();
-                var colorType = LemmingActionSpriteLayerColorTypeHelpers.GetEnumValue(rawLayerColorTypeData);
+                var colorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawLayerColorTypeData);
 
                 spriteLayers[i] = new LemmingActionSpriteLayerData(layer, colorType);
             }

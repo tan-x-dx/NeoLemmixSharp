@@ -1,23 +1,31 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
 
 internal readonly ref struct GadgetSpriteDataReader
 {
-    public SpriteArchetypeData ReadSpriteData(RawStyleFileDataReader rawFileData, int expectedNumberOfGadgetStates)
+    private readonly RawStyleFileDataReader _rawFileData;
+
+    public GadgetSpriteDataReader(RawStyleFileDataReader rawFileData)
     {
-        int baseWidth = rawFileData.Read16BitUnsignedInteger();
-        int baseHeight = rawFileData.Read16BitUnsignedInteger();
+        _rawFileData = rawFileData;
+    }
 
-        int numberOfLayers = rawFileData.Read8BitUnsignedInteger();
-        int numberOfFrames = rawFileData.Read8BitUnsignedInteger();
+    internal SpriteArchetypeData ReadSpriteData(int expectedNumberOfGadgetStates)
+    {
+        int baseWidth = _rawFileData.Read16BitUnsignedInteger();
+        int baseHeight = _rawFileData.Read16BitUnsignedInteger();
 
-        int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
+        int numberOfLayers = _rawFileData.Read8BitUnsignedInteger();
+        int numberOfFrames = _rawFileData.Read8BitUnsignedInteger();
+
+        int numberOfGadgetStates = _rawFileData.Read8BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(numberOfGadgetStates == expectedNumberOfGadgetStates, "Wrong number of states in animation data");
 
-        var spriteArchetypeDataForStates = ReadGadgetStateSpriteArchetypeData(rawFileData, numberOfGadgetStates);
+        var spriteArchetypeDataForStates = ReadGadgetStateSpriteArchetypeData(numberOfGadgetStates);
 
         return new SpriteArchetypeData
         {
@@ -30,7 +38,7 @@ internal readonly ref struct GadgetSpriteDataReader
         };
     }
 
-    private StateSpriteArchetypeData[] ReadGadgetStateSpriteArchetypeData(RawStyleFileDataReader rawFileData, int numberOfGadgetStates)
+    private StateSpriteArchetypeData[] ReadGadgetStateSpriteArchetypeData(int numberOfGadgetStates)
     {
         var result = new StateSpriteArchetypeData[numberOfGadgetStates];
 
@@ -38,16 +46,16 @@ internal readonly ref struct GadgetSpriteDataReader
         {
             result[i] = new StateSpriteArchetypeData
             {
-                AnimationData = ReadAnimationData(rawFileData)
+                AnimationData = ReadAnimationData()
             };
         }
 
         return result;
     }
 
-    private AnimationLayerArchetypeData[] ReadAnimationData(RawStyleFileDataReader rawFileData)
+    private AnimationLayerArchetypeData[] ReadAnimationData()
     {
-        int numberOfAnimationBehaviours = rawFileData.Read8BitUnsignedInteger();
+        int numberOfAnimationBehaviours = _rawFileData.Read8BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(numberOfAnimationBehaviours > 0, "Zero animation data defined!");
 
@@ -55,43 +63,51 @@ internal readonly ref struct GadgetSpriteDataReader
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = ReadAnimationBehaviourArchetypData(rawFileData);
+            result[i] = ReadAnimationBehaviourArchetypData();
         }
 
         return result;
     }
 
-    private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData(RawStyleFileDataReader rawFileData)
+    private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData()
     {
-        return default;
+        var animationLayerParameters = ReadAnimationLayerParameters();
 
-        /*   var animationLayerParameters = ReadAnimationLayerParameters(rawFileData);
-           int rawColorChooser = rawFileData.Read8BitUnsignedInteger();
-           var tribeColorChooser = TribeColorChooser.GetTribeColorChooser(rawColorChooser);
+        var nineSliceData = ReadNineSliceData();
 
-           int initialFrame = rawFileData.Read8BitUnsignedInteger();
-           int nextGadgetState = rawFileData.Read8BitUnsignedInteger();
+        uint rawColorType = _rawFileData.Read8BitUnsignedInteger();
+        var colorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawColorType);
 
-           return new AnimationLayerArchetypeData
-           {
-               AnimationLayerParameters = animationLayerParameters,
+        int initialFrame = _rawFileData.Read8BitUnsignedInteger();
+        int nextGadgetState = _rawFileData.Read8BitUnsignedInteger();
 
-               InitialFrame = initialFrame,
-               NextGadgetState = nextGadgetState - 1,
-
-               ColorChooser = tribeColorChooser,
-
-               NineSliceData = null!
-           };*/
+        return new AnimationLayerArchetypeData
+        {
+            AnimationLayerParameters = animationLayerParameters,
+            NineSliceData = nineSliceData,
+            ColorType = colorType,
+            InitialFrame = initialFrame,
+            NextGadgetState = nextGadgetState - 1
+        };
     }
 
-    /* private AnimationLayerParameters ReadAnimationLayerParameters(RawStyleFileDataReader rawFileData)
-     {
-         int frameStart = rawFileData.Read8BitUnsignedInteger();
-         int frameEnd = rawFileData.Read8BitUnsignedInteger();
-         int frameDelta = rawFileData.Read8BitUnsignedInteger();
-         int transitionToFrame = rawFileData.Read8BitUnsignedInteger();
+    private AnimationLayerParameters ReadAnimationLayerParameters()
+    {
+        int frameStart = _rawFileData.Read8BitUnsignedInteger();
+        int frameEnd = _rawFileData.Read8BitUnsignedInteger();
+        int frameDelta = _rawFileData.Read8BitUnsignedInteger();
+        int transitionToFrame = _rawFileData.Read8BitUnsignedInteger();
 
-         return new AnimationLayerParameters(frameStart, frameEnd, frameDelta, transitionToFrame);
-     }*/
+        return new AnimationLayerParameters(frameStart, frameEnd, frameDelta, transitionToFrame);
+    }
+
+    private NineSliceData ReadNineSliceData()
+    {
+        int nineSliceDown = _rawFileData.Read8BitUnsignedInteger();
+        int nineSliceLeft = _rawFileData.Read8BitUnsignedInteger();
+        int nineSliceUp = _rawFileData.Read8BitUnsignedInteger();
+        int nineSliceRight = _rawFileData.Read8BitUnsignedInteger();
+
+        return new NineSliceData(nineSliceDown, nineSliceLeft, nineSliceUp, nineSliceRight);
+    }
 }

@@ -1,25 +1,16 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
-public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
+public static class HatchGadgetArchetypeBuilder
 {
-    public required StyleIdentifier StyleName { get; init; }
-    public required PieceIdentifier PieceName { get; init; }
-
-    public required Point SpawnPosition { get; init; }
-
-    public required SpriteArchetypeData SpriteData { get; init; }
-
-    public GadgetBase BuildGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
+    public static GadgetBase BuildGadget(
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
         TribeManager tribeManager)
@@ -33,17 +24,17 @@ public sealed class HatchGadgetArchetypeBuilder : IGadgetArchetypeBuilder
             gadgetData.Orientation,
             FacingDirection.Right); // Hatches do not flip according to facing direction
 
-        var transformedSize = dihedralTransformation.Transform(SpriteData.BaseSpriteSize);
-        var spawnPointOffset = dihedralTransformation.Transform(SpawnPosition, SpriteData.BaseSpriteSize);
+       //var transformedSize = dihedralTransformation.Transform(SpriteData.BaseSpriteSize);
+        //var spawnPointOffset = dihedralTransformation.Transform(SpawnPosition, SpriteData.BaseSpriteSize);
 
-        var currentGadgetBounds = new GadgetBounds
+        /*var currentGadgetBounds = new GadgetBounds
         {
             Position = gadgetData.Position,
             Width = transformedSize.W,
             Height = transformedSize.H
-        };
+        };*/
 
-        var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(this, gadgetData);
+       // var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(gadgetData);
 
         var hatchSpawnData = new HatchSpawnData(
             hatchGadgetId,

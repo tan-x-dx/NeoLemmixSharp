@@ -14,18 +14,15 @@ public sealed class GadgetRendererBuilder
     private readonly Dictionary<StylePiecePair, Texture2D> _gadgetTextures = [];
 
     public GadgetRenderer? BuildStatefulGadgetRenderer(
-        IGadgetArchetypeBuilder gadgetArchetypeBuilder,
         GadgetData gadgetData)
     {
-        var texture = GetTextureForGadget(gadgetArchetypeBuilder, gadgetData);
+        var texture = GetTextureForGadget(gadgetData);
         return texture is null
             ? null
             : new GadgetRenderer(null, texture, gadgetData.GadgetRenderMode);
     }
 
-    private Texture2D? GetTextureForGadget(
-        IGadgetArchetypeBuilder gadgetArchetypeBuilder,
-        GadgetData gadgetData)
+    private Texture2D? GetTextureForGadget(GadgetData gadgetData)
     {
         if (gadgetData.GadgetRenderMode == GadgetRenderMode.NoRender)
             return null;
@@ -36,39 +33,39 @@ public sealed class GadgetRendererBuilder
 
         Texture2D GetOrAddCachedTexture()
         {
-            var key = new StylePiecePair(gadgetArchetypeBuilder.StyleName, gadgetArchetypeBuilder.PieceName);
+            var key = gadgetData.GetStylePiecePair();
 
             ref var cachedTexture = ref CollectionsMarshal.GetValueRefOrAddDefault(_gadgetTextures, key, out var exists);
 
             if (exists)
                 return cachedTexture!;
 
-            cachedTexture = LoadSprite(gadgetArchetypeBuilder);
+            cachedTexture = LoadSprite(key);
 
-            AssertSpriteDimensionsMakeSense(gadgetArchetypeBuilder, new Size(cachedTexture.Width, cachedTexture.Height));
+           //AssertSpriteDimensionsMakeSense(gadgetArchetypeBuilder, new Size(cachedTexture.Width, cachedTexture.Height));
 
             return cachedTexture;
         }
     }
 
-    private static Texture2D LoadSprite(IGadgetArchetypeBuilder gadgetArchetypeBuilder)
+    private static Texture2D LoadSprite(StylePiecePair stylePiecePair)
     {
         var rootFilePath = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
-            gadgetArchetypeBuilder.StyleName.ToString(),
+            stylePiecePair.StyleName.ToString(),
             DefaultFileExtensions.GadgetFolderName,
-            gadgetArchetypeBuilder.PieceName.ToString());
+            stylePiecePair.PieceName.ToString());
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
         return TextureCache.GetOrLoadTexture(
             pngPath,
-            gadgetArchetypeBuilder.StyleName,
-            gadgetArchetypeBuilder.PieceName,
+            stylePiecePair.StyleName,
+            stylePiecePair.PieceName,
             TextureType.GadgetSprite);
     }
 
-    private static void AssertSpriteDimensionsMakeSense(IGadgetArchetypeBuilder gadgetArchetypeBuilder, Size textureDimensions)
+    /*private static void AssertSpriteDimensionsMakeSense(StylePiecePair gadgetArchetypeBuilder, Size textureDimensions)
     {
         var spriteData = gadgetArchetypeBuilder.SpriteData;
 
@@ -78,5 +75,5 @@ public sealed class GadgetRendererBuilder
 
         if (textureDimensions != expectedTextureDimensions)
             throw new InvalidOperationException("Sprite dimensions are invalid!");
-    }
+    }*/
 }

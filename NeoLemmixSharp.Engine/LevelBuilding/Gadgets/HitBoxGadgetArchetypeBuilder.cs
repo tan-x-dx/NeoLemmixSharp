@@ -19,23 +19,15 @@ using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.B
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
-public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
+public static class HitBoxGadgetArchetypeBuilder
 {
-    public required StyleIdentifier StyleName { get; init; }
-    public required PieceIdentifier PieceName { get; init; }
-
-    public required ResizeType ResizeType { get; init; }
-    public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
-
-    public required SpriteArchetypeData SpriteData { get; init; }
-
-    public GadgetBase BuildGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
+    public static GadgetBase BuildGadget(
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
         TribeManager tribeManager)
     {
-        var currentGadgetBounds = GetGadgetBounds(gadgetData);
+    /*    var currentGadgetBounds = GetGadgetBounds(gadgetData);
         var resizeType = GetResizeTypeForGadgetOrientation(gadgetData);
         var gadgetStates = GetGadgetStates(gadgetData, currentGadgetBounds, tribeManager);
         var initialStateIndex = gadgetData.InitialStateId;
@@ -51,7 +43,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         {
             isFastForward = false;
         }
-
+    */
         return null;
 
         /*
@@ -68,9 +60,9 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
 
             IsFastForward = isFastForward
         };*/
-    }
+    }/*
 
-    private GadgetBounds GetGadgetBounds(GadgetData gadgetData)
+    private static GadgetBounds GetGadgetBounds(GadgetData gadgetData)
     {
         var result = new GadgetBounds
         {
@@ -89,12 +81,12 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         return result;
     }
 
-    private ResizeType GetResizeTypeForGadgetOrientation(GadgetData gadgetData)
+    private static ResizeType GetResizeTypeForGadgetOrientation(GadgetData gadgetData)
     {
         return new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(ResizeType);
     }
 
-    private GadgetState[] GetGadgetStates(
+    private static GadgetState[] GetGadgetStates(
         GadgetData gadgetData,
         GadgetBounds currentGadgetBounds,
         TribeManager tribeManager)
@@ -265,7 +257,7 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
         }
     }
 
-    private OrientationToHitBoxRegionLookup CreateHitBoxRegionLookup(
+    private static OrientationToHitBoxRegionLookup CreateHitBoxRegionLookup(
         GadgetData gadgetData,
         GadgetBounds hitBoxGadgetBounds,
         ReadOnlySpan<HitBoxRegionData> hitBoxRegionData)
@@ -348,5 +340,5 @@ public sealed class HitBoxGadgetArchetypeBuilder : IGadgetArchetypeBuilder
     private static void ThrowInvalidHitBoxRegionDataException()
     {
         throw new InvalidOperationException("Expected exactly two points of data");
-    }
+    }*/
 }

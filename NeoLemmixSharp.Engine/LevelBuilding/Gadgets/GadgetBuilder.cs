@@ -6,7 +6,6 @@ using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
@@ -24,64 +23,41 @@ public ref struct GadgetBuilder
     }
 
     public GadgetBase[] BuildLevelGadgets(
-        LemmingManager lemmingHasher,
+        LemmingManager lemmingManager,
         TribeManager tribeManager)
     {
-        var allGadgetData = CollectionsMarshal.AsSpan(_levelData.AllGadgetData);
-
-        foreach (var prototype in allGadgetData)
+        foreach (var prototype in _levelData.AllGadgetData)
         {
             var gadgetArchetypeData = _gadgetArchetypeDataLookup[prototype.GetStylePiecePair()];
 
-            var gadget = BuildGadget(gadgetArchetypeData, prototype, lemmingHasher, tribeManager);
+            var gadget = BuildGadget(gadgetArchetypeData, prototype, lemmingManager, tribeManager);
             _gadgetList.Add(gadget);
         }
 
         return _gadgetList.GetArray();
     }
 
-    public static GadgetBase BuildGadget(
+    private static GadgetBase BuildGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData prototype,
-        LemmingManager lemmingHasher,
+        LemmingManager lemmingManager,
         TribeManager tribeManager)
     {
-        switch (gadgetArchetypeData.GadgetType)
+        return gadgetArchetypeData.GadgetType switch
         {
-            case GadgetType.HitBoxGadget:
-                break;
-            case GadgetType.HatchGadget:
-                break;
-            case GadgetType.GadgetMover:
-                break;
-            case GadgetType.GadgetResizer:
-                break;
-            case GadgetType.GadgetStateChanger:
-                break;
-            case GadgetType.AndGate:
-                break;
-            case GadgetType.OrGate:
-                break;
-            case GadgetType.NotGate:
-                break;
-            case GadgetType.XorGate:
-                break;
+            GadgetType.HitBoxGadget => HitBoxGadgetArchetypeBuilder.BuildGadget(gadgetArchetypeData, prototype, lemmingManager, tribeManager),
+            GadgetType.HatchGadget => HatchGadgetArchetypeBuilder.BuildGadget(gadgetArchetypeData, prototype, lemmingManager, tribeManager),
 
-            default:
-                break;
-        }
+            GadgetType.GadgetMover => null,
+            GadgetType.GadgetResizer => null,
+            GadgetType.GadgetStateChanger => null,
 
+            GadgetType.AndGate => LogicGateArchetypeBuilder.BuildGadget(LogicGateType.AndGate, gadgetArchetypeData, prototype, lemmingManager, tribeManager),
+            GadgetType.OrGate => LogicGateArchetypeBuilder.BuildGadget(LogicGateType.OrGate, gadgetArchetypeData, prototype, lemmingManager, tribeManager),
+            GadgetType.NotGate => LogicGateArchetypeBuilder.BuildGadget(LogicGateType.NotGate, gadgetArchetypeData, prototype, lemmingManager, tribeManager),
+            GadgetType.XorGate => LogicGateArchetypeBuilder.BuildGadget(LogicGateType.XorGate, gadgetArchetypeData, prototype, lemmingManager, tribeManager),
 
-
-
-
-
-
-
-
-
-
-
-        throw new NotImplementedException();
+            _ => Helpers.ThrowUnknownEnumValueException<GadgetType, GadgetBase>(gadgetArchetypeData.GadgetType)
+        };
     }
 }

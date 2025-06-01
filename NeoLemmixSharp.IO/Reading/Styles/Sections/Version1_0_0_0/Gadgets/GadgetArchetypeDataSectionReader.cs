@@ -91,7 +91,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = gadgetStateReader.ReadStateData();
+            result[i] = gadgetStateReader.ReadStateData(numberOfGadgetStates);
         }
 
         return result;

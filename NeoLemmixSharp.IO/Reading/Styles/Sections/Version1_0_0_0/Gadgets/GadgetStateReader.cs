@@ -19,7 +19,7 @@ internal readonly ref struct GadgetStateReader
         _stringIdLookup = stringIdLookup;
     }
 
-    internal GadgetStateArchetypeData ReadStateData()
+    internal GadgetStateArchetypeData ReadStateData(int numberOfGadgetStates)
     {
         int stateNameId = _rawFileData.Read16BitUnsignedInteger();
 
@@ -28,7 +28,7 @@ internal readonly ref struct GadgetStateReader
 
         var hitBoxData = ReadHitBoxData();
         var regionData = ReadRegionData();
-        var spriteData = ReadSpriteData();
+        var spriteData = ReadSpriteData(numberOfGadgetStates);
 
         var result = new GadgetStateArchetypeData
         {
@@ -171,8 +171,10 @@ internal readonly ref struct GadgetStateReader
         };
     }
 
-    private SpriteArchetypeData ReadSpriteData()
+    private SpriteArchetypeData ReadSpriteData(int numberOfGadgetStates)
     {
-        throw new NotImplementedException();
+        var spriteDataReader = new GadgetSpriteDataReader(_rawFileData);
+
+        return spriteDataReader.ReadSpriteData(numberOfGadgetStates);
     }
 }

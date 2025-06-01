@@ -4,38 +4,32 @@ using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
-public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
+public static class LogicGateArchetypeBuilder
 {
-    public required StyleIdentifier StyleName { get; init; }
-    public required PieceIdentifier PieceName { get; init; }
-    public required LogicGateType LogicGateType { get; init; }
-
-    public required SpriteArchetypeData SpriteData { get; init; }
-
-    public GadgetBase BuildGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
+    public static GadgetBase BuildGadget(
+        LogicGateType logicGateType,
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
         TribeManager tribeManager)
     {
-        return LogicGateType switch
+        return logicGateType switch
         {
-            LogicGateType.AndGate => CreateAndGateGadget(gadgetSpriteBuilder, gadgetData),
-            LogicGateType.OrGate => CreateOrGateGadget(gadgetSpriteBuilder, gadgetData),
-            LogicGateType.NotGate => CreateNotGateGadget(gadgetSpriteBuilder, gadgetData),
-            LogicGateType.XorGate => CreateXorGateGadget(gadgetSpriteBuilder, gadgetData),
+            LogicGateType.AndGate => CreateAndGateGadget(gadgetArchetypeData, gadgetData),
+            LogicGateType.OrGate => CreateOrGateGadget(gadgetArchetypeData, gadgetData),
+            LogicGateType.NotGate => CreateNotGateGadget(gadgetArchetypeData, gadgetData),
+            LogicGateType.XorGate => CreateXorGateGadget(gadgetArchetypeData, gadgetData),
 
-            _ => Helpers.ThrowUnknownEnumValueException<LogicGateType, GadgetBase>(LogicGateType)
+            _ => Helpers.ThrowUnknownEnumValueException<LogicGateType, GadgetBase>(logicGateType)
         };
     }
 
     private static AndGateGadget CreateAndGateGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData)
     {
         if (gadgetData.OverrideInputNames.Length < 2)
@@ -56,7 +50,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
     }
 
     private static OrGateGadget CreateOrGateGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData)
     {
         if (gadgetData.OverrideInputNames.Length < 2)
@@ -77,7 +71,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
     }
 
     private static NotGateGadget CreateNotGateGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData)
     {
         if (gadgetData.OverrideInputNames.Length != 1)
@@ -99,7 +93,7 @@ public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
     }
 
     private static XorGateGadget CreateXorGateGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData)
     {
         if (gadgetData.OverrideInputNames.Length != 2)

@@ -12,7 +12,7 @@ public enum TribeSpriteLayerColorType
     TribePaintColor
 }
 
-public static class LemmingActionSpriteLayerColorTypeHelpers
+public static class TribeSpriteLayerColorTypeHelpers
 {
     private const int NumberOfEnumValues = 6;
 
