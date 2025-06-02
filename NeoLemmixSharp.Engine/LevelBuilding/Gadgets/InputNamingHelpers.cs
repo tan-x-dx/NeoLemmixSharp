@@ -23,22 +23,22 @@ public static class InputNamingHelpers
 
     private static readonly GadgetInputName[] BasicInputNames =
     [
-        new (Input01Name),
-        new (Input02Name),
-        new (Input03Name),
-        new (Input04Name),
-        new (Input05Name),
-        new (Input06Name),
-        new (Input07Name),
-        new (Input08Name),
-        new (Input09Name),
-        new (Input10Name),
-        new (Input11Name),
-        new (Input12Name),
-        new (Input13Name),
-        new (Input14Name),
-        new (Input15Name),
-        new (Input16Name)
+        new(Input01Name),
+        new(Input02Name),
+        new(Input03Name),
+        new(Input04Name),
+        new(Input05Name),
+        new(Input06Name),
+        new(Input07Name),
+        new(Input08Name),
+        new(Input09Name),
+        new(Input10Name),
+        new(Input11Name),
+        new(Input12Name),
+        new(Input13Name),
+        new(Input14Name),
+        new(Input15Name),
+        new(Input16Name)
     ];
 
     public static ReadOnlySpan<GadgetInputName> GetInputNamesForCount(int numberOfInputs)
@@ -46,7 +46,7 @@ public static class InputNamingHelpers
         ArgumentOutOfRangeException.ThrowIfNegative(numberOfInputs);
         ArgumentOutOfRangeException.ThrowIfZero(numberOfInputs);
 
-        if (numberOfInputs < BasicInputNames.Length)
+        if (numberOfInputs <= BasicInputNames.Length)
             return new ReadOnlySpan<GadgetInputName>(BasicInputNames, 0, numberOfInputs);
 
         return ConstructLargeInputNameArray(numberOfInputs);
@@ -60,7 +60,7 @@ public static class InputNamingHelpers
 
         for (var i = BasicInputNames.Length; i < result.Length; i++)
         {
-            var inputName = $"Input {i}";
+            var inputName = $"Input {i + 1}";
             result[i] = new GadgetInputName(inputName);
         }
 

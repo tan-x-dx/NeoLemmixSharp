@@ -15,10 +15,7 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     public required int DefaultWidth { get; init; }
     public required int DefaultHeight { get; init; }
 
-    public required int NineSliceBottom { get; init; }
-    public required int NineSliceLeft { get; init; }
-    public required int NineSliceTop { get; init; }
-    public required int NineSliceRight { get; init; }
+    public required NineSliceData NineSliceData { get; init; }
 
     internal TerrainArchetypeData()
     {
@@ -46,9 +43,6 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
            DefaultWidth = 0,
            DefaultHeight = 0,
 
-           NineSliceBottom = 0,
-           NineSliceLeft = 0,
-           NineSliceTop = 0,
-           NineSliceRight = 0
+           NineSliceData = default
        };
 }
