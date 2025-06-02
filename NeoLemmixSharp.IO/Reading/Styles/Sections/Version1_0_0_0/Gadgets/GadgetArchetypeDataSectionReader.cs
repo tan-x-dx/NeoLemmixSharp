@@ -21,12 +21,12 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newGadgetArchetypeDatum = ReadNextGadgetArchetypeData(styleData.Identifier, rawFileData);
+            var newGadgetArchetypeDatum = ReadGadgetArchetypeData(styleData.Identifier, rawFileData);
             styleData.GadgetArchetypeData.Add(newGadgetArchetypeDatum.PieceName, newGadgetArchetypeDatum);
         }
     }
 
-    private GadgetArchetypeData ReadNextGadgetArchetypeData(
+    private GadgetArchetypeData ReadGadgetArchetypeData(
         StyleIdentifier styleName,
         RawStyleFileDataReader rawFileData)
     {
@@ -42,8 +42,9 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         uint rawResizeType = rawFileData.Read8BitUnsignedInteger();
         var resizeType = ReadWriteHelpers.DecodeResizeType(rawResizeType);
 
-        var inputNames = ReadInputNames(rawFileData);
         var gadgetStates = ReadGadgetStates(rawFileData);
+
+        AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
 
         var result = new GadgetArchetypeData
         {
@@ -54,32 +55,10 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
             GadgetType = gadgetType,
             ResizeType = resizeType,
 
-            AllGadgetStateData = gadgetStates,
-            AllGadgetInputs = inputNames,
+            AllGadgetStateData = gadgetStates
         };
 
         return result;
-    }
-
-    private GadgetInputData[] ReadInputNames(RawStyleFileDataReader rawFileData)
-    {
-        int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
-
-        var result = CollectionsHelper.GetArrayForSize<GadgetInputData>(numberOfInputNames);
-
-        for (var i = 0; i < result.Length; i++)
-        {
-            result[i] = ReadGadgetInputName(rawFileData);
-        }
-
-        return result;
-    }
-
-    private GadgetInputData ReadGadgetInputName(RawStyleFileDataReader rawFileData)
-    {
-        int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
-        var inputName = _stringIdLookup[inputNameStringId];
-        return new GadgetInputData(inputName);
     }
 
     private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader rawFileData)
@@ -95,5 +74,38 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         }
 
         return result;
+    }
+
+    private static void AssertGadgetStateDataMakesSense(
+        GadgetType gadgetType,
+        GadgetStateArchetypeData[] gadgetStates)
+    {
+        var baseGadgetType = gadgetType.GetBaseGadgetType();
+
+        switch (baseGadgetType)
+        {
+            case BaseGadgetType.HitBox:
+                return;
+
+            case BaseGadgetType.Hatch:
+                AssertHatchGadgetStateDataMakesSense();
+                return;
+
+            case BaseGadgetType.Functional:
+                AssertFunctionalGadgetStateDataMakesSense();
+                return;
+        }
+
+        return;
+
+        void AssertHatchGadgetStateDataMakesSense()
+        {
+            FileReadingException.ReaderAssert(gadgetStates.Length == 2, "Expected exactly 2 states for Hatch gadget!");
+        }
+
+        void AssertFunctionalGadgetStateDataMakesSense()
+        {
+            FileReadingException.ReaderAssert(gadgetStates.Length == 2, "Expected exactly 2 states for Functional gadget!");
+        }
     }
 }

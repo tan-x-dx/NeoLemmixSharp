@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
@@ -16,15 +17,14 @@ public sealed class GadgetMover : FunctionalGadget<GadgetMover.GadgetMoverInput>
 
     public GadgetMover(
         string gadgetName,
-        GadgetState state0,
-        GadgetState state1,
+        GadgetState[] states,
         bool startActive,
-        string inputName,
+        GadgetInputName inputName,
         IMoveableGadget[] gadgets,
         int tickDelay,
         int dx,
         int dy)
-        : base(gadgetName, state0, state1, startActive, 1)
+        : base(gadgetName, states, startActive, 1)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;
@@ -59,7 +59,7 @@ public sealed class GadgetMover : FunctionalGadget<GadgetMover.GadgetMoverInput>
     {
         private readonly GadgetMover _gadget;
 
-        public GadgetMoverInput(string inputName, GadgetMover gadget)
+        public GadgetMoverInput(GadgetInputName inputName, GadgetMover gadget)
             : base(inputName)
         {
             _gadget = gadget;

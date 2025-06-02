@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
@@ -16,15 +17,14 @@ public sealed class GadgetResizer : FunctionalGadget<GadgetResizer.GadgetResizer
 
     public GadgetResizer(
         string gadgetName,
-        GadgetState state0,
-        GadgetState state1,
+        GadgetState[] states,
         bool startActive,
-        string inputName,
+        GadgetInputName inputName,
         HitBoxGadget[] gadgets,
         int tickDelay,
         int dw,
         int dh)
-        : base(gadgetName, state0, state1, startActive, 1)
+        : base(gadgetName, states, startActive, 1)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;
@@ -59,7 +59,7 @@ public sealed class GadgetResizer : FunctionalGadget<GadgetResizer.GadgetResizer
     {
         private readonly GadgetResizer _gadget;
 
-        public GadgetResizerInput(string inputName, GadgetResizer gadget)
+        public GadgetResizerInput(GadgetInputName inputName, GadgetResizer gadget)
             : base(inputName)
         {
             _gadget = gadget;

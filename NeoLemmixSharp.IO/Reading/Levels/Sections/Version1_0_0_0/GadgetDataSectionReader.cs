@@ -25,12 +25,12 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newGadgetDatum = ReadNextGadgetData(rawFileData, levelData);
+            var newGadgetDatum = ReadGadgetData(rawFileData, levelData);
             levelData.AllGadgetData.Add(newGadgetDatum);
         }
     }
 
-    private GadgetData ReadNextGadgetData(RawLevelFileDataReader rawFileData, LevelData levelData)
+    private GadgetData ReadGadgetData(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
@@ -71,23 +71,24 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             OverrideInputNames = inputNames
         };
 
-
         ReadProperties(rawFileData, result);
+
+        AssertGadgetInputDataIsConsistent(result);
 
         return result;
     }
 
-    private GadgetInputData[] ReadOverrideInputNames(RawLevelFileDataReader rawFileData)
+    private GadgetInputName[] ReadOverrideInputNames(RawLevelFileDataReader rawFileData)
     {
         int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
 
-        var result = CollectionsHelper.GetArrayForSize<GadgetInputData>(numberOfInputNames);
+        var result = CollectionsHelper.GetArrayForSize<GadgetInputName>(numberOfInputNames);
 
         for (var i = 0; i < result.Length; i++)
         {
             int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
             var inputName = _stringIdLookup[inputNameStringId];
-            result[i] = new GadgetInputData(inputName);
+            result[i] = new GadgetInputName(inputName);
         }
 
         return result;
@@ -103,5 +104,15 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             int propertyValue = rawFileData.Read32BitSignedInteger();
             result.AddProperty(gadgetProperty, propertyValue);
         }
+    }
+
+    private static void AssertGadgetInputDataIsConsistent(GadgetData result)
+    {
+        if (!result.TryGetProperty(GadgetProperty.NumberOfInputs, out var numberOfInputsSpecified))
+            numberOfInputsSpecified = 0;
+
+        var numberOfOverrideInputNames = result.OverrideInputNames.Length;
+
+        FileReadingException.ReaderAssert(numberOfInputsSpecified == numberOfOverrideInputNames, "Mismatch between number of inputs specified and number of override input names!");
     }
 }
