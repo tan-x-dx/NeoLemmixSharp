@@ -25,9 +25,7 @@ public static class LogicGateArchetypeBuilder
 
         Debug.Assert(states.Length == 2);
 
-        var startActive = gadgetData.InitialStateId > 0;
-
-        return new AndGateGadget(gadgetName, states, startActive, inputNames)
+        return new AndGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames)
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
@@ -55,9 +53,7 @@ public static class LogicGateArchetypeBuilder
 
         Debug.Assert(states.Length == 2);
 
-        var startActive = gadgetData.InitialStateId > 0;
-
-        return new OrGateGadget(gadgetName, states, startActive, inputNames)
+        return new OrGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames)
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
@@ -85,9 +81,7 @@ public static class LogicGateArchetypeBuilder
 
         Debug.Assert(states.Length == 2);
 
-        var startActive = gadgetData.InitialStateId > 0;
-
-        return new NotGateGadget(gadgetName, states, startActive, inputNames[0])
+        return new NotGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames[0])
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
@@ -115,9 +109,7 @@ public static class LogicGateArchetypeBuilder
 
         Debug.Assert(states.Length == 2);
 
-        var startActive = gadgetData.InitialStateId > 0;
-
-        return new XorGateGadget(gadgetName, states, startActive, inputNames[0], inputNames[1])
+        return new XorGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames[0], inputNames[1])
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
