@@ -1,7 +1,18 @@
-﻿namespace NeoLemmixSharp.IO;
+﻿using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.FileFormats;
+
+namespace NeoLemmixSharp.IO;
 
 public static class IoConstants
 {
+    internal const string DefaultStyleIdentifierString = "default";
+    internal const string DefaultStyleName = "Default";
+    internal const string DefaultStyleAuthor = "";
+    internal const string DefaultStyleDescription = "A default style containing most basic functionality.";
+
+    internal static readonly StyleIdentifier DefaultStyleIdentifier = new(DefaultStyleIdentifierString);
+    internal static readonly StyleFormatPair DefaultStyleFormatPair = new(DefaultStyleIdentifier, FileFormatType.Default);
+
     /// <summary>
     /// Assumption: if there are infinite skills available of a certain type,
     /// there'll probably be around this number of actual usages.

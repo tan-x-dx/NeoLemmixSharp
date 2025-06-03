@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Data.Level;
+﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -12,9 +11,6 @@ namespace NeoLemmixSharp.IO.Data.Style;
 
 public static class StyleCache
 {
-    internal static readonly StyleIdentifier DefaultStyleIdentifier = new(EngineConstants.DefaultStyleIdentifier);
-    internal static readonly StyleFormatPair DefaultStyleFormatPair = new(DefaultStyleIdentifier, FileFormatType.Default);
-
     private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(IoConstants.AssumedInitialStyleCapacity * IoConstants.NumberOfLevelsToKeepStyle);
     internal static StyleData DefaultStyleData { get; set; } = null!;
 
@@ -30,7 +26,7 @@ public static class StyleCache
             FileTypeHandler.ReadStyle(DefaultStyleFormatPair);
 #endif
 
-        CachedStyles.Add(DefaultStyleFormatPair, DefaultStyleData);
+        CachedStyles.Add(IoConstants.DefaultStyleFormatPair, DefaultStyleData);
     }
 
     public static void EnsureStylesAreLoadedForLevel(LevelData levelData)
@@ -177,7 +173,7 @@ public static class StyleCache
 
         foreach (var styleFormatPair in notUsedStylesFormatPairs)
         {
-            if (DefaultStyleFormatPair.Equals(styleFormatPair))
+            if (IoConstants.DefaultStyleFormatPair.Equals(styleFormatPair))
                 continue;
 
             CachedStyles.Remove(styleFormatPair);

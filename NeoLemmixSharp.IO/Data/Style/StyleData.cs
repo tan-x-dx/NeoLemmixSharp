@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
+﻿using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
@@ -11,9 +10,14 @@ internal sealed class StyleData
     internal int NumberOfLevelsSinceLastUsed;
 
     internal StyleIdentifier Identifier { get; }
+    internal string Name { get; set; } = string.Empty;
+    internal string Author { get; set; } = string.Empty;
+    internal string Description { get; set; } = string.Empty;
     internal FileFormatType FileFormatType { get; }
 
-    internal StyleData(StyleIdentifier identifier, FileFormatType fileFormatType)
+    internal StyleData(
+        StyleIdentifier identifier,
+        FileFormatType fileFormatType)
     {
         Identifier = identifier;
         FileFormatType = fileFormatType;

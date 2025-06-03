@@ -39,6 +39,9 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
     private void RecordThemeDataStrings(StyleData styleData)
     {
         _stringIdLookup.RecordString(styleData.Identifier.ToString());
+        _stringIdLookup.RecordString(styleData.Name);
+        _stringIdLookup.RecordString(styleData.Author);
+        _stringIdLookup.RecordString(styleData.Description);
         _stringIdLookup.RecordString(styleData.ThemeData.LemmingSpriteData.LemmingSpriteStyleIdentifier.ToString());
     }
 
