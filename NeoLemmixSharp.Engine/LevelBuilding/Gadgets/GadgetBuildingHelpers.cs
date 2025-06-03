@@ -1,8 +1,11 @@
-﻿using NeoLemmixSharp.IO.Data.Style.Gadget;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
-public static class InputNamingHelpers
+public static class GadgetBuildingHelpers
 {
     private const string Input01Name = "Input 01";
     private const string Input02Name = "Input 02";
@@ -63,6 +66,30 @@ public static class InputNamingHelpers
             var inputName = $"Input {i + 1}";
             result[i] = new GadgetInputName(inputName);
         }
+
+        return result;
+    }
+
+    public static GadgetBounds CreateGadgetBounds(
+        GadgetArchetypeData gadgetArchetypeData,
+        GadgetData gadgetData)
+    {
+        var resizeType = gadgetArchetypeData.ResizeType;
+        var baseSize = gadgetArchetypeData.BaseSpriteSize;
+
+        var result = new GadgetBounds
+        {
+            Position = gadgetData.Position
+        };
+
+        var size = new Size(
+            resizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetProperty.Width) : baseSize.W,
+            resizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetProperty.Height) : baseSize.H);
+
+        size = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(size);
+
+        result.Width = size.W;
+        result.Height = size.H;
 
         return result;
     }

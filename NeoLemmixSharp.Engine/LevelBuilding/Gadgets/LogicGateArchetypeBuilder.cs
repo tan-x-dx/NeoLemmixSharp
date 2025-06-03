@@ -20,7 +20,8 @@ public static class LogicGateArchetypeBuilder
             ? gadgetArchetypeData.GadgetName
             : gadgetData.OverrideName;
 
-        var states = BuildGadgetStates(gadgetArchetypeData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
 
         Debug.Assert(states.Length == 2);
 
@@ -31,7 +32,7 @@ public static class LogicGateArchetypeBuilder
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
 
-            CurrentGadgetBounds = new GadgetBounds(),
+            CurrentGadgetBounds = gadgetBounds,
 
             IsFastForward = true
         };
@@ -49,7 +50,8 @@ public static class LogicGateArchetypeBuilder
             ? gadgetArchetypeData.GadgetName
             : gadgetData.OverrideName;
 
-        var states = BuildGadgetStates(gadgetArchetypeData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
 
         Debug.Assert(states.Length == 2);
 
@@ -60,7 +62,7 @@ public static class LogicGateArchetypeBuilder
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
 
-            CurrentGadgetBounds = new GadgetBounds(),
+            CurrentGadgetBounds = gadgetBounds,
 
             IsFastForward = true
         };
@@ -78,7 +80,8 @@ public static class LogicGateArchetypeBuilder
             ? gadgetArchetypeData.GadgetName
             : gadgetData.OverrideName;
 
-        var states = BuildGadgetStates(gadgetArchetypeData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
 
         Debug.Assert(states.Length == 2);
 
@@ -89,7 +92,7 @@ public static class LogicGateArchetypeBuilder
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
 
-            CurrentGadgetBounds = new GadgetBounds(),
+            CurrentGadgetBounds = gadgetBounds,
 
             IsFastForward = true
         };
@@ -107,7 +110,8 @@ public static class LogicGateArchetypeBuilder
             ? gadgetArchetypeData.GadgetName
             : gadgetData.OverrideName;
 
-        var states = BuildGadgetStates(gadgetArchetypeData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
 
         Debug.Assert(states.Length == 2);
 
@@ -118,7 +122,7 @@ public static class LogicGateArchetypeBuilder
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
 
-            CurrentGadgetBounds = new GadgetBounds(),
+            CurrentGadgetBounds = gadgetBounds,
 
             IsFastForward = true
         };
@@ -140,25 +144,30 @@ public static class LogicGateArchetypeBuilder
             return gadgetData.OverrideInputNames;
         }
 
-        return InputNamingHelpers.GetInputNamesForCount(numberOfInputs);
+        return GadgetBuildingHelpers.GetInputNamesForCount(numberOfInputs);
     }
 
-    private static GadgetState[] BuildGadgetStates(GadgetArchetypeData gadgetArchetypeData)
+    private static GadgetState[] BuildGadgetStates(GadgetArchetypeData gadgetArchetypeData, GadgetBounds gadgetBounds)
     {
         Debug.Assert(gadgetArchetypeData.AllGadgetStateData.Length == 2);
 
         var result = new GadgetState[2];
 
-        result[0] = BuildGadgetState(gadgetArchetypeData.AllGadgetStateData[0]);
-        result[1] = BuildGadgetState(gadgetArchetypeData.AllGadgetStateData[1]);
+        result[0] = BuildGadgetState(gadgetArchetypeData.AllGadgetStateData, 0, gadgetBounds);
+        result[1] = BuildGadgetState(gadgetArchetypeData.AllGadgetStateData, 1, gadgetBounds);
 
         return result;
     }
 
-    private static GadgetState BuildGadgetState(GadgetStateArchetypeData gadgetStateArchetypeData)
+    private static GadgetState BuildGadgetState(
+        GadgetStateArchetypeData[] gadgetStateArchetypeData,
+        int stateId,
+        GadgetBounds gadgetBounds)
     {
-        var stateName = gadgetStateArchetypeData.StateName;
-        var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(gadgetStateArchetypeData);
+        var state = gadgetStateArchetypeData[stateId];
+
+        var stateName = state.StateName;
+        var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(state.AnimationLayerData, gadgetBounds);
 
         return new GadgetState(stateName, [], null, animationController);
     }

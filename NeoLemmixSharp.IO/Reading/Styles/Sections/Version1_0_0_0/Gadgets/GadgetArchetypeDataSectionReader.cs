@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.FileFormats;
@@ -42,6 +43,12 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         uint rawResizeType = rawFileData.Read8BitUnsignedInteger();
         var resizeType = ReadWriteHelpers.DecodeResizeType(rawResizeType);
 
+        int baseWidth = rawFileData.Read16BitUnsignedInteger();
+        int baseHeight = rawFileData.Read16BitUnsignedInteger();
+
+        int numberOfLayers = rawFileData.Read8BitUnsignedInteger();
+        int numberOfFrames = rawFileData.Read8BitUnsignedInteger();
+
         var gadgetStates = ReadGadgetStates(rawFileData);
 
         AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
@@ -54,6 +61,10 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
             GadgetType = gadgetType,
             ResizeType = resizeType,
+
+            BaseSpriteSize = new Size(baseWidth, baseHeight),
+            MaxNumberOfFrames = numberOfFrames,
+            NumberOfLayers = numberOfLayers,
 
             AllGadgetStateData = gadgetStates
         };
@@ -70,7 +81,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = gadgetStateReader.ReadStateData(numberOfGadgetStates);
+            result[i] = gadgetStateReader.ReadStateData();
         }
 
         return result;

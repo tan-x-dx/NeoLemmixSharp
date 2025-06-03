@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Style;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -90,7 +89,7 @@ public static class TextureCache
 
     public static void CleanUpOldTextures()
     {
-        var notUsedTextureTypeKeys = new SimpleList<TextureTypeKey>(LongLivedTextures.Count);
+        var notUsedTextureTypeKeys = new ArrayListWrapper<TextureTypeKey>(LongLivedTextures.Count);
 
         foreach (var textureTypeKey in LongLivedTextures.Keys)
         {

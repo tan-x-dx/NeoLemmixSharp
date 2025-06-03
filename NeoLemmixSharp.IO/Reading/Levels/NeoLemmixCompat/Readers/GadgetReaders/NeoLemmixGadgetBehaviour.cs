@@ -72,13 +72,13 @@ internal static class NeoLemmixGadgetBehaviourExtensions
 
             _ => ThrowUnknownBehaviourException<GadgetBehaviour>(neoLemmixGadgetBehaviour)
         };
-    }*/
+    }
 
     public static GadgetStateArchetypeData[] GetGadgetStates(
         this NeoLemmixGadgetArchetypeData archetypeData,
         SpriteArchetypeData spriteData)
     {
-        /*  if (archetypeData.Behaviour is
+          if (archetypeData.Behaviour is
               NeoLemmixGadgetBehaviour.None or
               NeoLemmixGadgetBehaviour.Entrance or
               NeoLemmixGadgetBehaviour.Exit or
@@ -102,10 +102,10 @@ internal static class NeoLemmixGadgetBehaviourExtensions
               NeoLemmixGadgetBehaviour.Trap or
               NeoLemmixGadgetBehaviour.TrapOnce)
               return GetGadgetStatesForTraps(archetypeData, spriteData);
-          */
+          
         return ToBeImplemented(archetypeData.Behaviour);
     }
-    /*
+    
     private static GadgetStateArchetypeData[] GetSingleGadgetState(
         NeoLemmixGadgetArchetypeData archetypeData,
         SpriteData spriteData)
