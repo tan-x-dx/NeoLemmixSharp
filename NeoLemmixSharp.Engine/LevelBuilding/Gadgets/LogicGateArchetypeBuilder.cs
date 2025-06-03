@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -136,7 +135,10 @@ public static class LogicGateArchetypeBuilder
         ArgumentOutOfRangeException.ThrowIfGreaterThan(numberOfInputs, maxExpectedInputCount);
 
         if (gadgetData.OverrideInputNames.Length > 0)
+        {
+            Debug.Assert(gadgetData.OverrideInputNames.Length == numberOfInputs);
             return gadgetData.OverrideInputNames;
+        }
 
         return InputNamingHelpers.GetInputNamesForCount(numberOfInputs);
     }
@@ -156,15 +158,8 @@ public static class LogicGateArchetypeBuilder
     private static GadgetState BuildGadgetState(GadgetStateArchetypeData gadgetStateArchetypeData)
     {
         var stateName = gadgetStateArchetypeData.StateName;
-        var animationController = BuildAnimationController(gadgetStateArchetypeData);
+        var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(gadgetStateArchetypeData);
 
         return new GadgetState(stateName, [], null, animationController);
-    }
-
-    private static AnimationController BuildAnimationController(GadgetStateArchetypeData gadgetStateArchetypeData)
-    {
-        //gadgetStateArchetypeData.SpriteData.SpriteArchetypeDataForStates[0].
-
-        throw new NotImplementedException();
     }
 }

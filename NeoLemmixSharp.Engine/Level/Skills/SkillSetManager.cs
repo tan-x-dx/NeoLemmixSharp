@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Tribes;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data.Level;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -73,11 +74,11 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         {
             if (skillTrackingDatum.IsInfinite)
             {
-                result += EngineConstants.AssumedSkillUsageForInfiniteSkillCounts;
+                result += IoConstants.AssumedSkillUsageForInfiniteSkillCounts;
             }
             else if (skillTrackingDatum.SkillCount == 0)
             {
-                result += EngineConstants.AssumedSkillCountsFromPickups;
+                result += IoConstants.AssumedSkillCountsFromPickups;
             }
             else
             {

@@ -100,7 +100,7 @@ public static class TextureCache
             ref var usageData = ref CollectionsMarshal.GetValueRefOrNullRef(LongLivedTextures, textureTypeKey);
             usageData = usageData.IncrementTimeSinceLastUsage();
 
-            if (usageData.NumberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
+            if (usageData.NumberOfLevelsSinceLastUsed > IoConstants.NumberOfLevelsToKeepStyle)
             {
                 notUsedTextureTypeKeys.Add(textureTypeKey);
             }

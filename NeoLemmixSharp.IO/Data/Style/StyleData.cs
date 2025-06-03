@@ -20,6 +20,6 @@ internal sealed class StyleData
     }
 
     internal ThemeData ThemeData { get; set; } = null!;
-    internal Dictionary<PieceIdentifier, TerrainArchetypeData> TerrainArchetypeData { get; } = new(EngineConstants.AssumedNumberOfTerrainArchetypeDataInStyle);
-    internal Dictionary<PieceIdentifier, GadgetArchetypeData> GadgetArchetypeData { get; } = new(EngineConstants.AssumedNumberOfGadgetArchetypeDataInStyle);
+    internal Dictionary<PieceIdentifier, TerrainArchetypeData> TerrainArchetypeData { get; } = new(IoConstants.AssumedNumberOfTerrainArchetypeDataInStyle);
+    internal Dictionary<PieceIdentifier, GadgetArchetypeData> GadgetArchetypeData { get; } = new(IoConstants.AssumedNumberOfGadgetArchetypeDataInStyle);
 }
