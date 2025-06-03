@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 
@@ -112,10 +113,7 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
         IsSteel = _isSteel,
         ResizeType = _resizeType,
 
-        NineSliceRight = _nineSliceRight,
-        NineSliceTop = _nineSliceTop,
-        NineSliceLeft = _nineSliceLeft,
-        NineSliceBottom = _nineSliceBottom,
+        NineSliceData = new NineSliceData(_nineSliceBottom, _nineSliceLeft, _nineSliceTop, _nineSliceRight),
 
         DefaultWidth = _defaultWidth,
         DefaultHeight = _defaultHeight,

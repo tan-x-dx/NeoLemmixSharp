@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
@@ -14,13 +15,12 @@ public sealed class GadgetStateChanger : FunctionalGadget<GadgetStateChanger.Sta
 
     public GadgetStateChanger(
         string gadgetName,
-        GadgetState state0,
-        GadgetState state1,
+        GadgetState[] states,
         bool startActive,
-        string inputName,
+        GadgetInputName inputName,
         HitBoxGadget gadget,
         int newState)
-        : base(gadgetName, state0, state1, startActive, 1)
+        : base(gadgetName, states, startActive, 1)
     {
         _gadget = gadget;
         _newState = newState;
@@ -44,7 +44,7 @@ public sealed class GadgetStateChanger : FunctionalGadget<GadgetStateChanger.Sta
     {
         private readonly GadgetStateChanger _gadget;
 
-        public StateChangerGadgetInput(string inputName, GadgetStateChanger gadget)
+        public StateChangerGadgetInput(GadgetInputName inputName, GadgetStateChanger gadget)
             : base(inputName)
         {
             _gadget = gadget;

@@ -15,7 +15,7 @@ public static class StyleCache
     internal static readonly StyleIdentifier DefaultStyleIdentifier = new(EngineConstants.DefaultStyleIdentifier);
     internal static readonly StyleFormatPair DefaultStyleFormatPair = new(DefaultStyleIdentifier, FileFormatType.Default);
 
-    private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(EngineConstants.AssumedInitialStyleCapacity * EngineConstants.NumberOfLevelsToKeepStyle);
+    private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(IoConstants.AssumedInitialStyleCapacity * IoConstants.NumberOfLevelsToKeepStyle);
     internal static StyleData DefaultStyleData { get; set; } = null!;
 
     public static void Initialise()
@@ -61,7 +61,7 @@ public static class StyleCache
 
     private static HashSet<StyleFormatPair> GetAllMentionedStyles(LevelData levelData)
     {
-        var result = new HashSet<StyleFormatPair>(EngineConstants.AssumedInitialStyleCapacity)
+        var result = new HashSet<StyleFormatPair>(IoConstants.AssumedInitialStyleCapacity)
         {
             new(levelData.LevelTheme, levelData.FileFormatType)
         };
@@ -89,7 +89,7 @@ public static class StyleCache
 
     public static Dictionary<StylePiecePair, TerrainArchetypeData> GetAllTerrainArchetypeData(LevelData levelData)
     {
-        var result = new Dictionary<StylePiecePair, TerrainArchetypeData>(EngineConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
+        var result = new Dictionary<StylePiecePair, TerrainArchetypeData>(IoConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
 
         foreach (var prototype in levelData.AllTerrainData)
         {
@@ -129,7 +129,7 @@ public static class StyleCache
 
     public static Dictionary<StylePiecePair, GadgetArchetypeData> GetAllGadgetArchetypeData(LevelData levelData)
     {
-        var result = new Dictionary<StylePiecePair, GadgetArchetypeData>(EngineConstants.AssumedNumberOfGadgetArchetypeDataInLevel);
+        var result = new Dictionary<StylePiecePair, GadgetArchetypeData>(IoConstants.AssumedNumberOfGadgetArchetypeDataInLevel);
 
         foreach (var prototype in levelData.AllGadgetData)
         {
@@ -161,7 +161,7 @@ public static class StyleCache
 
     public static void CleanUpOldStyles()
     {
-        var notUsedStylesFormatPairs = new List<StyleFormatPair>(EngineConstants.AssumedInitialStyleCapacity);
+        var notUsedStylesFormatPairs = new List<StyleFormatPair>(IoConstants.AssumedInitialStyleCapacity);
 
         foreach (var kvp in CachedStyles)
         {
@@ -169,7 +169,7 @@ public static class StyleCache
 
             numberOfLevelsSinceLastUsed++;
 
-            if (numberOfLevelsSinceLastUsed > EngineConstants.NumberOfLevelsToKeepStyle)
+            if (numberOfLevelsSinceLastUsed > IoConstants.NumberOfLevelsToKeepStyle)
             {
                 notUsedStylesFormatPairs.Add(kvp.Key);
             }

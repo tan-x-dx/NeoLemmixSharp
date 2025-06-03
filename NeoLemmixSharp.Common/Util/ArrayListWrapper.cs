@@ -9,6 +9,12 @@ public ref struct ArrayListWrapper<T>
 
     private int _size;
 
+    public ArrayListWrapper(T[] array)
+    {
+        _array = array;
+        _size = 0;
+    }
+
     public ArrayListWrapper(int capacity)
     {
         _array = CollectionsHelper.GetArrayForSize<T>(capacity);
@@ -35,7 +41,7 @@ public ref struct ArrayListWrapper<T>
     [DoesNotReturn]
     private static void ThrowReachedCapacityException() => throw new InvalidOperationException("This array is full!");
 
-    public readonly Span<T> AsSpan() => new(_array, 0, _size);
+    public readonly ReadOnlySpan<T> AsReadOnlySpan() => new(_array, 0, _size);
 
     public readonly T[] GetArray() => _array;
 }

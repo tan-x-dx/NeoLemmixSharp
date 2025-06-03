@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using NeoLemmixSharp.IO.Data.Style.Gadget;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
@@ -6,9 +7,9 @@ public abstract class GadgetInput : IEquatable<GadgetInput>
 {
     public string InputName { get; }
 
-    protected GadgetInput(string inputName)
+    protected GadgetInput(GadgetInputName inputName)
     {
-        InputName = inputName;
+        InputName = inputName.ToString();
     }
 
     public virtual void OnRegistered() { }

@@ -24,7 +24,7 @@ public sealed class GadgetData
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }
 
-    public required GadgetInputData[] OverrideInputNames { get; init; }
+    public required GadgetInputName[] OverrideInputNames { get; init; }
 
     public int NumberOfGadgetProperties => _properties.Count;
 

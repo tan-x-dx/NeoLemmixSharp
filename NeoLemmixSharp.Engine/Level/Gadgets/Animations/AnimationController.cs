@@ -7,7 +7,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 public sealed class AnimationController
 {
     private readonly AnimationLayer[] _layers;
-
     private readonly GadgetBounds _currentGadgetBounds;
 
     public AnimationController(

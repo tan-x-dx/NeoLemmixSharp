@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+﻿namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 
 public readonly struct AnimationLayerParameters(int frameStart, int frameEnd, int frameDelta, int transitionToFrame)
 {

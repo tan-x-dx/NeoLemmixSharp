@@ -1,9 +1,11 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
@@ -28,7 +30,8 @@ internal readonly ref struct GadgetStateReader
 
         var hitBoxData = ReadHitBoxData();
         var regionData = ReadRegionData();
-        var spriteData = ReadSpriteData();
+
+        var animationLayerData = ReadAnimationLayerData();
 
         var result = new GadgetStateArchetypeData
         {
@@ -36,7 +39,8 @@ internal readonly ref struct GadgetStateReader
             HitBoxOffset = new Point(offsetX, offsetY),
             HitBoxData = hitBoxData,
             RegionData = regionData,
-            SpriteData = spriteData,
+
+            AnimationLayerData = animationLayerData,
         };
 
         return result;
@@ -171,8 +175,61 @@ internal readonly ref struct GadgetStateReader
         };
     }
 
-    private SpriteArchetypeData ReadSpriteData()
+    private AnimationLayerArchetypeData[] ReadAnimationLayerData()
     {
-        throw new NotImplementedException();
+        int numberOfAnimationBehaviours = _rawFileData.Read8BitUnsignedInteger();
+
+        FileReadingException.ReaderAssert(numberOfAnimationBehaviours > 0, "Zero animation data defined!");
+
+        var result = new AnimationLayerArchetypeData[numberOfAnimationBehaviours];
+
+        for (var i = 0; i < result.Length; i++)
+        {
+            result[i] = ReadAnimationBehaviourArchetypData();
+        }
+
+        return result;
+    }
+
+    private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData()
+    {
+        var animationLayerParameters = ReadAnimationLayerParameters();
+
+        var nineSliceData = ReadNineSliceData();
+
+        uint rawColorType = _rawFileData.Read8BitUnsignedInteger();
+        var colorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawColorType);
+
+        int initialFrame = _rawFileData.Read8BitUnsignedInteger();
+        int nextGadgetState = _rawFileData.Read8BitUnsignedInteger();
+
+        return new AnimationLayerArchetypeData
+        {
+            AnimationLayerParameters = animationLayerParameters,
+            NineSliceData = nineSliceData,
+            ColorType = colorType,
+            InitialFrame = initialFrame,
+            NextGadgetState = nextGadgetState - 1
+        };
+    }
+
+    private AnimationLayerParameters ReadAnimationLayerParameters()
+    {
+        int frameStart = _rawFileData.Read8BitUnsignedInteger();
+        int frameEnd = _rawFileData.Read8BitUnsignedInteger();
+        int frameDelta = _rawFileData.Read8BitUnsignedInteger();
+        int transitionToFrame = _rawFileData.Read8BitUnsignedInteger();
+
+        return new AnimationLayerParameters(frameStart, frameEnd, frameDelta, transitionToFrame);
+    }
+
+    private NineSliceData ReadNineSliceData()
+    {
+        int nineSliceBottom = _rawFileData.Read8BitUnsignedInteger();
+        int nineSliceLeft = _rawFileData.Read8BitUnsignedInteger();
+        int nineSliceTop = _rawFileData.Read8BitUnsignedInteger();
+        int nineSliceRight = _rawFileData.Read8BitUnsignedInteger();
+
+        return new NineSliceData(nineSliceBottom, nineSliceLeft, nineSliceTop, nineSliceRight);
     }
 }

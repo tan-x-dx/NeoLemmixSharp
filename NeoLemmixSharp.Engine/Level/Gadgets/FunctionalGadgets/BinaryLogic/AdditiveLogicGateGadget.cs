@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
@@ -12,11 +13,10 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
 
     protected AdditiveLogicGateGadget(
         string gadgetName,
-        GadgetState state0,
-        GadgetState state1,
+        GadgetState[] states,
         bool startActive,
-        ReadOnlySpan<string> inputNames)
-        : base(gadgetName, state0, state1, startActive, inputNames.Length)
+        ReadOnlySpan<GadgetInputName> inputNames)
+        : base(gadgetName, states, startActive, inputNames.Length)
     {
         _numberOfInputs = inputNames.Length;
         _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput>(this);
@@ -53,7 +53,7 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
 
         public AdditiveGateGadgetInput(
             int id,
-            string inputName,
+            GadgetInputName inputName,
             AdditiveLogicGateGadget gadget)
             : base(inputName)
         {
@@ -74,11 +74,10 @@ public sealed class AndGateGadget : AdditiveLogicGateGadget
 {
     public AndGateGadget(
         string gadgetName,
-        GadgetState state0,
-        GadgetState state1,
+        GadgetState[] states,
         bool startActive,
-        ReadOnlySpan<string> inputNames)
-        : base(gadgetName, state0, state1, startActive, inputNames)
+        ReadOnlySpan<GadgetInputName> inputNames)
+        : base(gadgetName, states, startActive, inputNames)
     {
     }
 
@@ -92,11 +91,10 @@ public sealed class OrGateGadget : AdditiveLogicGateGadget
 {
     public OrGateGadget(
         string gadgetName,
-        GadgetState state0,
-        GadgetState state1,
+        GadgetState[] states,
         bool startActive,
-        ReadOnlySpan<string> inputNames)
-        : base(gadgetName, state0, state1, startActive, inputNames)
+        ReadOnlySpan<GadgetInputName> inputNames)
+        : base(gadgetName, states, startActive, inputNames)
     {
     }
 

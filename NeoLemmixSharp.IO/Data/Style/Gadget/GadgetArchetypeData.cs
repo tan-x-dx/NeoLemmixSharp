@@ -13,8 +13,11 @@ public sealed class GadgetArchetypeData
     public required GadgetType GadgetType { get; init; }
     public required ResizeType ResizeType { get; init; }
 
+    public required Size BaseSpriteSize { get; init; }
+    public required int NumberOfLayers { get; init; }
+    public required int MaxNumberOfFrames { get; init; }
+
     public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
-    public required GadgetInputData[] AllGadgetInputs { get; init; }
 
     internal GadgetArchetypeData()
     {

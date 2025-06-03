@@ -1,123 +1,174 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
-using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
-public sealed class LogicGateArchetypeBuilder : IGadgetArchetypeBuilder
+public static class LogicGateArchetypeBuilder
 {
-    public required StyleIdentifier StyleName { get; init; }
-    public required PieceIdentifier PieceName { get; init; }
-    public required LogicGateType LogicGateType { get; init; }
-
-    public required SpriteArchetypeData SpriteData { get; init; }
-
-    public GadgetBase BuildGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
-        GadgetData gadgetData,
-        LemmingManager lemmingManager,
-        TribeManager tribeManager)
+    public static AndGateGadget BuildAndGateGadget(
+        GadgetArchetypeData gadgetArchetypeData,
+        GadgetData gadgetData)
     {
-        return LogicGateType switch
-        {
-            LogicGateType.AndGate => CreateAndGateGadget(gadgetSpriteBuilder, gadgetData),
-            LogicGateType.OrGate => CreateOrGateGadget(gadgetSpriteBuilder, gadgetData),
-            LogicGateType.NotGate => CreateNotGateGadget(gadgetSpriteBuilder, gadgetData),
-            LogicGateType.XorGate => CreateXorGateGadget(gadgetSpriteBuilder, gadgetData),
+        var inputNames = GetInputNames(gadgetData, 2, 256);
 
-            _ => Helpers.ThrowUnknownEnumValueException<LogicGateType, GadgetBase>(LogicGateType)
+        Debug.Assert(inputNames.Length >= 2);
+
+        var gadgetName = string.IsNullOrEmpty(gadgetData.OverrideName)
+            ? gadgetArchetypeData.GadgetName
+            : gadgetData.OverrideName;
+
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
+
+        Debug.Assert(states.Length == 2);
+
+        var startActive = gadgetData.InitialStateId > 0;
+
+        return new AndGateGadget(gadgetName, states, startActive, inputNames)
+        {
+            Id = gadgetData.Id,
+            Orientation = gadgetData.Orientation,
+
+            CurrentGadgetBounds = gadgetBounds,
+
+            IsFastForward = true
         };
     }
 
-    private static AndGateGadget CreateAndGateGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
+    public static OrGateGadget BuildOrGateGadget(
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData)
     {
-        if (gadgetData.OverrideInputNames.Length < 2)
-            throw new ArgumentException("Expected at least 2 inputs!");
+        var inputNames = GetInputNames(gadgetData, 2, 256);
 
-        return null;
+        Debug.Assert(inputNames.Length >= 2);
 
-        /*
-        return new AndGateGadget(null, null, gadgetData.InputNames)
+        var gadgetName = string.IsNullOrEmpty(gadgetData.OverrideName)
+            ? gadgetArchetypeData.GadgetName
+            : gadgetData.OverrideName;
+
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
+
+        Debug.Assert(states.Length == 2);
+
+        var startActive = gadgetData.InitialStateId > 0;
+
+        return new OrGateGadget(gadgetName, states, startActive, inputNames)
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
 
-            CurrentGadgetBounds = new GadgetBounds(),
+            CurrentGadgetBounds = gadgetBounds,
 
             IsFastForward = true
-        };*/
+        };
     }
 
-    private static OrGateGadget CreateOrGateGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
+    public static NotGateGadget BuildNotGateGadget(
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData)
     {
-        if (gadgetData.OverrideInputNames.Length < 2)
-            throw new ArgumentException("Expected at least 2 inputs!");
+        var inputNames = GetInputNames(gadgetData, 1, 1);
 
-        return null;
+        Debug.Assert(inputNames.Length == 1);
 
-        /*
-        return new OrGateGadget(null, null, gadgetData.InputNames)
+        var gadgetName = string.IsNullOrEmpty(gadgetData.OverrideName)
+            ? gadgetArchetypeData.GadgetName
+            : gadgetData.OverrideName;
+
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
+
+        Debug.Assert(states.Length == 2);
+
+        var startActive = gadgetData.InitialStateId > 0;
+
+        return new NotGateGadget(gadgetName, states, startActive, inputNames[0])
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
 
-            CurrentGadgetBounds = new GadgetBounds(),
+            CurrentGadgetBounds = gadgetBounds,
 
             IsFastForward = true
-        };*/
+        };
     }
 
-    private static NotGateGadget CreateNotGateGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
+    public static XorGateGadget BuildXorGateGadget(
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData)
     {
-        if (gadgetData.OverrideInputNames.Length != 1)
-            throw new InvalidOperationException("Expected precisely ONE input name!");
+        var inputNames = GetInputNames(gadgetData, 2, 2);
 
-        return null;
+        Debug.Assert(inputNames.Length == 2);
 
-        /*
-        var inputName = gadgetData.InputNames[0];
-        return new NotGateGadget(null, null, inputName)
+        var gadgetName = string.IsNullOrEmpty(gadgetData.OverrideName)
+            ? gadgetArchetypeData.GadgetName
+            : gadgetData.OverrideName;
+
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
+
+        Debug.Assert(states.Length == 2);
+
+        var startActive = gadgetData.InitialStateId > 0;
+
+        return new XorGateGadget(gadgetName, states, startActive, inputNames[0], inputNames[1])
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
 
-            CurrentGadgetBounds = new GadgetBounds(),
+            CurrentGadgetBounds = gadgetBounds,
 
             IsFastForward = true
-        };*/
+        };
     }
 
-    private static XorGateGadget CreateXorGateGadget(
-        GadgetRendererBuilder gadgetSpriteBuilder,
-        GadgetData gadgetData)
+    private static ReadOnlySpan<GadgetInputName> GetInputNames(
+        GadgetData gadgetData,
+        int minExpectedInputCount,
+        int maxExpectedInputCount)
     {
-        if (gadgetData.OverrideInputNames.Length != 2)
-            throw new InvalidOperationException("Expected precisely TWO input names!");
+        var numberOfInputs = gadgetData.GetProperty(GadgetProperty.NumberOfInputs);
 
-        return null;
+        ArgumentOutOfRangeException.ThrowIfLessThan(numberOfInputs, minExpectedInputCount);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(numberOfInputs, maxExpectedInputCount);
 
-        /*
-        var inputName1 = gadgetData.InputNames[0];
-        var inputName2 = gadgetData.InputNames[1];
-        return new XorGateGadget(null, null, inputName1, inputName2)
+        if (gadgetData.OverrideInputNames.Length > 0)
         {
-            Id = gadgetData.Id,
-            Orientation = gadgetData.Orientation,
+            Debug.Assert(gadgetData.OverrideInputNames.Length == numberOfInputs);
+            return gadgetData.OverrideInputNames;
+        }
 
-            CurrentGadgetBounds = new GadgetBounds(),
+        return GadgetBuildingHelpers.GetInputNamesForCount(numberOfInputs);
+    }
 
-            IsFastForward = true
-        };*/
+    private static GadgetState[] BuildGadgetStates(GadgetArchetypeData gadgetArchetypeData, GadgetBounds gadgetBounds)
+    {
+        Debug.Assert(gadgetArchetypeData.AllGadgetStateData.Length == 2);
+
+        var result = new GadgetState[2];
+
+        result[0] = BuildGadgetState(gadgetArchetypeData.AllGadgetStateData, 0, gadgetBounds);
+        result[1] = BuildGadgetState(gadgetArchetypeData.AllGadgetStateData, 1, gadgetBounds);
+
+        return result;
+    }
+
+    private static GadgetState BuildGadgetState(
+        GadgetStateArchetypeData[] gadgetStateArchetypeData,
+        int stateId,
+        GadgetBounds gadgetBounds)
+    {
+        var state = gadgetStateArchetypeData[stateId];
+
+        var stateName = state.StateName;
+        var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(state.AnimationLayerData, gadgetBounds);
+
+        return new GadgetState(stateName, [], null, animationController);
     }
 }

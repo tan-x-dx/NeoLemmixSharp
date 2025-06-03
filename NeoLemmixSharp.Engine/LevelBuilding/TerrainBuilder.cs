@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
@@ -21,7 +22,7 @@ public readonly ref struct TerrainBuilder
     private readonly ArrayWrapper2D<PixelType> _terrainPixels;
 
     private readonly Dictionary<StylePiecePair, TerrainArchetypeData> _terrainArchetypeDataLookup;
-    private readonly Dictionary<StylePiecePair, ArrayWrapper2D<Color>> _colorDataLookup = new(EngineConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
+    private readonly Dictionary<StylePiecePair, ArrayWrapper2D<Color>> _colorDataLookup = new(IoConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
 
     public TerrainBuilder(GraphicsDevice graphicsDevice, LevelData levelData)
     {

@@ -39,7 +39,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
         {
             var fileExtension = Path.GetExtension(filePath.AsSpan());
 
-            if (fileExtension.Equals(DefaultFileExtensions.LevelStyleExtension, StringComparison.OrdinalIgnoreCase))
+            if (fileExtension.Equals(DefaultFileExtensions.StyleFileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 foundFilePath = filePath;
                 return true;

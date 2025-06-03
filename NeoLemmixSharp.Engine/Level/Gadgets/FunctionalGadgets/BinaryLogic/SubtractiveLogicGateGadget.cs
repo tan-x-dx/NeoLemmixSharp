@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
@@ -8,11 +9,10 @@ public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveL
 
     protected SubtractiveLogicGateGadget(
         string gadgetName,
-        GadgetState state0,
-        GadgetState state1,
+        GadgetState[] states,
         bool startActive,
         int expectedNumberOfInputs)
-        : base(gadgetName, state0, state1, startActive, expectedNumberOfInputs)
+        : base(gadgetName, states, startActive, expectedNumberOfInputs)
     {
     }
 
@@ -37,7 +37,7 @@ public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveL
 
         public bool Signal { get; private set; }
 
-        public SubtractiveLogicGateGadgetInput(string inputName, SubtractiveLogicGateGadget gadget)
+        public SubtractiveLogicGateGadgetInput(GadgetInputName inputName, SubtractiveLogicGateGadget gadget)
             : base(inputName)
         {
             _gadget = gadget;
@@ -57,11 +57,10 @@ public sealed class NotGateGadget : SubtractiveLogicGateGadget
 
     public NotGateGadget(
         string gadgetName,
-        GadgetState state0,
-        GadgetState state1,
+        GadgetState[] states,
         bool startActive,
-        string inputName)
-        : base(gadgetName, state0, state1, startActive, 1)
+        GadgetInputName inputName)
+        : base(gadgetName, states, startActive, 1)
     {
         _input = new SubtractiveLogicGateGadgetInput(inputName, this);
         RegisterInput(_input);
@@ -80,12 +79,11 @@ public sealed class XorGateGadget : SubtractiveLogicGateGadget
 
     public XorGateGadget(
         string gadgetName,
-        GadgetState state0,
-        GadgetState state1,
+        GadgetState[] states,
         bool startActive,
-        string input1Name,
-        string input2Name)
-        : base(gadgetName, state0, state1, startActive, 2)
+        GadgetInputName input1Name,
+        GadgetInputName input2Name)
+        : base(gadgetName, states, startActive, 2)
     {
         _input1 = new SubtractiveLogicGateGadgetInput(input1Name, this);
         _input2 = new SubtractiveLogicGateGadgetInput(input2Name, this);

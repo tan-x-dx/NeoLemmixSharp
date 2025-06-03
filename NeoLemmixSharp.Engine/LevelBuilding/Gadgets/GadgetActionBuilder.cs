@@ -19,12 +19,12 @@ public static class GadgetActionBuilder
         out GadgetAction[] onLemmingPresentActions,
         out GadgetAction[] onLemmingExitActions)
     {
-        onLemmingEnterActions = ReadGadgetActionSection(hitBoxData.OnLemmingEnterActions);
-        onLemmingPresentActions = ReadGadgetActionSection(hitBoxData.OnLemmingPresentActions);
-        onLemmingExitActions = ReadGadgetActionSection(hitBoxData.OnLemmingExitActions);
+        onLemmingEnterActions = BuildGadgetActions(hitBoxData.OnLemmingEnterActions);
+        onLemmingPresentActions = BuildGadgetActions(hitBoxData.OnLemmingPresentActions);
+        onLemmingExitActions = BuildGadgetActions(hitBoxData.OnLemmingExitActions);
     }
 
-    private static GadgetAction[] ReadGadgetActionSection(GadgetActionData[] gadgetActions)
+    private static GadgetAction[] BuildGadgetActions(GadgetActionData[] gadgetActions)
     {
         var result = CollectionsHelper.GetArrayForSize<GadgetAction>(gadgetActions.Length);
 

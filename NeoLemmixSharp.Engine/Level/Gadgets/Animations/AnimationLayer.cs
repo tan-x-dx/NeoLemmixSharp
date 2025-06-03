@@ -1,13 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 
 public sealed class AnimationLayer
 {
     private readonly AnimationLayerParameters _animationLayerParameters;
-    private readonly NineSliceDataThing[] _nineSliceData;
+    private readonly NineSliceRenderer[] _nineSliceData;
 
     private readonly int _nextGadgetState;
     private int _currentFrame;
@@ -18,7 +18,7 @@ public sealed class AnimationLayer
 
     public AnimationLayer(
         AnimationLayerParameters animationLayerParameters,
-        NineSliceDataThing[] nineSliceData,
+        NineSliceRenderer[] nineSliceData,
         int initialFrame,
         int nextGadgetState)
     {

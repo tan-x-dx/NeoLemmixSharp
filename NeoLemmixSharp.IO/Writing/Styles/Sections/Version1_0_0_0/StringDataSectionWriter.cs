@@ -59,11 +59,6 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
             var gadgetArchetypeDatum = kvp.Value;
             _stringIdLookup.RecordString(pieceIdentifier.ToString());
 
-            foreach (var gadgetInputData in gadgetArchetypeDatum.AllGadgetInputs)
-            {
-                _stringIdLookup.RecordString(gadgetInputData.ToString());
-            }
-
             foreach (var gadgetStateData in gadgetArchetypeDatum.AllGadgetStateData)
             {
                 _stringIdLookup.RecordString(gadgetStateData.StateName);

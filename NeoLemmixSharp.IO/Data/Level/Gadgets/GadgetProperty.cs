@@ -16,12 +16,13 @@ public enum GadgetProperty
     Count,
     InitialAnimationFrame,
     LogicGateType,
-    IsFastForwards
+    IsFastForwards,
+    NumberOfInputs
 }
 
 public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IBitBufferCreator<BitBuffer32>
 {
-    private const int NumberOfEnumValues = 10;
+    private const int NumberOfEnumValues = 11;
 
     public int NumberOfItems => NumberOfEnumValues;
 

@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Reading;
 using NeoLemmixSharp.IO.Writing;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Color = Microsoft.Xna.Framework.Color;
 
@@ -180,8 +179,7 @@ internal static class ReadWriteHelpers
     private const int GadgetArchetypeDataAllowedOrientationsBitShift = 2;
     private const int GadgetArchetypeDataAllowedFacingDirectionBitShift = 3;
 
-    internal static uint EncodeGadgetArchetypeDataFilterByte(
-        DecodedGadgetArchetypeDataHitBoxFilter hitBoxFilter)
+    internal static uint EncodeGadgetArchetypeDataFilterByte(DecodedGadgetArchetypeDataHitBoxFilter hitBoxFilter)
     {
         var filterByte = (hitBoxFilter.HasAllowedActions ? 1 << GadgetArchetypeDataAllowedActionsBitShift : 0) |
                          (hitBoxFilter.HasAllowedStates ? 1 << GadgetArchetypeDataAllowedStatesBitShift : 0) |
@@ -191,8 +189,7 @@ internal static class ReadWriteHelpers
         return (byte)filterByte;
     }
 
-    internal static DecodedGadgetArchetypeDataHitBoxFilter DecodeGadgetArchetypeDataFilterByte(
-        uint byteValue)
+    internal static DecodedGadgetArchetypeDataHitBoxFilter DecodeGadgetArchetypeDataFilterByte(uint byteValue)
     {
         var hasAllowedActions = ((byteValue >>> GadgetArchetypeDataAllowedActionsBitShift) & 1) != 0;
         var hasAllowedStates = ((byteValue >>> GadgetArchetypeDataAllowedStatesBitShift) & 1) != 0;
@@ -221,7 +218,7 @@ internal static class ReadWriteHelpers
 
     internal static void WriteArgbBytes(Color color, Span<byte> bytes)
     {
-        Debug.Assert(bytes.Length == 4);
+        FileWritingException.WriterAssert(bytes.Length == 4, "Expected span length of exactly 4");
         bytes[0] = color.A;
         bytes[1] = color.R;
         bytes[2] = color.G;
@@ -230,7 +227,7 @@ internal static class ReadWriteHelpers
 
     internal static void WriteRgbBytes(Color color, Span<byte> bytes)
     {
-        Debug.Assert(bytes.Length == 3);
+        FileWritingException.WriterAssert(bytes.Length == 3, "Expected span length of exactly 3");
         bytes[0] = color.R;
         bytes[1] = color.G;
         bytes[2] = color.B;
@@ -238,14 +235,14 @@ internal static class ReadWriteHelpers
 
     internal static Color ReadArgbBytes(ReadOnlySpan<byte> bytes)
     {
-        Debug.Assert(bytes.Length == 4);
+        FileReadingException.ReaderAssert(bytes.Length == 4, "Expected span length of exactly 4");
         return new Color(alpha: bytes[0], r: bytes[1], g: bytes[2], b: bytes[3]);
     }
 
     internal static Color ReadRgbBytes(ReadOnlySpan<byte> bytes)
     {
         const byte alphaByte = 0xff;
-        Debug.Assert(bytes.Length == 3);
+        FileReadingException.ReaderAssert(bytes.Length == 3, "Expected span length of exactly 3");
         return new Color(alpha: alphaByte, r: bytes[0], g: bytes[1], b: bytes[2]);
     }
 }

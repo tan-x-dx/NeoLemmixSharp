@@ -11,17 +11,17 @@ public sealed class LemmingActionLayerRenderer
     private readonly Texture2D _texture;
 
     private readonly int _layerOffsetX;
-    private readonly LemmingActionSpriteLayerColorType _colorChooser;
+    private readonly TribeSpriteLayerColorType _colorChooser;
 
     public LemmingActionLayerRenderer(Texture2D texture)
-        : this(texture, 0, LemmingActionSpriteLayerColorType.TrueColor)
+        : this(texture, 0, TribeSpriteLayerColorType.TrueColor)
     {
     }
 
     public LemmingActionLayerRenderer(
         Texture2D texture,
         int layerOffsetX,
-        LemmingActionSpriteLayerColorType colorChooser)
+        TribeSpriteLayerColorType colorChooser)
     {
         _texture = texture;
         _layerOffsetX = layerOffsetX;
@@ -52,13 +52,13 @@ public sealed class LemmingActionLayerRenderer
 
     private Color GetColorForLayer(LemmingState lemmingState) => _colorChooser switch
     {
-        LemmingActionSpriteLayerColorType.TrueColor => Color.White,
-        LemmingActionSpriteLayerColorType.LemmingHairColor => lemmingState.HairColor,
-        LemmingActionSpriteLayerColorType.LemmingSkinColor => lemmingState.SkinColor,
-        LemmingActionSpriteLayerColorType.LemmingBodyColor => lemmingState.BodyColor,
-        LemmingActionSpriteLayerColorType.LemmingFootColor => lemmingState.FootColor,
-        LemmingActionSpriteLayerColorType.TribePaintColor => lemmingState.PaintColor,
+        TribeSpriteLayerColorType.TrueColor => Color.White,
+        TribeSpriteLayerColorType.LemmingHairColor => lemmingState.HairColor,
+        TribeSpriteLayerColorType.LemmingSkinColor => lemmingState.SkinColor,
+        TribeSpriteLayerColorType.LemmingBodyColor => lemmingState.BodyColor,
+        TribeSpriteLayerColorType.LemmingFootColor => lemmingState.FootColor,
+        TribeSpriteLayerColorType.TribePaintColor => lemmingState.PaintColor,
 
-        _ => Helpers.ThrowUnknownEnumValueException<LemmingActionSpriteLayerColorType, Color>(_colorChooser)
+        _ => Helpers.ThrowUnknownEnumValueException<TribeSpriteLayerColorType, Color>(_colorChooser)
     };
 }

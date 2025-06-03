@@ -19,7 +19,7 @@ public static class FileTypeHandler
     private static readonly Dictionary<string, FileTypeAndFormat> FileTypeAndFormatLookup = new(8, StringComparer.OrdinalIgnoreCase)
     {
         [DefaultFileExtensions.LevelFileExtension] = new(FileType.Level, FileFormatType.Default),
-        [DefaultFileExtensions.LevelStyleExtension] = new(FileType.Style, FileFormatType.Default),
+        [DefaultFileExtensions.StyleFileExtension] = new(FileType.Style, FileFormatType.Default),
 
         [NeoLemmixFileExtensions.LevelFileExtension] = new(FileType.Level, FileFormatType.NeoLemmix),
         [NeoLemmixFileExtensions.GadgetFileExtension] = new(FileType.NeoLemmixGadget, FileFormatType.NeoLemmix),
