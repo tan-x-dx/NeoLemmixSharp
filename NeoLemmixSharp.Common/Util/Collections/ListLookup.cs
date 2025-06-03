@@ -4,6 +4,17 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Common.Util.Collections;
 
+/// <summary>
+/// <para>
+/// A simple Key/Value pair lookup that works best when there are relatively few distinct keys.
+/// Technically O(n), but n is small, and this collection has smaller overheads than an equivalent Hashtable implementation.
+/// </para>
+/// <para>
+/// Not recommended for more than 6 distinct keys.
+/// </para>
+/// </summary>
+/// <typeparam name="TKey"></typeparam>
+/// <typeparam name="TValue"></typeparam>
 public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
     where TKey : notnull, IEquatable<TKey>
 {
