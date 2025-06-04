@@ -9,7 +9,7 @@ using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;

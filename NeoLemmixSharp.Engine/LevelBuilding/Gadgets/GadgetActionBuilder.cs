@@ -1,11 +1,8 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
 
@@ -13,7 +10,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public static class GadgetActionBuilder
 {
-    public static void ReadGadgetActions(
+    public static void BuildGadgetActions(
         HitBoxData hitBoxData,
         out GadgetAction[] onLemmingEnterActions,
         out GadgetAction[] onLemmingPresentActions,
@@ -95,10 +92,8 @@ public static class GadgetActionBuilder
 
     private static LemmingMoverAction CreateLemmingMoverAction(int miscData)
     {
-        var dx = (short)(miscData & 0xffff);
-        var dy = (short)(miscData >>> 16);
-
-        return new LemmingMoverAction(new Point(dx, dy));
+        var delta = GadgetBuildingHelpers.DecodePoint(miscData);
+        return new LemmingMoverAction(delta);
     }
 
     private static AdditionalTimeAction CreateAddLevelTimeAction(int miscData)

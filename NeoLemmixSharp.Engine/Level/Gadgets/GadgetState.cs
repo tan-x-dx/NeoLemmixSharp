@@ -21,8 +21,18 @@ public sealed class GadgetState
 
     public GadgetState(
         string stateName,
+        AnimationController animationController)
+    {
+        _stateName = stateName;
+        _lemmingHitBoxFilters = [];
+        _hitBoxLookup = null;
+        AnimationController = animationController;
+    }
+
+    public GadgetState(
+        string stateName,
         LemmingHitBoxFilter[] lemmingHitBoxFilters,
-        OrientationToHitBoxRegionLookup? hitBoxLookup,
+        OrientationToHitBoxRegionLookup hitBoxLookup,
         AnimationController animationController)
     {
         _stateName = stateName;

@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Level.Gadgets;
-
-namespace NeoLemmixSharp.IO.Data.Style.Gadget;
+﻿namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 public readonly struct GadgetActionData(GadgetActionType gadgetActionType, int miscData)
 {

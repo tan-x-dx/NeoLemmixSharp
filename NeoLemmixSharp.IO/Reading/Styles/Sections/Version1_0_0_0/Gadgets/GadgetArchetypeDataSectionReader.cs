@@ -54,7 +54,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         var gadgetStates = ReadGadgetStates(rawFileData);
 
-        AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
+        GadgetArchetypeValidation.AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
 
         var result = new GadgetArchetypeData
         {
@@ -72,6 +72,10 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
             AllGadgetStateData = gadgetStates
         };
+
+        ReadMiscData(rawFileData, result);
+
+        GadgetArchetypeValidation.AssertGadgetArchetypeDataHasRequiredMiscData(result);
 
         return result;
     }
@@ -114,36 +118,15 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return result;
     }
 
-    private static void AssertGadgetStateDataMakesSense(
-        GadgetType gadgetType,
-        GadgetStateArchetypeData[] gadgetStates)
+    private static void ReadMiscData(RawStyleFileDataReader rawFileData, GadgetArchetypeData result)
     {
-        var baseGadgetType = gadgetType.GetBaseGadgetType();
-
-        switch (baseGadgetType)
+        int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
+        while (numberOfProperties-- > 0)
         {
-            case BaseGadgetType.HitBox:
-                return;
-
-            case BaseGadgetType.Hatch:
-                AssertHatchGadgetStateDataMakesSense();
-                return;
-
-            case BaseGadgetType.Functional:
-                AssertFunctionalGadgetStateDataMakesSense();
-                return;
-        }
-
-        return;
-
-        void AssertHatchGadgetStateDataMakesSense()
-        {
-            FileReadingException.ReaderAssert(gadgetStates.Length == 2, "Expected exactly 2 states for Hatch gadget!");
-        }
-
-        void AssertFunctionalGadgetStateDataMakesSense()
-        {
-            FileReadingException.ReaderAssert(gadgetStates.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets, "Expected exactly 2 states for Functional gadget!");
+            uint rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
+            var gadgetProperty = GadgetArchetypeMiscDataTypeHasher.GetEnumValue(rawGadgetProperty);
+            int propertyValue = rawFileData.Read32BitSignedInteger();
+            result.AddMiscData(gadgetProperty, propertyValue);
         }
     }
 }

@@ -74,8 +74,9 @@ internal readonly ref struct GadgetStateReader
         var allowedLemmingActionIds = ReadUintSequence();
         var allowedLemmingStateIds = ReadUintSequence();
 
-        byte allowedLemmingOrientationIds = _rawFileData.Read8BitUnsignedInteger();
-        byte allowedFacingDirectionId = _rawFileData.Read8BitUnsignedInteger();
+        byte? allowedLemmingTribeId = ReadAllowedLemmingTribeId();
+        byte? allowedLemmingOrientationIds = ReadAllowedLemmingOrientationIds();
+        byte? allowedFacingDirectionId = ReadAllowedLemmingFacingDirectionId();
 
         var result = new HitBoxData
         {
@@ -86,6 +87,7 @@ internal readonly ref struct GadgetStateReader
             OnLemmingExitActions = onLemmingExitActions,
             AllowedLemmingActionIds = allowedLemmingActionIds,
             AllowedLemmingStateIds = allowedLemmingStateIds,
+            AllowedLemmingTribeIds = allowedLemmingTribeId,
             AllowedLemmingOrientationIds = allowedLemmingOrientationIds,
             AllowedFacingDirectionId = allowedFacingDirectionId
         };
@@ -143,6 +145,46 @@ internal readonly ref struct GadgetStateReader
         }
 
         throw new FileReadingException("No bits set when reading bit sequence!");
+    }
+
+    private byte? ReadAllowedLemmingTribeId()
+    {
+        int rawValue = _rawFileData.Read8BitUnsignedInteger();
+
+        var hasTribeData = ((rawValue >>> EngineConstants.MaxNumberOfTribes) & 1) != 0;
+
+        const int TribeMask = (1 << EngineConstants.MaxNumberOfTribes) - 1;
+
+        if (hasTribeData)
+            return (byte)(rawValue & TribeMask);
+
+        return null;
+    }
+
+    private byte? ReadAllowedLemmingOrientationIds()
+    {
+        int rawValue = _rawFileData.Read8BitUnsignedInteger();
+
+        var hasOrientationData = ((rawValue >>> EngineConstants.NumberOfOrientations) & 1) != 0;
+
+        const int OrientationMask = (1 << EngineConstants.NumberOfOrientations) - 1;
+
+        if (hasOrientationData)
+            return (byte)(rawValue & OrientationMask);
+
+        return null;
+    }
+
+    private byte? ReadAllowedLemmingFacingDirectionId()
+    {
+        int rawValue = _rawFileData.Read8BitUnsignedInteger();
+
+        var hasFacingDirectionData = ((rawValue >>> 1) & 1) != 0;
+
+        if (hasFacingDirectionData)
+            return (byte)(rawValue & 1);
+
+        return null;
     }
 
     private HitBoxRegionData[] ReadRegionData()

@@ -70,6 +70,13 @@ public static class GadgetBuildingHelpers
         return result;
     }
 
+    public static string GetGadgetName(GadgetArchetypeData gadgetArchetypeData, GadgetData gadgetData)
+    {
+        return string.IsNullOrEmpty(gadgetData.OverrideName)
+            ? gadgetArchetypeData.GadgetName
+            : gadgetData.OverrideName;
+    }
+
     public static GadgetBounds CreateGadgetBounds(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData)
@@ -92,5 +99,13 @@ public static class GadgetBuildingHelpers
         result.Height = size.H;
 
         return result;
+    }
+
+    public static Point DecodePoint(int combinedBits)
+    {
+        short x = (short)(combinedBits & 0xffff);
+        short y = (short)(combinedBits >>> 16);
+
+        return new Point(x, y);
     }
 }

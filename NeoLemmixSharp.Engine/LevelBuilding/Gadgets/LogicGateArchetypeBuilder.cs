@@ -19,10 +19,7 @@ public static class LogicGateArchetypeBuilder
 
         Debug.Assert(inputNames.Length >= 2);
 
-        var gadgetName = string.IsNullOrEmpty(gadgetData.OverrideName)
-            ? gadgetArchetypeData.GadgetName
-            : gadgetData.OverrideName;
-
+        var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, gadgetData);
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
         var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
@@ -32,6 +29,7 @@ public static class LogicGateArchetypeBuilder
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
+            FacingDirection = gadgetData.FacingDirection,
 
             CurrentGadgetBounds = gadgetBounds,
 
@@ -48,10 +46,7 @@ public static class LogicGateArchetypeBuilder
 
         Debug.Assert(inputNames.Length >= 2);
 
-        var gadgetName = string.IsNullOrEmpty(gadgetData.OverrideName)
-            ? gadgetArchetypeData.GadgetName
-            : gadgetData.OverrideName;
-
+        var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, gadgetData);
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
         var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
@@ -61,6 +56,7 @@ public static class LogicGateArchetypeBuilder
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
+            FacingDirection = gadgetData.FacingDirection,
 
             CurrentGadgetBounds = gadgetBounds,
 
@@ -77,10 +73,7 @@ public static class LogicGateArchetypeBuilder
 
         Debug.Assert(inputNames.Length == 1);
 
-        var gadgetName = string.IsNullOrEmpty(gadgetData.OverrideName)
-            ? gadgetArchetypeData.GadgetName
-            : gadgetData.OverrideName;
-
+        var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, gadgetData);
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
         var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
@@ -90,6 +83,7 @@ public static class LogicGateArchetypeBuilder
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
+            FacingDirection = gadgetData.FacingDirection,
 
             CurrentGadgetBounds = gadgetBounds,
 
@@ -106,10 +100,7 @@ public static class LogicGateArchetypeBuilder
 
         Debug.Assert(inputNames.Length == 2);
 
-        var gadgetName = string.IsNullOrEmpty(gadgetData.OverrideName)
-            ? gadgetArchetypeData.GadgetName
-            : gadgetData.OverrideName;
-
+        var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, gadgetData);
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
         var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
@@ -119,6 +110,7 @@ public static class LogicGateArchetypeBuilder
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
+            FacingDirection = gadgetData.FacingDirection,
 
             CurrentGadgetBounds = gadgetBounds,
 
@@ -171,6 +163,6 @@ public static class LogicGateArchetypeBuilder
     {
         var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(gadgetArchetypeData, gadgetData, gadgetBounds, stateIndex, baseSpriteSize, tribeManager);
 
-        return new GadgetState(gadgetArchetypeData.AllGadgetStateData[stateIndex].StateName, [], null, animationController);
+        return new GadgetState(gadgetArchetypeData.AllGadgetStateData[stateIndex].StateName, animationController);
     }
 }

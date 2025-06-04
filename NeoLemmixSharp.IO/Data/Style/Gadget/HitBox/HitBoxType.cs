@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.IO.Data.Level.Gadgets;
+namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 public enum HitBoxType
 {

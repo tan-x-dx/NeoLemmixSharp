@@ -245,4 +245,9 @@ internal static class ReadWriteHelpers
         FileReadingException.ReaderAssert(bytes.Length == 3, "Expected span length of exactly 3");
         return new Color(alpha: alphaByte, r: bytes[0], g: bytes[1], b: bytes[2]);
     }
+
+    internal static int EncodePoint(Point point)
+    {
+        return ((point.Y & 0xffff) << 16) | (point.X & 0xffff);
+    }
 }

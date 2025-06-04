@@ -29,7 +29,7 @@ public sealed class GadgetData
 
     public int NumberOfGadgetProperties => _properties.Count;
 
-    public void AddProperty(GadgetProperty property, int value)
+    internal void AddProperty(GadgetProperty property, int value)
     {
         _properties.Add(property, value);
     }
