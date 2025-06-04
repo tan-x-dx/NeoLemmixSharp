@@ -14,7 +14,7 @@ public sealed class LemmingActionLayerRenderer
     private readonly TribeSpriteLayerColorType _colorChooser;
 
     public LemmingActionLayerRenderer(Texture2D texture)
-        : this(texture, 0, TribeSpriteLayerColorType.TrueColor)
+        : this(texture, 0, TribeSpriteLayerColorType.NoRender)
     {
     }
 
@@ -52,6 +52,7 @@ public sealed class LemmingActionLayerRenderer
 
     private Color GetColorForLayer(LemmingState lemmingState) => _colorChooser switch
     {
+        TribeSpriteLayerColorType.NoRender => Color.Transparent,
         TribeSpriteLayerColorType.TrueColor => Color.White,
         TribeSpriteLayerColorType.LemmingHairColor => lemmingState.HairColor,
         TribeSpriteLayerColorType.LemmingSkinColor => lemmingState.SkinColor,
