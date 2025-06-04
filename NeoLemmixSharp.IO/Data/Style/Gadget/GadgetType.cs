@@ -26,9 +26,10 @@ public enum GadgetType
 
 public static class GadgetTypeHelpers
 {
-    private const int NumberOfEnumValues = 9;
+    private const int NumberOfBaseGadgetTypeEnumValues = 3;
+    private const int NumberOfGadgetTypeEnumValues = 9;
 
-    public static GadgetType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetType>(rawValue, NumberOfEnumValues);
+    public static GadgetType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetType>(rawValue, NumberOfGadgetTypeEnumValues);
 
     public static BaseGadgetType GetBaseGadgetType(this GadgetType subType) => subType switch
     {

@@ -8,6 +8,8 @@ public sealed class AnimationLayer
 {
     private readonly AnimationLayerParameters _animationLayerParameters;
     private readonly NineSliceRenderer[] _nineSliceData;
+    private readonly int _layer;
+    private readonly Color _color;
 
     private readonly int _nextGadgetState;
     private int _currentFrame;
@@ -19,11 +21,15 @@ public sealed class AnimationLayer
     public AnimationLayer(
         AnimationLayerParameters animationLayerParameters,
         NineSliceRenderer[] nineSliceData,
+        int layer,
+        Color color,
         int initialFrame,
         int nextGadgetState)
     {
         _animationLayerParameters = animationLayerParameters;
         _nineSliceData = nineSliceData;
+        _layer = layer;
+        _color = color;
         _currentFrame = initialFrame;
         _nextGadgetState = nextGadgetState;
     }
@@ -44,9 +50,16 @@ public sealed class AnimationLayer
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
     {
-        for (var i = 0; i < _nineSliceData.Length; i++)
+        foreach (var renderer in _nineSliceData)
         {
-            _nineSliceData[i].Render(_currentFrame, spriteBatch, texture, null, sourceRectangle, destinationRectangle);
+            renderer.Render(
+                spriteBatch,
+                texture,
+                sourceRectangle,
+                destinationRectangle,
+                _layer,
+                _currentFrame,
+                _color);
         }
     }
 }

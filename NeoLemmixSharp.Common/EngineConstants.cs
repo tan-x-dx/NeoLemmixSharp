@@ -138,6 +138,12 @@ public static class EngineConstants
 
     #endregion
 
+    #region Gadget Constants
+
+    public const int NumberOfAllowedStatesForFunctionalGadgets = 2;
+
+    #endregion
+
     #region Control Panel Strings
 
     public const string NeutralControlPanelString = "NEUTRAL";

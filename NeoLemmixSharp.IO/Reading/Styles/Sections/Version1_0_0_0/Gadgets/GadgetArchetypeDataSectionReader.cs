@@ -45,13 +45,14 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         int baseWidth = rawFileData.Read16BitUnsignedInteger();
         int baseHeight = rawFileData.Read16BitUnsignedInteger();
-
         var baseSpriteSize = new Size(baseWidth, baseHeight);
+
+        var nineSliceData = ReadNineSliceData(rawFileData, baseSpriteSize);
 
         int numberOfLayers = rawFileData.Read8BitUnsignedInteger();
         int numberOfFrames = rawFileData.Read8BitUnsignedInteger();
 
-        var gadgetStates = ReadGadgetStates(rawFileData, baseSpriteSize);
+        var gadgetStates = ReadGadgetStates(rawFileData);
 
         AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
 
@@ -65,6 +66,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
             ResizeType = resizeType,
 
             BaseSpriteSize = baseSpriteSize,
+            NineSliceData = nineSliceData,
             MaxNumberOfFrames = numberOfFrames,
             NumberOfLayers = numberOfLayers,
 
@@ -74,7 +76,30 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return result;
     }
 
-    private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader rawFileData, Size baseSpriteSize)
+    private static RectangularRegion ReadNineSliceData(
+        RawStyleFileDataReader rawFileData,
+        Size baseSpriteSize)
+    {
+        int nineSliceLeft = rawFileData.Read16BitUnsignedInteger();
+        int nineSliceWidth = rawFileData.Read16BitUnsignedInteger();
+
+        int nineSliceTop = rawFileData.Read16BitUnsignedInteger();
+        int nineSliceHeight = rawFileData.Read16BitUnsignedInteger();
+
+        FileReadingException.ReaderAssert(nineSliceLeft >= 0, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceWidth >= 1, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceLeft + nineSliceWidth <= baseSpriteSize.W, "Invalid nine slice definition!");
+
+        FileReadingException.ReaderAssert(nineSliceTop >= 0, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceHeight >= 1, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceTop + nineSliceHeight <= baseSpriteSize.H, "Invalid nine slice definition!");
+
+        var p = new Point(nineSliceLeft, nineSliceTop);
+        var s = new Size(nineSliceWidth, nineSliceHeight);
+        return new RectangularRegion(p, s);
+    }
+
+    private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader rawFileData)
     {
         var gadgetStateReader = new GadgetStateReader(rawFileData, _stringIdLookup);
 
@@ -83,7 +108,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = gadgetStateReader.ReadStateData(baseSpriteSize);
+            result[i] = gadgetStateReader.ReadStateData();
         }
 
         return result;
@@ -118,7 +143,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         void AssertFunctionalGadgetStateDataMakesSense()
         {
-            FileReadingException.ReaderAssert(gadgetStates.Length == 2, "Expected exactly 2 states for Functional gadget!");
+            FileReadingException.ReaderAssert(gadgetStates.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets, "Expected exactly 2 states for Functional gadget!");
         }
     }
 }

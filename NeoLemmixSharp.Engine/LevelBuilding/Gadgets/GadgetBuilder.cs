@@ -52,10 +52,10 @@ public ref struct GadgetBuilder
             GadgetType.GadgetResizer => null,
             GadgetType.GadgetStateChanger => null,
 
-            GadgetType.AndGate => LogicGateArchetypeBuilder.BuildAndGateGadget(gadgetArchetypeData, prototype),
-            GadgetType.OrGate => LogicGateArchetypeBuilder.BuildOrGateGadget(gadgetArchetypeData, prototype),
-            GadgetType.NotGate => LogicGateArchetypeBuilder.BuildNotGateGadget(gadgetArchetypeData, prototype),
-            GadgetType.XorGate => LogicGateArchetypeBuilder.BuildXorGateGadget(gadgetArchetypeData, prototype),
+            GadgetType.AndGate => LogicGateArchetypeBuilder.BuildAndGateGadget(gadgetArchetypeData, prototype, tribeManager),
+            GadgetType.OrGate => LogicGateArchetypeBuilder.BuildOrGateGadget(gadgetArchetypeData, prototype, tribeManager),
+            GadgetType.NotGate => LogicGateArchetypeBuilder.BuildNotGateGadget(gadgetArchetypeData, prototype, tribeManager),
+            GadgetType.XorGate => LogicGateArchetypeBuilder.BuildXorGateGadget(gadgetArchetypeData, prototype, tribeManager),
 
             _ => Helpers.ThrowUnknownEnumValueException<GadgetType, GadgetBase>(gadgetArchetypeData.GadgetType)
         };

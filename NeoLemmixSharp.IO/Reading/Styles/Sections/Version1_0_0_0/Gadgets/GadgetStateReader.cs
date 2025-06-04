@@ -1,10 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
-using NeoLemmixSharp.IO.Data.Style.Theme;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
@@ -20,7 +18,7 @@ internal readonly ref struct GadgetStateReader
         _stringIdLookup = stringIdLookup;
     }
 
-    internal GadgetStateArchetypeData ReadStateData(Size baseSpriteSize)
+    internal GadgetStateArchetypeData ReadStateData()
     {
         int stateNameId = _rawFileData.Read16BitUnsignedInteger();
 
@@ -30,7 +28,7 @@ internal readonly ref struct GadgetStateReader
         var hitBoxData = ReadHitBoxData();
         var regionData = ReadRegionData();
 
-        var animationLayerData = ReadAnimationLayerData(baseSpriteSize);
+        var animationLayerData = ReadAnimationLayerArchetypeData();
 
         var result = new GadgetStateArchetypeData
         {
@@ -131,9 +129,20 @@ internal readonly ref struct GadgetStateReader
         var destBytes = MemoryMarshal.Cast<uint, byte>(result);
         sourceBytes.CopyTo(destBytes);
 
-        FileReadingException.ReaderAssert(BitArrayHelpers.GetPopCount(result) > 0, "No bits set when reading bit sequence!");
+        AssertNonZeroUintSequence(result);
 
         return result;
+    }
+
+    private static void AssertNonZeroUintSequence(uint[] bits)
+    {
+        foreach (var value in bits)
+        {
+            if (value != 0)
+                return;
+        }
+
+        throw new FileReadingException("No bits set when reading bit sequence!");
     }
 
     private HitBoxRegionData[] ReadRegionData()
@@ -174,40 +183,39 @@ internal readonly ref struct GadgetStateReader
         };
     }
 
-    private AnimationLayerArchetypeData[] ReadAnimationLayerData(Size baseSpriteSize)
+    private AnimationLayerArchetypeData[] ReadAnimationLayerArchetypeData()
     {
-        int numberOfAnimationBehaviours = _rawFileData.Read8BitUnsignedInteger();
+        int numberOfAnimationLayers = _rawFileData.Read8BitUnsignedInteger();
 
-        FileReadingException.ReaderAssert(numberOfAnimationBehaviours > 0, "Zero animation data defined!");
+        FileReadingException.ReaderAssert(numberOfAnimationLayers > 0, "Zero animation layers defined!");
 
-        var result = new AnimationLayerArchetypeData[numberOfAnimationBehaviours];
+        var result = new AnimationLayerArchetypeData[numberOfAnimationLayers];
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = ReadAnimationBehaviourArchetypData(baseSpriteSize);
+            result[i] = ReadAnimationLayerArchetypeDatum(numberOfAnimationLayers);
         }
 
         return result;
     }
 
-    private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData(Size baseSpriteSize)
+    private AnimationLayerArchetypeData ReadAnimationLayerArchetypeDatum(int numberOfAnimationLayers)
     {
+        int layer = _rawFileData.Read8BitUnsignedInteger();
+        FileReadingException.ReaderAssert(layer < numberOfAnimationLayers, "Invalid layer definition!");
+
         var animationLayerParameters = ReadAnimationLayerParameters();
-
-        var nineSliceData = ReadNineSliceData(baseSpriteSize);
-
-        uint rawColorType = _rawFileData.Read8BitUnsignedInteger();
-        var colorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawColorType);
 
         int initialFrame = _rawFileData.Read8BitUnsignedInteger();
         int nextGadgetState = _rawFileData.Read8BitUnsignedInteger();
 
         return new AnimationLayerArchetypeData
         {
+            Layer = layer,
             AnimationLayerParameters = animationLayerParameters,
-            NineSliceData = nineSliceData,
-            ColorType = colorType,
             InitialFrame = initialFrame,
+
+            // Need to offset by 1
             NextGadgetState = nextGadgetState - 1
         };
     }
@@ -220,26 +228,5 @@ internal readonly ref struct GadgetStateReader
         int transitionToFrame = _rawFileData.Read8BitUnsignedInteger();
 
         return new AnimationLayerParameters(frameStart, frameEnd, frameDelta, transitionToFrame);
-    }
-
-    private RectangularRegion ReadNineSliceData(Size baseSpriteSize)
-    {
-        int nineSliceLeft = _rawFileData.Read16BitUnsignedInteger();
-        int nineSliceWidth = _rawFileData.Read16BitUnsignedInteger();
-
-        int nineSliceTop = _rawFileData.Read16BitUnsignedInteger();
-        int nineSliceHeight = _rawFileData.Read16BitUnsignedInteger();
-
-        FileReadingException.ReaderAssert(nineSliceLeft >= 0, "Invalid nine slice definition!");
-        FileReadingException.ReaderAssert(nineSliceWidth >= 1, "Invalid nine slice definition!");
-        FileReadingException.ReaderAssert(nineSliceLeft + nineSliceWidth <= baseSpriteSize.W, "Invalid nine slice definition!");
-
-        FileReadingException.ReaderAssert(nineSliceTop >= 0, "Invalid nine slice definition!");
-        FileReadingException.ReaderAssert(nineSliceHeight >= 1, "Invalid nine slice definition!");
-        FileReadingException.ReaderAssert(nineSliceTop + nineSliceHeight <= baseSpriteSize.H, "Invalid nine slice definition!");
-
-        var p = new Point(nineSliceLeft, nineSliceTop);
-        var s = new Size(nineSliceWidth, nineSliceHeight);
-        return new RectangularRegion(p, s);
     }
 }

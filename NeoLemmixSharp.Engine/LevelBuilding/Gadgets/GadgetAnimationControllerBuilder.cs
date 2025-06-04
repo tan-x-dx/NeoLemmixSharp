@@ -1,54 +1,90 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+using NeoLemmixSharp.Engine.Level.Tribes;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Runtime.CompilerServices;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public static class GadgetAnimationControllerBuilder
 {
     public static AnimationController BuildAnimationController(
-        AnimationLayerArchetypeData[] animationLayerData,
+        GadgetArchetypeData gadgetArchetypeData,
+        GadgetData gadgetData,
         GadgetBounds gadgetBounds,
+        int stateIndex,
         Size baseSpriteSize,
-        DihedralTransformation dihedralTransformation)
+        TribeManager tribeManager)
     {
-        var animationLayers = BuildAnimationLayers(animationLayerData, baseSpriteSize, dihedralTransformation);
+        var dihedralTransformation = new DihedralTransformation(
+            gadgetData.Orientation,
+            gadgetData.FacingDirection);
+
+        var transformedSpriteSize = dihedralTransformation.Transform(baseSpriteSize);
+        var transformedNineSliceData = dihedralTransformation.Transform(gadgetArchetypeData.NineSliceData, baseSpriteSize);
+
+        var animationLayers = BuildAnimationLayers(
+            gadgetArchetypeData.AllGadgetStateData[stateIndex].AnimationLayerData,
+            gadgetData,
+            stateIndex,
+            transformedSpriteSize,
+            transformedNineSliceData,
+            tribeManager);
 
         return new AnimationController(animationLayers, gadgetBounds);
     }
 
     private static AnimationLayer[] BuildAnimationLayers(
         AnimationLayerArchetypeData[] animationLayerData,
+        GadgetData gadgetData,
+        int stateIndex,
         Size baseSpriteSize,
-        DihedralTransformation dihedralTransformation)
+        RectangularRegion nineSliceData,
+        TribeManager tribeManager)
     {
-        var result = CollectionsHelper.GetArrayForSize<AnimationLayer>(animationLayerData.Length);
-
-        var transformedSpriteSize = dihedralTransformation.Transform(baseSpriteSize);
+        var result = new AnimationLayer[animationLayerData.Length];
+        var nineSliceRenderers = BuildNineSliceData(baseSpriteSize, nineSliceData);
 
         for (var i = 0; i < result.Length; i++)
         {
             var animationLayerArchetypeData = animationLayerData[i];
-            var transformedNineSliceData = dihedralTransformation.Transform(animationLayerArchetypeData.NineSliceData, baseSpriteSize);
-            var nineSliceData = BuildNineSliceData(transformedNineSliceData, transformedSpriteSize);
 
             result[i] = new AnimationLayer(
                 animationLayerArchetypeData.AnimationLayerParameters,
-                nineSliceData,
+                nineSliceRenderers,
+                animationLayerArchetypeData.Layer,
+                GetColorForLayer(animationLayerArchetypeData.Layer),
                 animationLayerArchetypeData.InitialFrame,
                 animationLayerArchetypeData.NextGadgetState);
         }
 
         return result;
+
+        Color GetColorForLayer(int layerIndex)
+        {
+            foreach (var layerColorData in gadgetData.LayerColorData)
+            {
+                if (layerColorData.StateIndex == stateIndex &&
+                    layerColorData.LayerIndex == layerIndex)
+                {
+                    if (layerColorData.UsesSpecificColor)
+                        return layerColorData.SpecificColor;
+
+                    return tribeManager.AllItems[layerColorData.TribeId].ColorData.GetFromTribeSpriteLayerColorType(layerColorData.SpriteLayerColorType);
+                }
+            }
+
+            return Color.White;
+        }
     }
 
     [SkipLocalsInit]
     private static NineSliceRenderer[] BuildNineSliceData(
-        RectangularRegion nineSliceData,
-        Size baseSpriteSize)
+        Size baseSpriteSize,
+        RectangularRegion nineSliceData)
     {
         var horizontalInterval = nineSliceData.GetHorizontalInterval();
         var numberOfHorizontalIntervals = CalculateNumberOfNineSliceIntervals(horizontalInterval, baseSpriteSize.W);

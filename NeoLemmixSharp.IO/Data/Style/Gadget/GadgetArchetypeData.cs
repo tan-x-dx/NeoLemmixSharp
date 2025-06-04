@@ -14,6 +14,10 @@ public sealed class GadgetArchetypeData
     public required ResizeType ResizeType { get; init; }
 
     public required Size BaseSpriteSize { get; init; }
+    /// <summary>
+    /// Denotes the dimensions of the middle/middle nine-slice block
+    /// </summary>
+    public required RectangularRegion NineSliceData { get; init; }
     public required int NumberOfLayers { get; init; }
     public required int MaxNumberOfFrames { get; init; }
 

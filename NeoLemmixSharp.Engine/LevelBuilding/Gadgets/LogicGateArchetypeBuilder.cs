@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics;
@@ -11,7 +12,8 @@ public static class LogicGateArchetypeBuilder
 {
     public static AndGateGadget BuildAndGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
-        GadgetData gadgetData)
+        GadgetData gadgetData,
+        TribeManager tribeManager)
     {
         var inputNames = GetInputNames(gadgetData, 2, 256);
 
@@ -22,9 +24,9 @@ public static class LogicGateArchetypeBuilder
             : gadgetData.OverrideName;
 
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
-        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
-        Debug.Assert(states.Length == 2);
+        Debug.Assert(states.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
         return new AndGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames)
         {
@@ -39,7 +41,8 @@ public static class LogicGateArchetypeBuilder
 
     public static OrGateGadget BuildOrGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
-        GadgetData gadgetData)
+        GadgetData gadgetData,
+        TribeManager tribeManager)
     {
         var inputNames = GetInputNames(gadgetData, 2, 256);
 
@@ -50,9 +53,9 @@ public static class LogicGateArchetypeBuilder
             : gadgetData.OverrideName;
 
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
-        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
-        Debug.Assert(states.Length == 2);
+        Debug.Assert(states.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
         return new OrGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames)
         {
@@ -67,7 +70,8 @@ public static class LogicGateArchetypeBuilder
 
     public static NotGateGadget BuildNotGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
-        GadgetData gadgetData)
+        GadgetData gadgetData,
+        TribeManager tribeManager)
     {
         var inputNames = GetInputNames(gadgetData, 1, 1);
 
@@ -78,9 +82,9 @@ public static class LogicGateArchetypeBuilder
             : gadgetData.OverrideName;
 
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
-        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
-        Debug.Assert(states.Length == 2);
+        Debug.Assert(states.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
         return new NotGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames[0])
         {
@@ -95,7 +99,8 @@ public static class LogicGateArchetypeBuilder
 
     public static XorGateGadget BuildXorGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
-        GadgetData gadgetData)
+        GadgetData gadgetData,
+        TribeManager tribeManager)
     {
         var inputNames = GetInputNames(gadgetData, 2, 2);
 
@@ -106,9 +111,9 @@ public static class LogicGateArchetypeBuilder
             : gadgetData.OverrideName;
 
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
-        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
-        Debug.Assert(states.Length == 2);
+        Debug.Assert(states.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
         return new XorGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames[0], inputNames[1])
         {
@@ -143,27 +148,29 @@ public static class LogicGateArchetypeBuilder
     private static GadgetState[] BuildGadgetStates(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
-        GadgetBounds gadgetBounds)
+        GadgetBounds gadgetBounds,
+        TribeManager tribeManager)
     {
-        Debug.Assert(gadgetArchetypeData.AllGadgetStateData.Length == 2);
+        Debug.Assert(gadgetArchetypeData.AllGadgetStateData.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
-        var result = new GadgetState[2];
+        var result = new GadgetState[EngineConstants.NumberOfAllowedStatesForFunctionalGadgets];
 
-        result[0] = BuildGadgetState(gadgetArchetypeData.AllGadgetStateData[0], gadgetData, gadgetBounds, gadgetArchetypeData.BaseSpriteSize);
-        result[1] = BuildGadgetState(gadgetArchetypeData.AllGadgetStateData[1], gadgetData, gadgetBounds, gadgetArchetypeData.BaseSpriteSize);
+        result[0] = BuildGadgetState(gadgetArchetypeData, gadgetData, gadgetBounds, 0, gadgetArchetypeData.BaseSpriteSize, tribeManager);
+        result[1] = BuildGadgetState(gadgetArchetypeData, gadgetData, gadgetBounds, 1, gadgetArchetypeData.BaseSpriteSize, tribeManager);
 
         return result;
     }
 
     private static GadgetState BuildGadgetState(
-        GadgetStateArchetypeData state,
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         GadgetBounds gadgetBounds,
-        Size baseSpriteSize)
+        int stateIndex,
+        Size baseSpriteSize,
+        TribeManager tribeManager)
     {
-        var dihedralTransformation = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection);
-        var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(state.AnimationLayerData, gadgetBounds, baseSpriteSize, dihedralTransformation);
+        var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(gadgetArchetypeData, gadgetData, gadgetBounds, stateIndex, baseSpriteSize, tribeManager);
 
-        return new GadgetState(state.StateName, [], null, animationController);
+        return new GadgetState(gadgetArchetypeData.AllGadgetStateData[stateIndex].StateName, [], null, animationController);
     }
 }
