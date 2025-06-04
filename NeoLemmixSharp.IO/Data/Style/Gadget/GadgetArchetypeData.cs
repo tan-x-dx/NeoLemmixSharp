@@ -3,12 +3,12 @@ using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 
-[DebuggerDisplay("{StyleName}:{PieceName}")]
+[DebuggerDisplay("{StyleIdentifier}:{PieceIdentifier}")]
 public sealed class GadgetArchetypeData
 {
+    public required StyleIdentifier StyleIdentifier { get; init; }
+    public required PieceIdentifier PieceIdentifier { get; init; }
     public required string GadgetName { get; init; }
-    public required StyleIdentifier StyleName { get; init; }
-    public required PieceIdentifier PieceName { get; init; }
 
     public required GadgetType GadgetType { get; init; }
     public required ResizeType ResizeType { get; init; }

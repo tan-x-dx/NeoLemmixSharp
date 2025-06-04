@@ -23,7 +23,7 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         while (numberOfItemsInSection-- > 0)
         {
             var newTerrainArchetypeDatum = ReadNextTerrainArchetypeData(styleData.Identifier, rawFileData);
-            styleData.TerrainArchetypeData.Add(newTerrainArchetypeDatum.PieceName, newTerrainArchetypeDatum);
+            styleData.TerrainArchetypeData.Add(newTerrainArchetypeDatum.PieceIdentifier, newTerrainArchetypeDatum);
         }
     }
 
@@ -32,6 +32,7 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         RawStyleFileDataReader rawFileData)
     {
         int pieceId = rawFileData.Read16BitUnsignedInteger();
+        int nameId = rawFileData.Read16BitUnsignedInteger();
 
         uint terrainArchetypeDataByte = rawFileData.Read8BitUnsignedInteger();
         ReadWriteHelpers.DecodeTerrainArchetypeDataByte(
@@ -71,8 +72,9 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
 
         var newTerrainArchetypeData = new TerrainArchetypeData
         {
-            StyleName = styleName,
-            PieceName = new PieceIdentifier(_stringIdLookup[pieceId]),
+            StyleIdentifier = styleName,
+            PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
+            Name = _stringIdLookup[nameId],
 
             IsSteel = isSteel,
             ResizeType = resizeType,
@@ -80,7 +82,7 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
             DefaultWidth = defaultWidth,
             DefaultHeight = defaultHeight,
 
-            NineSliceData =  new NineSliceData(nineSliceBottom, nineSliceLeft, nineSliceTop, nineSliceRight)
+            NineSliceData = new NineSliceData(nineSliceBottom, nineSliceLeft, nineSliceTop, nineSliceRight)
         };
 
         return newTerrainArchetypeData;

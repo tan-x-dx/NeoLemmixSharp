@@ -3,11 +3,12 @@ using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Data.Style.Terrain;
 
-[DebuggerDisplay("{StyleName}:{PieceName}")]
+[DebuggerDisplay("{StyleIdentifier}:{PieceIdentifier}")]
 public sealed class TerrainArchetypeData : ITerrainArchetypeData
 {
-    public required StyleIdentifier StyleName { get; init; }
-    public required PieceIdentifier PieceName { get; init; }
+    public required StyleIdentifier StyleIdentifier { get; init; }
+    public required PieceIdentifier PieceIdentifier { get; init; }
+    public required string Name { get; init; }
 
     public required bool IsSteel { get; init; }
     public required ResizeType ResizeType { get; init; }
@@ -34,8 +35,9 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
        StyleIdentifier styleName,
        PieceIdentifier pieceName) => new()
        {
-           StyleName = styleName,
-           PieceName = pieceName,
+           StyleIdentifier = styleName,
+           PieceIdentifier = pieceName,
+           Name = string.Empty,
 
            IsSteel = false,
            ResizeType = ResizeType.None,

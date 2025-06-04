@@ -23,7 +23,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         while (numberOfItemsInSection-- > 0)
         {
             var newGadgetArchetypeDatum = ReadGadgetArchetypeData(styleData.Identifier, rawFileData);
-            styleData.GadgetArchetypeData.Add(newGadgetArchetypeDatum.PieceName, newGadgetArchetypeDatum);
+            styleData.GadgetArchetypeData.Add(newGadgetArchetypeDatum.PieceIdentifier, newGadgetArchetypeDatum);
         }
     }
 
@@ -56,8 +56,8 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         var result = new GadgetArchetypeData
         {
             GadgetName = gadgetName,
-            StyleName = styleName,
-            PieceName = pieceName,
+            StyleIdentifier = styleName,
+            PieceIdentifier = pieceName,
 
             GadgetType = gadgetType,
             ResizeType = resizeType,

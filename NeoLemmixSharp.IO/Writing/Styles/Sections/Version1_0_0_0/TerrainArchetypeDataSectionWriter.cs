@@ -43,7 +43,8 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
 
     private void WriteTerrainArchetypeData(RawStyleFileDataWriter writer, TerrainArchetypeData terrainArchetypeData)
     {
-        writer.Write(_stringIdLookup.GetStringId(terrainArchetypeData.PieceName.ToString()));
+        writer.Write(_stringIdLookup.GetStringId(terrainArchetypeData.PieceIdentifier.ToString()));
+        writer.Write(_stringIdLookup.GetStringId(terrainArchetypeData.Name));
 
         var resizeType = terrainArchetypeData.ResizeType;
         writer.Write((byte)ReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainArchetypeData.IsSteel, resizeType));
