@@ -24,10 +24,19 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
 
     public override void WriteSection(RawStyleFileDataWriter writer, StyleData styleData)
     {
+        WriteStringData(writer, styleData);
+
         var themeData = styleData.ThemeData;
 
         WriteColorData(writer, themeData);
         WriteLemmingSpriteData(writer, styleData.Identifier, themeData.LemmingSpriteData);
+    }
+
+    private void WriteStringData(RawStyleFileDataWriter writer, StyleData styleData)
+    {
+        writer.Write(_stringIdLookup.GetStringId(styleData.Name));
+        writer.Write(_stringIdLookup.GetStringId(styleData.Author));
+        writer.Write(_stringIdLookup.GetStringId(styleData.Description));
     }
 
     private static void WriteColorData(RawStyleFileDataWriter writer, ThemeData themeData)

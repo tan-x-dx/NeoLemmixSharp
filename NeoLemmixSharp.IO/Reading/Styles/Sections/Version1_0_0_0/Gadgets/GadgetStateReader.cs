@@ -1,11 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
-using NeoLemmixSharp.IO.Data.Style.Theme;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
@@ -31,7 +28,7 @@ internal readonly ref struct GadgetStateReader
         var hitBoxData = ReadHitBoxData();
         var regionData = ReadRegionData();
 
-        var animationLayerData = ReadAnimationLayerData();
+        var animationLayerData = ReadAnimationLayerArchetypeData();
 
         var result = new GadgetStateArchetypeData
         {
@@ -132,9 +129,20 @@ internal readonly ref struct GadgetStateReader
         var destBytes = MemoryMarshal.Cast<uint, byte>(result);
         sourceBytes.CopyTo(destBytes);
 
-        FileReadingException.ReaderAssert(BitArrayHelpers.GetPopCount(result) > 0, "No bits set when reading bit sequence!");
+        AssertNonZeroUintSequence(result);
 
         return result;
+    }
+
+    private static void AssertNonZeroUintSequence(uint[] bits)
+    {
+        foreach (var value in bits)
+        {
+            if (value != 0)
+                return;
+        }
+
+        throw new FileReadingException("No bits set when reading bit sequence!");
     }
 
     private HitBoxRegionData[] ReadRegionData()
@@ -175,40 +183,39 @@ internal readonly ref struct GadgetStateReader
         };
     }
 
-    private AnimationLayerArchetypeData[] ReadAnimationLayerData()
+    private AnimationLayerArchetypeData[] ReadAnimationLayerArchetypeData()
     {
-        int numberOfAnimationBehaviours = _rawFileData.Read8BitUnsignedInteger();
+        int numberOfAnimationLayers = _rawFileData.Read8BitUnsignedInteger();
 
-        FileReadingException.ReaderAssert(numberOfAnimationBehaviours > 0, "Zero animation data defined!");
+        FileReadingException.ReaderAssert(numberOfAnimationLayers > 0, "Zero animation layers defined!");
 
-        var result = new AnimationLayerArchetypeData[numberOfAnimationBehaviours];
+        var result = new AnimationLayerArchetypeData[numberOfAnimationLayers];
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = ReadAnimationBehaviourArchetypData();
+            result[i] = ReadAnimationLayerArchetypeDatum(numberOfAnimationLayers);
         }
 
         return result;
     }
 
-    private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData()
+    private AnimationLayerArchetypeData ReadAnimationLayerArchetypeDatum(int numberOfAnimationLayers)
     {
+        int layer = _rawFileData.Read8BitUnsignedInteger();
+        FileReadingException.ReaderAssert(layer < numberOfAnimationLayers, "Invalid layer definition!");
+
         var animationLayerParameters = ReadAnimationLayerParameters();
-
-        var nineSliceData = ReadNineSliceData();
-
-        uint rawColorType = _rawFileData.Read8BitUnsignedInteger();
-        var colorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawColorType);
 
         int initialFrame = _rawFileData.Read8BitUnsignedInteger();
         int nextGadgetState = _rawFileData.Read8BitUnsignedInteger();
 
         return new AnimationLayerArchetypeData
         {
+            Layer = layer,
             AnimationLayerParameters = animationLayerParameters,
-            NineSliceData = nineSliceData,
-            ColorType = colorType,
             InitialFrame = initialFrame,
+
+            // Need to offset by 1
             NextGadgetState = nextGadgetState - 1
         };
     }
@@ -221,15 +228,5 @@ internal readonly ref struct GadgetStateReader
         int transitionToFrame = _rawFileData.Read8BitUnsignedInteger();
 
         return new AnimationLayerParameters(frameStart, frameEnd, frameDelta, transitionToFrame);
-    }
-
-    private NineSliceData ReadNineSliceData()
-    {
-        int nineSliceBottom = _rawFileData.Read8BitUnsignedInteger();
-        int nineSliceLeft = _rawFileData.Read8BitUnsignedInteger();
-        int nineSliceTop = _rawFileData.Read8BitUnsignedInteger();
-        int nineSliceRight = _rawFileData.Read8BitUnsignedInteger();
-
-        return new NineSliceData(nineSliceBottom, nineSliceLeft, nineSliceTop, nineSliceRight);
     }
 }

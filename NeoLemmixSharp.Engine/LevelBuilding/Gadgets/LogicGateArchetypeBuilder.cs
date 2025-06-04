@@ -1,5 +1,7 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
+using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics;
@@ -10,7 +12,8 @@ public static class LogicGateArchetypeBuilder
 {
     public static AndGateGadget BuildAndGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
-        GadgetData gadgetData)
+        GadgetData gadgetData,
+        TribeManager tribeManager)
     {
         var inputNames = GetInputNames(gadgetData, 2, 256);
 
@@ -21,13 +24,11 @@ public static class LogicGateArchetypeBuilder
             : gadgetData.OverrideName;
 
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
-        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
-        Debug.Assert(states.Length == 2);
+        Debug.Assert(states.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
-        var startActive = gadgetData.InitialStateId > 0;
-
-        return new AndGateGadget(gadgetName, states, startActive, inputNames)
+        return new AndGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames)
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
@@ -40,7 +41,8 @@ public static class LogicGateArchetypeBuilder
 
     public static OrGateGadget BuildOrGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
-        GadgetData gadgetData)
+        GadgetData gadgetData,
+        TribeManager tribeManager)
     {
         var inputNames = GetInputNames(gadgetData, 2, 256);
 
@@ -51,13 +53,11 @@ public static class LogicGateArchetypeBuilder
             : gadgetData.OverrideName;
 
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
-        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
-        Debug.Assert(states.Length == 2);
+        Debug.Assert(states.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
-        var startActive = gadgetData.InitialStateId > 0;
-
-        return new OrGateGadget(gadgetName, states, startActive, inputNames)
+        return new OrGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames)
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
@@ -70,7 +70,8 @@ public static class LogicGateArchetypeBuilder
 
     public static NotGateGadget BuildNotGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
-        GadgetData gadgetData)
+        GadgetData gadgetData,
+        TribeManager tribeManager)
     {
         var inputNames = GetInputNames(gadgetData, 1, 1);
 
@@ -81,13 +82,11 @@ public static class LogicGateArchetypeBuilder
             : gadgetData.OverrideName;
 
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
-        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
-        Debug.Assert(states.Length == 2);
+        Debug.Assert(states.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
-        var startActive = gadgetData.InitialStateId > 0;
-
-        return new NotGateGadget(gadgetName, states, startActive, inputNames[0])
+        return new NotGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames[0])
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
@@ -100,7 +99,8 @@ public static class LogicGateArchetypeBuilder
 
     public static XorGateGadget BuildXorGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
-        GadgetData gadgetData)
+        GadgetData gadgetData,
+        TribeManager tribeManager)
     {
         var inputNames = GetInputNames(gadgetData, 2, 2);
 
@@ -111,13 +111,11 @@ public static class LogicGateArchetypeBuilder
             : gadgetData.OverrideName;
 
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
-        var states = BuildGadgetStates(gadgetArchetypeData, gadgetBounds);
+        var states = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
-        Debug.Assert(states.Length == 2);
+        Debug.Assert(states.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
-        var startActive = gadgetData.InitialStateId > 0;
-
-        return new XorGateGadget(gadgetName, states, startActive, inputNames[0], inputNames[1])
+        return new XorGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames[0], inputNames[1])
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
@@ -147,28 +145,32 @@ public static class LogicGateArchetypeBuilder
         return GadgetBuildingHelpers.GetInputNamesForCount(numberOfInputs);
     }
 
-    private static GadgetState[] BuildGadgetStates(GadgetArchetypeData gadgetArchetypeData, GadgetBounds gadgetBounds)
+    private static GadgetState[] BuildGadgetStates(
+        GadgetArchetypeData gadgetArchetypeData,
+        GadgetData gadgetData,
+        GadgetBounds gadgetBounds,
+        TribeManager tribeManager)
     {
-        Debug.Assert(gadgetArchetypeData.AllGadgetStateData.Length == 2);
+        Debug.Assert(gadgetArchetypeData.AllGadgetStateData.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
-        var result = new GadgetState[2];
+        var result = new GadgetState[EngineConstants.NumberOfAllowedStatesForFunctionalGadgets];
 
-        result[0] = BuildGadgetState(gadgetArchetypeData.AllGadgetStateData, 0, gadgetBounds);
-        result[1] = BuildGadgetState(gadgetArchetypeData.AllGadgetStateData, 1, gadgetBounds);
+        result[0] = BuildGadgetState(gadgetArchetypeData, gadgetData, gadgetBounds, 0, gadgetArchetypeData.BaseSpriteSize, tribeManager);
+        result[1] = BuildGadgetState(gadgetArchetypeData, gadgetData, gadgetBounds, 1, gadgetArchetypeData.BaseSpriteSize, tribeManager);
 
         return result;
     }
 
     private static GadgetState BuildGadgetState(
-        GadgetStateArchetypeData[] gadgetStateArchetypeData,
-        int stateId,
-        GadgetBounds gadgetBounds)
+        GadgetArchetypeData gadgetArchetypeData,
+        GadgetData gadgetData,
+        GadgetBounds gadgetBounds,
+        int stateIndex,
+        Size baseSpriteSize,
+        TribeManager tribeManager)
     {
-        var state = gadgetStateArchetypeData[stateId];
+        var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(gadgetArchetypeData, gadgetData, gadgetBounds, stateIndex, baseSpriteSize, tribeManager);
 
-        var stateName = state.StateName;
-        var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(state.AnimationLayerData, gadgetBounds);
-
-        return new GadgetState(stateName, [], null, animationController);
+        return new GadgetState(gadgetArchetypeData.AllGadgetStateData[stateIndex].StateName, [], null, animationController);
     }
 }

@@ -4,6 +4,7 @@ using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
@@ -32,6 +33,10 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
     private GadgetData ReadGadgetData(RawLevelFileDataReader rawFileData, LevelData levelData)
     {
+        int gadgetId = rawFileData.Read16BitUnsignedInteger();
+
+        FileReadingException.ReaderAssert(gadgetId == levelData.AllGadgetData.Count + 1, "GadgetData id mismatch!");
+
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
@@ -51,10 +56,11 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         var renderMode = GadgetRenderModeHelpers.GetEnumValue(rawFileData.Read8BitUnsignedInteger());
 
         var inputNames = ReadOverrideInputNames(rawFileData);
+        var layerColorData = ReadLayerColorData(rawFileData);
 
         var result = new GadgetData
         {
-            Id = levelData.AllGadgetData.Count,
+            Id = gadgetId,
             OverrideName = _stringIdLookup[overrideNameId],
 
             StyleName = new StyleIdentifier(_stringIdLookup[styleId]),
@@ -68,7 +74,8 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             Orientation = dht.Orientation,
             FacingDirection = dht.FacingDirection,
 
-            OverrideInputNames = inputNames
+            OverrideInputNames = inputNames,
+            LayerColorData = layerColorData
         };
 
         ReadProperties(rawFileData, result);
@@ -76,6 +83,49 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         AssertGadgetInputDataIsConsistent(result);
 
         return result;
+    }
+
+    private static GadgetLayerColorData[] ReadLayerColorData(RawLevelFileDataReader rawFileData)
+    {
+        int numberOfColorData = rawFileData.Read8BitUnsignedInteger();
+
+        var result = CollectionsHelper.GetArrayForSize<GadgetLayerColorData>(numberOfColorData);
+
+        for (var i = 0; i < result.Length; i++)
+        {
+            result[i] = ReadLayerColorDatum(rawFileData);
+        }
+
+        return result;
+    }
+
+    private static GadgetLayerColorData ReadLayerColorDatum(RawLevelFileDataReader rawFileData)
+    {
+        int stateIndex = rawFileData.Read8BitUnsignedInteger();
+        int layerIndex = rawFileData.Read8BitUnsignedInteger();
+
+        int usesSpecificColor = rawFileData.Read8BitUnsignedInteger();
+
+        if (usesSpecificColor == 0)
+        {
+            int tribeId = rawFileData.Read8BitUnsignedInteger();
+            uint rawTribeSpriteLayerColorType = rawFileData.Read8BitUnsignedInteger();
+            var spriteLayerColorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawTribeSpriteLayerColorType);
+
+            return new GadgetLayerColorData(tribeId, spriteLayerColorType)
+            {
+                StateIndex = stateIndex,
+                LayerIndex = layerIndex,
+            };
+        }
+
+        var colorBytes = rawFileData.ReadBytes(4);
+        var color = ReadWriteHelpers.ReadArgbBytes(colorBytes);
+        return new GadgetLayerColorData(color)
+        {
+            StateIndex = stateIndex,
+            LayerIndex = layerIndex,
+        };
     }
 
     private GadgetInputName[] ReadOverrideInputNames(RawLevelFileDataReader rawFileData)

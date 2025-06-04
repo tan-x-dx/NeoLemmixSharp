@@ -10,9 +10,9 @@ public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveL
     protected SubtractiveLogicGateGadget(
         string gadgetName,
         GadgetState[] states,
-        bool startActive,
+        int initialStateIndex,
         int expectedNumberOfInputs)
-        : base(gadgetName, states, startActive, expectedNumberOfInputs)
+        : base(gadgetName, states, initialStateIndex, expectedNumberOfInputs)
     {
     }
 
@@ -58,9 +58,9 @@ public sealed class NotGateGadget : SubtractiveLogicGateGadget
     public NotGateGadget(
         string gadgetName,
         GadgetState[] states,
-        bool startActive,
+        int initialStateIndex,
         GadgetInputName inputName)
-        : base(gadgetName, states, startActive, 1)
+        : base(gadgetName, states, initialStateIndex, 1)
     {
         _input = new SubtractiveLogicGateGadgetInput(inputName, this);
         RegisterInput(_input);
@@ -80,10 +80,10 @@ public sealed class XorGateGadget : SubtractiveLogicGateGadget
     public XorGateGadget(
         string gadgetName,
         GadgetState[] states,
-        bool startActive,
+        int initialStateIndex,
         GadgetInputName input1Name,
         GadgetInputName input2Name)
-        : base(gadgetName, states, startActive, 2)
+        : base(gadgetName, states, initialStateIndex, 2)
     {
         _input1 = new SubtractiveLogicGateGadgetInput(input1Name, this);
         _input2 = new SubtractiveLogicGateGadgetInput(input2Name, this);

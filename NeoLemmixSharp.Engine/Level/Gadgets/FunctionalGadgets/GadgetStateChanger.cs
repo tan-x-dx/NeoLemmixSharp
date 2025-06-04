@@ -16,11 +16,11 @@ public sealed class GadgetStateChanger : FunctionalGadget<GadgetStateChanger.Sta
     public GadgetStateChanger(
         string gadgetName,
         GadgetState[] states,
-        bool startActive,
+        int initialStateIndex,
         GadgetInputName inputName,
         HitBoxGadget gadget,
         int newState)
-        : base(gadgetName, states, startActive, 1)
+        : base(gadgetName, states, initialStateIndex, 1)
     {
         _gadget = gadget;
         _newState = newState;

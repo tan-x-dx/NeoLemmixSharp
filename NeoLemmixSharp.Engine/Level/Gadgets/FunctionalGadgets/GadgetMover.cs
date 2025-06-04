@@ -18,13 +18,13 @@ public sealed class GadgetMover : FunctionalGadget<GadgetMover.GadgetMoverInput>
     public GadgetMover(
         string gadgetName,
         GadgetState[] states,
-        bool startActive,
+        int initialStateIndex,
         GadgetInputName inputName,
         IMoveableGadget[] gadgets,
         int tickDelay,
         int dx,
         int dy)
-        : base(gadgetName, states, startActive, 1)
+        : base(gadgetName, states, initialStateIndex, 1)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;

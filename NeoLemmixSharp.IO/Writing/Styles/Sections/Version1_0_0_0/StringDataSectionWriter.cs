@@ -39,6 +39,9 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
     private void RecordThemeDataStrings(StyleData styleData)
     {
         _stringIdLookup.RecordString(styleData.Identifier.ToString());
+        _stringIdLookup.RecordString(styleData.Name);
+        _stringIdLookup.RecordString(styleData.Author);
+        _stringIdLookup.RecordString(styleData.Description);
         _stringIdLookup.RecordString(styleData.ThemeData.LemmingSpriteData.LemmingSpriteStyleIdentifier.ToString());
     }
 
@@ -46,8 +49,9 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
     {
         foreach (var kvp in styleData.TerrainArchetypeData)
         {
-            var pieceIdentifier = kvp.Key;
-            _stringIdLookup.RecordString(pieceIdentifier.ToString());
+            var terrainArchetypeData = kvp.Value;
+            _stringIdLookup.RecordString(terrainArchetypeData.PieceIdentifier.ToString());
+            _stringIdLookup.RecordString(terrainArchetypeData.Name);
         }
     }
 
@@ -55,9 +59,9 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
     {
         foreach (var kvp in styleData.GadgetArchetypeData)
         {
-            var pieceIdentifier = kvp.Key;
             var gadgetArchetypeDatum = kvp.Value;
-            _stringIdLookup.RecordString(pieceIdentifier.ToString());
+            _stringIdLookup.RecordString(gadgetArchetypeDatum.PieceIdentifier.ToString());
+            _stringIdLookup.RecordString(gadgetArchetypeDatum.GadgetName.ToString());
 
             foreach (var gadgetStateData in gadgetArchetypeDatum.AllGadgetStateData)
             {

@@ -18,13 +18,13 @@ public sealed class GadgetResizer : FunctionalGadget<GadgetResizer.GadgetResizer
     public GadgetResizer(
         string gadgetName,
         GadgetState[] states,
-        bool startActive,
+        int initialStateIndex,
         GadgetInputName inputName,
         HitBoxGadget[] gadgets,
         int tickDelay,
         int dw,
         int dh)
-        : base(gadgetName, states, startActive, 1)
+        : base(gadgetName, states, initialStateIndex, 1)
     {
         _tickDelay = tickDelay;
         _gadgets = gadgets;

@@ -11,8 +11,11 @@ internal static class DefaultStyleGenerator
     {
         var themeData = GenerateDefaultThemeData();
 
-        var result = new StyleData(StyleCache.DefaultStyleIdentifier, FileFormats.FileFormatType.Default)
+        var result = new StyleData(IoConstants.DefaultStyleIdentifier, FileFormats.FileFormatType.Default)
         {
+            Name = IoConstants.DefaultStyleName,
+            Author = IoConstants.DefaultStyleAuthor,
+            Description = IoConstants.DefaultStyleDescription,
             ThemeData = themeData
         };
 
@@ -41,7 +44,7 @@ internal static class DefaultStyleGenerator
 
     private static LemmingSpriteData SetUpActionSpriteData()
     {
-        var lemmingSpriteData = new LemmingSpriteData(StyleCache.DefaultStyleIdentifier);
+        var lemmingSpriteData = new LemmingSpriteData(IoConstants.DefaultStyleIdentifier);
 
         LemmingActionSpriteLayerData[] oneLayerTrueColor =
         [

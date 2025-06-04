@@ -43,30 +43,31 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
 
     private void WriteTerrainArchetypeData(RawStyleFileDataWriter writer, TerrainArchetypeData terrainArchetypeData)
     {
-        writer.Write(_stringIdLookup.GetStringId(terrainArchetypeData.PieceName.ToString()));
+        writer.Write(_stringIdLookup.GetStringId(terrainArchetypeData.PieceIdentifier.ToString()));
+        writer.Write(_stringIdLookup.GetStringId(terrainArchetypeData.Name));
 
         var resizeType = terrainArchetypeData.ResizeType;
         writer.Write((byte)ReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainArchetypeData.IsSteel, resizeType));
 
         if (resizeType.CanResizeHorizontally())
         {
-            writer.Write((byte)terrainArchetypeData.DefaultWidth);
+            writer.Write((ushort)terrainArchetypeData.DefaultSize.W);
 
-            if (terrainArchetypeData.DefaultWidth > 0)
+            if (terrainArchetypeData.DefaultSize.W > 0)
             {
-                writer.Write((byte)terrainArchetypeData.NineSliceData.NineSliceLeft);
-                writer.Write((byte)terrainArchetypeData.NineSliceData.NineSliceRight);
+                writer.Write((ushort)terrainArchetypeData.NineSliceData.X);
+                writer.Write((ushort)terrainArchetypeData.NineSliceData.W);
             }
         }
 
         if (resizeType.CanResizeVertically())
         {
-            writer.Write((byte)terrainArchetypeData.DefaultHeight);
+            writer.Write((ushort)terrainArchetypeData.DefaultSize.H);
 
-            if (terrainArchetypeData.DefaultHeight > 0)
+            if (terrainArchetypeData.DefaultSize.H > 0)
             {
-                writer.Write((byte)terrainArchetypeData.NineSliceData.NineSliceTop);
-                writer.Write((byte)terrainArchetypeData.NineSliceData.NineSliceBottom);
+                writer.Write((ushort)terrainArchetypeData.NineSliceData.Y);
+                writer.Write((ushort)terrainArchetypeData.NineSliceData.H);
             }
         }
     }

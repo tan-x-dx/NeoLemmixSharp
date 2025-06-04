@@ -22,8 +22,6 @@ public static class EngineConstants
 
     public const Keys FullscreenKey = Keys.F12;
 
-    public const string DefaultStyleIdentifier = "default";
-
     #endregion
 
     #region Engine Constants
@@ -137,6 +135,12 @@ public static class EngineConstants
     public static readonly Color PanelRed = new(0xff0000b0);
     public static readonly Color PanelMagenta = new(0xffb000b0);
     public static readonly Color PanelYellow = new(0xff00b0b0);
+
+    #endregion
+
+    #region Gadget Constants
+
+    public const int NumberOfAllowedStatesForFunctionalGadgets = 2;
 
     #endregion
 

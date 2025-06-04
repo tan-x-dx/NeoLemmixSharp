@@ -42,7 +42,7 @@ public static class TextureCache
             var spriteName = SpritesFolder + lemmingActionData.LemmingActionFileName;
 
             var sprite = contentManager.Load<Texture2D>(spriteName);
-            var key = new TextureTypeKey(StyleCache.DefaultStyleIdentifier, pieceIdentifier, TextureType.LemmingSprite);
+            var key = new TextureTypeKey(IoConstants.DefaultStyleIdentifier, pieceIdentifier, TextureType.LemmingSprite);
 
             LongLivedTextures.Add(key, new TextureUsageData(sprite));
         }
@@ -93,7 +93,7 @@ public static class TextureCache
 
         foreach (var textureTypeKey in LongLivedTextures.Keys)
         {
-            if (StyleCache.DefaultStyleIdentifier.Equals(textureTypeKey.StyleIdentifier))
+            if (IoConstants.DefaultStyleIdentifier.Equals(textureTypeKey.StyleIdentifier))
                 continue;
 
             ref var usageData = ref CollectionsMarshal.GetValueRefOrNullRef(LongLivedTextures, textureTypeKey);
@@ -107,7 +107,7 @@ public static class TextureCache
 
         foreach (var textureTypeKey in notUsedTextureTypeKeys.AsReadOnlySpan())
         {
-            if (StyleCache.DefaultStyleIdentifier.Equals(textureTypeKey.StyleIdentifier))
+            if (IoConstants.DefaultStyleIdentifier.Equals(textureTypeKey.StyleIdentifier))
                 continue;
 
             LongLivedTextures[textureTypeKey].Dispose();

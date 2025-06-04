@@ -18,9 +18,22 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
 
     public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
     {
+        ReadStringData(rawFileData, styleData);
+
         var themeData = ReadThemeData(rawFileData, styleData.Identifier);
 
         styleData.ThemeData = themeData;
+    }
+
+    private void ReadStringData(RawStyleFileDataReader rawFileData, StyleData styleData)
+    {
+        var styleNameId = rawFileData.Read16BitUnsignedInteger();
+        var authorId = rawFileData.Read16BitUnsignedInteger();
+        var descriptionId = rawFileData.Read16BitUnsignedInteger();
+
+        styleData.Name = _stringIdLookup[styleNameId];
+        styleData.Author = _stringIdLookup[authorId];
+        styleData.Description = _stringIdLookup[descriptionId];
     }
 
     private ThemeData ReadThemeData(RawStyleFileDataReader rawFileData, StyleIdentifier originalStyleIdentifier)

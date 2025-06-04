@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
@@ -28,4 +29,17 @@ public readonly struct TribeColorData(
     public readonly Color WaterLemmingFootColor = waterLemmingFootColor;
 
     public readonly Color PaintColor = paintColor;
+
+    public Color GetFromTribeSpriteLayerColorType(TribeSpriteLayerColorType tribeSpriteLayerColorType) => tribeSpriteLayerColorType switch
+    {
+        TribeSpriteLayerColorType.NoRender => Color.Transparent,
+        TribeSpriteLayerColorType.TrueColor => Color.White,
+        TribeSpriteLayerColorType.LemmingHairColor => HairColor,
+        TribeSpriteLayerColorType.LemmingSkinColor => SkinColor,
+        TribeSpriteLayerColorType.LemmingBodyColor => BodyColor,
+        TribeSpriteLayerColorType.LemmingFootColor => WaterLemmingFootColor,
+        TribeSpriteLayerColorType.TribePaintColor => PaintColor,
+
+        _ => Helpers.ThrowUnknownEnumValueException<TribeSpriteLayerColorType, Color>(tribeSpriteLayerColorType)
+    };
 }

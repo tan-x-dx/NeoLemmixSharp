@@ -23,7 +23,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         while (numberOfItemsInSection-- > 0)
         {
             var newGadgetArchetypeDatum = ReadGadgetArchetypeData(styleData.Identifier, rawFileData);
-            styleData.GadgetArchetypeData.Add(newGadgetArchetypeDatum.PieceName, newGadgetArchetypeDatum);
+            styleData.GadgetArchetypeData.Add(newGadgetArchetypeDatum.PieceIdentifier, newGadgetArchetypeDatum);
         }
     }
 
@@ -45,6 +45,9 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         int baseWidth = rawFileData.Read16BitUnsignedInteger();
         int baseHeight = rawFileData.Read16BitUnsignedInteger();
+        var baseSpriteSize = new Size(baseWidth, baseHeight);
+
+        var nineSliceData = ReadNineSliceData(rawFileData, baseSpriteSize);
 
         int numberOfLayers = rawFileData.Read8BitUnsignedInteger();
         int numberOfFrames = rawFileData.Read8BitUnsignedInteger();
@@ -56,13 +59,14 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         var result = new GadgetArchetypeData
         {
             GadgetName = gadgetName,
-            StyleName = styleName,
-            PieceName = pieceName,
+            StyleIdentifier = styleName,
+            PieceIdentifier = pieceName,
 
             GadgetType = gadgetType,
             ResizeType = resizeType,
 
-            BaseSpriteSize = new Size(baseWidth, baseHeight),
+            BaseSpriteSize = baseSpriteSize,
+            NineSliceData = nineSliceData,
             MaxNumberOfFrames = numberOfFrames,
             NumberOfLayers = numberOfLayers,
 
@@ -70,6 +74,29 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         };
 
         return result;
+    }
+
+    private static RectangularRegion ReadNineSliceData(
+        RawStyleFileDataReader rawFileData,
+        Size baseSpriteSize)
+    {
+        int nineSliceLeft = rawFileData.Read16BitUnsignedInteger();
+        int nineSliceWidth = rawFileData.Read16BitUnsignedInteger();
+
+        int nineSliceTop = rawFileData.Read16BitUnsignedInteger();
+        int nineSliceHeight = rawFileData.Read16BitUnsignedInteger();
+
+        FileReadingException.ReaderAssert(nineSliceLeft >= 0, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceWidth >= 1, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceLeft + nineSliceWidth <= baseSpriteSize.W, "Invalid nine slice definition!");
+
+        FileReadingException.ReaderAssert(nineSliceTop >= 0, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceHeight >= 1, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceTop + nineSliceHeight <= baseSpriteSize.H, "Invalid nine slice definition!");
+
+        var p = new Point(nineSliceLeft, nineSliceTop);
+        var s = new Size(nineSliceWidth, nineSliceHeight);
+        return new RectangularRegion(p, s);
     }
 
     private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader rawFileData)
@@ -116,7 +143,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         void AssertFunctionalGadgetStateDataMakesSense()
         {
-            FileReadingException.ReaderAssert(gadgetStates.Length == 2, "Expected exactly 2 states for Functional gadget!");
+            FileReadingException.ReaderAssert(gadgetStates.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets, "Expected exactly 2 states for Functional gadget!");
         }
     }
 }

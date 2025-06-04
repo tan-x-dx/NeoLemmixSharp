@@ -1,12 +1,9 @@
-﻿using NeoLemmixSharp.IO.Data.Style.Theme;
-
-namespace NeoLemmixSharp.IO.Data.Style.Gadget;
+﻿namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 
 public sealed class AnimationLayerArchetypeData
 {
+    public required int Layer { get; init; }
     public required AnimationLayerParameters AnimationLayerParameters { get; init; }
-    public required NineSliceData NineSliceData { get; init; }
-    public required TribeSpriteLayerColorType ColorType { get; init; }
     public required int InitialFrame { get; init; }
     public required int NextGadgetState { get; init; }
 
