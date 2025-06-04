@@ -69,6 +69,15 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     }
 
     [DebuggerStepThrough]
+    public RectangularRegion(Interval horizontalRegion, Interval verticalRegion)
+    {
+        X = horizontalRegion.Start;
+        Y = verticalRegion.Start;
+        W = Math.Max(horizontalRegion.Length, 1);
+        H = Math.Max(verticalRegion.Length, 1);
+    }
+
+    [DebuggerStepThrough]
     public RectangularRegion(Texture2D texture)
     {
         X = 0;

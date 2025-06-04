@@ -13,10 +13,9 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     public required bool IsSteel { get; init; }
     public required ResizeType ResizeType { get; init; }
 
-    public required int DefaultWidth { get; init; }
-    public required int DefaultHeight { get; init; }
+    public required Size DefaultSize { get; init; }
 
-    public required NineSliceData NineSliceData { get; init; }
+    public required RectangularRegion NineSliceData { get; init; }
 
     internal TerrainArchetypeData()
     {
@@ -27,8 +26,8 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
         return !(
             IsSteel ||
             ResizeType != ResizeType.None ||
-            DefaultWidth > 0 ||
-            DefaultHeight > 0);
+            DefaultSize.W > 0 ||
+            DefaultSize.H > 0);
     }
 
     internal static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
@@ -42,9 +41,7 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
            IsSteel = false,
            ResizeType = ResizeType.None,
 
-           DefaultWidth = 0,
-           DefaultHeight = 0,
-
+           DefaultSize = default,
            NineSliceData = default
        };
 }

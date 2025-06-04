@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using static NeoLemmixSharp.Common.DihedralTransformation;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -102,7 +101,7 @@ public readonly struct ArrayWrapper2D<T> : IEquatable<ArrayWrapper2D<T>>
         if (dht.Transform(sourceSize) != destination._subRegion.Size)
             throw new ArgumentException("Cannot compare different regions!");
 
-        var transformationData = new TransformationData(dht.Orientation, dht.FacingDirection, sourceSize);
+        var transformationData = dht.GetTransformationData(sourceSize);
 
         var w = sourceSize.W;
         var h = sourceSize.H;

@@ -70,6 +70,20 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
+    public RectangularRegion Transform(RectangularRegion region, Size size)
+    {
+        var transformationData = new TransformationData(Orientation, FacingDirection, size);
+
+        var q0 = transformationData.Transform(new Point());
+        var q1 = transformationData.Transform(region.GetBottomRight() - region.Position);
+
+        q0 += region.Position;
+        q1 += region.Position;
+
+        return new RectangularRegion(q0, q1);
+    }
+
+    [Pure]
     public Point Transform(
         Point position,
         Size size)
@@ -80,6 +94,13 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
 
     [Pure]
     public static int Encode(Orientation orientation, FacingDirection facingDirection) => orientation.RotNum | (facingDirection.Id << FlipBitShift);
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public TransformationData GetTransformationData(Size size)
+    {
+        return new TransformationData(Orientation, FacingDirection, size);
+    }
 
     public readonly ref struct TransformationData
     {

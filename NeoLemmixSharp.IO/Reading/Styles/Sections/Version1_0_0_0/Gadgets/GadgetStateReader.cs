@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
@@ -21,7 +20,7 @@ internal readonly ref struct GadgetStateReader
         _stringIdLookup = stringIdLookup;
     }
 
-    internal GadgetStateArchetypeData ReadStateData()
+    internal GadgetStateArchetypeData ReadStateData(Size baseSpriteSize)
     {
         int stateNameId = _rawFileData.Read16BitUnsignedInteger();
 
@@ -31,7 +30,7 @@ internal readonly ref struct GadgetStateReader
         var hitBoxData = ReadHitBoxData();
         var regionData = ReadRegionData();
 
-        var animationLayerData = ReadAnimationLayerData();
+        var animationLayerData = ReadAnimationLayerData(baseSpriteSize);
 
         var result = new GadgetStateArchetypeData
         {
@@ -175,7 +174,7 @@ internal readonly ref struct GadgetStateReader
         };
     }
 
-    private AnimationLayerArchetypeData[] ReadAnimationLayerData()
+    private AnimationLayerArchetypeData[] ReadAnimationLayerData(Size baseSpriteSize)
     {
         int numberOfAnimationBehaviours = _rawFileData.Read8BitUnsignedInteger();
 
@@ -185,17 +184,17 @@ internal readonly ref struct GadgetStateReader
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = ReadAnimationBehaviourArchetypData();
+            result[i] = ReadAnimationBehaviourArchetypData(baseSpriteSize);
         }
 
         return result;
     }
 
-    private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData()
+    private AnimationLayerArchetypeData ReadAnimationBehaviourArchetypData(Size baseSpriteSize)
     {
         var animationLayerParameters = ReadAnimationLayerParameters();
 
-        var nineSliceData = ReadNineSliceData();
+        var nineSliceData = ReadNineSliceData(baseSpriteSize);
 
         uint rawColorType = _rawFileData.Read8BitUnsignedInteger();
         var colorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawColorType);
@@ -223,13 +222,24 @@ internal readonly ref struct GadgetStateReader
         return new AnimationLayerParameters(frameStart, frameEnd, frameDelta, transitionToFrame);
     }
 
-    private NineSliceData ReadNineSliceData()
+    private RectangularRegion ReadNineSliceData(Size baseSpriteSize)
     {
-        int nineSliceBottom = _rawFileData.Read8BitUnsignedInteger();
-        int nineSliceLeft = _rawFileData.Read8BitUnsignedInteger();
-        int nineSliceTop = _rawFileData.Read8BitUnsignedInteger();
-        int nineSliceRight = _rawFileData.Read8BitUnsignedInteger();
+        int nineSliceLeft = _rawFileData.Read16BitUnsignedInteger();
+        int nineSliceWidth = _rawFileData.Read16BitUnsignedInteger();
 
-        return new NineSliceData(nineSliceBottom, nineSliceLeft, nineSliceTop, nineSliceRight);
+        int nineSliceTop = _rawFileData.Read16BitUnsignedInteger();
+        int nineSliceHeight = _rawFileData.Read16BitUnsignedInteger();
+
+        FileReadingException.ReaderAssert(nineSliceLeft >= 0, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceWidth >= 1, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceLeft + nineSliceWidth <= baseSpriteSize.W, "Invalid nine slice definition!");
+
+        FileReadingException.ReaderAssert(nineSliceTop >= 0, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceHeight >= 1, "Invalid nine slice definition!");
+        FileReadingException.ReaderAssert(nineSliceTop + nineSliceHeight <= baseSpriteSize.H, "Invalid nine slice definition!");
+
+        var p = new Point(nineSliceLeft, nineSliceTop);
+        var s = new Size(nineSliceWidth, nineSliceHeight);
+        return new RectangularRegion(p, s);
     }
 }

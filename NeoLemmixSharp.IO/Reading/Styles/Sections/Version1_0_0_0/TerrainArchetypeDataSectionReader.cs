@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.IO.FileFormats;
@@ -40,35 +39,7 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
             out var isSteel,
             out var resizeType);
 
-        int defaultWidth = 0;
-        int defaultHeight = 0;
-
-        int nineSliceBottom = 0;
-        int nineSliceLeft = 0;
-        int nineSliceTop = 0;
-        int nineSliceRight = 0;
-
-        if (resizeType.CanResizeHorizontally())
-        {
-            defaultWidth = rawFileData.Read8BitUnsignedInteger();
-
-            if (defaultWidth > 0)
-            {
-                nineSliceLeft = rawFileData.Read8BitUnsignedInteger();
-                nineSliceRight = rawFileData.Read8BitUnsignedInteger();
-            }
-        }
-
-        if (resizeType.CanResizeVertically())
-        {
-            defaultHeight = rawFileData.Read8BitUnsignedInteger();
-
-            if (defaultHeight > 0)
-            {
-                nineSliceBottom = rawFileData.Read8BitUnsignedInteger();
-                nineSliceTop = rawFileData.Read8BitUnsignedInteger();
-            }
-        }
+        var nineSliceData = ReadNineSliceData(rawFileData, resizeType, out var defaultSize);
 
         var newTerrainArchetypeData = new TerrainArchetypeData
         {
@@ -79,12 +50,60 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
             IsSteel = isSteel,
             ResizeType = resizeType,
 
-            DefaultWidth = defaultWidth,
-            DefaultHeight = defaultHeight,
+            DefaultSize = defaultSize,
 
-            NineSliceData = new NineSliceData(nineSliceBottom, nineSliceLeft, nineSliceTop, nineSliceRight)
+            NineSliceData = nineSliceData
         };
 
         return newTerrainArchetypeData;
+    }
+
+    private static RectangularRegion ReadNineSliceData(
+        RawStyleFileDataReader rawFileData,
+        ResizeType resizeType,
+        out Size defaultSize)
+    {
+        int defaultWidth = 0;
+        int defaultHeight = 0;
+
+        int nineSliceLeft = 0;
+        int nineSliceWidth = 0;
+        int nineSliceTop = 0;
+        int nineSliceHeight = 0;
+
+        if (resizeType.CanResizeHorizontally())
+        {
+            defaultWidth = rawFileData.Read16BitUnsignedInteger();
+
+            if (defaultWidth > 0)
+            {
+                nineSliceLeft = rawFileData.Read16BitUnsignedInteger();
+                nineSliceWidth = rawFileData.Read16BitUnsignedInteger();
+
+                FileReadingException.ReaderAssert(nineSliceLeft >= 0, "Invalid nine slice definition!");
+                FileReadingException.ReaderAssert(nineSliceWidth >= 1, "Invalid nine slice definition!");
+                FileReadingException.ReaderAssert(nineSliceLeft + nineSliceWidth <= defaultWidth, "Invalid nine slice definition!");
+            }
+        }
+
+        if (resizeType.CanResizeVertically())
+        {
+            defaultHeight = rawFileData.Read16BitUnsignedInteger();
+
+            if (defaultHeight > 0)
+            {
+                nineSliceTop = rawFileData.Read16BitUnsignedInteger();
+                nineSliceHeight = rawFileData.Read16BitUnsignedInteger();
+
+                FileReadingException.ReaderAssert(nineSliceTop >= 0, "Invalid nine slice definition!");
+                FileReadingException.ReaderAssert(nineSliceHeight >= 1, "Invalid nine slice definition!");
+                FileReadingException.ReaderAssert(nineSliceTop + nineSliceHeight <= defaultHeight, "Invalid nine slice definition!");
+            }
+        }
+
+        defaultSize = new Size(defaultWidth, defaultHeight);
+        var p = new Point(nineSliceLeft, nineSliceTop);
+        var s = new Size(nineSliceWidth, nineSliceHeight);
+        return new RectangularRegion(p, s);
     }
 }

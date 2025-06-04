@@ -46,10 +46,12 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         int baseWidth = rawFileData.Read16BitUnsignedInteger();
         int baseHeight = rawFileData.Read16BitUnsignedInteger();
 
+        var baseSpriteSize = new Size(baseWidth, baseHeight);
+
         int numberOfLayers = rawFileData.Read8BitUnsignedInteger();
         int numberOfFrames = rawFileData.Read8BitUnsignedInteger();
 
-        var gadgetStates = ReadGadgetStates(rawFileData);
+        var gadgetStates = ReadGadgetStates(rawFileData, baseSpriteSize);
 
         AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
 
@@ -62,7 +64,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
             GadgetType = gadgetType,
             ResizeType = resizeType,
 
-            BaseSpriteSize = new Size(baseWidth, baseHeight),
+            BaseSpriteSize = baseSpriteSize,
             MaxNumberOfFrames = numberOfFrames,
             NumberOfLayers = numberOfLayers,
 
@@ -72,7 +74,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return result;
     }
 
-    private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader rawFileData)
+    private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader rawFileData, Size baseSpriteSize)
     {
         var gadgetStateReader = new GadgetStateReader(rawFileData, _stringIdLookup);
 
@@ -81,7 +83,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = gadgetStateReader.ReadStateData();
+            result[i] = gadgetStateReader.ReadStateData(baseSpriteSize);
         }
 
         return result;
