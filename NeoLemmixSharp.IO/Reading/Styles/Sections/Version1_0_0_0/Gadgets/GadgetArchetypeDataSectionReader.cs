@@ -49,9 +49,6 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         var nineSliceData = ReadNineSliceData(rawFileData, baseSpriteSize);
 
-        int numberOfLayers = rawFileData.Read8BitUnsignedInteger();
-        int numberOfFrames = rawFileData.Read8BitUnsignedInteger();
-
         var gadgetStates = ReadGadgetStates(rawFileData);
 
         GadgetArchetypeValidation.AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
@@ -67,8 +64,6 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
             BaseSpriteSize = baseSpriteSize,
             NineSliceData = nineSliceData,
-            MaxNumberOfFrames = numberOfFrames,
-            NumberOfLayers = numberOfLayers,
 
             AllGadgetStateData = gadgetStates
         };
