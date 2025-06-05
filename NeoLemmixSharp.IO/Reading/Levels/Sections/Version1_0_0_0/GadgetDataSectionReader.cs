@@ -63,8 +63,8 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             Id = gadgetId,
             OverrideName = _stringIdLookup[overrideNameId],
 
-            StyleName = new StyleIdentifier(_stringIdLookup[styleId]),
-            PieceName = new PieceIdentifier(_stringIdLookup[pieceId]),
+            StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),
+            PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
 
             Position = new Point(x, y),
 

@@ -304,16 +304,16 @@ public readonly ref struct TerrainBuilder
 
         var rootFilePath = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
-            stylePiecePair.StyleName.ToString(),
+            stylePiecePair.StyleIdentifier.ToString(),
             DefaultFileExtensions.TerrainFolderName,
-            stylePiecePair.PieceName.ToString());
+            stylePiecePair.PieceIdentifier.ToString());
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
         var mainTexture = TextureCache.GetOrLoadTexture(
             pngPath,
-            terrainData.StyleName,
-            terrainData.PieceName,
+            terrainData.StyleIdentifier,
+            terrainData.PieceIdentifier,
             TextureType.TerrainSprite);
         colorData = ArrayWrapperHelpers.GetPixelColorDataFromTexture(mainTexture);
     }

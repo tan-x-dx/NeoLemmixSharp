@@ -43,7 +43,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         _stringIdLookup.RecordString(levelData.LevelTitle);
         _stringIdLookup.RecordString(levelData.LevelAuthor);
-        _stringIdLookup.RecordString(levelData.LevelTheme.ToString());
+        _stringIdLookup.RecordString(levelData.LevelTheme);
 
         HandleBackgroundString(levelData);
     }
@@ -73,8 +73,8 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            _stringIdLookup.RecordString(terrainData.StyleName.ToString());
-            _stringIdLookup.RecordString(terrainData.PieceName.ToString());
+            _stringIdLookup.RecordString(terrainData.StyleIdentifier);
+            _stringIdLookup.RecordString(terrainData.PieceIdentifier);
         }
     }
 
@@ -86,8 +86,8 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 
             foreach (var terrainData in levelData.AllTerrainData)
             {
-                _stringIdLookup.RecordString(terrainData.StyleName.ToString());
-                _stringIdLookup.RecordString(terrainData.PieceName.ToString());
+                _stringIdLookup.RecordString(terrainData.StyleIdentifier);
+                _stringIdLookup.RecordString(terrainData.PieceIdentifier);
             }
         }
     }
@@ -96,12 +96,12 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         foreach (var gadgetData in levelData.AllGadgetData)
         {
-            _stringIdLookup.RecordString(gadgetData.StyleName.ToString());
-            _stringIdLookup.RecordString(gadgetData.PieceName.ToString());
+            _stringIdLookup.RecordString(gadgetData.StyleIdentifier);
+            _stringIdLookup.RecordString(gadgetData.PieceIdentifier);
 
             foreach (var gadgetInputName in gadgetData.OverrideInputNames)
             {
-                _stringIdLookup.RecordString(gadgetInputName.ToString());
+                _stringIdLookup.RecordString(gadgetInputName);
             }
         }
     }

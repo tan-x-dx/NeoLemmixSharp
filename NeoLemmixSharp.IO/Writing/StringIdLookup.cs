@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.Contracts;
+﻿using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -17,6 +19,10 @@ internal readonly struct StringIdLookup
         _lookup = new Dictionary<string, ushort>(ReadWriteHelpers.InitialStringListCapacity);
     }
 
+    internal void RecordString(StyleIdentifier styleIdentifier) => RecordString(styleIdentifier.ToString());
+    internal void RecordString(PieceIdentifier pieceIdentifier) => RecordString(pieceIdentifier.ToString());
+    internal void RecordString(GadgetInputName gadgetInputName) => RecordString(gadgetInputName.ToString());
+
     internal void RecordString(string? s)
     {
         if (string.IsNullOrEmpty(s))
@@ -32,6 +38,13 @@ internal readonly struct StringIdLookup
             correspondingStringId = nextStringId;
         }
     }
+
+    [Pure]
+    internal ushort GetStringId(StyleIdentifier styleIdentifier) => GetStringId(styleIdentifier.ToString());
+    [Pure]
+    internal ushort GetStringId(PieceIdentifier pieceIdentifier) => GetStringId(pieceIdentifier.ToString());
+    [Pure]
+    internal ushort GetStringId(GadgetInputName gadgetInputName) => GetStringId(gadgetInputName.ToString());
 
     [Pure]
     internal ushort GetStringId(string? s)

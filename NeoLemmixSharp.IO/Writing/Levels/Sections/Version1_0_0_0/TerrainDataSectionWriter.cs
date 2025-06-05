@@ -34,8 +34,8 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         TerrainData terrainData)
     {
-        writer.Write(_stringIdLookup.GetStringId(terrainData.StyleName.ToString()));
-        writer.Write(_stringIdLookup.GetStringId(terrainData.PieceName.ToString()));
+        writer.Write(_stringIdLookup.GetStringId(terrainData.StyleIdentifier));
+        writer.Write(_stringIdLookup.GetStringId(terrainData.PieceIdentifier));
 
         writer.Write((ushort)(terrainData.Position.X + ReadWriteHelpers.PositionOffset));
         writer.Write((ushort)(terrainData.Position.Y + ReadWriteHelpers.PositionOffset));

@@ -35,8 +35,8 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         GadgetData gadgetData)
     {
         writer.Write((ushort)gadgetData.Id);
-        writer.Write(_stringIdLookup.GetStringId(gadgetData.StyleName.ToString()));
-        writer.Write(_stringIdLookup.GetStringId(gadgetData.PieceName.ToString()));
+        writer.Write(_stringIdLookup.GetStringId(gadgetData.StyleIdentifier));
+        writer.Write(_stringIdLookup.GetStringId(gadgetData.PieceIdentifier));
 
         writer.Write(_stringIdLookup.GetStringId(gadgetData.OverrideName));
 
@@ -59,7 +59,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write((byte)gadgetData.OverrideInputNames.Length);
         foreach (var inputName in gadgetData.OverrideInputNames)
         {
-            writer.Write(_stringIdLookup.GetStringId(inputName.ToString()));
+            writer.Write(_stringIdLookup.GetStringId(inputName));
         }
     }
 

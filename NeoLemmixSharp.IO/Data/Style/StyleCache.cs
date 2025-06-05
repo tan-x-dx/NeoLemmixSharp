@@ -64,20 +64,20 @@ public static class StyleCache
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            result.Add(new StyleFormatPair(terrainData.StyleName, levelData.FileFormatType));
+            result.Add(new StyleFormatPair(terrainData.StyleIdentifier, levelData.FileFormatType));
         }
 
         foreach (var terrainGroupData in levelData.AllTerrainGroups)
         {
             foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
             {
-                result.Add(new StyleFormatPair(terrainData.StyleName, levelData.FileFormatType));
+                result.Add(new StyleFormatPair(terrainData.StyleIdentifier, levelData.FileFormatType));
             }
         }
 
         foreach (var gadgetData in levelData.AllGadgetData)
         {
-            result.Add(new StyleFormatPair(gadgetData.StyleName, levelData.FileFormatType));
+            result.Add(new StyleFormatPair(gadgetData.StyleIdentifier, levelData.FileFormatType));
         }
 
         return result;
@@ -109,15 +109,15 @@ public static class StyleCache
             if (exists)
                 return;
 
-            var key = new StyleFormatPair(terrainData.StyleName, levelData.FileFormatType);
+            var key = new StyleFormatPair(terrainData.StyleIdentifier, levelData.FileFormatType);
 
             if (!CachedStyles.TryGetValue(key, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
-            ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeData, terrainData.PieceName, out exists);
+            ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeData, terrainData.PieceIdentifier, out exists);
             if (!exists)
             {
-                terrainArchetypeDataForStyle = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(terrainData.StyleName, terrainData.PieceName);
+                terrainArchetypeDataForStyle = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(terrainData.StyleIdentifier, terrainData.PieceIdentifier);
             }
             terrainArchetypeDataForLevel = terrainArchetypeDataForStyle;
         }
@@ -141,12 +141,12 @@ public static class StyleCache
             if (exists)
                 return;
 
-            var key = new StyleFormatPair(gadgetData.StyleName, levelData.FileFormatType);
+            var key = new StyleFormatPair(gadgetData.StyleIdentifier, levelData.FileFormatType);
 
             if (!CachedStyles.TryGetValue(key, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
-            gadgetArchetypeDataForLevel = styleData.GadgetArchetypeData[gadgetData.PieceName];
+            gadgetArchetypeDataForLevel = styleData.GadgetArchetypeData[gadgetData.PieceIdentifier];
         }
     }
 
