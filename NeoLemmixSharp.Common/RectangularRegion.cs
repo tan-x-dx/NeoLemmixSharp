@@ -93,8 +93,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
         Y = Math.Min(p1.Y, p2.Y);
         var w0 = p1.X - p2.X;
         var h0 = p1.Y - p2.Y;
-        W = w0 > 0 ? w0 : -w0;
-        H = h0 > 0 ? h0 : -h0;
+        W = Math.Abs(w0);
+        H = Math.Abs(h0);
         W++;
         H++;
     }
