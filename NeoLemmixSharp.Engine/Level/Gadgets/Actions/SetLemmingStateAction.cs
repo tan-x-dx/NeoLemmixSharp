@@ -2,16 +2,16 @@
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
-using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
+using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
 public sealed class SetLemmingStateAction : GadgetAction
 {
-    private readonly ILemmingStateChanger _lemmingStateChanger;
+    private readonly ILemmingState _lemmingStateChanger;
     private readonly SetStateType _type;
 
-    public SetLemmingStateAction(ILemmingStateChanger lemmingStateChanger, SetStateType type)
+    public SetLemmingStateAction(ILemmingState lemmingStateChanger, SetStateType type)
         : base(GadgetActionType.SetLemmingState)
     {
         _lemmingStateChanger = lemmingStateChanger;
@@ -43,11 +43,11 @@ public sealed class SetLemmingStateAction : GadgetAction
     public static SetStateType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<SetStateType>(rawValue, NumberOfEnumValues);
 }
 
-public sealed class ZombieStateChanger : ILemmingStateChanger
+public sealed class ZombieStateChanger : ILemmingState
 {
     public static readonly ZombieStateChanger Instance = new();
 
-    public StateChangerType LemmingStateChangerType => StateChangerType.ZombieStateChanger;
+    public StateType LemmingStateType => StateType.ZombieState;
 
     private ZombieStateChanger()
     {
@@ -58,11 +58,11 @@ public sealed class ZombieStateChanger : ILemmingStateChanger
     public bool IsApplied(LemmingState lemmingState) => lemmingState.IsZombie;
 }
 
-public sealed class NeutralStateChanger : ILemmingStateChanger
+public sealed class NeutralStateChanger : ILemmingState
 {
     public static readonly NeutralStateChanger Instance = new();
 
-    public StateChangerType LemmingStateChangerType => StateChangerType.NeutralStateChanger;
+    public StateType LemmingStateType => StateType.NeutralState;
 
     private NeutralStateChanger()
     {

@@ -1,10 +1,10 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
+using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class WaterLemmingSkill : LemmingSkill, ILemmingStateChanger
+public sealed class WaterLemmingSkill : LemmingSkill, ILemmingState
 {
     public static readonly WaterLemmingSkill Instance = new();
 
@@ -15,7 +15,7 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public StateChangerType LemmingStateChangerType => StateChangerType.WaterStateChanger;
+    public StateType LemmingStateType => StateType.WaterState;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

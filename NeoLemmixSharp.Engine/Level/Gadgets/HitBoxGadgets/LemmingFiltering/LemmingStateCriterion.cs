@@ -7,9 +7,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
 public sealed class LemmingStateCriterion : LemmingCriterion
 {
-    private readonly ILemmingStateChanger[] _allowedLemmingStates;
+    private readonly ILemmingState[] _allowedLemmingStates;
 
-    public LemmingStateCriterion(StateChangerSet allowedStates)
+    public LemmingStateCriterion(LemmingStateSet allowedStates)
         :base(LemmingCriteria.LemmingState)
     {
         Debug.Assert(allowedStates.Count > 0);

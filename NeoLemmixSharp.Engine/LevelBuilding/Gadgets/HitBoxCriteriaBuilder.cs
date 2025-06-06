@@ -60,10 +60,10 @@ public static class HitBoxCriteriaBuilder
 
     private static LemmingStateCriterion BuildLemmingStateCriterion(uint[] allowedLemmingStateIds)
     {
-        var stateChangerSet = ILemmingStateChanger.CreateBitArraySet();
-        stateChangerSet.ReadFrom(allowedLemmingStateIds);
+        var lemmingStateSet = ILemmingState.CreateBitArraySet();
+        lemmingStateSet.ReadFrom(allowedLemmingStateIds);
 
-        return new LemmingStateCriterion(stateChangerSet);
+        return new LemmingStateCriterion(lemmingStateSet);
     }
 
     private static LemmingTribeCriterion BuildLemmingTribeCriterion(byte value, TribeManager tribeManager)

@@ -1,10 +1,10 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
+using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class ClimberSkill : LemmingSkill, ILemmingStateChanger
+public sealed class ClimberSkill : LemmingSkill, ILemmingState
 {
     public static readonly ClimberSkill Instance = new();
 
@@ -15,7 +15,7 @@ public sealed class ClimberSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public StateChangerType LemmingStateChangerType => StateChangerType.ClimberStateChanger;
+    public StateType LemmingStateType => StateType.ClimberState;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
