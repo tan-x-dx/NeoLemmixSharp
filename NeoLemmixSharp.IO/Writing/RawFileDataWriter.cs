@@ -115,6 +115,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         _currentSectionStartPosition = _mainDataPosition;
     }
 
+    public void Write(bool value) => WriteSectionData(value ? (byte)1 : (byte)0);
     public void Write(byte value) => WriteSectionData(value);
     public void Write(ushort value) => WriteSectionData(value);
     public void Write(int value) => WriteSectionData(value);

@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -26,6 +27,7 @@ public sealed class GadgetData
 
     public required GadgetInputName[] OverrideInputNames { get; init; }
     public required GadgetLayerColorData[] LayerColorData { get; init; }
+    public required HitBoxCriteriaData? OverrideHitBoxCriteriaData { get; init; }
 
     public int NumberOfGadgetProperties => _properties.Count;
 

@@ -74,6 +74,7 @@ public static class HitBoxGadgetArchetypeBuilder
 
         var hitBoxFilters = BuildHitBoxFilters(
             state,
+            gadgetData,
             tribeManager);
 
         var hitBoxLookup = HitBoxBuilder.BuildHitBoxLookup(
@@ -89,6 +90,7 @@ public static class HitBoxGadgetArchetypeBuilder
 
     private static LemmingHitBoxFilter[] BuildHitBoxFilters(
         GadgetStateArchetypeData state,
+        GadgetData gadgetData,
         TribeManager tribeManager)
     {
         var result = CollectionsHelper.GetArrayForSize<LemmingHitBoxFilter>(state.HitBoxData.Length);
@@ -106,7 +108,7 @@ public static class HitBoxGadgetArchetypeBuilder
             result[i] = new LemmingHitBoxFilter(
                 hitBoxData.SolidityType,
                 hitBoxData.HitBoxBehaviour,
-                HitBoxCriteriaBuilder.BuildLemmingCriteria(hitBoxData, tribeManager),
+                HitBoxCriteriaBuilder.BuildLemmingCriteria(hitBoxData.HitBoxCriteria, gadgetData.OverrideHitBoxCriteriaData, tribeManager),
                 onLemmingEnterActions,
                 onLemmingPresentActions,
                 onLemmingExitActions);

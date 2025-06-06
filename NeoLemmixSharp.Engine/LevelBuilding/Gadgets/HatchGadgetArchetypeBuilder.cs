@@ -65,7 +65,7 @@ public static class HatchGadgetArchetypeBuilder
         {
             var spawnPointMiscData = gadgetArchetypeData.GetMiscData(GadgetArchetypeMiscDataType.SpawnPointOffset);
 
-            return GadgetBuildingHelpers.DecodePoint(spawnPointMiscData);
+            return IO.ReadWriteHelpers.DecodePoint(spawnPointMiscData);
         }
     }
 

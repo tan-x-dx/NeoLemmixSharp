@@ -8,11 +8,9 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO;
 
-internal static class ReadWriteHelpers
+public static class ReadWriteHelpers
 {
     internal const byte Period = (byte)'.';
-
-    internal const int PositionOffset = 512;
 
     internal const int InitialStringListCapacity = 32;
 
@@ -174,39 +172,6 @@ internal static class ReadWriteHelpers
 
     #region Gadget Archetype Data Read/Write Stuff
 
-    private const int GadgetArchetypeDataAllowedActionsBitShift = 0;
-    private const int GadgetArchetypeDataAllowedStatesBitShift = 1;
-    private const int GadgetArchetypeDataAllowedOrientationsBitShift = 2;
-    private const int GadgetArchetypeDataAllowedFacingDirectionBitShift = 3;
-
-    internal static uint EncodeGadgetArchetypeDataFilterByte(DecodedGadgetArchetypeDataHitBoxFilter hitBoxFilter)
-    {
-        var filterByte = (hitBoxFilter.HasAllowedActions ? 1 << GadgetArchetypeDataAllowedActionsBitShift : 0) |
-                         (hitBoxFilter.HasAllowedStates ? 1 << GadgetArchetypeDataAllowedStatesBitShift : 0) |
-                         (hitBoxFilter.HasAllowedOrientations ? 1 << GadgetArchetypeDataAllowedOrientationsBitShift : 0) |
-                         (hitBoxFilter.HasAllowedFacingDirection ? 1 << GadgetArchetypeDataAllowedFacingDirectionBitShift : 0);
-
-        return (byte)filterByte;
-    }
-
-    internal static DecodedGadgetArchetypeDataHitBoxFilter DecodeGadgetArchetypeDataFilterByte(uint byteValue)
-    {
-        var hasAllowedActions = ((byteValue >>> GadgetArchetypeDataAllowedActionsBitShift) & 1) != 0;
-        var hasAllowedStates = ((byteValue >>> GadgetArchetypeDataAllowedStatesBitShift) & 1) != 0;
-        var hasAllowedOrientations = ((byteValue >>> GadgetArchetypeDataAllowedOrientationsBitShift) & 1) != 0;
-        var hasAllowedFacingDirection = ((byteValue >>> GadgetArchetypeDataAllowedFacingDirectionBitShift) & 1) != 0;
-
-        return new DecodedGadgetArchetypeDataHitBoxFilter(hasAllowedActions, hasAllowedStates, hasAllowedOrientations, hasAllowedFacingDirection);
-    }
-
-    internal readonly ref struct DecodedGadgetArchetypeDataHitBoxFilter(bool hasAllowedActions, bool hasAllowedStates, bool hasAllowedOrientations, bool hasAllowedFacingDirection)
-    {
-        internal readonly bool HasAllowedActions = hasAllowedActions;
-        internal readonly bool HasAllowedStates = hasAllowedStates;
-        internal readonly bool HasAllowedOrientations = hasAllowedOrientations;
-        internal readonly bool HasAllowedFacingDirection = hasAllowedFacingDirection;
-    }
-
     #endregion
 
     internal static void AssertDihedralTransformationByteMakesSense(int dhtByte)
@@ -249,5 +214,13 @@ internal static class ReadWriteHelpers
     internal static int EncodePoint(Point point)
     {
         return ((point.Y & 0xffff) << 16) | (point.X & 0xffff);
+    }
+
+    public static Point DecodePoint(int combinedBits)
+    {
+        short x = (short)(combinedBits & 0xffff);
+        short y = (short)(combinedBits >>> 16);
+
+        return new Point(x, y);
     }
 }

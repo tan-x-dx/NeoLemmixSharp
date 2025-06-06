@@ -37,8 +37,7 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         writer.Write(_stringIdLookup.GetStringId(terrainData.StyleIdentifier));
         writer.Write(_stringIdLookup.GetStringId(terrainData.PieceIdentifier));
 
-        writer.Write((ushort)(terrainData.Position.X + ReadWriteHelpers.PositionOffset));
-        writer.Write((ushort)(terrainData.Position.Y + ReadWriteHelpers.PositionOffset));
+        writer.Write(ReadWriteHelpers.EncodePoint(terrainData.Position));
         writer.Write((byte)DihedralTransformation.Encode(terrainData.Orientation, terrainData.FacingDirection));
 
         WriteTerrainDataMisc(writer, terrainData);

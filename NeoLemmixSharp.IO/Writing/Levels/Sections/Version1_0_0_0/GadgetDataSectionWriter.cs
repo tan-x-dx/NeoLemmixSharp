@@ -40,8 +40,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
         writer.Write(_stringIdLookup.GetStringId(gadgetData.OverrideName));
 
-        writer.Write((ushort)(gadgetData.Position.X + ReadWriteHelpers.PositionOffset));
-        writer.Write((ushort)(gadgetData.Position.Y + ReadWriteHelpers.PositionOffset));
+        writer.Write(ReadWriteHelpers.EncodePoint(gadgetData.Position));
         writer.Write((byte)DihedralTransformation.Encode(gadgetData.Orientation, gadgetData.FacingDirection));
 
         writer.Write((byte)gadgetData.InitialStateId);
@@ -49,6 +48,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
         WriteOverrideInputNames(writer, gadgetData);
         WriteLayerColorData(writer, gadgetData);
+        WriteOverrideHitBoxCriteriaData(writer, gadgetData);
         WriteGadgetProperties(writer, gadgetData);
     }
 
@@ -72,7 +72,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
             writer.Write((byte)layerColorData.LayerIndex);
             if (layerColorData.UsesSpecificColor)
             {
-                writer.Write((byte)1);
+                writer.Write(true);
 
                 Span<byte> buffer = [0, 0, 0, 0];
                 ReadWriteHelpers.WriteArgbBytes(layerColorData.SpecificColor, buffer);
@@ -80,11 +80,23 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
             }
             else
             {
-                writer.Write((byte)0);
+                writer.Write(false);
                 writer.Write((byte)layerColorData.TribeId);
                 writer.Write((byte)layerColorData.SpriteLayerColorType);
             }
         }
+    }
+
+    private static void WriteOverrideHitBoxCriteriaData(RawLevelFileDataWriter writer, GadgetData gadgetData)
+    {
+        if (gadgetData.OverrideHitBoxCriteriaData is null)
+        {
+            writer.Write(false);
+            return; 
+        }
+
+        writer.Write(true);
+        new GadgetHitBoxCriteriaWriter<LevelFileSectionIdentifierHasher, LevelFileSectionIdentifier>(writer).WriteHitBoxCriteria(gadgetData.OverrideHitBoxCriteriaData);
     }
 
     private static void WriteGadgetProperties(

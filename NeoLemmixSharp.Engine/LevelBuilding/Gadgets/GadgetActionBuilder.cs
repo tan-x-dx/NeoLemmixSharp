@@ -92,7 +92,7 @@ public static class GadgetActionBuilder
 
     private static LemmingMoverAction CreateLemmingMoverAction(int miscData)
     {
-        var delta = GadgetBuildingHelpers.DecodePoint(miscData);
+        var delta = IO.ReadWriteHelpers.DecodePoint(miscData);
         return new LemmingMoverAction(delta);
     }
 

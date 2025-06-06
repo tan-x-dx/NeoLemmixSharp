@@ -34,11 +34,8 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         int styleId = rawFileData.Read16BitUnsignedInteger();
         int pieceId = rawFileData.Read16BitUnsignedInteger();
 
-        int x = rawFileData.Read16BitUnsignedInteger();
-        int y = rawFileData.Read16BitUnsignedInteger();
-
-        x -= ReadWriteHelpers.PositionOffset;
-        y -= ReadWriteHelpers.PositionOffset;
+        int positionData = rawFileData.Read32BitSignedInteger();
+        var position = ReadWriteHelpers.DecodePoint(positionData);
 
         int dhtByte = rawFileData.Read8BitUnsignedInteger();
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
@@ -71,7 +68,7 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
             StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),
             PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
 
-            Position = new Point(x, y),
+            Position = position,
 
             NoOverwrite = decipheredTerrainDataMisc.NoOverwrite,
             Orientation = dht.Orientation,

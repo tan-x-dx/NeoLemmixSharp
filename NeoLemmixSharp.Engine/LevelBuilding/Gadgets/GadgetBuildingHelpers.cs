@@ -100,12 +100,4 @@ public static class GadgetBuildingHelpers
 
         return result;
     }
-
-    public static Point DecodePoint(int combinedBits)
-    {
-        short x = (short)(combinedBits & 0xffff);
-        short y = (short)(combinedBits >>> 16);
-
-        return new Point(x, y);
-    }
 }

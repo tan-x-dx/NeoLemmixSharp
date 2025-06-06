@@ -1,21 +1,20 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
 public sealed class LemmingTribeCriterion : LemmingCriterion
 {
-    private readonly Tribe _tribe;
+    private readonly TribeSet _tribes;
 
-    public LemmingTribeCriterion(Tribe tribe)
+    public LemmingTribeCriterion(TribeSet tribes)
         : base(LemmingCriteria.LemmingTribe)
     {
-        _tribe = tribe;
+        _tribes = tribes;
     }
 
     public override bool LemmingMatchesCriteria(Lemming lemming)
     {
-        return lemming.State.TribeAffiliation == _tribe;
+        return _tribes.Contains(lemming.State.TribeAffiliation);
     }
 }

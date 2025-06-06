@@ -106,6 +106,11 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
         return result;
     }
 
+    public bool ReadBool()
+    {
+        uint byteValue = Read8BitUnsignedInteger();
+        return byteValue != 0U;
+    }
     public byte Read8BitUnsignedInteger() => Read<byte>();
     public ushort Read16BitUnsignedInteger() => Read<ushort>();
     public uint Read32BitUnsignedInteger() => Read<uint>();

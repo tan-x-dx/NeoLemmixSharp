@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
-using System.Runtime.InteropServices;
+using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
 
@@ -71,12 +71,7 @@ internal readonly ref struct GadgetStateReader
         var onLemmingPresentActions = ReadGadgetActionData(1);
         var onLemmingExitActions = ReadGadgetActionData(2);
 
-        var allowedLemmingActionIds = ReadUintSequence();
-        var allowedLemmingStateIds = ReadUintSequence();
-
-        byte? allowedLemmingTribeId = ReadAllowedLemmingTribeId();
-        byte? allowedLemmingOrientationIds = ReadAllowedLemmingOrientationIds();
-        byte? allowedFacingDirectionId = ReadAllowedLemmingFacingDirectionId();
+        var hitBoxCriteria = ReadHitBoxCriteria();
 
         var result = new HitBoxData
         {
@@ -85,11 +80,8 @@ internal readonly ref struct GadgetStateReader
             OnLemmingEnterActions = onLemmingEnterActions,
             OnLemmingPresentActions = onLemmingPresentActions,
             OnLemmingExitActions = onLemmingExitActions,
-            AllowedLemmingActionIds = allowedLemmingActionIds,
-            AllowedLemmingStateIds = allowedLemmingStateIds,
-            AllowedLemmingTribeIds = allowedLemmingTribeId,
-            AllowedLemmingOrientationIds = allowedLemmingOrientationIds,
-            AllowedFacingDirectionId = allowedFacingDirectionId
+
+            HitBoxCriteria = hitBoxCriteria
         };
 
         return result;
@@ -120,71 +112,9 @@ internal readonly ref struct GadgetStateReader
         return new GadgetActionData(gadgetActionType, miscData);
     }
 
-    private uint[] ReadUintSequence()
+    private HitBoxCriteriaData ReadHitBoxCriteria()
     {
-        int numberOfBytesToRead = _rawFileData.Read8BitUnsignedInteger();
-        FileReadingException.ReaderAssert((numberOfBytesToRead % sizeof(uint)) == 0, "Expected to read a multiple of 4 bytes!");
-
-        var result = CollectionsHelper.GetArrayForSize<uint>(numberOfBytesToRead >> 2);
-
-        var sourceBytes = _rawFileData.ReadBytes(numberOfBytesToRead);
-        var destBytes = MemoryMarshal.Cast<uint, byte>(result);
-        sourceBytes.CopyTo(destBytes);
-
-        AssertNonZeroUintSequence(result);
-
-        return result;
-    }
-
-    private static void AssertNonZeroUintSequence(uint[] bits)
-    {
-        foreach (var value in bits)
-        {
-            if (value != 0)
-                return;
-        }
-
-        throw new FileReadingException("No bits set when reading bit sequence!");
-    }
-
-    private byte? ReadAllowedLemmingTribeId()
-    {
-        int rawValue = _rawFileData.Read8BitUnsignedInteger();
-
-        var hasTribeData = ((rawValue >>> EngineConstants.MaxNumberOfTribes) & 1) != 0;
-
-        const int TribeMask = (1 << EngineConstants.MaxNumberOfTribes) - 1;
-
-        if (hasTribeData)
-            return (byte)(rawValue & TribeMask);
-
-        return null;
-    }
-
-    private byte? ReadAllowedLemmingOrientationIds()
-    {
-        int rawValue = _rawFileData.Read8BitUnsignedInteger();
-
-        var hasOrientationData = ((rawValue >>> EngineConstants.NumberOfOrientations) & 1) != 0;
-
-        const int OrientationMask = (1 << EngineConstants.NumberOfOrientations) - 1;
-
-        if (hasOrientationData)
-            return (byte)(rawValue & OrientationMask);
-
-        return null;
-    }
-
-    private byte? ReadAllowedLemmingFacingDirectionId()
-    {
-        int rawValue = _rawFileData.Read8BitUnsignedInteger();
-
-        var hasFacingDirectionData = ((rawValue >>> 1) & 1) != 0;
-
-        if (hasFacingDirectionData)
-            return (byte)(rawValue & 1);
-
-        return null;
+        return new GadgetHitBoxCriteriaReader<StyleFileSectionIdentifierHasher, StyleFileSectionIdentifier>(_rawFileData).ReadHitBoxCriteria();
     }
 
     private HitBoxRegionData[] ReadRegionData()

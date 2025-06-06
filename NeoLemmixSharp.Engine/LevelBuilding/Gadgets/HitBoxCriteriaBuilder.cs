@@ -12,40 +12,43 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 public static class HitBoxCriteriaBuilder
 {
     public static LemmingCriterion[] BuildLemmingCriteria(
-        HitBoxData hitBoxData,
+        HitBoxCriteriaData gadgetArchetypeDataHitBoxCriteriaData,
+        HitBoxCriteriaData? gadgetDataOverrideHitBoxCriteriaData,
         TribeManager tribeManager)
     {
-        var result = CreateArrayForSize(hitBoxData);
+        var lemmingCriteriaData = gadgetDataOverrideHitBoxCriteriaData ?? gadgetArchetypeDataHitBoxCriteriaData;
+
+        var result = CreateArrayForSize(lemmingCriteriaData);
 
         var i = 0;
 
-        if (hitBoxData.AllowedLemmingActionIds.Length > 0)
-            result[i++] = BuildLemmingActionCriterion(hitBoxData.AllowedLemmingActionIds);
+        if (lemmingCriteriaData.AllowedLemmingActionIds.Length > 0)
+            result[i++] = BuildLemmingActionCriterion(lemmingCriteriaData.AllowedLemmingActionIds);
 
-        if (hitBoxData.AllowedLemmingStateIds.Length > 0)
-            result[i++] = BuildLemmingStateCriterion(hitBoxData.AllowedLemmingStateIds);
+        if (lemmingCriteriaData.AllowedLemmingStateIds.Length > 0)
+            result[i++] = BuildLemmingStateCriterion(lemmingCriteriaData.AllowedLemmingStateIds);
 
-        if (hitBoxData.AllowedLemmingTribeIds.HasValue)
-            result[i++] = BuildLemmingTribeCriterion(hitBoxData.AllowedLemmingTribeIds.Value, tribeManager);
+        if (lemmingCriteriaData.AllowedLemmingTribeIds != 0)
+            result[i++] = BuildLemmingTribeCriterion(lemmingCriteriaData.AllowedLemmingTribeIds, tribeManager);
 
-        if (hitBoxData.AllowedLemmingOrientationIds.HasValue)
-            result[i++] = BuildLemmingOrientationCriterion(hitBoxData.AllowedLemmingOrientationIds.Value);
+        if (lemmingCriteriaData.AllowedLemmingOrientationIds != 0)
+            result[i++] = BuildLemmingOrientationCriterion(lemmingCriteriaData.AllowedLemmingOrientationIds);
 
-        if (hitBoxData.AllowedFacingDirectionId.HasValue)
-            result[i++] = BuildLemmingFacingDirectionCriterion(hitBoxData.AllowedFacingDirectionId.Value);
+        if (lemmingCriteriaData.AllowedFacingDirectionId != 0)
+            result[i++] = BuildLemmingFacingDirectionCriterion(lemmingCriteriaData.AllowedFacingDirectionId);
 
         Debug.Assert(i == result.Length);
 
         return result;
     }
 
-    private static LemmingCriterion[] CreateArrayForSize(HitBoxData hitBoxData)
+    private static LemmingCriterion[] CreateArrayForSize(HitBoxCriteriaData lemmingCriteriaData)
     {
-        var arraySize = (hitBoxData.AllowedLemmingActionIds.Length > 0 ? 1 : 0) +
-                        (hitBoxData.AllowedLemmingStateIds.Length > 0 ? 1 : 0) +
-                        (hitBoxData.AllowedLemmingTribeIds.HasValue ? 1 : 0) +
-                        (hitBoxData.AllowedLemmingOrientationIds.HasValue ? 1 : 0) +
-                        (hitBoxData.AllowedFacingDirectionId.HasValue ? 1 : 0);
+        var arraySize = (lemmingCriteriaData.AllowedLemmingActionIds.Length > 0 ? 1 : 0) +
+                        (lemmingCriteriaData.AllowedLemmingStateIds.Length > 0 ? 1 : 0) +
+                        (lemmingCriteriaData.AllowedLemmingTribeIds != 0 ? 1 : 0) +
+                        (lemmingCriteriaData.AllowedLemmingOrientationIds != 0 ? 1 : 0) +
+                        (lemmingCriteriaData.AllowedFacingDirectionId != 0 ? 1 : 0);
 
         return CollectionsHelper.GetArrayForSize<LemmingCriterion>(arraySize);
     }
@@ -68,9 +71,12 @@ public static class HitBoxCriteriaBuilder
 
     private static LemmingTribeCriterion BuildLemmingTribeCriterion(byte value, TribeManager tribeManager)
     {
-        var tribe = tribeManager.AllItems[value];
+        var tribeSet = tribeManager.CreateBitArraySet();
+        uint intValue = value;
+        var sourceSpan = new ReadOnlySpan<uint>(ref intValue);
+        tribeSet.ReadFrom(sourceSpan);
 
-        return new LemmingTribeCriterion(tribe);
+        return new LemmingTribeCriterion(tribeSet);
     }
 
     private static LemmingOrientationCriterion BuildLemmingOrientationCriterion(byte value)
