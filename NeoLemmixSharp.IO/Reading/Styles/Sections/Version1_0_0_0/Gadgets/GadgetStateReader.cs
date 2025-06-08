@@ -22,8 +22,8 @@ internal readonly ref struct GadgetStateReader
     {
         int stateNameId = _rawFileData.Read16BitUnsignedInteger();
 
-        int offsetX = _rawFileData.Read16BitUnsignedInteger();
-        int offsetY = _rawFileData.Read16BitUnsignedInteger();
+        var rawPointData = _rawFileData.Read32BitSignedInteger();
+        var hitBoxOffset = ReadWriteHelpers.DecodePoint(rawPointData);
 
         var hitBoxData = ReadHitBoxData();
         var regionData = ReadRegionData();
@@ -33,7 +33,7 @@ internal readonly ref struct GadgetStateReader
         var result = new GadgetStateArchetypeData
         {
             StateName = _stringIdLookup[stateNameId],
-            HitBoxOffset = new Point(offsetX, offsetY),
+            HitBoxOffset = hitBoxOffset,
             HitBoxData = hitBoxData,
             RegionData = regionData,
 
@@ -132,7 +132,7 @@ internal readonly ref struct GadgetStateReader
     {
         int rotNum = _rawFileData.Read8BitUnsignedInteger();
 
-        FileReadingException.ReaderAssert(rotNum == orientation.RotNum, "Hit box region data does not match expected orientation");
+        FileReadingException.ReaderAssert(rotNum == orientation.RotNum, "HitBox region orientation mismatch!");
 
         uint rawHitBoxType = _rawFileData.Read8BitUnsignedInteger();
         var actualHitBoxType = HitBoxTypeHelpers.GetEnumValue(rawHitBoxType);
@@ -179,7 +179,8 @@ internal readonly ref struct GadgetStateReader
         var animationLayerParameters = ReadAnimationLayerParameters();
 
         int initialFrame = _rawFileData.Read8BitUnsignedInteger();
-        int nextGadgetState = _rawFileData.Read8BitUnsignedInteger();
+        // Need to offset by 1
+        int nextGadgetState = _rawFileData.Read8BitUnsignedInteger() - 1;
 
         return new AnimationLayerArchetypeData
         {
@@ -187,8 +188,7 @@ internal readonly ref struct GadgetStateReader
             AnimationLayerParameters = animationLayerParameters,
             InitialFrame = initialFrame,
 
-            // Need to offset by 1
-            NextGadgetState = nextGadgetState - 1
+            NextGadgetState = nextGadgetState
         };
     }
 

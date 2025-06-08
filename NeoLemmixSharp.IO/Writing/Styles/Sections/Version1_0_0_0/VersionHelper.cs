@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Versions;
+using NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0.Gadgets;
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 

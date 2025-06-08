@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 [DebuggerDisplay("{StyleIdentifier}:{PieceIdentifier}")]
 public sealed class GadgetArchetypeData
 {
-    private readonly GadgetArchetypeMiscDictionary _miscData = GadgetArchetypeMiscDataTypeHasher.CreateBitArrayDictionary<int>();
+    public GadgetArchetypeMiscDictionary MiscData { get; } = GadgetArchetypeMiscDataTypeHasher.CreateBitArrayDictionary<int>();
 
     public required StyleIdentifier StyleIdentifier { get; init; }
     public required PieceIdentifier PieceIdentifier { get; init; }
@@ -23,10 +23,10 @@ public sealed class GadgetArchetypeData
 
     public required GadgetStateArchetypeData[] AllGadgetStateData { get; init; }
 
-    internal void AddMiscData(GadgetArchetypeMiscDataType miscDataType, int value) => _miscData.Add(miscDataType, value);
-    public bool HasMiscData(GadgetArchetypeMiscDataType miscDataType) => _miscData.ContainsKey(miscDataType);
-    public int GetMiscData(GadgetArchetypeMiscDataType miscDataType) => _miscData[miscDataType];
-    public bool TryGetMiscData(GadgetArchetypeMiscDataType miscDataType, out int value) => _miscData.TryGetValue(miscDataType, out value);
+    internal void AddMiscData(GadgetArchetypeMiscDataType miscDataType, int value) => MiscData.Add(miscDataType, value);
+    public bool HasMiscData(GadgetArchetypeMiscDataType miscDataType) => MiscData.ContainsKey(miscDataType);
+    public int GetMiscData(GadgetArchetypeMiscDataType miscDataType) => MiscData[miscDataType];
+    public bool TryGetMiscData(GadgetArchetypeMiscDataType miscDataType, out int value) => MiscData.TryGetValue(miscDataType, out value);
 
     internal GadgetArchetypeData()
     {

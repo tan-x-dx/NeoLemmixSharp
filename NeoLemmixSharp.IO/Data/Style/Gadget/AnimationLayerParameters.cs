@@ -2,28 +2,28 @@
 
 public readonly struct AnimationLayerParameters(int frameStart, int frameEnd, int frameDelta, int transitionToFrame)
 {
-    private readonly int _frameStart = frameStart;
-    private readonly int _frameEnd = frameEnd;
-    private readonly int _frameDelta = frameDelta;
-    private readonly int _transitionToFrame = transitionToFrame;
+    internal readonly int FrameStart = frameStart;
+    internal readonly int FrameEnd = frameEnd;
+    internal readonly int FrameDelta = frameDelta;
+    internal readonly int TransitionToFrame = transitionToFrame;
 
     public int GetTransitionToFrame()
     {
-        return _transitionToFrame < 0
-            ? _frameStart
-            : _transitionToFrame;
+        return TransitionToFrame < 0
+            ? FrameStart
+            : TransitionToFrame;
     }
 
     public int GetNextFame(int currentFrame, out bool isEndOfAnimation)
     {
-        if (currentFrame == _frameEnd)
+        if (currentFrame == FrameEnd)
         {
             isEndOfAnimation = false;
-            return _frameStart;
+            return FrameStart;
         }
 
-        currentFrame += _frameDelta;
-        isEndOfAnimation = currentFrame == _frameEnd;
+        currentFrame += FrameDelta;
+        isEndOfAnimation = currentFrame == FrameEnd;
         return currentFrame;
     }
 }

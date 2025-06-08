@@ -1,26 +1,26 @@
-﻿using NeoLemmixSharp.IO.Data.Level;
+﻿using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Versions;
-using NeoLemmixSharp.IO.Writing.Levels.Sections;
+using NeoLemmixSharp.IO.Writing.Styles.Sections;
 
-namespace NeoLemmixSharp.IO.Writing.Levels;
+namespace NeoLemmixSharp.IO.Writing.Styles;
 
-public readonly ref struct DefaultLevelWriter
+internal readonly ref struct DefaultStyleWriter
 {
-    private readonly LevelData _levelData;
+    private readonly StyleData _styleData;
     private readonly FileFormatVersion _version;
 
-    public DefaultLevelWriter(LevelData levelData, FileFormatVersion version)
+    public DefaultStyleWriter(StyleData styleData, FileFormatVersion version)
     {
-        _levelData = levelData;
+        _styleData = styleData;
         _version = version;
     }
 
-    public void WriteToFile(Stream stream)
+    public void WriteStyleData(Stream stream)
     {
-        var writer = new RawLevelFileDataWriter();
+        var writer = new RawStyleFileDataWriter();
 
-        var sectionWriters = VersionHelper.GetLevelDataSectionWritersForVersion(_version);
+        var sectionWriters = VersionHelper.GetStyleDataSectionWritersForVersion(_version);
 
         foreach (var sectionWriter in sectionWriters)
         {
@@ -31,10 +31,10 @@ public readonly ref struct DefaultLevelWriter
     }
 
     private void WriteSection(
-        RawLevelFileDataWriter writer,
-        LevelDataSectionWriter sectionWriter)
+        RawStyleFileDataWriter writer,
+        StyleDataSectionWriter sectionWriter)
     {
-        var numberOfItemsInSection = sectionWriter.CalculateNumberOfItemsInSection(_levelData);
+        var numberOfItemsInSection = sectionWriter.CalculateNumberOfItemsInSection(_styleData);
         if (numberOfItemsInSection == 0)
         {
             FileWritingException.WriterAssert(
@@ -47,7 +47,7 @@ public readonly ref struct DefaultLevelWriter
         writer.Write(sectionWriter.GetSectionIdentifierBytes());
         writer.Write(numberOfItemsInSection);
 
-        sectionWriter.WriteSection(writer, _levelData);
+        sectionWriter.WriteSection(writer, _styleData);
         writer.EndWritingSection(sectionWriter.SectionIdentifier);
     }
 }
