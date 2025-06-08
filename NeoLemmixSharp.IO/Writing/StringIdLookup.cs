@@ -62,7 +62,7 @@ internal readonly struct StringIdLookup
     {
         var bufferSize = CalculateBufferSize();
 
-        FileWritingException.WriterAssert(bufferSize <= ushort.MaxValue, "Cannot serialize a string larger than 65535 bytes!");
+        FileWritingException.WriterAssert(bufferSize <= IoConstants.MaxStringLengthInBytes, "Cannot serialize a string larger than 2048 bytes!");
 
         Span<byte> buffer = bufferSize > MaxStackByteBufferSize
             ? new byte[bufferSize]
