@@ -7,11 +7,11 @@ using System.Text;
 
 namespace NeoLemmixSharp.IO.Writing;
 
-internal readonly struct StringIdLookup
+internal readonly struct FileWriterStringIdLookup
 {
     private readonly Dictionary<string, ushort> _lookup;
 
-    internal StringIdLookup(Dictionary<string, ushort> lookup) => _lookup = lookup;
+    internal FileWriterStringIdLookup(Dictionary<string, ushort> lookup) => _lookup = lookup;
 
     [Pure]
     internal ushort GetStringId(StyleIdentifier styleIdentifier) => GetStringId(styleIdentifier.ToString());
@@ -30,18 +30,18 @@ internal readonly struct StringIdLookup
     }
 }
 
-internal readonly struct MutableStringIdLookup
+internal readonly struct MutableFileWriterStringIdLookup
 {
     private const int MaxStackByteBufferSize = 256;
 
     private readonly Dictionary<string, ushort> _lookup = new(ReadWriteHelpers.InitialStringListCapacity);
     internal int Count => _lookup.Count;
 
-    public MutableStringIdLookup()
+    public MutableFileWriterStringIdLookup()
     {
     }
 
-    public static implicit operator StringIdLookup(MutableStringIdLookup lookup) => new(lookup._lookup);
+    public static implicit operator FileWriterStringIdLookup(MutableFileWriterStringIdLookup lookup) => new(lookup._lookup);
 
     internal void RecordString(StyleIdentifier styleIdentifier) => RecordString(styleIdentifier.ToString());
     internal void RecordString(PieceIdentifier pieceIdentifier) => RecordString(pieceIdentifier.ToString());

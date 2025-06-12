@@ -5,9 +5,9 @@ namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class LevelMessageDataSectionWriter : LevelDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public LevelMessageDataSectionWriter(StringIdLookup stringIdLookup)
+    public LevelMessageDataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelTextDataSection, false)
     {
         _stringIdLookup = stringIdLookup;

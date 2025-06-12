@@ -5,10 +5,10 @@ namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
 internal sealed class LevelMessageDataSectionReader : LevelDataSectionReader
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileReaderStringIdLookup _stringIdLookup;
 
     public LevelMessageDataSectionReader(
-        StringIdLookup stringIdLookup)
+        FileReaderStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelTextDataSection, false)
     {
         _stringIdLookup = stringIdLookup;

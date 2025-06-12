@@ -7,9 +7,9 @@ namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
 internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileReaderStringIdLookup _stringIdLookup;
 
-    public TerrainArchetypeDataSectionReader(StringIdLookup stringIdLookup)
+    public TerrainArchetypeDataSectionReader(FileReaderStringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.TerrainArchetypeDataSection, false)
     {
         _stringIdLookup = stringIdLookup;

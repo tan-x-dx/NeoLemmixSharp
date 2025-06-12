@@ -2,10 +2,10 @@
 
 namespace NeoLemmixSharp.IO.Reading;
 
-internal readonly struct FileStringReader<TRawFileDataReader>(MutableStringIdLookup stringIdLookup)
+internal readonly struct FileStringReader<TRawFileDataReader>(MutableFileReaderStringIdLookup stringIdLookup)
     where TRawFileDataReader : class, IRawFileDataReader
 {
-    private readonly MutableStringIdLookup _stringIdLookup = stringIdLookup;
+    private readonly MutableFileReaderStringIdLookup _stringIdLookup = stringIdLookup;
 
     internal void ReadSection(TRawFileDataReader rawFileData, int numberOfItemsInSection)
     {

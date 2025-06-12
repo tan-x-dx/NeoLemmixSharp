@@ -9,9 +9,9 @@ namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
 internal readonly ref struct GadgetStateReader
 {
     private readonly RawStyleFileDataReader _rawFileData;
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileReaderStringIdLookup _stringIdLookup;
 
-    internal GadgetStateReader(RawStyleFileDataReader rawFileData, StringIdLookup stringIdLookup)
+    internal GadgetStateReader(RawStyleFileDataReader rawFileData, FileReaderStringIdLookup stringIdLookup)
     {
         _rawFileData = rawFileData;
         _stringIdLookup = stringIdLookup;

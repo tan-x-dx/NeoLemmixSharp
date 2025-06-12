@@ -9,9 +9,9 @@ namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
 internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEqualityComparer<LemmingActionSpriteLayerData[]>
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public ThemeDataSectionWriter(StringIdLookup stringIdLookup)
+    public ThemeDataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.ThemeDataSection, true)
     {
         _stringIdLookup = stringIdLookup;

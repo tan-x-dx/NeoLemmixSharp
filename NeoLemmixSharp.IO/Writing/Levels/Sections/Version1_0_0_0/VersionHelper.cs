@@ -6,7 +6,7 @@ internal sealed class VersionHelper : ILevelDataSectionWriterVersionHelper
 {
     public LevelDataSectionWriter[] GetLevelDataSectionWriters()
     {
-        var stringIdLookup = new MutableStringIdLookup();
+        var stringIdLookup = new MutableFileWriterStringIdLookup();
         var terrainSectionWriter = new TerrainDataSectionWriter(stringIdLookup);
 
         LevelDataSectionWriter[] sectionWriters =

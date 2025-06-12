@@ -1,23 +1,23 @@
 ﻿namespace NeoLemmixSharp.IO.Reading;
 
-internal readonly struct StringIdLookup(List<string> strings)
+internal readonly struct FileReaderStringIdLookup(List<string> strings)
 {
     private readonly List<string> _strings = strings;
 
     internal string this[int index] => _strings[index];
 }
 
-internal readonly struct MutableStringIdLookup
+internal readonly struct MutableFileReaderStringIdLookup
 {
     private readonly List<string> _strings = [];
 
     internal int Count => _strings.Count;
 
-    public MutableStringIdLookup()
+    public MutableFileReaderStringIdLookup()
     {
     }
 
-    public static implicit operator StringIdLookup(MutableStringIdLookup lookup) => new(lookup._strings);
+    public static implicit operator FileReaderStringIdLookup(MutableFileReaderStringIdLookup lookup) => new(lookup._strings);
 
     internal void SetCapacity(int capacity) => _strings.Capacity = capacity;
 

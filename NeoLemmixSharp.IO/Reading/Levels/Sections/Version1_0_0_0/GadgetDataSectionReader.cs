@@ -12,10 +12,10 @@ namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
 internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileReaderStringIdLookup _stringIdLookup;
 
     public GadgetDataSectionReader(
-        StringIdLookup stringIdLookup)
+        FileReaderStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.GadgetDataSection, false)
     {
         _stringIdLookup = stringIdLookup;

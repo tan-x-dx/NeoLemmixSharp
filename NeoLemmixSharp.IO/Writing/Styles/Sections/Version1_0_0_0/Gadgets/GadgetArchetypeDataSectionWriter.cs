@@ -6,9 +6,9 @@ namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0.Gadgets;
 
 internal sealed class GadgetArchetypeDataSectionWriter : StyleDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public GadgetArchetypeDataSectionWriter(StringIdLookup stringIdLookup)
+    public GadgetArchetypeDataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection, false)
     {
         _stringIdLookup = stringIdLookup;

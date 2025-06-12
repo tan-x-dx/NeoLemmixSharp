@@ -8,9 +8,9 @@ namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
 internal sealed class TribeDataSectionReader : LevelDataSectionReader
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileReaderStringIdLookup _stringIdLookup;
 
-    public TribeDataSectionReader(StringIdLookup stringIdLookup)
+    public TribeDataSectionReader(FileReaderStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.TribeDataSection, true)
     {
         _stringIdLookup = stringIdLookup;

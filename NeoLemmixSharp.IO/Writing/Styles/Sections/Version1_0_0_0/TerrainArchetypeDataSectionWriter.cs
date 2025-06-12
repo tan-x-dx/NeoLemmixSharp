@@ -7,9 +7,9 @@ namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
 internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public TerrainArchetypeDataSectionWriter(StringIdLookup stringIdLookup)
+    public TerrainArchetypeDataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.TerrainArchetypeDataSection, false)
     {
         _stringIdLookup = stringIdLookup;

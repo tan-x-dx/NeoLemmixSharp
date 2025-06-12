@@ -8,9 +8,9 @@ namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0.Gadgets;
 internal readonly ref struct GadgetStateWriter
 {
     private readonly RawStyleFileDataWriter _rawFileData;
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    internal GadgetStateWriter(RawStyleFileDataWriter rawFileData, StringIdLookup stringIdLookup)
+    internal GadgetStateWriter(RawStyleFileDataWriter rawFileData, FileWriterStringIdLookup stringIdLookup)
     {
         _rawFileData = rawFileData;
         _stringIdLookup = stringIdLookup;

@@ -7,7 +7,7 @@ internal sealed class VersionHelper : IStyleDataSectionWriterVersionHelper
 {
     public StyleDataSectionWriter[] GetStyleDataSectionWriters()
     {
-        var stringIdLookup = new MutableStringIdLookup();
+        var stringIdLookup = new MutableFileWriterStringIdLookup();
 
         StyleDataSectionWriter[] sectionWriters =
         [

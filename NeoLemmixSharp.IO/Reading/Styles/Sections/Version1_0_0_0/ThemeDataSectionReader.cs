@@ -8,9 +8,9 @@ namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
 internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer<LemmingActionSpriteData>
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileReaderStringIdLookup _stringIdLookup;
 
-    public ThemeDataSectionReader(StringIdLookup stringIdLookup)
+    public ThemeDataSectionReader(FileReaderStringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.ThemeDataSection, true)
     {
         _stringIdLookup = stringIdLookup;

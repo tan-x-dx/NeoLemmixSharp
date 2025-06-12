@@ -7,9 +7,9 @@ namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public TerrainDataSectionWriter(StringIdLookup stringIdLookup)
+    public TerrainDataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.TerrainDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
