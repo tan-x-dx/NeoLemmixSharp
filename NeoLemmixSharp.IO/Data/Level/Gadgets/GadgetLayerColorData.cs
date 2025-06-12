@@ -1,30 +1,42 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.IO.Data.Style.Theme;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Data.Level.Gadgets;
 
-public sealed class GadgetLayerColorData
+[StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
+public readonly struct GadgetLayerColorData
 {
-    public required int StateIndex { get; init; }
-    public required int LayerIndex { get; init; }
+    [FieldOffset(0 * sizeof(int))] public readonly int StateIndex;
+    [FieldOffset(1 * sizeof(int))] public readonly int LayerIndex;
 
-    public Color SpecificColor { get; }
+    [FieldOffset(2 * sizeof(int))] public readonly Color SpecificColor;
+    [FieldOffset(3 * sizeof(int))] private readonly int _dummy;
 
-    public int TribeId { get; }
-    public TribeSpriteLayerColorType SpriteLayerColorType { get; }
+    [FieldOffset(2 * sizeof(int))] public readonly int TribeId;
+    [FieldOffset(3 * sizeof(int))] public readonly TribeSpriteLayerColorType SpriteLayerColorType;
 
-    public bool UsesSpecificColor => TribeId == -1;
+    public bool UsesSpecificColor => _dummy == -1;
 
-    public GadgetLayerColorData(Color specificColor)
+    public GadgetLayerColorData(
+        int stateIndex,
+        int layerIndex,
+        Color specificColor)
     {
+        StateIndex = stateIndex;
+        LayerIndex = layerIndex;
         SpecificColor = specificColor;
-        TribeId = -1;
-        SpriteLayerColorType = default;
+        _dummy = -1;
     }
 
-    public GadgetLayerColorData(int tribeId, TribeSpriteLayerColorType spriteLayerColorType)
+    public GadgetLayerColorData(
+        int stateIndex,
+        int layerIndex,
+        int tribeId,
+        TribeSpriteLayerColorType spriteLayerColorType)
     {
-        SpecificColor = default;
+        StateIndex = stateIndex;
+        LayerIndex = layerIndex;
         TribeId = tribeId;
         SpriteLayerColorType = spriteLayerColorType;
     }

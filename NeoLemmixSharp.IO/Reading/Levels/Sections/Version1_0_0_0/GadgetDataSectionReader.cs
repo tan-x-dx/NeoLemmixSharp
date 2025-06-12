@@ -126,22 +126,14 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         {
             var colorBytes = rawFileData.ReadBytes(4);
             var color = ReadWriteHelpers.ReadArgbBytes(colorBytes);
-            return new GadgetLayerColorData(color)
-            {
-                StateIndex = stateIndex,
-                LayerIndex = layerIndex,
-            };
+            return new GadgetLayerColorData(stateIndex, layerIndex, color);
         }
 
         int tribeId = rawFileData.Read8BitUnsignedInteger();
         uint rawTribeSpriteLayerColorType = rawFileData.Read8BitUnsignedInteger();
         var spriteLayerColorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawTribeSpriteLayerColorType);
 
-        return new GadgetLayerColorData(tribeId, spriteLayerColorType)
-        {
-            StateIndex = stateIndex,
-            LayerIndex = layerIndex,
-        };
+        return new GadgetLayerColorData(stateIndex, layerIndex, tribeId, spriteLayerColorType);
     }
 
     private static HitBoxCriteriaData? ReadOverrideHitBoxCriteriaData(RawLevelFileDataReader rawFileData)
