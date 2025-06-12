@@ -9,7 +9,7 @@ public sealed class SetLemmingActionAction : GadgetAction
     private readonly LemmingAction _action;
 
     public SetLemmingActionAction(LemmingAction action)
-        : base(GadgetActionType.SetLemmingAction)
+        : base(GadgetActionType.ChangeLemmingAction)
     {
         _action = action;
     }

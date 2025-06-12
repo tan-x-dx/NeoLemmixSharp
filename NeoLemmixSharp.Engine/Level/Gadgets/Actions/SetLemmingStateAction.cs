@@ -12,7 +12,7 @@ public sealed class SetLemmingStateAction : GadgetAction
     private readonly SetStateType _type;
 
     public SetLemmingStateAction(ILemmingState lemmingStateChanger, SetStateType type)
-        : base(GadgetActionType.SetLemmingState)
+        : base(GadgetActionType.ChangeLemmingState)
     {
         _lemmingStateChanger = lemmingStateChanger;
         _type = type;

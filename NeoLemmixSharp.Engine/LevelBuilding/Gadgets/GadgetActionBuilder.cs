@@ -36,8 +36,8 @@ public static class GadgetActionBuilder
 
     private static GadgetAction CreateGadgetAction(GadgetActionType gadgetActionType, int miscData) => gadgetActionType switch
     {
-        GadgetActionType.SetLemmingState => CreateSetLemmingStateAction(miscData),
-        GadgetActionType.SetLemmingAction => CreateSetLemmingActionAction(miscData),
+        GadgetActionType.ChangeLemmingState => CreateSetLemmingStateAction(miscData),
+        GadgetActionType.ChangeLemmingAction => CreateSetLemmingActionAction(miscData),
         GadgetActionType.ChangeSkillCount => CreateSkillCountModifierAction(miscData),
         GadgetActionType.ForceFacingDirection => CreateForceFacingDirectionAction(miscData),
         GadgetActionType.LemmingMover => CreateLemmingMoverAction(miscData),
