@@ -96,7 +96,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         }
 
         writer.Write(true);
-        new GadgetHitBoxCriteriaWriter<LevelFileSectionIdentifierHasher, LevelFileSectionIdentifier>(writer).WriteHitBoxCriteria(gadgetData.OverrideHitBoxCriteriaData);
+        new GadgetHitBoxCriteriaWriter<RawLevelFileDataWriter>(writer).WriteHitBoxCriteria(gadgetData.OverrideHitBoxCriteriaData);
     }
 
     private static void WriteGadgetProperties(

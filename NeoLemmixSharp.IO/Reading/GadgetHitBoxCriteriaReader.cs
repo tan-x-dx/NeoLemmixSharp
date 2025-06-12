@@ -1,16 +1,14 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
-using NeoLemmixSharp.IO.Writing;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Reading;
 
-internal readonly ref struct GadgetHitBoxCriteriaReader<TPerfectHasher, TEnum>(RawFileDataReader<TPerfectHasher, TEnum> rawFileData)
-    where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
-    where TEnum : unmanaged, Enum
+internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRawFileDataReader rawFileData)
+    where TRawFileDataReader : class, IRawFileDataReader
 {
-    private readonly RawFileDataReader<TPerfectHasher, TEnum> _rawFileData = rawFileData;
+    private readonly TRawFileDataReader _rawFileData = rawFileData;
 
     public HitBoxCriteriaData ReadHitBoxCriteria()
     {

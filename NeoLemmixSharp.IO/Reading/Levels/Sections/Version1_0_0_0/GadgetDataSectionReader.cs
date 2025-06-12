@@ -141,7 +141,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         bool hasOverrideHitBoxCriteriaData = rawFileData.ReadBool();
 
         return hasOverrideHitBoxCriteriaData
-            ? new GadgetHitBoxCriteriaReader<LevelFileSectionIdentifierHasher, LevelFileSectionIdentifier>(rawFileData).ReadHitBoxCriteria()
+            ? new GadgetHitBoxCriteriaReader<RawLevelFileDataReader>(rawFileData).ReadHitBoxCriteria()
             : null;
     }
 

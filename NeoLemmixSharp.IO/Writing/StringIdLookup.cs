@@ -64,9 +64,8 @@ internal readonly struct MutableStringIdLookup
     }
 
     [SkipLocalsInit]
-    internal void WriteStrings<TPerfectHasher, TEnum>(RawFileDataWriter<TPerfectHasher, TEnum> writer)
-        where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
-        where TEnum : unmanaged, Enum
+    internal void WriteStrings<TWriter>(TWriter writer)
+        where TWriter : class, IRawFileDataWriter
     {
         var bufferSize = CalculateBufferSize();
 

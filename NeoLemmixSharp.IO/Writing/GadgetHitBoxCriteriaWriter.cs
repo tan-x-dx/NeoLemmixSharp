@@ -4,11 +4,10 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Writing;
 
-internal readonly ref struct GadgetHitBoxCriteriaWriter<TPerfectHasher, TEnum>(RawFileDataWriter<TPerfectHasher, TEnum> rawFileData)
-    where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
-    where TEnum : unmanaged, Enum
+internal readonly ref struct GadgetHitBoxCriteriaWriter<TWriter>(TWriter rawFileData)
+    where TWriter : class, IRawFileDataWriter
 {
-    private readonly RawFileDataWriter<TPerfectHasher, TEnum> _rawFileData = rawFileData;
+    private readonly TWriter _rawFileData = rawFileData;
 
     internal void WriteHitBoxCriteria(HitBoxCriteriaData overrideHitBoxCriteriaData)
     {

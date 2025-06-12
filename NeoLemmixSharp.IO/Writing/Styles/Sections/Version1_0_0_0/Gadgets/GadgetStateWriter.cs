@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
-using NeoLemmixSharp.IO.FileFormats;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0.Gadgets;
@@ -81,7 +80,7 @@ internal readonly ref struct GadgetStateWriter
 
     private void WriteHitBoxCriteria(HitBoxCriteriaData hitBoxCriteria)
     {
-        new GadgetHitBoxCriteriaWriter<StyleFileSectionIdentifierHasher, StyleFileSectionIdentifier>(_rawFileData).WriteHitBoxCriteria(hitBoxCriteria);
+        new GadgetHitBoxCriteriaWriter<RawStyleFileDataWriter>(_rawFileData).WriteHitBoxCriteria(hitBoxCriteria);
     }
 
     private void WriteRegionData(HitBoxRegionData[] regionData)
