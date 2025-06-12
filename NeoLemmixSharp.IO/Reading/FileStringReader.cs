@@ -3,11 +3,11 @@ using System.Text;
 
 namespace NeoLemmixSharp.IO.Reading;
 
-internal readonly struct FileStringReader<TPerfectHasher, TEnum>(StringIdLookup stringIdLookup)
+internal readonly struct FileStringReader<TPerfectHasher, TEnum>(MutableStringIdLookup stringIdLookup)
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
-    private readonly StringIdLookup _stringIdLookup = stringIdLookup;
+    private readonly MutableStringIdLookup _stringIdLookup = stringIdLookup;
 
     internal void ReadSection(RawFileDataReader<TPerfectHasher, TEnum> rawFileData, int numberOfItemsInSection)
     {

@@ -5,9 +5,9 @@ namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
 internal sealed class StringDataSectionWriter : StyleDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly MutableStringIdLookup _stringIdLookup;
 
-    public StringDataSectionWriter(StringIdLookup stringIdLookup)
+    public StringDataSectionWriter(MutableStringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.StringDataSection, true)
     {
         _stringIdLookup = stringIdLookup;

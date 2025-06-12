@@ -9,15 +9,39 @@ namespace NeoLemmixSharp.IO.Writing;
 
 internal readonly struct StringIdLookup
 {
+    private readonly Dictionary<string, ushort> _lookup;
+
+    internal StringIdLookup(Dictionary<string, ushort> lookup) => _lookup = lookup;
+
+    [Pure]
+    internal ushort GetStringId(StyleIdentifier styleIdentifier) => GetStringId(styleIdentifier.ToString());
+    [Pure]
+    internal ushort GetStringId(PieceIdentifier pieceIdentifier) => GetStringId(pieceIdentifier.ToString());
+    [Pure]
+    internal ushort GetStringId(GadgetInputName gadgetInputName) => GetStringId(gadgetInputName.ToString());
+
+    [Pure]
+    internal ushort GetStringId(string? s)
+    {
+        if (string.IsNullOrEmpty(s))
+            return 0;
+
+        return _lookup[s];
+    }
+}
+
+internal readonly struct MutableStringIdLookup
+{
     private const int MaxStackByteBufferSize = 256;
 
-    private readonly Dictionary<string, ushort> _lookup;
+    private readonly Dictionary<string, ushort> _lookup = new(ReadWriteHelpers.InitialStringListCapacity);
     internal int Count => _lookup.Count;
 
-    public StringIdLookup()
+    public MutableStringIdLookup()
     {
-        _lookup = new Dictionary<string, ushort>(ReadWriteHelpers.InitialStringListCapacity);
     }
+
+    public static implicit operator StringIdLookup(MutableStringIdLookup lookup) => new(lookup._lookup);
 
     internal void RecordString(StyleIdentifier styleIdentifier) => RecordString(styleIdentifier.ToString());
     internal void RecordString(PieceIdentifier pieceIdentifier) => RecordString(pieceIdentifier.ToString());
@@ -37,22 +61,6 @@ internal readonly struct StringIdLookup
         {
             correspondingStringId = nextStringId;
         }
-    }
-
-    [Pure]
-    internal ushort GetStringId(StyleIdentifier styleIdentifier) => GetStringId(styleIdentifier.ToString());
-    [Pure]
-    internal ushort GetStringId(PieceIdentifier pieceIdentifier) => GetStringId(pieceIdentifier.ToString());
-    [Pure]
-    internal ushort GetStringId(GadgetInputName gadgetInputName) => GetStringId(gadgetInputName.ToString());
-
-    [Pure]
-    internal ushort GetStringId(string? s)
-    {
-        if (string.IsNullOrEmpty(s))
-            return 0;
-
-        return _lookup[s];
     }
 
     [SkipLocalsInit]
