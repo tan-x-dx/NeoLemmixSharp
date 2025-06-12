@@ -66,6 +66,8 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
             ReadSection(result, sectionReader);
         }
 
+        FileReadingException.ReaderAssert(!_rawFileData.MoreToRead, "Finished reading but extra bytes still in file!");
+
         return result;
     }
 

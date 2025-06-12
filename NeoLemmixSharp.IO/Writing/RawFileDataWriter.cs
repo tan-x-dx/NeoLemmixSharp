@@ -92,7 +92,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         TEnum sectionIdentifier,
         Interval interval)
     {
-        var sectionIdentifierByte = (byte)Unsafe.As<TEnum, int>(ref sectionIdentifier);
+        byte sectionIdentifierByte = (byte)Unsafe.As<TEnum, int>(ref sectionIdentifier);
         WriteToByteBuffer(sectionIdentifierByte, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(interval.Start + intervalOffset, ref preambleDataByteBuffer, ref preamblePosition);
         WriteToByteBuffer(interval.Length, ref preambleDataByteBuffer, ref preamblePosition);
@@ -102,7 +102,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         where T : unmanaged
     {
         var typeSize = sizeof(T);
-        if (position + typeSize >= byteBuffer.Length)
+        if (position + typeSize > byteBuffer.Length)
         {
             DoubleByteBufferLength(ref byteBuffer);
         }
