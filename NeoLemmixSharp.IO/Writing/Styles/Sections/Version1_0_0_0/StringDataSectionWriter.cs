@@ -5,9 +5,9 @@ namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
 internal sealed class StringDataSectionWriter : StyleDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly MutableStringIdLookup _stringIdLookup;
 
-    public StringDataSectionWriter(StringIdLookup stringIdLookup)
+    public StringDataSectionWriter(MutableStringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.StringDataSection, true)
     {
         _stringIdLookup = stringIdLookup;
@@ -38,11 +38,11 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
 
     private void RecordThemeDataStrings(StyleData styleData)
     {
-        _stringIdLookup.RecordString(styleData.Identifier.ToString());
+        _stringIdLookup.RecordString(styleData.Identifier);
         _stringIdLookup.RecordString(styleData.Name);
         _stringIdLookup.RecordString(styleData.Author);
         _stringIdLookup.RecordString(styleData.Description);
-        _stringIdLookup.RecordString(styleData.ThemeData.LemmingSpriteData.LemmingSpriteStyleIdentifier.ToString());
+        _stringIdLookup.RecordString(styleData.ThemeData.LemmingSpriteData.LemmingSpriteStyleIdentifier);
     }
 
     private void RecordTerrainArchetypeDataStrings(StyleData styleData)
@@ -50,7 +50,7 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
         foreach (var kvp in styleData.TerrainArchetypeData)
         {
             var terrainArchetypeData = kvp.Value;
-            _stringIdLookup.RecordString(terrainArchetypeData.PieceIdentifier.ToString());
+            _stringIdLookup.RecordString(terrainArchetypeData.PieceIdentifier);
             _stringIdLookup.RecordString(terrainArchetypeData.Name);
         }
     }
@@ -60,8 +60,8 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
         foreach (var kvp in styleData.GadgetArchetypeData)
         {
             var gadgetArchetypeDatum = kvp.Value;
-            _stringIdLookup.RecordString(gadgetArchetypeDatum.PieceIdentifier.ToString());
-            _stringIdLookup.RecordString(gadgetArchetypeDatum.GadgetName.ToString());
+            _stringIdLookup.RecordString(gadgetArchetypeDatum.PieceIdentifier);
+            _stringIdLookup.RecordString(gadgetArchetypeDatum.GadgetName);
 
             foreach (var gadgetStateData in gadgetArchetypeDatum.AllGadgetStateData)
             {

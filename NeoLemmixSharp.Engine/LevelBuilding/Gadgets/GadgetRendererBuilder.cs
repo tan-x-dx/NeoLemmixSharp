@@ -52,16 +52,16 @@ public sealed class GadgetRendererBuilder
     {
         var rootFilePath = Path.Combine(
             RootDirectoryManager.StyleFolderDirectory,
-            stylePiecePair.StyleName.ToString(),
+            stylePiecePair.StyleIdentifier.ToString(),
             DefaultFileExtensions.GadgetFolderName,
-            stylePiecePair.PieceName.ToString());
+            stylePiecePair.PieceIdentifier.ToString());
 
         var pngPath = Path.ChangeExtension(rootFilePath, "png");
 
         return TextureCache.GetOrLoadTexture(
             pngPath,
-            stylePiecePair.StyleName,
-            stylePiecePair.PieceName,
+            stylePiecePair.StyleIdentifier,
+            stylePiecePair.PieceIdentifier,
             TextureType.GadgetSprite);
     }
 

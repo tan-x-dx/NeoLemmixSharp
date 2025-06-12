@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -14,8 +15,8 @@ public sealed class GadgetData
     public required int Id { get; init; }
     public required string OverrideName { get; init; }
 
-    public required StyleIdentifier StyleName { get; init; }
-    public required PieceIdentifier PieceName { get; init; }
+    public required StyleIdentifier StyleIdentifier { get; init; }
+    public required PieceIdentifier PieceIdentifier { get; init; }
 
     public required Point Position { get; init; }
     public required int InitialStateId { get; init; }
@@ -26,10 +27,11 @@ public sealed class GadgetData
 
     public required GadgetInputName[] OverrideInputNames { get; init; }
     public required GadgetLayerColorData[] LayerColorData { get; init; }
+    public required HitBoxCriteriaData? OverrideHitBoxCriteriaData { get; init; }
 
     public int NumberOfGadgetProperties => _properties.Count;
 
-    public void AddProperty(GadgetProperty property, int value)
+    internal void AddProperty(GadgetProperty property, int value)
     {
         _properties.Add(property, value);
     }
@@ -53,5 +55,5 @@ public sealed class GadgetData
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int>.Enumerator GetProperties() => _properties.GetEnumerator();
 
-    public StylePiecePair GetStylePiecePair() => new(StyleName, PieceName);
+    public StylePiecePair GetStylePiecePair() => new(StyleIdentifier, PieceIdentifier);
 }

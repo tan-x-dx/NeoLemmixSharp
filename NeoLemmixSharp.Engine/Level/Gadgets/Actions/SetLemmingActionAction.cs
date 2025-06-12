@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 
@@ -9,7 +9,7 @@ public sealed class SetLemmingActionAction : GadgetAction
     private readonly LemmingAction _action;
 
     public SetLemmingActionAction(LemmingAction action)
-        : base(GadgetActionType.SetLemmingAction)
+        : base(GadgetActionType.ChangeLemmingAction)
     {
         _action = action;
     }

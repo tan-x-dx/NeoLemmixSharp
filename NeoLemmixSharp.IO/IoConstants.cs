@@ -53,4 +53,6 @@ public static class IoConstants
     /// Assumption: a style will probably define this number of unique gadgets or fewer
     /// </summary>
     public const int AssumedNumberOfGadgetArchetypeDataInStyle = 16;
+
+    public const int MaxStringLengthInBytes = 2048;
 }

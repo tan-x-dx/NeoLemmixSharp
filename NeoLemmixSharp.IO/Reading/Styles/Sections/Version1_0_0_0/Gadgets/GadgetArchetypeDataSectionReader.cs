@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.FileFormats;
@@ -49,12 +49,9 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         var nineSliceData = ReadNineSliceData(rawFileData, baseSpriteSize);
 
-        int numberOfLayers = rawFileData.Read8BitUnsignedInteger();
-        int numberOfFrames = rawFileData.Read8BitUnsignedInteger();
-
         var gadgetStates = ReadGadgetStates(rawFileData);
 
-        AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
+        GadgetArchetypeValidation.AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
 
         var result = new GadgetArchetypeData
         {
@@ -67,11 +64,13 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
             BaseSpriteSize = baseSpriteSize,
             NineSliceData = nineSliceData,
-            MaxNumberOfFrames = numberOfFrames,
-            NumberOfLayers = numberOfLayers,
 
             AllGadgetStateData = gadgetStates
         };
+
+        ReadMiscData(rawFileData, result);
+
+        GadgetArchetypeValidation.AssertGadgetArchetypeDataHasRequiredMiscData(result);
 
         return result;
     }
@@ -104,7 +103,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         var gadgetStateReader = new GadgetStateReader(rawFileData, _stringIdLookup);
 
         int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
-        var result = CollectionsHelper.GetArrayForSize<GadgetStateArchetypeData>(numberOfGadgetStates);
+        var result = Helpers.GetArrayForSize<GadgetStateArchetypeData>(numberOfGadgetStates);
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -114,36 +113,15 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return result;
     }
 
-    private static void AssertGadgetStateDataMakesSense(
-        GadgetType gadgetType,
-        GadgetStateArchetypeData[] gadgetStates)
+    private static void ReadMiscData(RawStyleFileDataReader rawFileData, GadgetArchetypeData result)
     {
-        var baseGadgetType = gadgetType.GetBaseGadgetType();
-
-        switch (baseGadgetType)
+        int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
+        while (numberOfProperties-- > 0)
         {
-            case BaseGadgetType.HitBox:
-                return;
-
-            case BaseGadgetType.Hatch:
-                AssertHatchGadgetStateDataMakesSense();
-                return;
-
-            case BaseGadgetType.Functional:
-                AssertFunctionalGadgetStateDataMakesSense();
-                return;
-        }
-
-        return;
-
-        void AssertHatchGadgetStateDataMakesSense()
-        {
-            FileReadingException.ReaderAssert(gadgetStates.Length == 2, "Expected exactly 2 states for Hatch gadget!");
-        }
-
-        void AssertFunctionalGadgetStateDataMakesSense()
-        {
-            FileReadingException.ReaderAssert(gadgetStates.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets, "Expected exactly 2 states for Functional gadget!");
+            uint rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
+            var gadgetProperty = GadgetArchetypeMiscDataTypeHasher.GetEnumValue(rawGadgetProperty);
+            int propertyValue = rawFileData.Read32BitSignedInteger();
+            result.AddMiscData(gadgetProperty, propertyValue);
         }
     }
 }

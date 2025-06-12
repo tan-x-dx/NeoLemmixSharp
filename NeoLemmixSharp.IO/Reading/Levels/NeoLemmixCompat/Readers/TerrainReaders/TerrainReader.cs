@@ -135,8 +135,8 @@ internal sealed class TerrainReader : NeoLemmixDataReader
         var newTerrainData = new TerrainData
         {
             GroupName = _currentTerrainData.GroupName,
-            StyleName = new StyleIdentifier(_currentTerrainData.Style),
-            PieceName = new PieceIdentifier(_currentTerrainData.TerrainPiece),
+            StyleIdentifier = new StyleIdentifier(_currentTerrainData.Style),
+            PieceIdentifier = new PieceIdentifier(_currentTerrainData.TerrainPiece),
 
             Position = new Point(_currentTerrainData.X, _currentTerrainData.Y),
 

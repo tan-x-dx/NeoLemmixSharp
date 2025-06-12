@@ -25,11 +25,8 @@ internal sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
 
     private static LemmingData ReadLemmingData(RawLevelFileDataReader rawFileData)
     {
-        int x = rawFileData.Read16BitUnsignedInteger();
-        int y = rawFileData.Read16BitUnsignedInteger();
-
-        x -= ReadWriteHelpers.PositionOffset;
-        y -= ReadWriteHelpers.PositionOffset;
+        int positionData = rawFileData.Read32BitSignedInteger();
+        var position = ReadWriteHelpers.DecodePoint(positionData);
 
         uint state = rawFileData.Read32BitUnsignedInteger();
 
@@ -44,7 +41,7 @@ internal sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
 
         return new LemmingData
         {
-            Position = new Point(x, y),
+            Position = position,
             State = state,
 
             Orientation = dht.Orientation,

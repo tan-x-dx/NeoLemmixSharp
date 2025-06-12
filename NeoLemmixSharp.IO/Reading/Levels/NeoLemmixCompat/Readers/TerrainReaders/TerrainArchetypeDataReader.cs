@@ -6,8 +6,8 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReader
 
 internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 {
-    private readonly StyleIdentifier _styleName;
-    private readonly PieceIdentifier _terrainPieceName;
+    private readonly StyleIdentifier _styleIdentifier;
+    private readonly PieceIdentifier _terrainPieceIdentifier;
 
     private bool _isSteel;
     private ResizeType _resizeType = ResizeType.None;
@@ -25,8 +25,8 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
         string terrainPieceName)
         : base(string.Empty)
     {
-        _styleName = new StyleIdentifier(styleName);
-        _terrainPieceName = new PieceIdentifier(terrainPieceName);
+        _styleIdentifier = new StyleIdentifier(styleName);
+        _terrainPieceIdentifier = new PieceIdentifier(terrainPieceName);
 
         SetNumberOfTokens(10);
 
@@ -106,8 +106,8 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 
     public TerrainArchetypeData CreateTerrainArchetypeData() => new()
     {
-        StyleIdentifier = _styleName,
-        PieceIdentifier = _terrainPieceName,
+        StyleIdentifier = _styleIdentifier,
+        PieceIdentifier = _terrainPieceIdentifier,
         Name = string.Empty,
 
         IsSteel = _isSteel,

@@ -2,3 +2,4 @@
 global using RawStyleFileDataReader = NeoLemmixSharp.IO.Reading.RawFileDataReader<NeoLemmixSharp.IO.FileFormats.StyleFileSectionIdentifierHasher, NeoLemmixSharp.IO.FileFormats.StyleFileSectionIdentifier>;
 global using RawLevelFileDataWriter = NeoLemmixSharp.IO.Writing.RawFileDataWriter<NeoLemmixSharp.IO.FileFormats.LevelFileSectionIdentifierHasher, NeoLemmixSharp.IO.FileFormats.LevelFileSectionIdentifier>;
 global using RawStyleFileDataWriter = NeoLemmixSharp.IO.Writing.RawFileDataWriter<NeoLemmixSharp.IO.FileFormats.StyleFileSectionIdentifierHasher, NeoLemmixSharp.IO.FileFormats.StyleFileSectionIdentifier>;
+global using GadgetArchetypeMiscDictionary = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.IO.Data.Style.Gadget.GadgetArchetypeMiscDataTypeHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.IO.Data.Style.Gadget.GadgetArchetypeMiscDataType, int>;

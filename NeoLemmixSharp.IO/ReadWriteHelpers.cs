@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
+using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Reading;
 using NeoLemmixSharp.IO.Writing;
 using System.Runtime.CompilerServices;
@@ -8,11 +9,9 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO;
 
-internal static class ReadWriteHelpers
+public static class ReadWriteHelpers
 {
     internal const byte Period = (byte)'.';
-
-    internal const int PositionOffset = 512;
 
     internal const int InitialStringListCapacity = 32;
 
@@ -174,39 +173,6 @@ internal static class ReadWriteHelpers
 
     #region Gadget Archetype Data Read/Write Stuff
 
-    private const int GadgetArchetypeDataAllowedActionsBitShift = 0;
-    private const int GadgetArchetypeDataAllowedStatesBitShift = 1;
-    private const int GadgetArchetypeDataAllowedOrientationsBitShift = 2;
-    private const int GadgetArchetypeDataAllowedFacingDirectionBitShift = 3;
-
-    internal static uint EncodeGadgetArchetypeDataFilterByte(DecodedGadgetArchetypeDataHitBoxFilter hitBoxFilter)
-    {
-        var filterByte = (hitBoxFilter.HasAllowedActions ? 1 << GadgetArchetypeDataAllowedActionsBitShift : 0) |
-                         (hitBoxFilter.HasAllowedStates ? 1 << GadgetArchetypeDataAllowedStatesBitShift : 0) |
-                         (hitBoxFilter.HasAllowedOrientations ? 1 << GadgetArchetypeDataAllowedOrientationsBitShift : 0) |
-                         (hitBoxFilter.HasAllowedFacingDirection ? 1 << GadgetArchetypeDataAllowedFacingDirectionBitShift : 0);
-
-        return (byte)filterByte;
-    }
-
-    internal static DecodedGadgetArchetypeDataHitBoxFilter DecodeGadgetArchetypeDataFilterByte(uint byteValue)
-    {
-        var hasAllowedActions = ((byteValue >>> GadgetArchetypeDataAllowedActionsBitShift) & 1) != 0;
-        var hasAllowedStates = ((byteValue >>> GadgetArchetypeDataAllowedStatesBitShift) & 1) != 0;
-        var hasAllowedOrientations = ((byteValue >>> GadgetArchetypeDataAllowedOrientationsBitShift) & 1) != 0;
-        var hasAllowedFacingDirection = ((byteValue >>> GadgetArchetypeDataAllowedFacingDirectionBitShift) & 1) != 0;
-
-        return new DecodedGadgetArchetypeDataHitBoxFilter(hasAllowedActions, hasAllowedStates, hasAllowedOrientations, hasAllowedFacingDirection);
-    }
-
-    internal readonly ref struct DecodedGadgetArchetypeDataHitBoxFilter(bool hasAllowedActions, bool hasAllowedStates, bool hasAllowedOrientations, bool hasAllowedFacingDirection)
-    {
-        internal readonly bool HasAllowedActions = hasAllowedActions;
-        internal readonly bool HasAllowedStates = hasAllowedStates;
-        internal readonly bool HasAllowedOrientations = hasAllowedOrientations;
-        internal readonly bool HasAllowedFacingDirection = hasAllowedFacingDirection;
-    }
-
     #endregion
 
     internal static void AssertDihedralTransformationByteMakesSense(int dhtByte)
@@ -244,5 +210,21 @@ internal static class ReadWriteHelpers
         const byte alphaByte = 0xff;
         FileReadingException.ReaderAssert(bytes.Length == 3, "Expected span length of exactly 3");
         return new Color(alpha: alphaByte, r: bytes[0], g: bytes[1], b: bytes[2]);
+    }
+
+    internal static int EncodePoint(Point point)
+    {
+        FileWritingException.WriterAssert(point.X <= short.MaxValue && point.X >= short.MinValue, "Point outside of valid scope");
+        FileWritingException.WriterAssert(point.Y <= short.MaxValue && point.Y >= short.MinValue, "Point outside of valid scope");
+
+        return ((point.Y & 0xffff) << 16) | (point.X & 0xffff);
+    }
+
+    public static Point DecodePoint(int combinedBits)
+    {
+        short x = (short)(combinedBits & 0xffff);
+        short y = (short)(combinedBits >>> 16);
+
+        return new Point(x, y);
     }
 }

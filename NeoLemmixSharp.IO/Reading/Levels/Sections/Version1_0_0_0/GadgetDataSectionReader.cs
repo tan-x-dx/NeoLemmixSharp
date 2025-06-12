@@ -1,9 +1,10 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 
@@ -42,11 +43,8 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
         int overrideNameId = rawFileData.Read16BitUnsignedInteger();
 
-        int x = rawFileData.Read16BitUnsignedInteger();
-        int y = rawFileData.Read16BitUnsignedInteger();
-
-        x -= ReadWriteHelpers.PositionOffset;
-        y -= ReadWriteHelpers.PositionOffset;
+        int positionData = rawFileData.Read32BitSignedInteger();
+        var position = ReadWriteHelpers.DecodePoint(positionData);
 
         int dhtByte = rawFileData.Read8BitUnsignedInteger();
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
@@ -57,16 +55,17 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
         var inputNames = ReadOverrideInputNames(rawFileData);
         var layerColorData = ReadLayerColorData(rawFileData);
+        var overrideHitBoxCriteriaData = ReadOverrideHitBoxCriteriaData(rawFileData);
 
         var result = new GadgetData
         {
             Id = gadgetId,
             OverrideName = _stringIdLookup[overrideNameId],
 
-            StyleName = new StyleIdentifier(_stringIdLookup[styleId]),
-            PieceName = new PieceIdentifier(_stringIdLookup[pieceId]),
+            StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),
+            PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
 
-            Position = new Point(x, y),
+            Position = position,
 
             InitialStateId = initialStateId,
             GadgetRenderMode = renderMode,
@@ -75,7 +74,8 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             FacingDirection = dht.FacingDirection,
 
             OverrideInputNames = inputNames,
-            LayerColorData = layerColorData
+            LayerColorData = layerColorData,
+            OverrideHitBoxCriteriaData = overrideHitBoxCriteriaData
         };
 
         ReadProperties(rawFileData, result);
@@ -85,11 +85,27 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         return result;
     }
 
+    private GadgetInputName[] ReadOverrideInputNames(RawLevelFileDataReader rawFileData)
+    {
+        int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
+
+        var result = Helpers.GetArrayForSize<GadgetInputName>(numberOfInputNames);
+
+        for (var i = 0; i < result.Length; i++)
+        {
+            int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
+            var inputName = _stringIdLookup[inputNameStringId];
+            result[i] = new GadgetInputName(inputName);
+        }
+
+        return result;
+    }
+
     private static GadgetLayerColorData[] ReadLayerColorData(RawLevelFileDataReader rawFileData)
     {
         int numberOfColorData = rawFileData.Read8BitUnsignedInteger();
 
-        var result = CollectionsHelper.GetArrayForSize<GadgetLayerColorData>(numberOfColorData);
+        var result = Helpers.GetArrayForSize<GadgetLayerColorData>(numberOfColorData);
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -104,44 +120,29 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         int stateIndex = rawFileData.Read8BitUnsignedInteger();
         int layerIndex = rawFileData.Read8BitUnsignedInteger();
 
-        int usesSpecificColor = rawFileData.Read8BitUnsignedInteger();
+        bool usesSpecificColor = rawFileData.ReadBool();
 
-        if (usesSpecificColor == 0)
+        if (usesSpecificColor)
         {
-            int tribeId = rawFileData.Read8BitUnsignedInteger();
-            uint rawTribeSpriteLayerColorType = rawFileData.Read8BitUnsignedInteger();
-            var spriteLayerColorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawTribeSpriteLayerColorType);
-
-            return new GadgetLayerColorData(tribeId, spriteLayerColorType)
-            {
-                StateIndex = stateIndex,
-                LayerIndex = layerIndex,
-            };
+            var colorBytes = rawFileData.ReadBytes(4);
+            var color = ReadWriteHelpers.ReadArgbBytes(colorBytes);
+            return new GadgetLayerColorData(stateIndex, layerIndex, color);
         }
 
-        var colorBytes = rawFileData.ReadBytes(4);
-        var color = ReadWriteHelpers.ReadArgbBytes(colorBytes);
-        return new GadgetLayerColorData(color)
-        {
-            StateIndex = stateIndex,
-            LayerIndex = layerIndex,
-        };
+        int tribeId = rawFileData.Read8BitUnsignedInteger();
+        uint rawTribeSpriteLayerColorType = rawFileData.Read8BitUnsignedInteger();
+        var spriteLayerColorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawTribeSpriteLayerColorType);
+
+        return new GadgetLayerColorData(stateIndex, layerIndex, tribeId, spriteLayerColorType);
     }
 
-    private GadgetInputName[] ReadOverrideInputNames(RawLevelFileDataReader rawFileData)
+    private static HitBoxCriteriaData? ReadOverrideHitBoxCriteriaData(RawLevelFileDataReader rawFileData)
     {
-        int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
+        bool hasOverrideHitBoxCriteriaData = rawFileData.ReadBool();
 
-        var result = CollectionsHelper.GetArrayForSize<GadgetInputName>(numberOfInputNames);
-
-        for (var i = 0; i < result.Length; i++)
-        {
-            int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
-            var inputName = _stringIdLookup[inputNameStringId];
-            result[i] = new GadgetInputName(inputName);
-        }
-
-        return result;
+        return hasOverrideHitBoxCriteriaData
+            ? new GadgetHitBoxCriteriaReader<RawLevelFileDataReader>(rawFileData).ReadHitBoxCriteria()
+            : null;
     }
 
     private static void ReadProperties(RawLevelFileDataReader rawFileData, GadgetData result)

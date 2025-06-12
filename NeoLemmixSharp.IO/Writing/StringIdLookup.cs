@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.Contracts;
+﻿using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -7,15 +9,43 @@ namespace NeoLemmixSharp.IO.Writing;
 
 internal readonly struct StringIdLookup
 {
+    private readonly Dictionary<string, ushort> _lookup;
+
+    internal StringIdLookup(Dictionary<string, ushort> lookup) => _lookup = lookup;
+
+    [Pure]
+    internal ushort GetStringId(StyleIdentifier styleIdentifier) => GetStringId(styleIdentifier.ToString());
+    [Pure]
+    internal ushort GetStringId(PieceIdentifier pieceIdentifier) => GetStringId(pieceIdentifier.ToString());
+    [Pure]
+    internal ushort GetStringId(GadgetInputName gadgetInputName) => GetStringId(gadgetInputName.ToString());
+
+    [Pure]
+    internal ushort GetStringId(string? s)
+    {
+        if (string.IsNullOrEmpty(s))
+            return 0;
+
+        return _lookup[s];
+    }
+}
+
+internal readonly struct MutableStringIdLookup
+{
     private const int MaxStackByteBufferSize = 256;
 
-    private readonly Dictionary<string, ushort> _lookup;
+    private readonly Dictionary<string, ushort> _lookup = new(ReadWriteHelpers.InitialStringListCapacity);
     internal int Count => _lookup.Count;
 
-    public StringIdLookup()
+    public MutableStringIdLookup()
     {
-        _lookup = new Dictionary<string, ushort>(ReadWriteHelpers.InitialStringListCapacity);
     }
+
+    public static implicit operator StringIdLookup(MutableStringIdLookup lookup) => new(lookup._lookup);
+
+    internal void RecordString(StyleIdentifier styleIdentifier) => RecordString(styleIdentifier.ToString());
+    internal void RecordString(PieceIdentifier pieceIdentifier) => RecordString(pieceIdentifier.ToString());
+    internal void RecordString(GadgetInputName gadgetInputName) => RecordString(gadgetInputName.ToString());
 
     internal void RecordString(string? s)
     {
@@ -33,23 +63,13 @@ internal readonly struct StringIdLookup
         }
     }
 
-    [Pure]
-    internal ushort GetStringId(string? s)
-    {
-        if (string.IsNullOrEmpty(s))
-            return 0;
-
-        return _lookup[s];
-    }
-
     [SkipLocalsInit]
-    internal void WriteStrings<TPerfectHasher, TEnum>(RawFileDataWriter<TPerfectHasher, TEnum> writer)
-        where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
-        where TEnum : unmanaged, Enum
+    internal void WriteStrings<TWriter>(TWriter writer)
+        where TWriter : class, IRawFileDataWriter
     {
         var bufferSize = CalculateBufferSize();
 
-        FileWritingException.WriterAssert(bufferSize <= ushort.MaxValue, "Cannot serialize a string larger than 65535 bytes!");
+        FileWritingException.WriterAssert(bufferSize <= IoConstants.MaxStringLengthInBytes, "Cannot serialize a string larger than 2048 bytes!");
 
         Span<byte> buffer = bufferSize > MaxStackByteBufferSize
             ? new byte[bufferSize]

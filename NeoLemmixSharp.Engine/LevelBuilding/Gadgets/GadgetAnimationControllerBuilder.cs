@@ -73,7 +73,10 @@ public static class GadgetAnimationControllerBuilder
                     if (layerColorData.UsesSpecificColor)
                         return layerColorData.SpecificColor;
 
-                    return tribeManager.AllItems[layerColorData.TribeId].ColorData.GetFromTribeSpriteLayerColorType(layerColorData.SpriteLayerColorType);
+                    return tribeManager
+                        .AllItems[layerColorData.TribeId]
+                        .ColorData
+                        .GetFromTribeSpriteLayerColorType(layerColorData.SpriteLayerColorType);
                 }
             }
 

@@ -70,6 +70,13 @@ public static class GadgetBuildingHelpers
         return result;
     }
 
+    public static string GetGadgetName(GadgetArchetypeData gadgetArchetypeData, GadgetData gadgetData)
+    {
+        return string.IsNullOrEmpty(gadgetData.OverrideName)
+            ? gadgetArchetypeData.GadgetName
+            : gadgetData.OverrideName;
+    }
+
     public static GadgetBounds CreateGadgetBounds(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData)

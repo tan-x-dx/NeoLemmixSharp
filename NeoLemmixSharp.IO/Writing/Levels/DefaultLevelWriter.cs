@@ -16,7 +16,7 @@ public readonly ref struct DefaultLevelWriter
         _version = version;
     }
 
-    public void WriteToFile(string filePath)
+    public void WriteToFile(Stream stream)
     {
         var writer = new RawLevelFileDataWriter();
 
@@ -27,8 +27,7 @@ public readonly ref struct DefaultLevelWriter
             WriteSection(writer, sectionWriter);
         }
 
-        using var fileStream = new FileStream(filePath, FileMode.Create);
-        writer.WriteToFile(fileStream, _version);
+        writer.WriteToFile(stream, _version);
     }
 
     private void WriteSection(

@@ -1,10 +1,10 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
+using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class FastForwardSkill : LemmingSkill, ILemmingStateChanger
+public sealed class FastForwardSkill : LemmingSkill, ILemmingState
 {
     public static readonly FastForwardSkill Instance = new();
 
@@ -15,7 +15,7 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public StateChangerType LemmingStateChangerType => StateChangerType.FastForwardStateChanger;
+    public StateType LemmingStateType => StateType.FastForwardState;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
@@ -9,7 +10,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public static class HatchGadgetArchetypeBuilder
 {
-    public static GadgetBase BuildGadget(
+    public static HatchGadget BuildGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         LemmingManager lemmingManager,
@@ -20,21 +21,7 @@ public static class HatchGadgetArchetypeBuilder
         var rawLemmingState = (uint)gadgetData.GetProperty(GadgetProperty.RawLemmingState);
         var lemmingCount = gadgetData.GetProperty(GadgetProperty.Count);
 
-        var dihedralTransformation = new DihedralTransformation(
-            gadgetData.Orientation,
-            FacingDirection.Right); // Hatches do not flip according to facing direction
-
-       //var transformedSize = dihedralTransformation.Transform(SpriteData.BaseSpriteSize);
-        //var spawnPointOffset = dihedralTransformation.Transform(SpawnPosition, SpriteData.BaseSpriteSize);
-
-        /*var currentGadgetBounds = new GadgetBounds
-        {
-            Position = gadgetData.Position,
-            Width = transformedSize.W,
-            Height = transformedSize.H
-        };*/
-
-       // var gadgetRenderer = gadgetSpriteBuilder.BuildStatefulGadgetRenderer(gadgetData);
+        var spawnPointOffset = GetSpawnPointOffset(gadgetArchetypeData, gadgetData);
 
         var hatchSpawnData = new HatchSpawnData(
             hatchGadgetId,
@@ -44,28 +31,46 @@ public static class HatchGadgetArchetypeBuilder
             gadgetData.FacingDirection,
             lemmingCount);
 
-        /*   var gadgetAnimationController = new GadgetStateAnimationController(
-               new GadgetStateAnimationBehaviour(SpriteData.SpriteWidth, SpriteData.SpriteHeight, 0, 0, 0, SpriteData.FrameCountsPerLayer[0], GadgetSecondaryAnimationAction.Play),
-               -1,
-               Array.Empty<GadgetStateAnimationBehaviour>());*/
+        var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, gadgetData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
+        var gadgetStates = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
 
-        return null;
-        /*
-        var result = new HatchGadget(
+        return new HatchGadget(
+            gadgetName,
+            gadgetStates,
+            gadgetData.InitialStateId,
             hatchSpawnData,
-            spawnPointOffset,
-            null!)
+            spawnPointOffset)
         {
             Id = gadgetData.Id,
             Orientation = gadgetData.Orientation,
+            FacingDirection = FacingDirection.Right, // Hatches do not flip according to facing direction
 
-            CurrentGadgetBounds = currentGadgetBounds,
+            CurrentGadgetBounds = gadgetBounds,
 
-            IsFastForward = false
+            IsFastForward = true
         };
+    }
 
-        //  gadgetRenderer?.SetGadget(result);
+    private static Point GetSpawnPointOffset(GadgetArchetypeData gadgetArchetypeData, GadgetData gadgetData)
+    {
+        var rawSpawnPoint = GetRawSpawnPoint();
 
-        return result;*/
+        var dihedralTransformation = new DihedralTransformation(
+            gadgetData.Orientation,
+            gadgetData.FacingDirection);
+        return dihedralTransformation.Transform(rawSpawnPoint, gadgetArchetypeData.BaseSpriteSize);
+
+        Point GetRawSpawnPoint()
+        {
+            var spawnPointMiscData = gadgetArchetypeData.GetMiscData(GadgetArchetypeMiscDataType.SpawnPointOffset);
+
+            return IO.ReadWriteHelpers.DecodePoint(spawnPointMiscData);
+        }
+    }
+
+    private static GadgetState[] BuildGadgetStates(GadgetArchetypeData gadgetArchetypeData, GadgetData gadgetData, GadgetBounds gadgetBounds, TribeManager tribeManager)
+    {
+        throw new NotImplementedException();
     }
 }

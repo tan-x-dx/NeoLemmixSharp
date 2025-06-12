@@ -1,11 +1,11 @@
 ﻿using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.IO.Data.Level.Gadgets;
+namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 public enum GadgetActionType
 {
-    SetLemmingState,
-    SetLemmingAction,
+    ChangeLemmingState,
+    ChangeLemmingAction,
     ChangeSkillCount,
     ForceFacingDirection,
     NullifyFallDistance,

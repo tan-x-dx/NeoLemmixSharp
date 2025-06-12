@@ -17,7 +17,7 @@ public sealed class ItemTracker<TPerfectHasher, T>
         _hasher = hasher;
         var arrayLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
 
-        _bits = CollectionsHelper.GetArrayForSize<ulong>(arrayLength);
+        _bits = Helpers.GetArrayForSize<ulong>(arrayLength);
     }
 
     public void Tick()

@@ -1,9 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
 
@@ -22,8 +21,8 @@ internal readonly ref struct GadgetStateReader
     {
         int stateNameId = _rawFileData.Read16BitUnsignedInteger();
 
-        int offsetX = _rawFileData.Read16BitUnsignedInteger();
-        int offsetY = _rawFileData.Read16BitUnsignedInteger();
+        var rawPointData = _rawFileData.Read32BitSignedInteger();
+        var hitBoxOffset = ReadWriteHelpers.DecodePoint(rawPointData);
 
         var hitBoxData = ReadHitBoxData();
         var regionData = ReadRegionData();
@@ -33,7 +32,7 @@ internal readonly ref struct GadgetStateReader
         var result = new GadgetStateArchetypeData
         {
             StateName = _stringIdLookup[stateNameId],
-            HitBoxOffset = new Point(offsetX, offsetY),
+            HitBoxOffset = hitBoxOffset,
             HitBoxData = hitBoxData,
             RegionData = regionData,
 
@@ -49,7 +48,7 @@ internal readonly ref struct GadgetStateReader
 
         FileReadingException.ReaderAssert(numberOfDefinedHitBoxes <= EngineConstants.NumberOfOrientations, "Too many hit boxes defined!");
 
-        var result = CollectionsHelper.GetArrayForSize<HitBoxData>(numberOfDefinedHitBoxes);
+        var result = Helpers.GetArrayForSize<HitBoxData>(numberOfDefinedHitBoxes);
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -71,11 +70,7 @@ internal readonly ref struct GadgetStateReader
         var onLemmingPresentActions = ReadGadgetActionData(1);
         var onLemmingExitActions = ReadGadgetActionData(2);
 
-        var allowedLemmingActionIds = ReadUintSequence();
-        var allowedLemmingStateIds = ReadUintSequence();
-
-        byte allowedLemmingOrientationIds = _rawFileData.Read8BitUnsignedInteger();
-        byte allowedFacingDirectionId = _rawFileData.Read8BitUnsignedInteger();
+        var hitBoxCriteria = ReadHitBoxCriteria();
 
         var result = new HitBoxData
         {
@@ -84,10 +79,8 @@ internal readonly ref struct GadgetStateReader
             OnLemmingEnterActions = onLemmingEnterActions,
             OnLemmingPresentActions = onLemmingPresentActions,
             OnLemmingExitActions = onLemmingExitActions,
-            AllowedLemmingActionIds = allowedLemmingActionIds,
-            AllowedLemmingStateIds = allowedLemmingStateIds,
-            AllowedLemmingOrientationIds = allowedLemmingOrientationIds,
-            AllowedFacingDirectionId = allowedFacingDirectionId
+
+            HitBoxCriteria = hitBoxCriteria
         };
 
         return result;
@@ -99,7 +92,7 @@ internal readonly ref struct GadgetStateReader
         FileReadingException.ReaderAssert(expectedMarkerValue == actualMarkerValue, "Mismatch in Gadget Action Data reading!");
 
         int numberOfGadgetActions = _rawFileData.Read8BitUnsignedInteger();
-        var result = CollectionsHelper.GetArrayForSize<GadgetActionData>(numberOfGadgetActions);
+        var result = Helpers.GetArrayForSize<GadgetActionData>(numberOfGadgetActions);
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -118,31 +111,9 @@ internal readonly ref struct GadgetStateReader
         return new GadgetActionData(gadgetActionType, miscData);
     }
 
-    private uint[] ReadUintSequence()
+    private HitBoxCriteriaData ReadHitBoxCriteria()
     {
-        int numberOfBytesToRead = _rawFileData.Read8BitUnsignedInteger();
-        FileReadingException.ReaderAssert((numberOfBytesToRead % sizeof(uint)) == 0, "Expected to read a multiple of 4 bytes!");
-
-        var result = CollectionsHelper.GetArrayForSize<uint>(numberOfBytesToRead >> 2);
-
-        var sourceBytes = _rawFileData.ReadBytes(numberOfBytesToRead);
-        var destBytes = MemoryMarshal.Cast<uint, byte>(result);
-        sourceBytes.CopyTo(destBytes);
-
-        AssertNonZeroUintSequence(result);
-
-        return result;
-    }
-
-    private static void AssertNonZeroUintSequence(uint[] bits)
-    {
-        foreach (var value in bits)
-        {
-            if (value != 0)
-                return;
-        }
-
-        throw new FileReadingException("No bits set when reading bit sequence!");
+        return new GadgetHitBoxCriteriaReader<RawStyleFileDataReader>(_rawFileData).ReadHitBoxCriteria();
     }
 
     private HitBoxRegionData[] ReadRegionData()
@@ -160,13 +131,13 @@ internal readonly ref struct GadgetStateReader
     {
         int rotNum = _rawFileData.Read8BitUnsignedInteger();
 
-        FileReadingException.ReaderAssert(rotNum == orientation.RotNum, "Hit box region data does not match expected orientation");
+        FileReadingException.ReaderAssert(rotNum == orientation.RotNum, "HitBox region orientation mismatch!");
 
         uint rawHitBoxType = _rawFileData.Read8BitUnsignedInteger();
         var actualHitBoxType = HitBoxTypeHelpers.GetEnumValue(rawHitBoxType);
 
         int numberOfPoints = _rawFileData.Read16BitUnsignedInteger();
-        var hitBoxPoints = CollectionsHelper.GetArrayForSize<Point>(numberOfPoints);
+        var hitBoxPoints = Helpers.GetArrayForSize<Point>(numberOfPoints);
 
         for (var i = 0; i < hitBoxPoints.Length; i++)
         {
@@ -207,7 +178,8 @@ internal readonly ref struct GadgetStateReader
         var animationLayerParameters = ReadAnimationLayerParameters();
 
         int initialFrame = _rawFileData.Read8BitUnsignedInteger();
-        int nextGadgetState = _rawFileData.Read8BitUnsignedInteger();
+        // Need to offset by 1
+        int nextGadgetState = _rawFileData.Read8BitUnsignedInteger() - 1;
 
         return new AnimationLayerArchetypeData
         {
@@ -215,8 +187,7 @@ internal readonly ref struct GadgetStateReader
             AnimationLayerParameters = animationLayerParameters,
             InitialFrame = initialFrame,
 
-            // Need to offset by 1
-            NextGadgetState = nextGadgetState - 1
+            NextGadgetState = nextGadgetState
         };
     }
 

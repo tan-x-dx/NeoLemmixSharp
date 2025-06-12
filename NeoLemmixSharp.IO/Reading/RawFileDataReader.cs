@@ -1,12 +1,23 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.FileFormats;
-using NeoLemmixSharp.IO.Writing;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading;
 
-internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
+internal interface IRawFileDataReader
+{
+    bool ReadBool();
+    byte Read8BitUnsignedInteger();
+    ushort Read16BitUnsignedInteger();
+    uint Read32BitUnsignedInteger();
+    int Read32BitSignedInteger();
+    ulong Read64BitUnsignedInteger();
+
+    ReadOnlySpan<byte> ReadBytes(int bufferSize);
+}
+
+internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataReader
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
@@ -106,6 +117,11 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum>
         return result;
     }
 
+    public bool ReadBool()
+    {
+        uint byteValue = Read8BitUnsignedInteger();
+        return byteValue != 0U;
+    }
     public byte Read8BitUnsignedInteger() => Read<byte>();
     public ushort Read16BitUnsignedInteger() => Read<ushort>();
     public uint Read32BitUnsignedInteger() => Read<uint>();

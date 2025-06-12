@@ -9,17 +9,6 @@ public sealed class RectangularHitBoxRegion : IHitBoxRegion
     public RectangularRegion CurrentBounds => _region;
 
     public RectangularHitBoxRegion(
-        int x,
-        int y,
-        int w,
-        int h)
-    {
-        var position = new Point(x, y);
-        var size = new Size(w, h);
-        _region = new RectangularRegion(position, size);
-    }
-
-    public RectangularHitBoxRegion(
         Point p0,
         Point p1)
     {

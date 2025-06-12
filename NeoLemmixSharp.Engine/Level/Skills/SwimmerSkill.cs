@@ -1,11 +1,11 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
+using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
+public sealed class SwimmerSkill : LemmingSkill, ILemmingState
 {
     public static readonly SwimmerSkill Instance = new();
 
@@ -16,7 +16,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingStateChanger
     {
     }
 
-    public StateChangerType LemmingStateChangerType => StateChangerType.SwimmerStateChanger;
+    public StateType LemmingStateType => StateType.SwimmerState;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {

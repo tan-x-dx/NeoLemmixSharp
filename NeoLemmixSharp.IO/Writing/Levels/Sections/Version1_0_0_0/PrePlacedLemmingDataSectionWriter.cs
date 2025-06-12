@@ -30,8 +30,7 @@ internal sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LemmingData lemmingData)
     {
-        writer.Write((ushort)(lemmingData.Position.X + ReadWriteHelpers.PositionOffset));
-        writer.Write((ushort)(lemmingData.Position.Y + ReadWriteHelpers.PositionOffset));
+        writer.Write(ReadWriteHelpers.EncodePoint(lemmingData.Position));
         writer.Write(lemmingData.State);
 
         writer.Write((byte)DihedralTransformation.Encode(lemmingData.Orientation, lemmingData.FacingDirection));

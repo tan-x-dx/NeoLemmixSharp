@@ -5,7 +5,18 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing;
 
-internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
+internal interface IRawFileDataWriter
+{
+    void Write(bool value);
+    void Write(byte value);
+    void Write(ushort value);
+    void Write(int value);
+    void Write(uint value);
+    void Write(ulong value);
+    void Write(ReadOnlySpan<byte> data);
+}
+
+internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWriter
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
@@ -115,6 +126,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum>
         _currentSectionStartPosition = _mainDataPosition;
     }
 
+    public void Write(bool value) => WriteSectionData(value ? (byte)1 : (byte)0);
     public void Write(byte value) => WriteSectionData(value);
     public void Write(ushort value) => WriteSectionData(value);
     public void Write(int value) => WriteSectionData(value);

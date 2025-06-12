@@ -31,11 +31,11 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     }
 
     internal static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
-       StyleIdentifier styleName,
-       PieceIdentifier pieceName) => new()
+       StyleIdentifier styleIdentifier,
+       PieceIdentifier pieceIdentifier) => new()
        {
-           StyleIdentifier = styleName,
-           PieceIdentifier = pieceName,
+           StyleIdentifier = styleIdentifier,
+           PieceIdentifier = pieceIdentifier,
            Name = string.Empty,
 
            IsSteel = false,

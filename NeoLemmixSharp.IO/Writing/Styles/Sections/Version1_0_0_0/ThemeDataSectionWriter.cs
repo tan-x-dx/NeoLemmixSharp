@@ -60,7 +60,7 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
 
     private void WriteLemmingSpriteData(RawStyleFileDataWriter writer, StyleIdentifier originalStyleIdentifier, LemmingSpriteData lemmingSpriteData)
     {
-        writer.Write(_stringIdLookup.GetStringId(lemmingSpriteData.LemmingSpriteStyleIdentifier.ToString()));
+        writer.Write(_stringIdLookup.GetStringId(lemmingSpriteData.LemmingSpriteStyleIdentifier));
 
         if (lemmingSpriteData.LemmingSpriteStyleIdentifier == originalStyleIdentifier)
         {

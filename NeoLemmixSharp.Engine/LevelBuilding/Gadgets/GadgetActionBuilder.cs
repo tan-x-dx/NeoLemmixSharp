@@ -1,19 +1,16 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
-using static NeoLemmixSharp.Engine.Level.Skills.ILemmingStateChanger;
+using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public static class GadgetActionBuilder
 {
-    public static void ReadGadgetActions(
+    public static void BuildGadgetActions(
         HitBoxData hitBoxData,
         out GadgetAction[] onLemmingEnterActions,
         out GadgetAction[] onLemmingPresentActions,
@@ -26,7 +23,7 @@ public static class GadgetActionBuilder
 
     private static GadgetAction[] BuildGadgetActions(GadgetActionData[] gadgetActions)
     {
-        var result = CollectionsHelper.GetArrayForSize<GadgetAction>(gadgetActions.Length);
+        var result = Helpers.GetArrayForSize<GadgetAction>(gadgetActions.Length);
 
         for (int i = 0; i < result.Length; i++)
         {
@@ -39,8 +36,8 @@ public static class GadgetActionBuilder
 
     private static GadgetAction CreateGadgetAction(GadgetActionType gadgetActionType, int miscData) => gadgetActionType switch
     {
-        GadgetActionType.SetLemmingState => CreateSetLemmingStateAction(miscData),
-        GadgetActionType.SetLemmingAction => CreateSetLemmingActionAction(miscData),
+        GadgetActionType.ChangeLemmingState => CreateSetLemmingStateAction(miscData),
+        GadgetActionType.ChangeLemmingAction => CreateSetLemmingActionAction(miscData),
         GadgetActionType.ChangeSkillCount => CreateSkillCountModifierAction(miscData),
         GadgetActionType.ForceFacingDirection => CreateForceFacingDirectionAction(miscData),
         GadgetActionType.LemmingMover => CreateLemmingMoverAction(miscData),
@@ -95,10 +92,8 @@ public static class GadgetActionBuilder
 
     private static LemmingMoverAction CreateLemmingMoverAction(int miscData)
     {
-        var dx = (short)(miscData & 0xffff);
-        var dy = (short)(miscData >>> 16);
-
-        return new LemmingMoverAction(new Point(dx, dy));
+        var delta = IO.ReadWriteHelpers.DecodePoint(miscData);
+        return new LemmingMoverAction(delta);
     }
 
     private static AdditionalTimeAction CreateAddLevelTimeAction(int miscData)
