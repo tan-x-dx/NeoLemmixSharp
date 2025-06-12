@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -6,7 +7,7 @@ namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 [DebuggerDisplay("{StyleIdentifier}:{PieceIdentifier}")]
 public sealed class GadgetArchetypeData
 {
-    public GadgetArchetypeMiscDictionary MiscData { get; } = GadgetArchetypeMiscDataTypeHasher.CreateBitArrayDictionary<int>();
+    internal BitArrayDictionary<GadgetArchetypeMiscDataTypeHasher, BitBuffer32, GadgetArchetypeMiscDataType, int> MiscData { get; } = GadgetArchetypeMiscDataTypeHasher.CreateBitArrayDictionary<int>();
 
     public required StyleIdentifier StyleIdentifier { get; init; }
     public required PieceIdentifier PieceIdentifier { get; init; }
