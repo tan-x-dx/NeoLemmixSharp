@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
@@ -93,7 +93,7 @@ public static class HitBoxGadgetArchetypeBuilder
         GadgetData gadgetData,
         TribeManager tribeManager)
     {
-        var result = CollectionsHelper.GetArrayForSize<LemmingHitBoxFilter>(state.HitBoxData.Length);
+        var result = Helpers.GetArrayForSize<LemmingHitBoxFilter>(state.HitBoxData.Length);
 
         for (var i = 0; i < result.Length; i++)
         {

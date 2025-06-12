@@ -23,7 +23,7 @@ public static class GadgetActionBuilder
 
     private static GadgetAction[] BuildGadgetActions(GadgetActionData[] gadgetActions)
     {
-        var result = CollectionsHelper.GetArrayForSize<GadgetAction>(gadgetActions.Length);
+        var result = Helpers.GetArrayForSize<GadgetAction>(gadgetActions.Length);
 
         for (int i = 0; i < result.Length; i++)
         {

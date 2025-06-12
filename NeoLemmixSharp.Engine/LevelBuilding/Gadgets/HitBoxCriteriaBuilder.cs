@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -50,7 +50,7 @@ public static class HitBoxCriteriaBuilder
                         (lemmingCriteriaData.AllowedLemmingOrientationIds != 0 ? 1 : 0) +
                         (lemmingCriteriaData.AllowedFacingDirectionId != 0 ? 1 : 0);
 
-        return CollectionsHelper.GetArrayForSize<LemmingCriterion>(arraySize);
+        return Helpers.GetArrayForSize<LemmingCriterion>(arraySize);
     }
 
     private static LemmingActionCriterion BuildLemmingActionCriterion(uint[] allowedLemmingActionIds)

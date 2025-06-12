@@ -11,6 +11,13 @@ public static class Helpers
     public const int Uint32NumberBufferLength = 10;
     public const int Int32NumberBufferLength = Uint32NumberBufferLength + 1;
 
+    public static T[] GetArrayForSize<T>(int size)
+    {
+        return size == 0
+            ? Array.Empty<T>()
+            : new T[size];
+    }
+
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rectangle CreateRectangle(Point pos, Size size) => new(pos.X, pos.Y, size.W, size.H);

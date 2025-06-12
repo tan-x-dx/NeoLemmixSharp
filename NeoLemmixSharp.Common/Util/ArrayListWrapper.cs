@@ -17,7 +17,7 @@ public ref struct ArrayListWrapper<T>
 
     public ArrayListWrapper(int capacity)
     {
-        _array = CollectionsHelper.GetArrayForSize<T>(capacity);
+        _array = Helpers.GetArrayForSize<T>(capacity);
         _size = 0;
     }
 

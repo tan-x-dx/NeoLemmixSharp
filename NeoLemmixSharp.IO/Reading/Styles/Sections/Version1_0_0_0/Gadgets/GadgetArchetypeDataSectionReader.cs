@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.FileFormats;
@@ -103,7 +103,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         var gadgetStateReader = new GadgetStateReader(rawFileData, _stringIdLookup);
 
         int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
-        var result = CollectionsHelper.GetArrayForSize<GadgetStateArchetypeData>(numberOfGadgetStates);
+        var result = Helpers.GetArrayForSize<GadgetStateArchetypeData>(numberOfGadgetStates);
 
         for (var i = 0; i < result.Length; i++)
         {

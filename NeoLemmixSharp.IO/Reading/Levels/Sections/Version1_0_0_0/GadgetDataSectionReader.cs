@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
@@ -89,7 +89,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
     {
         int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
 
-        var result = CollectionsHelper.GetArrayForSize<GadgetInputName>(numberOfInputNames);
+        var result = Helpers.GetArrayForSize<GadgetInputName>(numberOfInputNames);
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -105,7 +105,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
     {
         int numberOfColorData = rawFileData.Read8BitUnsignedInteger();
 
-        var result = CollectionsHelper.GetArrayForSize<GadgetLayerColorData>(numberOfColorData);
+        var result = Helpers.GetArrayForSize<GadgetLayerColorData>(numberOfColorData);
 
         for (var i = 0; i < result.Length; i++)
         {

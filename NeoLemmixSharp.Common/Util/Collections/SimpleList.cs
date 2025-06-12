@@ -12,7 +12,7 @@ public sealed class SimpleList<T>
 
     public SimpleList(int capacity)
     {
-        _items = CollectionsHelper.GetArrayForSize<T>(capacity);
+        _items = Helpers.GetArrayForSize<T>(capacity);
     }
 
     public Span<T> AsSpan() => new(_items, 0, Count);

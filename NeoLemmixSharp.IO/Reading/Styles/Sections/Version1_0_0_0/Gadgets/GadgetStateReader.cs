@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
@@ -49,7 +49,7 @@ internal readonly ref struct GadgetStateReader
 
         FileReadingException.ReaderAssert(numberOfDefinedHitBoxes <= EngineConstants.NumberOfOrientations, "Too many hit boxes defined!");
 
-        var result = CollectionsHelper.GetArrayForSize<HitBoxData>(numberOfDefinedHitBoxes);
+        var result = Helpers.GetArrayForSize<HitBoxData>(numberOfDefinedHitBoxes);
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -93,7 +93,7 @@ internal readonly ref struct GadgetStateReader
         FileReadingException.ReaderAssert(expectedMarkerValue == actualMarkerValue, "Mismatch in Gadget Action Data reading!");
 
         int numberOfGadgetActions = _rawFileData.Read8BitUnsignedInteger();
-        var result = CollectionsHelper.GetArrayForSize<GadgetActionData>(numberOfGadgetActions);
+        var result = Helpers.GetArrayForSize<GadgetActionData>(numberOfGadgetActions);
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -138,7 +138,7 @@ internal readonly ref struct GadgetStateReader
         var actualHitBoxType = HitBoxTypeHelpers.GetEnumValue(rawHitBoxType);
 
         int numberOfPoints = _rawFileData.Read16BitUnsignedInteger();
-        var hitBoxPoints = CollectionsHelper.GetArrayForSize<Point>(numberOfPoints);
+        var hitBoxPoints = Helpers.GetArrayForSize<Point>(numberOfPoints);
 
         for (var i = 0; i < hitBoxPoints.Length; i++)
         {
