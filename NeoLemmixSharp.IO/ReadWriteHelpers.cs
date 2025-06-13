@@ -11,13 +11,6 @@ namespace NeoLemmixSharp.IO;
 
 public static class ReadWriteHelpers
 {
-    internal const byte Period = (byte)'.';
-
-    internal const int InitialStringListCapacity = 32;
-
-    internal const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
-    internal const string FileSizeTooLargeExceptionMessage = "File too large! Max file size is 64Mb";
-
     internal sealed class SectionIdentifierComparer<TPerfectHasher, TEnum> : IComparer<Interval>
         where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
         where TEnum : unmanaged, Enum

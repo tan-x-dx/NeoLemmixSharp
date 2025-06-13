@@ -72,5 +72,6 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
 
     public void Dispose()
     {
+        _rawFileData?.Dispose();
     }
 }

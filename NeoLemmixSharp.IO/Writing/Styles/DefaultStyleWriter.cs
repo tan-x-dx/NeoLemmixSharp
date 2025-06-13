@@ -18,7 +18,7 @@ internal readonly ref struct DefaultStyleWriter
 
     public void WriteStyleData(Stream stream)
     {
-        var writer = new RawStyleFileDataWriter();
+        using var writer = new RawStyleFileDataWriter();
 
         var sectionWriters = VersionHelper.GetStyleDataSectionWritersForVersion(_version);
 

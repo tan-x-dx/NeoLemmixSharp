@@ -18,7 +18,7 @@ public readonly ref struct DefaultLevelWriter
 
     public void WriteToFile(Stream stream)
     {
-        var writer = new RawLevelFileDataWriter();
+        using var writer = new RawLevelFileDataWriter();
 
         var sectionWriters = VersionHelper.GetLevelDataSectionWritersForVersion(_version);
 

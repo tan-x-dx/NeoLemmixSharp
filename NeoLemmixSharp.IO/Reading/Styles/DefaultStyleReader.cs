@@ -102,5 +102,6 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
 
     public void Dispose()
     {
+        _rawFileData?.Dispose();
     }
 }

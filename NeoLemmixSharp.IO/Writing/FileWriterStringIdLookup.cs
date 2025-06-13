@@ -34,7 +34,7 @@ internal readonly struct MutableFileWriterStringIdLookup
 {
     private const int MaxStackByteBufferSize = 256;
 
-    private readonly Dictionary<string, ushort> _lookup = new(ReadWriteHelpers.InitialStringListCapacity);
+    private readonly Dictionary<string, ushort> _lookup = new(IoConstants.InitialStringListCapacity);
     internal int Count => _lookup.Count;
 
     public MutableFileWriterStringIdLookup()
