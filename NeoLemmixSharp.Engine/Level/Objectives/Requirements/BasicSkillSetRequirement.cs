@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Level.Objectives;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 

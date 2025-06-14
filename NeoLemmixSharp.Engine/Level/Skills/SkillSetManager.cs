@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Level.Objectives;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -39,7 +40,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         var lemmingSkill = LemmingSkill.AllItems[skillSetData.SkillId];
         var tribe = LevelScreen.TribeManager.AllItems[skillSetData.TribeId];
 
-        return new SkillTrackingData(id, lemmingSkill, tribe, skillSetData.NumberOfSkills);
+        return new SkillTrackingData(id, lemmingSkill, tribe, 0);
     }
 
     /// <summary>

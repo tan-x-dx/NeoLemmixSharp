@@ -125,7 +125,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         TimeLimitCriterion CreateTimeLimitCriterion()
         {
             int timeLimitInSeconds = rawFileData.Read16BitUnsignedInteger();
-            FileReadingException.ReaderAssert(timeLimitInSeconds < EngineConstants.MaxTimeLimitInSeconds, "Invalid time limit");
+            FileReadingException.ReaderAssert(timeLimitInSeconds <= EngineConstants.MaxTimeLimitInSeconds, "Invalid time limit");
 
             return new TimeLimitCriterion
             {

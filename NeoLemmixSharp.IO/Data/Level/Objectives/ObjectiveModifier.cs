@@ -2,6 +2,13 @@
 
 public abstract class ObjectiveModifier
 {
+    public ObjectiveModifierType Type { get; }
+
+    public ObjectiveModifier(ObjectiveModifierType type)
+    {
+        Type = type;
+    }
+
     public abstract bool MatchesBaseModifierData(ObjectiveModifier other);
 }
 
@@ -9,6 +16,11 @@ public sealed class LimitSpecificSkillAssignmentsModifier : ObjectiveModifier
 {
     public required int SkillId { get; init; }
     public required int MaxSkillAssignments { get; init; }
+
+    public LimitSpecificSkillAssignmentsModifier()
+        : base(ObjectiveModifierType.LimitSpecificSkillAssignments)
+    {
+    }
 
     public override bool MatchesBaseModifierData(ObjectiveModifier other)
     {
@@ -20,6 +32,11 @@ public sealed class LimitSpecificSkillAssignmentsModifier : ObjectiveModifier
 public sealed class LimitTotalSkillAssignmentsModifier : ObjectiveModifier
 {
     public required int MaxTotalSkillAssignments { get; init; }
+
+    public LimitTotalSkillAssignmentsModifier()
+        : base(ObjectiveModifierType.LimitTotalSkillAssignments)
+    {
+    }
 
     public override bool MatchesBaseModifierData(ObjectiveModifier other)
     {
