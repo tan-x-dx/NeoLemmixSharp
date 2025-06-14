@@ -16,63 +16,62 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
     public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
         return 1;
-     //   return (ushort)levelData.LevelObjectives.Count;
     }
 
     public override void WriteSection(
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-    /*    foreach (var levelObjective in levelData.LevelObjectives)
-        {
-            WriteLevelObjective(writer, levelObjective);
-        }*/
+        /*    foreach (var levelObjective in levelData.LevelObjectives)
+            {
+                WriteLevelObjective(writer, levelObjective);
+            }*/
     }
 
- /*   private void WriteLevelObjective(
-        RawLevelFileDataWriter writer,
-        LevelObjective levelObjective)
-    {
-        writer.Write(GetNumberOfBytesForLevelObjective(levelObjective));
+    /*   private void WriteLevelObjective(
+           RawLevelFileDataWriter writer,
+           LevelObjective levelObjective)
+       {
+           writer.Write(GetNumberOfBytesForLevelObjective(levelObjective));
 
-        writer.Write((byte)levelObjective.LevelObjectiveId);
-        var titleStringId = _stringIdLookup.GetValueOrDefault(levelObjective.LevelObjectiveTitle);
-        writer.Write(titleStringId);
+           writer.Write((byte)levelObjective.LevelObjectiveId);
+           var titleStringId = _stringIdLookup.GetValueOrDefault(levelObjective.LevelObjectiveTitle);
+           writer.Write(titleStringId);
 
-        writer.Write((ushort)levelObjective.SkillSetData.Length);
-        foreach (var skillSetDatum in levelObjective.SkillSetData)
-        {
-            WriteSkillSetDatum(writer, skillSetDatum);
-        }
+           writer.Write((ushort)levelObjective.SkillSetData.Length);
+           foreach (var skillSetDatum in levelObjective.SkillSetData)
+           {
+               WriteSkillSetDatum(writer, skillSetDatum);
+           }
 
-        writer.Write((ushort)levelObjective.Requirements.Length);
-        foreach (var levelObjectiveRequirement in levelObjective.Requirements)
-        {
-            WriteRequirements(writer, levelObjectiveRequirement);
-        }
-    }
+           writer.Write((ushort)levelObjective.Requirements.Length);
+           foreach (var levelObjectiveRequirement in levelObjective.Requirements)
+           {
+               WriteRequirements(writer, levelObjectiveRequirement);
+           }
+       }
 
-    private static ushort GetNumberOfBytesForLevelObjective(
-        LevelObjective levelObjective)
-    {
-        return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainLevelObjectiveData +
-                        LevelReadWriteHelpers.NumberOfBytesPerSkillSetDatum * levelObjective.SkillSetData.Length +
-                        LevelReadWriteHelpers.NumberOfBytesPerRequirementsDatum * levelObjective.Requirements.Length);
-    }
+       private static ushort GetNumberOfBytesForLevelObjective(
+           LevelObjective levelObjective)
+       {
+           return (ushort)(LevelReadWriteHelpers.NumberOfBytesForMainLevelObjectiveData +
+                           LevelReadWriteHelpers.NumberOfBytesPerSkillSetDatum * levelObjective.SkillSetData.Length +
+                           LevelReadWriteHelpers.NumberOfBytesPerRequirementsDatum * levelObjective.Requirements.Length);
+       }
 
-    private static void WriteSkillSetDatum(
-        RawLevelFileDataWriter writer,
-        SkillSetData skillSetData)
-    {
-        writer.Write((byte)skillSetData.Skill.Id);
-        writer.Write((byte)skillSetData.NumberOfSkills);
-        writer.Write((byte)skillSetData.TribeId);
-    }
+       private static void WriteSkillSetDatum(
+           RawLevelFileDataWriter writer,
+           SkillSetData skillSetData)
+       {
+           writer.Write((byte)skillSetData.Skill.Id);
+           writer.Write((byte)skillSetData.NumberOfSkills);
+           writer.Write((byte)skillSetData.TribeId);
+       }
 
-    private static void WriteRequirements(
-        RawLevelFileDataWriter writer,
-        IObjectiveRequirement objectiveRequirement)
-    {
-        // TODO
-    }*/
+       private static void WriteRequirements(
+           RawLevelFileDataWriter writer,
+           IObjectiveRequirement objectiveRequirement)
+       {
+           // TODO
+       }*/
 }

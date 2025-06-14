@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Theme;
@@ -22,6 +23,8 @@ public sealed class LevelData
     private int? _levelStartPositionX;
     private int? _levelStartPositionY;
     private int _maxNumberOfClonedLemmings = -1;
+
+    private ObjectiveData? _levelObjective;
 
     public FileFormatType FileFormatType { get; }
 
@@ -116,13 +119,20 @@ public sealed class LevelData
         }
     }
 
+    public void SetObjectiveData(ObjectiveData objectiveData)
+    {
+        _levelObjective = objectiveData;
+    }
+
     public StyleIdentifier LevelTheme { get; set; }
     public BackgroundData? LevelBackground { get; set; }
 
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
 
-    //    public List<LevelObjective> LevelObjectives { get; } = [];
+    public ObjectiveData LevelObjective => _levelObjective is null
+        ? throw new InvalidOperationException("Level objective not set!")
+        : _levelObjective;
     public BitArraySet<LevelParameterHasher, BitBuffer32, LevelParameters> LevelParameters { get; } = LevelParameterHasher.CreateBitArraySet();
     public BitArraySet<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters> ControlParameters { get; } = ControlPanelParameterHasher.CreateBitArraySet();
 
@@ -162,7 +172,6 @@ public sealed class LevelData
         if (PrePlacedLemmingData.Count == 0 && HatchLemmingData.Count == 0) return "Number of lemmings is invalid!";
         if (LevelTitle.Length == 0) return "Level title not set!";
         if (LevelAuthor.Length == 0) return "Level author not set!";
-        // if (LevelObjectives.Count == 0) return "Level objectives not set!";
 
         return null;
     }
