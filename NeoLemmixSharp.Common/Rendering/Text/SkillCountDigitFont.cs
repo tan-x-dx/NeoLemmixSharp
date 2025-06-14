@@ -20,7 +20,7 @@ public sealed class SkillCountDigitFont
 
     public SkillCountDigitFont(ContentManager content)
     {
-        _texture = content.Load<Texture2D>("panel/skill_count_digits");
+        _texture = content.Load<Texture2D>("Fonts/skill_count_digits");
     }
 
     private static bool GetCharRenderDetails(int c, out int sourceX, out int glyphWidth)

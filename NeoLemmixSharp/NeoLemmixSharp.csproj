@@ -33,9 +33,6 @@
   <ItemGroup>
     <EmbeddedResource Include="basher_mask.dat" />
     <EmbeddedResource Include="bomber_mask.dat" />
-    <EmbeddedResource Include="Content\Fonts\JetBrainsMono-Regular.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="fencer_mask.dat" />
     <EmbeddedResource Include="Icon.ico" />
     <EmbeddedResource Include="Icon.bmp" />

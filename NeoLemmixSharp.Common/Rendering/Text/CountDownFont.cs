@@ -14,7 +14,7 @@ public sealed class CountDownFont
 
     public CountDownFont(ContentManager content)
     {
-        _texture = content.Load<Texture2D>("sprites/lemming/countdown");
+        _texture = content.Load<Texture2D>("Fonts/countdown");
     }
 
     private static bool GetCharRenderDetails(int c, out int sourceX, out int glyphWidth)
