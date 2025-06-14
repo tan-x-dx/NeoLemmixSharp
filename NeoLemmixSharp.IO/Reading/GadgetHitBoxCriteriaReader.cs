@@ -37,6 +37,11 @@ internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRaw
         var sourceBytes = _rawFileData.ReadBytes(numberOfBytesToRead);
         var sourceUints = MemoryMarshal.Cast<byte, uint>(sourceBytes);
 
+        var expectedResultLength = BitArrayHelpers.CalculateBitArrayBufferLength(maxNumberOfBits);
+
+        FileReadingException.ReaderAssert(sourceUints.Length == expectedResultLength, "Invalid span lengths!");
+        BitArrayHelpers.AssertSourceDataIsValidForDestination(sourceUints, expectedResultLength, maxNumberOfBits);
+
         if (UintSpanIsTrivial(sourceUints, maxNumberOfBits))
             return [];
 
@@ -46,8 +51,6 @@ internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRaw
     private static bool UintSpanIsTrivial(ReadOnlySpan<uint> uints, int maxNumberOfBits)
     {
         var popCount = BitArrayHelpers.GetPopCount(uints);
-
-        FileReadingException.ReaderAssert(popCount <= maxNumberOfBits, "Invalid bit sequence!");
 
         return popCount == 0 || popCount == maxNumberOfBits;
     }

@@ -80,21 +80,8 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public void ReadFrom(ReadOnlySpan<uint> source)
     {
         var destSpan = _bits.AsSpan();
-        if (source.Length > destSpan.Length)
-            throw new ArgumentException("Source buffer too big!");
 
-        if (source.Length == destSpan.Length)
-        {
-            var upperIntNumberOfItems = _hasher.NumberOfItems & BitArrayHelpers.Mask;
-
-            if (upperIntNumberOfItems != 0)
-            {
-                var lastInt = source[^1];
-                var i = (1U << upperIntNumberOfItems) - 1U;
-                if ((lastInt & ~i) != 0U)
-                    throw new ArgumentException("Upper bits set outside of valid range");
-            }
-        }
+        BitArrayHelpers.AssertSourceDataIsValidForDestination(source, destSpan.Length, _hasher.NumberOfItems);
 
         destSpan.Clear();
         source.CopyTo(destSpan);

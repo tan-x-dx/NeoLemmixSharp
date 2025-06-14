@@ -140,6 +140,25 @@ public static class BitArrayHelpers
         return result;
     }
 
+    public static void AssertSourceDataIsValidForDestination(ReadOnlySpan<uint> source, int destinationLength, int numberOfItems)
+    {
+        if (source.Length > destinationLength)
+            throw new ArgumentException("Source buffer too big!");
+
+        if (source.Length < destinationLength)
+            return;
+
+        var upperIntNumberOfItems = numberOfItems & Mask;
+
+        if (upperIntNumberOfItems == 0)
+            return;
+
+        var lastInt = source[^1];
+        var i = (1U << upperIntNumberOfItems) - 1U;
+        if ((lastInt & ~i) != 0U)
+            throw new ArgumentException("Upper bits set outside of valid range");
+    }
+
     [Pure]
     public static int GetPopCount(ReadOnlySpan<uint> bits)
     {
