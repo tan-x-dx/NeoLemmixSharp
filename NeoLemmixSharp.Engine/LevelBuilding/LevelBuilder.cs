@@ -9,12 +9,8 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Objectives;
-using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Rewind;
-using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
-using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Level.Updates;
 using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
@@ -78,11 +74,12 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         }
 
         var inputController = new LevelInputController();
-        var levelObjectiveManager = new LevelObjectiveManager([]/*levelData.LevelObjectives*/, 0);
 
-        var skillSetManager = new SkillSetManager(levelObjectiveManager.PrimaryLevelObjective);
+        var levelObjectiveManager = LevelObjectiveBuilder.BuildLevelObjectiveManager(levelData.LevelObjective); //new LevelObjectiveManager(levelData.LevelObjective, 0);
+
+        var skillSetManager = LevelObjectiveBuilder.BuildSkillSetManager(levelData.LevelObjective);// new SkillSetManager(levelObjectiveManager.PrimaryLevelObjective);
         var levelCursor = new LevelCursor();
-        var levelTimer = BuildLevelTimer(levelObjectiveManager);
+        var levelTimer = LevelObjectiveBuilder.BuildLevelTimer(levelObjectiveManager);
 
         var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, lemmingManager, skillSetManager);
         // Need to call this here instead of initialising in LevelScreen
@@ -171,18 +168,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         }
 
         return new TribeManager(tribes);
-    }
-
-    private static LevelTimer BuildLevelTimer(LevelObjectiveManager levelObjectiveManager)
-    {
-        var primaryObjective = levelObjectiveManager.PrimaryLevelObjective;
-        foreach (var requirement in primaryObjective.Requirements)
-        {
-            if (requirement is TimeRequirement timeRequirement)
-                return LevelTimer.CreateCountDownTimer(timeRequirement.TimeLimitInSeconds);
-        }
-
-        return LevelTimer.CreateCountUpTimer();
     }
 
     private static IBackgroundRenderer BuildBackgroundRenderer(LevelData levelData)

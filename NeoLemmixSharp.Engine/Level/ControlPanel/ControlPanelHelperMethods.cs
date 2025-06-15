@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 
@@ -46,7 +47,7 @@ public static class ControlPanelHelperMethods
                 else
                 {
                     skillTrackingDataId = skillTrackingData.SkillTrackingDataId;
-                    skillCount = skillTrackingData.SkillCount;
+                    skillCount = skillTrackingData.EffectiveQuantity;
                 }
 
                 var skillAssignButton = new SkillAssignButton(
@@ -79,7 +80,7 @@ public static class ControlPanelHelperMethods
                     skillTrackingData.Skill.Id,
                     skillTrackingData.SkillTrackingDataId);
                 result[i++] = skillAssignButton;
-                skillAssignButton.UpdateSkillCount(skillTrackingData.SkillCount);
+                skillAssignButton.UpdateSkillCount(skillTrackingData.EffectiveQuantity);
             }
 
             return result;

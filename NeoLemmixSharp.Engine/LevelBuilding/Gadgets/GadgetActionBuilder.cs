@@ -79,10 +79,7 @@ public static class GadgetActionBuilder
         // 7 bits for numerical value (gets clamped between 0 and 100)
         var value = (miscData >>> 20) & 0x7f;
 
-        // 1 bit for isDelta
-        var isDelta = ((miscData >>> 27) & 1) != 0;
-
-        return new SkillCountModifierAction(skill, value, tribeId, isDelta);
+        return new SkillCountModifierAction(skill, value, tribeId);
     }
 
     private static ForceFacingDirectionAction CreateForceFacingDirectionAction(int miscData)

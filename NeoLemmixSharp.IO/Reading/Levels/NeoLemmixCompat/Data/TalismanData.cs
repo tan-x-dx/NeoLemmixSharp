@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Level.Objectives;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 
@@ -7,7 +8,7 @@ public sealed class TalismanData
 {
     public string Title { get; set; }
     public int Id { get; set; }
-    public TalismanColor Color { get; set; }
+    public TalismanRank Color { get; set; }
 
     public int? SaveRequirement { get; set; }
     public int? TimeLimitInSeconds { get; set; }
@@ -67,11 +68,4 @@ public sealed class TalismanData
 
         return result.ToArray();
     }*/
-}
-
-public enum TalismanColor
-{
-    Bronze,
-    Silver,
-    Gold
 }

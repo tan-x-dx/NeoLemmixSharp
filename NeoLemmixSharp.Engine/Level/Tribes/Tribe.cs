@@ -10,12 +10,12 @@ public sealed class Tribe : IIdEquatable<Tribe>
 {
     public readonly int Id;
     public readonly TribeColorData ColorData;
-    public readonly TribeIdentifier TribeIdentifier;
+    public readonly TribeStyleIdentifier TribeIdentifier;
 
     public Tribe(
         int id,
         LemmingSpriteBank spriteBank,
-        TribeIdentifier tribeIdentifier)
+        TribeStyleIdentifier tribeIdentifier)
     {
         Id = id;
         ColorData = spriteBank.GetColorData(tribeIdentifier);
@@ -30,7 +30,7 @@ public sealed class Tribe : IIdEquatable<Tribe>
     [DebuggerStepThrough]
     public override int GetHashCode() => Id;
     [DebuggerStepThrough]
-    public static bool operator ==(Tribe left, Tribe right) => left.Id == right.Id;
-    [DebuggerStepThrough]
-    public static bool operator !=(Tribe left, Tribe right) => left.Id != right.Id;
+    public static bool operator ==(Tribe? left, Tribe? right) => left?.Id == right?.Id;
+    [DebuggerStepThrough]               
+    public static bool operator !=(Tribe? left, Tribe? right) => left?.Id != right?.Id;
 }

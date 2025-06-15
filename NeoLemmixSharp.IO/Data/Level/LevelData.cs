@@ -24,7 +24,7 @@ public sealed class LevelData
     private int? _levelStartPositionY;
     private int _maxNumberOfClonedLemmings = -1;
 
-    private ObjectiveData? _levelObjective;
+    private LevelObjectiveData? _levelObjective;
 
     public FileFormatType FileFormatType { get; }
 
@@ -119,7 +119,7 @@ public sealed class LevelData
         }
     }
 
-    public void SetObjectiveData(ObjectiveData objectiveData)
+    public void SetObjectiveData(LevelObjectiveData objectiveData)
     {
         _levelObjective = objectiveData;
     }
@@ -130,7 +130,7 @@ public sealed class LevelData
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }
     public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
 
-    public ObjectiveData LevelObjective => _levelObjective is null
+    public LevelObjectiveData LevelObjective => _levelObjective is null
         ? throw new InvalidOperationException("Level objective not set!")
         : _levelObjective;
     public BitArraySet<LevelParameterHasher, BitBuffer32, LevelParameters> LevelParameters { get; } = LevelParameterHasher.CreateBitArraySet();
@@ -138,7 +138,7 @@ public sealed class LevelData
 
     public List<LemmingData> PrePlacedLemmingData { get; } = [];
     public List<LemmingData> HatchLemmingData { get; } = [];
-    public List<TribeIdentifier> TribeIdentifiers { get; } = [];
+    public List<TribeStyleIdentifier> TribeIdentifiers { get; } = [];
 
     public List<TerrainData> AllTerrainData { get; } = [];
     public List<TerrainGroupData> AllTerrainGroups { get; } = [];

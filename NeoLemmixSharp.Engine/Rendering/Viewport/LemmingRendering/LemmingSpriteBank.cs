@@ -14,7 +14,7 @@ public sealed class LemmingSpriteBank
         _lookupData = lookupData;
     }
 
-    public ref readonly TribeColorData GetColorData(TribeIdentifier tribeIdentifier)
+    public ref readonly TribeColorData GetColorData(TribeStyleIdentifier tribeIdentifier)
     {
         var spriteBankData = _lookupData[tribeIdentifier.StyleIdentifier];
 

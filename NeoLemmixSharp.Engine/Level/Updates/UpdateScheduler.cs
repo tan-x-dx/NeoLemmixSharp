@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Skills;
 using System.Diagnostics;
 
@@ -193,6 +194,8 @@ end;
         _elapsedTicks = newElapsedTicks;
         newElapsedTicks %= EngineConstants.FastForwardSpeedMultiplier;
         _elapsedTicksModuloFastForwardSpeed = newElapsedTicks;
+
+        LevelScreen.LevelObjectiveManager.RecheckLevelObjective();
     }
 
     private static void HandleCursor()
@@ -222,7 +225,7 @@ end;
 
         var selectedSkillId = LevelScreen.LevelControlPanel.SelectedSkillButtonId;
         var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(selectedSkillId);
-        if (skillTrackingData is null || skillTrackingData.SkillCount == 0)
+        if (skillTrackingData is null || skillTrackingData.EffectiveQuantity == 0)
             return;
 
         if (LemmingCanBeTicked(lemming) &&

@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.IO.Data.Level.Objectives;
 
-public sealed class ObjectiveData
+public sealed class LevelObjectiveData
 {
     public required string ObjectiveName { get; init; }
 

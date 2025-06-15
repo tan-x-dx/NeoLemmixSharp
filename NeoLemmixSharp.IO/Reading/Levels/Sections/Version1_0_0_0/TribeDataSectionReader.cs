@@ -30,7 +30,7 @@ internal sealed class TribeDataSectionReader : LevelDataSectionReader
         }
     }
 
-    private TribeIdentifier ReadTribeIdentifierData(RawLevelFileDataReader rawFileData)
+    private TribeStyleIdentifier ReadTribeIdentifierData(RawLevelFileDataReader rawFileData)
     {
         int styleId = rawFileData.Read16BitUnsignedInteger();
         var styleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]);
@@ -38,6 +38,6 @@ internal sealed class TribeDataSectionReader : LevelDataSectionReader
 
         FileReadingException.ReaderAssert(themeTribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id!");
 
-        return new TribeIdentifier(styleIdentifier, themeTribeId);
+        return new TribeStyleIdentifier(styleIdentifier, themeTribeId);
     }
 }

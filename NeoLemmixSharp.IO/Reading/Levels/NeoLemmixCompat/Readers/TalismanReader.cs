@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
@@ -6,9 +7,9 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 internal sealed class TalismanReader : NeoLemmixDataReader
 {
     private readonly UniqueStringSet _uniqueStringSet;
-    private TalismanData? _currentTalismanData;
+    private Data.TalismanData? _currentTalismanData;
 
-    public List<TalismanData> TalismanData { get; } = new();
+    public List<Data.TalismanData> TalismanData { get; } = new();
 
     public TalismanReader(
         UniqueStringSet uniqueStringSet)
@@ -28,7 +29,7 @@ internal sealed class TalismanReader : NeoLemmixDataReader
 
     public override bool BeginReading(ReadOnlySpan<char> line)
     {
-        _currentTalismanData = new TalismanData();
+        _currentTalismanData = new Data.TalismanData();
         FinishedReading = false;
         return false;
     }
@@ -88,18 +89,18 @@ internal sealed class TalismanReader : NeoLemmixDataReader
         throw new NotImplementedException();
     }
 
-    private TalismanColor GetTalismanColor(ReadOnlySpan<char> secondToken)
+    private TalismanRank GetTalismanColor(ReadOnlySpan<char> secondToken)
     {
         if (TokensMatch(secondToken, "BRONZE"))
-            return TalismanColor.Bronze;
+            return TalismanRank.Bronze;
 
         if (TokensMatch(secondToken, "SILVER"))
-            return TalismanColor.Silver;
+            return TalismanRank.Silver;
 
         if (TokensMatch(secondToken, "GOLD"))
-            return TalismanColor.Gold;
+            return TalismanRank.Gold;
 
-        return NxlvReadingHelpers.ThrowUnknownTokenException<TalismanColor>(IdentifierToken, "COLOR", secondToken);
+        return NxlvReadingHelpers.ThrowUnknownTokenException<TalismanRank>(IdentifierToken, "COLOR", secondToken);
     }
 
     private void ParseLimitTokens(ReadOnlySpan<char> firstToken, ReadOnlySpan<char> secondToken)

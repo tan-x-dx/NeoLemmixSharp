@@ -28,7 +28,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         var objectiveModifiers = ReadObjectiveModifiers(rawFileData);
         var talismanData = ReadTalismanData(rawFileData);
 
-        var objectiveData = new ObjectiveData
+        var objectiveData = new LevelObjectiveData
         {
             ObjectiveName = _stringIdLookup[objectiveNameId],
 
@@ -60,14 +60,14 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         int skillId = rawFileData.Read8BitUnsignedInteger();
         FileReadingException.ReaderAssert(LemmingSkillConstants.IsValidLemmingSkillId(skillId), "Invalid skill id");
 
-        int initialQuantity = rawFileData.Read8BitUnsignedInteger();
-        FileReadingException.ReaderAssert(initialQuantity <= EngineConstants.InfiniteSkillCount, "Invalid skill count quantity");
-
         int tribeId = rawFileData.Read8BitUnsignedInteger();
         tribeId--; // Need to offset by 1
         FileReadingException.ReaderAssert(tribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
 
-        return new SkillSetData(skillId, initialQuantity, tribeId);
+        int initialQuantity = rawFileData.Read8BitUnsignedInteger();
+        FileReadingException.ReaderAssert(initialQuantity <= EngineConstants.InfiniteSkillCount, "Invalid skill count quantity");
+
+        return new SkillSetData(skillId, tribeId, initialQuantity);
     }
 
     private static ObjectiveCriterion[] ReadObjectiveCriteria(RawLevelFileDataReader rawFileData)
@@ -175,12 +175,17 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
             int skillId = rawFileData.Read8BitUnsignedInteger();
             FileReadingException.ReaderAssert(LemmingSkillConstants.IsValidLemmingSkillId(skillId), "Invalid skill id");
 
+            int tribeId = rawFileData.Read8BitUnsignedInteger();
+            tribeId--; // Need to offset by 1
+            FileReadingException.ReaderAssert(tribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
+
             int maxSkillAssignments = rawFileData.Read8BitUnsignedInteger();
-            FileReadingException.ReaderAssert(maxSkillAssignments < EngineConstants.InfiniteSkillCount, "Invalid skill limit quantity");
+            FileReadingException.ReaderAssert(maxSkillAssignments <= EngineConstants.MaxFiniteSkillCount, "Invalid skill limit quantity");
 
             return new LimitSpecificSkillAssignmentsModifier
             {
                 SkillId = skillId,
+                TribeId = tribeId,
                 MaxSkillAssignments = maxSkillAssignments,
             };
         }
@@ -188,7 +193,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         LimitTotalSkillAssignmentsModifier CreateLimitTotalSkillAssignmentsModifier()
         {
             int maxTotalSkillAssignments = rawFileData.Read8BitUnsignedInteger();
-            FileReadingException.ReaderAssert(maxTotalSkillAssignments < EngineConstants.InfiniteSkillCount, "Invalid skill limit quantity");
+            FileReadingException.ReaderAssert(maxTotalSkillAssignments <= EngineConstants.MaxFiniteSkillCount, "Invalid skill limit quantity");
 
             return new LimitTotalSkillAssignmentsModifier
             {
@@ -213,14 +218,20 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
     private TalismanData ReadTalismanDatum(RawLevelFileDataReader rawFileData)
     {
+        int talismanId = rawFileData.Read8BitUnsignedInteger();
         int talismanNameId = rawFileData.Read16BitUnsignedInteger();
+
+        uint rawRankId = rawFileData.Read8BitUnsignedInteger();
+        var rank = TalismanRankHelpers.GetEnumValue(rawRankId);
 
         var overrideObjectiveCriteria = ReadObjectiveCriteria(rawFileData);
         var overrideObjectiveModifiers = ReadObjectiveModifiers(rawFileData);
 
         return new TalismanData
         {
+            TalismanId = talismanId,
             TalismanName = _stringIdLookup[talismanNameId],
+            Rank = rank,
 
             OverrideObjectiveCriteria = overrideObjectiveCriteria,
             OverrideObjectiveModifiers = overrideObjectiveModifiers

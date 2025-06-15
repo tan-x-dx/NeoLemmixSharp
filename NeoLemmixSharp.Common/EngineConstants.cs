@@ -55,7 +55,9 @@ public static class EngineConstants
     public const int MaxNumberOfTribes = 6;
     public const int ClassicTribeId = 0;
 
+    public const int TrivialSkillLimit = 1_000_000_000;
     public const int InfiniteSkillCount = 100;
+    public const int MaxFiniteSkillCount = InfiniteSkillCount - 1;
 
     public const int InitialLemmingHatchReleaseCountDown = 20;
 

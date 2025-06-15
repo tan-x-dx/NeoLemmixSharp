@@ -76,7 +76,7 @@ internal readonly ref struct NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelR
     private void ProcessLevelData()
     {
         _levelData.TribeIdentifiers.Capacity = 1;
-        _levelData.TribeIdentifiers.Add(new TribeIdentifier(_levelData.LevelTheme, EngineConstants.ClassicTribeId));
+        _levelData.TribeIdentifiers.Add(new TribeStyleIdentifier(_levelData.LevelTheme, EngineConstants.ClassicTribeId));
 
         /*  var objectiveRequirementsList = new List<IObjectiveRequirement>
           {

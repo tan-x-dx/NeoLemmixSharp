@@ -15,6 +15,7 @@ public abstract class ObjectiveModifier
 public sealed class LimitSpecificSkillAssignmentsModifier : ObjectiveModifier
 {
     public required int SkillId { get; init; }
+    public required int TribeId { get; init; }
     public required int MaxSkillAssignments { get; init; }
 
     public LimitSpecificSkillAssignmentsModifier()
@@ -25,7 +26,8 @@ public sealed class LimitSpecificSkillAssignmentsModifier : ObjectiveModifier
     public override bool MatchesBaseModifierData(ObjectiveModifier other)
     {
         return other is LimitSpecificSkillAssignmentsModifier otherLimitSpecificSkillAssignmentsModifier &&
-               SkillId == otherLimitSpecificSkillAssignmentsModifier.SkillId;
+               SkillId == otherLimitSpecificSkillAssignmentsModifier.SkillId &&
+               TribeId == otherLimitSpecificSkillAssignmentsModifier.TribeId;
     }
 }
 
