@@ -119,4 +119,17 @@ public static class Helpers
         var typeName = typeof(TEnum).Name;
         throw new ArgumentOutOfRangeException(nameof(enumValue), enumValue, $"Unknown {typeName} enum value!");
     }
+
+    public static TSubClass? TryFindItemOfType<TBaseClass, TSubClass>(this TBaseClass[] items)
+        where TBaseClass : class
+        where TSubClass : class, TBaseClass
+    {
+        foreach (var item in items)
+        {
+            if (item is TSubClass result)
+                return result;
+        }
+
+        return null;
+    }
 }

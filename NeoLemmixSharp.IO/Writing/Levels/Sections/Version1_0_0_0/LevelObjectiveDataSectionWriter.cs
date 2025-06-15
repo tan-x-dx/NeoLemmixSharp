@@ -56,7 +56,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
         writer.Write((byte)skillSetDatum.InitialQuantity);
     }
 
-    private static void WriteObjectiveCriteria(RawLevelFileDataWriter writer, ObjectiveCriterion[] objectiveCriteria)
+    private static void WriteObjectiveCriteria(RawLevelFileDataWriter writer, ObjectiveCriterionData[] objectiveCriteria)
     {
         writer.Write((byte)objectiveCriteria.Length);
 
@@ -66,7 +66,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
         }
     }
 
-    private static void WriteObjectiveCriterion(RawLevelFileDataWriter writer, ObjectiveCriterion objectiveCriterion)
+    private static void WriteObjectiveCriterion(RawLevelFileDataWriter writer, ObjectiveCriterionData objectiveCriterion)
     {
         writer.Write((byte)objectiveCriterion.Type);
 
@@ -91,7 +91,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 
         void WriteSaveLemmingsCriterion()
         {
-            var saveLemmingsCriterion = (SaveLemmingsCriterion)objectiveCriterion;
+            var saveLemmingsCriterion = (SaveLemmingsCriterionData)objectiveCriterion;
 
             FileWritingException.WriterAssert(saveLemmingsCriterion.TribeId >= -1, "Invalid tribe id");
             FileWritingException.WriterAssert(saveLemmingsCriterion.TribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
@@ -102,7 +102,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 
         void WriteTimeLimitCriterion()
         {
-            var timeLimitCriterion = (TimeLimitCriterion)objectiveCriterion;
+            var timeLimitCriterion = (TimeLimitCriterionData)objectiveCriterion;
 
             FileWritingException.WriterAssert(timeLimitCriterion.TimeLimitInSeconds > 0, "Invalid time limit");
             FileWritingException.WriterAssert(timeLimitCriterion.TimeLimitInSeconds <= EngineConstants.MaxTimeLimitInSeconds, "Invalid time limit");
@@ -111,7 +111,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
         }
     }
 
-    private static void WriteObjectiveModifiers(RawLevelFileDataWriter writer, ObjectiveModifier[] objectiveModifiers)
+    private static void WriteObjectiveModifiers(RawLevelFileDataWriter writer, ObjectiveModifierData[] objectiveModifiers)
     {
         writer.Write((byte)objectiveModifiers.Length);
 
@@ -121,7 +121,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
         }
     }
 
-    private static void WriteObjectiveModifier(RawLevelFileDataWriter writer, ObjectiveModifier objectiveModifier)
+    private static void WriteObjectiveModifier(RawLevelFileDataWriter writer, ObjectiveModifierData objectiveModifier)
     {
         writer.Write((byte)objectiveModifier.Type);
 
@@ -142,7 +142,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 
         void WriteLimitSpecificSkillModifier()
         {
-            var limitSpecificSkillModifier = (LimitSpecificSkillAssignmentsModifier)objectiveModifier;
+            var limitSpecificSkillModifier = (LimitSpecificSkillAssignmentsModifierData)objectiveModifier;
 
             FileWritingException.WriterAssert(LemmingSkillConstants.IsValidLemmingSkillId(limitSpecificSkillModifier.SkillId), "Invalid skill id");
             FileWritingException.WriterAssert(limitSpecificSkillModifier.TribeId >= -1, "Invalid tribe id");
@@ -157,7 +157,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 
         void WriteTotalSkillModifier()
         {
-            var limitTotalSkillModifier = (LimitTotalSkillAssignmentsModifier)objectiveModifier;
+            var limitTotalSkillModifier = (LimitTotalSkillAssignmentsModifierData)objectiveModifier;
 
             FileWritingException.WriterAssert(limitTotalSkillModifier.MaxTotalSkillAssignments >= 0, "Invalid skill limit quantity");
             FileWritingException.WriterAssert(limitTotalSkillModifier.MaxTotalSkillAssignments <= EngineConstants.MaxFiniteSkillCount, "Invalid skill limit quantity");

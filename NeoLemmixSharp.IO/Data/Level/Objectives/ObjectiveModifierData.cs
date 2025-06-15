@@ -1,48 +1,48 @@
 ﻿namespace NeoLemmixSharp.IO.Data.Level.Objectives;
 
-public abstract class ObjectiveModifier
+public abstract class ObjectiveModifierData
 {
     public ObjectiveModifierType Type { get; }
 
-    public ObjectiveModifier(ObjectiveModifierType type)
+    public ObjectiveModifierData(ObjectiveModifierType type)
     {
         Type = type;
     }
 
-    public abstract bool MatchesBaseModifierData(ObjectiveModifier other);
+    public abstract bool MatchesBaseModifierData(ObjectiveModifierData other);
 }
 
-public sealed class LimitSpecificSkillAssignmentsModifier : ObjectiveModifier
+public sealed class LimitSpecificSkillAssignmentsModifierData : ObjectiveModifierData
 {
     public required int SkillId { get; init; }
     public required int TribeId { get; init; }
     public required int MaxSkillAssignments { get; init; }
 
-    public LimitSpecificSkillAssignmentsModifier()
+    public LimitSpecificSkillAssignmentsModifierData()
         : base(ObjectiveModifierType.LimitSpecificSkillAssignments)
     {
     }
 
-    public override bool MatchesBaseModifierData(ObjectiveModifier other)
+    public override bool MatchesBaseModifierData(ObjectiveModifierData other)
     {
-        return other is LimitSpecificSkillAssignmentsModifier otherLimitSpecificSkillAssignmentsModifier &&
+        return other is LimitSpecificSkillAssignmentsModifierData otherLimitSpecificSkillAssignmentsModifier &&
                SkillId == otherLimitSpecificSkillAssignmentsModifier.SkillId &&
                TribeId == otherLimitSpecificSkillAssignmentsModifier.TribeId;
     }
 }
 
-public sealed class LimitTotalSkillAssignmentsModifier : ObjectiveModifier
+public sealed class LimitTotalSkillAssignmentsModifierData : ObjectiveModifierData
 {
     public required int MaxTotalSkillAssignments { get; init; }
 
-    public LimitTotalSkillAssignmentsModifier()
+    public LimitTotalSkillAssignmentsModifierData()
         : base(ObjectiveModifierType.LimitTotalSkillAssignments)
     {
     }
 
-    public override bool MatchesBaseModifierData(ObjectiveModifier other)
+    public override bool MatchesBaseModifierData(ObjectiveModifierData other)
     {
-        return other is LimitTotalSkillAssignmentsModifier;
+        return other is LimitTotalSkillAssignmentsModifierData;
     }
 }
 

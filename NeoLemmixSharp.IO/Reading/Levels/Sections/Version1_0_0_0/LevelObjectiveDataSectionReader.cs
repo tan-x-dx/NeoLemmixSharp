@@ -70,11 +70,11 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         return new SkillSetData(skillId, tribeId, initialQuantity);
     }
 
-    private static ObjectiveCriterion[] ReadObjectiveCriteria(RawLevelFileDataReader rawFileData)
+    private static ObjectiveCriterionData[] ReadObjectiveCriteria(RawLevelFileDataReader rawFileData)
     {
         int numberOfObjectiveCriteria = rawFileData.Read8BitUnsignedInteger();
 
-        var result = Helpers.GetArrayForSize<ObjectiveCriterion>(numberOfObjectiveCriteria);
+        var result = Helpers.GetArrayForSize<ObjectiveCriterionData>(numberOfObjectiveCriteria);
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -93,7 +93,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         return result;
     }
 
-    private static ObjectiveCriterion ReadObjectiveCriterion(RawLevelFileDataReader rawFileData)
+    private static ObjectiveCriterionData ReadObjectiveCriterion(RawLevelFileDataReader rawFileData)
     {
         uint rawObjectiveCriterionId = rawFileData.Read8BitUnsignedInteger();
         var objectiveCriterionType = (ObjectiveCriterionType)rawObjectiveCriterionId;
@@ -102,12 +102,12 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         {
             ObjectiveCriterionType.SaveLemmings => CreateSaveLemmingsCriterion(),
             ObjectiveCriterionType.TimeLimit => CreateTimeLimitCriterion(),
-            ObjectiveCriterionType.KillAllZombies => new KillAllZombiesCriterion(),
+            ObjectiveCriterionType.KillAllZombies => new KillAllZombiesCriterionData(),
 
-            _ => Helpers.ThrowUnknownEnumValueException<ObjectiveCriterionType, ObjectiveCriterion>(objectiveCriterionType),
+            _ => Helpers.ThrowUnknownEnumValueException<ObjectiveCriterionType, ObjectiveCriterionData>(objectiveCriterionType),
         };
 
-        SaveLemmingsCriterion CreateSaveLemmingsCriterion()
+        SaveLemmingsCriterionData CreateSaveLemmingsCriterion()
         {
             int saveRequirement = rawFileData.Read16BitUnsignedInteger();
             int tribeId = rawFileData.Read8BitUnsignedInteger();
@@ -115,30 +115,30 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
             FileReadingException.ReaderAssert(tribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
 
-            return new SaveLemmingsCriterion
+            return new SaveLemmingsCriterionData
             {
                 SaveRequirement = saveRequirement,
                 TribeId = tribeId
             };
         }
 
-        TimeLimitCriterion CreateTimeLimitCriterion()
+        TimeLimitCriterionData CreateTimeLimitCriterion()
         {
             int timeLimitInSeconds = rawFileData.Read16BitUnsignedInteger();
             FileReadingException.ReaderAssert(timeLimitInSeconds <= EngineConstants.MaxTimeLimitInSeconds, "Invalid time limit");
 
-            return new TimeLimitCriterion
+            return new TimeLimitCriterionData
             {
                 TimeLimitInSeconds = timeLimitInSeconds
             };
         }
     }
 
-    private static ObjectiveModifier[] ReadObjectiveModifiers(RawLevelFileDataReader rawFileData)
+    private static ObjectiveModifierData[] ReadObjectiveModifiers(RawLevelFileDataReader rawFileData)
     {
         int numberOfObjectiveModifiers = rawFileData.Read8BitUnsignedInteger();
 
-        var result = Helpers.GetArrayForSize<ObjectiveModifier>(numberOfObjectiveModifiers);
+        var result = Helpers.GetArrayForSize<ObjectiveModifierData>(numberOfObjectiveModifiers);
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -157,7 +157,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         return result;
     }
 
-    private static ObjectiveModifier ReadObjectiveModifier(RawLevelFileDataReader rawFileData)
+    private static ObjectiveModifierData ReadObjectiveModifier(RawLevelFileDataReader rawFileData)
     {
         uint rawObjectiveModifierId = rawFileData.Read8BitUnsignedInteger();
         var objectiveModifierType = (ObjectiveModifierType)rawObjectiveModifierId;
@@ -167,10 +167,10 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
             ObjectiveModifierType.LimitSpecificSkillAssignments => CreateLimitSpecificSkillAssignmentsModifier(),
             ObjectiveModifierType.LimitTotalSkillAssignments => CreateLimitTotalSkillAssignmentsModifier(),
 
-            _ => Helpers.ThrowUnknownEnumValueException<ObjectiveModifierType, ObjectiveModifier>(objectiveModifierType),
+            _ => Helpers.ThrowUnknownEnumValueException<ObjectiveModifierType, ObjectiveModifierData>(objectiveModifierType),
         };
 
-        LimitSpecificSkillAssignmentsModifier CreateLimitSpecificSkillAssignmentsModifier()
+        LimitSpecificSkillAssignmentsModifierData CreateLimitSpecificSkillAssignmentsModifier()
         {
             int skillId = rawFileData.Read8BitUnsignedInteger();
             FileReadingException.ReaderAssert(LemmingSkillConstants.IsValidLemmingSkillId(skillId), "Invalid skill id");
@@ -182,7 +182,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
             int maxSkillAssignments = rawFileData.Read8BitUnsignedInteger();
             FileReadingException.ReaderAssert(maxSkillAssignments <= EngineConstants.MaxFiniteSkillCount, "Invalid skill limit quantity");
 
-            return new LimitSpecificSkillAssignmentsModifier
+            return new LimitSpecificSkillAssignmentsModifierData
             {
                 SkillId = skillId,
                 TribeId = tribeId,
@@ -190,12 +190,12 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
             };
         }
 
-        LimitTotalSkillAssignmentsModifier CreateLimitTotalSkillAssignmentsModifier()
+        LimitTotalSkillAssignmentsModifierData CreateLimitTotalSkillAssignmentsModifier()
         {
             int maxTotalSkillAssignments = rawFileData.Read8BitUnsignedInteger();
             FileReadingException.ReaderAssert(maxTotalSkillAssignments <= EngineConstants.MaxFiniteSkillCount, "Invalid skill limit quantity");
 
-            return new LimitTotalSkillAssignmentsModifier
+            return new LimitTotalSkillAssignmentsModifierData
             {
                 MaxTotalSkillAssignments = maxTotalSkillAssignments
             };

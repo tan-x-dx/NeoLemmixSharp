@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Engine.Level.Objectives.Criteria;
 
-public sealed class SaveRequirement : ObjectiveCriterion
+public sealed class SaveRequirement : ObjectiveRequirement
 {
     private readonly int _saveRequirement;
     private readonly int _tribeId;

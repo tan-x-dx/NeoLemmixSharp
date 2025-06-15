@@ -75,11 +75,12 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
         var inputController = new LevelInputController();
 
-        var levelObjectiveManager = LevelObjectiveBuilder.BuildLevelObjectiveManager(levelData.LevelObjective); //new LevelObjectiveManager(levelData.LevelObjective, 0);
+        var selectedTalismanId = -1;
 
-        var skillSetManager = LevelObjectiveBuilder.BuildSkillSetManager(levelData.LevelObjective);// new SkillSetManager(levelObjectiveManager.PrimaryLevelObjective);
-        var levelCursor = new LevelCursor();
-        var levelTimer = LevelObjectiveBuilder.BuildLevelTimer(levelObjectiveManager);
+        var levelObjectiveBuilder = new LevelObjectiveBuilder(levelData.LevelObjective, selectedTalismanId);
+        var levelObjectiveManager = levelObjectiveBuilder.BuildLevelObjectiveManager();
+        var skillSetManager = levelObjectiveBuilder.BuildSkillSetManager(tribeManager);
+        var levelTimer = levelObjectiveBuilder.BuildLevelTimer();
 
         var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, lemmingManager, skillSetManager);
         // Need to call this here instead of initialising in LevelScreen
@@ -101,6 +102,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var viewportObjectRendererBuilder = new ViewportObjectRendererBuilder(levelGadgets, levelLemmings);
         var controlPanelSpriteBank = viewportObjectRendererBuilder.GetControlPanelSpriteBank(_contentManager);
 
+        var levelCursor = new LevelCursor();
         var levelCursorSprite = BuildLevelCursorSprite(levelCursor);
         var backgroundRenderer = BuildBackgroundRenderer(levelData);
 

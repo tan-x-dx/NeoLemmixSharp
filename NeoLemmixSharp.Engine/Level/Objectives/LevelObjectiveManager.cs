@@ -4,9 +4,9 @@ namespace NeoLemmixSharp.Engine.Level.Objectives;
 
 public sealed class LevelObjectiveManager
 {
-    private readonly ObjectiveCriterion[] _objectiveCriteria;
+    private readonly ObjectiveRequirement[] _objectiveCriteria;
 
-    public LevelObjectiveManager(ObjectiveCriterion[] objectiveCriteria)
+    public LevelObjectiveManager(ObjectiveRequirement[] objectiveCriteria)
     {
         _objectiveCriteria = objectiveCriteria;
     }
