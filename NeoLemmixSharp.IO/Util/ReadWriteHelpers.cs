@@ -1,54 +1,13 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
-using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Reading;
 using NeoLemmixSharp.IO.Writing;
-using System.Runtime.CompilerServices;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace NeoLemmixSharp.IO;
+namespace NeoLemmixSharp.IO.Util;
 
 public static class ReadWriteHelpers
 {
-    internal sealed class SectionIdentifierComparer<TPerfectHasher, TEnum> : IComparer<Interval>
-        where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
-        where TEnum : unmanaged, Enum
-    {
-        [SkipLocalsInit]
-        internal void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> result)
-        {
-            Span<Interval> intervals = stackalloc Interval[result.Count];
-            result.CopyValuesTo(intervals);
-
-            intervals.Sort(this);
-
-            var firstInterval = intervals[0];
-
-            for (var i = 1; i < intervals.Length; i++)
-            {
-                var secondInterval = intervals[i];
-
-                AssertSectionsAreContiguous(firstInterval, secondInterval);
-
-                firstInterval = secondInterval;
-            }
-        }
-
-        private static void AssertSectionsAreContiguous(Interval firstInterval, Interval secondInterval)
-        {
-            if (firstInterval.Start + firstInterval.Length != secondInterval.Start)
-                throw new InvalidOperationException("Sections are not contiguous!");
-        }
-
-        int IComparer<Interval>.Compare(Interval x, Interval y)
-        {
-            int gt = (x.Start > y.Start) ? 1 : 0;
-            int lt = (x.Start < y.Start) ? 1 : 0;
-            return gt - lt;
-        }
-    }
-
     #region Level Data Read/Write Stuff
 
     internal const int UnspecifiedLevelStartValue = 5000;
@@ -64,14 +23,6 @@ public static class ReadWriteHelpers
     #endregion
 
     #region Level Objectives Data Read/Write Stuff
-
-    internal const int NumberOfBytesForMainLevelObjectiveData = 7;
-    internal const int NumberOfBytesPerSkillSetDatum = 3;
-    internal const int NumberOfBytesPerRequirementsDatum = 4;
-
-    internal const byte SaveRequirementId = 0x01;
-    internal const byte TimeRequirementId = 0x02;
-    internal const byte BasicSkillSetRequirementId = 0x03;
 
     #endregion
 
@@ -210,7 +161,7 @@ public static class ReadWriteHelpers
         FileWritingException.WriterAssert(point.X <= short.MaxValue && point.X >= short.MinValue, "Point outside of valid scope");
         FileWritingException.WriterAssert(point.Y <= short.MaxValue && point.Y >= short.MinValue, "Point outside of valid scope");
 
-        return ((point.Y & 0xffff) << 16) | (point.X & 0xffff);
+        return (point.Y & 0xffff) << 16 | point.X & 0xffff;
     }
 
     public static Point DecodePoint(int combinedBits)

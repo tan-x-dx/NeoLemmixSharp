@@ -5,6 +5,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
@@ -65,7 +66,7 @@ public static class HatchGadgetArchetypeBuilder
         {
             var spawnPointMiscData = gadgetArchetypeData.GetMiscData(GadgetArchetypeMiscDataType.SpawnPointOffset);
 
-            return IO.ReadWriteHelpers.DecodePoint(spawnPointMiscData);
+            return ReadWriteHelpers.DecodePoint(spawnPointMiscData);
         }
     }
 

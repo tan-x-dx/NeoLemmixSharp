@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Util;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -197,7 +198,7 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
         FileWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot write to file - In middle of a section!");
         FileWritingException.WriterAssert(_sectionIntervals.Count > 0, "No sections written!");
 
-        new ReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
+        new SectionIdentifierValidator<TPerfectHasher, TEnum>()
             .AssertSectionsAreContiguous(_sectionIntervals);
     }
 

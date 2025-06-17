@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Util;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading;
@@ -80,7 +81,7 @@ internal unsafe sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFile
         while (i-- > 0)
             ReadSectionIntervalDatum();
 
-        new ReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
+        new SectionIdentifierValidator<TPerfectHasher, TEnum>()
             .AssertSectionsAreContiguous(result);
 
         return result;

@@ -2,6 +2,7 @@
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Util;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;

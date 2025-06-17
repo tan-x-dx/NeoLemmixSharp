@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Util;
 using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
@@ -89,7 +90,7 @@ public static class GadgetActionBuilder
 
     private static LemmingMoverAction CreateLemmingMoverAction(int miscData)
     {
-        var delta = IO.ReadWriteHelpers.DecodePoint(miscData);
+        var delta = ReadWriteHelpers.DecodePoint(miscData);
         return new LemmingMoverAction(delta);
     }
 
