@@ -106,36 +106,49 @@ internal unsafe sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFile
         uint byteValue = Read8BitUnsignedInteger();
         return byteValue != 0U;
     }
-    public byte Read8BitUnsignedInteger() => Read<byte>();
-    public ushort Read16BitUnsignedInteger() => Read<ushort>();
-    public uint Read32BitUnsignedInteger() => Read<uint>();
-    public int Read32BitSignedInteger() => Read<int>();
-    public ulong Read64BitUnsignedInteger() => Read<ulong>();
 
-    private T Read<T>()
-        where T : unmanaged
+    /// <summary>
+    /// Special override for individual bytes, since it's simpler to execute and also a lot more common.
+    /// </summary>
+    public byte Read8BitUnsignedInteger()
     {
-        var typeSize = sizeof(T);
-        FileReadingException.ReaderAssert(_byteBuffer.Length - _position >= typeSize, "Reached end of file!");
+        FileReadingException.ReaderAssert(_position < _byteBuffer.Length, "Reached end of file!");
 
         byte* pointer = (byte*)_byteBuffer.Handle;
-        pointer += _position;
-
-        var result = Unsafe.ReadUnaligned<T>(pointer);
-        _position += typeSize;
+        byte result = pointer[_position];
+        _position++;
 
         return result;
     }
 
-    public ReadOnlySpan<byte> ReadBytes(int bufferSize)
+    public ushort Read16BitUnsignedInteger() => ReadUnmanaged<ushort>();
+    public uint Read32BitUnsignedInteger() => ReadUnmanaged<uint>();
+    public int Read32BitSignedInteger() => ReadUnmanaged<int>();
+    public ulong Read64BitUnsignedInteger() => ReadUnmanaged<ulong>();
+
+    private T ReadUnmanaged<T>()
+        where T : unmanaged
     {
-        FileReadingException.ReaderAssert(_byteBuffer.Length - _position >= bufferSize, "Reached end of file!");
+        var newPosition = _position + sizeof(T);
+        FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
 
         byte* pointer = (byte*)_byteBuffer.Handle;
         pointer += _position;
+        T result = Unsafe.ReadUnaligned<T>(pointer);
+        _position = newPosition;
 
-        var result = new ReadOnlySpan<byte>(pointer, bufferSize);
-        _position += bufferSize;
+        return result;
+    }
+
+    public ReadOnlySpan<byte> ReadBytes(int numberOfBytes)
+    {
+        var newPosition = _position + numberOfBytes;
+        FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
+
+        byte* pointer = (byte*)_byteBuffer.Handle;
+        pointer += _position;
+        var result = new ReadOnlySpan<byte>(pointer, numberOfBytes);
+        _position = newPosition;
 
         return result;
     }
