@@ -16,7 +16,7 @@ internal interface IRawFileDataWriter
     void Write(int value);
     void Write(uint value);
     void Write(ulong value);
-    void Write(ReadOnlySpan<byte> data);
+    void WriteBytes(ReadOnlySpan<byte> data);
 }
 
 internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWriter, IDisposable
@@ -58,7 +58,7 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
     {
         const byte ZeroByte = 0;
         const byte OneByte = 1;
-        WriteSectionData(value ? OneByte : ZeroByte);
+        WriteByteToByteBuffer(value ? OneByte : ZeroByte, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
     public void Write(byte value)
@@ -68,18 +68,18 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
         WriteByteToByteBuffer(value, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
-    public void Write(ushort value) => WriteSectionData(value);
-    public void Write(int value) => WriteSectionData(value);
-    public void Write(uint value) => WriteSectionData(value);
-    public void Write(ulong value) => WriteSectionData(value);
+    public void Write(ushort value) => WriteUnmanaged(value);
+    public void Write(int value) => WriteUnmanaged(value);
+    public void Write(uint value) => WriteUnmanaged(value);
+    public void Write(ulong value) => WriteUnmanaged(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void WriteSectionData<T>(T value)
+    private void WriteUnmanaged<T>(T value)
         where T : unmanaged
     {
         AssertWithinSection();
 
-        WriteToByteBuffer(value, ref _mainDataByteBuffer, ref _mainDataPosition);
+        WriteUnmanagedToByteBuffer(value, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
         position++;
     }
 
-    private static void WriteToByteBuffer<T>(T value, ref RawArray byteBuffer, ref int position)
+    private static void WriteUnmanagedToByteBuffer<T>(T value, ref RawArray byteBuffer, ref int position)
         where T : unmanaged
     {
         var newPosition = position + sizeof(T);
@@ -113,7 +113,7 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
         position = newPosition;
     }
 
-    public void Write(ReadOnlySpan<byte> data)
+    public void WriteBytes(ReadOnlySpan<byte> data)
     {
         AssertWithinSection();
 
@@ -203,13 +203,13 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
 
     private void WriteVersion(FileFormatVersion version)
     {
-        WriteToByteBuffer(version.Major, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteUnmanagedToByteBuffer(version.Major, ref _preambleDataByteBuffer, ref _preambleDataPosition);
         WriteByteToByteBuffer(IoConstants.PeriodByte, ref _preambleDataByteBuffer, ref _preambleDataPosition);
-        WriteToByteBuffer(version.Minor, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteUnmanagedToByteBuffer(version.Minor, ref _preambleDataByteBuffer, ref _preambleDataPosition);
         WriteByteToByteBuffer(IoConstants.PeriodByte, ref _preambleDataByteBuffer, ref _preambleDataPosition);
-        WriteToByteBuffer(version.Build, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteUnmanagedToByteBuffer(version.Build, ref _preambleDataByteBuffer, ref _preambleDataPosition);
         WriteByteToByteBuffer(IoConstants.PeriodByte, ref _preambleDataByteBuffer, ref _preambleDataPosition);
-        WriteToByteBuffer(version.Revision, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteUnmanagedToByteBuffer(version.Revision, ref _preambleDataByteBuffer, ref _preambleDataPosition);
     }
 
     private void WriteSectionIntervals()
@@ -237,8 +237,8 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
     {
         byte sectionIdentifierByte = (byte)Unsafe.As<TEnum, int>(ref sectionIdentifier);
         WriteByteToByteBuffer(sectionIdentifierByte, ref _preambleDataByteBuffer, ref _preambleDataPosition);
-        WriteToByteBuffer(interval.Start + intervalOffset, ref _preambleDataByteBuffer, ref _preambleDataPosition);
-        WriteToByteBuffer(interval.Length, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteUnmanagedToByteBuffer(interval.Start + intervalOffset, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteUnmanagedToByteBuffer(interval.Length, ref _preambleDataByteBuffer, ref _preambleDataPosition);
     }
 
     public void Dispose()

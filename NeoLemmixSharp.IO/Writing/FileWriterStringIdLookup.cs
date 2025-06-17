@@ -85,7 +85,7 @@ internal readonly struct MutableFileWriterStringIdLookup
             var byteCount = Encoding.UTF8.GetBytes(stringToWrite, buffer);
 
             writer.Write((ushort)byteCount);
-            writer.Write(buffer[..byteCount]);
+            writer.WriteBytes(buffer[..byteCount]);
         }
     }
 

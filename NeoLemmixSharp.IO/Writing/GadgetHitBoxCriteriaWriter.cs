@@ -31,6 +31,6 @@ internal readonly ref struct GadgetHitBoxCriteriaWriter<TWriter>(TWriter rawFile
 
         Debug.Assert((spanAsBytes.Length % sizeof(uint)) == 0);
         _rawFileData.Write((byte)spanAsBytes.Length);
-        _rawFileData.Write(spanAsBytes);
+        _rawFileData.WriteBytes(spanAsBytes);
     }
 }

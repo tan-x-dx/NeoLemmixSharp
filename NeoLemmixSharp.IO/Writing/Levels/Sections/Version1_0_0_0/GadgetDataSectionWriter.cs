@@ -76,7 +76,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
                 Span<byte> buffer = [0, 0, 0, 0];
                 ReadWriteHelpers.WriteArgbBytes(layerColorData.SpecificColor, buffer);
-                writer.Write(buffer);
+                writer.WriteBytes(buffer);
             }
             else
             {

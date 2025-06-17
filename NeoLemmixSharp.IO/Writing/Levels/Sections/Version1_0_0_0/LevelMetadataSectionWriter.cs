@@ -88,6 +88,6 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
             Unsafe.WriteUnaligned(ref rawBytes[1], backgroundStringId);
         }
 
-        writer.Write(rawBytes);
+        writer.WriteBytes(rawBytes);
     }
 }

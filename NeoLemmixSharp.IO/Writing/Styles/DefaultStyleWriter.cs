@@ -44,7 +44,7 @@ internal readonly ref struct DefaultStyleWriter
         }
 
         writer.BeginWritingSection(sectionWriter.SectionIdentifier);
-        writer.Write(sectionWriter.GetSectionIdentifierBytes());
+        writer.WriteBytes(sectionWriter.GetSectionIdentifierBytes());
         writer.Write(numberOfItemsInSection);
 
         sectionWriter.WriteSection(writer, _styleData);

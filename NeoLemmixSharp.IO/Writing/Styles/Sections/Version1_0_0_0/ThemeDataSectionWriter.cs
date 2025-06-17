@@ -54,7 +54,7 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
         void WriteRgbColor(Color color, Span<byte> buffer)
         {
             ReadWriteHelpers.WriteRgbBytes(color, buffer);
-            writer.Write(buffer);
+            writer.WriteBytes(buffer);
         }
     }
 
@@ -165,7 +165,7 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
         void WriteArgbColor(Color color, Span<byte> buffer)
         {
             ReadWriteHelpers.WriteArgbBytes(color, buffer);
-            writer.Write(buffer);
+            writer.WriteBytes(buffer);
         }
     }
 
