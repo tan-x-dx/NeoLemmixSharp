@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.FileFormats;
 using System.Runtime.CompilerServices;
@@ -26,12 +27,10 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
 
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIntervals = new(new TPerfectHasher());
 
-    private IntPtr _mainDataByteBufferHandle = IntPtr.Zero;
-    private int _mainDataByteBufferLength;
+    private RawArray _mainDataByteBuffer = default;
     private int _mainDataPosition;
 
-    private IntPtr _preambleDataByteBufferHandle = IntPtr.Zero;
-    private int _preambleDataByteBufferLength;
+    private RawArray _preambleDataByteBuffer = default;
     private int _preambleDataPosition;
 
     private int _currentSectionStartPosition = -1;
@@ -39,12 +38,10 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
 
     public RawFileDataWriter()
     {
-        _mainDataByteBufferLength = InitialMainDataByteBufferLength;
-        _mainDataByteBufferHandle = Marshal.AllocHGlobal(_mainDataByteBufferLength);
+        _mainDataByteBuffer = new RawArray(InitialMainDataByteBufferLength);
         _mainDataPosition = 0;
 
-        _preambleDataByteBufferLength = InitialPreambleDataByteBufferLength;
-        _preambleDataByteBufferHandle = Marshal.AllocHGlobal(_preambleDataByteBufferLength);
+        _preambleDataByteBuffer = new RawArray(InitialPreambleDataByteBufferLength);
         _preambleDataPosition = 0;
     }
 
@@ -56,7 +53,13 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
         _currentSectionStartPosition = _mainDataPosition;
     }
 
-    public void Write(bool value) => WriteSectionData(value ? (byte)1 : (byte)0);
+    public void Write(bool value)
+    {
+        const byte ZeroByte = 0;
+        const byte OneByte = 1;
+        WriteSectionData(value ? OneByte : ZeroByte);
+    }
+
     public void Write(byte value) => WriteSectionData(value);
     public void Write(ushort value) => WriteSectionData(value);
     public void Write(int value) => WriteSectionData(value);
@@ -69,47 +72,42 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
     {
         AssertWithinSection();
 
-        WriteToByteBuffer(value, ref _mainDataByteBufferHandle, ref _mainDataByteBufferLength, ref _mainDataPosition);
+        WriteToByteBuffer(value, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
-    private static void WriteToByteBuffer<T>(T value, ref IntPtr byteBufferHandle, ref int byteBufferLength, ref int position)
+    private static void WriteToByteBuffer<T>(T value, ref RawArray byteBuffer, ref int position)
         where T : unmanaged
     {
         var typeSize = sizeof(T);
-        if (position + typeSize > byteBufferLength)
-        {
-            DoubleByteBufferLength(ref byteBufferHandle, ref byteBufferLength);
-        }
 
-        byte* pointer = (byte*)byteBufferHandle;
+        if (position + typeSize > byteBuffer.Length)
+            DoubleByteBufferLength(ref byteBuffer);
+
+        byte* pointer = (byte*)byteBuffer.Handle;
         pointer += position;
 
         Unsafe.WriteUnaligned(pointer, value);
         position += typeSize;
     }
 
-    private static void DoubleByteBufferLength(ref IntPtr byteBufferHandle, ref int byteBufferLength)
+    private static void DoubleByteBufferLength(ref RawArray byteBuffer)
     {
-        var newByteBufferLength = byteBufferLength << 1;
+        var newByteBufferLength = byteBuffer.Length << 1;
 
         FileWritingException.WriterAssert(newByteBufferLength <= IoConstants.MaxAllowedFileSizeInBytes, IoConstants.FileSizeTooLargeExceptionMessage);
 
-        IntPtr newHandle = Marshal.ReAllocHGlobal(byteBufferHandle, newByteBufferLength);
-
-        byteBufferHandle = newHandle;
-        byteBufferLength = newByteBufferLength;
+        IntPtr newHandle = Marshal.ReAllocHGlobal(byteBuffer.Handle, new IntPtr(newByteBufferLength));
+        byteBuffer = new RawArray(newHandle, newByteBufferLength);
     }
 
     public void Write(ReadOnlySpan<byte> data)
     {
         AssertWithinSection();
 
-        if (_mainDataPosition + data.Length >= _mainDataByteBufferLength)
-        {
-            DoubleByteBufferLength(ref _mainDataByteBufferHandle, ref _mainDataByteBufferLength);
-        }
+        if (_mainDataPosition + data.Length >= _mainDataByteBuffer.Length)
+            DoubleByteBufferLength(ref _mainDataByteBuffer);
 
-        byte* pointer = (byte*)_mainDataByteBufferHandle;
+        byte* pointer = (byte*)_mainDataByteBuffer.Handle;
         pointer += _mainDataPosition;
 
         var destinationSpan = new Span<byte>(pointer, data.Length);
@@ -167,8 +165,8 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
             _mainDataPosition + _preambleDataPosition <= IoConstants.MaxAllowedFileSizeInBytes,
             IoConstants.FileSizeTooLargeExceptionMessage);
 
-        stream.Write(new ReadOnlySpan<byte>((void*)_preambleDataByteBufferHandle, _preambleDataPosition));
-        stream.Write(new ReadOnlySpan<byte>((void*)_mainDataByteBufferHandle, _mainDataPosition));
+        stream.Write(_preambleDataByteBuffer.AsReadOnlySpan());
+        stream.Write(_mainDataByteBuffer.AsReadOnlySpan());
     }
 
     private void AssertCanWriteToFile()
@@ -180,21 +178,20 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
             .AssertSectionsAreContiguous(_sectionIntervals);
     }
 
-    private void WriteVersion(
-        FileFormatVersion version)
+    private void WriteVersion(FileFormatVersion version)
     {
-        WriteToByteBuffer(version.Major, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
-        WriteToByteBuffer(IoConstants.PeriodByte, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
-        WriteToByteBuffer(version.Minor, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
-        WriteToByteBuffer(IoConstants.PeriodByte, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
-        WriteToByteBuffer(version.Build, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
-        WriteToByteBuffer(IoConstants.PeriodByte, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
-        WriteToByteBuffer(version.Revision, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
+        WriteToByteBuffer(version.Major, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteToByteBuffer(IoConstants.PeriodByte, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteToByteBuffer(version.Minor, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteToByteBuffer(IoConstants.PeriodByte, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteToByteBuffer(version.Build, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteToByteBuffer(IoConstants.PeriodByte, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteToByteBuffer(version.Revision, ref _preambleDataByteBuffer, ref _preambleDataPosition);
     }
 
     private void WriteSectionIntervals()
     {
-        WriteToByteBuffer((byte)_sectionIntervals.Count, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
+        WriteToByteBuffer((byte)_sectionIntervals.Count, ref _preambleDataByteBuffer, ref _preambleDataPosition);
 
         // One byte for the section identifier, plus the size of the Interval type
         const int NumberOfBytesPerSectionIdentiferChunk = 1 + 2 * sizeof(int);
@@ -216,16 +213,14 @@ internal unsafe sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFile
         Interval interval)
     {
         byte sectionIdentifierByte = (byte)Unsafe.As<TEnum, int>(ref sectionIdentifier);
-        WriteToByteBuffer(sectionIdentifierByte, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
-        WriteToByteBuffer(interval.Start + intervalOffset, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
-        WriteToByteBuffer(interval.Length, ref _preambleDataByteBufferHandle, ref _preambleDataByteBufferLength, ref _preambleDataPosition);
+        WriteToByteBuffer(sectionIdentifierByte, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteToByteBuffer(interval.Start + intervalOffset, ref _preambleDataByteBuffer, ref _preambleDataPosition);
+        WriteToByteBuffer(interval.Length, ref _preambleDataByteBuffer, ref _preambleDataPosition);
     }
 
     public void Dispose()
     {
-        if (_mainDataByteBufferHandle != IntPtr.Zero)
-            Marshal.FreeHGlobal(_mainDataByteBufferHandle);
-        if (_preambleDataByteBufferHandle != IntPtr.Zero)
-            Marshal.FreeHGlobal(_preambleDataByteBufferHandle);
+        _mainDataByteBuffer.Dispose();
+        _preambleDataByteBuffer.Dispose();
     }
 }
