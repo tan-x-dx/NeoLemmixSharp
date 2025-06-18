@@ -18,7 +18,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper>(1)
         {
-            [new FileFormatVersion(1, 0, 0, 0)] = new Writing.Levels.Sections.Version1_0_0_0.VersionHelper()
+            { new FileFormatVersion(1, 0, 0, 0), new Writing.Levels.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
@@ -28,7 +28,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper>(1)
         {
-            [new FileFormatVersion(1, 0, 0, 0)] = new Reading.Levels.Sections.Version1_0_0_0.VersionHelper()
+            { new FileFormatVersion(1, 0, 0, 0), new Reading.Levels.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
@@ -38,7 +38,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper>(1)
         {
-            [new FileFormatVersion(1, 0, 0, 0)] = new Writing.Styles.Sections.Version1_0_0_0.VersionHelper()
+            { new FileFormatVersion(1, 0, 0, 0), new Writing.Styles.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
@@ -48,7 +48,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper>(1)
         {
-            [new FileFormatVersion(1, 0, 0, 0)] = new Reading.Styles.Sections.Version1_0_0_0.VersionHelper()
+            { new FileFormatVersion(1, 0, 0, 0), new Reading.Styles.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
