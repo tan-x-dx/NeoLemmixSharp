@@ -1,15 +1,15 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.IO.Util;
 
 public readonly unsafe struct RawArray : IDisposable
 {
-    public readonly IntPtr Handle;
+    public readonly nint Handle;
     public readonly int Length;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public RawArray(IntPtr handle, int length)
+    public RawArray(nint handle, int length)
     {
         Handle = handle;
         Length = length;
@@ -30,7 +30,7 @@ public readonly unsafe struct RawArray : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
-        if (Handle != IntPtr.Zero)
+        if (Handle != nint.Zero)
             Marshal.FreeHGlobal(Handle);
     }
 }
