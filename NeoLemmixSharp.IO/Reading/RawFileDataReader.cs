@@ -19,7 +19,7 @@ internal interface IRawFileDataReader
     ReadOnlySpan<byte> ReadBytes(int bufferSize);
 }
 
-internal unsafe sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataReader, IDisposable
+internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataReader, IDisposable
     where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
     where TEnum : unmanaged, Enum
 {
@@ -109,9 +109,9 @@ internal unsafe sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFile
     }
 
     /// <summary>
-    /// Special override for individual bytes, since it's simpler to execute and also a lot more common.
+    /// Special implmementation for individual bytes, since it's simpler to execute and also a lot more common.
     /// </summary>
-    public byte Read8BitUnsignedInteger()
+    public unsafe byte Read8BitUnsignedInteger()
     {
         FileReadingException.ReaderAssert(_position < _byteBuffer.Length, "Reached end of file!");
 
@@ -127,7 +127,7 @@ internal unsafe sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFile
     public int Read32BitSignedInteger() => ReadUnmanaged<int>();
     public ulong Read64BitUnsignedInteger() => ReadUnmanaged<ulong>();
 
-    private T ReadUnmanaged<T>()
+    private unsafe T ReadUnmanaged<T>()
         where T : unmanaged
     {
         var newPosition = _position + sizeof(T);
@@ -141,7 +141,7 @@ internal unsafe sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFile
         return result;
     }
 
-    public ReadOnlySpan<byte> ReadBytes(int numberOfBytes)
+    public unsafe ReadOnlySpan<byte> ReadBytes(int numberOfBytes)
     {
         var newPosition = _position + numberOfBytes;
         FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
