@@ -11,6 +11,12 @@ public static class Helpers
     public const int Uint32NumberBufferLength = 10;
     public const int Int32NumberBufferLength = Uint32NumberBufferLength + 1;
 
+    /// <summary>
+    /// Allocates an array of the given type and the given size, unless the <paramref name="size"/> parameter is zero. In that case a reference to Array.Empty&lt;<typeparamref name="T"/>&gt; is returned without allocating anything.
+    /// </summary>
+    /// <typeparam name="T">The type of the array.</typeparam>
+    /// <param name="size">The required length of the array.</param>
+    /// <returns>A newly allocated array reference, or a reference to Array.Empty&lt;<typeparamref name="T"/>&gt;.</returns>
     public static T[] GetArrayForSize<T>(int size)
     {
         return size == 0
