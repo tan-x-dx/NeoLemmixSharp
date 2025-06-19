@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Common.Util.Collections;
+﻿namespace NeoLemmixSharp.IO.Util;
 
 public readonly struct UniqueStringSet
 {
