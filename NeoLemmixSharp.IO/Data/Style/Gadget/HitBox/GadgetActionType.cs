@@ -6,6 +6,7 @@ public enum GadgetActionType
 {
     ChangeLemmingState,
     ChangeLemmingAction,
+    KillLemming,
     ChangeSkillCount,
     ForceFacingDirection,
     NullifyFallDistance,
@@ -17,7 +18,7 @@ public enum GadgetActionType
 
 public static class GadgetActionTypeHelpers
 {
-    private const int NumberOfEnumValues = 8;
+    private const int NumberOfEnumValues = 9;
 
     public static GadgetActionType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetActionType>(rawValue, NumberOfEnumValues);
 }

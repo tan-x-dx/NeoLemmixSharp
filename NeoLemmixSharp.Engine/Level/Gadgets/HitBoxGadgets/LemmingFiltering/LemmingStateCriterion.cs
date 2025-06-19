@@ -10,7 +10,7 @@ public sealed class LemmingStateCriterion : LemmingCriterion
     private readonly ILemmingState[] _allowedLemmingStates;
 
     public LemmingStateCriterion(LemmingStateSet allowedStates)
-        :base(LemmingCriteria.LemmingState)
+        : base(LemmingCriteria.LemmingState)
     {
         Debug.Assert(allowedStates.Count > 0);
         _allowedLemmingStates = allowedStates.ToArray();

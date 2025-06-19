@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using NeoLemmixSharp.IO.Util;
@@ -38,6 +39,7 @@ public static class GadgetActionBuilder
     {
         GadgetActionType.ChangeLemmingState => CreateSetLemmingStateAction(miscData),
         GadgetActionType.ChangeLemmingAction => CreateSetLemmingActionAction(miscData),
+        GadgetActionType.KillLemming => CreateKillLemmingAction(miscData),
         GadgetActionType.ChangeSkillCount => CreateSkillCountModifierAction(miscData),
         GadgetActionType.ForceFacingDirection => CreateForceFacingDirectionAction(miscData),
         GadgetActionType.LemmingMover => CreateLemmingMoverAction(miscData),
@@ -62,6 +64,12 @@ public static class GadgetActionBuilder
     {
         var lemmingAction = new LemmingAction.LemmingActionHasher().UnHash(miscData);
         return new SetLemmingActionAction(lemmingAction);
+    }
+
+    private static KillLemmingAction CreateKillLemmingAction(int miscData)
+    {
+        var lemmingRemovalReason = LemmingRemovalReasonHelpers.GetEnumValue((uint)miscData);
+        return new KillLemmingAction(lemmingRemovalReason);
     }
 
     private static SkillCountModifierAction CreateSkillCountModifierAction(int miscData)
