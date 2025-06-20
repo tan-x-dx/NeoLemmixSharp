@@ -107,4 +107,61 @@ public static class LemmingSkillConstants
 
     public const string FastForwardSkillName = "Fast Forward";
     public const int FastForwardSkillId = 30;
+
+    private static readonly Dictionary<string, int> LemmingSkillNameToIdLookup = GenerateLemmingSkillNameToIdLookup();
+
+    private static Dictionary<string, int> GenerateLemmingSkillNameToIdLookup()
+    {
+        var result = new Dictionary<string, int>(NumberOfLemmingSkills, StringComparer.OrdinalIgnoreCase)
+        {
+            { ClimberSkillName, ClimberSkillId },
+            { FloaterSkillName, FloaterSkillId },
+            { BlockerSkillName, BlockerSkillId },
+            { BomberSkillName, BomberSkillId },
+            { BuilderSkillName, BuilderSkillId },
+            { BasherSkillName, BasherSkillId },
+            { MinerSkillName, MinerSkillId },
+            { DiggerSkillName, DiggerSkillId },
+            { WalkerSkillName, WalkerSkillId },
+            { PlatformerSkillName, PlatformerSkillId },
+            { StackerSkillName, StackerSkillId },
+            { FencerSkillName, FencerSkillId },
+            { GliderSkillName, GliderSkillId },
+            { JumperSkillName, JumperSkillId },
+            { SwimmerSkillName, SwimmerSkillId },
+            { ShimmierSkillName, ShimmierSkillId },
+            { LasererSkillName, LasererSkillId },
+            { SliderSkillName, SliderSkillId },
+            { DisarmerSkillName, DisarmerSkillId },
+            { StonerSkillName, StonerSkillId },
+            { ClonerSkillName, ClonerSkillId },
+            { RotateClockwiseSkillName, RotateClockwiseSkillId },
+            { RotateCounterclockwiseSkillName, RotateCounterclockwiseSkillId },
+            { RotateHalfSkillName, RotateHalfSkillId },
+            { RotateToDownSkillName, RotateToDownSkillId },
+            { RotateToRightSkillName, RotateToRightSkillId },
+            { RotateToUpSkillName, RotateToUpSkillId },
+            { RotateToLeftSkillName, RotateToLeftSkillId },
+            { AcidLemmingSkillName, AcidLemmingSkillId },
+            { WaterLemmingSkillName, WaterLemmingSkillId },
+            { FastForwardSkillName, FastForwardSkillId }
+        };
+
+        if (result.Count != NumberOfLemmingSkills)
+            throw new Exception("Need to update this collection with new skills!");
+
+        return result;
+    }
+
+    public static bool TryGetLemmingSkillIdFromName(string lemmingSkillName, out int lemmingSkillId)
+    {
+        return LemmingSkillNameToIdLookup.TryGetValue(lemmingSkillName, out lemmingSkillId);
+    }
+
+    public static bool TryGetLemmingSkillIdFromName(ReadOnlySpan<char> lemmingSkillNameSpan, out int lemmingSkillId)
+    {
+        var alternateLookup = LemmingSkillNameToIdLookup.GetAlternateLookup<ReadOnlySpan<char>>();
+
+        return alternateLookup.TryGetValue(lemmingSkillNameSpan, out lemmingSkillId);
+    }
 }
