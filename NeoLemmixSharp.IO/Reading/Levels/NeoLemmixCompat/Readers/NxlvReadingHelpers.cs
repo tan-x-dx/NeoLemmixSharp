@@ -71,24 +71,6 @@ public static class NxlvReadingHelpers
         return TNumber.Parse(token[startIndex..], NumberStyles.AllowHexSpecifier, null);
     }
 
-    public static bool TryGetSkillByName(
-        ReadOnlySpan<char> token,
-        [MaybeNullWhen(false)] out int lemmingSkill)
-    {
-        /*    foreach (var item in LemmingSkill.AllItems)
-            {
-                var skillName = item.LemmingSkillName.AsSpan();
-                if (skillName.Equals(token, StringComparison.OrdinalIgnoreCase))
-                {
-                    lemmingSkill = item;
-                    return true;
-                }
-            }*/
-
-        lemmingSkill = 0;
-        return false;
-    }
-
     /// <summary>
     /// NeoLemmix data strings may be prefixed with a '#', indicating a comment
     /// </summary>

@@ -31,7 +31,7 @@ internal readonly ref struct NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelR
         _levelData = new LevelData(FileFormats.FileFormatType.NeoLemmix);
 
         _levelDataReader = new LevelDataReader(_uniqueStringSet, _levelData);
-        _skillSetReader = new SkillSetReader();
+        _skillSetReader = new SkillSetReader(_uniqueStringSet);
         _terrainGroupReader = new TerrainGroupReader(_uniqueStringSet);
         _gadgetReader = new GadgetReader(_uniqueStringSet);
         _talismanReader = new TalismanReader(_uniqueStringSet);
