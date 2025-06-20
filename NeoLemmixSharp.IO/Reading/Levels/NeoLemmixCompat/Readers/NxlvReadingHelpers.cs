@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
 
@@ -76,15 +75,15 @@ public static class NxlvReadingHelpers
         ReadOnlySpan<char> token,
         [MaybeNullWhen(false)] out int lemmingSkill)
     {
-    /*    foreach (var item in LemmingSkill.AllItems)
-        {
-            var skillName = item.LemmingSkillName.AsSpan();
-            if (skillName.Equals(token, StringComparison.OrdinalIgnoreCase))
+        /*    foreach (var item in LemmingSkill.AllItems)
             {
-                lemmingSkill = item;
-                return true;
-            }
-        }*/
+                var skillName = item.LemmingSkillName.AsSpan();
+                if (skillName.Equals(token, StringComparison.OrdinalIgnoreCase))
+                {
+                    lemmingSkill = item;
+                    return true;
+                }
+            }*/
 
         lemmingSkill = 0;
         return false;

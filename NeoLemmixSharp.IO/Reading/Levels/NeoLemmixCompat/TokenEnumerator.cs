@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Common.Util;
+﻿namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 
 public ref struct TokenEnumerator
 {
