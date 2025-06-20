@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Common.Util;
 
