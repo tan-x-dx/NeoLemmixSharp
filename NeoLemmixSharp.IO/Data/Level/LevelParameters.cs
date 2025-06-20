@@ -2,7 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.IO.Data.Level;
 
 public enum LevelParameters
 {
