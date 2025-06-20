@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Common.Util;
+﻿namespace NeoLemmixSharp.IO;
 
 public static class RootDirectoryManager
 {

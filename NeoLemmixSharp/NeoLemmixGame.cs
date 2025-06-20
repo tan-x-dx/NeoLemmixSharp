@@ -7,6 +7,7 @@ using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.Menu;

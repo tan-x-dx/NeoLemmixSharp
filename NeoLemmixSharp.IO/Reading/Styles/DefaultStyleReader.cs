@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.IO.Data.Style;
+﻿using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Reading.Styles.Sections;
 using NeoLemmixSharp.IO.Versions;

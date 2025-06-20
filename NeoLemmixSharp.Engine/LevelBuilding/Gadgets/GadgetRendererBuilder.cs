@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style;
@@ -42,7 +41,7 @@ public sealed class GadgetRendererBuilder
 
             cachedTexture = LoadSprite(key);
 
-           //AssertSpriteDimensionsMakeSense(gadgetArchetypeBuilder, new Size(cachedTexture.Width, cachedTexture.Height));
+            //AssertSpriteDimensionsMakeSense(gadgetArchetypeBuilder, new Size(cachedTexture.Width, cachedTexture.Height));
 
             return cachedTexture;
         }

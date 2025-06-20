@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
