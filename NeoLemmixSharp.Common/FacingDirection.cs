@@ -77,8 +77,8 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(FacingDirection first, FacingDirection second) => first.Equals(second.Id);
+    public static bool operator ==(FacingDirection first, FacingDirection second) => first.Equals(second);
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(FacingDirection first, FacingDirection second) => !first.Equals(second.Id);
+    public static bool operator !=(FacingDirection first, FacingDirection second) => !first.Equals(second);
 }
