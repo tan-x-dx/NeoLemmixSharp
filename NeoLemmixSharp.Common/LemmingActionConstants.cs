@@ -274,11 +274,11 @@ public static class LemmingActionConstants
         return LemmingActionNameToIdLookup.TryGetValue(lemmingActionName, out lemmingActionId);
     }
 
-    public static bool TryGetLemmingSkillIdFromName(ReadOnlySpan<char> lemmingActionNameSpan, out int lemmingSkillId)
+    public static bool TryGetLemmingActionIdFromName(ReadOnlySpan<char> lemmingActionNameSpan, out int lemmingActionId)
     {
         var alternateLookup = LemmingActionNameToIdLookup.GetAlternateLookup<ReadOnlySpan<char>>();
 
-        return alternateLookup.TryGetValue(lemmingActionNameSpan, out lemmingSkillId);
+        return alternateLookup.TryGetValue(lemmingActionNameSpan, out lemmingActionId);
     }
 
     private static readonly LemmingActionLookupData[] LemmingActionIdToStringLookup = GenerateLemmingActionIdToStringLookup();
