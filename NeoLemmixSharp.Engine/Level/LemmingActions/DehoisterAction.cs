@@ -16,7 +16,8 @@ public sealed class DehoisterAction : LemmingAction
             LemmingActionConstants.DehoisterActionSpriteFileName,
             LemmingActionConstants.DehoisterAnimationFrames,
             LemmingActionConstants.MaxDehoisterPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority)
+            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionBounds.HoisterActionBounds)
     {
     }
 
@@ -53,8 +54,6 @@ public sealed class DehoisterAction : LemmingAction
         return SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 2, in gadgetsNearLemming) ||
                lemming.CurrentAction != DrownerAction.Instance;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.HoisterActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

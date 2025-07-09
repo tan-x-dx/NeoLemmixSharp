@@ -16,7 +16,8 @@ public sealed class PlatformerAction : LemmingAction
             LemmingActionConstants.PlatformerActionSpriteFileName,
             LemmingActionConstants.PlatformerAnimationFrames,
             LemmingActionConstants.MaxPlatformerPhysicsFrames,
-            EngineConstants.NonPermanentSkillPriority)
+            EngineConstants.NonPermanentSkillPriority,
+            LemmingActionBounds.PlatformerActionBounds)
     {
     }
 
@@ -155,8 +156,6 @@ public sealed class PlatformerAction : LemmingAction
         return PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Orientation.MoveUp(pos, 1)) ||
                PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Orientation.MoveUp(pos, 2));
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.PlatformerActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

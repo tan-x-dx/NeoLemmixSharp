@@ -19,7 +19,8 @@ public sealed class SwimmerAction : LemmingAction
             LemmingActionConstants.SwimmerActionSpriteFileName,
             LemmingActionConstants.SwimmerAnimationFrames,
             LemmingActionConstants.MaxSwimmerPhysicsFrames,
-            EngineConstants.PermanentSkillPriority)
+            EngineConstants.PermanentSkillPriority,
+            LemmingActionBounds.SwimmerActionBounds)
     {
     }
 
@@ -172,8 +173,6 @@ public sealed class SwimmerAction : LemmingAction
             ? 0
             : result;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.SwimmerActionBounds;
 
     public override void TransitionLemmingToAction(
         Lemming lemming,

@@ -19,7 +19,8 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
             LemmingActionConstants.DiggerActionSpriteFileName,
             LemmingActionConstants.DiggerAnimationFrames,
             LemmingActionConstants.MaxDiggerPhysicsFrames,
-            EngineConstants.NonPermanentSkillPriority)
+            EngineConstants.NonPermanentSkillPriority,
+            LemmingActionBounds.DiggerLemmingBounds)
     {
     }
 
@@ -75,8 +76,6 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
         return true;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.DiggerLemmingBounds;
 
     private bool DigOneRow(
         in GadgetEnumerable gadgetsNearRegion,

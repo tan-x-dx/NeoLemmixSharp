@@ -17,7 +17,8 @@ public sealed class BuilderAction : LemmingAction
             LemmingActionConstants.BuilderActionSpriteFileName,
             LemmingActionConstants.BuilderAnimationFrames,
             LemmingActionConstants.MaxBuilderPhysicsFrames,
-            EngineConstants.NonPermanentSkillPriority)
+            EngineConstants.NonPermanentSkillPriority,
+            LemmingActionBounds.StandardLemmingBounds)
     {
     }
 

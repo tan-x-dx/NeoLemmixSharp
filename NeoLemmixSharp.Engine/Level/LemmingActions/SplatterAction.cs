@@ -14,7 +14,8 @@ public sealed class SplatterAction : LemmingAction
             LemmingActionConstants.SplatterActionSpriteFileName,
             LemmingActionConstants.SplatterAnimationFrames,
             LemmingActionConstants.MaxSplatterPhysicsFrames,
-            EngineConstants.NoPriority)
+            EngineConstants.NoPriority,
+            LemmingActionBounds.SplatterActionBounds)
     {
     }
 
@@ -27,8 +28,6 @@ public sealed class SplatterAction : LemmingAction
 
         return false;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.SplatterActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

@@ -14,7 +14,8 @@ public sealed class ExiterAction : LemmingAction
             LemmingActionConstants.ExiterActionSpriteFileName,
             LemmingActionConstants.ExiterAnimationFrames,
             LemmingActionConstants.MaxExiterPhysicsFrames,
-            EngineConstants.NoPriority)
+            EngineConstants.NoPriority,
+            LemmingActionBounds.StandardLemmingBounds)
     {
     }
 

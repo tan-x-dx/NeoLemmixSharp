@@ -16,7 +16,8 @@ public sealed class AscenderAction : LemmingAction
             LemmingActionConstants.AscenderActionSpriteFileName,
             LemmingActionConstants.AscenderAnimationFrames,
             LemmingActionConstants.MaxAscenderPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority)
+            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionBounds.StandardLemmingBounds)
     {
     }
 

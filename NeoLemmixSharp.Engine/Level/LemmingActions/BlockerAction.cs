@@ -17,7 +17,8 @@ public sealed class BlockerAction : LemmingAction
             LemmingActionConstants.BlockerActionSpriteFileName,
             LemmingActionConstants.BlockerAnimationFrames,
             LemmingActionConstants.MaxBlockerPhysicsFrames,
-            EngineConstants.NonPermanentSkillPriority)
+            EngineConstants.NonPermanentSkillPriority,
+            LemmingActionBounds.BlockerActionBounds)
     {
     }
 
@@ -30,8 +31,6 @@ public sealed class BlockerAction : LemmingAction
 
         return true;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.BlockerActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

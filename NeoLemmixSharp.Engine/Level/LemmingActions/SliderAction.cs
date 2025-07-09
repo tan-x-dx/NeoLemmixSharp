@@ -18,7 +18,8 @@ public sealed class SliderAction : LemmingAction
             LemmingActionConstants.SliderActionSpriteFileName,
             LemmingActionConstants.SliderAnimationFrames,
             LemmingActionConstants.MaxSliderPhysicsFrames,
-            EngineConstants.PermanentSkillPriority)
+            EngineConstants.PermanentSkillPriority,
+            LemmingActionBounds.ClimberActionBounds)
     {
     }
 
@@ -104,8 +105,6 @@ public sealed class SliderAction : LemmingAction
                     PositionIsSolidToLemming(in gadgetsNearLemming1, lemming, orientation.MoveDown(testPosition, 1)));
         }
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.ClimberActionBounds;
 
     public override Point GetFootPosition(Lemming lemming, Point anchorPosition)
     {

@@ -117,7 +117,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     }
 
     /// <summary>
-    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid id. In such a case the <see cref="NoneAction"/> is returned
+    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid id. In such a case the <see cref="NoneAction"/> is returned.
     /// </summary>
     /// <param name="unboundActionId">The (possibly invalid) id of the action to fetch.</param>
     /// <returns>The LemmingAction with that id, or the <see cref="NoneAction"/> if the id is invalid.</returns>
@@ -128,12 +128,13 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
             : NoneAction.Instance;
     }
 
-    public readonly int Id;
     public readonly string LemmingActionName;
     public readonly string LemmingActionSpriteFileName;
+    public readonly int Id;
     public readonly int NumberOfAnimationFrames;
     public readonly int MaxPhysicsFrames;
     public readonly int CursorSelectionPriorityValue;
+    private readonly RectangularRegion _actionBounds;
 
     protected LemmingAction(
         int id,
@@ -141,7 +142,8 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
         string lemmingActionSpriteFileName,
         int numberOfAnimationFrames,
         int maxPhysicsFrames,
-        int cursorSelectionPriorityValue)
+        int cursorSelectionPriorityValue,
+        RectangularRegion actionBounds)
     {
         Id = id;
         LemmingActionName = lemmingActionName;
@@ -149,6 +151,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
         NumberOfAnimationFrames = numberOfAnimationFrames;
         MaxPhysicsFrames = maxPhysicsFrames;
         CursorSelectionPriorityValue = cursorSelectionPriorityValue;
+        _actionBounds = actionBounds;
     }
 
     public abstract bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming);
@@ -156,15 +159,13 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     public RectangularRegion GetLemmingBounds(Lemming lemming)
     {
         var dht = new DihedralTransformation(lemming.Orientation, lemming.FacingDirection);
-        var actionBounds = ActionBounds();
+        var actionBounds = _actionBounds;
 
         actionBounds = dht.Transform(actionBounds);
         actionBounds = actionBounds.Translate(lemming.AnchorPosition);
 
         return actionBounds;
     }
-
-    protected virtual RectangularRegion ActionBounds() => LemmingActionBounds.StandardLemmingBounds;
 
     public virtual Point GetFootPosition(
         Lemming lemming,
