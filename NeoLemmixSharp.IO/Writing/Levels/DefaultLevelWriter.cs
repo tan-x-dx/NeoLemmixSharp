@@ -44,7 +44,7 @@ public readonly ref struct DefaultLevelWriter
         }
 
         writer.BeginWritingSection(sectionWriter.SectionIdentifier);
-        writer.WriteBytes(sectionWriter.GetSectionIdentifierBytes());
+        writer.Write(sectionWriter.GetSectionIdentifier());
         writer.Write(numberOfItemsInSection);
 
         sectionWriter.WriteSection(writer, _levelData);

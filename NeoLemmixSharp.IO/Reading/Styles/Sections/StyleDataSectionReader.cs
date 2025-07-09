@@ -14,7 +14,7 @@ internal abstract class StyleDataSectionReader : IComparable<StyleDataSectionRea
         IsNecessary = isNecessary;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifierBytes() => StyleFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
+    public ushort GetSectionIdentifier() => StyleFileSectionIdentifierHasher.GetSectionIdentifier(SectionIdentifier);
 
     public abstract void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection);
 

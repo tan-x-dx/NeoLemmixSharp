@@ -84,10 +84,10 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
 
         _rawFileData.SetReaderPosition(interval.Start);
 
-        var sectionIdentifierBytes = _rawFileData.ReadBytes(StyleFileSectionIdentifierHasher.NumberOfBytesForStyleSectionIdentifier);
+        ushort sectionIdentifierBytes = _rawFileData.Read16BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(
-            sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),
+            sectionIdentifierBytes == sectionReader.GetSectionIdentifier(),
             "Section Identifier mismatch!");
 
         int numberOfItemsInSection = _rawFileData.Read16BitUnsignedInteger();
