@@ -104,6 +104,9 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     public bool ReadBool()
     {
         uint byteValue = Read8BitUnsignedInteger();
+
+        FileReadingException.ReaderAssert(byteValue <= 1, "Expected bool byte to have a value of either 0 or 1!");
+
         return byteValue != 0U;
     }
 
