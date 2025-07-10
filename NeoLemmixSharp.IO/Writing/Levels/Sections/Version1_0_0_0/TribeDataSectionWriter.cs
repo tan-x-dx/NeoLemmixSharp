@@ -31,7 +31,7 @@ internal sealed class TribeDataSectionWriter : LevelDataSectionWriter
 
     private void WriteTribeIdentifierData(RawLevelFileDataWriter writer, TribeStyleIdentifier tribeIdentifier)
     {
-        writer.Write(_stringIdLookup.GetStringId(tribeIdentifier.StyleIdentifier));
-        writer.Write((byte)tribeIdentifier.ThemeTribeId);
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(tribeIdentifier.StyleIdentifier));
+        writer.Write8BitUnsignedInteger((byte)tribeIdentifier.ThemeTribeId);
     }
 }

@@ -31,11 +31,11 @@ internal sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LemmingData lemmingData)
     {
-        writer.Write(ReadWriteHelpers.EncodePoint(lemmingData.Position));
-        writer.Write(lemmingData.State);
+        writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(lemmingData.Position));
+        writer.Write32BitUnsignedInteger(lemmingData.State);
 
-        writer.Write((byte)DihedralTransformation.Encode(lemmingData.Orientation, lemmingData.FacingDirection));
-        writer.Write((byte)lemmingData.TribeId);
-        writer.Write((byte)lemmingData.InitialLemmingActionId);
+        writer.Write8BitUnsignedInteger((byte)DihedralTransformation.Encode(lemmingData.Orientation, lemmingData.FacingDirection));
+        writer.Write8BitUnsignedInteger((byte)lemmingData.TribeId);
+        writer.Write8BitUnsignedInteger((byte)lemmingData.InitialLemmingActionId);
     }
 }

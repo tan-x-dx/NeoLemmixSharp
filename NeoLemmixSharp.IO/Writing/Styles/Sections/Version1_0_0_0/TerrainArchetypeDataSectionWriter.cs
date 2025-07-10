@@ -44,31 +44,31 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
 
     private void WriteTerrainArchetypeData(RawStyleFileDataWriter writer, TerrainArchetypeData terrainArchetypeData)
     {
-        writer.Write(_stringIdLookup.GetStringId(terrainArchetypeData.PieceIdentifier));
-        writer.Write(_stringIdLookup.GetStringId(terrainArchetypeData.Name));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainArchetypeData.PieceIdentifier));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainArchetypeData.Name));
 
         var resizeType = terrainArchetypeData.ResizeType;
-        writer.Write((byte)ReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainArchetypeData.IsSteel, resizeType));
+        writer.Write8BitUnsignedInteger((byte)ReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainArchetypeData.IsSteel, resizeType));
 
         if (resizeType.CanResizeHorizontally())
         {
-            writer.Write((ushort)terrainArchetypeData.DefaultSize.W);
+            writer.Write16BitUnsignedInteger((ushort)terrainArchetypeData.DefaultSize.W);
 
             if (terrainArchetypeData.DefaultSize.W > 0)
             {
-                writer.Write((ushort)terrainArchetypeData.NineSliceData.X);
-                writer.Write((ushort)terrainArchetypeData.NineSliceData.W);
+                writer.Write16BitUnsignedInteger((ushort)terrainArchetypeData.NineSliceData.X);
+                writer.Write16BitUnsignedInteger((ushort)terrainArchetypeData.NineSliceData.W);
             }
         }
 
         if (resizeType.CanResizeVertically())
         {
-            writer.Write((ushort)terrainArchetypeData.DefaultSize.H);
+            writer.Write16BitUnsignedInteger((ushort)terrainArchetypeData.DefaultSize.H);
 
             if (terrainArchetypeData.DefaultSize.H > 0)
             {
-                writer.Write((ushort)terrainArchetypeData.NineSliceData.Y);
-                writer.Write((ushort)terrainArchetypeData.NineSliceData.H);
+                writer.Write16BitUnsignedInteger((ushort)terrainArchetypeData.NineSliceData.Y);
+                writer.Write16BitUnsignedInteger((ushort)terrainArchetypeData.NineSliceData.H);
             }
         }
     }

@@ -14,23 +14,23 @@ internal readonly ref struct GadgetHitBoxCriteriaWriter<TWriter>(TWriter rawFile
         WriteUintSequence(overrideHitBoxCriteriaData.AllowedLemmingActionIds);
         WriteUintSequence(overrideHitBoxCriteriaData.AllowedLemmingStateIds);
 
-        _rawFileData.Write(overrideHitBoxCriteriaData.AllowedLemmingTribeIds);
-        _rawFileData.Write(overrideHitBoxCriteriaData.AllowedLemmingOrientationIds);
-        _rawFileData.Write(overrideHitBoxCriteriaData.AllowedFacingDirectionId);
+        _rawFileData.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedLemmingTribeIds);
+        _rawFileData.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedLemmingOrientationIds);
+        _rawFileData.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedFacingDirectionId);
     }
 
     private void WriteUintSequence(ReadOnlySpan<uint> allowedLemmingStateIds)
     {
         if (allowedLemmingStateIds.Length == 0)
         {
-            _rawFileData.Write((byte)0);
+            _rawFileData.Write8BitUnsignedInteger((byte)0);
             return;
         }
 
         var spanAsBytes = MemoryMarshal.AsBytes(allowedLemmingStateIds);
 
         Debug.Assert((spanAsBytes.Length % sizeof(uint)) == 0);
-        _rawFileData.Write((byte)spanAsBytes.Length);
+        _rawFileData.Write8BitUnsignedInteger((byte)spanAsBytes.Length);
         _rawFileData.WriteBytes(spanAsBytes);
     }
 }

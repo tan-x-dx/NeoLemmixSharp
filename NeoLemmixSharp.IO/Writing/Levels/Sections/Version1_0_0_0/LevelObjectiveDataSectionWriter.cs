@@ -25,7 +25,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        writer.Write(_stringIdLookup.GetStringId(levelData.LevelObjective.ObjectiveName));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(levelData.LevelObjective.ObjectiveName));
 
         WriteSkillSetData(writer, levelData.LevelObjective.SkillSetData);
         WriteObjectiveCriteria(writer, levelData.LevelObjective.ObjectiveCriteria);
@@ -35,7 +35,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 
     private static void WriteSkillSetData(RawLevelFileDataWriter writer, SkillSetData[] skillSetData)
     {
-        writer.Write((ushort)skillSetData.Length);
+        writer.Write16BitUnsignedInteger((ushort)skillSetData.Length);
 
         foreach (var skillSetDatum in skillSetData)
         {
@@ -51,14 +51,14 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
         FileWritingException.WriterAssert(skillSetDatum.InitialQuantity >= 0, "Invalid skill limit quantity");
         FileWritingException.WriterAssert(skillSetDatum.InitialQuantity <= EngineConstants.InfiniteSkillCount, "Invalid skill limit quantity");
 
-        writer.Write((byte)skillSetDatum.SkillId);
-        writer.Write((byte)(skillSetDatum.TribeId + 1)); // Need to offset by 1
-        writer.Write((byte)skillSetDatum.InitialQuantity);
+        writer.Write8BitUnsignedInteger((byte)skillSetDatum.SkillId);
+        writer.Write8BitUnsignedInteger((byte)(skillSetDatum.TribeId + 1)); // Need to offset by 1
+        writer.Write8BitUnsignedInteger((byte)skillSetDatum.InitialQuantity);
     }
 
     private static void WriteObjectiveCriteria(RawLevelFileDataWriter writer, ObjectiveCriterionData[] objectiveCriteria)
     {
-        writer.Write((byte)objectiveCriteria.Length);
+        writer.Write8BitUnsignedInteger((byte)objectiveCriteria.Length);
 
         foreach (var objectiveCriterion in objectiveCriteria)
         {
@@ -68,7 +68,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 
     private static void WriteObjectiveCriterion(RawLevelFileDataWriter writer, ObjectiveCriterionData objectiveCriterion)
     {
-        writer.Write((byte)objectiveCriterion.Type);
+        writer.Write8BitUnsignedInteger((byte)objectiveCriterion.Type);
 
         switch (objectiveCriterion.Type)
         {
@@ -96,8 +96,8 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
             FileWritingException.WriterAssert(saveLemmingsCriterion.TribeId >= -1, "Invalid tribe id");
             FileWritingException.WriterAssert(saveLemmingsCriterion.TribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
 
-            writer.Write((ushort)saveLemmingsCriterion.SaveRequirement);
-            writer.Write((byte)(saveLemmingsCriterion.TribeId + 1));// Need to offset by 1
+            writer.Write16BitUnsignedInteger((ushort)saveLemmingsCriterion.SaveRequirement);
+            writer.Write8BitUnsignedInteger((byte)(saveLemmingsCriterion.TribeId + 1));// Need to offset by 1
         }
 
         void WriteTimeLimitCriterion()
@@ -107,13 +107,13 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
             FileWritingException.WriterAssert(timeLimitCriterion.TimeLimitInSeconds > 0, "Invalid time limit");
             FileWritingException.WriterAssert(timeLimitCriterion.TimeLimitInSeconds <= EngineConstants.MaxTimeLimitInSeconds, "Invalid time limit");
 
-            writer.Write((ushort)timeLimitCriterion.TimeLimitInSeconds);
+            writer.Write16BitUnsignedInteger((ushort)timeLimitCriterion.TimeLimitInSeconds);
         }
     }
 
     private static void WriteObjectiveModifiers(RawLevelFileDataWriter writer, ObjectiveModifierData[] objectiveModifiers)
     {
-        writer.Write((byte)objectiveModifiers.Length);
+        writer.Write8BitUnsignedInteger((byte)objectiveModifiers.Length);
 
         foreach (var objectiveModifier in objectiveModifiers)
         {
@@ -123,7 +123,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 
     private static void WriteObjectiveModifier(RawLevelFileDataWriter writer, ObjectiveModifierData objectiveModifier)
     {
-        writer.Write((byte)objectiveModifier.Type);
+        writer.Write8BitUnsignedInteger((byte)objectiveModifier.Type);
 
         switch (objectiveModifier.Type)
         {
@@ -150,9 +150,9 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
             FileWritingException.WriterAssert(limitSpecificSkillModifier.MaxSkillAssignments >= 0, "Invalid skill limit quantity");
             FileWritingException.WriterAssert(limitSpecificSkillModifier.MaxSkillAssignments <= EngineConstants.MaxFiniteSkillCount, "Invalid skill limit quantity");
 
-            writer.Write((byte)limitSpecificSkillModifier.SkillId);
-            writer.Write((byte)(limitSpecificSkillModifier.TribeId + 1)); // Need to offset by 1
-            writer.Write((byte)limitSpecificSkillModifier.MaxSkillAssignments);
+            writer.Write8BitUnsignedInteger((byte)limitSpecificSkillModifier.SkillId);
+            writer.Write8BitUnsignedInteger((byte)(limitSpecificSkillModifier.TribeId + 1)); // Need to offset by 1
+            writer.Write8BitUnsignedInteger((byte)limitSpecificSkillModifier.MaxSkillAssignments);
         }
 
         void WriteTotalSkillModifier()
@@ -162,13 +162,13 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
             FileWritingException.WriterAssert(limitTotalSkillModifier.MaxTotalSkillAssignments >= 0, "Invalid skill limit quantity");
             FileWritingException.WriterAssert(limitTotalSkillModifier.MaxTotalSkillAssignments <= EngineConstants.MaxFiniteSkillCount, "Invalid skill limit quantity");
 
-            writer.Write((ushort)limitTotalSkillModifier.MaxTotalSkillAssignments);
+            writer.Write16BitUnsignedInteger((ushort)limitTotalSkillModifier.MaxTotalSkillAssignments);
         }
     }
 
     private void WriteTalismanData(RawLevelFileDataWriter writer, TalismanData[] talismanData)
     {
-        writer.Write((byte)talismanData.Length);
+        writer.Write8BitUnsignedInteger((byte)talismanData.Length);
 
         foreach (var talisman in talismanData)
         {
@@ -178,9 +178,9 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 
     private void WriteTalismanDatum(RawLevelFileDataWriter writer, TalismanData talisman)
     {
-        writer.Write((byte)talisman.TalismanId);
-        writer.Write(_stringIdLookup.GetStringId(talisman.TalismanName));
-        writer.Write((byte)talisman.Rank);
+        writer.Write8BitUnsignedInteger((byte)talisman.TalismanId);
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(talisman.TalismanName));
+        writer.Write8BitUnsignedInteger((byte)talisman.Rank);
 
         WriteObjectiveCriteria(writer, talisman.OverrideObjectiveCriteria);
         WriteObjectiveModifiers(writer, talisman.OverrideObjectiveModifiers);

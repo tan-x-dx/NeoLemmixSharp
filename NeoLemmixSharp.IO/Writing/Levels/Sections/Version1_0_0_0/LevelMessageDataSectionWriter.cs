@@ -29,11 +29,11 @@ internal sealed class LevelMessageDataSectionWriter : LevelDataSectionWriter
     {
         FileWritingException.WriterAssert(stringList.Count < 256, "Too many strings to serialise!");
 
-        writer.Write((byte)stringList.Count);
+        writer.Write8BitUnsignedInteger((byte)stringList.Count);
 
         foreach (var stringToWrite in stringList)
         {
-            writer.Write(_stringIdLookup.GetStringId(stringToWrite));
+            writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(stringToWrite));
         }
     }
 }

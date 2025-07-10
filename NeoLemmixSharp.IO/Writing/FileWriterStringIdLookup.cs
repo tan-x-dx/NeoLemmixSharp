@@ -80,11 +80,11 @@ internal readonly struct MutableFileWriterStringIdLookup
             var stringToWrite = kvp.Key;
             var id = kvp.Value;
 
-            writer.Write(id);
+            writer.Write16BitUnsignedInteger(id);
 
             var byteCount = Encoding.UTF8.GetBytes(stringToWrite, buffer);
 
-            writer.Write((ushort)byteCount);
+            writer.Write16BitUnsignedInteger((ushort)byteCount);
             writer.WriteBytes(buffer[..byteCount]);
         }
     }

@@ -10,12 +10,12 @@ namespace NeoLemmixSharp.IO.Writing;
 
 internal interface IRawFileDataWriter
 {
-    void Write(bool value);
-    void Write(byte value);
-    void Write(ushort value);
-    void Write(int value);
-    void Write(uint value);
-    void Write(ulong value);
+    void WriteBool(bool value);
+    void Write8BitUnsignedInteger(byte value);
+    void Write16BitUnsignedInteger(ushort value);
+    void Write32BitSignedInteger(int value);
+    void Write32BitUnsignedInteger(uint value);
+    void Write64BitUnsignedInteger(ulong value);
     void WriteBytes(ReadOnlySpan<byte> data);
 }
 
@@ -54,7 +54,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         _currentSectionStartPosition = _mainDataPosition;
     }
 
-    public void Write(bool value)
+    public void WriteBool(bool value)
     {
         const byte ZeroByte = 0;
         const byte OneByte = 1;
@@ -64,17 +64,17 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         WriteSingleByte(value ? OneByte : ZeroByte, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
-    public void Write(byte value)
+    public void Write8BitUnsignedInteger(byte value)
     {
         AssertWithinSection();
 
         WriteSingleByte(value, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
-    public void Write(ushort value) => WriteUnmanaged(value);
-    public void Write(int value) => WriteUnmanaged(value);
-    public void Write(uint value) => WriteUnmanaged(value);
-    public void Write(ulong value) => WriteUnmanaged(value);
+    public void Write16BitUnsignedInteger(ushort value) => WriteUnmanaged(value);
+    public void Write32BitSignedInteger(int value) => WriteUnmanaged(value);
+    public void Write32BitUnsignedInteger(uint value) => WriteUnmanaged(value);
+    public void Write64BitUnsignedInteger(ulong value) => WriteUnmanaged(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteUnmanaged<T>(T value)

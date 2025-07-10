@@ -35,9 +35,9 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
 
     private void WriteStringData(RawStyleFileDataWriter writer, StyleData styleData)
     {
-        writer.Write(_stringIdLookup.GetStringId(styleData.Name));
-        writer.Write(_stringIdLookup.GetStringId(styleData.Author));
-        writer.Write(_stringIdLookup.GetStringId(styleData.Description));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(styleData.Name));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(styleData.Author));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(styleData.Description));
     }
 
     private static void WriteColorData(RawStyleFileDataWriter writer, ThemeData themeData)
@@ -61,7 +61,7 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
 
     private void WriteLemmingSpriteData(RawStyleFileDataWriter writer, StyleIdentifier originalStyleIdentifier, LemmingSpriteData lemmingSpriteData)
     {
-        writer.Write(_stringIdLookup.GetStringId(lemmingSpriteData.LemmingSpriteStyleIdentifier));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(lemmingSpriteData.LemmingSpriteStyleIdentifier));
 
         if (lemmingSpriteData.LemmingSpriteStyleIdentifier == originalStyleIdentifier)
         {
@@ -75,7 +75,7 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
     {
         var lemmingActionSpriteLayerDataLookup = GetSpriteLayerLookup();
 
-        writer.Write((byte)lemmingActionSpriteLayerDataLookup.Count);
+        writer.Write8BitUnsignedInteger((byte)lemmingActionSpriteLayerDataLookup.Count);
 
         WriteSpriteLayerData();
         WriteLemmingActionSpriteData();
@@ -105,12 +105,12 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
             foreach (var kvp in lemmingActionSpriteLayerDataLookup.OrderBy(x => x.Value))
             {
                 var array = kvp.Key;
-                writer.Write((byte)array.Length);
+                writer.Write8BitUnsignedInteger((byte)array.Length);
 
                 foreach (var spriteLayerData in array)
                 {
-                    writer.Write((byte)spriteLayerData.Layer);
-                    writer.Write((byte)spriteLayerData.ColorType);
+                    writer.Write8BitUnsignedInteger((byte)spriteLayerData.Layer);
+                    writer.Write8BitUnsignedInteger((byte)spriteLayerData.ColorType);
                 }
             }
         }
@@ -125,13 +125,13 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
                 var lemmingActionId = spriteData.LemmingActionId;
                 FileWritingException.WriterAssert(lemmingActionId == i, "Lemming action id mismatch!");
 
-                writer.Write((byte)lemmingActionId);
-                writer.Write((byte)spriteData.AnchorPoint.X);
-                writer.Write((byte)spriteData.AnchorPoint.Y);
+                writer.Write8BitUnsignedInteger((byte)lemmingActionId);
+                writer.Write8BitUnsignedInteger((byte)spriteData.AnchorPoint.X);
+                writer.Write8BitUnsignedInteger((byte)spriteData.AnchorPoint.Y);
 
                 var correspondingId = lemmingActionSpriteLayerDataLookup[spriteData.Layers];
 
-                writer.Write((byte)correspondingId);
+                writer.Write8BitUnsignedInteger((byte)correspondingId);
             }
         }
     }

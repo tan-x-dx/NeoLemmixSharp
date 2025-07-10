@@ -29,9 +29,9 @@ internal sealed class HatchGroupDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         HatchGroupData hatchGroupData)
     {
-        writer.Write((byte)hatchGroupData.HatchGroupId);
-        writer.Write((byte)hatchGroupData.MinSpawnInterval);
-        writer.Write((byte)hatchGroupData.MaxSpawnInterval);
-        writer.Write((byte)hatchGroupData.InitialSpawnInterval);
+        writer.Write8BitUnsignedInteger((byte)hatchGroupData.HatchGroupId);
+        writer.Write8BitUnsignedInteger((byte)hatchGroupData.MinSpawnInterval);
+        writer.Write8BitUnsignedInteger((byte)hatchGroupData.MaxSpawnInterval);
+        writer.Write8BitUnsignedInteger((byte)hatchGroupData.InitialSpawnInterval);
     }
 }
