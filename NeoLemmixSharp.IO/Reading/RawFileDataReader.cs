@@ -111,7 +111,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     }
 
     /// <summary>
-    /// Special implmementation for individual bytes, since it's simpler to execute and also a lot more common.
+    /// Special implementation for individual bytes, since it's simpler to execute and also a lot more common.
     /// </summary>
     public unsafe byte Read8BitUnsignedInteger()
     {
