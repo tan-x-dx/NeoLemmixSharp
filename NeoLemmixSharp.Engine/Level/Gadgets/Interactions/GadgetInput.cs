@@ -5,11 +5,11 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
 public abstract class GadgetInput : IEquatable<GadgetInput>
 {
-    public string InputName { get; }
+    public GadgetInputName InputName { get; }
 
     protected GadgetInput(GadgetInputName inputName)
     {
-        InputName = inputName.ToString();
+        InputName = inputName;
     }
 
     public virtual void OnRegistered() { }
@@ -18,5 +18,5 @@ public abstract class GadgetInput : IEquatable<GadgetInput>
     public bool Equals(GadgetInput? other) => other is not null && string.Equals(InputName, other.InputName);
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetInput other && string.Equals(InputName, other.InputName);
     public sealed override int GetHashCode() => InputName.GetHashCode();
-    public sealed override string ToString() => InputName;
+    public sealed override string ToString() => InputName.ToString();
 }

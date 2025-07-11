@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Diagnostics.CodeAnalysis;
@@ -44,6 +45,11 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
         _currentStateIndex = initialStateIndex;
         _currentState = _states[initialStateIndex];
         _previousState = _currentState;
+    }
+
+    public GadgetOutput GetGadgetOutputForState(int stateIndex)
+    {
+        return _states[stateIndex].StateSelectedOutput;
     }
 
     public void SetNextState(int stateIndex)

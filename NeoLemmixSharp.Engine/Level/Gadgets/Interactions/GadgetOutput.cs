@@ -2,7 +2,7 @@
 
 public sealed class GadgetOutput
 {
-    private readonly List<GadgetInput> _inputs = new();
+    private readonly List<GadgetInput> _inputs = [];
     private bool _currentSignal;
 
     public void RegisterInput(GadgetInput input)

@@ -1,9 +1,10 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public abstract class FunctionalGadget<TInput> : GadgetBase
+public abstract class FunctionalGadget<TInput> : GadgetBase, IFunctionalGadget
     where TInput : GadgetInput
 {
     private readonly TInput[] _inputs;
@@ -24,7 +25,7 @@ public abstract class FunctionalGadget<TInput> : GadgetBase
         _inputs[_gadgetIndex++] = gadgetInput;
     }
 
-    public bool TryGetInputWithName(string inputName, [MaybeNullWhen(false)] out TInput gadgetInput)
+    public bool TryGetInputWithName(GadgetInputName inputName, [MaybeNullWhen(false)] out GadgetInput gadgetInput)
     {
         for (var i = 0; i < _gadgetIndex; i++)
         {
