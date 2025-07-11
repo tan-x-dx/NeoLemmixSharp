@@ -27,7 +27,7 @@ public static class LogicGateArchetypeBuilder
 
         return new AndGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames)
         {
-            Id = gadgetData.Id,
+            Id = gadgetData.Identifier.GadgetId,
             Orientation = gadgetData.Orientation,
             FacingDirection = gadgetData.FacingDirection,
 
@@ -54,7 +54,7 @@ public static class LogicGateArchetypeBuilder
 
         return new OrGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames)
         {
-            Id = gadgetData.Id,
+            Id = gadgetData.Identifier.GadgetId,
             Orientation = gadgetData.Orientation,
             FacingDirection = gadgetData.FacingDirection,
 
@@ -81,7 +81,7 @@ public static class LogicGateArchetypeBuilder
 
         return new NotGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames[0])
         {
-            Id = gadgetData.Id,
+            Id = gadgetData.Identifier.GadgetId,
             Orientation = gadgetData.Orientation,
             FacingDirection = gadgetData.FacingDirection,
 
@@ -108,7 +108,7 @@ public static class LogicGateArchetypeBuilder
 
         return new XorGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames[0], inputNames[1])
         {
-            Id = gadgetData.Id,
+            Id = gadgetData.Identifier.GadgetId,
             Orientation = gadgetData.Orientation,
             FacingDirection = gadgetData.FacingDirection,
 

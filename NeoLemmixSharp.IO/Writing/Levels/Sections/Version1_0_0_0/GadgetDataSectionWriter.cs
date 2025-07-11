@@ -35,7 +35,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         GadgetData gadgetData)
     {
-        writer.Write16BitUnsignedInteger((ushort)gadgetData.Id);
+        writer.Write16BitUnsignedInteger((ushort)gadgetData.Identifier.GadgetId);
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.StyleIdentifier));
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.PieceIdentifier));
 

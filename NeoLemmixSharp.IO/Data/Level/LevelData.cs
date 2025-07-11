@@ -144,6 +144,7 @@ public sealed class LevelData
     public List<HatchGroupData> AllHatchGroupData { get; } = [];
 
     public List<GadgetData> AllGadgetData { get; } = [];
+    public List<GadgetLinkData> AllGadgetLinkData { get; } = [];
     public List<SketchData> AllSketchData { get; } = [];
 
     public List<string> PreTextLines { get; } = [];

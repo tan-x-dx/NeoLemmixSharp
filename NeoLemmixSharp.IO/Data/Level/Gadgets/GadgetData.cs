@@ -11,7 +11,7 @@ public sealed class GadgetData
 {
     private readonly BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int> _properties = GadgetPropertyHasher.CreateBitArrayDictionary<int>();
 
-    public required int Id { get; init; }
+    public required GadgetIdentifier Identifier { get; init; }
     public required string OverrideName { get; init; }
 
     public required StyleIdentifier StyleIdentifier { get; init; }

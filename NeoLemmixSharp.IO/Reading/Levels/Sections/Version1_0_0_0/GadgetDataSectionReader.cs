@@ -60,7 +60,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
         var result = new GadgetData
         {
-            Id = gadgetId,
+            Identifier = new GadgetIdentifier(gadgetId),
             OverrideName = _stringIdLookup[overrideNameId],
 
             StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),

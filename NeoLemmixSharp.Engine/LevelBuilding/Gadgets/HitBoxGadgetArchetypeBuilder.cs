@@ -32,7 +32,7 @@ public static class HitBoxGadgetArchetypeBuilder
             resizeType,
             lemmingTracker)
         {
-            Id = gadgetData.Id,
+            Id = gadgetData.Identifier.GadgetId,
             Orientation = gadgetData.Orientation,
             FacingDirection = gadgetData.FacingDirection,
 

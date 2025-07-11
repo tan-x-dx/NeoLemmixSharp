@@ -43,7 +43,7 @@ public static class HatchGadgetArchetypeBuilder
             hatchSpawnData,
             spawnPointOffset)
         {
-            Id = gadgetData.Id,
+            Id = gadgetData.Identifier.GadgetId,
             Orientation = gadgetData.Orientation,
             FacingDirection = FacingDirection.Right, // Hatches do not flip according to facing direction
 
