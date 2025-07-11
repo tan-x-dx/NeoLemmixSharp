@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.IO.Data.Style.Theme;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Data.Level.Gadgets;
 
+[SkipLocalsInit]
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
 public readonly struct GadgetLayerColorData
 {
