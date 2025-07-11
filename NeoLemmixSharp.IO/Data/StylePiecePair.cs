@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.IO.Data.Style;
+namespace NeoLemmixSharp.IO.Data;
 
 [DebuggerDisplay("{StyleName}:{PieceName}")]
 public readonly struct StylePiecePair(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier) : IEquatable<StylePiecePair>

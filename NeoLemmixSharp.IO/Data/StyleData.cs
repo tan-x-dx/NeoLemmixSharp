@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 
-namespace NeoLemmixSharp.IO.Data.Style;
+namespace NeoLemmixSharp.IO.Data;
 
 internal sealed class StyleData
 {

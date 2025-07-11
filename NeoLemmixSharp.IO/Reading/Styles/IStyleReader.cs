@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Style;
+﻿using NeoLemmixSharp.IO.Data;
 
 namespace NeoLemmixSharp.IO.Reading.Styles;
 

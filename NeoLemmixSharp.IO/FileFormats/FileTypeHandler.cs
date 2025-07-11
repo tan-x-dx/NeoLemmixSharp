@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Reading.Levels;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 using NeoLemmixSharp.IO.Reading.Styles;

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.IO.Data.Style;
+namespace NeoLemmixSharp.IO.Data;
 
 [DebuggerDisplay("{StyleIdentifier} - {FileFormatType}")]
 public readonly struct StyleFormatPair(StyleIdentifier styleIdentifier, FileFormatType fileFormatType) : IEquatable<StyleFormatPair>

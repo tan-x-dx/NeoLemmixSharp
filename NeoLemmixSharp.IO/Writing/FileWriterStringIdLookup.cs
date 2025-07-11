@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.IO.Data;
-using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;

@@ -1,13 +1,14 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
+using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.IO.Data.Style;
+namespace NeoLemmixSharp.IO.Data;
 
 public static class StyleCache
 {
