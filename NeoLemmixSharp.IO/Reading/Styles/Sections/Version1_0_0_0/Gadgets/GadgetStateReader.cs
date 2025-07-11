@@ -32,7 +32,7 @@ internal readonly ref struct GadgetStateReader
 
         var result = new GadgetStateArchetypeData
         {
-            StateName = _stringIdLookup[stateNameId],
+            StateName = new GadgetStateName(_stringIdLookup[stateNameId]),
             HitBoxOffset = hitBoxOffset,
             HitBoxData = hitBoxData,
             RegionData = regionData,

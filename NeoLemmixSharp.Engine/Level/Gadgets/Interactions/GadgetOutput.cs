@@ -20,7 +20,7 @@ public sealed class GadgetOutput
 
         for (var i = 0; i < _inputs.Count; i++)
         {
-            _inputs[i].ReactToSignal(_currentSignal);
+            _inputs[i].ReactToSignal(newSignal);
         }
     }
 }

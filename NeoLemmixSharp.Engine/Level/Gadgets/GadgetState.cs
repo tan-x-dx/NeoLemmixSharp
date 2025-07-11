@@ -3,6 +3,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics;
 using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
 
@@ -10,9 +11,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public sealed class GadgetState
 {
-    private readonly string _stateName;
+    private readonly GadgetStateName _stateName;
 
-    private readonly GadgetOutput _stateSelectedOutput = new();
+    public GadgetOutput StateSelectedOutput { get; } = new();
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
     private readonly OrientationToHitBoxRegionLookup? _hitBoxLookup;
 
@@ -20,7 +21,7 @@ public sealed class GadgetState
     public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
 
     public GadgetState(
-        string stateName,
+        GadgetStateName stateName,
         AnimationController animationController)
     {
         _stateName = stateName;
@@ -30,7 +31,7 @@ public sealed class GadgetState
     }
 
     public GadgetState(
-        string stateName,
+        GadgetStateName stateName,
         LemmingHitBoxFilter[] lemmingHitBoxFilters,
         OrientationToHitBoxRegionLookup hitBoxLookup,
         AnimationController animationController)
@@ -85,7 +86,7 @@ public sealed class GadgetState
     public void OnTransitionTo()
     {
         AnimationController.OnTransitionTo();
-        _stateSelectedOutput.SetSignal(true);
+        StateSelectedOutput.SetSignal(true);
     }
 
     public void Tick(GadgetBase parentGadget)
@@ -101,8 +102,8 @@ public sealed class GadgetState
 
     public void OnTransitionFrom()
     {
-        _stateSelectedOutput.SetSignal(false);
+        StateSelectedOutput.SetSignal(false);
     }
 
-    public override string ToString() => _stateName;
+    public override string ToString() => _stateName.ToString();
 }

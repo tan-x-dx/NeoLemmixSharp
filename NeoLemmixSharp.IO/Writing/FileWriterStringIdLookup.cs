@@ -19,6 +19,8 @@ internal readonly struct FileWriterStringIdLookup
     internal ushort GetStringId(PieceIdentifier pieceIdentifier) => GetStringId(pieceIdentifier.ToString());
     [Pure]
     internal ushort GetStringId(GadgetInputName gadgetInputName) => GetStringId(gadgetInputName.ToString());
+    [Pure]
+    internal ushort GetStringId(GadgetStateName gadgetStateName) => GetStringId(gadgetStateName.ToString());
 
     [Pure]
     internal ushort GetStringId(string? s)
@@ -46,6 +48,7 @@ internal readonly struct MutableFileWriterStringIdLookup
     internal void RecordString(StyleIdentifier styleIdentifier) => RecordString(styleIdentifier.ToString());
     internal void RecordString(PieceIdentifier pieceIdentifier) => RecordString(pieceIdentifier.ToString());
     internal void RecordString(GadgetInputName gadgetInputName) => RecordString(gadgetInputName.ToString());
+    internal void RecordString(GadgetStateName gadgetStateName) => RecordString(gadgetStateName.ToString());
 
     internal void RecordString(string? s)
     {
