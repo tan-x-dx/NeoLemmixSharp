@@ -21,6 +21,7 @@ internal sealed class VersionHelper : ILevelDataSectionWriterVersionHelper
             terrainSectionWriter,
             new TerrainGroupDataSectionWriter(stringIdLookup, terrainSectionWriter),
             new GadgetDataSectionWriter(stringIdLookup),
+            new GadgetLinkDataSectionWriter(stringIdLookup),
         ];
 
         return sectionWriters;

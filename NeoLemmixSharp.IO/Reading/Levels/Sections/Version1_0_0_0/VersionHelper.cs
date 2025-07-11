@@ -20,7 +20,8 @@ internal sealed class VersionHelper : ILevelDataSectionReaderVersionHelper
             new PrePlacedLemmingDataSectionReader(),
             terrainComponentReader,
             new TerrainGroupDataSectionReader(stringIdLookup, terrainComponentReader),
-            new GadgetDataSectionReader(stringIdLookup)
+            new GadgetDataSectionReader(stringIdLookup),
+            new GadgetLinkDataSectionReader(stringIdLookup),
         ];
 
         return sectionReaders;
