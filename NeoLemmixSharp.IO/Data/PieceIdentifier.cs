@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.IO.Data.Style;
+namespace NeoLemmixSharp.IO.Data;
 
 public readonly struct PieceIdentifier : IEquatable<PieceIdentifier>
 {
