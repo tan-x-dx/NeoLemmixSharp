@@ -16,31 +16,31 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
+    public override void ReadSection(RawStyleFileDataReader reader, StyleData styleData, int numberOfItemsInSection)
     {
         styleData.TerrainArchetypeData.EnsureCapacity(numberOfItemsInSection);
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newTerrainArchetypeDatum = ReadNextTerrainArchetypeData(styleData.Identifier, rawFileData);
+            var newTerrainArchetypeDatum = ReadNextTerrainArchetypeData(styleData.Identifier, reader);
             styleData.TerrainArchetypeData.Add(newTerrainArchetypeDatum.PieceIdentifier, newTerrainArchetypeDatum);
         }
     }
 
     private TerrainArchetypeData ReadNextTerrainArchetypeData(
         StyleIdentifier styleName,
-        RawStyleFileDataReader rawFileData)
+        RawStyleFileDataReader reader)
     {
-        int pieceId = rawFileData.Read16BitUnsignedInteger();
-        int nameId = rawFileData.Read16BitUnsignedInteger();
+        int pieceId = reader.Read16BitUnsignedInteger();
+        int nameId = reader.Read16BitUnsignedInteger();
 
-        uint terrainArchetypeDataByte = rawFileData.Read8BitUnsignedInteger();
+        uint terrainArchetypeDataByte = reader.Read8BitUnsignedInteger();
         ReadWriteHelpers.DecodeTerrainArchetypeDataByte(
             terrainArchetypeDataByte,
             out var isSteel,
             out var resizeType);
 
-        var nineSliceData = ReadNineSliceData(rawFileData, resizeType, out var defaultSize);
+        var nineSliceData = ReadNineSliceData(reader, resizeType, out var defaultSize);
 
         var newTerrainArchetypeData = new TerrainArchetypeData
         {
@@ -60,7 +60,7 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
     }
 
     private static RectangularRegion ReadNineSliceData(
-        RawStyleFileDataReader rawFileData,
+        RawStyleFileDataReader reader,
         ResizeType resizeType,
         out Size defaultSize)
     {
@@ -74,12 +74,12 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
 
         if (resizeType.CanResizeHorizontally())
         {
-            defaultWidth = rawFileData.Read16BitUnsignedInteger();
+            defaultWidth = reader.Read16BitUnsignedInteger();
 
             if (defaultWidth > 0)
             {
-                nineSliceLeft = rawFileData.Read16BitUnsignedInteger();
-                nineSliceWidth = rawFileData.Read16BitUnsignedInteger();
+                nineSliceLeft = reader.Read16BitUnsignedInteger();
+                nineSliceWidth = reader.Read16BitUnsignedInteger();
 
                 FileReadingException.ReaderAssert(nineSliceLeft >= 0, "Invalid nine slice definition!");
                 FileReadingException.ReaderAssert(nineSliceWidth >= 1, "Invalid nine slice definition!");
@@ -89,12 +89,12 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
 
         if (resizeType.CanResizeVertically())
         {
-            defaultHeight = rawFileData.Read16BitUnsignedInteger();
+            defaultHeight = reader.Read16BitUnsignedInteger();
 
             if (defaultHeight > 0)
             {
-                nineSliceTop = rawFileData.Read16BitUnsignedInteger();
-                nineSliceHeight = rawFileData.Read16BitUnsignedInteger();
+                nineSliceTop = reader.Read16BitUnsignedInteger();
+                nineSliceHeight = reader.Read16BitUnsignedInteger();
 
                 FileReadingException.ReaderAssert(nineSliceTop >= 0, "Invalid nine slice definition!");
                 FileReadingException.ReaderAssert(nineSliceHeight >= 1, "Invalid nine slice definition!");

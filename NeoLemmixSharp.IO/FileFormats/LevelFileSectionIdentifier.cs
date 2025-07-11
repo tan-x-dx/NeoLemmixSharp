@@ -16,6 +16,7 @@ internal enum LevelFileSectionIdentifier
     TerrainDataSection,
     TerrainGroupDataSection,
     GadgetDataSection,
+    GadgetLinkDataSection
 }
 
 internal readonly struct LevelFileSectionIdentifierHasher :
@@ -46,6 +47,7 @@ internal readonly struct LevelFileSectionIdentifierHasher :
         LevelFileSectionIdentifier.TerrainDataSection => 0x7C5C,
         LevelFileSectionIdentifier.TerrainGroupDataSection => 0x3D98,
         LevelFileSectionIdentifier.GadgetDataSection => 0x2FCD,
+        LevelFileSectionIdentifier.GadgetLinkDataSection => 0xAE0F,
 
         _ => Helpers.ThrowUnknownEnumValueException<LevelFileSectionIdentifier, ushort>(sectionIdentifier)
     };

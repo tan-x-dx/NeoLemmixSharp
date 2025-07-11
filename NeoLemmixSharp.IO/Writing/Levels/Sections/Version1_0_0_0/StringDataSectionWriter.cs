@@ -65,18 +65,18 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         _stringIdLookup.RecordString(levelData.LevelObjective.ObjectiveName);
 
-        foreach (var talisman in levelData.LevelObjective.TalismanData)
+        foreach (var talismanDatum in levelData.LevelObjective.TalismanData)
         {
-            _stringIdLookup.RecordString(talisman.TalismanName);
+            _stringIdLookup.RecordString(talismanDatum.TalismanName);
         }
     }
 
     private void RecordTerrainDataStrings(LevelData levelData)
     {
-        foreach (var terrainData in levelData.AllTerrainData)
+        foreach (var terrainDatum in levelData.AllTerrainData)
         {
-            _stringIdLookup.RecordString(terrainData.StyleIdentifier);
-            _stringIdLookup.RecordString(terrainData.PieceIdentifier);
+            _stringIdLookup.RecordString(terrainDatum.StyleIdentifier);
+            _stringIdLookup.RecordString(terrainDatum.PieceIdentifier);
         }
     }
 
@@ -86,25 +86,30 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
         {
             _stringIdLookup.RecordString(terrainGroup.GroupName!);
 
-            foreach (var terrainData in levelData.AllTerrainData)
+            foreach (var terrainDatum in levelData.AllTerrainData)
             {
-                _stringIdLookup.RecordString(terrainData.StyleIdentifier);
-                _stringIdLookup.RecordString(terrainData.PieceIdentifier);
+                _stringIdLookup.RecordString(terrainDatum.StyleIdentifier);
+                _stringIdLookup.RecordString(terrainDatum.PieceIdentifier);
             }
         }
     }
 
     private void RecordGadgetDataStrings(LevelData levelData)
     {
-        foreach (var gadgetData in levelData.AllGadgetData)
+        foreach (var gadgetDatum in levelData.AllGadgetData)
         {
-            _stringIdLookup.RecordString(gadgetData.StyleIdentifier);
-            _stringIdLookup.RecordString(gadgetData.PieceIdentifier);
+            _stringIdLookup.RecordString(gadgetDatum.StyleIdentifier);
+            _stringIdLookup.RecordString(gadgetDatum.PieceIdentifier);
 
-            foreach (var gadgetInputName in gadgetData.OverrideInputNames)
+            foreach (var gadgetInputName in gadgetDatum.OverrideInputNames)
             {
                 _stringIdLookup.RecordString(gadgetInputName);
             }
+        }
+
+        foreach (var gadgetLinkDatum in levelData.AllGadgetLinkData)
+        {
+            _stringIdLookup.RecordString(gadgetLinkDatum.TargetGadgetInputName);
         }
     }
 

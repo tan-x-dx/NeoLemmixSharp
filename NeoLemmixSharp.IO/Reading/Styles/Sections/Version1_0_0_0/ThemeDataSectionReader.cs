@@ -17,36 +17,36 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
+    public override void ReadSection(RawStyleFileDataReader reader, StyleData styleData, int numberOfItemsInSection)
     {
-        ReadStringData(rawFileData, styleData);
+        ReadStringData(reader, styleData);
 
-        var themeData = ReadThemeData(rawFileData, styleData.Identifier);
+        var themeData = ReadThemeData(reader, styleData.Identifier);
 
         styleData.ThemeData = themeData;
     }
 
-    private void ReadStringData(RawStyleFileDataReader rawFileData, StyleData styleData)
+    private void ReadStringData(RawStyleFileDataReader reader, StyleData styleData)
     {
-        var styleNameId = rawFileData.Read16BitUnsignedInteger();
-        var authorId = rawFileData.Read16BitUnsignedInteger();
-        var descriptionId = rawFileData.Read16BitUnsignedInteger();
+        var styleNameId = reader.Read16BitUnsignedInteger();
+        var authorId = reader.Read16BitUnsignedInteger();
+        var descriptionId = reader.Read16BitUnsignedInteger();
 
         styleData.Name = _stringIdLookup[styleNameId];
         styleData.Author = _stringIdLookup[authorId];
         styleData.Description = _stringIdLookup[descriptionId];
     }
 
-    private ThemeData ReadThemeData(RawStyleFileDataReader rawFileData, StyleIdentifier originalStyleIdentifier)
+    private ThemeData ReadThemeData(RawStyleFileDataReader reader, StyleIdentifier originalStyleIdentifier)
     {
-        var maskColor = ReadRgbColor(rawFileData);
-        var minimap = ReadRgbColor(rawFileData);
-        var background = ReadRgbColor(rawFileData);
-        var oneWayArrows = ReadRgbColor(rawFileData);
-        var pickupBorder = ReadRgbColor(rawFileData);
-        var pickupInside = ReadRgbColor(rawFileData);
+        var maskColor = ReadRgbColor(reader);
+        var minimap = ReadRgbColor(reader);
+        var background = ReadRgbColor(reader);
+        var oneWayArrows = ReadRgbColor(reader);
+        var pickupBorder = ReadRgbColor(reader);
+        var pickupInside = ReadRgbColor(reader);
 
-        var lemmingSpriteData = ReadLemmingSpriteData(rawFileData, originalStyleIdentifier);
+        var lemmingSpriteData = ReadLemmingSpriteData(reader, originalStyleIdentifier);
 
         var themeData = new ThemeData
         {
@@ -63,21 +63,21 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
         return themeData;
     }
 
-    private LemmingSpriteData ReadLemmingSpriteData(RawStyleFileDataReader rawFileData, StyleIdentifier originalStyleIdentifier)
+    private LemmingSpriteData ReadLemmingSpriteData(RawStyleFileDataReader reader, StyleIdentifier originalStyleIdentifier)
     {
-        int lemmingSpriteStyleIdentifierId = rawFileData.Read16BitUnsignedInteger();
+        int lemmingSpriteStyleIdentifierId = reader.Read16BitUnsignedInteger();
         var lemmingSpriteStyleIdentifier = new StyleIdentifier(_stringIdLookup[lemmingSpriteStyleIdentifierId]);
 
         var result = new LemmingSpriteData(lemmingSpriteStyleIdentifier);
 
-        ReadLemmingActionSpriteData(rawFileData, originalStyleIdentifier, lemmingSpriteStyleIdentifier, result);
-        ReadTribeColorData(rawFileData, result._tribeColorData);
+        ReadLemmingActionSpriteData(reader, originalStyleIdentifier, lemmingSpriteStyleIdentifier, result);
+        ReadTribeColorData(reader, result._tribeColorData);
 
         return result;
     }
 
     private void ReadLemmingActionSpriteData(
-        RawStyleFileDataReader rawFileData,
+        RawStyleFileDataReader reader,
         StyleIdentifier originalStyleIdentifier,
         StyleIdentifier lemmingSpriteStyleIdentifier,
         LemmingSpriteData lemmingSpriteData)
@@ -103,7 +103,7 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
 
         LemmingActionSpriteLayerData[][] ReadSpriteLayerArchetypes()
         {
-            int numberOfSpriteLayerArchetypes = rawFileData.Read8BitUnsignedInteger();
+            int numberOfSpriteLayerArchetypes = reader.Read8BitUnsignedInteger();
             FileReadingException.ReaderAssert(numberOfSpriteLayerArchetypes > 0, "No sprite layer data specified!");
 
             var spriteLayerArchetypes = new LemmingActionSpriteLayerData[numberOfSpriteLayerArchetypes][];
@@ -118,15 +118,15 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
 
         LemmingActionSpriteLayerData[] ReadSpriteLayerData()
         {
-            int numberOfSpriteLayers = rawFileData.Read8BitUnsignedInteger();
+            int numberOfSpriteLayers = reader.Read8BitUnsignedInteger();
             FileReadingException.ReaderAssert(numberOfSpriteLayers > 0, "No sprite layer data specified!");
 
             var spriteLayers = new LemmingActionSpriteLayerData[numberOfSpriteLayers];
 
             for (var i = 0; i < spriteLayers.Length; i++)
             {
-                int layer = rawFileData.Read8BitUnsignedInteger();
-                uint rawLayerColorTypeData = rawFileData.Read8BitUnsignedInteger();
+                int layer = reader.Read8BitUnsignedInteger();
+                uint rawLayerColorTypeData = reader.Read8BitUnsignedInteger();
                 var colorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawLayerColorTypeData);
 
                 spriteLayers[i] = new LemmingActionSpriteLayerData(layer, colorType);
@@ -137,13 +137,13 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
 
         LemmingActionSpriteData ReadLemmingActionSpriteData(int i)
         {
-            int lemmingActionId = rawFileData.Read8BitUnsignedInteger();
+            int lemmingActionId = reader.Read8BitUnsignedInteger();
             FileReadingException.ReaderAssert(lemmingActionId == i, "Lemming action id mismatch!");
 
-            int x = rawFileData.Read8BitUnsignedInteger();
-            int y = rawFileData.Read8BitUnsignedInteger();
+            int x = reader.Read8BitUnsignedInteger();
+            int y = reader.Read8BitUnsignedInteger();
 
-            int spriteLayerArchetypeId = rawFileData.Read8BitUnsignedInteger();
+            int spriteLayerArchetypeId = reader.Read8BitUnsignedInteger();
 
             return new LemmingActionSpriteData
             {
@@ -155,7 +155,7 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
     }
 
     private static void ReadTribeColorData(
-        RawStyleFileDataReader rawFileData,
+        RawStyleFileDataReader reader,
         TribeColorData[] tribeColorData)
     {
         for (var i = 0; i < tribeColorData.Length; i++)
@@ -167,16 +167,16 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
 
         TribeColorData ReadTribeColorData()
         {
-            var hairColor = ReadArgbColor(rawFileData);
-            var permanentSkillHairColor = ReadArgbColor(rawFileData);
-            var skinColor = ReadArgbColor(rawFileData);
-            var zombieSkinColor = ReadArgbColor(rawFileData);
-            var bodyColor = ReadArgbColor(rawFileData);
-            var permanentSkillBodyColor = ReadArgbColor(rawFileData);
-            var neutralBodyColor = ReadArgbColor(rawFileData);
-            var acidLemmingFootColor = ReadArgbColor(rawFileData);
-            var waterLemmingFootColor = ReadArgbColor(rawFileData);
-            var paintColor = ReadArgbColor(rawFileData);
+            var hairColor = ReadArgbColor(reader);
+            var permanentSkillHairColor = ReadArgbColor(reader);
+            var skinColor = ReadArgbColor(reader);
+            var zombieSkinColor = ReadArgbColor(reader);
+            var bodyColor = ReadArgbColor(reader);
+            var permanentSkillBodyColor = ReadArgbColor(reader);
+            var neutralBodyColor = ReadArgbColor(reader);
+            var acidLemmingFootColor = ReadArgbColor(reader);
+            var waterLemmingFootColor = ReadArgbColor(reader);
+            var paintColor = ReadArgbColor(reader);
 
             return new TribeColorData(
                 hairColor,
@@ -192,15 +192,15 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
         }
     }
 
-    private static Color ReadRgbColor(RawStyleFileDataReader rawFileData)
+    private static Color ReadRgbColor(RawStyleFileDataReader reader)
     {
-        var bytes = rawFileData.ReadBytes(3);
+        var bytes = reader.ReadBytes(3);
         return ReadWriteHelpers.ReadRgbBytes(bytes);
     }
 
-    private static Color ReadArgbColor(RawStyleFileDataReader rawFileData)
+    private static Color ReadArgbColor(RawStyleFileDataReader reader)
     {
-        var bytes = rawFileData.ReadBytes(4);
+        var bytes = reader.ReadBytes(4);
         return ReadWriteHelpers.ReadArgbBytes(bytes);
     }
 

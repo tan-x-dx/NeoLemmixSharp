@@ -22,41 +22,41 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
+    public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
         levelData.AllGadgetData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newGadgetDatum = ReadGadgetData(rawFileData, levelData);
+            var newGadgetDatum = ReadGadgetData(reader, levelData);
             levelData.AllGadgetData.Add(newGadgetDatum);
         }
     }
 
-    private GadgetData ReadGadgetData(RawLevelFileDataReader rawFileData, LevelData levelData)
+    private GadgetData ReadGadgetData(RawLevelFileDataReader reader, LevelData levelData)
     {
-        int gadgetId = rawFileData.Read16BitUnsignedInteger();
+        int gadgetId = reader.Read16BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(gadgetId == levelData.AllGadgetData.Count + 1, "GadgetData id mismatch!");
 
-        int styleId = rawFileData.Read16BitUnsignedInteger();
-        int pieceId = rawFileData.Read16BitUnsignedInteger();
+        int styleId = reader.Read16BitUnsignedInteger();
+        int pieceId = reader.Read16BitUnsignedInteger();
 
-        int overrideNameId = rawFileData.Read16BitUnsignedInteger();
+        int overrideNameId = reader.Read16BitUnsignedInteger();
 
-        int positionData = rawFileData.Read32BitSignedInteger();
+        int positionData = reader.Read32BitSignedInteger();
         var position = ReadWriteHelpers.DecodePoint(positionData);
 
-        int dhtByte = rawFileData.Read8BitUnsignedInteger();
+        int dhtByte = reader.Read8BitUnsignedInteger();
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
-        int initialStateId = rawFileData.Read8BitUnsignedInteger();
-        var renderMode = GadgetRenderModeHelpers.GetEnumValue(rawFileData.Read8BitUnsignedInteger());
+        int initialStateId = reader.Read8BitUnsignedInteger();
+        var renderMode = GadgetRenderModeHelpers.GetEnumValue(reader.Read8BitUnsignedInteger());
 
-        var inputNames = ReadOverrideInputNames(rawFileData);
-        var layerColorData = ReadLayerColorData(rawFileData);
-        var overrideHitBoxCriteriaData = ReadOverrideHitBoxCriteriaData(rawFileData);
+        var inputNames = ReadOverrideInputNames(reader);
+        var layerColorData = ReadLayerColorData(reader);
+        var overrideHitBoxCriteriaData = ReadOverrideHitBoxCriteriaData(reader);
 
         var result = new GadgetData
         {
@@ -79,22 +79,22 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             OverrideHitBoxCriteriaData = overrideHitBoxCriteriaData
         };
 
-        ReadProperties(rawFileData, result);
+        ReadProperties(reader, result);
 
         AssertGadgetInputDataIsConsistent(result);
 
         return result;
     }
 
-    private GadgetInputName[] ReadOverrideInputNames(RawLevelFileDataReader rawFileData)
+    private GadgetInputName[] ReadOverrideInputNames(RawLevelFileDataReader reader)
     {
-        int numberOfInputNames = rawFileData.Read8BitUnsignedInteger();
+        int numberOfInputNames = reader.Read8BitUnsignedInteger();
 
         var result = Helpers.GetArrayForSize<GadgetInputName>(numberOfInputNames);
 
         for (var i = 0; i < result.Length; i++)
         {
-            int inputNameStringId = rawFileData.Read16BitUnsignedInteger();
+            int inputNameStringId = reader.Read16BitUnsignedInteger();
             var inputName = _stringIdLookup[inputNameStringId];
             result[i] = new GadgetInputName(inputName);
         }
@@ -102,58 +102,58 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         return result;
     }
 
-    private static GadgetLayerColorData[] ReadLayerColorData(RawLevelFileDataReader rawFileData)
+    private static GadgetLayerColorData[] ReadLayerColorData(RawLevelFileDataReader reader)
     {
-        int numberOfColorData = rawFileData.Read8BitUnsignedInteger();
+        int numberOfColorData = reader.Read8BitUnsignedInteger();
 
         var result = Helpers.GetArrayForSize<GadgetLayerColorData>(numberOfColorData);
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = ReadLayerColorDatum(rawFileData);
+            result[i] = ReadLayerColorDatum(reader);
         }
 
         return result;
     }
 
-    private static GadgetLayerColorData ReadLayerColorDatum(RawLevelFileDataReader rawFileData)
+    private static GadgetLayerColorData ReadLayerColorDatum(RawLevelFileDataReader reader)
     {
-        int stateIndex = rawFileData.Read8BitUnsignedInteger();
-        int layerIndex = rawFileData.Read8BitUnsignedInteger();
+        int stateIndex = reader.Read8BitUnsignedInteger();
+        int layerIndex = reader.Read8BitUnsignedInteger();
 
-        bool usesSpecificColor = rawFileData.ReadBool();
+        bool usesSpecificColor = reader.ReadBool();
 
         if (usesSpecificColor)
         {
-            var colorBytes = rawFileData.ReadBytes(4);
+            var colorBytes = reader.ReadBytes(4);
             var color = ReadWriteHelpers.ReadArgbBytes(colorBytes);
             return new GadgetLayerColorData(stateIndex, layerIndex, color);
         }
 
-        int tribeId = rawFileData.Read8BitUnsignedInteger();
-        uint rawTribeSpriteLayerColorType = rawFileData.Read8BitUnsignedInteger();
+        int tribeId = reader.Read8BitUnsignedInteger();
+        uint rawTribeSpriteLayerColorType = reader.Read8BitUnsignedInteger();
         var spriteLayerColorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawTribeSpriteLayerColorType);
 
         return new GadgetLayerColorData(stateIndex, layerIndex, tribeId, spriteLayerColorType);
     }
 
-    private static HitBoxCriteriaData? ReadOverrideHitBoxCriteriaData(RawLevelFileDataReader rawFileData)
+    private static HitBoxCriteriaData? ReadOverrideHitBoxCriteriaData(RawLevelFileDataReader reader)
     {
-        bool hasOverrideHitBoxCriteriaData = rawFileData.ReadBool();
+        bool hasOverrideHitBoxCriteriaData = reader.ReadBool();
 
         return hasOverrideHitBoxCriteriaData
-            ? new GadgetHitBoxCriteriaReader<RawLevelFileDataReader>(rawFileData).ReadHitBoxCriteria()
+            ? new GadgetHitBoxCriteriaReader<RawLevelFileDataReader>(reader).ReadHitBoxCriteria()
             : null;
     }
 
-    private static void ReadProperties(RawLevelFileDataReader rawFileData, GadgetData result)
+    private static void ReadProperties(RawLevelFileDataReader reader, GadgetData result)
     {
-        int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
+        int numberOfProperties = reader.Read8BitUnsignedInteger();
         while (numberOfProperties-- > 0)
         {
-            uint rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
+            uint rawGadgetProperty = reader.Read8BitUnsignedInteger();
             var gadgetProperty = GadgetPropertyHasher.GetEnumValue(rawGadgetProperty);
-            int propertyValue = rawFileData.Read32BitSignedInteger();
+            int propertyValue = reader.Read32BitSignedInteger();
             result.AddProperty(gadgetProperty, propertyValue);
         }
     }

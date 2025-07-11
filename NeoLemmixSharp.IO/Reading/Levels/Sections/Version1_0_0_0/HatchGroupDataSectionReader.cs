@@ -11,24 +11,24 @@ internal sealed class HatchGroupDataSectionReader : LevelDataSectionReader
     {
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
+    public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
         levelData.AllHatchGroupData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {
-            var hatchGroupData = ReadHatchGroupData(rawFileData);
+            var hatchGroupData = ReadHatchGroupData(reader);
 
             levelData.AllHatchGroupData.Add(hatchGroupData);
         }
     }
 
-    private static HatchGroupData ReadHatchGroupData(RawLevelFileDataReader rawFileData)
+    private static HatchGroupData ReadHatchGroupData(RawLevelFileDataReader reader)
     {
-        int hatchGroupId = rawFileData.Read8BitUnsignedInteger();
-        int minSpawnInterval = rawFileData.Read8BitUnsignedInteger();
-        int maxSpawnInterval = rawFileData.Read8BitUnsignedInteger();
-        int initialSpawnInterval = rawFileData.Read8BitUnsignedInteger();
+        int hatchGroupId = reader.Read8BitUnsignedInteger();
+        int minSpawnInterval = reader.Read8BitUnsignedInteger();
+        int maxSpawnInterval = reader.Read8BitUnsignedInteger();
+        int initialSpawnInterval = reader.Read8BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(minSpawnInterval >= EngineConstants.MinAllowedSpawnInterval, "Invalid MinSpawnInterval");
         FileReadingException.ReaderAssert(maxSpawnInterval <= EngineConstants.MaxAllowedSpawnInterval, "Invalid MaxSpawnInterval");

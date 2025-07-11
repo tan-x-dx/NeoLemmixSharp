@@ -8,12 +8,12 @@ namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0.Gadgets;
 
 internal readonly ref struct GadgetStateWriter
 {
-    private readonly RawStyleFileDataWriter _rawFileData;
+    private readonly RawStyleFileDataWriter _reader;
     private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    internal GadgetStateWriter(RawStyleFileDataWriter rawFileData, FileWriterStringIdLookup stringIdLookup)
+    internal GadgetStateWriter(RawStyleFileDataWriter reader, FileWriterStringIdLookup stringIdLookup)
     {
-        _rawFileData = rawFileData;
+        _reader = reader;
         _stringIdLookup = stringIdLookup;
     }
 
@@ -27,10 +27,10 @@ internal readonly ref struct GadgetStateWriter
 
     private void WriteStateDatum(GadgetStateArchetypeData gadgetStateData)
     {
-        _rawFileData.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetStateData.StateName));
+        _reader.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetStateData.StateName));
 
         var hitBoxOffsetData = ReadWriteHelpers.EncodePoint(gadgetStateData.HitBoxOffset);
-        _rawFileData.Write32BitSignedInteger(hitBoxOffsetData);
+        _reader.Write32BitSignedInteger(hitBoxOffsetData);
 
         WriteHitBoxData(gadgetStateData.HitBoxData);
         WriteRegionData(gadgetStateData.RegionData);
@@ -40,7 +40,7 @@ internal readonly ref struct GadgetStateWriter
 
     private void WriteHitBoxData(HitBoxData[] hitBoxData)
     {
-        _rawFileData.Write8BitUnsignedInteger((byte)hitBoxData.Length);
+        _reader.Write8BitUnsignedInteger((byte)hitBoxData.Length);
 
         foreach (var hitBoxDatum in hitBoxData)
         {
@@ -50,9 +50,9 @@ internal readonly ref struct GadgetStateWriter
 
     private void WriteHitBoxDatum(HitBoxData hitBoxDatum)
     {
-        _rawFileData.Write8BitUnsignedInteger((byte)hitBoxDatum.SolidityType);
+        _reader.Write8BitUnsignedInteger((byte)hitBoxDatum.SolidityType);
 
-        _rawFileData.Write8BitUnsignedInteger((byte)hitBoxDatum.HitBoxBehaviour);
+        _reader.Write8BitUnsignedInteger((byte)hitBoxDatum.HitBoxBehaviour);
 
         WriteGadgetActionData(hitBoxDatum.OnLemmingEnterActions, 0);
         WriteGadgetActionData(hitBoxDatum.OnLemmingPresentActions, 1);
@@ -63,9 +63,9 @@ internal readonly ref struct GadgetStateWriter
 
     private void WriteGadgetActionData(GadgetActionData[] actionData, byte markerValue)
     {
-        _rawFileData.Write8BitUnsignedInteger(markerValue);
+        _reader.Write8BitUnsignedInteger(markerValue);
 
-        _rawFileData.Write8BitUnsignedInteger((byte)actionData.Length);
+        _reader.Write8BitUnsignedInteger((byte)actionData.Length);
 
         foreach (var gadgetActionData in actionData)
         {
@@ -75,13 +75,13 @@ internal readonly ref struct GadgetStateWriter
 
     private void WriteGadgetActionDatum(GadgetActionData gadgetActionData)
     {
-        _rawFileData.Write8BitUnsignedInteger((byte)gadgetActionData.GadgetActionType);
-        _rawFileData.Write32BitSignedInteger(gadgetActionData.MiscData);
+        _reader.Write8BitUnsignedInteger((byte)gadgetActionData.GadgetActionType);
+        _reader.Write32BitSignedInteger(gadgetActionData.MiscData);
     }
 
     private void WriteHitBoxCriteria(HitBoxCriteriaData hitBoxCriteria)
     {
-        new GadgetHitBoxCriteriaWriter<RawStyleFileDataWriter>(_rawFileData).WriteHitBoxCriteria(hitBoxCriteria);
+        new GadgetHitBoxCriteriaWriter<RawStyleFileDataWriter>(_reader).WriteHitBoxCriteria(hitBoxCriteria);
     }
 
     private void WriteRegionData(HitBoxRegionData[] regionData)
@@ -98,21 +98,21 @@ internal readonly ref struct GadgetStateWriter
     {
         FileWritingException.WriterAssert(hitBoxRegionData.Orientation == orientation, "HitBox region orientation mismatch!");
 
-        _rawFileData.Write8BitUnsignedInteger((byte)orientation.RotNum);
+        _reader.Write8BitUnsignedInteger((byte)orientation.RotNum);
 
-        _rawFileData.Write8BitUnsignedInteger((byte)hitBoxRegionData.HitBoxType);
+        _reader.Write8BitUnsignedInteger((byte)hitBoxRegionData.HitBoxType);
 
-        _rawFileData.Write16BitUnsignedInteger((ushort)hitBoxRegionData.HitBoxDefinitionData.Length);
+        _reader.Write16BitUnsignedInteger((ushort)hitBoxRegionData.HitBoxDefinitionData.Length);
         foreach (var point in hitBoxRegionData.HitBoxDefinitionData)
         {
-            _rawFileData.Write8BitUnsignedInteger((byte)point.X);
-            _rawFileData.Write8BitUnsignedInteger((byte)point.Y);
+            _reader.Write8BitUnsignedInteger((byte)point.X);
+            _reader.Write8BitUnsignedInteger((byte)point.Y);
         }
     }
 
     private void WriteAnimationLayerArchetypeData(AnimationLayerArchetypeData[] animationLayerData)
     {
-        _rawFileData.Write8BitUnsignedInteger((byte)animationLayerData.Length);
+        _reader.Write8BitUnsignedInteger((byte)animationLayerData.Length);
 
         foreach (var animationLayerArchetypeDatum in animationLayerData)
         {
@@ -122,20 +122,20 @@ internal readonly ref struct GadgetStateWriter
 
     private void WriteAnimationLayerArchetypeDatum(AnimationLayerArchetypeData animationLayerArchetypeDatum)
     {
-        _rawFileData.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.Layer);
+        _reader.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.Layer);
 
         WriteAnimationLayerParameters(animationLayerArchetypeDatum);
 
-        _rawFileData.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.InitialFrame);
+        _reader.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.InitialFrame);
         // Need to offset by 1
-        _rawFileData.Write32BitSignedInteger((byte)animationLayerArchetypeDatum.NextGadgetState + 1);
+        _reader.Write32BitSignedInteger((byte)animationLayerArchetypeDatum.NextGadgetState + 1);
     }
 
     private void WriteAnimationLayerParameters(AnimationLayerArchetypeData animationLayerArchetypeDatum)
     {
-        _rawFileData.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.AnimationLayerParameters.FrameStart);
-        _rawFileData.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.AnimationLayerParameters.FrameEnd);
-        _rawFileData.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.AnimationLayerParameters.FrameDelta);
-        _rawFileData.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.AnimationLayerParameters.TransitionToFrame);
+        _reader.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.AnimationLayerParameters.FrameStart);
+        _reader.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.AnimationLayerParameters.FrameEnd);
+        _reader.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.AnimationLayerParameters.FrameDelta);
+        _reader.Write8BitUnsignedInteger((byte)animationLayerArchetypeDatum.AnimationLayerParameters.TransitionToFrame);
     }
 }

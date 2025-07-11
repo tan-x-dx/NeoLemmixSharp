@@ -7,7 +7,7 @@ internal readonly struct FileStringReader<TRawFileDataReader>(MutableFileReaderS
 {
     private readonly MutableFileReaderStringIdLookup _stringIdLookup = stringIdLookup;
 
-    internal void ReadSection(TRawFileDataReader rawFileData, int numberOfItemsInSection)
+    internal void ReadSection(TRawFileDataReader reader, int numberOfItemsInSection)
     {
         FileReadingException.ReaderAssert(_stringIdLookup.Count == 0, "Expected string lookup to be empty!");
         _stringIdLookup.SetCapacity(numberOfItemsInSection + 1);
@@ -15,20 +15,20 @@ internal readonly struct FileStringReader<TRawFileDataReader>(MutableFileReaderS
 
         while (numberOfItemsInSection-- > 0)
         {
-            var actualString = ReadString(rawFileData);
+            var actualString = ReadString(reader);
 
             _stringIdLookup.Add(actualString);
         }
     }
 
-    private string ReadString(TRawFileDataReader rawFileData)
+    private string ReadString(TRawFileDataReader reader)
     {
-        int id = rawFileData.Read16BitUnsignedInteger();
+        int id = reader.Read16BitUnsignedInteger();
         FileReadingException.ReaderAssert(id == _stringIdLookup.Count, "Invalid string ids");
 
         // The next 16bit int specifies how many bytes make up the next string
-        int stringLengthInBytes = rawFileData.Read16BitUnsignedInteger();
-        var stringBytes = rawFileData.ReadBytes(stringLengthInBytes);
+        int stringLengthInBytes = reader.Read16BitUnsignedInteger();
+        var stringBytes = reader.ReadBytes(stringLengthInBytes);
         var actualString = Encoding.UTF8.GetString(stringBytes);
 
         return actualString;

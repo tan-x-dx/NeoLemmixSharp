@@ -25,23 +25,23 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        foreach (var terrainData in levelData.AllTerrainData)
+        foreach (var terrainDatum in levelData.AllTerrainData)
         {
-            WriteTerrainData(writer, terrainData);
+            WriteTerrainData(writer, terrainDatum);
         }
     }
 
     public void WriteTerrainData(
         RawLevelFileDataWriter writer,
-        TerrainData terrainData)
+        TerrainData terrainDatum)
     {
-        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainData.StyleIdentifier));
-        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainData.PieceIdentifier));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainDatum.StyleIdentifier));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainDatum.PieceIdentifier));
 
-        writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(terrainData.Position));
-        writer.Write8BitUnsignedInteger((byte)DihedralTransformation.Encode(terrainData.Orientation, terrainData.FacingDirection));
+        writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(terrainDatum.Position));
+        writer.Write8BitUnsignedInteger((byte)DihedralTransformation.Encode(terrainDatum.Orientation, terrainDatum.FacingDirection));
 
-        WriteTerrainDataMisc(writer, terrainData);
+        WriteTerrainDataMisc(writer, terrainDatum);
     }
 
     private static void WriteTerrainDataMisc(

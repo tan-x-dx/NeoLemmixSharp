@@ -18,7 +18,7 @@ internal sealed class TerrainGroupDataSectionReader : LevelDataSectionReader
     }
 
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
+    public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
         throw new NotImplementedException();
     }

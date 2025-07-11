@@ -17,40 +17,40 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
+    public override void ReadSection(RawStyleFileDataReader reader, StyleData styleData, int numberOfItemsInSection)
     {
         styleData.GadgetArchetypeData.EnsureCapacity(numberOfItemsInSection);
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newGadgetArchetypeDatum = ReadGadgetArchetypeData(styleData.Identifier, rawFileData);
+            var newGadgetArchetypeDatum = ReadGadgetArchetypeData(styleData.Identifier, reader);
             styleData.GadgetArchetypeData.Add(newGadgetArchetypeDatum.PieceIdentifier, newGadgetArchetypeDatum);
         }
     }
 
     private GadgetArchetypeData ReadGadgetArchetypeData(
         StyleIdentifier styleName,
-        RawStyleFileDataReader rawFileData)
+        RawStyleFileDataReader reader)
     {
-        int pieceId = rawFileData.Read16BitUnsignedInteger();
+        int pieceId = reader.Read16BitUnsignedInteger();
         var pieceName = new PieceIdentifier(_stringIdLookup[pieceId]);
 
-        int nameId = rawFileData.Read16BitUnsignedInteger();
+        int nameId = reader.Read16BitUnsignedInteger();
         var gadgetName = _stringIdLookup[nameId];
 
-        uint rawGadgetType = rawFileData.Read8BitUnsignedInteger();
+        uint rawGadgetType = reader.Read8BitUnsignedInteger();
         var gadgetType = GadgetTypeHelpers.GetEnumValue(rawGadgetType);
 
-        uint rawResizeType = rawFileData.Read8BitUnsignedInteger();
+        uint rawResizeType = reader.Read8BitUnsignedInteger();
         var resizeType = ReadWriteHelpers.DecodeResizeType(rawResizeType);
 
-        int baseWidth = rawFileData.Read16BitUnsignedInteger();
-        int baseHeight = rawFileData.Read16BitUnsignedInteger();
+        int baseWidth = reader.Read16BitUnsignedInteger();
+        int baseHeight = reader.Read16BitUnsignedInteger();
         var baseSpriteSize = new Size(baseWidth, baseHeight);
 
-        var nineSliceData = ReadNineSliceData(rawFileData, baseSpriteSize);
+        var nineSliceData = ReadNineSliceData(reader, baseSpriteSize);
 
-        var gadgetStates = ReadGadgetStates(rawFileData);
+        var gadgetStates = ReadGadgetStates(reader);
 
         GadgetArchetypeValidation.AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
 
@@ -69,7 +69,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
             AllGadgetStateData = gadgetStates
         };
 
-        ReadMiscData(rawFileData, result);
+        ReadMiscData(reader, result);
 
         GadgetArchetypeValidation.AssertGadgetArchetypeDataHasRequiredMiscData(result);
 
@@ -77,14 +77,14 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
     }
 
     private static RectangularRegion ReadNineSliceData(
-        RawStyleFileDataReader rawFileData,
+        RawStyleFileDataReader reader,
         Size baseSpriteSize)
     {
-        int nineSliceLeft = rawFileData.Read16BitUnsignedInteger();
-        int nineSliceWidth = rawFileData.Read16BitUnsignedInteger();
+        int nineSliceLeft = reader.Read16BitUnsignedInteger();
+        int nineSliceWidth = reader.Read16BitUnsignedInteger();
 
-        int nineSliceTop = rawFileData.Read16BitUnsignedInteger();
-        int nineSliceHeight = rawFileData.Read16BitUnsignedInteger();
+        int nineSliceTop = reader.Read16BitUnsignedInteger();
+        int nineSliceHeight = reader.Read16BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(nineSliceLeft >= 0, "Invalid nine slice definition!");
         FileReadingException.ReaderAssert(nineSliceWidth >= 1, "Invalid nine slice definition!");
@@ -99,11 +99,11 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return new RectangularRegion(p, s);
     }
 
-    private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader rawFileData)
+    private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader reader)
     {
-        var gadgetStateReader = new GadgetStateReader(rawFileData, _stringIdLookup);
+        var gadgetStateReader = new GadgetStateReader(reader, _stringIdLookup);
 
-        int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
+        int numberOfGadgetStates = reader.Read8BitUnsignedInteger();
         var result = Helpers.GetArrayForSize<GadgetStateArchetypeData>(numberOfGadgetStates);
 
         for (var i = 0; i < result.Length; i++)
@@ -114,14 +114,14 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return result;
     }
 
-    private static void ReadMiscData(RawStyleFileDataReader rawFileData, GadgetArchetypeData result)
+    private static void ReadMiscData(RawStyleFileDataReader reader, GadgetArchetypeData result)
     {
-        int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
+        int numberOfProperties = reader.Read8BitUnsignedInteger();
         while (numberOfProperties-- > 0)
         {
-            uint rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
+            uint rawGadgetProperty = reader.Read8BitUnsignedInteger();
             var gadgetProperty = GadgetArchetypeMiscDataTypeHasher.GetEnumValue(rawGadgetProperty);
-            int propertyValue = rawFileData.Read32BitSignedInteger();
+            int propertyValue = reader.Read32BitSignedInteger();
             result.AddMiscData(gadgetProperty, propertyValue);
         }
     }

@@ -17,16 +17,16 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
+    public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
         FileReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level objective item!");
 
-        int objectiveNameId = rawFileData.Read16BitUnsignedInteger();
+        int objectiveNameId = reader.Read16BitUnsignedInteger();
 
-        var skillSetData = ReadSkillSetData(rawFileData);
-        var objectiveCriteria = ReadObjectiveCriteria(rawFileData);
-        var objectiveModifiers = ReadObjectiveModifiers(rawFileData);
-        var talismanData = ReadTalismanData(rawFileData);
+        var skillSetData = ReadSkillSetData(reader);
+        var objectiveCriteria = ReadObjectiveCriteria(reader);
+        var objectiveModifiers = ReadObjectiveModifiers(reader);
+        var talismanData = ReadTalismanData(reader);
 
         var objectiveData = new LevelObjectiveData
         {
@@ -41,44 +41,44 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         levelData.SetObjectiveData(objectiveData);
     }
 
-    private static SkillSetData[] ReadSkillSetData(RawLevelFileDataReader rawFileData)
+    private static SkillSetData[] ReadSkillSetData(RawLevelFileDataReader reader)
     {
-        int numberOfSkillSetData = rawFileData.Read16BitUnsignedInteger();
+        int numberOfSkillSetData = reader.Read16BitUnsignedInteger();
 
         var result = Helpers.GetArrayForSize<SkillSetData>(numberOfSkillSetData);
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = ReadSkillSetDatum(rawFileData);
+            result[i] = ReadSkillSetDatum(reader);
         }
 
         return result;
     }
 
-    private static SkillSetData ReadSkillSetDatum(RawLevelFileDataReader rawFileData)
+    private static SkillSetData ReadSkillSetDatum(RawLevelFileDataReader reader)
     {
-        int skillId = rawFileData.Read8BitUnsignedInteger();
+        int skillId = reader.Read8BitUnsignedInteger();
         FileReadingException.ReaderAssert(LemmingSkillConstants.IsValidLemmingSkillId(skillId), "Invalid skill id");
 
-        int tribeId = rawFileData.Read8BitUnsignedInteger();
+        int tribeId = reader.Read8BitUnsignedInteger();
         tribeId--; // Need to offset by 1
         FileReadingException.ReaderAssert(tribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
 
-        int initialQuantity = rawFileData.Read8BitUnsignedInteger();
+        int initialQuantity = reader.Read8BitUnsignedInteger();
         FileReadingException.ReaderAssert(initialQuantity <= EngineConstants.InfiniteSkillCount, "Invalid skill count quantity");
 
         return new SkillSetData(skillId, tribeId, initialQuantity);
     }
 
-    private static ObjectiveCriterionData[] ReadObjectiveCriteria(RawLevelFileDataReader rawFileData)
+    private static ObjectiveCriterionData[] ReadObjectiveCriteria(RawLevelFileDataReader reader)
     {
-        int numberOfObjectiveCriteria = rawFileData.Read8BitUnsignedInteger();
+        int numberOfObjectiveCriteria = reader.Read8BitUnsignedInteger();
 
         var result = Helpers.GetArrayForSize<ObjectiveCriterionData>(numberOfObjectiveCriteria);
 
         for (var i = 0; i < result.Length; i++)
         {
-            var newObjectiveCriterion = ReadObjectiveCriterion(rawFileData);
+            var newObjectiveCriterion = ReadObjectiveCriterion(reader);
 
             for (var j = 0; j < i; j++)
             {
@@ -93,9 +93,9 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         return result;
     }
 
-    private static ObjectiveCriterionData ReadObjectiveCriterion(RawLevelFileDataReader rawFileData)
+    private static ObjectiveCriterionData ReadObjectiveCriterion(RawLevelFileDataReader reader)
     {
-        uint rawObjectiveCriterionId = rawFileData.Read8BitUnsignedInteger();
+        uint rawObjectiveCriterionId = reader.Read8BitUnsignedInteger();
         var objectiveCriterionType = (ObjectiveCriterionType)rawObjectiveCriterionId;
 
         return objectiveCriterionType switch
@@ -109,8 +109,8 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
         SaveLemmingsCriterionData CreateSaveLemmingsCriterion()
         {
-            int saveRequirement = rawFileData.Read16BitUnsignedInteger();
-            int tribeId = rawFileData.Read8BitUnsignedInteger();
+            int saveRequirement = reader.Read16BitUnsignedInteger();
+            int tribeId = reader.Read8BitUnsignedInteger();
             tribeId--; // Need to offset by 1
 
             FileReadingException.ReaderAssert(tribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
@@ -124,7 +124,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
         TimeLimitCriterionData CreateTimeLimitCriterion()
         {
-            int timeLimitInSeconds = rawFileData.Read16BitUnsignedInteger();
+            int timeLimitInSeconds = reader.Read16BitUnsignedInteger();
             FileReadingException.ReaderAssert(timeLimitInSeconds <= EngineConstants.MaxTimeLimitInSeconds, "Invalid time limit");
 
             return new TimeLimitCriterionData
@@ -134,15 +134,15 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         }
     }
 
-    private static ObjectiveModifierData[] ReadObjectiveModifiers(RawLevelFileDataReader rawFileData)
+    private static ObjectiveModifierData[] ReadObjectiveModifiers(RawLevelFileDataReader reader)
     {
-        int numberOfObjectiveModifiers = rawFileData.Read8BitUnsignedInteger();
+        int numberOfObjectiveModifiers = reader.Read8BitUnsignedInteger();
 
         var result = Helpers.GetArrayForSize<ObjectiveModifierData>(numberOfObjectiveModifiers);
 
         for (var i = 0; i < result.Length; i++)
         {
-            var newObjectiveModifier = ReadObjectiveModifier(rawFileData);
+            var newObjectiveModifier = ReadObjectiveModifier(reader);
 
             for (var j = 0; j < i; j++)
             {
@@ -157,9 +157,9 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         return result;
     }
 
-    private static ObjectiveModifierData ReadObjectiveModifier(RawLevelFileDataReader rawFileData)
+    private static ObjectiveModifierData ReadObjectiveModifier(RawLevelFileDataReader reader)
     {
-        uint rawObjectiveModifierId = rawFileData.Read8BitUnsignedInteger();
+        uint rawObjectiveModifierId = reader.Read8BitUnsignedInteger();
         var objectiveModifierType = (ObjectiveModifierType)rawObjectiveModifierId;
 
         return objectiveModifierType switch
@@ -172,14 +172,14 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
         LimitSpecificSkillAssignmentsModifierData CreateLimitSpecificSkillAssignmentsModifier()
         {
-            int skillId = rawFileData.Read8BitUnsignedInteger();
+            int skillId = reader.Read8BitUnsignedInteger();
             FileReadingException.ReaderAssert(LemmingSkillConstants.IsValidLemmingSkillId(skillId), "Invalid skill id");
 
-            int tribeId = rawFileData.Read8BitUnsignedInteger();
+            int tribeId = reader.Read8BitUnsignedInteger();
             tribeId--; // Need to offset by 1
             FileReadingException.ReaderAssert(tribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
 
-            int maxSkillAssignments = rawFileData.Read8BitUnsignedInteger();
+            int maxSkillAssignments = reader.Read8BitUnsignedInteger();
             FileReadingException.ReaderAssert(maxSkillAssignments <= EngineConstants.MaxFiniteSkillCount, "Invalid skill limit quantity");
 
             return new LimitSpecificSkillAssignmentsModifierData
@@ -192,7 +192,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
         LimitTotalSkillAssignmentsModifierData CreateLimitTotalSkillAssignmentsModifier()
         {
-            int maxTotalSkillAssignments = rawFileData.Read8BitUnsignedInteger();
+            int maxTotalSkillAssignments = reader.Read8BitUnsignedInteger();
             FileReadingException.ReaderAssert(maxTotalSkillAssignments <= EngineConstants.MaxFiniteSkillCount, "Invalid skill limit quantity");
 
             return new LimitTotalSkillAssignmentsModifierData
@@ -202,30 +202,30 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         }
     }
 
-    private TalismanData[] ReadTalismanData(RawLevelFileDataReader rawFileData)
+    private TalismanData[] ReadTalismanData(RawLevelFileDataReader reader)
     {
-        int numberOfTalismanData = rawFileData.Read8BitUnsignedInteger();
+        int numberOfTalismanData = reader.Read8BitUnsignedInteger();
 
         var result = Helpers.GetArrayForSize<TalismanData>(numberOfTalismanData);
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = ReadTalismanDatum(rawFileData);
+            result[i] = ReadTalismanDatum(reader);
         }
 
         return result;
     }
 
-    private TalismanData ReadTalismanDatum(RawLevelFileDataReader rawFileData)
+    private TalismanData ReadTalismanDatum(RawLevelFileDataReader reader)
     {
-        int talismanId = rawFileData.Read8BitUnsignedInteger();
-        int talismanNameId = rawFileData.Read16BitUnsignedInteger();
+        int talismanId = reader.Read8BitUnsignedInteger();
+        int talismanNameId = reader.Read16BitUnsignedInteger();
 
-        uint rawRankId = rawFileData.Read8BitUnsignedInteger();
+        uint rawRankId = reader.Read8BitUnsignedInteger();
         var rank = TalismanRankHelpers.GetEnumValue(rawRankId);
 
-        var overrideObjectiveCriteria = ReadObjectiveCriteria(rawFileData);
-        var overrideObjectiveModifiers = ReadObjectiveModifiers(rawFileData);
+        var overrideObjectiveCriteria = ReadObjectiveCriteria(reader);
+        var overrideObjectiveModifiers = ReadObjectiveModifiers(reader);
 
         return new TalismanData
         {

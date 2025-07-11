@@ -16,7 +16,7 @@ internal sealed class TribeDataSectionReader : LevelDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
+    public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
         FileReadingException.ReaderAssert(numberOfItemsInSection <= EngineConstants.MaxNumberOfTribes, "Too many tribes specified!");
 
@@ -24,17 +24,17 @@ internal sealed class TribeDataSectionReader : LevelDataSectionReader
 
         while (numberOfItemsInSection-- > 0)
         {
-            var tribeIdentifierData = ReadTribeIdentifierData(rawFileData);
+            var tribeIdentifierData = ReadTribeIdentifierData(reader);
 
             levelData.TribeIdentifiers.Add(tribeIdentifierData);
         }
     }
 
-    private TribeStyleIdentifier ReadTribeIdentifierData(RawLevelFileDataReader rawFileData)
+    private TribeStyleIdentifier ReadTribeIdentifierData(RawLevelFileDataReader reader)
     {
-        int styleId = rawFileData.Read16BitUnsignedInteger();
+        int styleId = reader.Read16BitUnsignedInteger();
         var styleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]);
-        int themeTribeId = rawFileData.Read8BitUnsignedInteger();
+        int themeTribeId = reader.Read8BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(themeTribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id!");
 

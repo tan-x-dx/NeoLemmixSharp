@@ -19,45 +19,45 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
+    public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
         levelData.AllTerrainData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newTerrainDatum = ReadNextTerrainData(rawFileData);
+            var newTerrainDatum = ReadNextTerrainData(reader);
             levelData.AllTerrainData.Add(newTerrainDatum);
         }
     }
 
-    private TerrainData ReadNextTerrainData(RawLevelFileDataReader rawFileData)
+    private TerrainData ReadNextTerrainData(RawLevelFileDataReader reader)
     {
-        int styleId = rawFileData.Read16BitUnsignedInteger();
-        int pieceId = rawFileData.Read16BitUnsignedInteger();
+        int styleId = reader.Read16BitUnsignedInteger();
+        int pieceId = reader.Read16BitUnsignedInteger();
 
-        int positionData = rawFileData.Read32BitSignedInteger();
+        int positionData = reader.Read32BitSignedInteger();
         var position = ReadWriteHelpers.DecodePoint(positionData);
 
-        int dhtByte = rawFileData.Read8BitUnsignedInteger();
+        int dhtByte = reader.Read8BitUnsignedInteger();
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
-        uint terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
+        uint terrainDataMiscByte = reader.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = ReadWriteHelpers.DecodeTerrainDataMiscByte(terrainDataMiscByte);
 
-        Color? tintColor = ReadTerrainDataTintColor(rawFileData);
+        Color? tintColor = ReadTerrainDataTintColor(reader);
         if (!decipheredTerrainDataMisc.HasTintSpecified)
         {
             tintColor = null;
         }
 
-        int? width = rawFileData.Read16BitUnsignedInteger();
+        int? width = reader.Read16BitUnsignedInteger();
         if (!decipheredTerrainDataMisc.HasWidthSpecified)
         {
             width = null;
         }
 
-        int? height = rawFileData.Read16BitUnsignedInteger();
+        int? height = reader.Read16BitUnsignedInteger();
         if (!decipheredTerrainDataMisc.HasHeightSpecified)
         {
             height = null;
@@ -83,9 +83,9 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         };
     }
 
-    private static Color ReadTerrainDataTintColor(RawLevelFileDataReader rawFileData)
+    private static Color ReadTerrainDataTintColor(RawLevelFileDataReader reader)
     {
-        var bytes = rawFileData.ReadBytes(3);
+        var bytes = reader.ReadBytes(3);
 
         return ReadWriteHelpers.ReadRgbBytes(bytes);
     }

@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.IO.Reading.Styles;
 internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReader>
 {
     private readonly StyleIdentifier _styleIdentifier;
-    private readonly RawStyleFileDataReader _rawFileData;
+    private readonly RawStyleFileDataReader _reader;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static DefaultStyleReader Create(StyleIdentifier styleIdentifier) => new(styleIdentifier);
@@ -21,7 +21,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
             throw new FileReadingException($"Could not locate style file for style: {style}");
 
         _styleIdentifier = style;
-        _rawFileData = GetRawStyleFileDataReader(styleFilePath);
+        _reader = GetRawStyleFileDataReader(styleFilePath);
     }
 
     private static bool TryLocateStyleFile(
@@ -57,7 +57,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
 
     public StyleData ReadStyle()
     {
-        var sectionReaders = VersionHelper.GetStyleDataSectionReadersForVersion(_rawFileData.FileFormatVersion);
+        var sectionReaders = VersionHelper.GetStyleDataSectionReadersForVersion(_reader.FileFormatVersion);
         var result = new StyleData(_styleIdentifier, FileFormatType.Default);
 
         foreach (var sectionReader in sectionReaders)
@@ -65,7 +65,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
             ReadSection(result, sectionReader);
         }
 
-        FileReadingException.ReaderAssert(!_rawFileData.MoreToRead, "Finished reading but extra bytes still in file!");
+        FileReadingException.ReaderAssert(!_reader.MoreToRead, "Finished reading but extra bytes still in file!");
 
         return result;
     }
@@ -74,7 +74,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
         StyleData result,
         StyleDataSectionReader sectionReader)
     {
-        if (!_rawFileData.TryGetSectionInterval(sectionReader.SectionIdentifier, out var interval))
+        if (!_reader.TryGetSectionInterval(sectionReader.SectionIdentifier, out var interval))
         {
             FileReadingException.ReaderAssert(
                 !sectionReader.IsNecessary,
@@ -82,25 +82,25 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
             return;
         }
 
-        _rawFileData.SetReaderPosition(interval.Start);
+        _reader.SetReaderPosition(interval.Start);
 
-        ushort sectionIdentifierBytes = _rawFileData.Read16BitUnsignedInteger();
+        ushort sectionIdentifierBytes = _reader.Read16BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(
             sectionIdentifierBytes == sectionReader.GetSectionIdentifier(),
             "Section Identifier mismatch!");
 
-        int numberOfItemsInSection = _rawFileData.Read16BitUnsignedInteger();
+        int numberOfItemsInSection = _reader.Read16BitUnsignedInteger();
 
-        sectionReader.ReadSection(_rawFileData, result, numberOfItemsInSection);
+        sectionReader.ReadSection(_reader, result, numberOfItemsInSection);
 
         FileReadingException.ReaderAssert(
-            interval.Start + interval.Length == _rawFileData.Position,
+            interval.Start + interval.Length == _reader.Position,
             "Byte reading mismatch!");
     }
 
     public void Dispose()
     {
-        _rawFileData?.Dispose();
+        _reader?.Dispose();
     }
 }

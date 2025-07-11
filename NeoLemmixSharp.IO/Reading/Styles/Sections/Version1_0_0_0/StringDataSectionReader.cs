@@ -14,8 +14,8 @@ internal sealed class StringDataSectionReader : StyleDataSectionReader
         _stringReader = new FileStringReader<RawStyleFileDataReader>(stringIdLookup);
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
+    public override void ReadSection(RawStyleFileDataReader reader, StyleData styleData, int numberOfItemsInSection)
     {
-        _stringReader.ReadSection(rawFileData, numberOfItemsInSection);
+        _stringReader.ReadSection(reader, numberOfItemsInSection);
     }
 }

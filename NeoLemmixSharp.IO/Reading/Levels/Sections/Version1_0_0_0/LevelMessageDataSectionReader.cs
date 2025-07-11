@@ -14,11 +14,11 @@ internal sealed class LevelMessageDataSectionReader : LevelDataSectionReader
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
+    public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
-        ReadTextLines(rawFileData, levelData.PreTextLines);
+        ReadTextLines(reader, levelData.PreTextLines);
 
-        ReadTextLines(rawFileData, levelData.PostTextLines);
+        ReadTextLines(reader, levelData.PostTextLines);
 
         AssertLevelTextDataCountsMakeSense(
             numberOfItemsInSection,
@@ -26,14 +26,14 @@ internal sealed class LevelMessageDataSectionReader : LevelDataSectionReader
             levelData.PostTextLines.Count);
     }
 
-    private void ReadTextLines(RawLevelFileDataReader rawFileData, List<string> collection)
+    private void ReadTextLines(RawLevelFileDataReader reader, List<string> collection)
     {
-        int numberOfTextItems = rawFileData.Read8BitUnsignedInteger();
+        int numberOfTextItems = reader.Read8BitUnsignedInteger();
         collection.Capacity = numberOfTextItems;
 
         while (numberOfTextItems-- > 0)
         {
-            int stringId = rawFileData.Read16BitUnsignedInteger();
+            int stringId = reader.Read16BitUnsignedInteger();
             collection.Add(_stringIdLookup[stringId]);
         }
     }
