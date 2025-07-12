@@ -4,7 +4,7 @@ using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetStateChanger : FunctionalGadget<GadgetStateChanger.StateChangerGadgetInput>
+public sealed class GadgetStateChanger : FunctionalGadget<GadgetStateChanger.StateChangerGadgetLinkInput>
 {
     private readonly HitBoxGadget _gadget;
 
@@ -25,7 +25,7 @@ public sealed class GadgetStateChanger : FunctionalGadget<GadgetStateChanger.Sta
         _gadget = gadget;
         _newState = newState;
 
-        RegisterInput(new StateChangerGadgetInput(inputName, this));
+        RegisterInput(new StateChangerGadgetLinkInput(inputName, this));
     }
 
     protected override void OnTick()
@@ -40,11 +40,11 @@ public sealed class GadgetStateChanger : FunctionalGadget<GadgetStateChanger.Sta
 
     protected override void OnChangeStates() { }
 
-    public sealed class StateChangerGadgetInput : GadgetInput
+    public sealed class StateChangerGadgetLinkInput : GadgetLinkInput
     {
         private readonly GadgetStateChanger _gadget;
 
-        public StateChangerGadgetInput(GadgetInputName inputName, GadgetStateChanger gadget)
+        public StateChangerGadgetLinkInput(GadgetInputName inputName, GadgetStateChanger gadget)
             : base(inputName)
         {
             _gadget = gadget;

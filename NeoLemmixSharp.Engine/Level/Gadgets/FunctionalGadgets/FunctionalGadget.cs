@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public abstract class FunctionalGadget<TInput> : GadgetBase, IFunctionalGadget
-    where TInput : GadgetInput
+    where TInput : GadgetLinkInput
 {
     private readonly TInput[] _inputs;
     private int _gadgetIndex;
@@ -25,7 +25,7 @@ public abstract class FunctionalGadget<TInput> : GadgetBase, IFunctionalGadget
         _inputs[_gadgetIndex++] = gadgetInput;
     }
 
-    public bool TryGetInputWithName(GadgetInputName inputName, [MaybeNullWhen(false)] out GadgetInput gadgetInput)
+    public bool TryGetInputWithName(GadgetInputName inputName, [MaybeNullWhen(false)] out GadgetLinkInput gadgetInput)
     {
         for (var i = 0; i < _gadgetIndex; i++)
         {

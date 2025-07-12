@@ -4,7 +4,7 @@ using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetMover : FunctionalGadget<GadgetMover.GadgetMoverInput>
+public sealed class GadgetMover : FunctionalGadget<GadgetMover.GadgetMoverLinkInput>
 {
     private readonly IMoveableGadget[] _gadgets;
 
@@ -31,7 +31,7 @@ public sealed class GadgetMover : FunctionalGadget<GadgetMover.GadgetMoverInput>
         _dx = dx;
         _dy = dy;
 
-        RegisterInput(new GadgetMoverInput(inputName, this));
+        RegisterInput(new GadgetMoverLinkInput(inputName, this));
     }
 
     protected override void OnTick()
@@ -55,11 +55,11 @@ public sealed class GadgetMover : FunctionalGadget<GadgetMover.GadgetMoverInput>
 
     protected override void OnChangeStates() { }
 
-    public sealed class GadgetMoverInput : GadgetInput
+    public sealed class GadgetMoverLinkInput : GadgetLinkInput
     {
         private readonly GadgetMover _gadget;
 
-        public GadgetMoverInput(GadgetInputName inputName, GadgetMover gadget)
+        public GadgetMoverLinkInput(GadgetInputName inputName, GadgetMover gadget)
             : base(inputName)
         {
             _gadget = gadget;

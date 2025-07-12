@@ -4,7 +4,7 @@ using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
-public sealed class GadgetResizer : FunctionalGadget<GadgetResizer.GadgetResizerInput>
+public sealed class GadgetResizer : FunctionalGadget<GadgetResizer.GadgetResizerLinkInput>
 {
     private readonly HitBoxGadget[] _gadgets;
 
@@ -31,7 +31,7 @@ public sealed class GadgetResizer : FunctionalGadget<GadgetResizer.GadgetResizer
         _dw = dw;
         _dh = dh;
 
-        RegisterInput(new GadgetResizerInput(inputName, this));
+        RegisterInput(new GadgetResizerLinkInput(inputName, this));
     }
 
     protected override void OnTick()
@@ -55,11 +55,11 @@ public sealed class GadgetResizer : FunctionalGadget<GadgetResizer.GadgetResizer
 
     protected override void OnChangeStates() { }
 
-    public sealed class GadgetResizerInput : GadgetInput
+    public sealed class GadgetResizerLinkInput : GadgetLinkInput
     {
         private readonly GadgetResizer _gadget;
 
-        public GadgetResizerInput(GadgetInputName inputName, GadgetResizer gadget)
+        public GadgetResizerLinkInput(GadgetInputName inputName, GadgetResizer gadget)
             : base(inputName)
         {
             _gadget = gadget;

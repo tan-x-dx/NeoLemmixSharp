@@ -4,11 +4,11 @@ using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
-public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGateGadget.AdditiveGateGadgetInput>,
-    IPerfectHasher<AdditiveLogicGateGadget.AdditiveGateGadgetInput>,
+public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGateGadget.AdditiveGateGadgetLinkInput>,
+    IPerfectHasher<AdditiveLogicGateGadget.AdditiveGateGadgetLinkInput>,
     IBitBufferCreator<ArrayBitBuffer>
 {
-    private readonly BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput> _set;
+    private readonly BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetLinkInput> _set;
     private readonly int _numberOfInputs;
 
     protected AdditiveLogicGateGadget(
@@ -19,11 +19,11 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
         : base(gadgetName, states, initialStateIndex, inputNames.Length)
     {
         _numberOfInputs = inputNames.Length;
-        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetInput>(this);
+        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetLinkInput>(this);
 
         for (var i = 0; i < inputNames.Length; i++)
         {
-            var input = new AdditiveGateGadgetInput(i, inputNames[i], this);
+            var input = new AdditiveGateGadgetLinkInput(i, inputNames[i], this);
             RegisterInput(input);
         }
     }
@@ -31,7 +31,7 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
     protected sealed override void OnTick() { }
     protected sealed override void OnChangeStates() { }
 
-    private void ReactToSignal(AdditiveGateGadgetInput input, bool signal)
+    private void ReactToSignal(AdditiveGateGadgetLinkInput input, bool signal)
     {
         var hasChanged = signal
             ? _set.Add(input)
@@ -46,12 +46,12 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
 
     protected abstract bool EvaluateInputCount(int numberOfTrueInputs, int numberOfInputs);
 
-    public sealed class AdditiveGateGadgetInput : GadgetInput
+    public sealed class AdditiveGateGadgetLinkInput : GadgetLinkInput
     {
         public readonly int Id;
         private readonly AdditiveLogicGateGadget _gadget;
 
-        public AdditiveGateGadgetInput(
+        public AdditiveGateGadgetLinkInput(
             int id,
             GadgetInputName inputName,
             AdditiveLogicGateGadget gadget)
@@ -64,9 +64,9 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
         public override void ReactToSignal(bool signal) => _gadget.ReactToSignal(this, signal);
     }
 
-    int IPerfectHasher<AdditiveGateGadgetInput>.NumberOfItems => _numberOfInputs;
-    int IPerfectHasher<AdditiveGateGadgetInput>.Hash(AdditiveGateGadgetInput item) => item.Id;
-    AdditiveGateGadgetInput IPerfectHasher<AdditiveGateGadgetInput>.UnHash(int index) => throw new NotSupportedException("Why are you doing this? Stop it.");
+    int IPerfectHasher<AdditiveGateGadgetLinkInput>.NumberOfItems => _numberOfInputs;
+    int IPerfectHasher<AdditiveGateGadgetLinkInput>.Hash(AdditiveGateGadgetLinkInput item) => item.Id;
+    AdditiveGateGadgetLinkInput IPerfectHasher<AdditiveGateGadgetLinkInput>.UnHash(int index) => throw new NotSupportedException("Why are you doing this? Stop it.");
     void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_numberOfInputs);
 }
 

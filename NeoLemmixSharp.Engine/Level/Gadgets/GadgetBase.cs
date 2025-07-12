@@ -47,7 +47,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
         _previousState = _currentState;
     }
 
-    public GadgetOutput GetGadgetOutputForState(int stateIndex)
+    public GadgetLinkOutput GetGadgetOutputForState(int stateIndex)
     {
         return _states[stateIndex].StateSelectedOutput;
     }

@@ -3,7 +3,7 @@ using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
 
-public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveLogicGateGadget.SubtractiveLogicGateGadgetInput>
+public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveLogicGateGadget.SubtractiveLogicGateGadgetLinkInput>
 {
     private bool _shouldTick;
 
@@ -31,13 +31,13 @@ public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveL
 
     protected abstract bool EvaluateInputs();
 
-    public sealed class SubtractiveLogicGateGadgetInput : GadgetInput
+    public sealed class SubtractiveLogicGateGadgetLinkInput : GadgetLinkInput
     {
         private readonly SubtractiveLogicGateGadget _gadget;
 
         public bool Signal { get; private set; }
 
-        public SubtractiveLogicGateGadgetInput(GadgetInputName inputName, SubtractiveLogicGateGadget gadget)
+        public SubtractiveLogicGateGadgetLinkInput(GadgetInputName inputName, SubtractiveLogicGateGadget gadget)
             : base(inputName)
         {
             _gadget = gadget;
@@ -53,7 +53,7 @@ public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveL
 
 public sealed class NotGateGadget : SubtractiveLogicGateGadget
 {
-    private readonly SubtractiveLogicGateGadgetInput _input;
+    private readonly SubtractiveLogicGateGadgetLinkInput _input;
 
     public NotGateGadget(
         string gadgetName,
@@ -62,7 +62,7 @@ public sealed class NotGateGadget : SubtractiveLogicGateGadget
         GadgetInputName inputName)
         : base(gadgetName, states, initialStateIndex, 1)
     {
-        _input = new SubtractiveLogicGateGadgetInput(inputName, this);
+        _input = new SubtractiveLogicGateGadgetLinkInput(inputName, this);
         RegisterInput(_input);
     }
 
@@ -74,8 +74,8 @@ public sealed class NotGateGadget : SubtractiveLogicGateGadget
 
 public sealed class XorGateGadget : SubtractiveLogicGateGadget
 {
-    private readonly SubtractiveLogicGateGadgetInput _input1;
-    private readonly SubtractiveLogicGateGadgetInput _input2;
+    private readonly SubtractiveLogicGateGadgetLinkInput _input1;
+    private readonly SubtractiveLogicGateGadgetLinkInput _input2;
 
     public XorGateGadget(
         string gadgetName,
@@ -85,8 +85,8 @@ public sealed class XorGateGadget : SubtractiveLogicGateGadget
         GadgetInputName input2Name)
         : base(gadgetName, states, initialStateIndex, 2)
     {
-        _input1 = new SubtractiveLogicGateGadgetInput(input1Name, this);
-        _input2 = new SubtractiveLogicGateGadgetInput(input2Name, this);
+        _input1 = new SubtractiveLogicGateGadgetLinkInput(input1Name, this);
+        _input2 = new SubtractiveLogicGateGadgetLinkInput(input2Name, this);
         RegisterInput(_input1);
         RegisterInput(_input2);
     }

@@ -13,7 +13,7 @@ public sealed class GadgetState
 {
     private readonly GadgetStateName _stateName;
 
-    public GadgetOutput StateSelectedOutput { get; } = new();
+    public GadgetLinkOutput StateSelectedOutput { get; } = new();
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
     private readonly OrientationToHitBoxRegionLookup? _hitBoxLookup;
 

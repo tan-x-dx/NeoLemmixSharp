@@ -1,11 +1,11 @@
 ﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 
-public sealed class GadgetOutput
+public sealed class GadgetLinkOutput
 {
-    private readonly List<GadgetInput> _inputs = [];
+    private readonly List<GadgetLinkInput> _inputs = [];
     private bool _currentSignal;
 
-    public void RegisterInput(GadgetInput input)
+    public void RegisterInput(GadgetLinkInput input)
     {
         _inputs.Add(input);
         input.OnRegistered();
