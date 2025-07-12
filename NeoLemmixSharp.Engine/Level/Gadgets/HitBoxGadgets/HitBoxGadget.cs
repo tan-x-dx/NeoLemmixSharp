@@ -82,8 +82,8 @@ public sealed class HitBoxGadget : GadgetBase,
         return trackingStatus switch
         {
             TrackingStatus.Absent => ReadOnlySpan<GadgetAction>.Empty,
-            TrackingStatus.JustAdded => activeFilter.OnLemmingEnterActions,
-            TrackingStatus.JustRemoved => activeFilter.OnLemmingExitActions,
+            TrackingStatus.Entered => activeFilter.OnLemmingEnterActions,
+            TrackingStatus.Exited => activeFilter.OnLemmingExitActions,
             TrackingStatus.StillPresent => activeFilter.OnLemmingPresentActions,
 
             _ => ReadOnlySpan<GadgetAction>.Empty

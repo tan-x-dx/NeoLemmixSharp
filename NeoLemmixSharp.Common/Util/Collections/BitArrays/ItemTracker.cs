@@ -67,7 +67,7 @@ public sealed class ItemTracker<TPerfectHasher, T>
 public enum TrackingStatus
 {
     Absent = 0,
-    JustAdded = 1,
-    JustRemoved = 2,
+    Entered = 1,
+    Exited = 2,
     StillPresent = 3
-}
+} 
