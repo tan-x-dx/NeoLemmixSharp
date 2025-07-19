@@ -9,7 +9,7 @@ public sealed class AdditionalTimeAction : GeneralBehaviour
         _additionalSeconds = additionalSeconds;
     }
 
-    public override void PerformBehaviour()
+    protected override void PerformInternalBehaviour()
     {
         LevelScreen.LevelTimer.AddAdditionalSeconds(_additionalSeconds);
     }

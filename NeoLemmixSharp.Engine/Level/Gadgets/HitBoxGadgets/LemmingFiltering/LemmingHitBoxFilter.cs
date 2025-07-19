@@ -1,12 +1,15 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.LemmingBehaviours;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GeneralBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.LemmingBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.Triggers;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 
-public sealed class LemmingHitBoxFilter
+public sealed class LemmingHitBoxFilter : GadgetTrigger
 {
     private readonly LemmingCriterion[] _criteria;
     private readonly LemmingBehaviour[] _onLemmingEnterActions;
@@ -21,12 +24,15 @@ public sealed class LemmingHitBoxFilter
     public ReadOnlySpan<LemmingBehaviour> OnLemmingExitActions => new(_onLemmingExitActions);
 
     public LemmingHitBoxFilter(
+        GadgetTriggerName gadgetTriggerName,
+        GeneralBehaviour[] gadgetBehaviours,
         LemmingSolidityType lemmingSolidityType,
         HitBoxBehaviour hitBoxBehaviour,
         LemmingCriterion[] criteria,
         LemmingBehaviour[] onLemmingEnterActions,
         LemmingBehaviour[] onLemmingPresentActions,
         LemmingBehaviour[] onLemmingExitActions)
+        : base(gadgetTriggerName, gadgetBehaviours)
     {
         LemmingSolidityType = lemmingSolidityType;
         HitBoxBehaviour = hitBoxBehaviour;
@@ -34,6 +40,30 @@ public sealed class LemmingHitBoxFilter
         _onLemmingEnterActions = onLemmingEnterActions;
         _onLemmingPresentActions = onLemmingPresentActions;
         _onLemmingExitActions = onLemmingExitActions;
+    }
+
+    public override void OnNewTick()
+    {
+        ResetGeneralBehaviours();
+        ResetLemmingBehaviours();
+    }
+
+    private void ResetLemmingBehaviours()
+    {
+        foreach (var behavior in _onLemmingEnterActions)
+        {
+            behavior.Reset();
+        }
+
+        foreach (var behavior in _onLemmingPresentActions)
+        {
+            behavior.Reset();
+        }
+
+        foreach (var behavior in _onLemmingExitActions)
+        {
+            behavior.Reset();
+        }
     }
 
     [Pure]

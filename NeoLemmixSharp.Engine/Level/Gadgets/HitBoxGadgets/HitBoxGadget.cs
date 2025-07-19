@@ -22,6 +22,9 @@ public sealed class HitBoxGadget : GadgetBase,
     private HitBoxGadgetState _currentState;
     private HitBoxGadgetState _previousState;
 
+    private int _currentStateIndex;
+    private int _nextStateIndex;
+
     // The below properties refer to the positions of the hitboxes, not the gadget itself
     public RectangularRegion CurrentBounds => CurrentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
 
@@ -38,31 +41,56 @@ public sealed class HitBoxGadget : GadgetBase,
         _lemmingTracker = lemmingTracker;
         _states = states;
 
+        _currentState = states[initialStateIndex];
+        _previousState = _currentState;
+        _currentStateIndex = initialStateIndex;
+        _nextStateIndex = initialStateIndex;
+
         ResizeType = resizeType;
+
+        foreach (var state in states)
+        {
+            state.SetParentGadget(this);
+        }
     }
 
     public override HitBoxGadgetState CurrentState => _currentState;
 
-    protected override void OnTick()
+    public override void Tick()
     {
         _lemmingTracker.Tick();
+
+        if (_currentStateIndex != _nextStateIndex)
+            ChangeStates();
+
+        CurrentState.Tick();
     }
 
-    protected override void OnChangeStates(int currentStateIndex)
+    private void ChangeStates()
     {
-        _previousState = _currentState;
+        _currentStateIndex = _nextStateIndex;
 
-        _currentState = _states[currentStateIndex];
+        _previousState = _currentState;
+        _currentState = _states[_currentStateIndex];
 
         _previousState.OnTransitionFrom();
         _currentState.OnTransitionTo();
+        _previousState = _currentState;
 
         // Changing states may change hitbox positions 
         // Force a position update to accommodate this
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
-    protected override GadgetState GetState(int stateIndex) => _states[stateIndex];
+    private void UpdatePreviousState()
+    {
+        _previousState = _currentState;
+    }
+
+    public override void SetNextState(int stateIndex)
+    {
+        _nextStateIndex = stateIndex;
+    }
 
     public bool ContainsPoint(Orientation orientation, Point levelPosition)
     {
@@ -87,6 +115,13 @@ public sealed class HitBoxGadget : GadgetBase,
         for (var i = 0; i < actionsToPerform.Length; i++)
         {
             actionsToPerform[i].PerformBehaviour(lemming);
+        }
+
+        var generalBehaviours = activeFilter.Behaviours;
+
+        foreach (var behaviour in generalBehaviours)
+        {
+            behaviour.PerformBehaviour();
         }
     }
 

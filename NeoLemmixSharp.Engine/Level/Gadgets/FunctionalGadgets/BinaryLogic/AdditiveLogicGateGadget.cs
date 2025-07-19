@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.Triggers;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
@@ -29,7 +28,7 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
         }
     }
 
-    protected sealed override void OnTick() { }
+    public sealed override void Tick() { }
 
     private void ReactToSignal(AdditiveGateGadgetLinkInput input, bool signal)
     {
@@ -40,17 +39,13 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
             return;
 
         var isActive = EvaluateInputCount(_set.Count, _numberOfInputs);
-        SetNextState(isActive ? 1 : 0);
-        ChangeStates();
+        //SetNextState(isActive ? 1 : 0);
+        // ChangeStates();
     }
 
     public sealed override GadgetState CurrentState => throw new NotImplementedException();
-    protected sealed override GadgetState GetState(int stateIndex)
-    {
-        throw new NotImplementedException();
-    }
 
-    protected sealed override void OnChangeStates(int currentStateIndex)
+    public sealed override void SetNextState(int stateIndex)
     {
         throw new NotImplementedException();
     }
@@ -66,10 +61,15 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
             int id,
             GadgetTriggerName inputName,
             AdditiveLogicGateGadget gadget)
-            : base(inputName)
+            : base(inputName, [])
         {
             Id = id;
             _gadget = gadget;
+        }
+
+        public override void OnNewTick()
+        {
+            ResetGeneralBehaviours();
         }
 
         public override void ReactToSignal(bool signal) => _gadget.ReactToSignal(this, signal);

@@ -8,15 +8,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
     private readonly string _gadgetName;
-
-    private GadgetState _currentState;
-    private GadgetState _previousState;
-
-    private int _currentStateIndex;
-    private int _nextStateIndex;
-
-    public abstract GadgetState CurrentState { get; }
-
     public required GadgetBounds CurrentGadgetBounds { get; init; }
 
     public required int Id { get; init; }
@@ -27,56 +18,17 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public Point Position => CurrentGadgetBounds.Position;
     public Size Size => CurrentGadgetBounds.Size;
 
+    public abstract GadgetState CurrentState { get; }
+
     public GadgetBase(string gadgetName)
     {
         _gadgetName = gadgetName;
     }
 
-    public void SetNextState(int stateIndex)
-    {
-        _nextStateIndex = stateIndex;
-    }
+    public abstract void Tick();
+    public abstract void SetNextState(int stateIndex);
 
-    public void Tick()
-    {
-        OnTick();
-
-        if (_currentStateIndex == _nextStateIndex)
-        {
-            CurrentState.Tick();
-        }
-        else
-        {
-            ChangeStates();
-        }
-    }
-
-    protected abstract void OnTick();
-
-    protected void ChangeStates()
-    {
-        _currentStateIndex = _nextStateIndex;
-
-        _previousState = _currentState;
-
-        _currentState = GetState(_currentStateIndex);
-
-        _previousState.OnTransitionFrom();
-        _currentState.OnTransitionTo();
-
-        OnChangeStates(_currentStateIndex);
-    }
-
-    protected abstract GadgetState GetState(int stateIndex);
-
-    protected abstract void OnChangeStates(int currentStateIndex);
-
-    protected void UpdatePreviousState()
-    {
-        _previousState = _currentState;
-    }
-
-    public bool Equals(GadgetBase? other) => Id == (other?.Id ?? -1);
+    public bool Equals(GadgetBase? other) => other is not null && Id == other.Id;
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBase other && Id == other.Id;
     public sealed override int GetHashCode() => Id;
 

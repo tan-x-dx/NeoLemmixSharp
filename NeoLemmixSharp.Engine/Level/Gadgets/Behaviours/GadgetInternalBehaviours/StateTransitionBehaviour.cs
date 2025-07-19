@@ -1,6 +1,8 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GadgetInternalBehaviours;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GeneralBehaviours;
 
-public sealed class StateTransitionBehaviour : GadgetInternalBehaviour
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GadgetInternalBehaviours;
+
+public sealed class StateTransitionBehaviour : GeneralBehaviour
 {
     private readonly int _gadgetId;
     private readonly int _stateIndex;
@@ -13,7 +15,7 @@ public sealed class StateTransitionBehaviour : GadgetInternalBehaviour
         _stateIndex = stateIndex;
     }
 
-    public override void PerformBehaviour()
+    protected override void PerformInternalBehaviour()
     {
         var gadget = LevelScreen.GadgetManager.AllItems[_gadgetId];
         gadget.SetNextState(_stateIndex);

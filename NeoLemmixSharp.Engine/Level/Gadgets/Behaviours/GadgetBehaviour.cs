@@ -11,8 +11,12 @@ public abstract class GadgetBehaviour
         _maxTriggerCountPerTick = maxTriggerCountPerUpdate;
     }
 
-    public void OnNewTick()
+    public void Reset()
     {
         _currentTickTriggerCount = 0;
     }
+
+    protected bool HasReachedMaxTriggerCount() => _currentTickTriggerCount >= _maxTriggerCountPerTick;
+
+    protected void RegisterTrigger() => _currentTickTriggerCount++;
 }

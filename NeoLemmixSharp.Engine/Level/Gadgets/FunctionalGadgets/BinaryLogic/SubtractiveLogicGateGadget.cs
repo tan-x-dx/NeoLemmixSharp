@@ -16,7 +16,7 @@ public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveL
     {
     }
 
-    protected sealed override void OnTick()
+    public sealed override void Tick()
     {
         if (!_shouldTick)
             return;
@@ -24,16 +24,12 @@ public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveL
         _shouldTick = false;
 
         var isActive = EvaluateInputs();
-        SetNextState(isActive ? 1 : 0);
+        //   SetNextState(isActive ? 1 : 0);
     }
 
     public sealed override GadgetState CurrentState => throw new NotImplementedException();
-    protected sealed override GadgetState GetState(int stateIndex)
-    {
-        throw new NotImplementedException();
-    }
 
-    protected sealed override void OnChangeStates(int currentStateIndex)
+    public sealed override void SetNextState(int stateIndex)
     {
         throw new NotImplementedException();
     }
@@ -47,9 +43,14 @@ public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveL
         public bool Signal { get; private set; }
 
         public SubtractiveLogicGateGadgetLinkInput(GadgetTriggerName inputName, SubtractiveLogicGateGadget gadget)
-            : base(inputName)
+            : base(inputName, [])
         {
             _gadget = gadget;
+        }
+
+        public override void OnNewTick()
+        {
+            ResetGeneralBehaviours();
         }
 
         public override void ReactToSignal(bool signal)

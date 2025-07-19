@@ -5,10 +5,10 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Triggers;
 
 public abstract class GlobalConditionTrigger : GadgetTrigger
 {
-    GeneralBehaviour[] _behaviours;
-
-    protected GlobalConditionTrigger(GadgetTriggerName triggerName)
-        : base(triggerName)
+    protected GlobalConditionTrigger(
+        GadgetTriggerName triggerName,
+        GeneralBehaviour[] generalBehaviours)
+        : base(triggerName, generalBehaviours)
     {
     }
 }

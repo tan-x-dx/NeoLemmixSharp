@@ -2,11 +2,10 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
+using NeoLemmixSharp.Engine.Level.Gadgets.Triggers;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
-using System.Diagnostics;
 using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
-
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -16,26 +15,18 @@ public sealed class HitBoxGadgetState : GadgetState
     private readonly GadgetStateName _stateName;
 
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
-    private readonly OrientationToHitBoxRegionLookup? _hitBoxLookup;
+    private readonly OrientationToHitBoxRegionLookup _hitBoxLookup;
 
     public AnimationController AnimationController { get; }
     public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
 
     public HitBoxGadgetState(
         GadgetStateName stateName,
-        AnimationController animationController)
-    {
-        _stateName = stateName;
-        _lemmingHitBoxFilters = [];
-        _hitBoxLookup = null;
-        AnimationController = animationController;
-    }
-
-    public HitBoxGadgetState(
-        GadgetStateName stateName,
+        GadgetTrigger[] gadgetTriggers,
         LemmingHitBoxFilter[] lemmingHitBoxFilters,
         OrientationToHitBoxRegionLookup hitBoxLookup,
         AnimationController animationController)
+        : base(gadgetTriggers)
     {
         _stateName = stateName;
         _lemmingHitBoxFilters = lemmingHitBoxFilters;
@@ -53,18 +44,14 @@ public sealed class HitBoxGadgetState : GadgetState
 
     public IHitBoxRegion HitBoxFor(Orientation orientation)
     {
-        Debug.Assert(_hitBoxLookup != null);
-
-        if (_hitBoxLookup!.TryGetValue(orientation, out var hitBoxRegion))
+        if (_hitBoxLookup.TryGetValue(orientation, out var hitBoxRegion))
             return hitBoxRegion;
         return EmptyHitBoxRegion.Instance;
     }
 
     public RectangularRegion GetMininmumBoundingBoxForAllHitBoxes(Point offset)
     {
-        Debug.Assert(_hitBoxLookup != null);
-
-        if (_hitBoxLookup!.Count == 0)
+        if (_hitBoxLookup.Count == 0)
             return new RectangularRegion(offset);
 
         var x = int.MaxValue;
@@ -92,21 +79,18 @@ public sealed class HitBoxGadgetState : GadgetState
         return new RectangularRegion(new Point(x, y), new Size(w, h));
     }
 
+    protected override void OnTick()
+    {
+        foreach (var lemmingHitBoxFilter in _lemmingHitBoxFilters)
+        {
+            lemmingHitBoxFilter.OnNewTick();
+        }
+    }
+
     public override void OnTransitionTo()
     {
         AnimationController.OnTransitionTo();
         //  StateSelectedOutput.SetSignal(true);
-    }
-
-    public override void Tick()
-    {
-        AnimationController.Tick();
-
-        var nextStateIndex = AnimationController.GetNextStateIndex();
-        if (nextStateIndex >= 0)
-        {
-            _parentGadget.SetNextState(nextStateIndex);
-        }
     }
 
     public override void OnTransitionFrom()
@@ -116,5 +100,5 @@ public sealed class HitBoxGadgetState : GadgetState
 
     public override string ToString() => _stateName.ToString();
 
-    public override GadgetRenderer Renderer { get; }
+    public override GadgetRenderer Renderer => throw new NotImplementedException();
 }

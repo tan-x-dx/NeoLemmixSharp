@@ -5,12 +5,12 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.Triggers;
 
 public abstract class GadgetLinkTrigger : GadgetTrigger
 {
-    protected GadgetLinkTrigger(GadgetTriggerName triggerName)
-        : base(triggerName)
+    protected GadgetLinkTrigger(
+        GadgetTriggerName triggerName,
+        GeneralBehaviour[] generalBehaviours)
+        : base(triggerName, generalBehaviours)
     {
     }
-
-    GeneralBehaviour[] _behaviours;
 
     public abstract void ReactToSignal(bool signal);
 }

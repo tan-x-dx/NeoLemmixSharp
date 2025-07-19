@@ -1,8 +1,9 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GeneralBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GadgetInternalBehaviours;
 
-public sealed class GadgetResizer : GadgetInternalBehaviour
+public sealed class GadgetResizer : GeneralBehaviour
 {
     private readonly HitBoxGadget _gadget;
 
@@ -24,7 +25,7 @@ public sealed class GadgetResizer : GadgetInternalBehaviour
         _dh = dh;
     }
 
-    public override void PerformBehaviour()
+    protected override void PerformInternalBehaviour()
     {
         if (_tickCount < _tickDelay)
         {

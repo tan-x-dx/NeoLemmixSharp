@@ -7,5 +7,14 @@ public abstract class GeneralBehaviour : GadgetBehaviour
     {
     }
 
-    public abstract void PerformBehaviour();
+    public void PerformBehaviour()
+    {
+        if (HasReachedMaxTriggerCount())
+            return;
+
+        PerformInternalBehaviour();
+        RegisterTrigger();
+    }
+
+    protected abstract void PerformInternalBehaviour();
 }

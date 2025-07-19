@@ -1,8 +1,9 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GeneralBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GadgetInternalBehaviours;
 
-public sealed class GadgetMoverBehaviour : GadgetInternalBehaviour
+public sealed class GadgetMoverBehaviour : GeneralBehaviour
 {
     private readonly IMoveableGadget _gadget;
     private readonly int _tickDelay;
@@ -23,7 +24,7 @@ public sealed class GadgetMoverBehaviour : GadgetInternalBehaviour
         _dy = dy;
     }
 
-    public override void PerformBehaviour()
+    protected override void PerformInternalBehaviour()
     {
         if (_tickCount < _tickDelay)
         {

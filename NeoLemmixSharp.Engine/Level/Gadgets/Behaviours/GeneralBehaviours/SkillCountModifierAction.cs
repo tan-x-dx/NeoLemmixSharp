@@ -15,7 +15,7 @@ public sealed class SkillCountModifierAction : GeneralBehaviour
         _tribeId = tribeId;
     }
 
-    public override void PerformBehaviour()
+    protected override void PerformInternalBehaviour()
     {
         var tribe = LevelScreen.TribeManager.GetTribeForId(_tribeId);
         LevelScreen.SkillSetManager.SetSkillCount(_skill, tribe, _value);

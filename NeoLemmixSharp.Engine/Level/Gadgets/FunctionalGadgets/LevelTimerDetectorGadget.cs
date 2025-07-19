@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-
-namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
+﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public sealed class LevelTimerDetectorGadget : GadgetBase
 {
@@ -12,19 +10,14 @@ public sealed class LevelTimerDetectorGadget : GadgetBase
     {
     }
 
-    protected override void OnTick()
+    public override void Tick()
     {
         throw new NotImplementedException();
     }
 
-    public override GadgetState CurrentState { get; }
+    public override GadgetState CurrentState => throw new NotImplementedException();
 
-    protected override GadgetState GetState(int stateIndex)
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override void OnChangeStates(int currentStateIndex)
+    public override void SetNextState(int stateIndex)
     {
         throw new NotImplementedException();
     }

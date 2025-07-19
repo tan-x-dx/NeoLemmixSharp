@@ -83,6 +83,7 @@ public static class HitBoxGadgetArchetypeBuilder
 
         return new HitBoxGadgetState(
             state.StateName,
+            [],
             hitBoxFilters,
             hitBoxLookup,
             animationController);
@@ -106,6 +107,8 @@ public static class HitBoxGadgetArchetypeBuilder
                 out var onLemmingExitActions);
 
             result[i] = new LemmingHitBoxFilter(
+                new GadgetTriggerName(),
+                [],
                 hitBoxData.SolidityType,
                 hitBoxData.HitBoxBehaviour,
                 HitBoxCriteriaBuilder.BuildLemmingCriteria(hitBoxData.HitBoxCriteria, gadgetData.OverrideHitBoxCriteriaData, tribeManager),

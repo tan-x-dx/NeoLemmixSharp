@@ -21,7 +21,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
         HatchSpawnData = hatchSpawnData;
     }
 
-    protected override void OnTick() { }
+    public override void Tick() { }
 
     public bool CanReleaseLemmings()
     {
@@ -40,14 +40,9 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(newPosition);
     }
 
-    public override GadgetState CurrentState { get; }
+    public override GadgetState CurrentState => throw new NotImplementedException();
 
-    protected override GadgetState GetState(int stateIndex)
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override void OnChangeStates(int currentStateIndex)
+    public override void SetNextState(int stateIndex)
     {
         throw new NotImplementedException();
     }
