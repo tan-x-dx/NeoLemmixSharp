@@ -258,6 +258,7 @@ public sealed class LevelRenderer :
 
         DisposableHelperMethods.DisposeOf(ref _backgroundRenderer);
         DisposableHelperMethods.DisposeOfAll<IViewportObjectRenderer>(CollectionsMarshal.AsSpan(_orderedSprites));
+        _spriteSpacialHashGrid.Dispose();
 
         _disposed = true;
     }

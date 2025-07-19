@@ -398,7 +398,8 @@ public sealed class LemmingManager :
     {
         new Span<Lemming>(_lemmings).Clear();
         new Span<HatchGroup>(_hatchGroups).Clear();
-        _lemmingPositionHelper.Clear();
+        _lemmingPositionHelper.Dispose();
+        _zombieSpacialHashGrid.Dispose();
         _lemmingsToZombify.Clear();
         _allBlockers.Clear();
     }

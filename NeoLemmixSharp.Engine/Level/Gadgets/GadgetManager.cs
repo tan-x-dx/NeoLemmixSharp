@@ -132,7 +132,7 @@ public sealed class GadgetManager :
     public void Dispose()
     {
         Array.Clear(_allGadgets);
-        _hitBoxGadgetSpacialHashGrid.Clear();
+        _hitBoxGadgetSpacialHashGrid.Dispose();
     }
 
     public void WriteToSnapshotData(out int snapshotData)
