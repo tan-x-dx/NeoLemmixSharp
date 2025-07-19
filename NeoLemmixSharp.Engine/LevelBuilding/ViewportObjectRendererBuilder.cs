@@ -31,7 +31,7 @@ public readonly ref struct ViewportObjectRendererBuilder
 
         foreach (var gadget in _gadgets)
         {
-            var renderer = gadget.Renderer;
+            var renderer = gadget.CurrentState.Renderer;
 
             if (renderer.RenderMode == GadgetRenderMode.BehindTerrain)
             {

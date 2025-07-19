@@ -37,7 +37,7 @@ internal sealed class GadgetLinkDataSectionReader : LevelDataSectionReader
             SourceGadgetIdentifier = new GadgetIdentifier(sourceGadgetIdentifier),
             SourceGadgetStateId = sourceGadgetStateId,
             TargetGadgetIdentifier = new GadgetIdentifier(targetGadgetIdentifier),
-            TargetGadgetInputName = new GadgetInputName(_stringIdLookup[targetGadgetInputNameId])
+            TargetGadgetInputName = new GadgetTriggerName(_stringIdLookup[targetGadgetInputNameId])
         };
     }
 }

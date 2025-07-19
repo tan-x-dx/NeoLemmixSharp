@@ -4,21 +4,21 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.LemmingBehaviours;
 
-public sealed class SetLemmingStateAction : GadgetAction
+public sealed class SetLemmingStateBehaviour : LemmingBehaviour
 {
     private readonly ILemmingState _lemmingStateChanger;
     private readonly SetStateType _type;
 
-    public SetLemmingStateAction(ILemmingState lemmingStateChanger, SetStateType type)
-        : base(GadgetActionType.ChangeLemmingState)
+    public SetLemmingStateBehaviour(ILemmingState lemmingStateChanger, SetStateType type)
+        : base(LemmingBehaviourType.ChangeLemmingState)
     {
         _lemmingStateChanger = lemmingStateChanger;
         _type = type;
     }
 
-    public override void PerformAction(Lemming lemming)
+    public override void PerformBehaviour(Lemming lemming)
     {
         var lemmingState = lemming.State;
 

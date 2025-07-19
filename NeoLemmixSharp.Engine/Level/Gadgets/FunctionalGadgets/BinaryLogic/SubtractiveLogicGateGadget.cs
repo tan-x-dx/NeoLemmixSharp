@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Triggers;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
@@ -27,17 +27,26 @@ public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveL
         SetNextState(isActive ? 1 : 0);
     }
 
-    protected sealed override void OnChangeStates() { }
+    public sealed override GadgetState CurrentState => throw new NotImplementedException();
+    protected sealed override GadgetState GetState(int stateIndex)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected sealed override void OnChangeStates(int currentStateIndex)
+    {
+        throw new NotImplementedException();
+    }
 
     protected abstract bool EvaluateInputs();
 
-    public sealed class SubtractiveLogicGateGadgetLinkInput : GadgetLinkInput
+    public sealed class SubtractiveLogicGateGadgetLinkInput : GadgetLinkTrigger
     {
         private readonly SubtractiveLogicGateGadget _gadget;
 
         public bool Signal { get; private set; }
 
-        public SubtractiveLogicGateGadgetLinkInput(GadgetInputName inputName, SubtractiveLogicGateGadget gadget)
+        public SubtractiveLogicGateGadgetLinkInput(GadgetTriggerName inputName, SubtractiveLogicGateGadget gadget)
             : base(inputName)
         {
             _gadget = gadget;
@@ -59,7 +68,7 @@ public sealed class NotGateGadget : SubtractiveLogicGateGadget
         string gadgetName,
         GadgetState[] states,
         int initialStateIndex,
-        GadgetInputName inputName)
+        GadgetTriggerName inputName)
         : base(gadgetName, states, initialStateIndex, 1)
     {
         _input = new SubtractiveLogicGateGadgetLinkInput(inputName, this);
@@ -81,8 +90,8 @@ public sealed class XorGateGadget : SubtractiveLogicGateGadget
         string gadgetName,
         GadgetState[] states,
         int initialStateIndex,
-        GadgetInputName input1Name,
-        GadgetInputName input2Name)
+        GadgetTriggerName input1Name,
+        GadgetTriggerName input2Name)
         : base(gadgetName, states, initialStateIndex, 2)
     {
         _input1 = new SubtractiveLogicGateGadgetLinkInput(input1Name, this);

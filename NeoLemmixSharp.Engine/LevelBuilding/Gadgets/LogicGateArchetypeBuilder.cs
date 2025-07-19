@@ -118,7 +118,7 @@ public static class LogicGateArchetypeBuilder
         };
     }
 
-    private static ReadOnlySpan<GadgetInputName> GetInputNames(
+    private static ReadOnlySpan<GadgetTriggerName> GetInputNames(
         GadgetData gadgetData,
         int minExpectedInputCount,
         int maxExpectedInputCount)
@@ -163,6 +163,6 @@ public static class LogicGateArchetypeBuilder
     {
         var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(gadgetArchetypeData, gadgetData, gadgetBounds, stateIndex, baseSpriteSize, tribeManager);
 
-        return new GadgetState(gadgetArchetypeData.AllGadgetStateData[stateIndex].StateName, animationController);
+        return null!;//new GadgetState(gadgetArchetypeData.AllGadgetStateData[stateIndex].StateName, animationController);
     }
 }

@@ -229,7 +229,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
     private static void SetUpGadgetConnections(LevelData levelData, GadgetManager gadgetManager)
     {
-        foreach (var gadgetLinkDatum in levelData.AllGadgetLinkData)
+       /* foreach (var gadgetLinkDatum in levelData.AllGadgetLinkData)
         {
             var sourceGadget = gadgetManager.AllItems[gadgetLinkDatum.SourceGadgetIdentifier.GadgetId];
             var targetGadget = gadgetManager.AllItems[gadgetLinkDatum.TargetGadgetIdentifier.GadgetId];
@@ -243,7 +243,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
                 throw new InvalidOperationException("Could not locate target gadget input!");
 
             sourceGadgetOutput.RegisterInput(targetGadgetInput);
-        }
+        }*/
     }
 
     int IComparer<IViewportObjectRenderer>.Compare(IViewportObjectRenderer? x, IViewportObjectRenderer? y)

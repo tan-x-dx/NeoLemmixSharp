@@ -1,5 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GadgetInternalBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GeneralBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.LemmingBehaviours;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -13,18 +15,18 @@ public static class GadgetActionBuilder
 {
     public static void BuildGadgetActions(
         HitBoxData hitBoxData,
-        out GadgetAction[] onLemmingEnterActions,
-        out GadgetAction[] onLemmingPresentActions,
-        out GadgetAction[] onLemmingExitActions)
+        out LemmingBehaviour[] onLemmingEnterActions,
+        out LemmingBehaviour[] onLemmingPresentActions,
+        out LemmingBehaviour[] onLemmingExitActions)
     {
         onLemmingEnterActions = BuildGadgetActions(hitBoxData.OnLemmingEnterActions);
         onLemmingPresentActions = BuildGadgetActions(hitBoxData.OnLemmingPresentActions);
         onLemmingExitActions = BuildGadgetActions(hitBoxData.OnLemmingExitActions);
     }
 
-    private static GadgetAction[] BuildGadgetActions(GadgetActionData[] gadgetActions)
+    private static LemmingBehaviour[] BuildGadgetActions(GadgetActionData[] gadgetActions)
     {
-        var result = Helpers.GetArrayForSize<GadgetAction>(gadgetActions.Length);
+        var result = Helpers.GetArrayForSize<LemmingBehaviour>(gadgetActions.Length);
 
         for (int i = 0; i < result.Length; i++)
         {
@@ -35,41 +37,52 @@ public static class GadgetActionBuilder
         return result;
     }
 
-    private static GadgetAction CreateGadgetAction(GadgetActionType gadgetActionType, int miscData) => gadgetActionType switch
+    private static LemmingBehaviour CreateGadgetAction(LemmingBehaviourType gadgetActionType, int miscData) => gadgetActionType switch
     {
-        GadgetActionType.ChangeLemmingState => CreateSetLemmingStateAction(miscData),
-        GadgetActionType.ChangeLemmingAction => CreateSetLemmingActionAction(miscData),
-        GadgetActionType.KillLemming => CreateKillLemmingAction(miscData),
-        GadgetActionType.ChangeSkillCount => CreateSkillCountModifierAction(miscData),
-        GadgetActionType.ForceFacingDirection => CreateForceFacingDirectionAction(miscData),
-        GadgetActionType.LemmingMover => CreateLemmingMoverAction(miscData),
-        GadgetActionType.AddLevelTime => CreateAddLevelTimeAction(miscData),
-        GadgetActionType.SetGadgetState => SetGadgetStateAction(miscData),
+        LemmingBehaviourType.ChangeLemmingState => CreateSetLemmingStateAction(miscData),
+        LemmingBehaviourType.ChangeLemmingAction => CreateSetLemmingActionAction(miscData),
+        LemmingBehaviourType.KillLemming => CreateKillLemmingAction(miscData),
+        LemmingBehaviourType.ForceFacingDirection => CreateForceFacingDirectionAction(miscData),
+        LemmingBehaviourType.LemmingMover => CreateLemmingMoverAction(miscData),
+        //LemmingBehaviourType.ChangeSkillCount => CreateSkillCountModifierAction(miscData),
+        //GadgetActionType.AddLevelTime => CreateAddLevelTimeAction(miscData),
+        //GadgetActionType.SetGadgetState => SetGadgetStateAction(miscData),
 
-        _ => Helpers.ThrowUnknownEnumValueException<GadgetActionType, GadgetAction>(gadgetActionType)
+        _ => Helpers.ThrowUnknownEnumValueException<LemmingBehaviourType, LemmingBehaviour>(gadgetActionType)
     };
 
-    private static SetLemmingStateAction CreateSetLemmingStateAction(int miscData)
+    private static SetLemmingStateBehaviour CreateSetLemmingStateAction(int miscData)
     {
         var stateChangerId = miscData & 0xffff;
         var stateChanger = new LemmingStateChangerHasher().UnHash(stateChangerId);
 
         var rawSetStateType = (uint)(miscData >>> 16);
-        var setStateType = SetLemmingStateAction.GetEnumValue(rawSetStateType);
+        var setStateType = SetLemmingStateBehaviour.GetEnumValue(rawSetStateType);
 
-        return new SetLemmingStateAction(stateChanger, setStateType);
+        return new SetLemmingStateBehaviour(stateChanger, setStateType);
     }
 
-    private static SetLemmingActionAction CreateSetLemmingActionAction(int miscData)
+    private static SetLemmingActionBehaviour CreateSetLemmingActionAction(int miscData)
     {
         var lemmingAction = new LemmingAction.LemmingActionHasher().UnHash(miscData);
-        return new SetLemmingActionAction(lemmingAction);
+        return new SetLemmingActionBehaviour(lemmingAction);
     }
 
-    private static KillLemmingAction CreateKillLemmingAction(int miscData)
+    private static KillLemmingBehaviour CreateKillLemmingAction(int miscData)
     {
         var lemmingRemovalReason = LemmingRemovalReasonHelpers.GetEnumValue((uint)miscData);
-        return new KillLemmingAction(lemmingRemovalReason);
+        return new KillLemmingBehaviour(lemmingRemovalReason);
+    }
+
+    private static ForceFacingDirectionBehaviour CreateForceFacingDirectionAction(int miscData)
+    {
+        return ForceFacingDirectionBehaviour.ForFacingDirection(miscData);
+    }
+
+    private static LemmingMoverBehaviour CreateLemmingMoverAction(int miscData)
+    {
+        var delta = ReadWriteHelpers.DecodePoint(miscData);
+        return new LemmingMoverBehaviour(delta);
     }
 
     private static SkillCountModifierAction CreateSkillCountModifierAction(int miscData)
@@ -90,27 +103,16 @@ public static class GadgetActionBuilder
         return new SkillCountModifierAction(skill, value, tribeId);
     }
 
-    private static ForceFacingDirectionAction CreateForceFacingDirectionAction(int miscData)
-    {
-        return ForceFacingDirectionAction.ForFacingDirection(miscData);
-    }
-
-    private static LemmingMoverAction CreateLemmingMoverAction(int miscData)
-    {
-        var delta = ReadWriteHelpers.DecodePoint(miscData);
-        return new LemmingMoverAction(delta);
-    }
-
     private static AdditionalTimeAction CreateAddLevelTimeAction(int miscData)
     {
         return new AdditionalTimeAction(miscData);
     }
 
-    private static StateTransitionAction SetGadgetStateAction(int miscData)
+    private static StateTransitionBehaviour SetGadgetStateAction(int miscData)
     {
         var gadgetId = miscData & 0xffff;
         var stateIndex = miscData >>> 16;
 
-        return new StateTransitionAction(gadgetId, stateIndex);
+        return new StateTransitionBehaviour(gadgetId, stateIndex);
     }
 }

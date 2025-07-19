@@ -1,11 +1,11 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Triggers;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public abstract class FunctionalGadget<TInput> : GadgetBase, IFunctionalGadget
-    where TInput : GadgetLinkInput
+    where TInput : GadgetLinkTrigger
 {
     private readonly TInput[] _inputs;
     private int _gadgetIndex;
@@ -15,7 +15,7 @@ public abstract class FunctionalGadget<TInput> : GadgetBase, IFunctionalGadget
         GadgetState[] states,
         int initialStateIndex,
         int expectedNumberOfInputs)
-        : base(gadgetName, states, initialStateIndex)
+        : base(gadgetName)
     {
         _inputs = new TInput[expectedNumberOfInputs];
     }
@@ -25,12 +25,12 @@ public abstract class FunctionalGadget<TInput> : GadgetBase, IFunctionalGadget
         _inputs[_gadgetIndex++] = gadgetInput;
     }
 
-    public bool TryGetInputWithName(GadgetInputName inputName, [MaybeNullWhen(false)] out GadgetLinkInput gadgetInput)
+    public bool TryGetInputWithName(GadgetTriggerName inputName, [MaybeNullWhen(false)] out GadgetLinkTrigger gadgetInput)
     {
         for (var i = 0; i < _gadgetIndex; i++)
         {
             var input = _inputs[i];
-            if (string.Equals(input.InputName, inputName))
+            if (input.TriggerName.Equals(inputName))
             {
                 gadgetInput = input;
                 return true;

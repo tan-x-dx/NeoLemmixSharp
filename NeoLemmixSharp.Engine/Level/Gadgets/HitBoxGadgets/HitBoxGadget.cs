@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.LemmingBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -17,6 +17,11 @@ public sealed class HitBoxGadget : GadgetBase,
 #pragma warning restore CS0660, CS0661, CA1067
 {
     private readonly LemmingTracker _lemmingTracker;
+    private readonly HitBoxGadgetState[] _states;
+
+    private HitBoxGadgetState _currentState;
+    private HitBoxGadgetState _previousState;
+
     // The below properties refer to the positions of the hitboxes, not the gadget itself
     public RectangularRegion CurrentBounds => CurrentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
 
@@ -24,28 +29,40 @@ public sealed class HitBoxGadget : GadgetBase,
 
     public HitBoxGadget(
         string gadgetName,
-        GadgetState[] states,
+        HitBoxGadgetState[] states,
         int initialStateIndex,
         ResizeType resizeType,
         LemmingTracker lemmingTracker)
-        : base(gadgetName, states, initialStateIndex)
+        : base(gadgetName)
     {
         _lemmingTracker = lemmingTracker;
+        _states = states;
 
         ResizeType = resizeType;
     }
+
+    public override HitBoxGadgetState CurrentState => _currentState;
 
     protected override void OnTick()
     {
         _lemmingTracker.Tick();
     }
 
-    protected override void OnChangeStates()
+    protected override void OnChangeStates(int currentStateIndex)
     {
+        _previousState = _currentState;
+
+        _currentState = _states[currentStateIndex];
+
+        _previousState.OnTransitionFrom();
+        _currentState.OnTransitionTo();
+
         // Changing states may change hitbox positions 
         // Force a position update to accommodate this
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
+
+    protected override GadgetState GetState(int stateIndex) => _states[stateIndex];
 
     public bool ContainsPoint(Orientation orientation, Point levelPosition)
     {
@@ -69,11 +86,11 @@ public sealed class HitBoxGadget : GadgetBase,
 
         for (var i = 0; i < actionsToPerform.Length; i++)
         {
-            actionsToPerform[i].PerformAction(lemming);
+            actionsToPerform[i].PerformBehaviour(lemming);
         }
     }
 
-    private ReadOnlySpan<GadgetAction> GetActionsToPerformOnLemming(
+    private ReadOnlySpan<LemmingBehaviour> GetActionsToPerformOnLemming(
         LemmingHitBoxFilter activeFilter,
         Lemming lemming)
     {
@@ -81,12 +98,12 @@ public sealed class HitBoxGadget : GadgetBase,
 
         return trackingStatus switch
         {
-            TrackingStatus.Absent => ReadOnlySpan<GadgetAction>.Empty,
+            TrackingStatus.Absent => ReadOnlySpan<LemmingBehaviour>.Empty,
             TrackingStatus.Entered => activeFilter.OnLemmingEnterActions,
             TrackingStatus.Exited => activeFilter.OnLemmingExitActions,
             TrackingStatus.StillPresent => activeFilter.OnLemmingPresentActions,
 
-            _ => ReadOnlySpan<GadgetAction>.Empty
+            _ => ReadOnlySpan<LemmingBehaviour>.Empty
         };
     }
 

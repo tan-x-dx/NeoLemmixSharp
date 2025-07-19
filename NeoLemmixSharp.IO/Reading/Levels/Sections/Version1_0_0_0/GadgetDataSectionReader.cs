@@ -86,17 +86,17 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         return result;
     }
 
-    private GadgetInputName[] ReadOverrideInputNames(RawLevelFileDataReader reader)
+    private GadgetTriggerName[] ReadOverrideInputNames(RawLevelFileDataReader reader)
     {
         int numberOfInputNames = reader.Read8BitUnsignedInteger();
 
-        var result = Helpers.GetArrayForSize<GadgetInputName>(numberOfInputNames);
+        var result = Helpers.GetArrayForSize<GadgetTriggerName>(numberOfInputNames);
 
         for (var i = 0; i < result.Length; i++)
         {
             int inputNameStringId = reader.Read16BitUnsignedInteger();
             var inputName = _stringIdLookup[inputNameStringId];
-            result[i] = new GadgetInputName(inputName);
+            result[i] = new GadgetTriggerName(inputName);
         }
 
         return result;

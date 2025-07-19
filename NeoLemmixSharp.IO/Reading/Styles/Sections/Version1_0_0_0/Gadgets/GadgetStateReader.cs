@@ -106,7 +106,7 @@ internal readonly ref struct GadgetStateReader
     private GadgetActionData ReadGadgetActionDatum()
     {
         uint rawGadgetActionType = _reader.Read8BitUnsignedInteger();
-        var gadgetActionType = GadgetActionTypeHelpers.GetEnumValue(rawGadgetActionType);
+        var gadgetActionType = LemmingBehaviourTypeHelpers.GetEnumValue(rawGadgetActionType);
         int miscData = _reader.Read32BitSignedInteger();
 
         return new GadgetActionData(gadgetActionType, miscData);

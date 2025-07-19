@@ -15,14 +15,13 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
         int initialStateIndex,
         HatchSpawnData hatchSpawnData,
         Point spawnPointOffset)
-        : base(gadgetName, states, initialStateIndex)
+        : base(gadgetName)
     {
         SpawnPointOffset = spawnPointOffset;
         HatchSpawnData = hatchSpawnData;
     }
 
     protected override void OnTick() { }
-    protected override void OnChangeStates() { }
 
     public bool CanReleaseLemmings()
     {
@@ -39,5 +38,17 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
     {
         var newPosition = new Point(x, y);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(newPosition);
+    }
+
+    public override GadgetState CurrentState { get; }
+
+    protected override GadgetState GetState(int stateIndex)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override void OnChangeStates(int currentStateIndex)
+    {
+        throw new NotImplementedException();
     }
 }

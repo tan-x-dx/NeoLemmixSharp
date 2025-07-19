@@ -18,7 +18,7 @@ public sealed class GadgetManager :
     IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly GadgetSpacialHashGrid _gadgetPositionHelper;
+    private readonly HitBoxGadgetSpacialHashGrid _hitBoxGadgetSpacialHashGrid;
     private readonly GadgetSet _fastForwardGadgets;
     private readonly uint[] _bitBuffer;
 
@@ -42,7 +42,7 @@ public sealed class GadgetManager :
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_allGadgets.Length);
         _bitBuffer = new uint[bitBufferLength * ExpectedNumberOfGadgetBitSets];
 
-        _gadgetPositionHelper = new GadgetSpacialHashGrid(
+        _hitBoxGadgetSpacialHashGrid = new HitBoxGadgetSpacialHashGrid(
             this,
             EngineConstants.GadgetPositionChunkSize,
             horizontalBoundaryBehaviour,
@@ -51,7 +51,7 @@ public sealed class GadgetManager :
         _fastForwardGadgets = new GadgetSet(this);
     }
 
-    public int ScratchSpaceSize => _gadgetPositionHelper.ScratchSpaceSize;
+    public int ScratchSpaceSize => _hitBoxGadgetSpacialHashGrid.ScratchSpaceSize;
 
     public void Initialise()
     {
@@ -64,7 +64,7 @@ public sealed class GadgetManager :
 
             if (gadget is HitBoxGadget hitBoxGadget)
             {
-                _gadgetPositionHelper.AddItem(hitBoxGadget);
+                _hitBoxGadgetSpacialHashGrid.AddItem(hitBoxGadget);
             }
         }
     }
@@ -88,13 +88,12 @@ public sealed class GadgetManager :
         }
     }
 
-
     public void GetAllGadgetsNearPosition(
         Span<uint> scratchSpaceSpan,
         Point levelPosition,
         out GadgetEnumerable result)
     {
-        _gadgetPositionHelper.GetAllItemsNearPosition(
+        _hitBoxGadgetSpacialHashGrid.GetAllItemsNearPosition(
             scratchSpaceSpan,
             levelPosition,
             out result);
@@ -105,7 +104,7 @@ public sealed class GadgetManager :
         RectangularRegion levelRegion,
         out GadgetEnumerable result)
     {
-        _gadgetPositionHelper.GetAllItemsNearRegion(
+        _hitBoxGadgetSpacialHashGrid.GetAllItemsNearRegion(
             scratchSpace,
             levelRegion,
             out result);
@@ -113,7 +112,7 @@ public sealed class GadgetManager :
 
     public void UpdateGadgetPosition(HitBoxGadget gadget)
     {
-        _gadgetPositionHelper.UpdateItemPosition(gadget);
+        _hitBoxGadgetSpacialHashGrid.UpdateItemPosition(gadget);
     }
 
     public int NumberOfItems => _allGadgets.Length;
@@ -133,7 +132,7 @@ public sealed class GadgetManager :
     public void Dispose()
     {
         Array.Clear(_allGadgets);
-        _gadgetPositionHelper.Clear();
+        _hitBoxGadgetSpacialHashGrid.Clear();
     }
 
     public void WriteToSnapshotData(out int snapshotData)
@@ -148,7 +147,7 @@ public sealed class GadgetManager :
 
     private void ResetGadgetPositions()
     {
-        _gadgetPositionHelper.Clear();
+        _hitBoxGadgetSpacialHashGrid.Clear();
 
         var gadgets = AllItems;
 
@@ -156,7 +155,7 @@ public sealed class GadgetManager :
         {
             if (gadgets[i] is HitBoxGadget hitBoxGadget)
             {
-                _gadgetPositionHelper.AddItem(hitBoxGadget);
+                _hitBoxGadgetSpacialHashGrid.AddItem(hitBoxGadget);
             }
         }
     }

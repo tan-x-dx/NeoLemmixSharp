@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.LemmingBehaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
@@ -9,24 +9,24 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 public sealed class LemmingHitBoxFilter
 {
     private readonly LemmingCriterion[] _criteria;
-    private readonly GadgetAction[] _onLemmingEnterActions;
-    private readonly GadgetAction[] _onLemmingPresentActions;
-    private readonly GadgetAction[] _onLemmingExitActions;
+    private readonly LemmingBehaviour[] _onLemmingEnterActions;
+    private readonly LemmingBehaviour[] _onLemmingPresentActions;
+    private readonly LemmingBehaviour[] _onLemmingExitActions;
 
     public LemmingSolidityType LemmingSolidityType { get; }
     public HitBoxBehaviour HitBoxBehaviour { get; }
 
-    public ReadOnlySpan<GadgetAction> OnLemmingEnterActions => new(_onLemmingEnterActions);
-    public ReadOnlySpan<GadgetAction> OnLemmingPresentActions => new(_onLemmingPresentActions);
-    public ReadOnlySpan<GadgetAction> OnLemmingExitActions => new(_onLemmingExitActions);
+    public ReadOnlySpan<LemmingBehaviour> OnLemmingEnterActions => new(_onLemmingEnterActions);
+    public ReadOnlySpan<LemmingBehaviour> OnLemmingPresentActions => new(_onLemmingPresentActions);
+    public ReadOnlySpan<LemmingBehaviour> OnLemmingExitActions => new(_onLemmingExitActions);
 
     public LemmingHitBoxFilter(
         LemmingSolidityType lemmingSolidityType,
         HitBoxBehaviour hitBoxBehaviour,
         LemmingCriterion[] criteria,
-        GadgetAction[] onLemmingEnterActions,
-        GadgetAction[] onLemmingPresentActions,
-        GadgetAction[] onLemmingExitActions)
+        LemmingBehaviour[] onLemmingEnterActions,
+        LemmingBehaviour[] onLemmingPresentActions,
+        LemmingBehaviour[] onLemmingExitActions)
     {
         LemmingSolidityType = lemmingSolidityType;
         HitBoxBehaviour = hitBoxBehaviour;

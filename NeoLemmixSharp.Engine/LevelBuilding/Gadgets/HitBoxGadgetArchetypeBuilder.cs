@@ -21,7 +21,7 @@ public static class HitBoxGadgetArchetypeBuilder
     {
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, gadgetData);
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetData);
-        var gadgetStates = BuildGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
+        var gadgetStates = BuildHitBoxGadgetStates(gadgetArchetypeData, gadgetData, gadgetBounds, tribeManager);
         var resizeType = GetResizeType(gadgetArchetypeData, gadgetData);
         var lemmingTracker = new LemmingTracker(lemmingManager);
 
@@ -42,7 +42,7 @@ public static class HitBoxGadgetArchetypeBuilder
         };
     }
 
-    private static GadgetState[] BuildGadgetStates(
+    private static HitBoxGadgetState[] BuildHitBoxGadgetStates(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         GadgetBounds gadgetBounds,
@@ -50,17 +50,17 @@ public static class HitBoxGadgetArchetypeBuilder
     {
         Debug.Assert(gadgetArchetypeData.AllGadgetStateData.Length == EngineConstants.NumberOfAllowedStatesForFunctionalGadgets);
 
-        var result = new GadgetState[gadgetArchetypeData.AllGadgetStateData.Length];
+        var result = new HitBoxGadgetState[gadgetArchetypeData.AllGadgetStateData.Length];
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = BuildGadgetState(gadgetArchetypeData, gadgetData, gadgetBounds, i, gadgetArchetypeData.BaseSpriteSize, tribeManager);
+            result[i] = BuildHitBoxGadgetState(gadgetArchetypeData, gadgetData, gadgetBounds, i, gadgetArchetypeData.BaseSpriteSize, tribeManager);
         }
 
         return result;
     }
 
-    private static GadgetState BuildGadgetState(
+    private static HitBoxGadgetState BuildHitBoxGadgetState(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         GadgetBounds gadgetBounds,
@@ -81,7 +81,7 @@ public static class HitBoxGadgetArchetypeBuilder
             state,
             gadgetBounds);
 
-        return new GadgetState(
+        return new HitBoxGadgetState(
             state.StateName,
             hitBoxFilters,
             hitBoxLookup,

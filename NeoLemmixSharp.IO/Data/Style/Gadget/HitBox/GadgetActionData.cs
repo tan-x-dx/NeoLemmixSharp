@@ -1,7 +1,7 @@
 ﻿namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
-public readonly struct GadgetActionData(GadgetActionType gadgetActionType, int miscData)
+public readonly struct GadgetActionData(LemmingBehaviourType gadgetActionType, int miscData)
 {
-    public readonly GadgetActionType GadgetActionType = gadgetActionType;
+    public readonly LemmingBehaviourType GadgetActionType = gadgetActionType;
     public readonly int MiscData = miscData;
 }

@@ -2,19 +2,19 @@
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.LemmingBehaviours;
 
-public sealed class LemmingMoverAction : GadgetAction
+public sealed class LemmingMoverBehaviour : LemmingBehaviour
 {
     private readonly Point _deltaPosition;
 
-    public LemmingMoverAction(Point deltaPosition)
-        : base(GadgetActionType.LemmingMover)
+    public LemmingMoverBehaviour(Point deltaPosition)
+        : base(LemmingBehaviourType.LemmingMover)
     {
         _deltaPosition = deltaPosition;
     }
 
-    public override void PerformAction(Lemming lemming)
+    public override void PerformBehaviour(Lemming lemming)
     {
         ref var lemmingPosition = ref lemming.AnchorPosition;
         lemmingPosition += _deltaPosition;

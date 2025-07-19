@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
+using NeoLemmixSharp.Engine.Level.Gadgets.Triggers;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
@@ -15,7 +16,7 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
         string gadgetName,
         GadgetState[] states,
         int initialStateIndex,
-        ReadOnlySpan<GadgetInputName> inputNames)
+        ReadOnlySpan<GadgetTriggerName> inputNames)
         : base(gadgetName, states, initialStateIndex, inputNames.Length)
     {
         _numberOfInputs = inputNames.Length;
@@ -29,7 +30,6 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
     }
 
     protected sealed override void OnTick() { }
-    protected sealed override void OnChangeStates() { }
 
     private void ReactToSignal(AdditiveGateGadgetLinkInput input, bool signal)
     {
@@ -44,16 +44,27 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
         ChangeStates();
     }
 
+    public sealed override GadgetState CurrentState => throw new NotImplementedException();
+    protected sealed override GadgetState GetState(int stateIndex)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected sealed override void OnChangeStates(int currentStateIndex)
+    {
+        throw new NotImplementedException();
+    }
+
     protected abstract bool EvaluateInputCount(int numberOfTrueInputs, int numberOfInputs);
 
-    public sealed class AdditiveGateGadgetLinkInput : GadgetLinkInput
+    public sealed class AdditiveGateGadgetLinkInput : GadgetLinkTrigger
     {
         public readonly int Id;
         private readonly AdditiveLogicGateGadget _gadget;
 
         public AdditiveGateGadgetLinkInput(
             int id,
-            GadgetInputName inputName,
+            GadgetTriggerName inputName,
             AdditiveLogicGateGadget gadget)
             : base(inputName)
         {
@@ -76,7 +87,7 @@ public sealed class AndGateGadget : AdditiveLogicGateGadget
         string gadgetName,
         GadgetState[] states,
         int initialStateIndex,
-        ReadOnlySpan<GadgetInputName> inputNames)
+        ReadOnlySpan<GadgetTriggerName> inputNames)
         : base(gadgetName, states, initialStateIndex, inputNames)
     {
     }
@@ -93,7 +104,7 @@ public sealed class OrGateGadget : AdditiveLogicGateGadget
         string gadgetName,
         GadgetState[] states,
         int initialStateIndex,
-        ReadOnlySpan<GadgetInputName> inputNames)
+        ReadOnlySpan<GadgetTriggerName> inputNames)
         : base(gadgetName, states, initialStateIndex, inputNames)
     {
     }

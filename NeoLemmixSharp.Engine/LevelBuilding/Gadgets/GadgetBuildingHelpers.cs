@@ -24,7 +24,7 @@ public static class GadgetBuildingHelpers
     private const string Input15Name = "Input 15";
     private const string Input16Name = "Input 16";
 
-    private static readonly GadgetInputName[] BasicInputNames =
+    private static readonly GadgetTriggerName[] BasicInputNames =
     [
         new(Input01Name),
         new(Input02Name),
@@ -81,27 +81,27 @@ public static class GadgetBuildingHelpers
         new(State16Name)
     ];
 
-    public static ReadOnlySpan<GadgetInputName> GetInputNamesForCount(int numberOfInputs)
+    public static ReadOnlySpan<GadgetTriggerName> GetInputNamesForCount(int numberOfInputs)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(numberOfInputs);
         ArgumentOutOfRangeException.ThrowIfZero(numberOfInputs);
 
         if (numberOfInputs <= BasicInputNames.Length)
-            return new ReadOnlySpan<GadgetInputName>(BasicInputNames, 0, numberOfInputs);
+            return new ReadOnlySpan<GadgetTriggerName>(BasicInputNames, 0, numberOfInputs);
 
         return ConstructLargeInputNameArray(numberOfInputs);
     }
 
-    private static ReadOnlySpan<GadgetInputName> ConstructLargeInputNameArray(int numberOfInputs)
+    private static ReadOnlySpan<GadgetTriggerName> ConstructLargeInputNameArray(int numberOfInputs)
     {
-        var result = new GadgetInputName[numberOfInputs];
+        var result = new GadgetTriggerName[numberOfInputs];
 
-        new ReadOnlySpan<GadgetInputName>(BasicInputNames).CopyTo(result);
+        new ReadOnlySpan<GadgetTriggerName>(BasicInputNames).CopyTo(result);
 
         for (var i = BasicInputNames.Length; i < result.Length; i++)
         {
             var inputName = $"Input {i + 1}";
-            result[i] = new GadgetInputName(inputName);
+            result[i] = new GadgetTriggerName(inputName);
         }
 
         return result;

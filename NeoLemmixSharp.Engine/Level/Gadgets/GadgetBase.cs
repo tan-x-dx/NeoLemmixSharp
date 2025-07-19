@@ -1,9 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interactions;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
-using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
@@ -11,7 +8,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
     private readonly string _gadgetName;
-    private readonly GadgetState[] _states;
 
     private GadgetState _currentState;
     private GadgetState _previousState;
@@ -19,10 +15,9 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     private int _currentStateIndex;
     private int _nextStateIndex;
 
-    public GadgetState CurrentState => _currentState;
-    public AnimationController CurrentAnimationController => _currentState.AnimationController;
+    public abstract GadgetState CurrentState { get; }
 
-    public required GadgetBounds CurrentGadgetBounds { protected get; init; }
+    public required GadgetBounds CurrentGadgetBounds { get; init; }
 
     public required int Id { get; init; }
     public required Orientation Orientation { get; init; }
@@ -32,24 +27,9 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public Point Position => CurrentGadgetBounds.Position;
     public Size Size => CurrentGadgetBounds.Size;
 
-    public GadgetRenderer Renderer { get; internal set; }
-
-    public GadgetBase(
-        string gadgetName,
-        GadgetState[] states,
-        int initialStateIndex)
+    public GadgetBase(string gadgetName)
     {
         _gadgetName = gadgetName;
-        _states = states;
-
-        _currentStateIndex = initialStateIndex;
-        _currentState = _states[initialStateIndex];
-        _previousState = _currentState;
-    }
-
-    public GadgetLinkOutput GetGadgetOutputForState(int stateIndex)
-    {
-        return _states[stateIndex].StateSelectedOutput;
     }
 
     public void SetNextState(int stateIndex)
@@ -63,7 +43,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
 
         if (_currentStateIndex == _nextStateIndex)
         {
-            CurrentState.Tick(this);
+            CurrentState.Tick();
         }
         else
         {
@@ -79,15 +59,17 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
 
         _previousState = _currentState;
 
-        _currentState = _states[_currentStateIndex];
+        _currentState = GetState(_currentStateIndex);
 
         _previousState.OnTransitionFrom();
         _currentState.OnTransitionTo();
 
-        OnChangeStates();
+        OnChangeStates(_currentStateIndex);
     }
 
-    protected abstract void OnChangeStates();
+    protected abstract GadgetState GetState(int stateIndex);
+
+    protected abstract void OnChangeStates(int currentStateIndex);
 
     protected void UpdatePreviousState()
     {

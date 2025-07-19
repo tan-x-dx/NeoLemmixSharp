@@ -5,11 +5,22 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public sealed class GadgetBounds : IRectangularBounds
 {
-    public Point Position { get; set; }
+    public int X;
+    public int Y;
+
+    public Point Position
+    {
+        get => new(X, Y);
+        set
+        {
+            X = value.X;
+            Y = value.Y;
+        }
+    }
 
     // Size data is raw ints, since it can technically be negative or zero
-    public int Width { get; set; }
-    public int Height { get; set; }
+    public int Width;
+    public int Height;
 
     public Size Size => new(Width, Height);
     public RectangularRegion CurrentBounds => new(Position, Size);
