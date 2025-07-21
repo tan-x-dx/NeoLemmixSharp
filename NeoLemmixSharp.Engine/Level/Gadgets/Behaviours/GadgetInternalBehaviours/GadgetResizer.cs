@@ -1,9 +1,8 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GeneralBehaviours;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GadgetInternalBehaviours;
 
-public sealed class GadgetResizer : GeneralBehaviour
+public sealed class GadgetResizer : GadgetBehaviour
 {
     private readonly HitBoxGadget _gadget;
 
@@ -14,10 +13,12 @@ public sealed class GadgetResizer : GeneralBehaviour
     private int _tickCount;
 
     public GadgetResizer(
+        int maxTriggerCountPerUpdate,
         HitBoxGadget gadget,
         int tickDelay,
         int dw,
         int dh)
+        : base(maxTriggerCountPerUpdate)
     {
         _tickDelay = tickDelay;
         _gadget = gadget;

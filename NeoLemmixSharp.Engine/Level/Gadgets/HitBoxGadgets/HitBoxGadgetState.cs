@@ -83,7 +83,7 @@ public sealed class HitBoxGadgetState : GadgetState
     {
         foreach (var lemmingHitBoxFilter in _lemmingHitBoxFilters)
         {
-            lemmingHitBoxFilter.OnNewTick();
+            lemmingHitBoxFilter.Tick();
         }
     }
 

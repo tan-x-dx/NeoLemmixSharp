@@ -1,9 +1,8 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GeneralBehaviours;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GadgetInternalBehaviours;
 
-public sealed class GadgetMoverBehaviour : GeneralBehaviour
+public sealed class GadgetMoverBehaviour : GadgetBehaviour
 {
     private readonly IMoveableGadget _gadget;
     private readonly int _tickDelay;
@@ -13,10 +12,12 @@ public sealed class GadgetMoverBehaviour : GeneralBehaviour
     private int _tickCount;
 
     public GadgetMoverBehaviour(
+        int maxTriggerCountPerUpdate,
         IMoveableGadget gadget,
         int tickDelay,
         int dx,
         int dy)
+        : base(maxTriggerCountPerUpdate)
     {
         _gadget = gadget;
         _tickDelay = tickDelay;

@@ -8,7 +8,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Terrain;
@@ -87,7 +86,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         // Need to call this here instead of initialising in LevelScreen
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 
-        var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var gadgetManager = new GadgetManager(levelGadgets, [], horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         SetUpGadgetConnections(levelData, gadgetManager);
 
@@ -229,21 +228,21 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
     private static void SetUpGadgetConnections(LevelData levelData, GadgetManager gadgetManager)
     {
-       /* foreach (var gadgetLinkDatum in levelData.AllGadgetLinkData)
-        {
-            var sourceGadget = gadgetManager.AllItems[gadgetLinkDatum.SourceGadgetIdentifier.GadgetId];
-            var targetGadget = gadgetManager.AllItems[gadgetLinkDatum.TargetGadgetIdentifier.GadgetId];
+        /* foreach (var gadgetLinkDatum in levelData.AllGadgetLinkData)
+         {
+             var sourceGadget = gadgetManager.AllItems[gadgetLinkDatum.SourceGadgetIdentifier.GadgetId];
+             var targetGadget = gadgetManager.AllItems[gadgetLinkDatum.TargetGadgetIdentifier.GadgetId];
 
-            if (targetGadget is not IFunctionalGadget targetFunctionalGadget)
-                throw new InvalidOperationException("Target gadget is not a functional gadget! Cannot set up gadget link!");
+             if (targetGadget is not IFunctionalGadget targetFunctionalGadget)
+                 throw new InvalidOperationException("Target gadget is not a functional gadget! Cannot set up gadget link!");
 
-            var sourceGadgetOutput = sourceGadget.GetGadgetOutputForState(gadgetLinkDatum.SourceGadgetStateId);
+             var sourceGadgetOutput = sourceGadget.GetGadgetOutputForState(gadgetLinkDatum.SourceGadgetStateId);
 
-            if (!targetFunctionalGadget.TryGetInputWithName(gadgetLinkDatum.TargetGadgetInputName, out var targetGadgetInput))
-                throw new InvalidOperationException("Could not locate target gadget input!");
+             if (!targetFunctionalGadget.TryGetInputWithName(gadgetLinkDatum.TargetGadgetInputName, out var targetGadgetInput))
+                 throw new InvalidOperationException("Could not locate target gadget input!");
 
-            sourceGadgetOutput.RegisterInput(targetGadgetInput);
-        }*/
+             sourceGadgetOutput.RegisterInput(targetGadgetInput);
+         }*/
     }
 
     int IComparer<IViewportObjectRenderer>.Compare(IViewportObjectRenderer? x, IViewportObjectRenderer? y)

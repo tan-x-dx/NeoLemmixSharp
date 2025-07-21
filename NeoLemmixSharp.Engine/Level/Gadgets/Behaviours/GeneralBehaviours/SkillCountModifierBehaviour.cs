@@ -2,13 +2,18 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GeneralBehaviours;
 
-public sealed class SkillCountModifierAction : GeneralBehaviour
+public sealed class SkillCountModifierBehaviour : GadgetBehaviour
 {
     private readonly LemmingSkill _skill;
     private readonly int _value;
     private readonly int? _tribeId;
 
-    public SkillCountModifierAction(LemmingSkill skill, int value, int? tribeId)
+    public SkillCountModifierBehaviour(
+        int maxTriggerCountPerUpdate,
+        LemmingSkill skill,
+        int value,
+        int? tribeId)
+        : base(maxTriggerCountPerUpdate)
     {
         _skill = skill;
         _value = value;

@@ -67,9 +67,8 @@ public abstract class AdditiveLogicGateGadget : FunctionalGadget<AdditiveLogicGa
             _gadget = gadget;
         }
 
-        public override void OnNewTick()
+        public override void Tick()
         {
-            ResetGeneralBehaviours();
         }
 
         public override void ReactToSignal(bool signal) => _gadget.ReactToSignal(this, signal);

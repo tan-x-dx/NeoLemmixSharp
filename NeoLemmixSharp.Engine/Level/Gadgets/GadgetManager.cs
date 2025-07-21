@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
@@ -18,9 +19,10 @@ public sealed class GadgetManager :
     IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
+    private readonly GadgetBehaviour[] _allGadgetBehaviours;
+    private readonly uint[] _bitBuffer;
     private readonly HitBoxGadgetSpacialHashGrid _hitBoxGadgetSpacialHashGrid;
     private readonly GadgetSet _fastForwardGadgets;
-    private readonly uint[] _bitBuffer;
 
     private int _bitArrayBufferUsageCount;
 
@@ -28,12 +30,15 @@ public sealed class GadgetManager :
 
     public GadgetManager(
         GadgetBase[] allGadgets,
+        GadgetBehaviour[] allGadgetBehaviours,
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
         _allGadgets = allGadgets;
         this.AssertUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
         Array.Sort(_allGadgets, this);
+
+        _allGadgetBehaviours = allGadgetBehaviours;
 
         // 1 spacial hash grid + 1 gadget set
         const int ExpectedNumberOfGadgetBitSets = 2;
@@ -71,6 +76,11 @@ public sealed class GadgetManager :
 
     public void Tick(bool isMajorTick)
     {
+        foreach (var gadgetBehaviour in _allGadgetBehaviours)
+        {
+            gadgetBehaviour.Reset();
+        }
+
         if (isMajorTick)
         {
             var gadgetSpan = new ReadOnlySpan<GadgetBase>(_allGadgets);

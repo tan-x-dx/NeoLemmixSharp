@@ -1,10 +1,13 @@
 ﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GeneralBehaviours;
 
-public sealed class AdditionalTimeAction : GeneralBehaviour
+public sealed class AdditionalTimeBehaviour : GadgetBehaviour
 {
     private readonly int _additionalSeconds;
 
-    public AdditionalTimeAction(int additionalSeconds)
+    public AdditionalTimeBehaviour(
+        int maxTriggerCountPerUpdate,
+        int additionalSeconds)
+        : base(maxTriggerCountPerUpdate)
     {
         _additionalSeconds = additionalSeconds;
     }

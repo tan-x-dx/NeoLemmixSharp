@@ -16,7 +16,7 @@ public abstract class GadgetState
     {
         foreach (var gadgetTrigger in _gadgetTriggers)
         {
-            gadgetTrigger.OnNewTick();
+            gadgetTrigger.Tick();
         }
 
         OnTick();

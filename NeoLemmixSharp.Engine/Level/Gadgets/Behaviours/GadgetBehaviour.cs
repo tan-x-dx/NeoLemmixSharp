@@ -6,7 +6,8 @@ public abstract class GadgetBehaviour
 
     private int _currentTickTriggerCount;
 
-    protected GadgetBehaviour(int maxTriggerCountPerUpdate)
+    protected GadgetBehaviour(
+        int maxTriggerCountPerUpdate)
     {
         _maxTriggerCountPerTick = maxTriggerCountPerUpdate;
     }
@@ -16,7 +17,18 @@ public abstract class GadgetBehaviour
         _currentTickTriggerCount = 0;
     }
 
-    protected bool HasReachedMaxTriggerCount() => _currentTickTriggerCount >= _maxTriggerCountPerTick;
+    private bool HasReachedMaxTriggerCount() => _currentTickTriggerCount >= _maxTriggerCountPerTick;
 
-    protected void RegisterTrigger() => _currentTickTriggerCount++;
+    private void RegisterTrigger() => _currentTickTriggerCount++;
+
+    public void PerformBehaviour()
+    {
+        if (HasReachedMaxTriggerCount())
+            return;
+
+        PerformInternalBehaviour();
+        RegisterTrigger();
+    }
+
+    protected abstract void PerformInternalBehaviour();
 }

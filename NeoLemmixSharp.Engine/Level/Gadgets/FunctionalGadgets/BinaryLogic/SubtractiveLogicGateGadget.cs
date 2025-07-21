@@ -48,9 +48,8 @@ public abstract class SubtractiveLogicGateGadget : FunctionalGadget<SubtractiveL
             _gadget = gadget;
         }
 
-        public override void OnNewTick()
+        public override void Tick()
         {
-            ResetGeneralBehaviours();
         }
 
         public override void ReactToSignal(bool signal)

@@ -85,7 +85,7 @@ public static class GadgetActionBuilder
         return new LemmingMoverBehaviour(delta);
     }
 
-    private static SkillCountModifierAction CreateSkillCountModifierAction(int miscData)
+    private static SkillCountModifierBehaviour CreateSkillCountModifierAction(int miscData)
     {
         // 16 bits for skill id
         var rawSkillId = miscData & 0xffff;
@@ -100,12 +100,12 @@ public static class GadgetActionBuilder
         // 7 bits for numerical value (gets clamped between 0 and 100)
         var value = (miscData >>> 20) & 0x7f;
 
-        return new SkillCountModifierAction(skill, value, tribeId);
+        return new SkillCountModifierBehaviour(-1, skill, value, tribeId);
     }
 
-    private static AdditionalTimeAction CreateAddLevelTimeAction(int miscData)
+    private static AdditionalTimeBehaviour CreateAddLevelTimeAction(int miscData)
     {
-        return new AdditionalTimeAction(miscData);
+        return new AdditionalTimeBehaviour(-1, miscData);
     }
 
     private static StateTransitionBehaviour SetGadgetStateAction(int miscData)

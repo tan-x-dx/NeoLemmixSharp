@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.GeneralBehaviours;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.Behaviours.LemmingBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.Triggers;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -25,7 +25,7 @@ public sealed class LemmingHitBoxFilter : GadgetTrigger
 
     public LemmingHitBoxFilter(
         GadgetTriggerName gadgetTriggerName,
-        GeneralBehaviour[] gadgetBehaviours,
+        GadgetBehaviour[] gadgetBehaviours,
         LemmingSolidityType lemmingSolidityType,
         HitBoxBehaviour hitBoxBehaviour,
         LemmingCriterion[] criteria,
@@ -42,9 +42,8 @@ public sealed class LemmingHitBoxFilter : GadgetTrigger
         _onLemmingExitActions = onLemmingExitActions;
     }
 
-    public override void OnNewTick()
+    public override void Tick()
     {
-        ResetGeneralBehaviours();
         ResetLemmingBehaviours();
     }
 
