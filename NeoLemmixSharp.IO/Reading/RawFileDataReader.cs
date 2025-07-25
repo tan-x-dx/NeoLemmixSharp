@@ -107,21 +107,18 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
 
         FileReadingException.ReaderAssert(byteValue <= 1, "Expected bool byte to have a value of either 0 or 1!");
 
-        return byteValue != 0U;
+        return (byteValue & 1) != 0U;
     }
 
-    /// <summary>
-    /// Special implementation for individual bytes, since it's simpler to execute and also a lot more common.
-    /// </summary>
+    // Special implementation for individual bytes, since it's simpler to execute and also a lot more common.
     public unsafe byte Read8BitUnsignedInteger()
     {
         FileReadingException.ReaderAssert(_position < _byteBuffer.Length, "Reached end of file!");
 
-        byte* pointer = (byte*)_byteBuffer.Handle;
-        byte result = pointer[_position];
+        byte* pointer = (byte*)_byteBuffer.Handle + _position;
         _position++;
 
-        return result;
+        return *pointer;
     }
 
     public ushort Read16BitUnsignedInteger() => ReadUnmanaged<ushort>();
@@ -135,12 +132,19 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
         var newPosition = _position + sizeof(T);
         FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
 
-        byte* pointer = (byte*)_byteBuffer.Handle;
-        pointer += _position;
-        T result = Unsafe.ReadUnaligned<T>(pointer);
+        byte* pointer = (byte*)_byteBuffer.Handle + _position;
         _position = newPosition;
 
-        return result;
+        var mask = sizeof(T) - 1;
+        if (((int)pointer & mask) == 0)
+        {
+            // aligned read
+            return *(T*)pointer;
+        }
+        else
+        {
+            return Unsafe.ReadUnaligned<T>(pointer);
+        }
     }
 
     public unsafe ReadOnlySpan<byte> ReadBytes(int numberOfBytes)
@@ -148,12 +152,10 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
         var newPosition = _position + numberOfBytes;
         FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
 
-        byte* pointer = (byte*)_byteBuffer.Handle;
-        pointer += _position;
-        var result = new ReadOnlySpan<byte>(pointer, numberOfBytes);
+        byte* pointer = (byte*)_byteBuffer.Handle + _position;
         _position = newPosition;
 
-        return result;
+        return new ReadOnlySpan<byte>(pointer, numberOfBytes);
     }
 
     public void SetReaderPosition(int position)

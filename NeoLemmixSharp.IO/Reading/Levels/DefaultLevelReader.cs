@@ -40,6 +40,8 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
             ReadSection(result, sectionReader);
         }
 
+        FileReadingException.ReaderAssert(!_reader.MoreToRead, "Finished reading but extra bytes still in file!");
+
         return result;
     }
 

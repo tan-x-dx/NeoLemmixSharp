@@ -85,12 +85,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         WriteUnmanaged(value, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
-    /// <summary>
-    /// Special implementation for individual bytes, since it's simpler to execute and also a lot more common.
-    /// </summary>
-    /// <param name="value">The byte to write.</param>
-    /// <param name="byteBuffer">The byte buffer to write to.</param>
-    /// <param name="position">The position in the byte buffer to write to.</param>
+    // Special implementation for individual bytes, since it's simpler to execute and also a lot more common.
     private static unsafe void WriteSingleByte(byte value, ref RawArray byteBuffer, ref int position)
     {
         Debug.Assert(position <= byteBuffer.Length);
@@ -98,9 +93,10 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         if (position == byteBuffer.Length)
             DoubleByteBufferLength(ref byteBuffer);
 
-        byte* pointer = (byte*)byteBuffer.Handle;
-        pointer[position] = value;
+        byte* pointer = (byte*)byteBuffer.Handle + position;
         position++;
+
+        *pointer = value;
     }
 
     private static unsafe void WriteUnmanaged<T>(T value, ref RawArray byteBuffer, ref int position)
@@ -110,10 +106,20 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         if (newPosition > byteBuffer.Length)
             DoubleByteBufferLength(ref byteBuffer);
 
-        byte* pointer = (byte*)byteBuffer.Handle;
-        pointer += position;
-        Unsafe.WriteUnaligned(pointer, value);
+        byte* pointer = (byte*)byteBuffer.Handle + position;
         position = newPosition;
+
+        var mask = sizeof(T) - 1;
+
+        if (((int)pointer & mask) == 0)
+        {
+            // aligned write
+            *(T*)pointer = value;
+        }
+        else
+        {
+            Unsafe.WriteUnaligned(pointer, value);
+        }
     }
 
     public unsafe void WriteBytes(ReadOnlySpan<byte> data)
@@ -124,11 +130,11 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         if (newPosition >= _mainDataByteBuffer.Length)
             DoubleByteBufferLength(ref _mainDataByteBuffer);
 
-        byte* pointer = (byte*)_mainDataByteBuffer.Handle;
-        pointer += _mainDataPosition;
+        byte* pointer = (byte*)_mainDataByteBuffer.Handle + _mainDataPosition;
+        _mainDataPosition = newPosition;
+
         var destinationSpan = new Span<byte>(pointer, data.Length);
         data.CopyTo(destinationSpan);
-        _mainDataPosition = newPosition;
     }
 
     private static void DoubleByteBufferLength(ref RawArray byteBuffer)
