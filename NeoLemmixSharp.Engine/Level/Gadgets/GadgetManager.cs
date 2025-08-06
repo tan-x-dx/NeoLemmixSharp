@@ -125,26 +125,6 @@ public sealed class GadgetManager :
         _hitBoxGadgetSpacialHashGrid.UpdateItemPosition(gadget);
     }
 
-    public int NumberOfItems => _allGadgets.Length;
-    int IPerfectHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
-    GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
-    int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
-    HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer)
-    {
-        if (_bitArrayBufferUsageCount == 0)
-            throw new InvalidOperationException("Insufficient space for bit buffers!");
-        _bitArrayBufferUsageCount--;
-        var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_allGadgets.Length);
-        buffer = new(_bitBuffer, bitBufferLength * _bitArrayBufferUsageCount, bitBufferLength);
-    }
-
-    public void Dispose()
-    {
-        Array.Clear(_allGadgets);
-        _hitBoxGadgetSpacialHashGrid.Dispose();
-    }
-
     public void WriteToSnapshotData(out int snapshotData)
     {
         snapshotData = 0;
@@ -168,5 +148,25 @@ public sealed class GadgetManager :
                 _hitBoxGadgetSpacialHashGrid.AddItem(hitBoxGadget);
             }
         }
+    }
+
+    public int NumberOfItems => _allGadgets.Length;
+    int IPerfectHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
+    GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
+    int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
+    HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
+    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(int numberOfItems, out ArrayBitBuffer buffer)
+    {
+        if (_bitArrayBufferUsageCount == 0)
+            throw new InvalidOperationException("Insufficient space for bit buffers!");
+        _bitArrayBufferUsageCount--;
+        var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_allGadgets.Length);
+        buffer = new(_bitBuffer, bitBufferLength * _bitArrayBufferUsageCount, bitBufferLength);
+    }
+
+    public void Dispose()
+    {
+        Array.Clear(_allGadgets);
+        _hitBoxGadgetSpacialHashGrid.Dispose();
     }
 }

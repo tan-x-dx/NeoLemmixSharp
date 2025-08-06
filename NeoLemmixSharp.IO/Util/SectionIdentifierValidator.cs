@@ -1,13 +1,12 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.IO.FileFormats;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Util;
 
 internal sealed class SectionIdentifierValidator<TPerfectHasher, TEnum> : IComparer<Interval>
-    where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
+    where TPerfectHasher : struct, IEnumIdentifierHelper<TEnum, BitBuffer32>
     where TEnum : unmanaged, Enum
 {
     [SkipLocalsInit]

@@ -23,8 +23,8 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     public BitArrayDictionary(TPerfectHasher hasher)
     {
         _hasher = hasher;
-        _hasher.CreateBitBuffer(out _bits);
         var numberOfItems = hasher.NumberOfItems;
+        _hasher.CreateBitBuffer(numberOfItems, out _bits);
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 

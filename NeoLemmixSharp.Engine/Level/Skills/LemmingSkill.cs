@@ -223,7 +223,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
         [Pure]
         public LemmingSkill UnHash(int index) => LemmingSkills[index];
 
-        public void CreateBitBuffer(out LemmingSkillBitBuffer buffer) => buffer = new();
+        public void CreateBitBuffer(int numberOfItems, out LemmingSkillBitBuffer buffer) => buffer = new();
     }
 
     [InlineArray(LemmingSkillBitBufferLength)]
@@ -235,7 +235,9 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
 
         public readonly int Length => LemmingSkillBitBufferLength;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingSkillBitBufferLength);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingSkillBitBufferLength);
     }
 }

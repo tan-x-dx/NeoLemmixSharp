@@ -20,9 +20,13 @@ public enum ControlPanelParameters
     ShowExpandedAthleteInformation
 }
 
-public readonly struct ControlPanelParameterHasher : IPerfectHasher<ControlPanelParameters>, IBitBufferCreator<BitBuffer32>
+public readonly struct ControlPanelParameterHasher : IEnumIdentifierHelper<ControlPanelParameters, BitBuffer32>
 {
-    public int NumberOfItems => 12;
+    private const int NumberOfEnumValues = 12;
+
+    public int NumberOfItems => NumberOfEnumValues;
+
+    public static ControlPanelParameters GetEnumValue(uint rawValue) => Helpers.GetEnumValue<ControlPanelParameters>(rawValue, NumberOfEnumValues);
 
     [Pure]
     public int Hash(ControlPanelParameters item) => (int)item;
@@ -36,5 +40,5 @@ public readonly struct ControlPanelParameterHasher : IPerfectHasher<ControlPanel
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new ControlPanelParameterHasher());
 
-    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
 }

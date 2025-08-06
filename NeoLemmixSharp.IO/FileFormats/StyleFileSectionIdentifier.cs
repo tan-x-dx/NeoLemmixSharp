@@ -13,7 +13,7 @@ internal enum StyleFileSectionIdentifier
 }
 
 internal readonly struct StyleFileSectionIdentifierHasher :
-    ISectionIdentifierHelper<StyleFileSectionIdentifier>
+    IEnumIdentifierHelper<StyleFileSectionIdentifier, BitBuffer32>
 {
     private const int NumberOfEnumValues = 4;
 
@@ -24,7 +24,7 @@ internal readonly struct StyleFileSectionIdentifierHasher :
     [Pure]
     public StyleFileSectionIdentifier UnHash(int index) => (StyleFileSectionIdentifier)index;
 
-    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
 
     public static StyleFileSectionIdentifier GetEnumValue(uint rawValue) => Helpers.GetEnumValue<StyleFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 

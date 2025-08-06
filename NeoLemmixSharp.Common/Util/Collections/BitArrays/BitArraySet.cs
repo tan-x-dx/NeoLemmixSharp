@@ -21,8 +21,8 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public BitArraySet(TPerfectHasher hasher)
     {
         _hasher = hasher;
-        _hasher.CreateBitBuffer(out _bits);
         var numberOfItems = _hasher.NumberOfItems;
+        _hasher.CreateBitBuffer(numberOfItems, out _bits);
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 
@@ -31,6 +31,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
     public int Length => _bits.Length;
     public int Count => _popCount;
+    public bool IsFull => _popCount == _hasher.NumberOfItems;
 
     public bool Add(T item)
     {

@@ -19,7 +19,7 @@ internal interface IRawFileDataReader
 }
 
 internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataReader, IDisposable
-    where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
+    where TPerfectHasher : struct, IEnumIdentifierHelper<TEnum, BitBuffer32>
     where TEnum : unmanaged, Enum
 {
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIdentifiers;
