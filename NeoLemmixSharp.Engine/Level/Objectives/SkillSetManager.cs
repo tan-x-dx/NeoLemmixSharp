@@ -11,7 +11,6 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
 
     private int _currentTotalSkillLimit;
 
-    public int NumberOfItems => _skillTrackingDataList.Length;
     public ReadOnlySpan<SkillTrackingData> AllItems => new(_skillTrackingDataList);
 
     public SkillSetManager(

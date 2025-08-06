@@ -380,8 +380,6 @@ public sealed class LemmingManager :
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
 
-    int IItemManager<Lemming>.NumberOfItems => _lemmings.Length;
-
     int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
     int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
     HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];

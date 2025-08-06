@@ -6,9 +6,9 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class TerrainPainter
+public sealed class TerrainPainter : IDisposable
 {
-    private const int InitialPixelChangeListSize = 1 << 12;
+    private const int InitialPixelChangeListSize = 1 << 14;
 
     private readonly TickOrderedList<PixelChangeData> _pixelChangeList = new(InitialPixelChangeListSize);
     private readonly Texture2D _terrainTexture;
@@ -39,9 +39,7 @@ public sealed class TerrainPainter
 
         var fromColor = _terrainColors[pixel];
 
-        ref var pixelChangeData = ref _pixelChangeList.GetNewDataRef();
-
-        pixelChangeData = new PixelChangeData(currentLatestTickWithUpdate, pixel, fromColor, toColor, fromPixelType, toPixelType);
+        _pixelChangeList.GetNewDataRef() = new PixelChangeData(currentLatestTickWithUpdate, pixel, fromColor, toColor, fromPixelType, toPixelType);
     }
 
     public void RepaintTerrain()
@@ -106,5 +104,10 @@ public sealed class TerrainPainter
             FromPixelType = fromPixelType;
             ToPixelType = toPixelType;
         }
+    }
+
+    public void Dispose()
+    {
+        _pixelChangeList.Dispose();
     }
 }

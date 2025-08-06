@@ -1,33 +1,50 @@
-﻿using System.Diagnostics.Contracts;
+﻿using NeoLemmixSharp.IO.Util;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class TickOrderedList<TTickOrderedData>
+public sealed class TickOrderedList<TTickOrderedData> : IDisposable
     where TTickOrderedData : unmanaged, ITickOrderedData
 {
-    private TTickOrderedData[] _items;
+    private RawArray _buffer;
+    private int _bufferLength;
     private int _count;
 
     public TickOrderedList(int initialCapacity)
     {
-        _items = GC.AllocateUninitializedArray<TTickOrderedData>(initialCapacity);
+        _bufferLength = initialCapacity;
+        _buffer = CreateBuffer(_bufferLength);
+    }
+
+    private static unsafe RawArray CreateBuffer(int initialCapacity)
+    {
+        var bufferLengthInBytes = initialCapacity * sizeof(TTickOrderedData);
+        return new RawArray(bufferLengthInBytes);
     }
 
     public int Count => _count;
 
     [Pure]
-    public ref readonly TTickOrderedData this[int index] => ref _items[index];
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private unsafe ReadOnlySpan<TTickOrderedData> GetReadOnlySpan(int start, int length)
+    {
+        TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + start;
+
+        return new ReadOnlySpan<TTickOrderedData>(pointer, length);
+    }
 
     [Pure]
     public ReadOnlySpan<TTickOrderedData> Slice(int start, int length)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(start);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
+
         if (_count - start < length)
             throw new ArgumentOutOfRangeException(nameof(start), "Start index with length is out of bounds");
 
-        return new ReadOnlySpan<TTickOrderedData>(_items, start, length);
+        return GetReadOnlySpan(start, length);
     }
 
     [Pure]
@@ -35,7 +52,7 @@ public sealed class TickOrderedList<TTickOrderedData>
     {
         ArgumentOutOfRangeException.ThrowIfNegative(start);
 
-        return new ReadOnlySpan<TTickOrderedData>(_items, start, Math.Max(0, _count - start));
+        return GetReadOnlySpan(start, Math.Max(0, _count - start));
     }
 
     public ReadOnlySpan<TTickOrderedData> RewindBackTo(int tick)
@@ -52,30 +69,30 @@ public sealed class TickOrderedList<TTickOrderedData>
     }
 
     [Pure]
-    public bool HasDataForTick(int tick)
+    public unsafe bool HasDataForTick(int tick)
     {
         if (_count == 0)
             return false;
 
         var index = GetSmallestIndexOfTick(tick);
 
-        ref readonly var data = ref _items[index];
+        TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + index;
 
-        return data.TickNumber == tick;
+        return pointer->TickNumber == tick;
     }
 
     [Pure]
-    public ref readonly TTickOrderedData TryGetDataForTick(int tick)
+    public unsafe ref readonly TTickOrderedData TryGetDataForTick(int tick)
     {
         if (_count == 0)
             return ref Unsafe.NullRef<TTickOrderedData>();
 
         var index = GetSmallestIndexOfTick(tick);
 
-        ref readonly var data = ref _items[index];
+        TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + index;
 
-        if (data.TickNumber == tick)
-            return ref data;
+        if (pointer->TickNumber == tick)
+            return ref *pointer;
 
         return ref Unsafe.NullRef<TTickOrderedData>();
     }
@@ -87,54 +104,67 @@ public sealed class TickOrderedList<TTickOrderedData>
     /// </para>
     /// </summary>
     [Pure]
-    private int GetSmallestIndexOfTick(int tick)
+    private unsafe int GetSmallestIndexOfTick(int tick)
     {
-        var upperTestIndex = _count;
+        var upperTestIndex = _count - 1;
         var lowerTestIndex = 0;
+
+        TTickOrderedData* basePointer = (TTickOrderedData*)_buffer.Handle;
 
         while (upperTestIndex - lowerTestIndex > 1)
         {
-            var bestGuess = (lowerTestIndex + upperTestIndex) >>> 1;
-            ref readonly var test = ref _items[bestGuess];
+            var bestGuessIndex = (lowerTestIndex + upperTestIndex) >>> 1;
+            TTickOrderedData* pointer = basePointer + bestGuessIndex;
 
-            if (test.TickNumber >= tick)
+            if (pointer->TickNumber >= tick)
             {
-                upperTestIndex = bestGuess;
+                upperTestIndex = bestGuessIndex;
             }
             else
             {
-                lowerTestIndex = bestGuess;
+                lowerTestIndex = bestGuessIndex;
             }
         }
 
-        ref readonly var test1 = ref _items[lowerTestIndex];
-        return test1.TickNumber >= tick
+        basePointer += lowerTestIndex;
+        return basePointer->TickNumber >= tick
             ? lowerTestIndex
             : upperTestIndex;
     }
 
-    public ref TTickOrderedData GetNewDataRef()
+    public unsafe ref TTickOrderedData GetNewDataRef()
     {
-        var arraySize = _items.Length;
-        if (_count == arraySize)
-        {
-            var newArray = GC.AllocateUninitializedArray<TTickOrderedData>(arraySize * 2);
-            new ReadOnlySpan<TTickOrderedData>(_items).CopyTo(newArray);
+        if (_count == _bufferLength)
+            DoubleByteBufferLength();
 
-            _items = newArray;
-        }
+        TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + _count;
+        _count++;
 
-        return ref _items[_count++];
+        return ref *pointer;
+    }
+
+    private void DoubleByteBufferLength()
+    {
+        var newBufferLength = _buffer.Length << 1;
+
+        nint newHandle = Marshal.ReAllocHGlobal(_buffer.Handle, newBufferLength);
+        _buffer = new RawArray(newHandle, newBufferLength);
+        _bufferLength <<= 1;
     }
 
     [Pure]
-    public int LatestTickWithData()
+    public unsafe int LatestTickWithData()
     {
         if (_count == 0)
             return -1;
 
-        ref readonly var data = ref _items[_count - 1];
+        TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + (_count - 1);
 
-        return data.TickNumber;
+        return pointer->TickNumber;
+    }
+
+    public void Dispose()
+    {
+        _buffer.Dispose();
     }
 }
