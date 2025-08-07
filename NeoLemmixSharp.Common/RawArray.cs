@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.IO.Util;
+namespace NeoLemmixSharp.Common;
 
 public readonly unsafe struct RawArray : IDisposable
 {

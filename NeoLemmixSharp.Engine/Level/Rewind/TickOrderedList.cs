@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Util;
+﻿using NeoLemmixSharp.Common;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
