@@ -90,3 +90,20 @@ public readonly struct ArrayBitBuffer : IBitBuffer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<uint> AsReadOnlySpan() => new(_array, _start, _length);
 }
+
+public unsafe readonly struct RawBitBuffer : IBitBuffer
+{
+    private readonly void* _pointer;
+    public int Length { get; }
+
+    public RawBitBuffer(void* pointer, int length)
+    {
+        _pointer = pointer;
+        Length = length;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Span<uint> AsSpan() => new(_pointer, Length);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadOnlySpan<uint> AsReadOnlySpan() => new(_pointer, Length);
+}

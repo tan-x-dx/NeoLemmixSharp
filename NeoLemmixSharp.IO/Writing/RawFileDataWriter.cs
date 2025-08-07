@@ -184,7 +184,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         FileWritingException.WriterAssert(_currentSectionStartPosition >= 0, "Invalid section writing state!");
     }
 
-    public void WriteToFile(
+    public unsafe void WriteToFile(
         Stream stream,
         FileFormatVersion version)
     {
@@ -197,8 +197,8 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
             _mainDataPosition + _preambleDataPosition <= IoConstants.MaxAllowedFileSizeInBytes,
             IoConstants.FileSizeTooLargeExceptionMessage);
 
-        stream.Write(_preambleDataByteBuffer.AsReadOnlySpan());
-        stream.Write(_mainDataByteBuffer.AsReadOnlySpan());
+        stream.Write(new ReadOnlySpan<byte>((void*)_preambleDataByteBuffer.Handle, _preambleDataPosition));
+        stream.Write(new ReadOnlySpan<byte>((void*)_mainDataByteBuffer.Handle, _mainDataPosition));
     }
 
     private void AssertCanWriteToFile()

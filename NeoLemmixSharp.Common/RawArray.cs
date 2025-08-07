@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
-public readonly unsafe struct RawArray : IDisposable
+public readonly struct RawArray : IDisposable
 {
     public readonly nint Handle;
     public readonly int Length;
@@ -23,9 +23,9 @@ public readonly unsafe struct RawArray : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Span<byte> AsSpan() => new((void*)Handle, Length);
+    public unsafe Span<byte> AsSpan() => new((void*)Handle, Length);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlySpan<byte> AsReadOnlySpan() => new((void*)Handle, Length);
+    public unsafe ReadOnlySpan<byte> AsReadOnlySpan() => new((void*)Handle, Length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()

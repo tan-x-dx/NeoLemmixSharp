@@ -24,6 +24,13 @@ public static class Helpers
             : new T[size];
     }
 
+    public static unsafe RawArray CreateBuffer<T>(int numberOfItems)
+        where T : unmanaged
+    {
+        var bufferLengthInBytes = numberOfItems * sizeof(T);
+        return new RawArray(bufferLengthInBytes);
+    }
+
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rectangle CreateRectangle(Point pos, Size size) => new(pos.X, pos.Y, size.W, size.H);

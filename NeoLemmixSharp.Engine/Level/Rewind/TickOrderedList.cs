@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -15,13 +16,7 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
     public TickOrderedList(int initialCapacity)
     {
         _bufferLength = initialCapacity;
-        _buffer = CreateBuffer(_bufferLength);
-    }
-
-    private static unsafe RawArray CreateBuffer(int initialCapacity)
-    {
-        var bufferLengthInBytes = initialCapacity * sizeof(TTickOrderedData);
-        return new RawArray(bufferLengthInBytes);
+        _buffer = Helpers.CreateBuffer<TTickOrderedData>(_bufferLength);
     }
 
     public int Count => _count;
@@ -57,9 +52,10 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
 
     public ReadOnlySpan<TTickOrderedData> RewindBackTo(int tick)
     {
-        var index = _count == 0
-            ? 0
-            : GetSmallestIndexOfTick(tick);
+        var index = 0;
+
+        if (_count > 0)
+            TryGetSmallestIndexOfTick(tick, out index);
 
         var result = GetSliceToEnd(index);
 
@@ -74,11 +70,7 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
         if (_count == 0)
             return false;
 
-        var index = GetSmallestIndexOfTick(tick);
-
-        TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + index;
-
-        return pointer->TickNumber == tick;
+        return TryGetSmallestIndexOfTick(tick, out _);
     }
 
     [Pure]
@@ -87,29 +79,57 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
         if (_count == 0)
             return ref Unsafe.NullRef<TTickOrderedData>();
 
-        var index = GetSmallestIndexOfTick(tick);
+        if (TryGetSmallestIndexOfTick(tick, out var index))
+        {
+            TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + index;
 
-        TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + index;
-
-        if (pointer->TickNumber == tick)
             return ref *pointer;
+        }
 
         return ref Unsafe.NullRef<TTickOrderedData>();
     }
 
     /// <summary>
-    /// Returns the smallest index such that the data at that index has a tick equal to or exceeding the input parameter
+    /// Finds the smallest index such that the data at that index has a TickNumber equal to or exceeding the input parameter.
+    /// Returns <see langword="true" /> if the resulting index has a TickNumber exactly equal to the input parameter, <see langword="false" /> otherwise.
     /// <para>
-    /// Binary search algorithm - O(log n)
+    /// WARNING: If ALL items have a TickNumber less than the input parameter, then the out index variable will be set to the array's current length.
+    /// This will be out of bounds! Don't forget about this!
+    /// </para>
+    /// <para>
+    /// Binary search algorithm - O(log n).
     /// </para>
     /// </summary>
-    [Pure]
-    private unsafe int GetSmallestIndexOfTick(int tick)
+    /// <param name="tick">The required TickNumber</param>
+    /// <param name="index">The smallest index such that the data at that index has a TickNumber equal to or exceeding the input parameter.</param>
+    /// <returns><see langword="true" /> if the resulting index has a TickNumber exactly equal to the input parameter, <see langword="false" /> otherwise.</returns>
+    private unsafe bool TryGetSmallestIndexOfTick(int tick, out int index)
     {
-        var upperTestIndex = _count - 1;
-        var lowerTestIndex = 0;
+        if (_count == 0)
+        {
+            index = -1;
+            return false;
+        }
 
         TTickOrderedData* basePointer = (TTickOrderedData*)_buffer.Handle;
+        // Edge case: ALL items are >= tick
+        if (basePointer->TickNumber >= tick)
+        {
+            index = 0;
+            return basePointer->TickNumber == tick;
+        }
+
+        var upperTestIndex = _count - 1;
+        // Edge case: ALL items are < tick
+        if ((basePointer + upperTestIndex)->TickNumber < tick)
+        {
+            // This is deliberately outside the bounds of the array
+            // Subsequent usages of this data must deal with it
+            index = _count;
+            return false;
+        }
+
+        var lowerTestIndex = 0;
 
         while (upperTestIndex - lowerTestIndex > 1)
         {
@@ -126,10 +146,8 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
             }
         }
 
-        basePointer += lowerTestIndex;
-        return basePointer->TickNumber >= tick
-            ? lowerTestIndex
-            : upperTestIndex;
+        index = upperTestIndex;
+        return (basePointer + upperTestIndex)->TickNumber == tick;
     }
 
     public unsafe ref TTickOrderedData GetNewDataRef()

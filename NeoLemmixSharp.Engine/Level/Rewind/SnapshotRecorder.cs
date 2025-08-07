@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using System.Runtime.InteropServices;
@@ -29,13 +30,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData> : I
         _itemManager = itemManager;
         _numberOfItemsPerSnapshot = itemManager.AllItems.Length;
         _bufferLength = _numberOfItemsPerSnapshot * SnapshotDataListSizeMultiplier;
-        _buffer = CreateBuffer(_bufferLength);
-    }
-
-    private static unsafe RawArray CreateBuffer(int initialCapacity)
-    {
-        var bufferLengthInBytes = initialCapacity * sizeof(TSnapshotData);
-        return new RawArray(bufferLengthInBytes);
+        _buffer = Helpers.CreateBuffer<TSnapshotData>(_bufferLength);
     }
 
     public void TakeSnapshot()
