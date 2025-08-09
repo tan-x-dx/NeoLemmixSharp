@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.GadgetBehaviours;
 
-public sealed class GadgetResizer2 : GadgetBehaviour
+public sealed class GadgetResizer : GadgetBehaviour
 {
     private readonly HitBoxGadget _gadget;
 
@@ -12,7 +12,7 @@ public sealed class GadgetResizer2 : GadgetBehaviour
 
     private int _tickCount;
 
-    public GadgetResizer2(
+    public GadgetResizer(
         HitBoxGadget gadget,
         int tickDelay,
         int dw,
