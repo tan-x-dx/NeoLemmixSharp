@@ -94,7 +94,8 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
     /// Returns <see langword="true" /> if the resulting index has a TickNumber exactly equal to the input parameter, <see langword="false" /> otherwise.
     /// <para>
     /// WARNING: If ALL items have a TickNumber less than the input parameter, then the out index variable will be set to the array's current length.
-    /// This will be out of bounds! Don't forget about this!
+    /// WARNING: If the array is empty, then the out index variable will be set to -1;
+    /// These values are out of bounds! Don't forget about this!
     /// </para>
     /// <para>
     /// Binary search algorithm - O(log n).
