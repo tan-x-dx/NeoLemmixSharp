@@ -14,10 +14,9 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager :
-    IPerfectHasher<Lemming>,
     IItemManager<Lemming>,
+    IBitBufferCreator<RawBitBuffer, Lemming>,
     IPerfectHasher<HatchGroup>,
-    IBitBufferCreator<RawBitBuffer>,
     ISnapshotDataConvertible<LemmingManagerSnapshotData>,
     IInitialisable,
     IDisposable
@@ -385,7 +384,7 @@ public sealed class LemmingManager :
     int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
     int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
     HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
-    unsafe void IBitBufferCreator<RawBitBuffer>.CreateBitBuffer(out RawBitBuffer buffer)
+    unsafe void IBitBufferCreator<RawBitBuffer, Lemming>.CreateBitBuffer(out RawBitBuffer buffer)
     {
         if (_bitArrayBufferUsageCount == 0)
             throw new InvalidOperationException("Insufficient space for bit buffers!");

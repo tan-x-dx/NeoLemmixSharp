@@ -5,8 +5,7 @@ using NeoLemmixSharp.IO.Data.Style.Gadget;
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public abstract class AdditiveLogicGateGadget : GadgetBase,
-    IPerfectHasher<AdditiveLogicGateGadget.AdditiveGateGadgetLinkInput>,
-    IBitBufferCreator<ArrayBitBuffer>
+    IBitBufferCreator<ArrayBitBuffer, AdditiveLogicGateGadget.AdditiveGateGadgetLinkInput>
 {
     private readonly BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetLinkInput> _set;
     private readonly int _numberOfInputs;
@@ -72,7 +71,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
     int IPerfectHasher<AdditiveGateGadgetLinkInput>.NumberOfItems => _numberOfInputs;
     int IPerfectHasher<AdditiveGateGadgetLinkInput>.Hash(AdditiveGateGadgetLinkInput item) => item.Id;
     AdditiveGateGadgetLinkInput IPerfectHasher<AdditiveGateGadgetLinkInput>.UnHash(int index) => throw new NotSupportedException("Why are you doing this? Stop it.");
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_numberOfInputs);
+    void IBitBufferCreator<ArrayBitBuffer, AdditiveGateGadgetLinkInput>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_numberOfInputs);
 }
 
 public sealed class AndGateGadget : AdditiveLogicGateGadget

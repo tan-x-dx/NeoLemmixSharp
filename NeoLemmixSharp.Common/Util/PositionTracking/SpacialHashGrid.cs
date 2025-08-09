@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
 public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDisposable
-    where TPerfectHasher : class, IPerfectHasher<T>, IBitBufferCreator<TBuffer>
+    where TPerfectHasher : class, IBitBufferCreator<TBuffer, T>
     where TBuffer : struct, IBitBuffer
     where T : class, IRectangularBounds
 {

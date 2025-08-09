@@ -126,7 +126,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     [DebuggerStepThrough]
     public static BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, TValue> CreateBitArrayDictionary<TValue>() => new(new OrientationHasher());
 
-    public readonly struct OrientationHasher : IPerfectHasher<Orientation>, IBitBufferCreator<BitBuffer32>
+    public readonly struct OrientationHasher : IBitBufferCreator<BitBuffer32, Orientation>
     {
         public int NumberOfItems => EngineConstants.NumberOfOrientations;
 

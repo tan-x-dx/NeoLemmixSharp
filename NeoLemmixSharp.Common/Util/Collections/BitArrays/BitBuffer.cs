@@ -15,12 +15,6 @@ public interface IBitBuffer
     ReadOnlySpan<uint> AsReadOnlySpan();
 }
 
-public interface IBitBufferCreator<TBuffer>
-    where TBuffer : struct, IBitBuffer
-{
-    void CreateBitBuffer(out TBuffer buffer);
-}
-
 [InlineArray(BitBuffer32Length)]
 public struct BitBuffer32 : IBitBuffer
 {

@@ -68,7 +68,7 @@ public interface ILemmingState
 
     public static LemmingStateSet CreateBitArraySet() => new(new LemmingStateChangerHasher());
 
-    public readonly struct LemmingStateChangerHasher : IPerfectHasher<ILemmingState>, IBitBufferCreator<BitBuffer32>
+    public readonly struct LemmingStateChangerHasher : IBitBufferCreator<BitBuffer32, ILemmingState>
     {
         public int NumberOfItems => LemmingStateConstants.NumberOfStates;
         public int Hash(ILemmingState item) => (int)item.LemmingStateType;

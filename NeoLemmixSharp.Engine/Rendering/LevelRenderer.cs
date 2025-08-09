@@ -16,8 +16,7 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 namespace NeoLemmixSharp.Engine.Rendering;
 
 public sealed class LevelRenderer :
-    IPerfectHasher<IViewportObjectRenderer>,
-    IBitBufferCreator<ArrayBitBuffer>,
+    IBitBufferCreator<ArrayBitBuffer, IViewportObjectRenderer>,
     IDisposable
 {
     private readonly GraphicsDevice _graphicsDevice;
@@ -266,5 +265,5 @@ public sealed class LevelRenderer :
     int IPerfectHasher<IViewportObjectRenderer>.NumberOfItems => _orderedSprites.Count;
     int IPerfectHasher<IViewportObjectRenderer>.Hash(IViewportObjectRenderer item) => item.RendererId;
     IViewportObjectRenderer IPerfectHasher<IViewportObjectRenderer>.UnHash(int index) => _orderedSprites[index];
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_orderedSprites.Count);
+    void IBitBufferCreator<ArrayBitBuffer, IViewportObjectRenderer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_orderedSprites.Count);
 }

@@ -9,10 +9,9 @@ using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public sealed class GadgetManager :
-    IPerfectHasher<GadgetBase>,
-    IPerfectHasher<HitBoxGadget>,
+    IBitBufferCreator<RawBitBuffer, HitBoxGadget>,
+    IBitBufferCreator<RawBitBuffer, GadgetBase>,
     IItemManager<GadgetBase>,
-    IBitBufferCreator<RawBitBuffer>,
     ISnapshotDataConvertible<int>,
     IInitialisable,
     IDisposable
@@ -145,9 +144,12 @@ public sealed class GadgetManager :
     public int NumberOfItems => _allGadgets.Length;
     int IPerfectHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
     GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
+    void IBitBufferCreator<RawBitBuffer, GadgetBase>.CreateBitBuffer(out RawBitBuffer buffer) => buffer = GetNextRawBitBuffer();
     int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
     HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
-    unsafe void IBitBufferCreator<RawBitBuffer>.CreateBitBuffer(out RawBitBuffer buffer)
+    void IBitBufferCreator<RawBitBuffer, HitBoxGadget>.CreateBitBuffer(out RawBitBuffer buffer) => buffer = GetNextRawBitBuffer();
+
+    private unsafe RawBitBuffer GetNextRawBitBuffer()
     {
         if (_bitArrayBufferUsageCount == 0)
             throw new InvalidOperationException("Insufficient space for bit buffers!");
@@ -155,7 +157,7 @@ public sealed class GadgetManager :
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_allGadgets.Length);
 
         uint* pointer = (uint*)_gadgetByteBuffer.Handle + (bitBufferLength * _bitArrayBufferUsageCount);
-        buffer = new RawBitBuffer(pointer, bitBufferLength);
+        return new RawBitBuffer(pointer, bitBufferLength);
     }
 
     public void Dispose()

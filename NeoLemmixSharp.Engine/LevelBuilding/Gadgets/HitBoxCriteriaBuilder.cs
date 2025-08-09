@@ -175,7 +175,7 @@ public static class HitBoxCriteriaBuilder
     // All queries will always return true, so we might as well not even bother
     // creating a criterion object.
     private static void CheckSetIsNotFull<TPerfectHasher, TBuffer, T>(ref BitArraySet<TPerfectHasher, TBuffer, T>? set, ref int numberOfCriteria)
-        where TPerfectHasher : IPerfectHasher<T>, IBitBufferCreator<TBuffer>
+        where TPerfectHasher : IBitBufferCreator<TBuffer, T>
         where TBuffer : struct, IBitBuffer
         where T : notnull
     {
