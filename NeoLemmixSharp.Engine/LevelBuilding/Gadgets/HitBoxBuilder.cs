@@ -11,11 +11,11 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public static class HitBoxBuilder
 {
-    public static BitArrayDictionary<Orientation.OrientationHasher, BitBuffer32, Orientation, IHitBoxRegion> BuildHitBoxLookup(
+    public static BitArrayDictionary<Orientation.OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> BuildHitBoxLookup(
         GadgetStateArchetypeData state,
         GadgetBounds gadgetBounds)
     {
-        var result = Orientation.CreateBitArrayDictionary<IHitBoxRegion>();
+        var result = Orientation.CreateBitArrayDictionary<HitBoxRegion>();
 
         foreach (var hitBoxRegionData in state.RegionData)
         {
@@ -30,7 +30,7 @@ public static class HitBoxBuilder
         return result;
     }
 
-    private static IHitBoxRegion? BuildHitBoxRegion(
+    private static HitBoxRegion? BuildHitBoxRegion(
         HitBoxRegionData hitBoxRegionData,
         GadgetBounds gadgetBounds) => hitBoxRegionData.HitBoxType switch
         {
@@ -39,7 +39,7 @@ public static class HitBoxBuilder
             HitBoxType.Rectangular => BuildRectangularHitBoxRegion(hitBoxRegionData),
             HitBoxType.PointSet => BuildPointSetHitBoxRegion(hitBoxRegionData),
 
-            _ => Helpers.ThrowUnknownEnumValueException<HitBoxType, IHitBoxRegion>(hitBoxRegionData.HitBoxType),
+            _ => Helpers.ThrowUnknownEnumValueException<HitBoxType, HitBoxRegion>(hitBoxRegionData.HitBoxType),
         };
 
     private static ResizableRectangularHitBoxRegion BuildResizableRectangularHitBoxRegion(

@@ -74,9 +74,9 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             Orientation = dht.Orientation,
             FacingDirection = dht.FacingDirection,
 
-            OverrideInputNames = inputNames,
+            // OverrideInputNames = inputNames,
             LayerColorData = layerColorData,
-            OverrideHitBoxCriteriaData = overrideHitBoxCriteriaData
+            // OverrideHitBoxCriteriaData = overrideHitBoxCriteriaData
         };
 
         ReadProperties(reader, result);
@@ -163,8 +163,8 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         if (!result.TryGetProperty(GadgetProperty.NumberOfInputs, out var numberOfInputsSpecified))
             numberOfInputsSpecified = 0;
 
-        var numberOfOverrideInputNames = result.OverrideInputNames.Length;
+        //  var numberOfOverrideInputNames = result.OverrideInputNames.Length;
 
-        FileReadingException.ReaderAssert(numberOfInputsSpecified == numberOfOverrideInputNames, "Mismatch between number of inputs specified and number of override input names!");
+        //  FileReadingException.ReaderAssert(numberOfInputsSpecified == numberOfOverrideInputNames, "Mismatch between number of inputs specified and number of override input names!");
     }
 }

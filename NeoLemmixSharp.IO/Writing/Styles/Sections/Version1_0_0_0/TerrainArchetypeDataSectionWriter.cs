@@ -20,7 +20,7 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
     {
         var numberOfNonTrivialArchetypeData = 0;
 
-        foreach (var kvp in styleData.TerrainArchetypeData)
+        foreach (var kvp in styleData.TerrainArchetypeDataLookup)
         {
             var terrainArchetypeData = kvp.Value;
 
@@ -33,7 +33,7 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
 
     public override void WriteSection(RawStyleFileDataWriter writer, StyleData styleData)
     {
-        foreach (var kvp in styleData.TerrainArchetypeData)
+        foreach (var kvp in styleData.TerrainArchetypeDataLookup)
         {
             var terrainArchetypeData = kvp.Value;
 

@@ -19,14 +19,14 @@ internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRaw
         byte allowedLemmingOrientationIds = ReadAllowedLemmingOrientationIds();
         byte allowedFacingDirectionId = ReadAllowedLemmingFacingDirectionId();
 
-        return new HitBoxCriteriaData
-        {
-            AllowedLemmingActionIds = allowedLemmingActionIds,
-            AllowedLemmingStateIds = allowedLemmingStateIds,
-            AllowedLemmingTribeIds = allowedLemmingTribeId,
-            AllowedLemmingOrientationIds = allowedLemmingOrientationIds,
-            AllowedFacingDirectionId = allowedFacingDirectionId
-        };
+        return new HitBoxCriteriaData();
+        /*  {
+              AllowedLemmingActionIds = allowedLemmingActionIds,
+              AllowedLemmingStateIds = allowedLemmingStateIds,
+              AllowedLemmingTribeIds = allowedLemmingTribeId,
+              AllowedLemmingOrientationIds = allowedLemmingOrientationIds,
+              AllowedFacingDirectionId = allowedFacingDirectionId
+          };*/
     }
 
     private uint[] ReadUintSequence(int maxNumberOfBits)

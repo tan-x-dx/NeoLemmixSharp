@@ -57,11 +57,11 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         GadgetData gadgetData)
     {
-        writer.Write8BitUnsignedInteger((byte)gadgetData.OverrideInputNames.Length);
-        foreach (var inputName in gadgetData.OverrideInputNames)
-        {
-            writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(inputName));
-        }
+        /*     writer.Write8BitUnsignedInteger((byte)gadgetData.OverrideInputNames.Length);
+             foreach (var inputName in gadgetData.OverrideInputNames)
+             {
+                 writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(inputName));
+             }*/
     }
 
     private static void WriteLayerColorData(RawLevelFileDataWriter writer, GadgetData gadgetData)
@@ -90,14 +90,14 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
     private static void WriteOverrideHitBoxCriteriaData(RawLevelFileDataWriter writer, GadgetData gadgetData)
     {
-        if (gadgetData.OverrideHitBoxCriteriaData is null)
-        {
-            writer.WriteBool(false);
-            return; 
-        }
+        /*      if (gadgetData.OverrideHitBoxCriteriaData is null)
+              {
+                  writer.WriteBool(false);
+                  return; 
+              }*/
 
-        writer.WriteBool(true);
-        new GadgetHitBoxCriteriaWriter<RawLevelFileDataWriter>(writer).WriteHitBoxCriteria(gadgetData.OverrideHitBoxCriteriaData);
+        //     writer.WriteBool(true);
+        //     new GadgetHitBoxCriteriaWriter<RawLevelFileDataWriter>(writer).WriteHitBoxCriteria(gadgetData.OverrideHitBoxCriteriaData);
     }
 
     private static void WriteGadgetProperties(

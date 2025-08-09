@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
-public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
+public sealed class ResizableRectangularHitBoxRegion : HitBoxRegion
 {
     private readonly GadgetBounds _gadgetBounds;
 
@@ -30,11 +30,11 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
     private int GetWidth() => _gadgetBounds.Width + _dw - _dx;
     private int GetHeight() => _gadgetBounds.Height + _dh - _dy;
 
-    public RectangularRegion CurrentBounds => new(
+    public override RectangularRegion CurrentBounds => new(
         new Point(GetX(), GetY()),
         new Size(GetWidth(), GetHeight()));
 
-    public bool ContainsPoint(Point levelPosition)
+    public override bool ContainsPoint(Point levelPosition)
     {
         var w = GetWidth();
         var h = GetHeight();
@@ -45,16 +45,16 @@ public sealed class ResizableRectangularHitBoxRegion : IHitBoxRegion
                LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetY(), h), levelPosition.Y);
     }
 
-    public bool ContainsEitherPoint(Point p1, Point p2)
+    public override bool ContainsEitherPoint(Point p1, Point p2)
     {
         var w = GetWidth();
         var h = GetHeight();
 
         return w > 0 &&
                h > 0 &&
-               ((LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetX(), w), p1.X) &&
-                 LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetY(), h), p1.Y)) ||
-                (LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetX(), w), p1.X) &&
-                 LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetY(), h), p1.Y)));
+               (LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetX(), w), p1.X) &&
+                 LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetY(), h), p1.Y) ||
+                LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetX(), w), p1.X) &&
+                 LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetY(), h), p1.Y));
     }
 }

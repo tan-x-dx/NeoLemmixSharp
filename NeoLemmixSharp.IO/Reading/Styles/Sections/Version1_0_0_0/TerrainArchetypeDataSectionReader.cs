@@ -18,12 +18,12 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
 
     public override void ReadSection(RawStyleFileDataReader reader, StyleData styleData, int numberOfItemsInSection)
     {
-        styleData.TerrainArchetypeData.EnsureCapacity(numberOfItemsInSection);
+        styleData.TerrainArchetypeDataLookup.EnsureCapacity(numberOfItemsInSection);
 
         while (numberOfItemsInSection-- > 0)
         {
             var newTerrainArchetypeDatum = ReadNextTerrainArchetypeData(styleData.Identifier, reader);
-            styleData.TerrainArchetypeData.Add(newTerrainArchetypeDatum.PieceIdentifier, newTerrainArchetypeDatum);
+            styleData.TerrainArchetypeDataLookup.Add(newTerrainArchetypeDatum.PieceIdentifier, newTerrainArchetypeDatum);
         }
     }
 

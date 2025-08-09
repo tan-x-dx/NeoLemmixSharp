@@ -393,7 +393,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         if (NextAction != NoneAction.Instance &&
             checkPosition == AnchorPosition &&
             (NextAction != SplatterAction.Instance ||
-            filter.HitBoxBehaviour != HitBoxBehaviour.Liquid))
+            filter.HitBoxBehaviour != HitBoxInteractionType.Liquid))
         {
             NextAction.TransitionLemmingToAction(this, false);
             if (JumpToHoistAdvance)

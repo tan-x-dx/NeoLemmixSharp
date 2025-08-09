@@ -1,9 +1,11 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using System.Diagnostics;
 
@@ -12,85 +14,175 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 public static class HitBoxCriteriaBuilder
 {
     public static LemmingCriterion[] BuildLemmingCriteria(
-        HitBoxCriteriaData gadgetArchetypeDataHitBoxCriteriaData,
-        HitBoxCriteriaData? gadgetDataOverrideHitBoxCriteriaData,
+        ReadOnlySpan<HitBoxCriteriaData> gadgetArchetypeDataHitBoxCriteriaData,
+        ReadOnlySpan<HitBoxCriteriaData> gadgetInstanceDataHitBoxCriteriaData,
+        BitArraySet<LemmingCriteriaHasher, BitBuffer32, LemmingCriteria> allowedCustomHitBoxCriteria,
         TribeManager tribeManager)
     {
-        var lemmingCriteriaData = gadgetDataOverrideHitBoxCriteriaData ?? gadgetArchetypeDataHitBoxCriteriaData;
+        OrientationSet? orientationSet = null;
+        int facingDirectionIds = 0;
+        LemmingActionSet? lemmingActionSet = null;
+        LemmingStateSet? lemmingStateSet = null;
+        TribeSet? tribeSet = null;
+        var numberOfCriteria = 0;
 
-        var result = CreateArrayForSize(lemmingCriteriaData);
+        foreach (var hitBoxCriteriaDatum in gadgetArchetypeDataHitBoxCriteriaData)
+        {
+            RegisterLemmingCriterion(hitBoxCriteriaDatum);
+        }
 
+        foreach (var hitBoxCriteriaDatum in gadgetInstanceDataHitBoxCriteriaData)
+        {
+            if (!allowedCustomHitBoxCriteria.Contains(hitBoxCriteriaDatum.LemmingCriteria))
+                throw new InvalidOperationException("Not allowed to change this criterion!");
+
+            RegisterLemmingCriterion(hitBoxCriteriaDatum);
+        }
+
+        CheckSetIsNotFull(ref orientationSet, ref numberOfCriteria);
+        // Have to deal with facing directions differently since there's
+        // only two possible values. It's not worth creating a set object
+        // for just two values so we mess around with IDs directly.
+        if (facingDirectionIds == 3)
+        {
+            facingDirectionIds = 0;
+            numberOfCriteria--;
+        }
+        CheckSetIsNotFull(ref lemmingActionSet, ref numberOfCriteria);
+        CheckSetIsNotFull(ref lemmingStateSet, ref numberOfCriteria);
+        CheckSetIsNotFull(ref tribeSet, ref numberOfCriteria);
+
+        return CreateLemmingCriteriaArray(orientationSet, facingDirectionIds, lemmingActionSet, lemmingStateSet, tribeSet, numberOfCriteria);
+
+        void RegisterLemmingCriterion(HitBoxCriteriaData hitBoxCriteriaDatum)
+        {
+            switch (hitBoxCriteriaDatum.LemmingCriteria)
+            {
+                case LemmingCriteria.LemmingOrientation:
+                    AddOrientationToCriteria(ref orientationSet, ref numberOfCriteria, hitBoxCriteriaDatum.ItemId);
+                    break;
+
+                case LemmingCriteria.LemmingFacingDirection:
+                    AddFacingToCriteria(ref facingDirectionIds, ref numberOfCriteria, hitBoxCriteriaDatum.ItemId);
+                    break;
+
+                case LemmingCriteria.LemmingAction:
+                    AddLemmingActionToCriteria(ref lemmingActionSet, ref numberOfCriteria, hitBoxCriteriaDatum.ItemId);
+                    break;
+
+                case LemmingCriteria.LemmingState:
+                    AddLemmingStateToCriteria(ref lemmingStateSet, ref numberOfCriteria, hitBoxCriteriaDatum.ItemId);
+                    break;
+
+                case LemmingCriteria.LemmingTribe:
+                    AddLemmingTribeToCriteria(ref tribeSet, ref numberOfCriteria, hitBoxCriteriaDatum.ItemId, tribeManager);
+                    break;
+
+                default:
+                    Helpers.ThrowUnknownEnumValueException<LemmingCriteria, LemmingCriteria>(hitBoxCriteriaDatum.LemmingCriteria);
+                    break;
+            }
+        }
+    }
+
+    private static LemmingCriterion[] CreateLemmingCriteriaArray(
+        OrientationSet? orientationSet,
+        int facingDirectionIds,
+        LemmingActionSet? lemmingActionSet,
+        LemmingStateSet? lemmingStateSet,
+        TribeSet? tribeSet,
+        int numberOfCriteria)
+    {
+        var result = Helpers.GetArrayForSize<LemmingCriterion>(numberOfCriteria);
         var i = 0;
 
-        if (lemmingCriteriaData.AllowedLemmingActionIds.Length > 0)
-            result[i++] = BuildLemmingActionCriterion(lemmingCriteriaData.AllowedLemmingActionIds);
-
-        if (lemmingCriteriaData.AllowedLemmingStateIds.Length > 0)
-            result[i++] = BuildLemmingStateCriterion(lemmingCriteriaData.AllowedLemmingStateIds);
-
-        if (lemmingCriteriaData.AllowedLemmingTribeIds != 0)
-            result[i++] = BuildLemmingTribeCriterion(lemmingCriteriaData.AllowedLemmingTribeIds, tribeManager);
-
-        if (lemmingCriteriaData.AllowedLemmingOrientationIds != 0)
-            result[i++] = BuildLemmingOrientationCriterion(lemmingCriteriaData.AllowedLemmingOrientationIds);
-
-        if (lemmingCriteriaData.AllowedFacingDirectionId != 0)
-            result[i++] = BuildLemmingFacingDirectionCriterion(lemmingCriteriaData.AllowedFacingDirectionId);
+        if (orientationSet is not null) result[i++] = new LemmingOrientationCriterion(orientationSet);
+        if (facingDirectionIds != 0)
+        {
+            var id = facingDirectionIds == 1 ? EngineConstants.RightFacingDirectionId : EngineConstants.LeftFacingDirectionId;
+            result[i++] = LemmingFacingDirectionCriterion.ForFacingDirection(id);
+        }
+        if (lemmingActionSet is not null) result[i++] = new LemmingActionCriterion(lemmingActionSet);
+        if (lemmingStateSet is not null) result[i++] = new LemmingStateCriterion(lemmingStateSet);
+        if (tribeSet is not null) result[i++] = new LemmingTribeCriterion(tribeSet);
 
         Debug.Assert(i == result.Length);
 
         return result;
     }
 
-    private static LemmingCriterion[] CreateArrayForSize(HitBoxCriteriaData lemmingCriteriaData)
+    private static void AddOrientationToCriteria(ref OrientationSet? orientationSet, ref int numberOfCriteria, int itemId)
     {
-        var arraySize = (lemmingCriteriaData.AllowedLemmingActionIds.Length > 0 ? 1 : 0) +
-                        (lemmingCriteriaData.AllowedLemmingStateIds.Length > 0 ? 1 : 0) +
-                        (lemmingCriteriaData.AllowedLemmingTribeIds != 0 ? 1 : 0) +
-                        (lemmingCriteriaData.AllowedLemmingOrientationIds != 0 ? 1 : 0) +
-                        (lemmingCriteriaData.AllowedFacingDirectionId != 0 ? 1 : 0);
+        if (orientationSet is null)
+        {
+            orientationSet = Orientation.CreateBitArraySet();
+            numberOfCriteria++;
+        }
 
-        return Helpers.GetArrayForSize<LemmingCriterion>(arraySize);
+        var orientation = new Orientation(itemId);
+        orientationSet.Add(orientation);
     }
 
-    private static LemmingActionCriterion BuildLemmingActionCriterion(uint[] allowedLemmingActionIds)
+    private static void AddFacingToCriteria(ref int facingDirectionIds, ref int numberOfCriteria, int itemId)
     {
-        var lemmingActionSet = LemmingAction.CreateBitArraySet();
-        lemmingActionSet.ReadFrom(allowedLemmingActionIds);
+        var newFacingDirectionId = itemId & 1;
+        if (facingDirectionIds == 0)
+        {
+            numberOfCriteria++;
+            return;
+        }
 
-        return new LemmingActionCriterion(lemmingActionSet);
+        facingDirectionIds |= 1 << newFacingDirectionId;
     }
 
-    private static LemmingStateCriterion BuildLemmingStateCriterion(uint[] allowedLemmingStateIds)
+    private static void AddLemmingActionToCriteria(ref LemmingActionSet? lemmingActionSet, ref int numberOfCriteria, int itemId)
     {
-        var lemmingStateSet = ILemmingState.CreateBitArraySet();
-        lemmingStateSet.ReadFrom(allowedLemmingStateIds);
+        if (lemmingActionSet is null)
+        {
+            lemmingActionSet = LemmingAction.CreateBitArraySet();
+            numberOfCriteria++;
+        }
 
-        return new LemmingStateCriterion(lemmingStateSet);
+        var lemmingAction = LemmingAction.AllItems[itemId];
+        lemmingActionSet.Add(lemmingAction);
     }
 
-    private static LemmingTribeCriterion BuildLemmingTribeCriterion(byte value, TribeManager tribeManager)
+    private static void AddLemmingStateToCriteria(ref LemmingStateSet? lemmingStateSet, ref int numberOfCriteria, int itemId)
     {
-        var tribeSet = tribeManager.CreateBitArraySet();
-        uint intValue = value;
-        var sourceSpan = new ReadOnlySpan<uint>(ref intValue);
-        tribeSet.ReadFrom(sourceSpan);
+        if (lemmingStateSet is null)
+        {
+            lemmingStateSet = ILemmingState.CreateBitArraySet();
+            numberOfCriteria++;
+        }
 
-        return new LemmingTribeCriterion(tribeSet);
+        var lemmingState = ILemmingState.AllItems[itemId];
+        lemmingStateSet.Add(lemmingState);
     }
 
-    private static LemmingOrientationCriterion BuildLemmingOrientationCriterion(byte value)
+    private static void AddLemmingTribeToCriteria(ref TribeSet? tribeSet, ref int numberOfCriteria, int itemId, TribeManager tribeManager)
     {
-        var orientationSet = Orientation.CreateBitArraySet();
-        uint intValue = value;
-        var sourceSpan = new ReadOnlySpan<uint>(ref intValue);
-        orientationSet.ReadFrom(sourceSpan);
+        if (tribeSet is null)
+        {
+            tribeSet = tribeManager.CreateBitArraySet();
+            numberOfCriteria++;
+        }
 
-        return new LemmingOrientationCriterion(orientationSet);
+        var tribe = tribeManager.AllItems[itemId];
+        tribeSet.Add(tribe);
     }
 
-    private static LemmingFacingDirectionCriterion BuildLemmingFacingDirectionCriterion(byte value)
+    // If the set contains all possible values, then it is functionally useless.
+    // All queries will always return true, so we might as well not even bother
+    // creating a criterion object.
+    private static void CheckSetIsNotFull<TPerfectHasher, TBuffer, T>(ref BitArraySet<TPerfectHasher, TBuffer, T>? set, ref int numberOfCriteria)
+        where TPerfectHasher : IPerfectHasher<T>, IBitBufferCreator<TBuffer>
+        where TBuffer : struct, IBitBuffer
+        where T : notnull
     {
-        return LemmingFacingDirectionCriterion.ForFacingDirection(value);
+        if (set is not null && set.IsFull)
+        {
+            set = null;
+            numberOfCriteria--;
+        }
     }
 }

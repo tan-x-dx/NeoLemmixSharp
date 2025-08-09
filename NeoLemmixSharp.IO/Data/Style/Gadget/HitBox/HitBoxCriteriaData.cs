@@ -1,10 +1,9 @@
-﻿namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+﻿using NeoLemmixSharp.IO.Data.Level.Gadgets;
 
-public sealed class HitBoxCriteriaData
+namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+
+public readonly struct HitBoxCriteriaData(LemmingCriteria lemmingCriteria, int itemId)
 {
-    public required uint[] AllowedLemmingActionIds { get; init; }
-    public required uint[] AllowedLemmingStateIds { get; init; }
-    public required byte AllowedLemmingTribeIds { get; init; }
-    public required byte AllowedLemmingOrientationIds { get; init; }
-    public required byte AllowedFacingDirectionId { get; init; }
+    public readonly LemmingCriteria LemmingCriteria = lemmingCriteria;
+    public readonly int ItemId = itemId;
 }

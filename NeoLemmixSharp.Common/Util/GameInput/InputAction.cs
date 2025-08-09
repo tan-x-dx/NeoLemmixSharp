@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
+﻿using NeoLemmixSharp.Common.Util.Identity;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using NeoLemmixSharp.Common.Util.Identity;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 

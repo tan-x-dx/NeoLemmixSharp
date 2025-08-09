@@ -79,6 +79,8 @@ public sealed class MenuPageCreator
             var levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);
             result = new LevelStartPage(_inputController, levelScreen);
+
+            GC.Collect(2, GCCollectionMode.Forced);
         }
         catch (Exception ex)
         {
@@ -106,6 +108,8 @@ public sealed class MenuPageCreator
             var levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);
             result = new LevelStartPage(_inputController, levelScreen);
+
+            GC.Collect(2, GCCollectionMode.Forced);
         }
         catch (Exception ex)
         {

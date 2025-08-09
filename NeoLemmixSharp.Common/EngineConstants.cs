@@ -83,6 +83,8 @@ public static class EngineConstants
 
     public const int FloaterGliderStartCycleFrame = 9;
 
+    public const int NoLemmingCauseAndEffectId = -1;
+
     /// <summary>
     /// A lemming falls 3 pixels each frame
     /// </summary>

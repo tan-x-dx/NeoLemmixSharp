@@ -101,10 +101,10 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
             _stringIdLookup.RecordString(gadgetDatum.StyleIdentifier);
             _stringIdLookup.RecordString(gadgetDatum.PieceIdentifier);
 
-            foreach (var gadgetInputName in gadgetDatum.OverrideInputNames)
-            {
-                _stringIdLookup.RecordString(gadgetInputName);
-            }
+            /*    foreach (var gadgetInputName in gadgetDatum.OverrideInputNames)
+                {
+                    _stringIdLookup.RecordString(gadgetInputName);
+                }*/
         }
 
         foreach (var gadgetLinkDatum in levelData.AllGadgetLinkData)

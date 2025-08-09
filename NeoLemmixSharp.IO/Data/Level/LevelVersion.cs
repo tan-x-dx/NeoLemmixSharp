@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Data.Level;
 
-public readonly struct LevelVersion(ulong levelVersion): IEquatable<LevelVersion>
+public readonly struct LevelVersion(ulong levelVersion) : IEquatable<LevelVersion>
 {
     public readonly ulong Version = levelVersion;
 

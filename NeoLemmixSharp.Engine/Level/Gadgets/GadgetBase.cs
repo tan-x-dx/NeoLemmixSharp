@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
-    private readonly string _gadgetName;
+    public required string GadgetName { get; init; }
     public required GadgetBounds CurrentGadgetBounds { get; init; }
 
     public required int Id { get; init; }
@@ -19,11 +19,6 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public Size Size => CurrentGadgetBounds.Size;
 
     public abstract GadgetState CurrentState { get; }
-
-    public GadgetBase(string gadgetName)
-    {
-        _gadgetName = gadgetName;
-    }
 
     public abstract void Tick();
     public abstract void SetNextState(int stateIndex);
@@ -44,5 +39,5 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     {
     }
 
-    public sealed override string ToString() => _gadgetName;
+    public sealed override string ToString() => GadgetName;
 }

@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
@@ -133,15 +134,15 @@ public static class GadgetBuildingHelpers
         return result;
     }
 
-    public static string GetGadgetName(GadgetArchetypeData gadgetArchetypeData, GadgetData gadgetData)
+    public static string GetGadgetName(IGadgetArchetypeData gadgetArchetypeData, GadgetData gadgetData)
     {
-        return string.IsNullOrEmpty(gadgetData.OverrideName)
+        return string.IsNullOrWhiteSpace(gadgetData.OverrideName)
             ? gadgetArchetypeData.GadgetName
             : gadgetData.OverrideName;
     }
 
     public static GadgetBounds CreateGadgetBounds(
-        GadgetArchetypeData gadgetArchetypeData,
+        HitBoxGadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData)
     {
         var resizeType = gadgetArchetypeData.ResizeType;

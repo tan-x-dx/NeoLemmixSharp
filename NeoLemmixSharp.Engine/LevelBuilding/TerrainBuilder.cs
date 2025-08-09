@@ -12,7 +12,7 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public readonly ref struct TerrainBuilder
+public sealed class TerrainBuilder
 {
     private readonly LevelData _levelData;
 

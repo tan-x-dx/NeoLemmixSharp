@@ -9,7 +9,7 @@ using NeoLemmixSharp.IO.Data.Level.Objectives;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public readonly ref struct LevelObjectiveBuilder
+public sealed class LevelObjectiveBuilder
 {
     private readonly LevelObjectiveData _levelObjectiveData;
     private readonly TalismanData? _selectedTalisman;

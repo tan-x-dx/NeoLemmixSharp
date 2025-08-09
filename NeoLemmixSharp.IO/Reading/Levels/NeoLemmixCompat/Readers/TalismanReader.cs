@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
-using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
@@ -77,12 +76,12 @@ internal sealed class TalismanReader : NeoLemmixDataReader
             return;
         }
 
-    /*    foreach (var item in LemmingSkill.AllItems)
-        {
-            _currentTalismanData!.SkillLimits.Add(item, 0);
-        }
+        /*    foreach (var item in LemmingSkill.AllItems)
+            {
+                _currentTalismanData!.SkillLimits.Add(item, 0);
+            }
 
-        _currentTalismanData!.SkillLimits.Remove(onlySkill);*/
+            _currentTalismanData!.SkillLimits.Remove(onlySkill);*/
     }
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -122,7 +121,7 @@ internal sealed class TalismanReader : NeoLemmixDataReader
 
         if (LemmingSkillConstants.TryGetLemmingSkillIdFromName(firstToken[..^6], out var skill))
         {
-       //     currentTalismanData.SkillLimits.Add(skill, int.Parse(secondToken));
+            //     currentTalismanData.SkillLimits.Add(skill, int.Parse(secondToken));
             return;
         }
 

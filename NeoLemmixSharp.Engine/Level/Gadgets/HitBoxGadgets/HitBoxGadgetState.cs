@@ -1,37 +1,28 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
-using NeoLemmixSharp.Engine.Level.Gadgets.Triggers;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
-using OrientationToHitBoxRegionLookup = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayDictionary<NeoLemmixSharp.Common.Orientation.OrientationHasher, NeoLemmixSharp.Common.Util.Collections.BitArrays.BitBuffer32, NeoLemmixSharp.Common.Orientation, NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes.IHitBoxRegion>;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class HitBoxGadgetState : GadgetState
 {
     private HitBoxGadget _parentGadget = null!;
-    private readonly GadgetStateName _stateName;
 
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
-    private readonly OrientationToHitBoxRegionLookup _hitBoxLookup;
+    private readonly BitArrayDictionary<Orientation.OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> _hitBoxLookup;
 
-    public AnimationController AnimationController { get; }
     public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
 
     public HitBoxGadgetState(
-        GadgetStateName stateName,
         GadgetTrigger[] gadgetTriggers,
         LemmingHitBoxFilter[] lemmingHitBoxFilters,
-        OrientationToHitBoxRegionLookup hitBoxLookup,
-        AnimationController animationController)
+        BitArrayDictionary<Orientation.OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> hitBoxLookup)
         : base(gadgetTriggers)
     {
-        _stateName = stateName;
         _lemmingHitBoxFilters = lemmingHitBoxFilters;
         _hitBoxLookup = hitBoxLookup;
-        AnimationController = animationController;
     }
 
     public void SetParentGadget(HitBoxGadget hitBoxGadget)
@@ -42,7 +33,7 @@ public sealed class HitBoxGadgetState : GadgetState
         _parentGadget = hitBoxGadget;
     }
 
-    public IHitBoxRegion HitBoxFor(Orientation orientation)
+    public HitBoxRegion HitBoxFor(Orientation orientation)
     {
         if (_hitBoxLookup.TryGetValue(orientation, out var hitBoxRegion))
             return hitBoxRegion;
@@ -89,7 +80,6 @@ public sealed class HitBoxGadgetState : GadgetState
 
     public override void OnTransitionTo()
     {
-        AnimationController.OnTransitionTo();
         //  StateSelectedOutput.SetSignal(true);
     }
 
@@ -97,8 +87,6 @@ public sealed class HitBoxGadgetState : GadgetState
     {
         // StateSelectedOutput.SetSignal(false);
     }
-
-    public override string ToString() => _stateName.ToString();
 
     public override GadgetRenderer Renderer => throw new NotImplementedException();
 }

@@ -70,4 +70,4 @@ public enum TrackingStatus
     Entered = 1,
     Exited = 2,
     StillPresent = 3
-} 
+}

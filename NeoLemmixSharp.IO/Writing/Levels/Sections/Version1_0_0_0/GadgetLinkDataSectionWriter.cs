@@ -8,7 +8,7 @@ internal sealed class GadgetLinkDataSectionWriter : LevelDataSectionWriter
 {
     private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public GadgetLinkDataSectionWriter(FileWriterStringIdLookup stringIdLookup) : base(LevelFileSectionIdentifier.GadgetLinkDataSection, false)
+    public GadgetLinkDataSectionWriter(FileWriterStringIdLookup stringIdLookup) : base(LevelFileSectionIdentifier.GadgetTriggerDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }

@@ -1,15 +1,14 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Level;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public ref struct LemmingBuilder
+public sealed class LemmingBuilder
 {
     private readonly LevelData _levelData;
-    private ArrayListWrapper<Lemming> _lemmingList;
+    private readonly List<Lemming> _lemmingList;
 
     public LemmingBuilder(LevelData levelData)
     {
@@ -19,7 +18,7 @@ public ref struct LemmingBuilder
                             _levelData.HatchLemmingData.Count +
                             _levelData.PrePlacedLemmingData.Count;
 
-        _lemmingList = new ArrayListWrapper<Lemming>(totalCapacity);
+        _lemmingList = new List<Lemming>(totalCapacity);
     }
 
     public Lemming[] BuildLevelLemmings()
@@ -42,7 +41,7 @@ public ref struct LemmingBuilder
             _lemmingList.Add(lemming);
         }
 
-        return _lemmingList.GetArray();
+        return _lemmingList.ToArray();
     }
 
     private void AddLemmings(ReadOnlySpan<LemmingData> lemmingDataSpan)

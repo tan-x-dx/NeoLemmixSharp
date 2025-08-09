@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
-public sealed class PointSetHitBoxRegion : IHitBoxRegion
+public sealed class PointSetHitBoxRegion : HitBoxRegion
 {
     private const int DimensionCutoffSize = 64;
     private const int AreaCutoffSize = 64 * 64;
@@ -14,7 +14,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
 
     private readonly RectangularRegion _bounds;
 
-    public RectangularRegion CurrentBounds => _bounds;
+    public override RectangularRegion CurrentBounds => _bounds;
 
     public PointSetHitBoxRegion(ReadOnlySpan<Point> points)
     {
@@ -44,7 +44,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     }
 
     [Pure]
-    public bool ContainsPoint(Point levelPosition)
+    public override bool ContainsPoint(Point levelPosition)
     {
         levelPosition -= _bounds.Position;
         var index = IndexFor(levelPosition);
@@ -54,7 +54,7 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
     }
 
     [Pure]
-    public bool ContainsEitherPoint(Point p1, Point p2)
+    public override bool ContainsEitherPoint(Point p1, Point p2)
     {
         p1 -= _bounds.Position;
         p2 -= _bounds.Position;
@@ -62,10 +62,10 @@ public sealed class PointSetHitBoxRegion : IHitBoxRegion
         var index2 = IndexFor(p2);
         var span = new ReadOnlySpan<uint>(_levelPositionBits);
 
-        return (_bounds.Size.EncompassesPoint(p1) &&
-                BitArrayHelpers.GetBit(span, index1)) ||
-               (_bounds.Size.EncompassesPoint(p2) &&
-                BitArrayHelpers.GetBit(span, index2));
+        return _bounds.Size.EncompassesPoint(p1) &&
+                BitArrayHelpers.GetBit(span, index1) ||
+               _bounds.Size.EncompassesPoint(p2) &&
+                BitArrayHelpers.GetBit(span, index2);
     }
 
     [Pure]

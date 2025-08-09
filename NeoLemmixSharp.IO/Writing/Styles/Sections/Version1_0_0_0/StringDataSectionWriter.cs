@@ -47,7 +47,7 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
 
     private void RecordTerrainArchetypeDataStrings(StyleData styleData)
     {
-        foreach (var kvp in styleData.TerrainArchetypeData)
+        foreach (var kvp in styleData.TerrainArchetypeDataLookup)
         {
             var terrainArchetypeData = kvp.Value;
             _stringIdLookup.RecordString(terrainArchetypeData.PieceIdentifier);
@@ -57,16 +57,16 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
 
     private void RecordGadgetArchetypeDataStrings(StyleData styleData)
     {
-        foreach (var kvp in styleData.GadgetArchetypeData)
+        foreach (var kvp in styleData.GadgetArchetypeDataLookup)
         {
             var gadgetArchetypeDatum = kvp.Value;
             _stringIdLookup.RecordString(gadgetArchetypeDatum.PieceIdentifier);
             _stringIdLookup.RecordString(gadgetArchetypeDatum.GadgetName);
 
-            foreach (var gadgetStateData in gadgetArchetypeDatum.AllGadgetStateData)
-            {
-                _stringIdLookup.RecordString(gadgetStateData.StateName);
-            }
+            /*     foreach (var gadgetStateData in gadgetArchetypeDatum.AllGadgetStateData)
+                 {
+                     _stringIdLookup.RecordString(gadgetStateData.StateName);
+                 }*/
         }
     }
 }

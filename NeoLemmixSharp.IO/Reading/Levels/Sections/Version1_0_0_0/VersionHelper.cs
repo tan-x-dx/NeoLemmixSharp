@@ -21,7 +21,7 @@ internal sealed class VersionHelper : ILevelDataSectionReaderVersionHelper
             terrainComponentReader,
             new TerrainGroupDataSectionReader(stringIdLookup, terrainComponentReader),
             new GadgetDataSectionReader(stringIdLookup),
-            new GadgetLinkDataSectionReader(stringIdLookup),
+            new GadgetTriggerDataSectionReader(stringIdLookup),
         ];
 
         return sectionReaders;

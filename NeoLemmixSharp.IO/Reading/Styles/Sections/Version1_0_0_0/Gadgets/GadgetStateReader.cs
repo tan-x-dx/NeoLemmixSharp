@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using NeoLemmixSharp.IO.Util;
@@ -25,7 +24,7 @@ internal readonly ref struct GadgetStateReader
         var rawPointData = _reader.Read32BitSignedInteger();
         var hitBoxOffset = ReadWriteHelpers.DecodePoint(rawPointData);
 
-        var hitBoxData = ReadHitBoxData();
+        //var hitBoxData = ReadHitBoxData();
         var regionData = ReadRegionData();
 
         var animationLayerData = ReadAnimationLayerArchetypeData();
@@ -33,8 +32,8 @@ internal readonly ref struct GadgetStateReader
         var result = new GadgetStateArchetypeData
         {
             StateName = new GadgetStateName(_stringIdLookup[stateNameId]),
-            HitBoxOffset = hitBoxOffset,
-            HitBoxData = hitBoxData,
+            // HitBoxOffset = hitBoxOffset,
+            //  HitBoxData = hitBoxData,
             RegionData = regionData,
 
             AnimationLayerData = animationLayerData,
@@ -42,7 +41,7 @@ internal readonly ref struct GadgetStateReader
 
         return result;
     }
-
+    /*
     private HitBoxData[] ReadHitBoxData()
     {
         int numberOfDefinedHitBoxes = _reader.Read8BitUnsignedInteger();
@@ -58,14 +57,14 @@ internal readonly ref struct GadgetStateReader
 
         return result;
     }
-
+    
     private HitBoxData ReadHitBoxDatum()
     {
         uint rawSolidityType = _reader.Read8BitUnsignedInteger();
         var solidityType = LemmingSolidityTypeHelpers.GetEnumValue(rawSolidityType);
 
         uint rawHitBoxBehaviour = _reader.Read8BitUnsignedInteger();
-        var hitBoxBehaviour = HitBoxBehaviourHelpers.GetEnumValue(rawHitBoxBehaviour);
+        var hitBoxBehaviour = HitBoxInteractionTypeHelpers.GetEnumValue(rawHitBoxBehaviour);
 
         var onLemmingEnterActions = ReadGadgetActionData(0);
         var onLemmingPresentActions = ReadGadgetActionData(1);
@@ -77,15 +76,15 @@ internal readonly ref struct GadgetStateReader
         {
             SolidityType = solidityType,
             HitBoxBehaviour = hitBoxBehaviour,
-            OnLemmingEnterActions = onLemmingEnterActions,
-            OnLemmingPresentActions = onLemmingPresentActions,
-            OnLemmingExitActions = onLemmingExitActions,
+            InnateOnLemmingEnterActions = onLemmingEnterActions,
+            InnateOnLemmingPresentActions = onLemmingPresentActions,
+            InnateOnLemmingExitActions = onLemmingExitActions,
 
-            HitBoxCriteria = hitBoxCriteria
+            InnateHitBoxCriteria = hitBoxCriteria
         };
 
         return result;
-    }
+    }*/
 
     private GadgetActionData[] ReadGadgetActionData(int expectedMarkerValue)
     {
@@ -149,6 +148,7 @@ internal readonly ref struct GadgetStateReader
 
         return new HitBoxRegionData
         {
+            HitBoxOffset = default,
             Orientation = orientation,
             HitBoxType = actualHitBoxType,
             HitBoxDefinitionData = hitBoxPoints

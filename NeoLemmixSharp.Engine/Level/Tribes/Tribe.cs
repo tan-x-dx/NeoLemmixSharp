@@ -31,6 +31,6 @@ public sealed class Tribe : IIdEquatable<Tribe>
     public override int GetHashCode() => Id;
     [DebuggerStepThrough]
     public static bool operator ==(Tribe? left, Tribe? right) => left?.Id == right?.Id;
-    [DebuggerStepThrough]               
+    [DebuggerStepThrough]
     public static bool operator !=(Tribe? left, Tribe? right) => left?.Id != right?.Id;
 }

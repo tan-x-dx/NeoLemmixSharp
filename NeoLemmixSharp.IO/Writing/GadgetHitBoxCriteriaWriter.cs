@@ -11,12 +11,12 @@ internal readonly ref struct GadgetHitBoxCriteriaWriter<TWriter>(TWriter reader)
 
     internal void WriteHitBoxCriteria(HitBoxCriteriaData overrideHitBoxCriteriaData)
     {
-        WriteUintSequence(overrideHitBoxCriteriaData.AllowedLemmingActionIds);
-        WriteUintSequence(overrideHitBoxCriteriaData.AllowedLemmingStateIds);
+        /*   WriteUintSequence(overrideHitBoxCriteriaData.AllowedLemmingActionIds);
+           WriteUintSequence(overrideHitBoxCriteriaData.AllowedLemmingStateIds);
 
-        _reader.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedLemmingTribeIds);
-        _reader.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedLemmingOrientationIds);
-        _reader.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedFacingDirectionId);
+           _reader.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedLemmingTribeIds);
+           _reader.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedLemmingOrientationIds);
+           _reader.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedFacingDirectionId);*/
     }
 
     private void WriteUintSequence(ReadOnlySpan<uint> allowedLemmingStateIds)

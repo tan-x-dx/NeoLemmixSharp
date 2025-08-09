@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+﻿using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -8,8 +7,6 @@ namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 public sealed class GadgetStateArchetypeData
 {
     public required GadgetStateName StateName { get; init; }
-    public required Point HitBoxOffset { get; init; }
-    public required HitBoxData[] HitBoxData { get; init; }
     public required HitBoxRegionData[] RegionData { get; init; }
     public required AnimationLayerArchetypeData[] AnimationLayerData { get; init; }
 

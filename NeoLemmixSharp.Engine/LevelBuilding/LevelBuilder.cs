@@ -13,7 +13,6 @@ using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
@@ -66,12 +65,19 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var lemmingSpriteBank = LemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
         var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
 
-        var levelGadgets = new GadgetBuilder(levelData).BuildLevelGadgets(lemmingManager, tribeManager);
+        // var gadgetBuilder = new GadgetBuilder(levelData);
+        // gadgetBuilder.BuildLevelGadgets(lemmingManager, tribeManager);
+
+        GadgetBase[] levelGadgets = []; // gadgetBuilder.GetGadgets();
+        GadgetTrigger[] gadgetTriggers = []; // gadgetBuilder.GetGadgetTriggers();
+        GadgetBehaviour[] gadgetBehaviours = []; // gadgetBuilder.GetGadgetBehaviours();
 
         foreach (var hatchGroup in hatchGroups)
         {
             HatchGroupBuilder.SetHatchesForHatchGroup(hatchGroup, levelGadgets);
         }
+
+        var causeAndEffectManager = new CauseAndEffectManager(gadgetTriggers, gadgetBehaviours);
 
         var inputController = new LevelInputController();
 
@@ -143,6 +149,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             terrainPainter,
             lemmingManager,
             gadgetManager,
+            causeAndEffectManager,
             tribeManager,
             skillSetManager,
             levelObjectiveManager,
@@ -155,8 +162,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             rewindManager,
             lemmingSpriteBank,
             levelScreenRenderer);
-
-        GC.Collect(2, GCCollectionMode.Forced);
 
         return result;
     }
