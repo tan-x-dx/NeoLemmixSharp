@@ -28,7 +28,9 @@ public static class Helpers
         where T : unmanaged
     {
         var bufferLengthInBytes = numberOfItems * sizeof(T);
-        return new RawArray(bufferLengthInBytes);
+        var result = new RawArray(bufferLengthInBytes);
+        result.AsSpan().Clear();
+        return result;
     }
 
     [Pure]

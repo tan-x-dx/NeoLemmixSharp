@@ -17,15 +17,18 @@ public sealed class LemmingManager :
     IPerfectHasher<Lemming>,
     IItemManager<Lemming>,
     IPerfectHasher<HatchGroup>,
-    IBitBufferCreator<ArrayBitBuffer>,
+    IBitBufferCreator<RawBitBuffer>,
     ISnapshotDataConvertible<LemmingManagerSnapshotData>,
     IInitialisable,
     IDisposable
 {
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
-    private readonly uint[] _bitBuffer;
 
+    private const int RequiredNumberOfLemmingBitSets =
+        2 + // spacial hash grids
+        3; // lemming sets
+    private readonly RawArray _lemmingByteBuffer;
     private readonly LemmingSpacialHashGrid _lemmingPositionHelper;
     private readonly LemmingSpacialHashGrid _zombieSpacialHashGrid;
     private readonly LemmingSet _lemmingsToZombify;
@@ -82,12 +85,10 @@ public sealed class LemmingManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        // 2 spacial hash grids + 3 lemming sets
-        const int ExpectedNumberOfLemmingBitSets = 5;
-        _bitArrayBufferUsageCount = ExpectedNumberOfLemmingBitSets;
+        _bitArrayBufferUsageCount = RequiredNumberOfLemmingBitSets;
 
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
-        _bitBuffer = new uint[bitBufferLength * ExpectedNumberOfLemmingBitSets];
+        _lemmingByteBuffer = Helpers.CreateBuffer<uint>(bitBufferLength * RequiredNumberOfLemmingBitSets);
 
         _lemmingsToZombify = new LemmingSet(this);
         _allBlockers = new LemmingSet(this);
@@ -384,19 +385,22 @@ public sealed class LemmingManager :
     int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
     int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
     HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
-    unsafe void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer)
+    unsafe void IBitBufferCreator<RawBitBuffer>.CreateBitBuffer(out RawBitBuffer buffer)
     {
         if (_bitArrayBufferUsageCount == 0)
             throw new InvalidOperationException("Insufficient space for bit buffers!");
         _bitArrayBufferUsageCount--;
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
-        buffer = new(_bitBuffer, bitBufferLength * _bitArrayBufferUsageCount, bitBufferLength);
+
+        uint* pointer = (uint*)_lemmingByteBuffer.Handle + (bitBufferLength * _bitArrayBufferUsageCount);
+        buffer = new RawBitBuffer(pointer, bitBufferLength);
     }
 
     public void Dispose()
     {
         new Span<Lemming>(_lemmings).Clear();
         new Span<HatchGroup>(_hatchGroups).Clear();
+        _lemmingByteBuffer.Dispose();
         _lemmingPositionHelper.Dispose();
         _zombieSpacialHashGrid.Dispose();
         _lemmingsToZombify.Clear();

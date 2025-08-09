@@ -92,7 +92,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         // Need to call this here instead of initialising in LevelScreen
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 
-        var gadgetManager = new GadgetManager(levelGadgets, [], horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         SetUpGadgetConnections(levelData, gadgetManager);
 

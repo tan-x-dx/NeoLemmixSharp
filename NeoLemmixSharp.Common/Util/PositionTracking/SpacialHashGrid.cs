@@ -6,15 +6,16 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
 
-public unsafe sealed class SpacialHashGrid<TPerfectHasher, T> : IDisposable
-    where TPerfectHasher : class, IPerfectHasher<T>, IBitBufferCreator<ArrayBitBuffer>
+public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDisposable
+    where TPerfectHasher : class, IPerfectHasher<T>, IBitBufferCreator<TBuffer>
+    where TBuffer : struct, IBitBuffer
     where T : class, IRectangularBounds
 {
     private readonly TPerfectHasher _hasher;
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
 
-    private readonly BitArraySet<TPerfectHasher, ArrayBitBuffer, T> _allTrackedItems;
+    private readonly BitArraySet<TPerfectHasher, TBuffer, T> _allTrackedItems;
 
     private readonly int _chunkSizeBitShift;
     private readonly Size _sizeInChunks;
@@ -39,7 +40,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, T> : IDisposable
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
         _bitArraySize = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        _allTrackedItems = new BitArraySet<TPerfectHasher, ArrayBitBuffer, T>(_hasher);
+        _allTrackedItems = new BitArraySet<TPerfectHasher, TBuffer, T>(_hasher);
 
         _chunkSizeBitShift = chunkSize.GetChunkSizeBitShift();
         var chunkSizeBitMask = (1 << _chunkSizeBitShift) - 1;
