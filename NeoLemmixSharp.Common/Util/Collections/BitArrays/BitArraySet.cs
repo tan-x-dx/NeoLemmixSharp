@@ -22,7 +22,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     {
         _hasher = hasher;
         var numberOfItems = _hasher.NumberOfItems;
-        _hasher.CreateBitBuffer(numberOfItems, out _bits);
+        _hasher.CreateBitBuffer(out _bits);
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 

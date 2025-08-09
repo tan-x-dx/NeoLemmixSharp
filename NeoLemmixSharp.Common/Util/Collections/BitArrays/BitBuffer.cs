@@ -19,7 +19,7 @@ public interface IBitBuffer
 public interface IBitBufferCreator<TBuffer>
     where TBuffer : struct, IBitBuffer
 {
-    void CreateBitBuffer(int numberOfItems, out TBuffer buffer);
+    void CreateBitBuffer(out TBuffer buffer);
 }
 
 [InlineArray(BitBuffer32Length)]

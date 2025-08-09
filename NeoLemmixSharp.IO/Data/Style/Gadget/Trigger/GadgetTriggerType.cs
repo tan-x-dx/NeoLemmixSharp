@@ -24,7 +24,7 @@ public readonly struct GadgetTriggerTypeHasher : IEnumIdentifierHelper<GadgetTri
     public int NumberOfItems => NumberOfEnumValues;
     public int Hash(GadgetTriggerType item) => (int)item;
     public GadgetTriggerType UnHash(int index) => (GadgetTriggerType)index;
-    public void CreateBitBuffer(int numberOfItems, out GadgetTriggerTypeBitBuffer buffer) => buffer = new();
+    public void CreateBitBuffer(out GadgetTriggerTypeBitBuffer buffer) => buffer = new();
 
     [InlineArray(GadgetTriggerTypeBitBufferLength)]
     public struct GadgetTriggerTypeBitBuffer : IBitBuffer

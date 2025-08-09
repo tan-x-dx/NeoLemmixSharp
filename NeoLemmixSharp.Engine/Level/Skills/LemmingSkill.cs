@@ -223,7 +223,7 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
         [Pure]
         public LemmingSkill UnHash(int index) => LemmingSkills[index];
 
-        public void CreateBitBuffer(int numberOfItems, out LemmingSkillBitBuffer buffer) => buffer = new();
+        public void CreateBitBuffer(out LemmingSkillBitBuffer buffer) => buffer = new();
     }
 
     [InlineArray(LemmingSkillBitBufferLength)]

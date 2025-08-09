@@ -40,5 +40,5 @@ public readonly struct ControlPanelParameterHasher : IEnumIdentifierHelper<Contr
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new ControlPanelParameterHasher());
 
-    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 }

@@ -40,7 +40,7 @@ public readonly struct GadgetBehaviourTypeHasher : IEnumIdentifierHelper<GadgetB
     public int NumberOfItems => NumberOfEnumValues;
     public int Hash(GadgetBehaviourType item) => (int)item;
     public GadgetBehaviourType UnHash(int index) => (GadgetBehaviourType)index;
-    public void CreateBitBuffer(int numberOfItems, out GadgetBehaviourTypeBitBuffer buffer) => buffer = new();
+    public void CreateBitBuffer(out GadgetBehaviourTypeBitBuffer buffer) => buffer = new();
 
     [InlineArray(GadgetBehaviourTypeBitBufferLength)]
     public struct GadgetBehaviourTypeBitBuffer : IBitBuffer

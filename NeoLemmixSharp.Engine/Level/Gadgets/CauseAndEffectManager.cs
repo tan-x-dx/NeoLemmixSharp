@@ -7,8 +7,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public sealed class CauseAndEffectManager :
     IPerfectHasher<GadgetTrigger>,
-    IPerfectHasher<GadgetBehaviour>,
-    IBitBufferCreator<ArrayBitBuffer>
+    IPerfectHasher<GadgetBehaviour>
 {
     private readonly GadgetTrigger[] _allTriggers;
     private readonly GadgetBehaviour[] _allBehaviours;
@@ -70,6 +69,4 @@ public sealed class CauseAndEffectManager :
     int IPerfectHasher<GadgetBehaviour>.NumberOfItems => _allBehaviours.Length;
     int IPerfectHasher<GadgetBehaviour>.Hash(GadgetBehaviour item) => item.Id;
     GadgetBehaviour IPerfectHasher<GadgetBehaviour>.UnHash(int index) => _allBehaviours[index];
-
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(int numberOfItems, out ArrayBitBuffer buffer) => buffer = new(numberOfItems);
 }

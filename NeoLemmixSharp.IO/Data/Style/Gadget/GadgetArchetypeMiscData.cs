@@ -30,5 +30,5 @@ public readonly struct GadgetArchetypeMiscDataTypeHasher : IEnumIdentifierHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<GadgetArchetypeMiscDataTypeHasher, BitBuffer32, GadgetArchetypeMiscDataType, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetArchetypeMiscDataTypeHasher());
 
-    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 }

@@ -266,5 +266,5 @@ public sealed class LevelRenderer :
     int IPerfectHasher<IViewportObjectRenderer>.NumberOfItems => _orderedSprites.Count;
     int IPerfectHasher<IViewportObjectRenderer>.Hash(IViewportObjectRenderer item) => item.RendererId;
     IViewportObjectRenderer IPerfectHasher<IViewportObjectRenderer>.UnHash(int index) => _orderedSprites[index];
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(int numberOfItems, out ArrayBitBuffer buffer) => buffer = new(_orderedSprites.Count);
+    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_orderedSprites.Count);
 }

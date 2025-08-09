@@ -154,7 +154,7 @@ public sealed class GadgetManager :
     GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
     int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
     HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(int numberOfItems, out ArrayBitBuffer buffer)
+    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer)
     {
         if (_bitArrayBufferUsageCount == 0)
             throw new InvalidOperationException("Insufficient space for bit buffers!");

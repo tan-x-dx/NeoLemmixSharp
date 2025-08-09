@@ -384,7 +384,7 @@ public sealed class LemmingManager :
     int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
     int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
     HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
-    unsafe void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(int numberOfItems, out ArrayBitBuffer buffer)
+    unsafe void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer)
     {
         if (_bitArrayBufferUsageCount == 0)
             throw new InvalidOperationException("Insufficient space for bit buffers!");

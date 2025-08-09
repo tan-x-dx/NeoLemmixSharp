@@ -24,7 +24,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     {
         _hasher = hasher;
         var numberOfItems = hasher.NumberOfItems;
-        _hasher.CreateBitBuffer(numberOfItems, out _bits);
+        _hasher.CreateBitBuffer(out _bits);
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 

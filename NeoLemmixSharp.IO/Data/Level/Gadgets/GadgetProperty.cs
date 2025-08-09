@@ -38,7 +38,7 @@ public readonly struct GadgetPropertyHasher : IEnumIdentifierHelper<GadgetProper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetPropertyHasher());
 
-    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 
     public static GadgetProperty GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetProperty>(rawValue, NumberOfEnumValues);
 }
