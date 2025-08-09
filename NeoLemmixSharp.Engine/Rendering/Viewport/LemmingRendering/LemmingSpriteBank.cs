@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
@@ -14,7 +14,7 @@ public sealed class LemmingSpriteBank
         _lookupData = lookupData;
     }
 
-    public ref readonly TribeColorData GetColorData(TribeIdentifier tribeIdentifier)
+    public ref readonly TribeColorData GetColorData(TribeStyleIdentifier tribeIdentifier)
     {
         var spriteBankData = _lookupData[tribeIdentifier.StyleIdentifier];
 

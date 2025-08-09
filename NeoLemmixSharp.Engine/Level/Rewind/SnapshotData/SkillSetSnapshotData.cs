@@ -3,11 +3,15 @@
 public readonly struct SkillSetSnapshotData
 {
     public readonly int SkillTrackingDataId;
-    public readonly int SkillCount;
+    public readonly int AdditionalQuantity;
+    public readonly int AmountUsed;
+    public readonly int CurrentSkillLimit;
 
-    public SkillSetSnapshotData(int skillTrackingDataId, int skillCount)
+    public SkillSetSnapshotData(int skillTrackingDataId, int additionalQuantity, int amountUsed, int currentSkillLimit)
     {
         SkillTrackingDataId = skillTrackingDataId;
-        SkillCount = skillCount;
+        AdditionalQuantity = additionalQuantity;
+        AmountUsed = amountUsed;
+        CurrentSkillLimit = currentSkillLimit;
     }
 }

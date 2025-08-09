@@ -6,7 +6,7 @@ internal sealed class VersionHelper : ILevelDataSectionReaderVersionHelper
 {
     public LevelDataSectionReader[] GetLevelDataSectionReaders()
     {
-        var stringIdLookup = new MutableStringIdLookup();
+        var stringIdLookup = new MutableFileReaderStringIdLookup();
 
         var terrainComponentReader = new TerrainDataSectionReader(stringIdLookup);
         LevelDataSectionReader[] sectionReaders =
@@ -20,7 +20,8 @@ internal sealed class VersionHelper : ILevelDataSectionReaderVersionHelper
             new PrePlacedLemmingDataSectionReader(),
             terrainComponentReader,
             new TerrainGroupDataSectionReader(stringIdLookup, terrainComponentReader),
-            new GadgetDataSectionReader(stringIdLookup)
+            new GadgetDataSectionReader(stringIdLookup),
+            new GadgetTriggerDataSectionReader(stringIdLookup),
         ];
 
         return sectionReaders;

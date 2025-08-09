@@ -13,7 +13,7 @@ public sealed class PanelFont
 
     public PanelFont(ContentManager content)
     {
-        _texture = content.Load<Texture2D>("panel/panel_font");
+        _texture = content.Load<Texture2D>("Fonts/panel_font");
     }
 
     private static bool CanRenderChar(int c, out int adjustedChar)

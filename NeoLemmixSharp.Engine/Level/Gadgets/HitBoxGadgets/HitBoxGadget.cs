@@ -1,50 +1,86 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
-using NeoLemmixSharp.Engine.Level.Gadgets.Interfaces;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
-#pragma warning disable CS0660, CS0661, CA1067
-public sealed class HitBoxGadget : GadgetBase,
-    IIdEquatable<HitBoxGadget>,
-    IRectangularBounds,
-    IMoveableGadget
-#pragma warning restore CS0660, CS0661, CA1067
+public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadget
 {
     private readonly LemmingTracker _lemmingTracker;
+    private readonly HitBoxGadgetState[] _states;
+
+    private HitBoxGadgetState _currentState;
+    private HitBoxGadgetState _previousState;
+
+    private int _currentStateIndex;
+    private int _nextStateIndex;
+
     // The below properties refer to the positions of the hitboxes, not the gadget itself
     public RectangularRegion CurrentBounds => CurrentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
 
     public ResizeType ResizeType { get; }
 
     public HitBoxGadget(
-        string gadgetName,
-        GadgetState[] states,
+        HitBoxGadgetState[] states,
         int initialStateIndex,
         ResizeType resizeType,
         LemmingTracker lemmingTracker)
-        : base(gadgetName, states, initialStateIndex)
     {
         _lemmingTracker = lemmingTracker;
+        _states = states;
+
+        _currentState = states[initialStateIndex];
+        _previousState = _currentState;
+        _currentStateIndex = initialStateIndex;
+        _nextStateIndex = initialStateIndex;
 
         ResizeType = resizeType;
+
+        foreach (var state in states)
+        {
+            state.SetParentGadget(this);
+        }
     }
 
-    protected override void OnTick()
+    public override HitBoxGadgetState CurrentState => _currentState;
+
+    public override void Tick()
     {
         _lemmingTracker.Tick();
+
+        if (_currentStateIndex != _nextStateIndex)
+            ChangeStates();
+
+        CurrentState.Tick();
     }
 
-    protected override void OnChangeStates()
+    private void ChangeStates()
     {
+        _currentStateIndex = _nextStateIndex;
+
+        _previousState = _currentState;
+        _currentState = _states[_currentStateIndex];
+
+        _previousState.OnTransitionFrom();
+        _currentState.OnTransitionTo();
+        _previousState = _currentState;
+
         // Changing states may change hitbox positions 
         // Force a position update to accommodate this
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
+    }
+
+    private void UpdatePreviousState()
+    {
+        _previousState = _currentState;
+    }
+
+    public override void SetNextState(int stateIndex)
+    {
+        _nextStateIndex = stateIndex;
     }
 
     public bool ContainsPoint(Orientation orientation, Point levelPosition)
@@ -65,15 +101,22 @@ public sealed class HitBoxGadget : GadgetBase,
         LemmingHitBoxFilter activeFilter,
         Lemming lemming)
     {
-        var actionsToPerform = GetActionsToPerformOnLemming(activeFilter, lemming);
+        var causeAndEffectManager = LevelScreen.CauseAndEffectManager;
 
-        for (var i = 0; i < actionsToPerform.Length; i++)
+        var lemmingBehaviourIds = activeFilter.OnLemmingHitBehaviourIds;
+        foreach (var behaviourId in lemmingBehaviourIds)
         {
-            actionsToPerform[i].PerformAction(lemming);
+            causeAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(behaviourId, lemming.Id));
+        }
+
+        var hitBoxModifierActionsToPerform = GetHitBoxModifierActionsToPerformOnLemming(activeFilter, lemming);
+        foreach (var behaviourId in hitBoxModifierActionsToPerform)
+        {
+            causeAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(behaviourId, lemming.Id));
         }
     }
 
-    private ReadOnlySpan<GadgetAction> GetActionsToPerformOnLemming(
+    private ReadOnlySpan<int> GetHitBoxModifierActionsToPerformOnLemming(
         LemmingHitBoxFilter activeFilter,
         Lemming lemming)
     {
@@ -81,12 +124,12 @@ public sealed class HitBoxGadget : GadgetBase,
 
         return trackingStatus switch
         {
-            TrackingStatus.Absent => ReadOnlySpan<GadgetAction>.Empty,
-            TrackingStatus.JustAdded => activeFilter.OnLemmingEnterActions,
-            TrackingStatus.JustRemoved => activeFilter.OnLemmingExitActions,
-            TrackingStatus.StillPresent => activeFilter.OnLemmingPresentActions,
+            TrackingStatus.Absent => ReadOnlySpan<int>.Empty,
+            TrackingStatus.Entered => activeFilter.OnLemmingEnterBehaviourIds,
+            TrackingStatus.Exited => activeFilter.OnLemmingExitBehaviourIds,
+            TrackingStatus.StillPresent => activeFilter.OnLemmingPresentBehaviourIds,
 
-            _ => ReadOnlySpan<GadgetAction>.Empty
+            _ => ReadOnlySpan<int>.Empty
         };
     }
 

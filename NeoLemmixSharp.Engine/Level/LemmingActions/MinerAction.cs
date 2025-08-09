@@ -19,7 +19,8 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             LemmingActionConstants.MinerActionSpriteFileName,
             LemmingActionConstants.MinerAnimationFrames,
             LemmingActionConstants.MaxMinerPhysicsFrames,
-            EngineConstants.NonPermanentSkillPriority)
+            EngineConstants.NonPermanentSkillPriority,
+            LemmingActionBounds.MinerActionBounds)
     {
     }
 
@@ -147,8 +148,6 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true); // turn around as well
         }
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.MinerActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 

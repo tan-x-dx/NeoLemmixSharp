@@ -15,7 +15,8 @@ public sealed class HoisterAction : LemmingAction
             LemmingActionConstants.HoisterActionSpriteFileName,
             LemmingActionConstants.HoisterAnimationFrames,
             LemmingActionConstants.MaxHoisterPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority)
+            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionBounds.HoisterActionBounds)
     {
     }
 
@@ -44,8 +45,6 @@ public sealed class HoisterAction : LemmingAction
 
         return true;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.HoisterActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

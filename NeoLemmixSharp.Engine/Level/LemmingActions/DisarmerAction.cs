@@ -14,7 +14,8 @@ public sealed class DisarmerAction : LemmingAction
             LemmingActionConstants.DisarmerActionSpriteFileName,
             LemmingActionConstants.DisarmerAnimationFrames,
             LemmingActionConstants.MaxDisarmerPhysicsFrames,
-            EngineConstants.PermanentSkillPriority)
+            EngineConstants.PermanentSkillPriority,
+            LemmingActionBounds.DisarmerLemmingBounds)
     {
     }
 
@@ -40,8 +41,6 @@ public sealed class DisarmerAction : LemmingAction
 
         return false;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.DisarmerLemmingBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 }

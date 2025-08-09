@@ -16,7 +16,7 @@ public sealed class MenuFont
 
     public MenuFont(ContentManager content)
     {
-        _texture = content.Load<Texture2D>("menu/menu_font");
+        _texture = content.Load<Texture2D>("Fonts/menu_font");
     }
 
     public void RenderText(

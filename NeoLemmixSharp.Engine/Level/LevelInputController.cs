@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.GameInput;
+using NeoLemmixSharp.IO.Data.Level;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;

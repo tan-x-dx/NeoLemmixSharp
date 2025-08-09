@@ -1,10 +1,17 @@
-﻿using NeoLemmixSharp.IO.Data.Style;
+﻿using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO;
 
 public static class IoConstants
 {
+    internal const byte PeriodByte = (byte)'.';
+
+    internal const int InitialStringListCapacity = 32;
+
+    internal const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
+    internal const string FileSizeTooLargeExceptionMessage = "File too large! Max file size is 64Mb";
+
     internal const string DefaultStyleIdentifierString = "default";
     internal const string DefaultStyleName = "Default";
     internal const string DefaultStyleAuthor = "";
@@ -18,11 +25,6 @@ public static class IoConstants
     /// there'll probably be around this number of actual usages.
     /// </summary>
     public const int AssumedSkillUsageForInfiniteSkillCounts = 40;
-    /// <summary>
-    /// Assumption: if there are skill pickups in a level,
-    /// there'll probably be around this number of skills added.
-    /// </summary>
-    public const int AssumedSkillCountsFromPickups = 10;
 
     /// <summary>
     /// If a style has not been used for this many levels, remove it from the cache

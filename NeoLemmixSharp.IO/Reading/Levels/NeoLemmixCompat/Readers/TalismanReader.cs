@@ -1,14 +1,15 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO.Data.Level.Objectives;
+using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 internal sealed class TalismanReader : NeoLemmixDataReader
 {
     private readonly UniqueStringSet _uniqueStringSet;
-    private TalismanData? _currentTalismanData;
+    private Data.TalismanData? _currentTalismanData;
 
-    public List<TalismanData> TalismanData { get; } = new();
+    public List<Data.TalismanData> TalismanData { get; } = new();
 
     public TalismanReader(
         UniqueStringSet uniqueStringSet)
@@ -28,7 +29,7 @@ internal sealed class TalismanReader : NeoLemmixDataReader
 
     public override bool BeginReading(ReadOnlySpan<char> line)
     {
-        _currentTalismanData = new TalismanData();
+        _currentTalismanData = new Data.TalismanData();
         FinishedReading = false;
         return false;
     }
@@ -69,18 +70,18 @@ internal sealed class TalismanReader : NeoLemmixDataReader
 
     private void SetUseOnlySkill(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        if (!NxlvReadingHelpers.TryGetSkillByName(secondToken, out var onlySkill))
+        if (!LemmingSkillConstants.TryGetLemmingSkillIdFromName(secondToken, out var onlySkill))
         {
             NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, "USE_ONLY_SKILL", line);
             return;
         }
 
-    /*    foreach (var item in LemmingSkill.AllItems)
-        {
-            _currentTalismanData!.SkillLimits.Add(item, 0);
-        }
+        /*    foreach (var item in LemmingSkill.AllItems)
+            {
+                _currentTalismanData!.SkillLimits.Add(item, 0);
+            }
 
-        _currentTalismanData!.SkillLimits.Remove(onlySkill);*/
+            _currentTalismanData!.SkillLimits.Remove(onlySkill);*/
     }
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -88,18 +89,18 @@ internal sealed class TalismanReader : NeoLemmixDataReader
         throw new NotImplementedException();
     }
 
-    private TalismanColor GetTalismanColor(ReadOnlySpan<char> secondToken)
+    private TalismanRank GetTalismanColor(ReadOnlySpan<char> secondToken)
     {
         if (TokensMatch(secondToken, "BRONZE"))
-            return TalismanColor.Bronze;
+            return TalismanRank.Bronze;
 
         if (TokensMatch(secondToken, "SILVER"))
-            return TalismanColor.Silver;
+            return TalismanRank.Silver;
 
         if (TokensMatch(secondToken, "GOLD"))
-            return TalismanColor.Gold;
+            return TalismanRank.Gold;
 
-        return NxlvReadingHelpers.ThrowUnknownTokenException<TalismanColor>(IdentifierToken, "COLOR", secondToken);
+        return NxlvReadingHelpers.ThrowUnknownTokenException<TalismanRank>(IdentifierToken, "COLOR", secondToken);
     }
 
     private void ParseLimitTokens(ReadOnlySpan<char> firstToken, ReadOnlySpan<char> secondToken)
@@ -118,9 +119,9 @@ internal sealed class TalismanReader : NeoLemmixDataReader
             return;
         }
 
-        if (NxlvReadingHelpers.TryGetSkillByName(firstToken[..^6], out var skill))
+        if (LemmingSkillConstants.TryGetLemmingSkillIdFromName(firstToken[..^6], out var skill))
         {
-       //     currentTalismanData.SkillLimits.Add(skill, int.Parse(secondToken));
+            //     currentTalismanData.SkillLimits.Add(skill, int.Parse(secondToken));
             return;
         }
 

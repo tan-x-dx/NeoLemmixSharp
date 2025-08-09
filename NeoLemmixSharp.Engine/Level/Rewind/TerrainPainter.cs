@@ -6,9 +6,9 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class TerrainPainter
+public sealed class TerrainPainter : IDisposable
 {
-    private const int InitialPixelChangeListSize = 1 << 12;
+    private const int InitialPixelChangeListSize = 1 << 14;
 
     private readonly TickOrderedList<PixelChangeData> _pixelChangeList = new(InitialPixelChangeListSize);
     private readonly Texture2D _terrainTexture;
@@ -39,9 +39,7 @@ public sealed class TerrainPainter
 
         var fromColor = _terrainColors[pixel];
 
-        ref var pixelChangeData = ref _pixelChangeList.GetNewDataRef();
-
-        pixelChangeData = new PixelChangeData(currentLatestTickWithUpdate, pixel.X, pixel.Y, fromColor, toColor, fromPixelType, toPixelType);
+        _pixelChangeList.GetNewDataRef() = new PixelChangeData(currentLatestTickWithUpdate, pixel, fromColor, toColor, fromPixelType, toPixelType);
     }
 
     public void RepaintTerrain()
@@ -52,7 +50,7 @@ public sealed class TerrainPainter
 
         foreach (ref readonly var pixelChangeData in pixelChanges)
         {
-            var position = new Point(pixelChangeData.X, pixelChangeData.Y);
+            var position = pixelChangeData.Position;
             _terrainColors[position] = pixelChangeData.ToColor;
         }
 
@@ -75,7 +73,7 @@ public sealed class TerrainPainter
         for (var i = pixelChanges.Length - 1; i >= 0; i--)
         {
             ref readonly var pixelChangeData = ref pixelChanges[i];
-            var position = new Point(pixelChangeData.X, pixelChangeData.Y);
+            var position = pixelChangeData.Position;
             _terrainColors[position] = pixelChangeData.FromColor;
             ref var pixelType = ref _terrainPixelTypes[position];
 
@@ -89,8 +87,7 @@ public sealed class TerrainPainter
     private readonly struct PixelChangeData : ITickOrderedData
     {
         public readonly int Tick;
-        public readonly int X;
-        public readonly int Y;
+        public readonly Point Position;
         public readonly Color FromColor;
         public readonly Color ToColor;
         public readonly PixelType FromPixelType;
@@ -98,15 +95,19 @@ public sealed class TerrainPainter
 
         public int TickNumber => Tick;
 
-        public PixelChangeData(int tick, int x, int y, Color fromColor, Color toColor, PixelType fromPixelType, PixelType toPixelType)
+        public PixelChangeData(int tick, Point position, Color fromColor, Color toColor, PixelType fromPixelType, PixelType toPixelType)
         {
             Tick = tick;
-            X = x;
-            Y = y;
+            Position = position;
             FromColor = fromColor;
             ToColor = toColor;
             FromPixelType = fromPixelType;
             ToPixelType = toPixelType;
         }
+    }
+
+    public void Dispose()
+    {
+        _pixelChangeList.Dispose();
     }
 }

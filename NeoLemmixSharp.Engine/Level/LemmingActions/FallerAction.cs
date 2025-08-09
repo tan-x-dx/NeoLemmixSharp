@@ -18,7 +18,8 @@ public sealed class FallerAction : LemmingAction
             LemmingActionConstants.FallerActionSpriteFileName,
             LemmingActionConstants.FallerAnimationFrames,
             LemmingActionConstants.MaxFallerPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority)
+            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionBounds.StandardLemmingBounds)
     {
     }
 
@@ -102,9 +103,9 @@ public sealed class FallerAction : LemmingAction
                 if (!filter.MatchesLemming(lemming))
                     continue;
 
-                if (filter.HitBoxBehaviour == HitBoxBehaviour.NoSplat)
+                if (filter.HitBoxBehaviour == HitBoxInteractionType.NoSplat)
                     return false;
-                if (filter.HitBoxBehaviour == HitBoxBehaviour.Splat)
+                if (filter.HitBoxBehaviour == HitBoxInteractionType.Splat)
                     return true;
             }
         }

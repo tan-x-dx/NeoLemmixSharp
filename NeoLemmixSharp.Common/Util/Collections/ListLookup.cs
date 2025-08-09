@@ -46,10 +46,10 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        for (var i = 0; i < _size; i++)
-        {
-            array[arrayIndex + i] = _data[i];
-        }
+        var sourceSpan = new ReadOnlySpan<KeyValuePair<TKey, TValue>>(_data, 0, _size);
+        var destSpan = new Span<KeyValuePair<TKey, TValue>>(array, arrayIndex, _size);
+
+        sourceSpan.CopyTo(destSpan);
     }
 
     public bool ContainsKey(TKey key)

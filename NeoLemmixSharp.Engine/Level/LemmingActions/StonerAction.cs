@@ -15,7 +15,8 @@ public sealed class StonerAction : LemmingAction
             LemmingActionConstants.StonerActionSpriteFileName,
             LemmingActionConstants.StonerAnimationFrames,
             LemmingActionConstants.MaxStonerPhysicsFrames,
-            EngineConstants.NoPriority)
+            EngineConstants.NoPriority,
+            LemmingActionBounds.StandardLemmingBounds)
     {
     }
 

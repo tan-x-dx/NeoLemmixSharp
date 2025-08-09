@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
-using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.IO.Data.Level;
 using System.Runtime.InteropServices;
 

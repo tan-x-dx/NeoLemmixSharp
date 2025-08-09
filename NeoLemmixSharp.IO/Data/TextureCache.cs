@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.IO.Data.Style;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 

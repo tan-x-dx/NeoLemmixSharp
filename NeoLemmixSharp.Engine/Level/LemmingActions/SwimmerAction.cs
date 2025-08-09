@@ -19,7 +19,8 @@ public sealed class SwimmerAction : LemmingAction
             LemmingActionConstants.SwimmerActionSpriteFileName,
             LemmingActionConstants.SwimmerAnimationFrames,
             LemmingActionConstants.MaxSwimmerPhysicsFrames,
-            EngineConstants.PermanentSkillPriority)
+            EngineConstants.PermanentSkillPriority,
+            LemmingActionBounds.SwimmerActionBounds)
     {
     }
 
@@ -138,7 +139,7 @@ public sealed class SwimmerAction : LemmingAction
                 var filter = filters[i];
 
                 if (filter.MatchesLemming(lemming) &&
-                    filter.HitBoxBehaviour == HitBoxBehaviour.Liquid)
+                    filter.HitBoxBehaviour == HitBoxInteractionType.Liquid)
                     return true;
             }
         }
@@ -172,8 +173,6 @@ public sealed class SwimmerAction : LemmingAction
             ? 0
             : result;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.SwimmerActionBounds;
 
     public override void TransitionLemmingToAction(
         Lemming lemming,

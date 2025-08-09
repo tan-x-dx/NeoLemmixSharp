@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.IO.Reading.Levels;
 
 internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReader>
 {
-    private readonly RawLevelFileDataReader _rawFileData;
+    private readonly RawLevelFileDataReader _reader;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static DefaultLevelReader Create(string filePath) => new(filePath);
@@ -16,7 +16,7 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
     private DefaultLevelReader(string filePath)
     {
         using var fileStream = new FileStream(filePath, FileMode.Open);
-        _rawFileData = new RawLevelFileDataReader(fileStream);
+        _reader = new RawLevelFileDataReader(fileStream);
     }
 
     public LevelData ReadLevel()
@@ -31,7 +31,7 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
     {
         var result = new LevelData(FileFormatType.Default);
 
-        var fileFormatVersion = _rawFileData.FileFormatVersion;
+        var fileFormatVersion = _reader.FileFormatVersion;
 
         var sectionReaders = VersionHelper.GetLevelDataSectionReadersForVersion(fileFormatVersion);
 
@@ -40,12 +40,14 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
             ReadSection(result, sectionReader);
         }
 
+        FileReadingException.ReaderAssert(!_reader.MoreToRead, "Finished reading but extra bytes still in file!");
+
         return result;
     }
 
     private void ReadSection(LevelData result, LevelDataSectionReader sectionReader)
     {
-        if (!_rawFileData.TryGetSectionInterval(sectionReader.SectionIdentifier, out var interval))
+        if (!_reader.TryGetSectionInterval(sectionReader.SectionIdentifier, out var interval))
         {
             FileReadingException.ReaderAssert(
                 !sectionReader.IsNecessary,
@@ -53,24 +55,25 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
             return;
         }
 
-        _rawFileData.SetReaderPosition(interval.Start);
+        _reader.SetReaderPosition(interval.Start);
 
-        var sectionIdentifierBytes = _rawFileData.ReadBytes(LevelFileSectionIdentifierHasher.NumberOfBytesForLevelSectionIdentifier);
+        ushort sectionIdentifierBytes = _reader.Read16BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(
-            sectionIdentifierBytes.SequenceEqual(sectionReader.GetSectionIdentifierBytes()),
+            sectionIdentifierBytes == sectionReader.GetSectionIdentifier(),
             "Section Identifier mismatch!");
 
-        int numberOfItemsInSection = _rawFileData.Read16BitUnsignedInteger();
+        int numberOfItemsInSection = _reader.Read16BitUnsignedInteger();
 
-        sectionReader.ReadSection(_rawFileData, result, numberOfItemsInSection);
+        sectionReader.ReadSection(_reader, result, numberOfItemsInSection);
 
         FileReadingException.ReaderAssert(
-            interval.Start + interval.Length == _rawFileData.Position,
+            interval.Start + interval.Length == _reader.Position,
             "Byte reading mismatch!");
     }
 
     public void Dispose()
     {
+        _reader?.Dispose();
     }
 }

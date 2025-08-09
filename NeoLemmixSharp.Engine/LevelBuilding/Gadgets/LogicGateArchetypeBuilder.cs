@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets.BinaryLogic;
+using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -8,10 +8,21 @@ using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
-public static class LogicGateArchetypeBuilder
+public sealed class LogicGateArchetypeBuilder
 {
-    public static AndGateGadget BuildAndGateGadget(
-        GadgetArchetypeData gadgetArchetypeData,
+    private readonly List<GadgetTrigger> _gadgetTriggers;
+    private readonly List<GadgetBehaviour> _gadgetBehaviours;
+
+    public LogicGateArchetypeBuilder(
+        List<GadgetTrigger> gadgetTriggers,
+        List<GadgetBehaviour> gadgetBehaviours)
+    {
+        _gadgetTriggers = gadgetTriggers;
+        _gadgetBehaviours = gadgetBehaviours;
+    }
+/*
+    public AndGateGadget BuildAndGateGadget(
+        IGadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         TribeManager tribeManager)
     {
@@ -27,7 +38,7 @@ public static class LogicGateArchetypeBuilder
 
         return new AndGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames)
         {
-            Id = gadgetData.Id,
+            Id = gadgetData.Identifier.GadgetId,
             Orientation = gadgetData.Orientation,
             FacingDirection = gadgetData.FacingDirection,
 
@@ -37,7 +48,7 @@ public static class LogicGateArchetypeBuilder
         };
     }
 
-    public static OrGateGadget BuildOrGateGadget(
+    public OrGateGadget BuildOrGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         TribeManager tribeManager)
@@ -54,7 +65,7 @@ public static class LogicGateArchetypeBuilder
 
         return new OrGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames)
         {
-            Id = gadgetData.Id,
+            Id = gadgetData.Identifier.GadgetId,
             Orientation = gadgetData.Orientation,
             FacingDirection = gadgetData.FacingDirection,
 
@@ -64,7 +75,7 @@ public static class LogicGateArchetypeBuilder
         };
     }
 
-    public static NotGateGadget BuildNotGateGadget(
+    public NotGateGadget BuildNotGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         TribeManager tribeManager)
@@ -81,7 +92,7 @@ public static class LogicGateArchetypeBuilder
 
         return new NotGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames[0])
         {
-            Id = gadgetData.Id,
+            Id = gadgetData.Identifier.GadgetId,
             Orientation = gadgetData.Orientation,
             FacingDirection = gadgetData.FacingDirection,
 
@@ -91,7 +102,7 @@ public static class LogicGateArchetypeBuilder
         };
     }
 
-    public static XorGateGadget BuildXorGateGadget(
+    public XorGateGadget BuildXorGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         TribeManager tribeManager)
@@ -108,7 +119,7 @@ public static class LogicGateArchetypeBuilder
 
         return new XorGateGadget(gadgetName, states, gadgetData.InitialStateId, inputNames[0], inputNames[1])
         {
-            Id = gadgetData.Id,
+            Id = gadgetData.Identifier.GadgetId,
             Orientation = gadgetData.Orientation,
             FacingDirection = gadgetData.FacingDirection,
 
@@ -118,7 +129,7 @@ public static class LogicGateArchetypeBuilder
         };
     }
 
-    private static ReadOnlySpan<GadgetInputName> GetInputNames(
+    private ReadOnlySpan<GadgetTriggerName> GetInputNames(
         GadgetData gadgetData,
         int minExpectedInputCount,
         int maxExpectedInputCount)
@@ -137,7 +148,7 @@ public static class LogicGateArchetypeBuilder
         return GadgetBuildingHelpers.GetInputNamesForCount(numberOfInputs);
     }
 
-    private static GadgetState[] BuildGadgetStates(
+    private GadgetState[] BuildGadgetStates(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         GadgetBounds gadgetBounds,
@@ -153,7 +164,7 @@ public static class LogicGateArchetypeBuilder
         return result;
     }
 
-    private static GadgetState BuildGadgetState(
+    private GadgetState BuildGadgetState(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         GadgetBounds gadgetBounds,
@@ -163,6 +174,7 @@ public static class LogicGateArchetypeBuilder
     {
         var animationController = GadgetAnimationControllerBuilder.BuildAnimationController(gadgetArchetypeData, gadgetData, gadgetBounds, stateIndex, baseSpriteSize, tribeManager);
 
-        return new GadgetState(gadgetArchetypeData.AllGadgetStateData[stateIndex].StateName, animationController);
+        return null!;//new GadgetState(gadgetArchetypeData.AllGadgetStateData[stateIndex].StateName, animationController);
     }
+*/
 }

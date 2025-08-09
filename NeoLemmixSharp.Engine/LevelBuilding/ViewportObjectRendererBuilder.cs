@@ -7,7 +7,7 @@ using NeoLemmixSharp.IO.Data.Level.Gadgets;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public readonly ref struct ViewportObjectRendererBuilder
+public sealed class ViewportObjectRendererBuilder
 {
     private readonly GadgetBase[] _gadgets;
     private readonly Lemming[] _lemmings;
@@ -31,7 +31,7 @@ public readonly ref struct ViewportObjectRendererBuilder
 
         foreach (var gadget in _gadgets)
         {
-            var renderer = gadget.Renderer;
+            var renderer = gadget.CurrentState.Renderer;
 
             if (renderer.RenderMode == GadgetRenderMode.BehindTerrain)
             {

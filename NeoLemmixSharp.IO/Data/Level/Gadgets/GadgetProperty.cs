@@ -20,7 +20,7 @@ public enum GadgetProperty
     NumberOfInputs
 }
 
-public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IBitBufferCreator<BitBuffer32>
+public readonly struct GadgetPropertyHasher : IEnumIdentifierHelper<GadgetProperty, BitBuffer32>
 {
     private const int NumberOfEnumValues = 11;
 
@@ -38,7 +38,7 @@ public readonly struct GadgetPropertyHasher : IPerfectHasher<GadgetProperty>, IB
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetPropertyHasher());
 
-    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
 
     public static GadgetProperty GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetProperty>(rawValue, NumberOfEnumValues);
 }

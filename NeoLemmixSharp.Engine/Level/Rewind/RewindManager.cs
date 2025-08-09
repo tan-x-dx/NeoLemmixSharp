@@ -2,14 +2,18 @@
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
-using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Timer;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<GadgetManager>, IItemManager<LevelTimer>
+public sealed class RewindManager :
+    IItemManager<LemmingManager>,
+    IItemManager<GadgetManager>,
+    IItemManager<LevelTimer>,
+    IDisposable
 {
     private readonly SnapshotRecorder<LemmingManager, Lemming, LemmingSnapshotData> _lemmingSnapshotRecorder;
     private readonly SnapshotRecorder<GadgetManager, GadgetBase, int> _gadgetSnapshotRecorder;
@@ -110,9 +114,7 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
             return;
         }
 
-        ref var skillAssignmentData = ref _skillCountChanges.GetNewDataRef();
-
-        skillAssignmentData = new SkillAssignmentData(tick, lemming, skillTrackingData.Skill);
+        _skillCountChanges.GetNewDataRef() = new SkillAssignmentData(tick, lemming, skillTrackingData.Skill);
     }
 
     public int RewindBackTo(int specifiedTick)
@@ -149,9 +151,20 @@ public sealed class RewindManager : IItemManager<LemmingManager>, IItemManager<G
         RewindBackTo(tick);
     }
 
-    public int NumberOfItems => 1;
-
     ReadOnlySpan<LemmingManager> IItemManager<LemmingManager>.AllItems => new(in LevelScreen.LemmingManagerRef);
     ReadOnlySpan<GadgetManager> IItemManager<GadgetManager>.AllItems => new(in LevelScreen.GadgetManagerRef);
     ReadOnlySpan<LevelTimer> IItemManager<LevelTimer>.AllItems => new(in LevelScreen.LevelTimerRef);
+
+    public void Dispose()
+    {
+        _lemmingSnapshotRecorder.Dispose();
+        _gadgetSnapshotRecorder.Dispose();
+        _skillSetSnapshotRecorder.Dispose();
+
+        _lemmingManagerSnapshotRecorder.Dispose();
+        _gadgetManagerSnapshotRecorder.Dispose();
+        _levelTimerRecorder.Dispose();
+
+        _skillCountChanges.Dispose();
+    }
 }

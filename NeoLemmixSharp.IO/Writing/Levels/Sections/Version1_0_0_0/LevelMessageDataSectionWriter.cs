@@ -5,9 +5,9 @@ namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class LevelMessageDataSectionWriter : LevelDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public LevelMessageDataSectionWriter(StringIdLookup stringIdLookup)
+    public LevelMessageDataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelTextDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
@@ -29,11 +29,11 @@ internal sealed class LevelMessageDataSectionWriter : LevelDataSectionWriter
     {
         FileWritingException.WriterAssert(stringList.Count < 256, "Too many strings to serialise!");
 
-        writer.Write((byte)stringList.Count);
+        writer.Write8BitUnsignedInteger((byte)stringList.Count);
 
         foreach (var stringToWrite in stringList)
         {
-            writer.Write(_stringIdLookup.GetStringId(stringToWrite));
+            writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(stringToWrite));
         }
     }
 }

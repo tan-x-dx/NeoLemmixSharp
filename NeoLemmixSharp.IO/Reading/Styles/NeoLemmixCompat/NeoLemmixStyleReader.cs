@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Style;
+﻿using NeoLemmixSharp.IO.Data;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat;

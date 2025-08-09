@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Util;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading;
@@ -17,41 +18,33 @@ internal interface IRawFileDataReader
     ReadOnlySpan<byte> ReadBytes(int bufferSize);
 }
 
-internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataReader
-    where TPerfectHasher : struct, ISectionIdentifierHelper<TEnum>
+internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataReader, IDisposable
+    where TPerfectHasher : struct, IEnumIdentifierHelper<TEnum, BitBuffer32>
     where TEnum : unmanaged, Enum
 {
-    private readonly byte[] _byteBuffer;
-    public FileFormatVersion FileFormatVersion { get; }
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIdentifiers;
 
+    private readonly RawArray _byteBuffer = default;
     private int _position;
 
-    public int FileSizeInBytes => _byteBuffer.Length;
+    public FileFormatVersion FileFormatVersion { get; }
     public int Position => _position;
-    public bool MoreToRead => Position < FileSizeInBytes;
+    public bool MoreToRead => _position < _byteBuffer.Length;
 
     public RawFileDataReader(Stream stream)
     {
-        _byteBuffer = ReadDataFromFile(stream);
+        long streamLength = stream.Length;
+
+        FileReadingException.ReaderAssert(
+            streamLength <= IoConstants.MaxAllowedFileSizeInBytes,
+            IoConstants.FileSizeTooLargeExceptionMessage);
+
+        _byteBuffer = new RawArray((int)streamLength);
+
+        stream.ReadExactly(_byteBuffer.AsSpan());
 
         FileFormatVersion = ReadVersion();
         _sectionIdentifiers = ReadSectionIdentifiers();
-    }
-
-    private static byte[] ReadDataFromFile(Stream stream)
-    {
-        var fileSizeInBytes = stream.Length;
-
-        FileReadingException.ReaderAssert(
-            fileSizeInBytes <= ReadWriteHelpers.MaxAllowedFileSizeInBytes,
-            ReadWriteHelpers.FileSizeTooLargeExceptionMessage);
-
-        var byteBuffer = new byte[(int)fileSizeInBytes];
-
-        stream.ReadExactly(byteBuffer);
-
-        return byteBuffer;
     }
 
     private FileFormatVersion ReadVersion()
@@ -69,7 +62,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
         void AssertNextByteIsPeriod()
         {
             int nextByteValue = Read8BitUnsignedInteger();
-            FileReadingException.ReaderAssert(nextByteValue == ReadWriteHelpers.Period, "Version not in correct format");
+            FileReadingException.ReaderAssert(nextByteValue == IoConstants.PeriodByte, "Version not in correct format!");
         }
     }
 
@@ -85,6 +78,14 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
         var result = new BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval>(hasher);
 
         while (i-- > 0)
+            ReadSectionIntervalDatum();
+
+        new SectionIdentifierValidator<TPerfectHasher, TEnum>()
+            .AssertSectionsAreContiguous(result);
+
+        return result;
+
+        void ReadSectionIntervalDatum()
         {
             uint rawIdentifier = Read8BitUnsignedInteger();
             TEnum enumValue = TPerfectHasher.GetEnumValue(rawIdentifier);
@@ -98,53 +99,77 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
 
             result.Add(enumValue, interval);
         }
-
-        new ReadWriteHelpers.SectionIdentifierComparer<TPerfectHasher, TEnum>()
-            .AssertSectionsAreContiguous(result);
-
-        return result;
-    }
-
-    private unsafe T Read<T>()
-        where T : unmanaged
-    {
-        var typeSize = sizeof(T);
-        FileReadingException.ReaderAssert(FileSizeInBytes - _position >= typeSize, "Reached end of file!");
-
-        var result = Unsafe.ReadUnaligned<T>(ref _byteBuffer[_position]);
-        _position += typeSize;
-
-        return result;
     }
 
     public bool ReadBool()
     {
         uint byteValue = Read8BitUnsignedInteger();
-        return byteValue != 0U;
+
+        FileReadingException.ReaderAssert(byteValue <= 1, "Expected bool byte to have a value of either 0 or 1!");
+
+        return (byteValue & 1) != 0U;
     }
-    public byte Read8BitUnsignedInteger() => Read<byte>();
-    public ushort Read16BitUnsignedInteger() => Read<ushort>();
-    public uint Read32BitUnsignedInteger() => Read<uint>();
-    public int Read32BitSignedInteger() => Read<int>();
-    public ulong Read64BitUnsignedInteger() => Read<ulong>();
 
-    public ReadOnlySpan<byte> ReadBytes(int bufferSize)
+    // Special implementation for individual bytes, since it's simpler to execute and also a lot more common.
+    public unsafe byte Read8BitUnsignedInteger()
     {
-        FileReadingException.ReaderAssert(FileSizeInBytes - _position >= bufferSize, "Reached end of file!");
+        FileReadingException.ReaderAssert(_position < _byteBuffer.Length, "Reached end of file!");
 
-        var result = new ReadOnlySpan<byte>(_byteBuffer, _position, bufferSize);
-        _position += bufferSize;
+        byte* pointer = (byte*)_byteBuffer.Handle + _position;
+        _position++;
 
-        return result;
+        return *pointer;
+    }
+
+    public ushort Read16BitUnsignedInteger() => ReadUnmanaged<ushort>();
+    public uint Read32BitUnsignedInteger() => ReadUnmanaged<uint>();
+    public int Read32BitSignedInteger() => ReadUnmanaged<int>();
+    public ulong Read64BitUnsignedInteger() => ReadUnmanaged<ulong>();
+
+    private unsafe T ReadUnmanaged<T>()
+        where T : unmanaged
+    {
+        var newPosition = _position + sizeof(T);
+        FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
+
+        byte* pointer = (byte*)_byteBuffer.Handle + _position;
+        _position = newPosition;
+
+        var mask = sizeof(T) - 1;
+        if (((int)pointer & mask) == 0)
+        {
+            // aligned read
+            return *(T*)pointer;
+        }
+        else
+        {
+            return Unsafe.ReadUnaligned<T>(pointer);
+        }
+    }
+
+    public unsafe ReadOnlySpan<byte> ReadBytes(int numberOfBytes)
+    {
+        var newPosition = _position + numberOfBytes;
+        FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
+
+        byte* pointer = (byte*)_byteBuffer.Handle + _position;
+        _position = newPosition;
+
+        return new ReadOnlySpan<byte>(pointer, numberOfBytes);
     }
 
     public void SetReaderPosition(int position)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(position);
-        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(position, FileSizeInBytes);
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(position, _byteBuffer.Length);
 
         _position = position;
     }
 
     public bool TryGetSectionInterval(TEnum section, out Interval interval) => _sectionIdentifiers.TryGetValue(section, out interval);
+
+    public void Dispose()
+    {
+        _byteBuffer.Dispose();
+    }
 }

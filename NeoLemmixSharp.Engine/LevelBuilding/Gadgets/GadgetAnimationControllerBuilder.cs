@@ -1,6 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.Animations;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -11,8 +9,9 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public static class GadgetAnimationControllerBuilder
 {
+    /*
     public static AnimationController BuildAnimationController(
-        GadgetArchetypeData gadgetArchetypeData,
+        IGadgetArchetypeData gadgetArchetypeData,
         GadgetData gadgetData,
         GadgetBounds gadgetBounds,
         int stateIndex,
@@ -162,4 +161,5 @@ public static class GadgetAnimationControllerBuilder
             return result;
         }
     }
+    */
 }

@@ -1,14 +1,15 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Util;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public LevelMetadataSectionWriter(StringIdLookup stringIdLookup)
+    public LevelMetadataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelMetadataSection, true)
     {
         _stringIdLookup = stringIdLookup;
@@ -24,8 +25,8 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         LevelData levelData)
     {
         WriteLevelStringData(writer, levelData);
-        writer.Write(levelData.LevelId.LevelId);
-        writer.Write(levelData.Version.Version);
+        writer.Write64BitUnsignedInteger(levelData.LevelId.LevelId);
+        writer.Write64BitUnsignedInteger(levelData.Version.Version);
 
         WriteLevelDimensionData(writer, levelData);
         WriteLevelBackgroundData(writer, levelData);
@@ -35,9 +36,9 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        writer.Write(_stringIdLookup.GetStringId(levelData.LevelTitle));
-        writer.Write(_stringIdLookup.GetStringId(levelData.LevelAuthor));
-        writer.Write(_stringIdLookup.GetStringId(levelData.LevelTheme));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(levelData.LevelTitle));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(levelData.LevelAuthor));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(levelData.LevelTheme));
     }
 
     private static void WriteLevelDimensionData(
@@ -45,13 +46,13 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         LevelData levelData)
     {
         var levelDimensions = levelData.LevelDimensions;
-        writer.Write((ushort)levelDimensions.W);
-        writer.Write((ushort)levelDimensions.H);
-        writer.Write((ushort)(levelData.LevelStartPositionX ?? ReadWriteHelpers.UnspecifiedLevelStartValue));
-        writer.Write((ushort)(levelData.LevelStartPositionY ?? ReadWriteHelpers.UnspecifiedLevelStartValue));
+        writer.Write16BitUnsignedInteger((ushort)levelDimensions.W);
+        writer.Write16BitUnsignedInteger((ushort)levelDimensions.H);
+        writer.Write16BitUnsignedInteger((ushort)(levelData.LevelStartPositionX ?? ReadWriteHelpers.UnspecifiedLevelStartValue));
+        writer.Write16BitUnsignedInteger((ushort)(levelData.LevelStartPositionY ?? ReadWriteHelpers.UnspecifiedLevelStartValue));
 
         var boundaryByte = GetBoundaryBehaviourByte(levelData);
-        writer.Write(boundaryByte);
+        writer.Write8BitUnsignedInteger(boundaryByte);
     }
 
     private static byte GetBoundaryBehaviourByte(LevelData levelData)
@@ -88,6 +89,6 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
             Unsafe.WriteUnaligned(ref rawBytes[1], backgroundStringId);
         }
 
-        writer.Write(rawBytes);
+        writer.WriteBytes(rawBytes);
     }
 }

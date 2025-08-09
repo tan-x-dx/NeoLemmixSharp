@@ -16,14 +16,14 @@ internal enum LevelFileSectionIdentifier
     TerrainDataSection,
     TerrainGroupDataSection,
     GadgetDataSection,
+    GadgetBehaviourDataSection,
+    GadgetTriggerDataSection
 }
 
 internal readonly struct LevelFileSectionIdentifierHasher :
-    ISectionIdentifierHelper<LevelFileSectionIdentifier>
+    IEnumIdentifierHelper<LevelFileSectionIdentifier, BitBuffer32>
 {
-    public const int NumberOfBytesForLevelSectionIdentifier = 2;
-
-    private const int NumberOfEnumValues = 10;
+    private const int NumberOfEnumValues = 12;
 
     public int NumberOfItems => NumberOfEnumValues;
 
@@ -32,29 +32,25 @@ internal readonly struct LevelFileSectionIdentifierHasher :
     [Pure]
     public LevelFileSectionIdentifier UnHash(int index) => (LevelFileSectionIdentifier)index;
 
-    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
 
     public static LevelFileSectionIdentifier GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LevelFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 
-    public static ReadOnlySpan<byte> GetSectionIdentifierBytes(LevelFileSectionIdentifier sectionIdentifier)
+    public static ushort GetSectionIdentifier(LevelFileSectionIdentifier sectionIdentifier) => sectionIdentifier switch
     {
-        var index = (int)sectionIdentifier;
-        index *= NumberOfBytesForLevelSectionIdentifier;
+        LevelFileSectionIdentifier.StringDataSection => 0x2644,
+        LevelFileSectionIdentifier.LevelMetadataSection => 0x79A6,
+        LevelFileSectionIdentifier.LevelTextDataSection => 0x43A0,
+        LevelFileSectionIdentifier.LevelObjectivesDataSection => 0x90D2,
+        LevelFileSectionIdentifier.TribeDataSection => 0xBEF4,
+        LevelFileSectionIdentifier.HatchGroupDataSection => 0xFE77,
+        LevelFileSectionIdentifier.PrePlacedLemmingDataSection => 0x601B,
+        LevelFileSectionIdentifier.TerrainDataSection => 0x785D,
+        LevelFileSectionIdentifier.TerrainGroupDataSection => 0x3D98,
+        LevelFileSectionIdentifier.GadgetDataSection => 0x2FCD,
+        LevelFileSectionIdentifier.GadgetBehaviourDataSection => 0xC32C,
+        LevelFileSectionIdentifier.GadgetTriggerDataSection => 0xAE0F,
 
-        return LevelDataSectionIdentifierBytes
-            .Slice(index, NumberOfBytesForLevelSectionIdentifier);
-    }
-
-    private static ReadOnlySpan<byte> LevelDataSectionIdentifierBytes =>
-    [
-        0x26, 0x44,
-        0x79, 0xA6,
-        0x43, 0xAA,
-        0x90, 0xD2,
-        0xBE, 0xF4,
-        0xFE, 0x77,
-        0x60, 0xBB,
-        0x7C, 0x5C,
-        0x3D, 0x98
-    ];
+        _ => Helpers.ThrowUnknownEnumValueException<LevelFileSectionIdentifier, ushort>(sectionIdentifier)
+    };
 }

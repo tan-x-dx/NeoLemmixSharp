@@ -1,14 +1,13 @@
-﻿using NeoLemmixSharp.IO.Data.Style;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
+﻿using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0.Gadgets;
 
 internal sealed class GadgetArchetypeDataSectionWriter : StyleDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public GadgetArchetypeDataSectionWriter(StringIdLookup stringIdLookup)
+    public GadgetArchetypeDataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
@@ -16,31 +15,31 @@ internal sealed class GadgetArchetypeDataSectionWriter : StyleDataSectionWriter
 
     public override ushort CalculateNumberOfItemsInSection(StyleData styleData)
     {
-        return (ushort)styleData.GadgetArchetypeData.Count;
+        return (ushort)styleData.GadgetArchetypeDataLookup.Count;
     }
 
     public override void WriteSection(
         RawStyleFileDataWriter writer,
         StyleData styleData)
     {
-        foreach (var kvp in styleData.GadgetArchetypeData)
+        foreach (var kvp in styleData.GadgetArchetypeDataLookup)
         {
-            WriteGadgetArchetypeData(writer, kvp.Value);
+            //     WriteGadgetArchetypeData(writer, kvp.Value);
         }
     }
-
+    /*
     private void WriteGadgetArchetypeData(
         RawStyleFileDataWriter writer,
-        GadgetArchetypeData gadgetArchetypeData)
+        IGadgetArchetypeData gadgetArchetypeData)
     {
-        writer.Write(_stringIdLookup.GetStringId(gadgetArchetypeData.PieceIdentifier));
-        writer.Write(_stringIdLookup.GetStringId(gadgetArchetypeData.GadgetName));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetArchetypeData.PieceIdentifier));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetArchetypeData.GadgetName));
 
-        writer.Write((byte)gadgetArchetypeData.GadgetType);
-        writer.Write((byte)gadgetArchetypeData.ResizeType);
+        writer.Write8BitUnsignedInteger((byte)gadgetArchetypeData.GadgetType);
+        writer.Write8BitUnsignedInteger((byte)gadgetArchetypeData.ResizeType);
 
-        writer.Write((ushort)gadgetArchetypeData.BaseSpriteSize.W);
-        writer.Write((ushort)gadgetArchetypeData.BaseSpriteSize.H);
+        writer.Write16BitUnsignedInteger((ushort)gadgetArchetypeData.BaseSpriteSize.W);
+        writer.Write16BitUnsignedInteger((ushort)gadgetArchetypeData.BaseSpriteSize.H);
 
         WriteNineSliceData(writer, gadgetArchetypeData);
 
@@ -51,33 +50,33 @@ internal sealed class GadgetArchetypeDataSectionWriter : StyleDataSectionWriter
 
     private static void WriteNineSliceData(
         RawStyleFileDataWriter writer,
-        GadgetArchetypeData gadgetArchetypeData)
+        IGadgetArchetypeData gadgetArchetypeData)
     {
         var nineSliceData = gadgetArchetypeData.NineSliceData;
-        writer.Write((ushort)nineSliceData.X);
-        writer.Write((ushort)nineSliceData.W);
-        writer.Write((ushort)nineSliceData.Y);
-        writer.Write((ushort)nineSliceData.H);
+        writer.Write16BitUnsignedInteger((ushort)nineSliceData.X);
+        writer.Write16BitUnsignedInteger((ushort)nineSliceData.W);
+        writer.Write16BitUnsignedInteger((ushort)nineSliceData.Y);
+        writer.Write16BitUnsignedInteger((ushort)nineSliceData.H);
     }
 
-    private void WriteGadgetStates(RawStyleFileDataWriter writer, GadgetArchetypeData gadgetArchetypeData)
+    private void WriteGadgetStates(RawStyleFileDataWriter writer, IGadgetArchetypeData gadgetArchetypeData)
     {
-        writer.Write((byte)gadgetArchetypeData.AllGadgetStateData.Length);
+        writer.Write8BitUnsignedInteger((byte)gadgetArchetypeData.AllGadgetStateData.Length);
 
         new GadgetStateWriter(writer, _stringIdLookup).WriteStateData(gadgetArchetypeData);
     }
 
-    private static void WriteMiscData(RawStyleFileDataWriter writer, GadgetArchetypeData gadgetArchetypeData)
+    private static void WriteMiscData(RawStyleFileDataWriter writer, IGadgetArchetypeData gadgetArchetypeData)
     {
-        writer.Write((byte)gadgetArchetypeData.MiscData.Count);
+        writer.Write8BitUnsignedInteger((byte)gadgetArchetypeData.MiscData.Count);
 
         foreach (var kvp in gadgetArchetypeData.MiscData)
         {
             var enumValue = kvp.Key;
             var miscDataValue = kvp.Value;
 
-            writer.Write((byte)enumValue);
-            writer.Write(miscDataValue);
+            writer.Write8BitUnsignedInteger((byte)enumValue);
+            writer.Write32BitSignedInteger(miscDataValue);
         }
-    }
+    }*/
 }

@@ -29,6 +29,13 @@ public interface IPerfectHasher<T> : IComparer<T>
     }
 }
 
+public interface IEnumIdentifierHelper<TEnum, TBuffer> : IPerfectHasher<TEnum>, IBitBufferCreator<TBuffer>
+    where TEnum : unmanaged, Enum
+    where TBuffer : struct, IBitBuffer
+{
+    static abstract TEnum GetEnumValue(uint rawValue);
+}
+
 public static class PerfectHasherHelperMethods
 {
     public static void AssertUniqueIds<TPerfectHasher, T>(

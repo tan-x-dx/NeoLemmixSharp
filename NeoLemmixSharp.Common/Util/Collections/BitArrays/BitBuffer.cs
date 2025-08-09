@@ -19,7 +19,7 @@ public interface IBitBuffer
 public interface IBitBufferCreator<TBuffer>
     where TBuffer : struct, IBitBuffer
 {
-    void CreateBitBuffer(out TBuffer buffer);
+    void CreateBitBuffer(int numberOfItems, out TBuffer buffer);
 }
 
 [InlineArray(BitBuffer32Length)]
@@ -89,4 +89,21 @@ public readonly struct ArrayBitBuffer : IBitBuffer
     public Span<uint> AsSpan() => new(_array, _start, _length);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<uint> AsReadOnlySpan() => new(_array, _start, _length);
+}
+
+public unsafe readonly struct RawBitBuffer : IBitBuffer
+{
+    private readonly void* _pointer;
+    public int Length { get; }
+
+    public RawBitBuffer(void* pointer, int length)
+    {
+        _pointer = pointer;
+        Length = length;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Span<uint> AsSpan() => new(_pointer, Length);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadOnlySpan<uint> AsReadOnlySpan() => new(_pointer, Length);
 }

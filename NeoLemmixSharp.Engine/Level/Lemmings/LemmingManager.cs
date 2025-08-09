@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using System.Diagnostics;
@@ -241,7 +242,6 @@ public sealed class LemmingManager :
 
         LemmingsRemoved++;
         lemming.OnRemoval(removalReason);
-        LevelScreen.LevelObjectiveManager.RecheckCriteria();
         UpdateControlPanel();
     }
 
@@ -381,12 +381,10 @@ public sealed class LemmingManager :
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
 
-    int IItemManager<Lemming>.NumberOfItems => _lemmings.Length;
-
     int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
     int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
     HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(out ArrayBitBuffer buffer)
+    unsafe void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(int numberOfItems, out ArrayBitBuffer buffer)
     {
         if (_bitArrayBufferUsageCount == 0)
             throw new InvalidOperationException("Insufficient space for bit buffers!");
@@ -399,7 +397,8 @@ public sealed class LemmingManager :
     {
         new Span<Lemming>(_lemmings).Clear();
         new Span<HatchGroup>(_hatchGroups).Clear();
-        _lemmingPositionHelper.Clear();
+        _lemmingPositionHelper.Dispose();
+        _zombieSpacialHashGrid.Dispose();
         _lemmingsToZombify.Clear();
         _allBlockers.Clear();
     }

@@ -14,7 +14,7 @@ internal abstract class LevelDataSectionWriter : IComparable<LevelDataSectionWri
         IsNecessary = isNecessary;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifierBytes() => LevelFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
+    public ushort GetSectionIdentifier() => LevelFileSectionIdentifierHasher.GetSectionIdentifier(SectionIdentifier);
 
     public abstract ushort CalculateNumberOfItemsInSection(LevelData levelData);
 

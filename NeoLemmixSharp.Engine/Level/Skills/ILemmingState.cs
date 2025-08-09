@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.Gadgets.Actions;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 
@@ -26,6 +26,7 @@ public interface ILemmingState
     }
 
     private static readonly ILemmingState[] AllLemmingStateChangers = GetLemmingStates();
+    public static ReadOnlySpan<ILemmingState> AllItems => new(AllLemmingStateChangers);
 
     private static ILemmingState[] GetLemmingStates()
     {
@@ -73,6 +74,6 @@ public interface ILemmingState
         public int Hash(ILemmingState item) => (int)item.LemmingStateType;
         public ILemmingState UnHash(int index) => AllLemmingStateChangers[index];
 
-        public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
+        public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
     }
 }

@@ -17,7 +17,8 @@ public sealed class ShimmierAction : LemmingAction
             LemmingActionConstants.ShimmierActionSpriteFileName,
             LemmingActionConstants.ShimmierAnimationFrames,
             LemmingActionConstants.MaxShimmierPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority)
+            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionBounds.ShimmierActionBounds)
     {
     }
 
@@ -127,8 +128,6 @@ public sealed class ShimmierAction : LemmingAction
 
         return true;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.ShimmierActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

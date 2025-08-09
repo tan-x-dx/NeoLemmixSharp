@@ -18,7 +18,8 @@ public sealed class GliderAction : LemmingAction
             LemmingActionConstants.GliderActionSpriteFileName,
             LemmingActionConstants.GliderAnimationFrames,
             LemmingActionConstants.MaxGliderPhysicsFrames,
-            EngineConstants.PermanentSkillPriority)
+            EngineConstants.PermanentSkillPriority,
+            LemmingActionBounds.GliderActionBounds)
     {
     }
 
@@ -217,8 +218,6 @@ end;
 
         return true;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.GliderActionBounds;
 
     private static bool DoTurnAround(
         in GadgetEnumerable gadgetsNearLemming,

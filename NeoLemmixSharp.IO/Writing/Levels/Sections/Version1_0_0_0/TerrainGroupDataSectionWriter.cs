@@ -5,11 +5,11 @@ namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class TerrainGroupDataSectionWriter : LevelDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
     private readonly TerrainDataSectionWriter _terrainDataComponentWriter;
 
     public TerrainGroupDataSectionWriter(
-        StringIdLookup stringIdLookup,
+        FileWriterStringIdLookup stringIdLookup,
         TerrainDataSectionWriter terrainDataComponentWriter)
         : base(LevelFileSectionIdentifier.TerrainGroupDataSection, false)
     {

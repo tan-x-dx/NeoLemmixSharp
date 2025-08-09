@@ -1,17 +1,20 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Level.Objectives;
+using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 internal sealed class SkillSetReader : NeoLemmixDataReader
 {
-  //  private readonly LemmingSkillSet _seenSkills = LemmingSkill.CreateBitArraySet();
+    private readonly HashSet<string> _seenSkills = new(10);
+    private readonly UniqueStringSet _uniqueStringSet;
 
     public List<SkillSetData> SkillSetData { get; } = new();
 
-    public SkillSetReader()
+    public SkillSetReader(UniqueStringSet uniqueStringSet)
         : base("$SKILLSET")
     {
+        _uniqueStringSet = uniqueStringSet;
     }
 
     public override bool BeginReading(ReadOnlySpan<char> line)
@@ -22,7 +25,7 @@ internal sealed class SkillSetReader : NeoLemmixDataReader
 
     public override bool ReadNextLine(ReadOnlySpan<char> line)
     {
-     /*   NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
         if (TokensMatch(firstToken, "$END"))
         {
@@ -30,32 +33,29 @@ internal sealed class SkillSetReader : NeoLemmixDataReader
             return false;
         }
 
-        if (!NxlvReadingHelpers.TryGetSkillByName(firstToken, out var skill))
+        if (!LemmingSkillConstants.TryGetLemmingSkillIdFromName(firstToken, out var skillId))
             throw new FileReadingException($"Unknown token: {firstToken}");
 
-        if (!_seenSkills.Add(skill))
-            throw new FileReadingException($"Skill recorded multiple times! {skill.LemmingSkillName}");
+        var skillName = _uniqueStringSet.GetUniqueStringInstance(firstToken);
+
+        if (!_seenSkills.Add(skillName))
+            throw new FileReadingException($"Skill recorded multiple times! {skillName}");
 
         var amount = TokensMatch(secondToken, "INFINITE")
             ? EngineConstants.InfiniteSkillCount
             : int.Parse(secondToken);
 
-        if ((uint)amount >= EngineConstants.InfiniteSkillCount)
+        if ((uint)amount > EngineConstants.InfiniteSkillCount)
             throw new FileReadingException($"Invalid skill count value! {amount}");
 
-        if (skill == ClonerSkill.Instance && amount == EngineConstants.InfiniteSkillCount)
+        if (skillId == LemmingSkillConstants.ClonerSkillId && amount == EngineConstants.InfiniteSkillCount)
         {
-            amount = EngineConstants.InfiniteSkillCount - 1;
+            amount = EngineConstants.MaxFiniteSkillCount;
         }
 
-        var skillSetDatum = new SkillSetData
-        {
-            Skill = skill,
-            NumberOfSkills = amount,
-            TribeId = EngineConstants.ClassicTribeId
-        };
+        var skillSetDatum = new SkillSetData(skillId, EngineConstants.ClassicTribeId, amount);
 
-        SkillSetData.Add(skillSetDatum);*/
+        SkillSetData.Add(skillSetDatum);
         return false;
     }
 }

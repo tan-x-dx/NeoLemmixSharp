@@ -2,11 +2,11 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
-public sealed class RectangularHitBoxRegion : IHitBoxRegion
+public sealed class RectangularHitBoxRegion : HitBoxRegion
 {
     private readonly RectangularRegion _region;
 
-    public RectangularRegion CurrentBounds => _region;
+    public override RectangularRegion CurrentBounds => _region;
 
     public RectangularHitBoxRegion(
         Point p0,
@@ -15,12 +15,12 @@ public sealed class RectangularHitBoxRegion : IHitBoxRegion
         _region = new RectangularRegion(p0, p1);
     }
 
-    public bool ContainsPoint(Point levelPosition)
+    public override bool ContainsPoint(Point levelPosition)
     {
         return LevelScreen.RegionContainsPoint(_region, levelPosition);
     }
 
-    public bool ContainsEitherPoint(Point p1, Point p2)
+    public override bool ContainsEitherPoint(Point p1, Point p2)
     {
         return LevelScreen.RegionContainsEitherPoint(_region, p1, p2);
     }

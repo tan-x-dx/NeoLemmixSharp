@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Style;
+﻿using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections;
@@ -14,7 +14,7 @@ internal abstract class StyleDataSectionWriter : IComparable<StyleDataSectionWri
         IsNecessary = isNecessary;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifierBytes() => StyleFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
+    public ushort GetSectionIdentifier() => StyleFileSectionIdentifierHasher.GetSectionIdentifier(SectionIdentifier);
 
     public abstract ushort CalculateNumberOfItemsInSection(StyleData styleData);
 

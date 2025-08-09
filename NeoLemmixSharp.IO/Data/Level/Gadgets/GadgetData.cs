@@ -1,8 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.IO.Data.Style;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -12,7 +9,7 @@ public sealed class GadgetData
 {
     private readonly BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int> _properties = GadgetPropertyHasher.CreateBitArrayDictionary<int>();
 
-    public required int Id { get; init; }
+    public required GadgetIdentifier Identifier { get; init; }
     public required string OverrideName { get; init; }
 
     public required StyleIdentifier StyleIdentifier { get; init; }
@@ -25,9 +22,7 @@ public sealed class GadgetData
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }
 
-    public required GadgetInputName[] OverrideInputNames { get; init; }
     public required GadgetLayerColorData[] LayerColorData { get; init; }
-    public required HitBoxCriteriaData? OverrideHitBoxCriteriaData { get; init; }
 
     public int NumberOfGadgetProperties => _properties.Count;
 

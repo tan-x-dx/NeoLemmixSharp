@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Reading;
 
-internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRawFileDataReader rawFileData)
+internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRawFileDataReader reader)
     where TRawFileDataReader : class, IRawFileDataReader
 {
-    private readonly TRawFileDataReader _rawFileData = rawFileData;
+    private readonly TRawFileDataReader _reader = reader;
 
     public HitBoxCriteriaData ReadHitBoxCriteria()
     {
@@ -19,23 +19,28 @@ internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRaw
         byte allowedLemmingOrientationIds = ReadAllowedLemmingOrientationIds();
         byte allowedFacingDirectionId = ReadAllowedLemmingFacingDirectionId();
 
-        return new HitBoxCriteriaData
-        {
-            AllowedLemmingActionIds = allowedLemmingActionIds,
-            AllowedLemmingStateIds = allowedLemmingStateIds,
-            AllowedLemmingTribeIds = allowedLemmingTribeId,
-            AllowedLemmingOrientationIds = allowedLemmingOrientationIds,
-            AllowedFacingDirectionId = allowedFacingDirectionId
-        };
+        return new HitBoxCriteriaData();
+        /*  {
+              AllowedLemmingActionIds = allowedLemmingActionIds,
+              AllowedLemmingStateIds = allowedLemmingStateIds,
+              AllowedLemmingTribeIds = allowedLemmingTribeId,
+              AllowedLemmingOrientationIds = allowedLemmingOrientationIds,
+              AllowedFacingDirectionId = allowedFacingDirectionId
+          };*/
     }
 
     private uint[] ReadUintSequence(int maxNumberOfBits)
     {
-        int numberOfBytesToRead = _rawFileData.Read8BitUnsignedInteger();
+        int numberOfBytesToRead = _reader.Read8BitUnsignedInteger();
         FileReadingException.ReaderAssert((numberOfBytesToRead % sizeof(uint)) == 0, "Expected to read a multiple of 4 bytes!");
 
-        var sourceBytes = _rawFileData.ReadBytes(numberOfBytesToRead);
+        var sourceBytes = _reader.ReadBytes(numberOfBytesToRead);
         var sourceUints = MemoryMarshal.Cast<byte, uint>(sourceBytes);
+
+        var expectedResultLength = BitArrayHelpers.CalculateBitArrayBufferLength(maxNumberOfBits);
+
+        FileReadingException.ReaderAssert(sourceUints.Length == expectedResultLength, "Invalid span lengths!");
+        BitArrayHelpers.AssertSourceDataIsValidForDestination(sourceUints, expectedResultLength, maxNumberOfBits);
 
         if (UintSpanIsTrivial(sourceUints, maxNumberOfBits))
             return [];
@@ -47,14 +52,12 @@ internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRaw
     {
         var popCount = BitArrayHelpers.GetPopCount(uints);
 
-        FileReadingException.ReaderAssert(popCount <= maxNumberOfBits, "Invalid bit sequence!");
-
         return popCount == 0 || popCount == maxNumberOfBits;
     }
 
     private byte ReadAllowedLemmingTribeIds()
     {
-        uint rawValue = _rawFileData.Read8BitUnsignedInteger();
+        uint rawValue = _reader.Read8BitUnsignedInteger();
 
         const uint TribeMask = (1 << EngineConstants.MaxNumberOfTribes) - 1;
         rawValue &= TribeMask;
@@ -67,7 +70,7 @@ internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRaw
 
     private byte ReadAllowedLemmingOrientationIds()
     {
-        uint rawValue = _rawFileData.Read8BitUnsignedInteger();
+        uint rawValue = _reader.Read8BitUnsignedInteger();
 
         const uint OrientationMask = (1 << EngineConstants.NumberOfOrientations) - 1;
         rawValue &= OrientationMask;
@@ -80,7 +83,7 @@ internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRaw
 
     private byte ReadAllowedLemmingFacingDirectionId()
     {
-        uint rawValue = _rawFileData.Read8BitUnsignedInteger();
+        uint rawValue = _reader.Read8BitUnsignedInteger();
 
         var hasFacingDirectionData = ((rawValue >>> 7) & 1) != 0;
 

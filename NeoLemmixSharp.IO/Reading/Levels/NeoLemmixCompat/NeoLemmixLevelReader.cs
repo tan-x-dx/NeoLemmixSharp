@@ -1,11 +1,11 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
+using NeoLemmixSharp.IO.Util;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
@@ -31,7 +31,7 @@ internal readonly ref struct NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelR
         _levelData = new LevelData(FileFormats.FileFormatType.NeoLemmix);
 
         _levelDataReader = new LevelDataReader(_uniqueStringSet, _levelData);
-        _skillSetReader = new SkillSetReader();
+        _skillSetReader = new SkillSetReader(_uniqueStringSet);
         _terrainGroupReader = new TerrainGroupReader(_uniqueStringSet);
         _gadgetReader = new GadgetReader(_uniqueStringSet);
         _talismanReader = new TalismanReader(_uniqueStringSet);
@@ -76,7 +76,7 @@ internal readonly ref struct NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelR
     private void ProcessLevelData()
     {
         _levelData.TribeIdentifiers.Capacity = 1;
-        _levelData.TribeIdentifiers.Add(new TribeIdentifier(_levelData.LevelTheme, EngineConstants.ClassicTribeId));
+        _levelData.TribeIdentifiers.Add(new TribeStyleIdentifier(_levelData.LevelTheme, EngineConstants.ClassicTribeId));
 
         /*  var objectiveRequirementsList = new List<IObjectiveRequirement>
           {

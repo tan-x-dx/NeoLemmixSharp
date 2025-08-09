@@ -134,7 +134,7 @@ public sealed class InputController :
     int IPerfectHasher<InputAction>.NumberOfItems => _inputActions.Count;
     int IPerfectHasher<InputAction>.Hash(InputAction item) => item.Id;
     InputAction IPerfectHasher<InputAction>.UnHash(int index) => _inputActions[index];
-    void IBitBufferCreator<KeysBitBuffer>.CreateBitBuffer(out KeysBitBuffer buffer) => buffer = new();
+    void IBitBufferCreator<KeysBitBuffer>.CreateBitBuffer(int numberOfItems, out KeysBitBuffer buffer) => buffer = new();
 
     private readonly struct KeyToInputMapping(Keys key, InputAction inputAction)
     {

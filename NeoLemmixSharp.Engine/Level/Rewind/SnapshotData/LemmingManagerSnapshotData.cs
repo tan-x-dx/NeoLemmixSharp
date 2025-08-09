@@ -9,7 +9,7 @@ public readonly struct LemmingManagerSnapshotData
     public readonly int LemmingsOut;
     public readonly int LemmingsRemoved;
     public readonly int LemmingsSaved;
-    
+
     public LemmingManagerSnapshotData(int numberOfLemmingsReleasedFromHatch, int numberOfClonedLemmings, int lemmingsToRelease, int lemmingsOut, int lemmingsRemoved, int lemmingsSaved)
     {
         NumberOfLemmingsReleasedFromHatch = numberOfLemmingsReleasedFromHatch;

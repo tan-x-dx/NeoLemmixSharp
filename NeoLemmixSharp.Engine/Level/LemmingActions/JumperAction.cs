@@ -37,7 +37,8 @@ public sealed class JumperAction : LemmingAction
             LemmingActionConstants.JumperActionSpriteFileName,
             LemmingActionConstants.JumperAnimationFrames,
             LemmingActionConstants.MaxJumperPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority)
+            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionBounds.JumperActionBounds)
     {
     }
 
@@ -264,8 +265,6 @@ public sealed class JumperAction : LemmingAction
           HandleForceField(L, 1);
       end;
     */
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.JumperActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

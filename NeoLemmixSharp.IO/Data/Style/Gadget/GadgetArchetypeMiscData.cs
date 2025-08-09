@@ -10,7 +10,7 @@ public enum GadgetArchetypeMiscDataType
     SpawnPointOffset,
 }
 
-public readonly struct GadgetArchetypeMiscDataTypeHasher : IPerfectHasher<GadgetArchetypeMiscDataType>, IBitBufferCreator<BitBuffer32>
+public readonly struct GadgetArchetypeMiscDataTypeHasher : IEnumIdentifierHelper<GadgetArchetypeMiscDataType, BitBuffer32>
 {
     private const int NumberOfEnumValues = 8;
 
@@ -30,5 +30,5 @@ public readonly struct GadgetArchetypeMiscDataTypeHasher : IPerfectHasher<Gadget
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<GadgetArchetypeMiscDataTypeHasher, BitBuffer32, GadgetArchetypeMiscDataType, TValue> CreateBitArrayDictionary<TValue>() => new(new GadgetArchetypeMiscDataTypeHasher());
 
-    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
 }

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Util;
+
+namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public enum LemmingRemovalReason
 {
@@ -14,4 +16,11 @@ public enum LemmingRemovalReason
     DeathWeasel,
     DeathMetalGrate,
     DeathDismemberment
+}
+
+public static class LemmingRemovalReasonHelpers
+{
+    private const int NumberOfEnumValues = 12;
+
+    public static LemmingRemovalReason GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingRemovalReason>(rawValue, NumberOfEnumValues);
 }

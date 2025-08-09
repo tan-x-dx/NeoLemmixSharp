@@ -1,13 +1,13 @@
-﻿using NeoLemmixSharp.IO.Data.Style;
+﻿using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
 internal sealed class StringDataSectionWriter : StyleDataSectionWriter
 {
-    private readonly MutableStringIdLookup _stringIdLookup;
+    private readonly MutableFileWriterStringIdLookup _stringIdLookup;
 
-    public StringDataSectionWriter(MutableStringIdLookup stringIdLookup)
+    public StringDataSectionWriter(MutableFileWriterStringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.StringDataSection, true)
     {
         _stringIdLookup = stringIdLookup;
@@ -47,7 +47,7 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
 
     private void RecordTerrainArchetypeDataStrings(StyleData styleData)
     {
-        foreach (var kvp in styleData.TerrainArchetypeData)
+        foreach (var kvp in styleData.TerrainArchetypeDataLookup)
         {
             var terrainArchetypeData = kvp.Value;
             _stringIdLookup.RecordString(terrainArchetypeData.PieceIdentifier);
@@ -57,16 +57,16 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
 
     private void RecordGadgetArchetypeDataStrings(StyleData styleData)
     {
-        foreach (var kvp in styleData.GadgetArchetypeData)
+        foreach (var kvp in styleData.GadgetArchetypeDataLookup)
         {
             var gadgetArchetypeDatum = kvp.Value;
             _stringIdLookup.RecordString(gadgetArchetypeDatum.PieceIdentifier);
             _stringIdLookup.RecordString(gadgetArchetypeDatum.GadgetName);
 
-            foreach (var gadgetStateData in gadgetArchetypeDatum.AllGadgetStateData)
-            {
-                _stringIdLookup.RecordString(gadgetStateData.StateName);
-            }
+            /*     foreach (var gadgetStateData in gadgetArchetypeDatum.AllGadgetStateData)
+                 {
+                     _stringIdLookup.RecordString(gadgetStateData.StateName);
+                 }*/
         }
     }
 }

@@ -1,89 +1,126 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.IO.Data.Style;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0.Gadgets;
 
 internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileReaderStringIdLookup _stringIdLookup;
 
-    public GadgetArchetypeDataSectionReader(StringIdLookup stringIdLookup)
+    public GadgetArchetypeDataSectionReader(FileReaderStringIdLookup stringIdLookup)
         : base(StyleFileSectionIdentifier.GadgetArchetypeDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection)
+    public override void ReadSection(RawStyleFileDataReader reader, StyleData styleData, int numberOfItemsInSection)
     {
-        styleData.GadgetArchetypeData.EnsureCapacity(numberOfItemsInSection);
+        styleData.GadgetArchetypeDataLookup.EnsureCapacity(numberOfItemsInSection);
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newGadgetArchetypeDatum = ReadGadgetArchetypeData(styleData.Identifier, rawFileData);
-            styleData.GadgetArchetypeData.Add(newGadgetArchetypeDatum.PieceIdentifier, newGadgetArchetypeDatum);
+            var newGadgetArchetypeDatum = ReadGadgetArchetypeData(reader, styleData.Identifier);
+            styleData.GadgetArchetypeDataLookup.Add(newGadgetArchetypeDatum.PieceIdentifier, newGadgetArchetypeDatum);
         }
     }
 
-    private GadgetArchetypeData ReadGadgetArchetypeData(
-        StyleIdentifier styleName,
-        RawStyleFileDataReader rawFileData)
+    private IGadgetArchetypeData ReadGadgetArchetypeData(
+        RawStyleFileDataReader reader,
+        StyleIdentifier styleIdentifier)
     {
-        int pieceId = rawFileData.Read16BitUnsignedInteger();
+        int pieceId = reader.Read16BitUnsignedInteger();
         var pieceName = new PieceIdentifier(_stringIdLookup[pieceId]);
 
-        int nameId = rawFileData.Read16BitUnsignedInteger();
+        int nameId = reader.Read16BitUnsignedInteger();
         var gadgetName = _stringIdLookup[nameId];
 
-        uint rawGadgetType = rawFileData.Read8BitUnsignedInteger();
-        var gadgetType = GadgetTypeHelpers.GetEnumValue(rawGadgetType);
+        var gadgetType = (GadgetType)reader.Read8BitUnsignedInteger();
 
-        uint rawResizeType = rawFileData.Read8BitUnsignedInteger();
-        var resizeType = ReadWriteHelpers.DecodeResizeType(rawResizeType);
-
-        int baseWidth = rawFileData.Read16BitUnsignedInteger();
-        int baseHeight = rawFileData.Read16BitUnsignedInteger();
-        var baseSpriteSize = new Size(baseWidth, baseHeight);
-
-        var nineSliceData = ReadNineSliceData(rawFileData, baseSpriteSize);
-
-        var gadgetStates = ReadGadgetStates(rawFileData);
-
-        GadgetArchetypeValidation.AssertGadgetStateDataMakesSense(gadgetType, gadgetStates);
-
-        var result = new GadgetArchetypeData
+        return gadgetType switch
         {
-            GadgetName = gadgetName,
-            StyleIdentifier = styleName,
-            PieceIdentifier = pieceName,
+            GadgetType.HitBoxGadget => ReadHitBoxGadgetArchetypeData(reader, styleIdentifier, pieceName, gadgetName),
+            GadgetType.HatchGadget => throw new NotImplementedException(),
+            GadgetType.AndGate => throw new NotImplementedException(),
+            GadgetType.OrGate => throw new NotImplementedException(),
+            GadgetType.NotGate => throw new NotImplementedException(),
+            GadgetType.XorGate => throw new NotImplementedException(),
 
-            GadgetType = gadgetType,
-            ResizeType = resizeType,
-
-            BaseSpriteSize = baseSpriteSize,
-            NineSliceData = nineSliceData,
-
-            AllGadgetStateData = gadgetStates
+            _ => Helpers.ThrowUnknownEnumValueException<GadgetType, IGadgetArchetypeData>(gadgetType),
         };
 
-        ReadMiscData(rawFileData, result);
+        /*= GadgetTypeHelpers.GetEnumValue(rawGadgetType);
 
-        GadgetArchetypeValidation.AssertGadgetArchetypeDataHasRequiredMiscData(result);
+         uint rawResizeType = reader.Read8BitUnsignedInteger();
+         var resizeType = ReadWriteHelpers.DecodeResizeType(rawResizeType);
 
-        return result;
+         int baseWidth = reader.Read16BitUnsignedInteger();
+         int baseHeight = reader.Read16BitUnsignedInteger();
+         var baseSpriteSize = new Size(baseWidth, baseHeight);
+
+         var nineSliceData = ReadNineSliceData(reader, baseSpriteSize);
+
+         var gadgetStates = ReadGadgetStates(reader);
+
+         var result = new GadgetArchetypeData
+         {
+             GadgetName = gadgetName,
+             StyleIdentifier = styleName,
+             PieceIdentifier = pieceName,
+
+             GadgetType = gadgetType,
+             ResizeType = resizeType,
+
+             BaseSpriteSize = baseSpriteSize,
+             NineSliceData = nineSliceData,
+
+             AllGadgetStateData = gadgetStates
+         };
+
+         ReadMiscData(reader, result);
+
+         return result;*/
+    }
+
+    private HitBoxGadgetArchetypeData ReadHitBoxGadgetArchetypeData(RawStyleFileDataReader reader, StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier, string gadgetName)
+    {
+        uint rawResizeType = reader.Read8BitUnsignedInteger();
+        var resizeType = ReadWriteHelpers.DecodeResizeType(rawResizeType);
+
+        int baseWidth = reader.Read16BitUnsignedInteger();
+        int baseHeight = reader.Read16BitUnsignedInteger();
+        var baseSpriteSize = new Size(baseWidth, baseHeight);
+
+        var nineSliceData = ReadNineSliceData(reader, baseSpriteSize);
+
+        var gadgetStates = ReadGadgetStates(reader);
+
+        return new HitBoxGadgetArchetypeData
+        {
+            StyleIdentifier = styleIdentifier,
+            PieceIdentifier = pieceIdentifier,
+            GadgetName = gadgetName,
+
+            ResizeType = resizeType,
+            BaseSpriteSize = baseSpriteSize,
+            NineSliceData = nineSliceData,
+            GadgetStates = []//gadgetStates
+        };
     }
 
     private static RectangularRegion ReadNineSliceData(
-        RawStyleFileDataReader rawFileData,
+        RawStyleFileDataReader reader,
         Size baseSpriteSize)
     {
-        int nineSliceLeft = rawFileData.Read16BitUnsignedInteger();
-        int nineSliceWidth = rawFileData.Read16BitUnsignedInteger();
+        int nineSliceLeft = reader.Read16BitUnsignedInteger();
+        int nineSliceWidth = reader.Read16BitUnsignedInteger();
 
-        int nineSliceTop = rawFileData.Read16BitUnsignedInteger();
-        int nineSliceHeight = rawFileData.Read16BitUnsignedInteger();
+        int nineSliceTop = reader.Read16BitUnsignedInteger();
+        int nineSliceHeight = reader.Read16BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(nineSliceLeft >= 0, "Invalid nine slice definition!");
         FileReadingException.ReaderAssert(nineSliceWidth >= 1, "Invalid nine slice definition!");
@@ -98,11 +135,11 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return new RectangularRegion(p, s);
     }
 
-    private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader rawFileData)
+    private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader reader)
     {
-        var gadgetStateReader = new GadgetStateReader(rawFileData, _stringIdLookup);
+        var gadgetStateReader = new GadgetStateReader(reader, _stringIdLookup);
 
-        int numberOfGadgetStates = rawFileData.Read8BitUnsignedInteger();
+        int numberOfGadgetStates = reader.Read8BitUnsignedInteger();
         var result = Helpers.GetArrayForSize<GadgetStateArchetypeData>(numberOfGadgetStates);
 
         for (var i = 0; i < result.Length; i++)
@@ -113,15 +150,15 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return result;
     }
 
-    private static void ReadMiscData(RawStyleFileDataReader rawFileData, GadgetArchetypeData result)
+    private static void ReadMiscData(RawStyleFileDataReader reader, IGadgetArchetypeData result)
     {
-        int numberOfProperties = rawFileData.Read8BitUnsignedInteger();
+        int numberOfProperties = reader.Read8BitUnsignedInteger();
         while (numberOfProperties-- > 0)
         {
-            uint rawGadgetProperty = rawFileData.Read8BitUnsignedInteger();
+            uint rawGadgetProperty = reader.Read8BitUnsignedInteger();
             var gadgetProperty = GadgetArchetypeMiscDataTypeHasher.GetEnumValue(rawGadgetProperty);
-            int propertyValue = rawFileData.Read32BitSignedInteger();
-            result.AddMiscData(gadgetProperty, propertyValue);
+            int propertyValue = reader.Read32BitSignedInteger();
+            //  result.AddMiscData(gadgetProperty, propertyValue);
         }
     }
 }

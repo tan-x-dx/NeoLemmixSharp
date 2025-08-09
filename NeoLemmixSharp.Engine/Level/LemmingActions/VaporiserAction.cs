@@ -14,7 +14,8 @@ public sealed class VaporiserAction : LemmingAction
             LemmingActionConstants.VaporiserActionSpriteFileName,
             LemmingActionConstants.VaporiserAnimationFrames,
             LemmingActionConstants.MaxVaporizerPhysicsFrames,
-            EngineConstants.NoPriority)
+            EngineConstants.NoPriority,
+            LemmingActionBounds.VaporiserActionBounds)
     {
     }
 
@@ -27,8 +28,6 @@ public sealed class VaporiserAction : LemmingAction
 
         return false;
     }
-
-    protected override RectangularRegion ActionBounds() => LemmingActionBounds.VaporiserActionBounds;
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

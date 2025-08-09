@@ -1,64 +1,65 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Util;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
 internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileReaderStringIdLookup _stringIdLookup;
 
     public LevelMetadataSectionReader(
-        StringIdLookup stringIdLookup)
+        FileReaderStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.LevelMetadataSection, true)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
+    public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
         FileReadingException.ReaderAssert(numberOfItemsInSection == 1, "Expected ONE level metadata item!");
 
-        int stringId = rawFileData.Read16BitUnsignedInteger();
+        int stringId = reader.Read16BitUnsignedInteger();
         levelData.LevelTitle = _stringIdLookup[stringId];
 
-        stringId = rawFileData.Read16BitUnsignedInteger();
+        stringId = reader.Read16BitUnsignedInteger();
         levelData.LevelAuthor = _stringIdLookup[stringId];
 
-        stringId = rawFileData.Read16BitUnsignedInteger();
+        stringId = reader.Read16BitUnsignedInteger();
         levelData.LevelTheme = new StyleIdentifier(_stringIdLookup[stringId]);
 
-        levelData.LevelId = new LevelIdentifier(rawFileData.Read64BitUnsignedInteger());
-        levelData.Version = new LevelVersion(rawFileData.Read64BitUnsignedInteger());
+        levelData.LevelId = new LevelIdentifier(reader.Read64BitUnsignedInteger());
+        levelData.Version = new LevelVersion(reader.Read64BitUnsignedInteger());
 
-        ReadLevelDimensionData(rawFileData, levelData);
-        ReadBackgroundData(rawFileData, levelData);
+        ReadLevelDimensionData(reader, levelData);
+        ReadBackgroundData(reader, levelData);
     }
 
-    private static void ReadLevelDimensionData(RawLevelFileDataReader rawFileData, LevelData levelData)
+    private static void ReadLevelDimensionData(RawLevelFileDataReader reader, LevelData levelData)
     {
-        int levelWidth = rawFileData.Read16BitUnsignedInteger();
-        int levelHeight = rawFileData.Read16BitUnsignedInteger();
+        int levelWidth = reader.Read16BitUnsignedInteger();
+        int levelHeight = reader.Read16BitUnsignedInteger();
 
         levelData.SetLevelWidth(levelWidth);
         levelData.SetLevelHeight(levelHeight);
 
-        int value = rawFileData.Read16BitUnsignedInteger();
+        int value = reader.Read16BitUnsignedInteger();
         if (value != ReadWriteHelpers.UnspecifiedLevelStartValue)
         {
             levelData.LevelStartPositionX = value;
         }
 
-        value = rawFileData.Read16BitUnsignedInteger();
+        value = reader.Read16BitUnsignedInteger();
         if (value != ReadWriteHelpers.UnspecifiedLevelStartValue)
         {
             levelData.LevelStartPositionY = value;
         }
 
-        uint boundaryByte = rawFileData.Read8BitUnsignedInteger();
+        uint boundaryByte = reader.Read8BitUnsignedInteger();
 
         DecipherBoundaryBehaviours(levelData, boundaryByte);
     }
@@ -72,13 +73,13 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         levelData.VerticalBoundaryBehaviour = verticalBoundaryBehaviour;
     }
 
-    private void ReadBackgroundData(RawLevelFileDataReader rawFileData, LevelData levelData)
+    private void ReadBackgroundData(RawLevelFileDataReader reader, LevelData levelData)
     {
         const int NumberOfBytesWrittenForBackgroundData =
             1 + // Enum specifier
             4; // Four bytes for actual data, padding with zeros where necessary
 
-        var rawBytes = rawFileData.ReadBytes(NumberOfBytesWrittenForBackgroundData);
+        var rawBytes = reader.ReadBytes(NumberOfBytesWrittenForBackgroundData);
 
         int rawBackgroundType = rawBytes[0];
         var backgroundType = (BackgroundType)rawBackgroundType;

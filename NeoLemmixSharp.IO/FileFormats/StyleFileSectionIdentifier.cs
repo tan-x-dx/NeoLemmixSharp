@@ -13,10 +13,8 @@ internal enum StyleFileSectionIdentifier
 }
 
 internal readonly struct StyleFileSectionIdentifierHasher :
-    ISectionIdentifierHelper<StyleFileSectionIdentifier>
+    IEnumIdentifierHelper<StyleFileSectionIdentifier, BitBuffer32>
 {
-    public const int NumberOfBytesForStyleSectionIdentifier = 2;
-
     private const int NumberOfEnumValues = 4;
 
     public int NumberOfItems => NumberOfEnumValues;
@@ -26,24 +24,17 @@ internal readonly struct StyleFileSectionIdentifierHasher :
     [Pure]
     public StyleFileSectionIdentifier UnHash(int index) => (StyleFileSectionIdentifier)index;
 
-    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
 
     public static StyleFileSectionIdentifier GetEnumValue(uint rawValue) => Helpers.GetEnumValue<StyleFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 
-    public static ReadOnlySpan<byte> GetSectionIdentifierBytes(StyleFileSectionIdentifier sectionIdentifier)
+    public static ushort GetSectionIdentifier(StyleFileSectionIdentifier sectionIdentifier) => sectionIdentifier switch
     {
-        var index = (int)sectionIdentifier;
-        index *= NumberOfBytesForStyleSectionIdentifier;
+        StyleFileSectionIdentifier.StringDataSection => 0x9B70,
+        StyleFileSectionIdentifier.ThemeDataSection => 0x35BF,
+        StyleFileSectionIdentifier.TerrainArchetypeDataSection => 0x1A47,
+        StyleFileSectionIdentifier.GadgetArchetypeDataSection => 0x8C92,
 
-        return StyleDataSectionIdentifierBytes
-            .Slice(index, NumberOfBytesForStyleSectionIdentifier);
-    }
-
-    private static ReadOnlySpan<byte> StyleDataSectionIdentifierBytes =>
-    [
-        0x9B, 0x70,
-        0x35, 0xBF,
-        0x1A, 0x47,
-        0x8C, 0x92
-    ];
+        _ => Helpers.ThrowUnknownEnumValueException<StyleFileSectionIdentifier, ushort>(sectionIdentifier)
+    };
 }

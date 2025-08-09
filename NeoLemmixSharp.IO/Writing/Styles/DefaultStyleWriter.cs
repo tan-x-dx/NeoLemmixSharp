@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Style;
+﻿using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Versions;
 using NeoLemmixSharp.IO.Writing.Styles.Sections;
@@ -18,7 +18,7 @@ internal readonly ref struct DefaultStyleWriter
 
     public void WriteStyleData(Stream stream)
     {
-        var writer = new RawStyleFileDataWriter();
+        using var writer = new RawStyleFileDataWriter();
 
         var sectionWriters = VersionHelper.GetStyleDataSectionWritersForVersion(_version);
 
@@ -44,8 +44,8 @@ internal readonly ref struct DefaultStyleWriter
         }
 
         writer.BeginWritingSection(sectionWriter.SectionIdentifier);
-        writer.Write(sectionWriter.GetSectionIdentifierBytes());
-        writer.Write(numberOfItemsInSection);
+        writer.Write16BitUnsignedInteger(sectionWriter.GetSectionIdentifier());
+        writer.Write16BitUnsignedInteger(numberOfItemsInSection);
 
         sectionWriter.WriteSection(writer, _styleData);
         writer.EndWritingSection(sectionWriter.SectionIdentifier);

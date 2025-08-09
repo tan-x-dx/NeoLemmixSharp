@@ -4,33 +4,33 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Writing;
 
-internal readonly ref struct GadgetHitBoxCriteriaWriter<TWriter>(TWriter rawFileData)
+internal readonly ref struct GadgetHitBoxCriteriaWriter<TWriter>(TWriter reader)
     where TWriter : class, IRawFileDataWriter
 {
-    private readonly TWriter _rawFileData = rawFileData;
+    private readonly TWriter _reader = reader;
 
     internal void WriteHitBoxCriteria(HitBoxCriteriaData overrideHitBoxCriteriaData)
     {
-        WriteUintSequence(overrideHitBoxCriteriaData.AllowedLemmingActionIds);
-        WriteUintSequence(overrideHitBoxCriteriaData.AllowedLemmingStateIds);
+        /*   WriteUintSequence(overrideHitBoxCriteriaData.AllowedLemmingActionIds);
+           WriteUintSequence(overrideHitBoxCriteriaData.AllowedLemmingStateIds);
 
-        _rawFileData.Write(overrideHitBoxCriteriaData.AllowedLemmingTribeIds);
-        _rawFileData.Write(overrideHitBoxCriteriaData.AllowedLemmingOrientationIds);
-        _rawFileData.Write(overrideHitBoxCriteriaData.AllowedFacingDirectionId);
+           _reader.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedLemmingTribeIds);
+           _reader.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedLemmingOrientationIds);
+           _reader.Write8BitUnsignedInteger(overrideHitBoxCriteriaData.AllowedFacingDirectionId);*/
     }
 
     private void WriteUintSequence(ReadOnlySpan<uint> allowedLemmingStateIds)
     {
         if (allowedLemmingStateIds.Length == 0)
         {
-            _rawFileData.Write((byte)0);
+            _reader.Write8BitUnsignedInteger((byte)0);
             return;
         }
 
         var spanAsBytes = MemoryMarshal.AsBytes(allowedLemmingStateIds);
 
         Debug.Assert((spanAsBytes.Length % sizeof(uint)) == 0);
-        _rawFileData.Write((byte)spanAsBytes.Length);
-        _rawFileData.Write(spanAsBytes);
+        _reader.Write8BitUnsignedInteger((byte)spanAsBytes.Length);
+        _reader.WriteBytes(spanAsBytes);
     }
 }

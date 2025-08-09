@@ -2,14 +2,15 @@
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public GadgetDataSectionWriter(StringIdLookup stringIdLookup)
+    public GadgetDataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.GadgetDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
@@ -34,17 +35,17 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         GadgetData gadgetData)
     {
-        writer.Write((ushort)gadgetData.Id);
-        writer.Write(_stringIdLookup.GetStringId(gadgetData.StyleIdentifier));
-        writer.Write(_stringIdLookup.GetStringId(gadgetData.PieceIdentifier));
+        writer.Write16BitUnsignedInteger((ushort)gadgetData.Identifier.GadgetId);
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.StyleIdentifier));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.PieceIdentifier));
 
-        writer.Write(_stringIdLookup.GetStringId(gadgetData.OverrideName));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.OverrideName));
 
-        writer.Write(ReadWriteHelpers.EncodePoint(gadgetData.Position));
-        writer.Write((byte)DihedralTransformation.Encode(gadgetData.Orientation, gadgetData.FacingDirection));
+        writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(gadgetData.Position));
+        writer.Write8BitUnsignedInteger((byte)DihedralTransformation.Encode(gadgetData.Orientation, gadgetData.FacingDirection));
 
-        writer.Write((byte)gadgetData.InitialStateId);
-        writer.Write((byte)gadgetData.GadgetRenderMode);
+        writer.Write8BitUnsignedInteger((byte)gadgetData.InitialStateId);
+        writer.Write8BitUnsignedInteger((byte)gadgetData.GadgetRenderMode);
 
         WriteOverrideInputNames(writer, gadgetData);
         WriteLayerColorData(writer, gadgetData);
@@ -56,47 +57,47 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         GadgetData gadgetData)
     {
-        writer.Write((byte)gadgetData.OverrideInputNames.Length);
-        foreach (var inputName in gadgetData.OverrideInputNames)
-        {
-            writer.Write(_stringIdLookup.GetStringId(inputName));
-        }
+        /*     writer.Write8BitUnsignedInteger((byte)gadgetData.OverrideInputNames.Length);
+             foreach (var inputName in gadgetData.OverrideInputNames)
+             {
+                 writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(inputName));
+             }*/
     }
 
     private static void WriteLayerColorData(RawLevelFileDataWriter writer, GadgetData gadgetData)
     {
-        writer.Write((byte)gadgetData.LayerColorData.Length);
+        writer.Write8BitUnsignedInteger((byte)gadgetData.LayerColorData.Length);
         foreach (var layerColorData in gadgetData.LayerColorData)
         {
-            writer.Write((byte)layerColorData.StateIndex);
-            writer.Write((byte)layerColorData.LayerIndex);
+            writer.Write8BitUnsignedInteger((byte)layerColorData.StateIndex);
+            writer.Write8BitUnsignedInteger((byte)layerColorData.LayerIndex);
             if (layerColorData.UsesSpecificColor)
             {
-                writer.Write(true);
+                writer.WriteBool(true);
 
                 Span<byte> buffer = [0, 0, 0, 0];
                 ReadWriteHelpers.WriteArgbBytes(layerColorData.SpecificColor, buffer);
-                writer.Write(buffer);
+                writer.WriteBytes(buffer);
             }
             else
             {
-                writer.Write(false);
-                writer.Write((byte)layerColorData.TribeId);
-                writer.Write((byte)layerColorData.SpriteLayerColorType);
+                writer.WriteBool(false);
+                writer.Write8BitUnsignedInteger((byte)layerColorData.TribeId);
+                writer.Write8BitUnsignedInteger((byte)layerColorData.SpriteLayerColorType);
             }
         }
     }
 
     private static void WriteOverrideHitBoxCriteriaData(RawLevelFileDataWriter writer, GadgetData gadgetData)
     {
-        if (gadgetData.OverrideHitBoxCriteriaData is null)
-        {
-            writer.Write(false);
-            return; 
-        }
+        /*      if (gadgetData.OverrideHitBoxCriteriaData is null)
+              {
+                  writer.WriteBool(false);
+                  return; 
+              }*/
 
-        writer.Write(true);
-        new GadgetHitBoxCriteriaWriter<RawLevelFileDataWriter>(writer).WriteHitBoxCriteria(gadgetData.OverrideHitBoxCriteriaData);
+        //     writer.WriteBool(true);
+        //     new GadgetHitBoxCriteriaWriter<RawLevelFileDataWriter>(writer).WriteHitBoxCriteria(gadgetData.OverrideHitBoxCriteriaData);
     }
 
     private static void WriteGadgetProperties(
@@ -108,8 +109,8 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         {
             var (gadgetProperty, gadgetPropertyValue) = gadgetPropertyEnumerator.Current;
 
-            writer.Write((byte)gadgetProperty);
-            writer.Write(gadgetPropertyValue);
+            writer.Write8BitUnsignedInteger((byte)gadgetProperty);
+            writer.Write32BitSignedInteger(gadgetPropertyValue);
         }
     }
 }

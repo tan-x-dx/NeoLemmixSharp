@@ -8,14 +8,14 @@ internal sealed class StringDataSectionReader : LevelDataSectionReader
     private readonly FileStringReader<RawLevelFileDataReader> _stringReader;
 
     public StringDataSectionReader(
-        MutableStringIdLookup stringIdLookup)
+        MutableFileReaderStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.StringDataSection, true)
     {
         _stringReader = new FileStringReader<RawLevelFileDataReader>(stringIdLookup);
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
+    public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
-        _stringReader.ReadSection(rawFileData, numberOfItemsInSection);
+        _stringReader.ReadSection(reader, numberOfItemsInSection);
     }
 }

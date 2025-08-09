@@ -17,7 +17,8 @@ public sealed class NoneAction : LemmingAction
             string.Empty,
             1,
             1,
-            -1)
+            -1,
+            new RectangularRegion())
     {
     }
 
@@ -25,8 +26,6 @@ public sealed class NoneAction : LemmingAction
     {
         return false;
     }
-
-    protected override RectangularRegion ActionBounds() => new();
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {

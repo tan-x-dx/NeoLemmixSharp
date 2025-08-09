@@ -9,21 +9,16 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Objectives;
-using NeoLemmixSharp.Engine.Level.Objectives.Requirements;
 using NeoLemmixSharp.Engine.Level.Rewind;
-using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Terrain;
-using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Level.Updates;
-using NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Style;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
@@ -70,25 +65,37 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var lemmingSpriteBank = LemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
         var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
 
-        var levelGadgets = new GadgetBuilder(levelData).BuildLevelGadgets(lemmingManager, tribeManager);
+        // var gadgetBuilder = new GadgetBuilder(levelData);
+        // gadgetBuilder.BuildLevelGadgets(lemmingManager, tribeManager);
+
+        GadgetBase[] levelGadgets = []; // gadgetBuilder.GetGadgets();
+        GadgetTrigger[] gadgetTriggers = []; // gadgetBuilder.GetGadgetTriggers();
+        GadgetBehaviour[] gadgetBehaviours = []; // gadgetBuilder.GetGadgetBehaviours();
 
         foreach (var hatchGroup in hatchGroups)
         {
             HatchGroupBuilder.SetHatchesForHatchGroup(hatchGroup, levelGadgets);
         }
 
-        var inputController = new LevelInputController();
-        var levelObjectiveManager = new LevelObjectiveManager([]/*levelData.LevelObjectives*/, 0);
+        var causeAndEffectManager = new CauseAndEffectManager(gadgetTriggers, gadgetBehaviours);
 
-        var skillSetManager = new SkillSetManager(levelObjectiveManager.PrimaryLevelObjective);
-        var levelCursor = new LevelCursor();
-        var levelTimer = BuildLevelTimer(levelObjectiveManager);
+        var inputController = new LevelInputController();
+
+        var selectedTalismanId = -1;
+
+        var levelObjectiveBuilder = new LevelObjectiveBuilder(levelData.LevelObjective, selectedTalismanId);
+        var levelObjectiveManager = levelObjectiveBuilder.BuildLevelObjectiveManager();
+        var skillSetManager = levelObjectiveBuilder.BuildSkillSetManager(tribeManager);
+        var levelTimer = levelObjectiveBuilder.BuildLevelTimer();
 
         var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, lemmingManager, skillSetManager);
         // Need to call this here instead of initialising in LevelScreen
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 
-        var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var gadgetManager = new GadgetManager(levelGadgets, [], horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+
+        SetUpGadgetConnections(levelData, gadgetManager);
+
         var levelViewport = new Level.Viewport();
 
         var terrainTexture = terrainBuilder.GetTerrainTexture();
@@ -104,6 +111,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var viewportObjectRendererBuilder = new ViewportObjectRendererBuilder(levelGadgets, levelLemmings);
         var controlPanelSpriteBank = viewportObjectRendererBuilder.GetControlPanelSpriteBank(_contentManager);
 
+        var levelCursor = new LevelCursor();
         var levelCursorSprite = BuildLevelCursorSprite(levelCursor);
         var backgroundRenderer = BuildBackgroundRenderer(levelData);
 
@@ -141,6 +149,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             terrainPainter,
             lemmingManager,
             gadgetManager,
+            causeAndEffectManager,
             tribeManager,
             skillSetManager,
             levelObjectiveManager,
@@ -153,8 +162,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             rewindManager,
             lemmingSpriteBank,
             levelScreenRenderer);
-
-        GC.Collect(2, GCCollectionMode.Forced);
 
         return result;
     }
@@ -171,18 +178,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         }
 
         return new TribeManager(tribes);
-    }
-
-    private static LevelTimer BuildLevelTimer(LevelObjectiveManager levelObjectiveManager)
-    {
-        var primaryObjective = levelObjectiveManager.PrimaryLevelObjective;
-        foreach (var requirement in primaryObjective.Requirements)
-        {
-            if (requirement is TimeRequirement timeRequirement)
-                return LevelTimer.CreateCountDownTimer(timeRequirement.TimeLimitInSeconds);
-        }
-
-        return LevelTimer.CreateCountUpTimer();
     }
 
     private static IBackgroundRenderer BuildBackgroundRenderer(LevelData levelData)
@@ -234,6 +229,25 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             levelCursor,
             CommonSprites.CursorCrossHair,
             CommonSprites.CursorHandHiRes);
+    }
+
+    private static void SetUpGadgetConnections(LevelData levelData, GadgetManager gadgetManager)
+    {
+        /* foreach (var gadgetLinkDatum in levelData.AllGadgetLinkData)
+         {
+             var sourceGadget = gadgetManager.AllItems[gadgetLinkDatum.SourceGadgetIdentifier.GadgetId];
+             var targetGadget = gadgetManager.AllItems[gadgetLinkDatum.TargetGadgetIdentifier.GadgetId];
+
+             if (targetGadget is not IFunctionalGadget targetFunctionalGadget)
+                 throw new InvalidOperationException("Target gadget is not a functional gadget! Cannot set up gadget link!");
+
+             var sourceGadgetOutput = sourceGadget.GetGadgetOutputForState(gadgetLinkDatum.SourceGadgetStateId);
+
+             if (!targetFunctionalGadget.TryGetInputWithName(gadgetLinkDatum.TargetGadgetInputName, out var targetGadgetInput))
+                 throw new InvalidOperationException("Could not locate target gadget input!");
+
+             sourceGadgetOutput.RegisterInput(targetGadgetInput);
+         }*/
     }
 
     int IComparer<IViewportObjectRenderer>.Compare(IViewportObjectRenderer? x, IViewportObjectRenderer? y)

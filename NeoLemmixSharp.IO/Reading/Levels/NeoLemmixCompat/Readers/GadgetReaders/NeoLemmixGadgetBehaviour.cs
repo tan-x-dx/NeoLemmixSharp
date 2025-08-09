@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.IO.Data.Style.Gadget;
-using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;

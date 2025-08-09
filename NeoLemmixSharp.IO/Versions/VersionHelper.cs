@@ -9,16 +9,16 @@ namespace NeoLemmixSharp.IO.Versions;
 
 internal static class VersionHelper
 {
-    private static readonly Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> _levelWriterVersionHelpers = GetLevelWriterLookup();
-    private static readonly Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper> _levelReaderVersionHelpers = GetLevelReaderLookup();
-    private static readonly Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper> _styleWriterVersionHelpers = GetStyleWriterLookup();
-    private static readonly Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper> _styleReaderVersionHelpers = GetStyleReaderLookup();
+    private static readonly Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> LevelWriterVersionHelpers = GetLevelWriterLookup();
+    private static readonly Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper> LevelReaderVersionHelpers = GetLevelReaderLookup();
+    private static readonly Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper> StyleWriterVersionHelpers = GetStyleWriterLookup();
+    private static readonly Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper> StyleReaderVersionHelpers = GetStyleReaderLookup();
 
     private static Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> GetLevelWriterLookup()
     {
         var result = new Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper>(1)
         {
-            [new FileFormatVersion(1, 0, 0, 0)] = new Writing.Levels.Sections.Version1_0_0_0.VersionHelper()
+            { new FileFormatVersion(1, 0, 0, 0), new Writing.Levels.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
@@ -28,7 +28,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper>(1)
         {
-            [new FileFormatVersion(1, 0, 0, 0)] = new Reading.Levels.Sections.Version1_0_0_0.VersionHelper()
+            { new FileFormatVersion(1, 0, 0, 0), new Reading.Levels.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
@@ -38,7 +38,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper>(1)
         {
-            [new FileFormatVersion(1, 0, 0, 0)] = new Writing.Styles.Sections.Version1_0_0_0.VersionHelper()
+            { new FileFormatVersion(1, 0, 0, 0), new Writing.Styles.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
@@ -48,7 +48,7 @@ internal static class VersionHelper
     {
         var result = new Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper>(1)
         {
-            [new FileFormatVersion(1, 0, 0, 0)] = new Reading.Styles.Sections.Version1_0_0_0.VersionHelper()
+            { new FileFormatVersion(1, 0, 0, 0), new Reading.Styles.Sections.Version1_0_0_0.VersionHelper() }
         };
 
         return result;
@@ -56,7 +56,7 @@ internal static class VersionHelper
 
     public static ReadOnlySpan<LevelDataSectionWriter> GetLevelDataSectionWritersForVersion(FileFormatVersion version)
     {
-        if (!_levelWriterVersionHelpers.TryGetValue(version, out var helper))
+        if (!LevelWriterVersionHelpers.TryGetValue(version, out var helper))
             ThrowUnknownFileFormatVersionException(version);
 
         var result = helper.GetLevelDataSectionWriters();
@@ -66,7 +66,7 @@ internal static class VersionHelper
 
     public static ReadOnlySpan<LevelDataSectionReader> GetLevelDataSectionReadersForVersion(FileFormatVersion version)
     {
-        if (!_levelReaderVersionHelpers.TryGetValue(version, out var helper))
+        if (!LevelReaderVersionHelpers.TryGetValue(version, out var helper))
             ThrowUnknownFileFormatVersionException(version);
 
         var result = helper.GetLevelDataSectionReaders();
@@ -76,7 +76,7 @@ internal static class VersionHelper
 
     public static ReadOnlySpan<StyleDataSectionWriter> GetStyleDataSectionWritersForVersion(FileFormatVersion version)
     {
-        if (!_styleWriterVersionHelpers.TryGetValue(version, out var helper))
+        if (!StyleWriterVersionHelpers.TryGetValue(version, out var helper))
             ThrowUnknownFileFormatVersionException(version);
 
         var result = helper.GetStyleDataSectionWriters();
@@ -86,7 +86,7 @@ internal static class VersionHelper
 
     public static ReadOnlySpan<StyleDataSectionReader> GetStyleDataSectionReadersForVersion(FileFormatVersion version)
     {
-        if (!_styleReaderVersionHelpers.TryGetValue(version, out var helper))
+        if (!StyleReaderVersionHelpers.TryGetValue(version, out var helper))
             ThrowUnknownFileFormatVersionException(version);
 
         var result = helper.GetStyleDataSectionReaders();

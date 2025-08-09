@@ -135,6 +135,6 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         [Pure]
         public Orientation UnHash(int index) => new(index);
 
-        public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
+        public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
     }
 }

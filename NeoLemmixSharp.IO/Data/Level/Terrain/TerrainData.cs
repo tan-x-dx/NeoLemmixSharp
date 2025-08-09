@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Data.Style;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Data.Level.Terrain;

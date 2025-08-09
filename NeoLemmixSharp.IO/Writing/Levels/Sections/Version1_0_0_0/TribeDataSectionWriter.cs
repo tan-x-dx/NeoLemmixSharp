@@ -6,9 +6,9 @@ namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class TribeDataSectionWriter : LevelDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public TribeDataSectionWriter(StringIdLookup stringIdLookup)
+    public TribeDataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.TribeDataSection, true)
     {
         _stringIdLookup = stringIdLookup;
@@ -29,9 +29,9 @@ internal sealed class TribeDataSectionWriter : LevelDataSectionWriter
         }
     }
 
-    private void WriteTribeIdentifierData(RawLevelFileDataWriter writer, TribeIdentifier tribeIdentifier)
+    private void WriteTribeIdentifierData(RawLevelFileDataWriter writer, TribeStyleIdentifier tribeIdentifier)
     {
-        writer.Write(_stringIdLookup.GetStringId(tribeIdentifier.StyleIdentifier));
-        writer.Write((byte)tribeIdentifier.ThemeTribeId);
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(tribeIdentifier.StyleIdentifier));
+        writer.Write8BitUnsignedInteger((byte)tribeIdentifier.ThemeTribeId);
     }
 }

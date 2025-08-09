@@ -159,14 +159,14 @@ public static class LemmingActionHelpers
                 var filter = filters[i];
 
                 if (filter.MatchesLemming(lemming) &&
-                    filter.HitBoxBehaviour == HitBoxBehaviour.Updraft)
+                    filter.HitBoxBehaviour == HitBoxInteractionType.Updraft)
                 {
                     firstMatchingFilter = filter;
                     break;
                 }
             }
 
-            if (firstMatchingFilter is null || firstMatchingFilter.HitBoxBehaviour != HitBoxBehaviour.Updraft)
+            if (firstMatchingFilter is null || firstMatchingFilter.HitBoxBehaviour != HitBoxInteractionType.Updraft)
                 continue;
 
             var deltaRotNum = gadget.Orientation.RotNum - lemmingOrientationRotNum;

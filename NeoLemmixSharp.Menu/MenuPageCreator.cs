@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.LevelBuilding;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
@@ -79,6 +79,8 @@ public sealed class MenuPageCreator
             var levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);
             result = new LevelStartPage(_inputController, levelScreen);
+
+            GC.Collect(2, GCCollectionMode.Forced);
         }
         catch (Exception ex)
         {
@@ -106,6 +108,8 @@ public sealed class MenuPageCreator
             var levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
             var levelScreen = levelBuilder.BuildLevel(levelData);
             result = new LevelStartPage(_inputController, levelScreen);
+
+            GC.Collect(2, GCCollectionMode.Forced);
         }
         catch (Exception ex)
         {

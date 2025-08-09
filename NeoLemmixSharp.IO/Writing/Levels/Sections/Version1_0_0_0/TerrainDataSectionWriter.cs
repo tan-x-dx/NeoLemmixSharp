@@ -2,14 +2,15 @@
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
 internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileWriterStringIdLookup _stringIdLookup;
 
-    public TerrainDataSectionWriter(StringIdLookup stringIdLookup)
+    public TerrainDataSectionWriter(FileWriterStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.TerrainDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
@@ -24,23 +25,23 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        foreach (var terrainData in levelData.AllTerrainData)
+        foreach (var terrainDatum in levelData.AllTerrainData)
         {
-            WriteTerrainData(writer, terrainData);
+            WriteTerrainData(writer, terrainDatum);
         }
     }
 
     public void WriteTerrainData(
         RawLevelFileDataWriter writer,
-        TerrainData terrainData)
+        TerrainData terrainDatum)
     {
-        writer.Write(_stringIdLookup.GetStringId(terrainData.StyleIdentifier));
-        writer.Write(_stringIdLookup.GetStringId(terrainData.PieceIdentifier));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainDatum.StyleIdentifier));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainDatum.PieceIdentifier));
 
-        writer.Write(ReadWriteHelpers.EncodePoint(terrainData.Position));
-        writer.Write((byte)DihedralTransformation.Encode(terrainData.Orientation, terrainData.FacingDirection));
+        writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(terrainDatum.Position));
+        writer.Write8BitUnsignedInteger((byte)DihedralTransformation.Encode(terrainDatum.Orientation, terrainDatum.FacingDirection));
 
-        WriteTerrainDataMisc(writer, terrainData);
+        WriteTerrainDataMisc(writer, terrainDatum);
     }
 
     private static void WriteTerrainDataMisc(
@@ -51,40 +52,40 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
 
         var miscDataBits = ReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainData);
 
-        writer.Write(miscDataBits);
+        writer.Write8BitUnsignedInteger(miscDataBits);
 
         if (terrainData.Tint.HasValue)
         {
             var tint = terrainData.Tint.Value;
-            writer.Write(tint.R);
-            writer.Write(tint.G);
-            writer.Write(tint.B);
+            writer.Write8BitUnsignedInteger(tint.R);
+            writer.Write8BitUnsignedInteger(tint.G);
+            writer.Write8BitUnsignedInteger(tint.B);
         }
         else
         {
-            writer.Write(ZeroByte);
-            writer.Write(ZeroByte);
-            writer.Write(ZeroByte);
+            writer.Write8BitUnsignedInteger(ZeroByte);
+            writer.Write8BitUnsignedInteger(ZeroByte);
+            writer.Write8BitUnsignedInteger(ZeroByte);
         }
 
         if (terrainData.Width.HasValue)
         {
-            writer.Write((ushort)terrainData.Width.Value);
+            writer.Write16BitUnsignedInteger((ushort)terrainData.Width.Value);
         }
         else
         {
-            writer.Write(ZeroByte);
-            writer.Write(ZeroByte);
+            writer.Write8BitUnsignedInteger(ZeroByte);
+            writer.Write8BitUnsignedInteger(ZeroByte);
         }
 
         if (terrainData.Height.HasValue)
         {
-            writer.Write((ushort)terrainData.Height.Value);
+            writer.Write16BitUnsignedInteger((ushort)terrainData.Height.Value);
         }
         else
         {
-            writer.Write(ZeroByte);
-            writer.Write(ZeroByte);
+            writer.Write8BitUnsignedInteger(ZeroByte);
+            writer.Write8BitUnsignedInteger(ZeroByte);
         }
     }
 }

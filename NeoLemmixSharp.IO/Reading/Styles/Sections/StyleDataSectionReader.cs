@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Style;
+﻿using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections;
@@ -14,9 +14,9 @@ internal abstract class StyleDataSectionReader : IComparable<StyleDataSectionRea
         IsNecessary = isNecessary;
     }
 
-    public ReadOnlySpan<byte> GetSectionIdentifierBytes() => StyleFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
+    public ushort GetSectionIdentifier() => StyleFileSectionIdentifierHasher.GetSectionIdentifier(SectionIdentifier);
 
-    public abstract void ReadSection(RawStyleFileDataReader rawFileData, StyleData styleData, int numberOfItemsInSection);
+    public abstract void ReadSection(RawStyleFileDataReader reader, StyleData styleData, int numberOfItemsInSection);
 
     public int CompareTo(StyleDataSectionReader? other)
     {

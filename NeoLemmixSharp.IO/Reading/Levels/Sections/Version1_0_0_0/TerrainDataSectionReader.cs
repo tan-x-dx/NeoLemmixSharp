@@ -1,62 +1,63 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
-using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.IO.Util;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
 internal sealed class TerrainDataSectionReader : LevelDataSectionReader
 {
-    private readonly StringIdLookup _stringIdLookup;
+    private readonly FileReaderStringIdLookup _stringIdLookup;
 
     public TerrainDataSectionReader(
-        StringIdLookup stringIdLookup)
+        FileReaderStringIdLookup stringIdLookup)
         : base(LevelFileSectionIdentifier.TerrainDataSection, false)
     {
         _stringIdLookup = stringIdLookup;
     }
 
-    public override void ReadSection(RawLevelFileDataReader rawFileData, LevelData levelData, int numberOfItemsInSection)
+    public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
         levelData.AllTerrainData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newTerrainDatum = ReadNextTerrainData(rawFileData);
+            var newTerrainDatum = ReadNextTerrainData(reader);
             levelData.AllTerrainData.Add(newTerrainDatum);
         }
     }
 
-    private TerrainData ReadNextTerrainData(RawLevelFileDataReader rawFileData)
+    private TerrainData ReadNextTerrainData(RawLevelFileDataReader reader)
     {
-        int styleId = rawFileData.Read16BitUnsignedInteger();
-        int pieceId = rawFileData.Read16BitUnsignedInteger();
+        int styleId = reader.Read16BitUnsignedInteger();
+        int pieceId = reader.Read16BitUnsignedInteger();
 
-        int positionData = rawFileData.Read32BitSignedInteger();
+        int positionData = reader.Read32BitSignedInteger();
         var position = ReadWriteHelpers.DecodePoint(positionData);
 
-        int dhtByte = rawFileData.Read8BitUnsignedInteger();
+        int dhtByte = reader.Read8BitUnsignedInteger();
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
-        uint terrainDataMiscByte = rawFileData.Read8BitUnsignedInteger();
+        uint terrainDataMiscByte = reader.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = ReadWriteHelpers.DecodeTerrainDataMiscByte(terrainDataMiscByte);
 
-        Color? tintColor = ReadTerrainDataTintColor(rawFileData);
+        Color? tintColor = ReadTerrainDataTintColor(reader);
         if (!decipheredTerrainDataMisc.HasTintSpecified)
         {
             tintColor = null;
         }
 
-        int? width = rawFileData.Read16BitUnsignedInteger();
+        int? width = reader.Read16BitUnsignedInteger();
         if (!decipheredTerrainDataMisc.HasWidthSpecified)
         {
             width = null;
         }
 
-        int? height = rawFileData.Read16BitUnsignedInteger();
+        int? height = reader.Read16BitUnsignedInteger();
         if (!decipheredTerrainDataMisc.HasHeightSpecified)
         {
             height = null;
@@ -82,9 +83,9 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         };
     }
 
-    private static Color ReadTerrainDataTintColor(RawLevelFileDataReader rawFileData)
+    private static Color ReadTerrainDataTintColor(RawLevelFileDataReader reader)
     {
-        var bytes = rawFileData.ReadBytes(3);
+        var bytes = reader.ReadBytes(3);
 
         return ReadWriteHelpers.ReadRgbBytes(bytes);
     }
