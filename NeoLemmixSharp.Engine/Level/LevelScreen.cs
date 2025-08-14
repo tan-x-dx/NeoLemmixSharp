@@ -206,18 +206,7 @@ public sealed class LevelScreen : IBaseScreen
 
     public void Dispose()
     {
-        var fields = typeof(LevelScreen)
-            .GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-
-        foreach (var field in fields)
-        {
-            var actualObject = field.GetValue(this);
-
-            if (actualObject is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
-        }
+        this.DisposeOfFields();
 
         TextureCache.DisposeOfShortLivedTextures();
 
