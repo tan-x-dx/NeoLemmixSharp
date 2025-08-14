@@ -112,10 +112,10 @@ public readonly struct Orientation : IIdEquatable<Orientation>
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(Orientation first, Orientation second) => first.Equals(second.RotNum);
+    public static bool operator ==(Orientation first, Orientation second) => first.Equals(second);
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(Orientation first, Orientation second) => !first.Equals(second.RotNum);
+    public static bool operator !=(Orientation first, Orientation second) => !first.Equals(second);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
