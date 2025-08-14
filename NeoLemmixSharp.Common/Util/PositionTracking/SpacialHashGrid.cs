@@ -17,13 +17,13 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
     private readonly BitArraySet<TPerfectHasher, TBuffer, T> _allTrackedItems;
 
-    private readonly int _chunkSizeBitShift;
-    private readonly Size _sizeInChunks;
-
-    private readonly int _bitArraySize;
     private readonly uint* _cachedQueryScratchSpacePointer;
     private readonly uint* _allBitsPointer;
+    private readonly int _bitArraySize;
     private readonly RectangularRegion* _previousItemPositionsPointer;
+
+    private readonly int _chunkSizeBitShift;
+    private readonly Size _sizeInChunks;
 
     private Point _cachedTopLeftChunkQuery = new(-256, -256);
     private Point _cachedBottomRightChunkQuery = new(-256, -256);
@@ -387,8 +387,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     private ref RectangularRegion GetPreviousBoundsForItem(T item)
     {
         var index = _hasher.Hash(item);
-        RectangularRegion* pointer = _previousItemPositionsPointer;
-        pointer += index;
+        RectangularRegion* pointer = _previousItemPositionsPointer + index;
 
         return ref *pointer;
     }
@@ -397,8 +396,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     private Span<uint> SpanForChunk(Point pos)
     {
         var index = IndexForChunk(pos);
-        uint* pointer = _allBitsPointer;
-        pointer += index;
+        uint* pointer = _allBitsPointer + index;
 
         return new Span<uint>(pointer, ScratchSpaceSize);
     }
@@ -407,8 +405,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     private ReadOnlySpan<uint> ReadOnlySpanForChunk(Point pos)
     {
         var index = IndexForChunk(pos);
-        uint* pointer = _allBitsPointer;
-        pointer += index;
+        uint* pointer = _allBitsPointer + index;
 
         return new ReadOnlySpan<uint>(pointer, ScratchSpaceSize);
     }
