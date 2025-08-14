@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.FileFormats;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Reading.Levels.Sections;
 using NeoLemmixSharp.IO.Reading.Styles.Sections;
 using NeoLemmixSharp.IO.Writing.Levels.Sections;
