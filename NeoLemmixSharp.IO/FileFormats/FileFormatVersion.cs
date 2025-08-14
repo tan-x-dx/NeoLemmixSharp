@@ -39,8 +39,7 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
     public override int GetHashCode()
     {
         var result = 3992171 * _upperBits +
-                     7851007 * _lowerBits +
-                     9472289;
+                     7851007 * _lowerBits;
         return (int)result;
     }
 

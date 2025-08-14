@@ -21,8 +21,7 @@ public readonly struct Interval : IEquatable<Interval>
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Interval other && Equals(other);
     public override int GetHashCode() =>
         5120813 * Start +
-        1646497 * Length +
-        8002627;
+        1646497 * Length;
 
     public static bool operator ==(Interval left, Interval right) => left.Equals(right);
     public static bool operator !=(Interval left, Interval right) => !left.Equals(right);

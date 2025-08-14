@@ -77,9 +77,10 @@ public readonly struct Size : IEquatable<Size>
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && Equals(other);
     [Pure]
     [DebuggerStepThrough]
-    public override int GetHashCode() => 8322929 * W +
-                                         5282777 * H +
-                                         4685531;
+    public override int GetHashCode() =>
+        8322929 * W +
+        5282777 * H;
+
     [Pure]
     [DebuggerStepThrough]
     public static bool operator ==(Size left, Size right) => left.Equals(right);

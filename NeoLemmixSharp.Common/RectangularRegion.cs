@@ -188,8 +188,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
         6208021 * X +
         4149227 * Y +
         2239063 * W +
-        8554379 * H +
-        1748359;
+        8554379 * H;
 
     [Pure]
     [SkipLocalsInit]
