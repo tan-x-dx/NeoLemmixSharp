@@ -12,7 +12,7 @@ public enum LemmingCriteria
     LemmingTribe
 }
 
-public readonly struct LemmingCriteriaHasher : IEnumIdentifierHelper<LemmingCriteria, BitBuffer32>
+public readonly struct LemmingCriteriaHasher : IEnumIdentifierHelper<BitBuffer32, LemmingCriteria>
 {
     private const int NumberOfEnumValues = 5;
 

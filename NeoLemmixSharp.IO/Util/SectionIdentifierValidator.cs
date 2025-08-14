@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.IO.Util;
 
 internal sealed class SectionIdentifierValidator<TPerfectHasher, TEnum> : IComparer<Interval>
-    where TPerfectHasher : struct, IEnumIdentifierHelper<TEnum, BitBuffer32>
+    where TPerfectHasher : struct, IEnumIdentifierHelper<BitBuffer32, TEnum>
     where TEnum : unmanaged, Enum
 {
     [SkipLocalsInit]

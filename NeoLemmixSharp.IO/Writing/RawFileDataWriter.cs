@@ -20,7 +20,7 @@ internal interface IRawFileDataWriter
 }
 
 internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWriter, IDisposable
-    where TPerfectHasher : struct, IEnumIdentifierHelper<TEnum, BitBuffer32>
+    where TPerfectHasher : struct, IEnumIdentifierHelper<BitBuffer32, TEnum>
     where TEnum : unmanaged, Enum
 {
     private const int InitialMainDataByteBufferLength = 1 << 12;

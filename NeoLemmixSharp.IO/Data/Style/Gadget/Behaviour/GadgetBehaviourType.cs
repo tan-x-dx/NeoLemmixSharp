@@ -32,7 +32,7 @@ public enum GadgetBehaviourType
     GlobalSkillCountChange,
 }
 
-public readonly struct GadgetBehaviourTypeHasher : IEnumIdentifierHelper<GadgetBehaviourType, GadgetBehaviourTypeHasher.GadgetBehaviourTypeBitBuffer>
+public readonly struct GadgetBehaviourTypeHasher : IEnumIdentifierHelper<GadgetBehaviourTypeHasher.GadgetBehaviourTypeBitBuffer, GadgetBehaviourType>
 {
     private const int NumberOfEnumValues = 19;
     public static GadgetBehaviourType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetBehaviourType>(rawValue, NumberOfEnumValues);

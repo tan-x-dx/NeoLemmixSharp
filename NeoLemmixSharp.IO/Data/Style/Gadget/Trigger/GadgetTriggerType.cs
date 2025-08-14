@@ -16,7 +16,7 @@ public enum GadgetTriggerType
     LemmingHitBoxTrigger
 }
 
-public readonly struct GadgetTriggerTypeHasher : IEnumIdentifierHelper<GadgetTriggerType, GadgetTriggerTypeHasher.GadgetTriggerTypeBitBuffer>
+public readonly struct GadgetTriggerTypeHasher : IEnumIdentifierHelper<GadgetTriggerTypeHasher.GadgetTriggerTypeBitBuffer, GadgetTriggerType>
 {
     private const int NumberOfEnumValues = 10;
     public static GadgetTriggerType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetTriggerType>(rawValue, NumberOfEnumValues);

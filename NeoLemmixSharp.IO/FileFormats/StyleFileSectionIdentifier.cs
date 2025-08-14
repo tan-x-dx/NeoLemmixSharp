@@ -12,8 +12,7 @@ internal enum StyleFileSectionIdentifier
     GadgetArchetypeDataSection,
 }
 
-internal readonly struct StyleFileSectionIdentifierHasher :
-    IEnumIdentifierHelper<StyleFileSectionIdentifier, BitBuffer32>
+internal readonly struct StyleFileSectionIdentifierHasher : IEnumIdentifierHelper<BitBuffer32, StyleFileSectionIdentifier>
 {
     private const int NumberOfEnumValues = 4;
 

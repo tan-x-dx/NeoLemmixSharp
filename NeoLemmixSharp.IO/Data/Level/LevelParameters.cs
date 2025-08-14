@@ -17,7 +17,7 @@ public enum LevelParameters
     EnableFrameControl
 }
 
-public readonly struct LevelParameterHasher : IEnumIdentifierHelper<LevelParameters, BitBuffer32>
+public readonly struct LevelParameterHasher : IEnumIdentifierHelper<BitBuffer32, LevelParameters>
 {
     private const int NumberOfEnumValues = 8;
 

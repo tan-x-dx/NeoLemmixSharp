@@ -20,7 +20,7 @@ public enum ControlPanelParameters
     ShowExpandedAthleteInformation
 }
 
-public readonly struct ControlPanelParameterHasher : IEnumIdentifierHelper<ControlPanelParameters, BitBuffer32>
+public readonly struct ControlPanelParameterHasher : IEnumIdentifierHelper<BitBuffer32, ControlPanelParameters>
 {
     private const int NumberOfEnumValues = 12;
 

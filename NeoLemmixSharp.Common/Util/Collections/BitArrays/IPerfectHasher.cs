@@ -36,7 +36,7 @@ public interface IBitBufferCreator<TBuffer, T> : IPerfectHasher<T>
     void CreateBitBuffer(out TBuffer buffer);
 }
 
-public interface IEnumIdentifierHelper<TEnum, TBuffer> : IBitBufferCreator<TBuffer, TEnum>
+public interface IEnumIdentifierHelper<TBuffer, TEnum> : IBitBufferCreator<TBuffer, TEnum>
     where TEnum : unmanaged, Enum
     where TBuffer : struct, IBitBuffer
 {
