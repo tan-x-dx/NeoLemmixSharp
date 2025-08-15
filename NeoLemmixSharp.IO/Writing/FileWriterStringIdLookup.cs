@@ -55,14 +55,12 @@ internal readonly struct MutableFileWriterStringIdLookup
         if (string.IsNullOrEmpty(s))
             return;
 
-        // IDs start at 1, ID 0 is associated with the empty string
-        // We don't serialise the empty string though
-        var nextStringId = (ushort)(1 + _lookup.Count);
-
         ref var correspondingStringId = ref CollectionsMarshal.GetValueRefOrAddDefault(_lookup, s, out var exists);
         if (!exists)
         {
-            correspondingStringId = nextStringId;
+            // IDs start at 1, ID 0 is associated with the empty string
+            // We don't serialise the empty string though
+            correspondingStringId = (ushort)_lookup.Count;
         }
     }
 
