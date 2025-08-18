@@ -41,7 +41,7 @@ public sealed class GadgetManager :
         _bitArrayBufferUsageCount = RequiredNumberOfGadgetBitSets;
 
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_allGadgets.Length);
-        _gadgetByteBuffer = Helpers.CreateBuffer<uint>(bitBufferLength * RequiredNumberOfGadgetBitSets);
+        _gadgetByteBuffer = Helpers.AllocateBuffer<uint>(bitBufferLength * RequiredNumberOfGadgetBitSets);
 
         _hitBoxGadgetSpacialHashGrid = new HitBoxGadgetSpacialHashGrid(
             this,

@@ -16,7 +16,7 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
     public TickOrderedList(int initialCapacity)
     {
         _bufferLength = initialCapacity;
-        _buffer = Helpers.CreateBuffer<TTickOrderedData>(_bufferLength);
+        _buffer = Helpers.AllocateBuffer<TTickOrderedData>(_bufferLength);
     }
 
     public int Count => _count;

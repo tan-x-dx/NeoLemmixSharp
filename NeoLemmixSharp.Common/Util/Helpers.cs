@@ -24,7 +24,7 @@ public static class Helpers
             : new T[size];
     }
 
-    public static unsafe RawArray CreateBuffer<T>(int numberOfItems)
+    public static unsafe RawArray AllocateBuffer<T>(int numberOfItems)
         where T : unmanaged
     {
         var bufferLengthInBytes = numberOfItems * sizeof(T);

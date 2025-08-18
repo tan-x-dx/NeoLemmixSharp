@@ -30,7 +30,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData> : I
         _itemManager = itemManager;
         _numberOfItemsPerSnapshot = itemManager.AllItems.Length;
         _bufferLength = _numberOfItemsPerSnapshot * SnapshotDataListSizeMultiplier;
-        _buffer = Helpers.CreateBuffer<TSnapshotData>(_bufferLength);
+        _buffer = Helpers.AllocateBuffer<TSnapshotData>(_bufferLength);
     }
 
     public void TakeSnapshot()

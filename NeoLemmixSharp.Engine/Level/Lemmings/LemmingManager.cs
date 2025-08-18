@@ -87,7 +87,7 @@ public sealed class LemmingManager :
         _bitArrayBufferUsageCount = RequiredNumberOfLemmingBitSets;
 
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
-        _lemmingByteBuffer = Helpers.CreateBuffer<uint>(bitBufferLength * RequiredNumberOfLemmingBitSets);
+        _lemmingByteBuffer = Helpers.AllocateBuffer<uint>(bitBufferLength * RequiredNumberOfLemmingBitSets);
 
         _lemmingsToZombify = new LemmingSet(this);
         _allBlockers = new LemmingSet(this);
