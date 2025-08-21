@@ -93,21 +93,21 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
     /// Finds the smallest index such that the data at that index has a TickNumber equal to or exceeding the input parameter.
     /// Returns <see langword="true" /> if the resulting index has a TickNumber exactly equal to the input parameter, <see langword="false" /> otherwise.
     /// <para>
-    /// WARNING: If ALL items have a TickNumber less than the input parameter, then the out index variable will be set to the array's current length.
-    /// WARNING: If the array is empty, then the out index variable will be set to -1;
-    /// These values are out of bounds! Don't forget about this!
-    /// </para>
-    /// <para>
     /// Binary search algorithm - O(log n).
     /// </para>
     /// </summary>
     /// <param name="tick">The required TickNumber</param>
     /// <param name="index">The smallest index such that the data at that index has a TickNumber equal to or exceeding the input parameter.</param>
     /// <returns><see langword="true" /> if the resulting index has a TickNumber exactly equal to the input parameter, <see langword="false" /> otherwise.</returns>
+    /// <remarks>If ALL items have a TickNumber less than the input parameter, then the out index variable will be set to the array's current length.
+    /// If the array is empty, then the out index variable will be set to -1.
+    /// These values are out of bounds! Don't forget about this!</remarks>
     private unsafe bool TryGetSmallestIndexOfTick(int tick, out int index)
     {
         if (_count == 0)
         {
+            // This is deliberately outside the bounds of the array
+            // Subsequent usages of this data must deal with it
             index = -1;
             return false;
         }

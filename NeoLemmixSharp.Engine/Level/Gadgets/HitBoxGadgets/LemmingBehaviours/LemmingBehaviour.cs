@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
@@ -8,14 +9,10 @@ public abstract class LemmingBehaviour : GadgetBehaviour
     public LemmingBehaviourType LemmingActionType { get; }
 
     protected LemmingBehaviour(LemmingBehaviourType lemmingActionType)
-        : base(lemmingActionType.ToGadgetBehaviourType())
+        : base(GadgetBehaviourType.LemmingBehaviour)
     {
         LemmingActionType = lemmingActionType;
     }
 
-    protected sealed override void PerformInternalBehaviour()
-    {
-    }
-
-    public abstract void PerformBehaviour(Lemming lemming);
+    protected static Lemming GetLemming(int lemmingId) => LevelScreen.LemmingManager.AllLemmings[lemmingId];
 }

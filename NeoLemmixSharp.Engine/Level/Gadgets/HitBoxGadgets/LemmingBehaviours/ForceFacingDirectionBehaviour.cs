@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
@@ -16,8 +15,9 @@ public sealed class ForceFacingDirectionBehaviour : LemmingBehaviour
         _facingDirection = facingDirection;
     }
 
-    public override void PerformBehaviour(Lemming lemming)
+    protected override void PerformInternalBehaviour(int lemmingId)
     {
+        var lemming = GetLemming(lemmingId);
         BlockerAction.ForceLemmingDirection(lemming, _facingDirection);
     }
 }
