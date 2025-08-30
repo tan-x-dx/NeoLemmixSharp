@@ -24,7 +24,7 @@ public sealed class GadgetMoverBehaviour : GadgetBehaviour
         _dy = dy;
     }
 
-    protected override void PerformInternalBehaviour()
+    protected override void PerformInternalBehaviour(int lemmingId)
     {
         if (_tickCount < _tickDelay)
         {

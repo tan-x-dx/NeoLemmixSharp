@@ -6,15 +6,15 @@ using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
-public sealed class SetLemmingStateBehaviour : LemmingBehaviour
+public sealed class SetStateLemmingBehaviour : LemmingBehaviour
 {
     private readonly ILemmingState _lemmingStateChanger;
     private readonly SetStateType _type;
 
-    public SetLemmingStateBehaviour(
+    public SetStateLemmingBehaviour(
         ILemmingState lemmingStateChanger,
         SetStateType type)
-        : base(LemmingBehaviourType.ChangeLemmingState)
+        : base(LemmingBehaviourType.SetLemmingState)
     {
         _lemmingStateChanger = lemmingStateChanger;
         _type = type;

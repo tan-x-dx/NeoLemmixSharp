@@ -3,13 +3,13 @@ using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
-public sealed class SetLemmingActionBehaviour : LemmingBehaviour
+public sealed class SetActionLemmingBehaviour : LemmingBehaviour
 {
     private readonly LemmingAction _action;
 
-    public SetLemmingActionBehaviour(
+    public SetActionLemmingBehaviour(
         LemmingAction action)
-        : base(LemmingBehaviourType.ChangeLemmingAction)
+        : base(LemmingBehaviourType.SetLemmingAction)
     {
         _action = action;
     }

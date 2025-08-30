@@ -25,7 +25,7 @@ public sealed class GadgetResizer : GadgetBehaviour
         _dh = dh;
     }
 
-    protected override void PerformInternalBehaviour()
+    protected override void PerformInternalBehaviour(int lemmingId)
     {
         if (_tickCount < _tickDelay)
         {

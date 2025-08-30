@@ -1,11 +1,13 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.IO.Data.Level.Gadgets;
 
 public interface IGadgetInstanceData
 {
+    GadgetType GadgetType { get; }
     GadgetIdentifier Identifier { get; }
-    string OverrideName { get; }
+    GadgetName OverrideName { get; }
 
     StyleIdentifier StyleIdentifier { get; }
     PieceIdentifier PieceIdentifier { get; }

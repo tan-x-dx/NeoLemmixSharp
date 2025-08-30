@@ -7,7 +7,11 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
+#pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
+#pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadget
+#pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+#pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 {
     private readonly LemmingTracker _lemmingTracker;
     private readonly HitBoxGadgetState[] _states;
@@ -38,11 +42,6 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         _nextStateIndex = initialStateIndex;
 
         ResizeType = resizeType;
-
-        foreach (var state in states)
-        {
-            state.SetParentGadget(this);
-        }
     }
 
     public override HitBoxGadgetState CurrentState => _currentState;
@@ -103,20 +102,20 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
     {
         var causeAndEffectManager = LevelScreen.CauseAndEffectManager;
 
-        var lemmingBehaviourIds = activeFilter.OnLemmingHitBehaviourIds;
-        foreach (var behaviourId in lemmingBehaviourIds)
+        var lemmingBehaviours = activeFilter.OnLemmingHitBehaviours;
+        foreach (var lemmingBehaviour in lemmingBehaviours)
         {
-            causeAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(behaviourId, lemming.Id));
+            causeAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(lemmingBehaviour.Id, lemming.Id));
         }
 
-        var hitBoxModifierActionsToPerform = GetHitBoxModifierActionsToPerformOnLemming(activeFilter, lemming);
-        foreach (var behaviourId in hitBoxModifierActionsToPerform)
+        var hitBoxLemmingBehaviours = GetHitBoxLemmingBehaviours(activeFilter, lemming);
+        foreach (var lemmingBehaviour in hitBoxLemmingBehaviours)
         {
-            causeAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(behaviourId, lemming.Id));
+            causeAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(lemmingBehaviour.Id, lemming.Id));
         }
     }
 
-    private ReadOnlySpan<int> GetHitBoxModifierActionsToPerformOnLemming(
+    private ReadOnlySpan<GadgetBehaviour> GetHitBoxLemmingBehaviours(
         LemmingHitBoxFilter activeFilter,
         Lemming lemming)
     {
@@ -124,12 +123,12 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 
         return trackingStatus switch
         {
-            TrackingStatus.Absent => ReadOnlySpan<int>.Empty,
-            TrackingStatus.Entered => activeFilter.OnLemmingEnterBehaviourIds,
-            TrackingStatus.Exited => activeFilter.OnLemmingExitBehaviourIds,
-            TrackingStatus.StillPresent => activeFilter.OnLemmingPresentBehaviourIds,
+            TrackingStatus.Absent => ReadOnlySpan<GadgetBehaviour>.Empty,
+            TrackingStatus.Entered => activeFilter.OnLemmingEnterBehaviours,
+            TrackingStatus.Exited => activeFilter.OnLemmingExitBehaviours,
+            TrackingStatus.StillPresent => activeFilter.OnLemmingPresentBehaviours,
 
-            _ => ReadOnlySpan<int>.Empty
+            _ => ReadOnlySpan<GadgetBehaviour>.Empty
         };
     }
 

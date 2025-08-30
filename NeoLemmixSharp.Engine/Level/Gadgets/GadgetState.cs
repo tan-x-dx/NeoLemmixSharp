@@ -6,16 +6,11 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public abstract class GadgetState
 {
     public required GadgetStateName StateName { get; init; }
-    private readonly GadgetTrigger[] _gadgetTriggers;
-
-    protected GadgetState(GadgetTrigger[] gadgetTriggers)
-    {
-        _gadgetTriggers = gadgetTriggers;
-    }
+    public required GadgetTrigger[] GadgetTriggers { private get; init; }
 
     public void Tick()
     {
-        foreach (var gadgetTrigger in _gadgetTriggers)
+        foreach (var gadgetTrigger in GadgetTriggers)
         {
             gadgetTrigger.Tick();
         }

@@ -85,14 +85,14 @@ internal readonly ref struct GadgetStateReader
 
         return result;
     }*/
-
-    private GadgetActionData[] ReadGadgetActionData(int expectedMarkerValue)
+    /*
+    private LemmingBehaviourData[] ReadGadgetActionData(int expectedMarkerValue)
     {
         int actualMarkerValue = _reader.Read8BitUnsignedInteger();
         FileReadingException.ReaderAssert(expectedMarkerValue == actualMarkerValue, "Mismatch in Gadget Action Data reading!");
 
         int numberOfGadgetActions = _reader.Read8BitUnsignedInteger();
-        var result = Helpers.GetArrayForSize<GadgetActionData>(numberOfGadgetActions);
+        var result = Helpers.GetArrayForSize<LemmingBehaviourData>(numberOfGadgetActions);
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -102,15 +102,15 @@ internal readonly ref struct GadgetStateReader
         return result;
     }
 
-    private GadgetActionData ReadGadgetActionDatum()
+    private LemmingBehaviourData ReadGadgetActionDatum()
     {
         uint rawGadgetActionType = _reader.Read8BitUnsignedInteger();
         var gadgetActionType = LemmingBehaviourTypeHelpers.GetEnumValue(rawGadgetActionType);
         int miscData = _reader.Read32BitSignedInteger();
 
-        return new GadgetActionData(gadgetActionType, miscData);
+        return new LemmingBehaviourData(gadgetActionType, miscData);
     }
-
+    */
     private HitBoxCriteriaData ReadHitBoxCriteria()
     {
         return new GadgetHitBoxCriteriaReader<RawStyleFileDataReader>(_reader).ReadHitBoxCriteria();

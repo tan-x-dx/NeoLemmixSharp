@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -17,6 +18,7 @@ internal readonly struct FileWriterStringIdLookup
     internal ushort GetStringId(StyleIdentifier styleIdentifier) => GetStringId(styleIdentifier.ToString());
     [Pure]
     internal ushort GetStringId(PieceIdentifier pieceIdentifier) => GetStringId(pieceIdentifier.ToString());
+    internal ushort GetStringId(GadgetName gadgetInputName) => GetStringId(gadgetInputName.ToString());
     [Pure]
     internal ushort GetStringId(GadgetTriggerName gadgetInputName) => GetStringId(gadgetInputName.ToString());
     [Pure]
@@ -47,6 +49,7 @@ internal readonly struct MutableFileWriterStringIdLookup
 
     internal void RecordString(StyleIdentifier styleIdentifier) => RecordString(styleIdentifier.ToString());
     internal void RecordString(PieceIdentifier pieceIdentifier) => RecordString(pieceIdentifier.ToString());
+    internal void RecordString(GadgetName gadgetInputName) => RecordString(gadgetInputName.ToString());
     internal void RecordString(GadgetTriggerName gadgetInputName) => RecordString(gadgetInputName.ToString());
     internal void RecordString(GadgetStateName gadgetStateName) => RecordString(gadgetStateName.ToString());
 

@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
@@ -41,9 +41,8 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
 
         public bool Signal { get; private set; }
 
-        public SubtractiveLogicGateGadgetLinkInput(
-            SubtractiveLogicGateGadget gadget)
-            : base([])
+        public SubtractiveLogicGateGadgetLinkInput(SubtractiveLogicGateGadget gadget)
+            : base(0)
         {
             _gadget = gadget;
         }
@@ -106,7 +105,7 @@ public sealed class XorGateGadget : SubtractiveLogicGateGadget
 
 public sealed class SubtractiveLogicGateGadgetState : GadgetState
 {
-    public SubtractiveLogicGateGadgetState(GadgetTrigger[] gadgetTriggers) : base(gadgetTriggers)
+    public SubtractiveLogicGateGadgetState(GadgetTrigger[] gadgetTriggers) 
     {
     }
 

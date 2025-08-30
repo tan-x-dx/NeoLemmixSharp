@@ -6,6 +6,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
 {
+    public required GadgetBehaviourName GadgetBehaviourName { get; init; }
     public required int Id { get; init; }
     public GadgetBehaviourType BehaviourType { get; }
 
@@ -24,22 +25,21 @@ public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
 
     private bool HasReachedMaxTriggerCount() => _currentTickTriggerCount >= MaxTriggerCountPerTick;
 
-    private void RegisterTrigger() => _currentTickTriggerCount++;
-
-    public void PerformBehaviour()
+    public void PerformBehaviour(int lemmingId)
     {
         if (HasReachedMaxTriggerCount())
             return;
 
-        PerformInternalBehaviour();
-        RegisterTrigger();
+        PerformInternalBehaviour(lemmingId);
+        _currentTickTriggerCount++;
     }
 
-    protected abstract void PerformInternalBehaviour();
+    protected abstract void PerformInternalBehaviour(int lemmingId);
 
     public bool Equals(GadgetBehaviour? other) => other is not null && Id == other.Id;
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBehaviour other && Id == other.Id;
     public sealed override int GetHashCode() => Id;
+    public sealed override string ToString() => GadgetBehaviourName.ToString();
 
     public static bool operator ==(GadgetBehaviour left, GadgetBehaviour right) => left.Id == right.Id;
     public static bool operator !=(GadgetBehaviour left, GadgetBehaviour right) => left.Id != right.Id;

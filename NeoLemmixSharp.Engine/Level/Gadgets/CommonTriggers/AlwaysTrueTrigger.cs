@@ -2,9 +2,9 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 
-public sealed class GadgetLinkTrigger : GadgetTrigger
+public sealed class AlwaysTrueTrigger : GadgetTrigger
 {
-    public GadgetLinkTrigger() : base(GadgetTriggerType.GadgetLinkTrigger)
+    public AlwaysTrueTrigger() : base(GadgetTriggerType.AlwaysTrue)
     {
     }
 

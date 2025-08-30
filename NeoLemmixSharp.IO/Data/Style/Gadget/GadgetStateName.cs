@@ -8,10 +8,10 @@ public readonly struct GadgetStateName : IEquatable<GadgetStateName>
 
     public GadgetStateName(string? gadgetStateName)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(gadgetStateName);
-
-        _gadgetStateName = gadgetStateName;
+        _gadgetStateName = gadgetStateName ?? string.Empty;
     }
+
+    public bool IsTrivial => string.IsNullOrWhiteSpace(_gadgetStateName);
 
     public override string ToString() => _gadgetStateName;
 

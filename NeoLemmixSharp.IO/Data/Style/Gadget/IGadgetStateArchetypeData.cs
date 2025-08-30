@@ -7,6 +7,7 @@ public interface IGadgetStateArchetypeData
 {
     GadgetStateName StateName { get; }
 
-    GadgetTriggerData[] InnateTriggers { get; }
-    GadgetBehaviourData[] InnateBehaviours { get; }
+    ReadOnlySpan<GadgetTriggerData> InnateTriggers { get; }
+    ReadOnlySpan<GadgetBehaviourData> InnateBehaviours { get; }
+    ReadOnlySpan<GadgetTriggerBehaviourLink> TriggerBehaviourLinks { get; }
 }

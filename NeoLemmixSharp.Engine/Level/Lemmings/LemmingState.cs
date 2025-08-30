@@ -261,9 +261,15 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
         _tribeId = tribeId;
     }
 
+    public void ClearAllPermanentSkills()
+    {
+        _states &= ~LemmingStateConstants.PermanentSkillBitMask;
+        UpdateHairAndBodyColors();
+    }
+
     private void UpdateHairAndBodyColors()
     {
-        var tribeColorData = LevelScreen.TribeManager.AllItems[_tribeId].ColorData;
+        ref readonly var tribeColorData = ref LevelScreen.TribeManager.AllItems[_tribeId].ColorData;
 
         if (HasPermanentSkill)
         {
@@ -283,7 +289,7 @@ public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshot
 
     private void UpdateSkinColor()
     {
-        var tribeColorData = LevelScreen.TribeManager.AllItems[_tribeId].ColorData;
+        ref readonly var tribeColorData = ref LevelScreen.TribeManager.AllItems[_tribeId].ColorData;
 
         var skinColor = IsZombie
             ? tribeColorData.ZombieSkinColor

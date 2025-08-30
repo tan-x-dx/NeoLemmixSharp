@@ -2,10 +2,10 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
-public sealed class NullifyFallDistanceBehaviour : LemmingBehaviour
+public sealed class NullifyFallDistanceLemmingBehaviour : LemmingBehaviour
 {
-    public NullifyFallDistanceBehaviour()
-        : base(LemmingBehaviourType.NullifyFallDistance)
+    public NullifyFallDistanceLemmingBehaviour()
+        : base(LemmingBehaviourType.NullifyLemmingFallDistance)
     {
     }
 

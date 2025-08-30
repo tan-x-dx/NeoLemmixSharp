@@ -20,7 +20,7 @@ public enum GadgetProperty
     NumberOfInputs
 }
 
-public readonly struct GadgetPropertyHasher : IEnumIdentifierHelper<GadgetProperty, BitBuffer32>
+public readonly struct GadgetPropertyHasher : IEnumIdentifierHelper<BitBuffer32, GadgetProperty>
 {
     private const int NumberOfEnumValues = 11;
 

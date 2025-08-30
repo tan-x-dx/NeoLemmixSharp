@@ -6,7 +6,7 @@ using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
+namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 
 public static class GadgetBuildingHelpers
 {
@@ -120,12 +120,18 @@ public static class GadgetBuildingHelpers
         return new ReadOnlySpan<GadgetStateName>(BasicStateNames, 0, numberOfStates);
     }
 
-    public static string GetGadgetName(IGadgetArchetypeData gadgetArchetypeData, IGadgetInstanceData gadgetInstanceData)
+    public static GadgetName GetGadgetName(IGadgetArchetypeData gadgetArchetypeData, IGadgetInstanceData gadgetInstanceData)
     {
-        GadgetName result = gadgetInstanceData.OverrideName.IsTrivial
+        return gadgetInstanceData.OverrideName.IsTrivial
             ? gadgetArchetypeData.GadgetName
             : gadgetInstanceData.OverrideName;
-        return result.ToString();
+    }
+
+    public static GadgetStateName GetGadgetStateName(IGadgetStateArchetypeData gadgetStateArchetypeData, HitBoxGadgetStateInstanceData gadgetStateInstanceData)
+    {
+        return gadgetStateInstanceData.OverrideStateName.IsTrivial
+            ? gadgetStateArchetypeData.StateName
+            : gadgetStateInstanceData.OverrideStateName;
     }
 
     public static GadgetBounds CreateGadgetBounds(

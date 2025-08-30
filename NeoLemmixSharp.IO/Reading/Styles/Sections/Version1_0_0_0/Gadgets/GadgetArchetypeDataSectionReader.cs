@@ -37,7 +37,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         var pieceName = new PieceIdentifier(_stringIdLookup[pieceId]);
 
         int nameId = reader.Read16BitUnsignedInteger();
-        var gadgetName = _stringIdLookup[nameId];
+        var gadgetName = new GadgetName(_stringIdLookup[nameId]);
 
         var gadgetType = (GadgetType)reader.Read8BitUnsignedInteger();
 
@@ -86,7 +86,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
          return result;*/
     }
 
-    private HitBoxGadgetArchetypeData ReadHitBoxGadgetArchetypeData(RawStyleFileDataReader reader, StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier, string gadgetName)
+    private HitBoxGadgetArchetypeData ReadHitBoxGadgetArchetypeData(RawStyleFileDataReader reader, StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier, GadgetName gadgetName)
     {
         uint rawResizeType = reader.Read8BitUnsignedInteger();
         var resizeType = ReadWriteHelpers.DecodeResizeType(rawResizeType);

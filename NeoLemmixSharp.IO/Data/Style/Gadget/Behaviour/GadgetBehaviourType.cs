@@ -21,12 +21,7 @@ public enum GadgetBehaviourType
     GadgetAnimationIncrementFrame,
     GadgetAnimationDecrementFrame,
 
-    LemmingChangeState,
-    LemmingChangeAction,
-    LemmingKill,
-    LemmingForceFacingDirection,
-    LemmingNullifyFallDistance,
-    LemmingMove,
+    LemmingBehaviour,
 
     GlobalAdditionalTime,
     GlobalSkillCountChange,
@@ -34,7 +29,7 @@ public enum GadgetBehaviourType
 
 public readonly struct GadgetBehaviourTypeHasher : IEnumIdentifierHelper<GadgetBehaviourTypeHasher.GadgetBehaviourTypeBitBuffer, GadgetBehaviourType>
 {
-    private const int NumberOfEnumValues = 19;
+    private const int NumberOfEnumValues = 14;
     public static GadgetBehaviourType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetBehaviourType>(rawValue, NumberOfEnumValues);
 
     public int NumberOfItems => NumberOfEnumValues;

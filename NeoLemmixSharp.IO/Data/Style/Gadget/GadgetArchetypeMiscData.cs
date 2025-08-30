@@ -10,7 +10,7 @@ public enum GadgetArchetypeMiscDataType
     SpawnPointOffset,
 }
 
-public readonly struct GadgetArchetypeMiscDataTypeHasher : IEnumIdentifierHelper<GadgetArchetypeMiscDataType, BitBuffer32>
+public readonly struct GadgetArchetypeMiscDataTypeHasher : IEnumIdentifierHelper<BitBuffer32, GadgetArchetypeMiscDataType>
 {
     private const int NumberOfEnumValues = 8;
 

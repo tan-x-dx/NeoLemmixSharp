@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
@@ -29,6 +30,7 @@ internal sealed class GadgetTriggerDataSectionReader : LevelDataSectionReader
     {
         int sourceGadgetIdentifier = reader.Read16BitUnsignedInteger();
         int sourceGadgetStateId = reader.Read16BitUnsignedInteger();
+        int sourceGadgetBehaviourNameId = reader.Read16BitUnsignedInteger();
         int targetGadgetIdentifier = reader.Read16BitUnsignedInteger();
         int targetGadgetInputNameId = reader.Read16BitUnsignedInteger();
 
@@ -36,6 +38,7 @@ internal sealed class GadgetTriggerDataSectionReader : LevelDataSectionReader
         {
             SourceGadgetIdentifier = new GadgetIdentifier(sourceGadgetIdentifier),
             SourceGadgetStateId = sourceGadgetStateId,
+            SourceLinkBehaviourName = new GadgetBehaviourName(_stringIdLookup[sourceGadgetBehaviourNameId]),
             TargetGadgetIdentifier = new GadgetIdentifier(targetGadgetIdentifier),
             TargetGadgetInputName = new GadgetTriggerName(_stringIdLookup[targetGadgetInputNameId])
         };

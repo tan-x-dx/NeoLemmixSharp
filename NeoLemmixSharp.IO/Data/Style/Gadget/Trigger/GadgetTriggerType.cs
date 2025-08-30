@@ -7,18 +7,17 @@ namespace NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 public enum GadgetTriggerType
 {
+    None,
+
     AlwaysTrue,
-
     GadgetLinkTrigger,
-
     GadgetAnimationFinished,
-
     LemmingHitBoxTrigger
 }
 
 public readonly struct GadgetTriggerTypeHasher : IEnumIdentifierHelper<GadgetTriggerTypeHasher.GadgetTriggerTypeBitBuffer, GadgetTriggerType>
 {
-    private const int NumberOfEnumValues = 10;
+    private const int NumberOfEnumValues = 5;
     public static GadgetTriggerType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetTriggerType>(rawValue, NumberOfEnumValues);
 
     public int NumberOfItems => NumberOfEnumValues;

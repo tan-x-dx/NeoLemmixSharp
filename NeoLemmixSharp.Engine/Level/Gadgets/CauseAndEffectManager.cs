@@ -1,7 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
-using System.Diagnostics;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -34,6 +31,8 @@ public sealed class CauseAndEffectManager :
 
     public void ResetBehaviours()
     {
+        _causeAndEffectData.Clear();
+
         foreach (var behaviour in _allBehaviours)
         {
             behaviour.Reset();
@@ -42,23 +41,11 @@ public sealed class CauseAndEffectManager :
 
     public void Tick()
     {
-        var lemmingManager = LevelScreen.LemmingManager;
-
         foreach (var causeAndEffectDatum in _causeAndEffectData)
         {
             var behaviour = _allBehaviours[causeAndEffectDatum.GadgetBehaviourId];
 
-            if (behaviour is LemmingBehaviour lemmingBehaviour)
-            {
-                Debug.Assert(causeAndEffectDatum.LemmingId != EngineConstants.NoLemmingCauseAndEffectId);
-
-                var lemming = lemmingManager.AllLemmings[causeAndEffectDatum.LemmingId];
-                lemmingBehaviour.PerformBehaviour(lemming);
-            }
-            else
-            {
-                behaviour.PerformBehaviour();
-            }
+            behaviour.PerformBehaviour(causeAndEffectDatum.LemmingId);
         }
     }
 

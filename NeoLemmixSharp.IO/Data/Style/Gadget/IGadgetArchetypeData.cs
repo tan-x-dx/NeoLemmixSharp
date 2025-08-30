@@ -4,7 +4,7 @@ public interface IGadgetArchetypeData
 {
     StyleIdentifier StyleIdentifier { get; }
     PieceIdentifier PieceIdentifier { get; }
-    string GadgetName { get; }
+    GadgetName GadgetName { get; }
 
     GadgetType GadgetType { get; }
 

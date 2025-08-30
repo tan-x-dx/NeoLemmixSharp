@@ -3,11 +3,11 @@ using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
-public sealed class LemmingMoverBehaviour : LemmingBehaviour
+public sealed class MoveLemmingBehaviour : LemmingBehaviour
 {
     private readonly Point _deltaPosition;
 
-    public LemmingMoverBehaviour(
+    public MoveLemmingBehaviour(
         Point deltaPosition)
         : base(LemmingBehaviourType.LemmingMover)
     {

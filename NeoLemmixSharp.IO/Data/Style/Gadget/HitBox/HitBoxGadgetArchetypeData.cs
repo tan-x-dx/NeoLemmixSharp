@@ -11,7 +11,7 @@ public sealed class HitBoxGadgetArchetypeData : IGadgetArchetypeData
 
     public required StyleIdentifier StyleIdentifier { get; init; }
     public required PieceIdentifier PieceIdentifier { get; init; }
-    public required string GadgetName { get; init; }
+    public required GadgetName GadgetName { get; init; }
 
     public GadgetType GadgetType => GadgetType.HitBoxGadget;
     public required ResizeType ResizeType { get; init; }

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.IO.Data.Style.Gadget;
+namespace NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 public readonly struct GadgetTriggerName : IEquatable<GadgetTriggerName>
 {

@@ -4,13 +4,13 @@ using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
-public sealed class ForceFacingDirectionBehaviour : LemmingBehaviour
+public sealed class ForceFacingDirectionLemmingBehaviour : LemmingBehaviour
 {
     private readonly FacingDirection _facingDirection;
 
-    public ForceFacingDirectionBehaviour(
+    public ForceFacingDirectionLemmingBehaviour(
         FacingDirection facingDirection)
-        : base(LemmingBehaviourType.ForceFacingDirection)
+        : base(LemmingBehaviourType.ForceLemmingFacingDirection)
     {
         _facingDirection = facingDirection;
     }

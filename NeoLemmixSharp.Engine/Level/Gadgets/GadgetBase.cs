@@ -1,13 +1,14 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
 {
-    public required string GadgetName { get; init; }
+    public required GadgetName GadgetName { get; init; }
     public required GadgetBounds CurrentGadgetBounds { get; init; }
 
     public required int Id { get; init; }
@@ -39,5 +40,5 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     {
     }
 
-    public sealed override string ToString() => GadgetName;
+    public sealed override string ToString() => GadgetName.ToString();
 }

@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
@@ -54,9 +54,8 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
     {
         private readonly AdditiveLogicGateGadget _gadget;
 
-        public AdditiveGateGadgetLinkInput(
-            AdditiveLogicGateGadget gadget)
-            : base([])
+        public AdditiveGateGadgetLinkInput(AdditiveLogicGateGadget gadget)
+            :base(0)
         {
             _gadget = gadget;
         }
@@ -108,10 +107,6 @@ public sealed class OrGateGadget : AdditiveLogicGateGadget
 
 public sealed class AdditiveLogicGateGadgetState : GadgetState
 {
-    public AdditiveLogicGateGadgetState(GadgetTrigger[] gadgetTriggers) : base(gadgetTriggers)
-    {
-    }
-
     protected override void OnTick()
     {
         throw new NotImplementedException();
