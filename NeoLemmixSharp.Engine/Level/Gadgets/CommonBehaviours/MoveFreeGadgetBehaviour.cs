@@ -1,24 +1,25 @@
-﻿using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
+﻿using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 
-public sealed class GadgetMoverBehaviour : GadgetBehaviour
+public sealed class MoveFreeGadgetBehaviour : GadgetBehaviour
 {
-    private readonly IMoveableGadget _gadget;
+    private readonly GadgetIdentifier _gadgetIdentifier;
     private readonly int _tickDelay;
     private readonly int _dx;
     private readonly int _dy;
 
     private int _tickCount;
 
-    public GadgetMoverBehaviour(
-        IMoveableGadget gadget,
+    public MoveFreeGadgetBehaviour(
+        GadgetIdentifier gadgetIdentifier,
         int tickDelay,
         int dx,
         int dy)
         : base(GadgetBehaviourType.GadgetMoveFree)
     {
-        _gadget = gadget;
+        _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;
         _dx = dx;
         _dy = dy;
@@ -34,6 +35,7 @@ public sealed class GadgetMoverBehaviour : GadgetBehaviour
 
         _tickCount = 0;
 
-        _gadget.Move(_dx, _dy);
+        var gadget = (IMoveableGadget)LevelScreen.GadgetManager.AllItems[_gadgetIdentifier.GadgetId];
+        gadget.Move(_dx, _dy);
     }
 }

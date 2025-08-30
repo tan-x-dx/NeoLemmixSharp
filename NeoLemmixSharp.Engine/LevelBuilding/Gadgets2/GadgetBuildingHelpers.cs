@@ -120,14 +120,18 @@ public static class GadgetBuildingHelpers
         return new ReadOnlySpan<GadgetStateName>(BasicStateNames, 0, numberOfStates);
     }
 
-    public static GadgetName GetGadgetName(IGadgetArchetypeData gadgetArchetypeData, IGadgetInstanceData gadgetInstanceData)
+    public static GadgetName GetGadgetName(
+        IGadgetArchetypeData gadgetArchetypeData,
+        IGadgetInstanceData gadgetInstanceData)
     {
         return gadgetInstanceData.OverrideName.IsTrivial
             ? gadgetArchetypeData.GadgetName
             : gadgetInstanceData.OverrideName;
     }
 
-    public static GadgetStateName GetGadgetStateName(IGadgetStateArchetypeData gadgetStateArchetypeData, HitBoxGadgetStateInstanceData gadgetStateInstanceData)
+    public static GadgetStateName GetGadgetStateName(
+        IGadgetStateArchetypeData gadgetStateArchetypeData,
+        IGadgetStateInstanceData gadgetStateInstanceData)
     {
         return gadgetStateInstanceData.OverrideStateName.IsTrivial
             ? gadgetStateArchetypeData.StateName
@@ -135,6 +139,25 @@ public static class GadgetBuildingHelpers
     }
 
     public static GadgetBounds CreateGadgetBounds(
+        IGadgetArchetypeData gadgetArchetypeData,
+        IGadgetInstanceData gadgetData)
+    {
+        var baseSize = gadgetArchetypeData.BaseSpriteSize;
+
+        var result = new GadgetBounds
+        {
+            Position = gadgetData.Position
+        };
+
+        baseSize = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(baseSize);
+
+        result.Width = baseSize.W;
+        result.Height = baseSize.H;
+
+        return result;
+    }
+
+    public static GadgetBounds CreateHitBoxGadgetBounds(
         HitBoxGadgetArchetypeData gadgetArchetypeData,
         HitBoxGadgetInstanceData gadgetData)
     {

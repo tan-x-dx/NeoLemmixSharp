@@ -5,15 +5,18 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 
 public sealed class HatchGadget : GadgetBase, IMoveableGadget
 {
+    private readonly HatchGadgetState[] _states;
+
     public HatchSpawnData HatchSpawnData { get; }
     public Point SpawnPointOffset { get; }
 
     public HatchGadget(
-        GadgetState[] states,
+        HatchGadgetState[] states,
         int initialStateIndex,
         HatchSpawnData hatchSpawnData,
         Point spawnPointOffset)
     {
+        _states = states;
         SpawnPointOffset = spawnPointOffset;
         HatchSpawnData = hatchSpawnData;
     }

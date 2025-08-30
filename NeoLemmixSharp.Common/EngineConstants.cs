@@ -86,6 +86,7 @@ public static class EngineConstants
     public const int NoLemmingCauseAndEffectId = -1;
 
     public const int TrivialBehaviourTriggerLimit = 1_000_000_000;
+    public const int ExpectedNumberOfHatchGadgetStates = 4;
     public const int MaxAllowedNumberOfGadgetStates = 16;
     public const int MaxAllowedNumberOfGadgetTriggers = 64;
 

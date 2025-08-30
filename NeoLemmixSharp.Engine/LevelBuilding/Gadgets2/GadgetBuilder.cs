@@ -1,7 +1,9 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
+using NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HatchGadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
@@ -17,11 +19,15 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 public sealed class GadgetBuilder
 {
     /// <summary>
-    /// Assumption: Each gadget instance will have about this many triggers defined.
+    /// Assumption: Each gadget instance will have about this many states defined.
+    /// </summary>
+    private const int GadgetStateCapacityMultiplier = 3;
+    /// <summary>
+    /// Assumption: Each gadget state will have about this many triggers defined.
     /// </summary>
     private const int GadgetTriggerCapacityMultiplier = 4;
     /// <summary>
-    /// Assumption: Each gadget instance will have about this many behvaviours defined.
+    /// Assumption: Each gadget state will have about this many behvaviours defined.
     /// </summary>
     private const int GadgetBehaviourCapacityMultiplier = 4;
 
@@ -30,8 +36,6 @@ public sealed class GadgetBuilder
     private readonly List<GadgetTrigger> _gadgetTriggers;
     private readonly List<GadgetBehaviour> _gadgetBehaviours;
 
-    private readonly HitBoxGadgetBuilder _hitBoxGadgetBuilder;
-
     public GadgetBuilder(LevelData levelData)
     {
         _levelData = levelData;
@@ -39,10 +43,10 @@ public sealed class GadgetBuilder
         var numberOfGadgetInstances = _levelData.AllGadgetInstanceData.Count;
 
         _gadgets = new List<GadgetBase>(numberOfGadgetInstances);
-        _gadgetTriggers = new List<GadgetTrigger>(numberOfGadgetInstances * GadgetTriggerCapacityMultiplier);
-        _gadgetBehaviours = new List<GadgetBehaviour>(numberOfGadgetInstances * GadgetBehaviourCapacityMultiplier);
 
-        _hitBoxGadgetBuilder = new HitBoxGadgetBuilder(_gadgetTriggers, _gadgetBehaviours);
+        // Preallocate lists with large(ish) initial capacities to reduce realloactions further down the line
+        _gadgetTriggers = new List<GadgetTrigger>(numberOfGadgetInstances * GadgetStateCapacityMultiplier * GadgetTriggerCapacityMultiplier);
+        _gadgetBehaviours = new List<GadgetBehaviour>(numberOfGadgetInstances * GadgetStateCapacityMultiplier * GadgetBehaviourCapacityMultiplier);
     }
 
     public void BuildLevelGadgets(LemmingManager lemmingManager, TribeManager tribeManager)
@@ -66,20 +70,33 @@ public sealed class GadgetBuilder
     {
         return gadgetArchetypeData switch
         {
-            HitBoxGadgetArchetypeData hitBoxGadgetArchetypeData => _hitBoxGadgetBuilder.BuildHitBoxGadget(hitBoxGadgetArchetypeData, (HitBoxGadgetInstanceData)gadgetInstanceData, lemmingManager, tribeManager),
+            HitBoxGadgetArchetypeData hitBoxGadgetArchetypeData => BuildHitBoxGadget(hitBoxGadgetArchetypeData, (HitBoxGadgetInstanceData)gadgetInstanceData, lemmingManager, tribeManager),
             HatchGadgetArchetypeData hatchGadgetArchetypeData => BuildHatchGadget(hatchGadgetArchetypeData, (HatchGadgetInstanceData)gadgetInstanceData, lemmingManager, tribeManager),
 
             _ => throw new NotImplementedException(),
         };
     }
 
-    private HatchGadget BuildHatchGadget(
-        HatchGadgetArchetypeData hatchGadgetArchetypeData,
-        HatchGadgetInstanceData gadgetInstanceData,
+    private HitBoxGadget BuildHitBoxGadget(
+        HitBoxGadgetArchetypeData hitBoxGadgetArchetypeData,
+        HitBoxGadgetInstanceData hitBoxGadgetInstanceData,
         LemmingManager lemmingManager,
         TribeManager tribeManager)
     {
-        throw new NotImplementedException();
+        var hitBoxGadgetBuilder = new HitBoxGadgetBuilder(hitBoxGadgetInstanceData.Identifier, _gadgetTriggers, _gadgetBehaviours);
+
+        return hitBoxGadgetBuilder.BuildHitBoxGadget(hitBoxGadgetArchetypeData, hitBoxGadgetInstanceData, lemmingManager, tribeManager);
+    }
+
+    private HatchGadget BuildHatchGadget(
+        HatchGadgetArchetypeData hatchGadgetArchetypeData,
+        HatchGadgetInstanceData hatchGadgetInstanceData,
+        LemmingManager lemmingManager,
+        TribeManager tribeManager)
+    {
+        var hatchGadgetBuilder = new HatchGadgetBuilder(hatchGadgetInstanceData.Identifier, _gadgetTriggers, _gadgetBehaviours);
+
+        return hatchGadgetBuilder.BuildHatchGadget(hatchGadgetArchetypeData, hatchGadgetInstanceData, lemmingManager, tribeManager);
     }
 
     public GadgetBase[] GetGadgets() => _gadgets.ToArray();

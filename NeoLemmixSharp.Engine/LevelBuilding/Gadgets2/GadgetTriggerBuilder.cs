@@ -11,11 +11,16 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 
 public readonly ref struct GadgetTriggerBuilder
 {
+    private readonly GadgetIdentifier _gadgetIdentifier;
     private readonly List<GadgetTrigger> _gadgetTriggers;
     private readonly List<GadgetBehaviour> _gadgetBehaviours;
 
-    public GadgetTriggerBuilder(List<GadgetTrigger> gadgetTriggers, List<GadgetBehaviour> gadgetBehaviours)
+    public GadgetTriggerBuilder(
+        GadgetIdentifier gadgetIdentifier,
+        List<GadgetTrigger> gadgetTriggers,
+        List<GadgetBehaviour> gadgetBehaviours)
     {
+        _gadgetIdentifier = gadgetIdentifier;
         _gadgetTriggers = gadgetTriggers;
         _gadgetBehaviours = gadgetBehaviours;
     }
@@ -24,7 +29,7 @@ public readonly ref struct GadgetTriggerBuilder
         IGadgetStateArchetypeData gadgetStateArchetypeData,
         IGadgetStateInstanceData gadgetStateInstanceData)
     {
-        var gadgetBehaviourBuilder = new GadgetBehaviourBuilder(_gadgetBehaviours);
+        var gadgetBehaviourBuilder = new GadgetBehaviourBuilder(_gadgetIdentifier, _gadgetBehaviours);
         var behaviourLookup = gadgetBehaviourBuilder.BuildBehaviourLookup(gadgetStateArchetypeData.InnateBehaviours, gadgetStateInstanceData.CustomBehaviours);
 
         var allTriggerBehaviourLinks = Helpers.CombineSpans(gadgetStateArchetypeData.TriggerBehaviourLinks, gadgetStateInstanceData.CustomTriggerBehaviourLinks);

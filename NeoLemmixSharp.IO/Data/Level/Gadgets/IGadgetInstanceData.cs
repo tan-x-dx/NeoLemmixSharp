@@ -13,6 +13,7 @@ public interface IGadgetInstanceData
     PieceIdentifier PieceIdentifier { get; }
 
     Point Position { get; }
+    int InitialStateId { get; }
     GadgetRenderMode GadgetRenderMode { get; }
 
     Orientation Orientation { get; }

@@ -13,13 +13,18 @@ using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;
 
-public sealed class HitBoxGadgetBuilder
+public readonly ref struct HitBoxGadgetBuilder
 {
+    private readonly GadgetIdentifier _gadgetIdentifier;
     private readonly List<GadgetTrigger> _gadgetTriggers;
     private readonly List<GadgetBehaviour> _gadgetBehaviours;
 
-    public HitBoxGadgetBuilder(List<GadgetTrigger> gadgetTriggers, List<GadgetBehaviour> gadgetBehaviours)
+    public HitBoxGadgetBuilder(
+        GadgetIdentifier gadgetIdentifier,
+        List<GadgetTrigger> gadgetTriggers,
+        List<GadgetBehaviour> gadgetBehaviours)
     {
+        _gadgetIdentifier = gadgetIdentifier;
         _gadgetTriggers = gadgetTriggers;
         _gadgetBehaviours = gadgetBehaviours;
     }
@@ -33,7 +38,7 @@ public sealed class HitBoxGadgetBuilder
         var lemmingTracker = new LemmingTracker(lemmingManager);
 
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, gadgetInstanceData);
-        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetInstanceData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateHitBoxGadgetBounds(gadgetArchetypeData, gadgetInstanceData);
         var gadgetStates = BuildHitBoxGadgetStates(gadgetArchetypeData, gadgetInstanceData, gadgetBounds, tribeManager);
         var resizeType = GetResizeType(gadgetArchetypeData, gadgetInstanceData);
 
@@ -137,7 +142,7 @@ public sealed class HitBoxGadgetBuilder
             alternateHitBoxFilterData = [];
         }
 
-        var behaviourBuilder = new GadgetBehaviourBuilder(_gadgetBehaviours);
+        var behaviourBuilder = new GadgetBehaviourBuilder(_gadgetIdentifier, _gadgetBehaviours);
         var result = Helpers.GetArrayForSize<LemmingHitBoxFilter>(mainHitBoxFilterData.Length);
 
         var i = 0;
@@ -196,7 +201,7 @@ public sealed class HitBoxGadgetBuilder
 
     private GadgetTrigger[] BuildGeneralTriggers(IGadgetStateArchetypeData gadgetStateArchetypeData, IGadgetStateInstanceData gadgetStateInstanceData)
     {
-        var gadgetTriggerBuilder = new GadgetTriggerBuilder(_gadgetTriggers, _gadgetBehaviours);
+        var gadgetTriggerBuilder = new GadgetTriggerBuilder(_gadgetIdentifier, _gadgetTriggers, _gadgetBehaviours);
         return gadgetTriggerBuilder.BuildGadgetTriggers(gadgetStateArchetypeData, gadgetStateInstanceData);
     }
 

@@ -1,10 +1,12 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
 using NeoLemmixSharp.IO.Util;
@@ -13,10 +15,14 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 
 public readonly struct GadgetBehaviourBuilder
 {
+    private readonly GadgetIdentifier _gadgetIdentifier;
     private readonly List<GadgetBehaviour> _gadgetBehaviours;
 
-    public GadgetBehaviourBuilder(List<GadgetBehaviour> gadgetBehaviours)
+    public GadgetBehaviourBuilder(
+        GadgetIdentifier gadgetIdentifier,
+        List<GadgetBehaviour> gadgetBehaviours)
     {
+        _gadgetIdentifier = gadgetIdentifier;
         _gadgetBehaviours = gadgetBehaviours;
     }
 
@@ -103,9 +109,18 @@ public readonly struct GadgetBehaviourBuilder
         throw new NotImplementedException();
     }
 
-    private static GadgetBehaviour CreateGadgetMoveFreeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private MoveFreeGadgetBehaviour CreateGadgetMoveFreeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        throw new NotImplementedException();
+        var tickDelay = gadgetBehaviourDatum.Data1;
+        var dx = gadgetBehaviourDatum.Data2;
+        var dy = gadgetBehaviourDatum.Data3;
+
+        return new MoveFreeGadgetBehaviour(_gadgetIdentifier, tickDelay, dx, dy)
+        {
+            GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
+            Id = newBehaviourId,
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+        };
     }
 
     private static GadgetBehaviour CreateGadgetMoveUntilPositionBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
