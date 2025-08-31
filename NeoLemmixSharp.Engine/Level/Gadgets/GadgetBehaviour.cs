@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Identity;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using System.Diagnostics.CodeAnalysis;
 
@@ -6,12 +8,24 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
 {
+    private readonly int _maxTriggerCountPerTick;
     public required GadgetBehaviourName GadgetBehaviourName { get; init; }
     public required int Id { get; init; }
     public GadgetBehaviourType BehaviourType { get; }
 
-    public required int MaxTriggerCountPerTick { get; init; }
     private int _currentTickTriggerCount;
+
+    public required int MaxTriggerCountPerTick
+    {
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+
+            _maxTriggerCountPerTick = value == 0
+                ? EngineConstants.TrivialBehaviourTriggerLimit
+                : value;
+        }
+    }
 
     protected GadgetBehaviour(GadgetBehaviourType behaviourType)
     {
@@ -21,9 +35,12 @@ public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
     public void Reset()
     {
         _currentTickTriggerCount = 0;
+        OnReset();
     }
 
-    private bool HasReachedMaxTriggerCount() => _currentTickTriggerCount >= MaxTriggerCountPerTick;
+    protected virtual void OnReset() { }
+
+    private bool HasReachedMaxTriggerCount() => _currentTickTriggerCount >= _maxTriggerCountPerTick;
 
     public void PerformBehaviour(int lemmingId)
     {
@@ -43,4 +60,6 @@ public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
 
     public static bool operator ==(GadgetBehaviour left, GadgetBehaviour right) => left.Id == right.Id;
     public static bool operator !=(GadgetBehaviour left, GadgetBehaviour right) => left.Id != right.Id;
+
+    protected static Lemming GetLemming(int lemmingId) => LevelScreen.LemmingManager.AllLemmings[lemmingId];
 }

@@ -11,9 +11,11 @@ public enum GadgetBehaviourType
 
     GadgetOutputSignal,
     GadgetChangeInternalState,
-    GadgetMoveFree,
-    GadgetMoveUntilPosition,
-    GadgetResizeFree,
+
+    GadgetFreeMove,
+    GadgetConstrainedMove,
+
+    GadgetFreeResize,
     GadgetConstrainedResize,
 
     GadgetAnimationRenderLayer,

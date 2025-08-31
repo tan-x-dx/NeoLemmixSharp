@@ -1,10 +1,11 @@
-﻿using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
+﻿using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.GadgetBehaviours;
 
-public sealed class GadgetResizer : GadgetBehaviour
+public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
 {
-    private readonly HitBoxGadget _gadget;
+    private readonly GadgetIdentifier _gadgetIdentifier;
 
     private readonly int _tickDelay;
     private readonly int _dw;
@@ -12,15 +13,15 @@ public sealed class GadgetResizer : GadgetBehaviour
 
     private int _tickCount;
 
-    public GadgetResizer(
-        HitBoxGadget gadget,
+    public FreeResizeHitBoxGadgetBehaviour(
+        GadgetIdentifier gadgetIdentifier,
         int tickDelay,
         int dw,
         int dh)
-        : base(GadgetBehaviourType.GadgetResizeFree)
+        : base(GadgetBehaviourType.GadgetFreeResize)
     {
         _tickDelay = tickDelay;
-        _gadget = gadget;
+        _gadgetIdentifier = gadgetIdentifier;
         _dw = dw;
         _dh = dh;
     }
@@ -35,6 +36,7 @@ public sealed class GadgetResizer : GadgetBehaviour
 
         _tickCount = 0;
 
-        _gadget.Resize(_dw, _dh);
+        var gadget = (HitBoxGadget)LevelScreen.GadgetManager.AllItems[_gadgetIdentifier.GadgetId];
+        gadget.Resize(_dw, _dh);
     }
 }

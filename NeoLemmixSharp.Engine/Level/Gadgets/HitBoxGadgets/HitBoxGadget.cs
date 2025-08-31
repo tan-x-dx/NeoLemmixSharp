@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -132,21 +132,19 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         };
     }
 
-    public void Move(int dx, int dy)
+    public void Move(Point delta)
     {
         UpdatePreviousState();
 
-        var delta = new Point(dx, dy);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(CurrentGadgetBounds.Position + delta);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
-    public void SetPosition(int x, int y)
+    public void SetPosition(Point position)
     {
         UpdatePreviousState();
 
-        var newPosition = new Point(x, y);
-        CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(newPosition);
+        CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(position);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 

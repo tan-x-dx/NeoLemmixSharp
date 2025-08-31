@@ -10,6 +10,9 @@ public sealed class AlwaysTrueTrigger : GadgetTrigger
 
     public override void Tick()
     {
-        throw new NotImplementedException();
+        foreach (var behaviour in Behaviours)
+        {
+            RegisterCauseAndEffectData(behaviour.Id);
+        }
     }
 }

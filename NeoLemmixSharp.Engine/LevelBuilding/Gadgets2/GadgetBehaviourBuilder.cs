@@ -1,7 +1,9 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.GadgetBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -13,7 +15,7 @@ using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 
-public readonly struct GadgetBehaviourBuilder
+public readonly ref struct GadgetBehaviourBuilder
 {
     private readonly GadgetIdentifier _gadgetIdentifier;
     private readonly List<GadgetBehaviour> _gadgetBehaviours;
@@ -77,19 +79,19 @@ public readonly struct GadgetBehaviourBuilder
         {
             GadgetBehaviourType.None => throw new InvalidOperationException("Invalid Behaviour Type!"),
 
-            GadgetBehaviourType.GadgetOutputSignal => CreateGadgetOutputSignalBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetChangeInternalState => CreateGadgetChangeInternalStateBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetMoveFree => CreateGadgetMoveFreeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetMoveUntilPosition => CreateGadgetMoveUntilPositionBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetResizeFree => CreateGadgetResizeFreeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetConstrainedResize => CreateGadgetConstrainedResizeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetAnimationRenderLayer => CreateGadgetAnimationRenderLayerBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetAnimationSetFrame => CreateGadgetAnimationSetFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetAnimationIncrementFrame => CreateGadgetAnimationIncrementFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetAnimationDecrementFrame => CreateGadgetAnimationDecrementFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.LemmingBehaviour => CreateLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GlobalAdditionalTime => CreateGlobalAdditionalTimeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GlobalSkillCountChange => CreateGlobalSkillCountChangeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetOutputSignal => BuildGadgetOutputSignalBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetChangeInternalState => BuildGadgetChangeInternalStateBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetFreeMove => BuildGadgetMoveFreeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetConstrainedMove => BuildConstrainedMoveGadgetBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetFreeResize => BuildFreeResizeGadgetBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetConstrainedResize => BuildConstrainedResizeGadgetBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetAnimationRenderLayer => BuildGadgetAnimationRenderLayerBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetAnimationSetFrame => BuildGadgetAnimationSetFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetAnimationIncrementFrame => BuildGadgetAnimationIncrementFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetAnimationDecrementFrame => BuildGadgetAnimationDecrementFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.LemmingBehaviour => BuildLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GlobalAdditionalTime => BuildGlobalAdditionalTimeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GlobalSkillCountChange => BuildGlobalSkillCountChangeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
 
             _ => Helpers.ThrowUnknownEnumValueException<GadgetBehaviourType, GadgetBehaviour>(gadgetBehaviourDatum.GadgetBehaviourType),
         };
@@ -99,23 +101,22 @@ public readonly struct GadgetBehaviourBuilder
         return newGadgetBehaviour;
     }
 
-    private static GadgetBehaviour CreateGadgetOutputSignalBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static GadgetBehaviour BuildGadgetOutputSignalBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         throw new NotImplementedException();
     }
 
-    private static GadgetBehaviour CreateGadgetChangeInternalStateBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static GadgetBehaviour BuildGadgetChangeInternalStateBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         throw new NotImplementedException();
     }
 
-    private MoveFreeGadgetBehaviour CreateGadgetMoveFreeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private FreeMoveGadgetBehaviour BuildGadgetMoveFreeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         var tickDelay = gadgetBehaviourDatum.Data1;
-        var dx = gadgetBehaviourDatum.Data2;
-        var dy = gadgetBehaviourDatum.Data3;
+        var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data2);
 
-        return new MoveFreeGadgetBehaviour(_gadgetIdentifier, tickDelay, dx, dy)
+        return new FreeMoveGadgetBehaviour(_gadgetIdentifier, tickDelay, delta)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
@@ -123,42 +124,70 @@ public readonly struct GadgetBehaviourBuilder
         };
     }
 
-    private static GadgetBehaviour CreateGadgetMoveUntilPositionBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private ConstrainedMoveGadgetBehaviour BuildConstrainedMoveGadgetBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    {
+        var maxTriggerCountPerTick = gadgetBehaviourDatum.Data1 & 0xffff;
+        var tickDelay = gadgetBehaviourDatum.Data1 >>> 16;
+        var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data1);
+        var limit = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data2);
+
+        return new ConstrainedMoveGadgetBehaviour(_gadgetIdentifier, tickDelay, delta, limit)
+        {
+            GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
+            Id = newBehaviourId,
+            MaxTriggerCountPerTick = maxTriggerCountPerTick
+        };
+    }
+
+    private FreeResizeHitBoxGadgetBehaviour BuildFreeResizeGadgetBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    {
+        var tickDelay = gadgetBehaviourDatum.Data1;
+        var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data2);
+
+        return new FreeResizeHitBoxGadgetBehaviour(_gadgetIdentifier, tickDelay, delta.X, delta.Y)
+        {
+            GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
+            Id = newBehaviourId,
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+        };
+    }
+
+    private ConstrainedResizeHitBoxGadgetBehaviour BuildConstrainedResizeGadgetBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    {
+        var maxTriggerCountPerTick = gadgetBehaviourDatum.Data1 & 0xffff;
+        var tickDelay = gadgetBehaviourDatum.Data1 >>> 16;
+        var delta = gadgetBehaviourDatum.Data1;
+        var max = gadgetBehaviourDatum.Data2;
+
+        return new ConstrainedResizeHitBoxGadgetBehaviour(_gadgetIdentifier, tickDelay, delta, max)
+        {
+            GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
+            Id = newBehaviourId,
+            MaxTriggerCountPerTick = maxTriggerCountPerTick
+        };
+    }
+
+    private static GadgetBehaviour BuildGadgetAnimationRenderLayerBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         throw new NotImplementedException();
     }
 
-    private static GadgetBehaviour CreateGadgetResizeFreeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static GadgetBehaviour BuildGadgetAnimationSetFrameBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         throw new NotImplementedException();
     }
 
-    private static GadgetBehaviour CreateGadgetConstrainedResizeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static GadgetBehaviour BuildGadgetAnimationIncrementFrameBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         throw new NotImplementedException();
     }
 
-    private static GadgetBehaviour CreateGadgetAnimationRenderLayerBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static GadgetBehaviour BuildGadgetAnimationDecrementFrameBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         throw new NotImplementedException();
     }
 
-    private static GadgetBehaviour CreateGadgetAnimationSetFrameBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static GadgetBehaviour CreateGadgetAnimationIncrementFrameBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static GadgetBehaviour CreateGadgetAnimationDecrementFrameBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static LemmingBehaviour CreateLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static LemmingBehaviour BuildLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         var lemmingBehaviourType = (LemmingBehaviourType)gadgetBehaviourDatum.Data1;
 
@@ -166,19 +195,19 @@ public readonly struct GadgetBehaviourBuilder
         {
             LemmingBehaviourType.None => throw new InvalidOperationException("Invalid Behaviour Type!"),
 
-            LemmingBehaviourType.SetLemmingState => CreateSetStateLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            LemmingBehaviourType.ClearLemmingStates => CreateClearAllStatesLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            LemmingBehaviourType.SetLemmingAction => CreateSetActionLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            LemmingBehaviourType.KillLemming => CreateKillLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            LemmingBehaviourType.ForceLemmingFacingDirection => CreateForceFacingDirectionLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            LemmingBehaviourType.NullifyLemmingFallDistance => CreateNullifyFallDistanceLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            LemmingBehaviourType.LemmingMover => CreateMoveLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.SetLemmingState => BuildSetStateLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.ClearLemmingStates => BuildClearAllStatesLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.SetLemmingAction => BuildSetActionLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.KillLemming => BuildKillLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.ForceLemmingFacingDirection => BuildForceFacingDirectionLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.NullifyLemmingFallDistance => BuildNullifyFallDistanceLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.LemmingMover => BuildMoveLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
 
             _ => Helpers.ThrowUnknownEnumValueException<LemmingBehaviourType, LemmingBehaviour>(lemmingBehaviourType),
         };
     }
 
-    private static SetStateLemmingBehaviour CreateSetStateLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static SetStateLemmingBehaviour BuildSetStateLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         var lemmingStateChangerId = gadgetBehaviourDatum.Data2 & 0xffff;
         var lemmingStateChanger = ILemmingState.AllItems[lemmingStateChangerId];
@@ -194,7 +223,7 @@ public readonly struct GadgetBehaviourBuilder
         };
     }
 
-    private static ClearAllSkillsLemmingBehaviour CreateClearAllStatesLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static ClearAllSkillsLemmingBehaviour BuildClearAllStatesLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         return new ClearAllSkillsLemmingBehaviour()
         {
@@ -204,7 +233,7 @@ public readonly struct GadgetBehaviourBuilder
         };
     }
 
-    private static SetActionLemmingBehaviour CreateSetActionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static SetActionLemmingBehaviour BuildSetActionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         var lemmingAction = LemmingAction.AllItems[gadgetBehaviourDatum.Data2];
 
@@ -216,7 +245,7 @@ public readonly struct GadgetBehaviourBuilder
         };
     }
 
-    private static KillLemmingBehaviour CreateKillLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static KillLemmingBehaviour BuildKillLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         var rawLemmingRemovalReasonId = (uint)gadgetBehaviourDatum.Data2;
         var lemmingRemovalReason = LemmingRemovalReasonHelpers.GetEnumValue(rawLemmingRemovalReasonId);
@@ -229,7 +258,7 @@ public readonly struct GadgetBehaviourBuilder
         };
     }
 
-    private static ForceFacingDirectionLemmingBehaviour CreateForceFacingDirectionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static ForceFacingDirectionLemmingBehaviour BuildForceFacingDirectionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         var facingDirection = new FacingDirection(gadgetBehaviourDatum.Data2);
 
@@ -241,7 +270,7 @@ public readonly struct GadgetBehaviourBuilder
         };
     }
 
-    private static NullifyFallDistanceLemmingBehaviour CreateNullifyFallDistanceLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static NullifyFallDistanceLemmingBehaviour BuildNullifyFallDistanceLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         return new NullifyFallDistanceLemmingBehaviour()
         {
@@ -251,7 +280,7 @@ public readonly struct GadgetBehaviourBuilder
         };
     }
 
-    private static MoveLemmingBehaviour CreateMoveLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static MoveLemmingBehaviour BuildMoveLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data2);
 
@@ -263,13 +292,30 @@ public readonly struct GadgetBehaviourBuilder
         };
     }
 
-    private static GadgetBehaviour CreateGlobalAdditionalTimeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static AdditionalTimeBehaviour BuildGlobalAdditionalTimeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        throw new NotImplementedException();
+        var additionalTimeInSecods = gadgetBehaviourDatum.Data2;
+
+        return new AdditionalTimeBehaviour(additionalTimeInSecods)
+        {
+            GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
+            Id = newBehaviourId,
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+        };
     }
 
-    private static GadgetBehaviour CreateGlobalSkillCountChangeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static SkillCountChangeBehaviour BuildGlobalSkillCountChangeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        throw new NotImplementedException();
+        var lemmingSkillId = gadgetBehaviourDatum.Data1;
+        var skillCountDelta = gadgetBehaviourDatum.Data2 & 0xffff;
+        var overrideTribeId = gadgetBehaviourDatum.Data2 >>> 16;
+        var lemmingSkill = LemmingSkill.AllItems[lemmingSkillId];
+
+        return new SkillCountChangeBehaviour(lemmingSkill, overrideTribeId, skillCountDelta)
+        {
+            GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
+            Id = newBehaviourId,
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+        };
     }
 }

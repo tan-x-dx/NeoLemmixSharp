@@ -18,6 +18,16 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
 
     public ReadOnlySpan<GadgetBehaviour> Behaviours => new(GadgetBehaviours);
 
+    protected static void RegisterCauseAndEffectData(int gadgetBehaviourId)
+    {
+        LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(gadgetBehaviourId));
+    }
+
+    protected static void RegisterCauseAndEffectData(int gadgetBehaviourId, int lemmingId)
+    {
+        LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(gadgetBehaviourId, lemmingId));
+    }
+
     public abstract void Tick();
 
     public bool Equals(GadgetTrigger? other) => other is not null && Id == other.Id;

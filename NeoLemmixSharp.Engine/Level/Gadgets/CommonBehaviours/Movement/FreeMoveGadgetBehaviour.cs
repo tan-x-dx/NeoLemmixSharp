@@ -1,28 +1,26 @@
-﻿using NeoLemmixSharp.IO.Data.Level.Gadgets;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO.Data.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
 
-public sealed class MoveFreeGadgetBehaviour : GadgetBehaviour
+public sealed class FreeMoveGadgetBehaviour : GadgetBehaviour
 {
     private readonly GadgetIdentifier _gadgetIdentifier;
     private readonly int _tickDelay;
-    private readonly int _dx;
-    private readonly int _dy;
+    private readonly Point _delta;
 
     private int _tickCount;
 
-    public MoveFreeGadgetBehaviour(
+    public FreeMoveGadgetBehaviour(
         GadgetIdentifier gadgetIdentifier,
         int tickDelay,
-        int dx,
-        int dy)
-        : base(GadgetBehaviourType.GadgetMoveFree)
+        Point delta)
+        : base(GadgetBehaviourType.GadgetFreeMove)
     {
         _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;
-        _dx = dx;
-        _dy = dy;
+        _delta = delta;
     }
 
     protected override void PerformInternalBehaviour(int lemmingId)
@@ -36,6 +34,6 @@ public sealed class MoveFreeGadgetBehaviour : GadgetBehaviour
         _tickCount = 0;
 
         var gadget = (IMoveableGadget)LevelScreen.GadgetManager.AllItems[_gadgetIdentifier.GadgetId];
-        gadget.Move(_dx, _dy);
+        gadget.Move(_delta);
     }
 }

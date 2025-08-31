@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 
@@ -28,16 +28,14 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
         return true;
     }
 
-    public void Move(int dx, int dy)
+    public void Move(Point delta)
     {
-        var delta = new Point(dx, dy);
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(CurrentGadgetBounds.Position + delta);
     }
 
-    public void SetPosition(int x, int y)
+    public void SetPosition(Point position)
     {
-        var newPosition = new Point(x, y);
-        CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(newPosition);
+        CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(position);
     }
 
     public override GadgetState CurrentState => throw new NotImplementedException();
