@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+﻿using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 

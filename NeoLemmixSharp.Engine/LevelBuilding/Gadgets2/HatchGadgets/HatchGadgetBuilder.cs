@@ -1,11 +1,10 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Level.Gadgets.Hatch;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Hatch;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.HatchGadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HatchGadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HatchGadgets;
 
@@ -28,7 +27,6 @@ public readonly struct HatchGadgetBuilder
     public HatchGadget BuildHatchGadget(
         HatchGadgetArchetypeData gadgetArchetypeData,
         HatchGadgetInstanceData gadgetInstanceData,
-        LemmingManager lemmingManager,
         TribeManager tribeManager)
     {
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, gadgetInstanceData);
@@ -92,6 +90,8 @@ public readonly struct HatchGadgetBuilder
         Orientation orientation,
         FacingDirection facingDirection)
     {
+        throw new NotImplementedException();
+
         var stateName = GadgetBuildingHelpers.GetGadgetStateName(gadgetStateArchetypeData, gadgetStateInstanceData);
 
         var triggers = BuildTriggers(gadgetStateArchetypeData, gadgetStateInstanceData);

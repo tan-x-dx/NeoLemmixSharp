@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Reading;

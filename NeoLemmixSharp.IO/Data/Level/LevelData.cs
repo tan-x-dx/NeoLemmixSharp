@@ -2,7 +2,8 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Theme;

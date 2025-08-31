@@ -5,11 +5,12 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Level.Gadgets.HitBox;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadgetGadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;
 

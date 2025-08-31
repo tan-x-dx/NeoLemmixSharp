@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using NeoLemmixSharp.IO.FileFormats;

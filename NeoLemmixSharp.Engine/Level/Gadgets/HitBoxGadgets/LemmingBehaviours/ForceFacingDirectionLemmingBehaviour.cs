@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 

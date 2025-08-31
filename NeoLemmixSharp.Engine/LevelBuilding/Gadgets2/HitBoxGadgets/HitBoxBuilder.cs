@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;

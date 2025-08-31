@@ -1,9 +1,9 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Level.Gadgets.HitBox;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;

@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;

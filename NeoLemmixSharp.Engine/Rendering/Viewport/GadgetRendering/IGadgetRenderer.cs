@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Level.Gadgets;
+﻿using NeoLemmixSharp.IO.Data.Level.Gadget;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 

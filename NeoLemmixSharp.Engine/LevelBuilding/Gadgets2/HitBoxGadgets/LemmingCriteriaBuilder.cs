@@ -5,8 +5,8 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteri
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;

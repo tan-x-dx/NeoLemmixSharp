@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
 

@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;

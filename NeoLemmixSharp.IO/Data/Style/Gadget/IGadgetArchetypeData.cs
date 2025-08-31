@@ -11,6 +11,4 @@ public interface IGadgetArchetypeData
     GadgetName GadgetName { get; }
 
     Size BaseSpriteSize { get; }
-
-    IGadgetStateArchetypeData[] GadgetStates { get; }
 }

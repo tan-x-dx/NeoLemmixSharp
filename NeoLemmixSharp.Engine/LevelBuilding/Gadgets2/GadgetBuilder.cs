@@ -5,14 +5,17 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HatchGadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;
+using NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.LogicGateGadgets;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Level.Gadgets.Hatch;
-using NeoLemmixSharp.IO.Data.Level.Gadgets.HitBox;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.HatchGadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.LogicGateGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Hatch;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HatchGadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.LogicGateGadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 
@@ -71,7 +74,8 @@ public sealed class GadgetBuilder
         return gadgetArchetypeData switch
         {
             HitBoxGadgetArchetypeData hitBoxGadgetArchetypeData => BuildHitBoxGadget(hitBoxGadgetArchetypeData, (HitBoxGadgetInstanceData)gadgetInstanceData, lemmingManager, tribeManager),
-            HatchGadgetArchetypeData hatchGadgetArchetypeData => BuildHatchGadget(hatchGadgetArchetypeData, (HatchGadgetInstanceData)gadgetInstanceData, lemmingManager, tribeManager),
+            HatchGadgetArchetypeData hatchGadgetArchetypeData => BuildHatchGadget(hatchGadgetArchetypeData, (HatchGadgetInstanceData)gadgetInstanceData, tribeManager),
+            LogicGateGadgetArchetypeData logicGateGadgetArchetypeData => BuildLogicGateGadget(logicGateGadgetArchetypeData, (LogicGateGadgetInstanceData)gadgetInstanceData),
 
             _ => throw new NotImplementedException(),
         };
@@ -91,12 +95,18 @@ public sealed class GadgetBuilder
     private HatchGadget BuildHatchGadget(
         HatchGadgetArchetypeData hatchGadgetArchetypeData,
         HatchGadgetInstanceData hatchGadgetInstanceData,
-        LemmingManager lemmingManager,
         TribeManager tribeManager)
     {
         var hatchGadgetBuilder = new HatchGadgetBuilder(hatchGadgetInstanceData.Identifier, _gadgetTriggers, _gadgetBehaviours);
 
-        return hatchGadgetBuilder.BuildHatchGadget(hatchGadgetArchetypeData, hatchGadgetInstanceData, lemmingManager, tribeManager);
+        return hatchGadgetBuilder.BuildHatchGadget(hatchGadgetArchetypeData, hatchGadgetInstanceData, tribeManager);
+    }
+
+    private GadgetBase BuildLogicGateGadget(LogicGateGadgetArchetypeData logicGateGadgetArchetypeData, LogicGateGadgetInstanceData logicGateGadgetInstanceData)
+    {
+        var logicGateBuilder = new LogicGateBuilder(logicGateGadgetInstanceData.Identifier, _gadgetTriggers, _gadgetBehaviours);
+
+        return logicGateBuilder.BuildLogicGateGadget(logicGateGadgetArchetypeData, logicGateGadgetInstanceData);
     }
 
     public GadgetBase[] GetGadgets() => _gadgets.ToArray();

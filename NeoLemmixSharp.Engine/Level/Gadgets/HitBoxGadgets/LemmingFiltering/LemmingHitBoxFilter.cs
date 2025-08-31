@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using System.Diagnostics.Contracts;
 

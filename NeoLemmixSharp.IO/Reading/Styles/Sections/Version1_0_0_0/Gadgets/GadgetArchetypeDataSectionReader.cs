@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
 
@@ -45,10 +45,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         {
             GadgetType.HitBoxGadget => ReadHitBoxGadgetArchetypeData(reader, styleIdentifier, pieceName, gadgetName),
             GadgetType.HatchGadget => throw new NotImplementedException(),
-            GadgetType.AndGate => throw new NotImplementedException(),
-            GadgetType.OrGate => throw new NotImplementedException(),
-            GadgetType.NotGate => throw new NotImplementedException(),
-            GadgetType.XorGate => throw new NotImplementedException(),
+            GadgetType.LogicGate => throw new NotImplementedException(),
 
             _ => Helpers.ThrowUnknownEnumValueException<GadgetType, IGadgetArchetypeData>(gadgetType),
         };
