@@ -99,12 +99,21 @@ public readonly ref struct HitBoxGadgetBuilder
     {
         var stateName = GadgetBuildingHelpers.GetGadgetStateName(gadgetStateArchetypeData, gadgetStateInstanceData);
 
-        var hitBoxFilters = BuildHitBoxFilters(
-            gadgetStateArchetypeData,
-            gadgetStateInstanceData,
-            tribeManager,
-            instanceOrientation,
-            instanceFacingDirection);
+        ReadOnlySpan<HitBoxFilterData> mainHitBoxFilterData;
+        ReadOnlySpan<HitBoxFilterData> alternateHitBoxFilterData;
+
+        if (gadgetStateArchetypeData.HitBoxFilters.Length > 0)
+        {
+            mainHitBoxFilterData = gadgetStateArchetypeData.HitBoxFilters;
+            alternateHitBoxFilterData = gadgetStateInstanceData.CustomHitBoxFilters;
+        }
+        else
+        {
+            mainHitBoxFilterData = gadgetStateInstanceData.CustomHitBoxFilters;
+            alternateHitBoxFilterData = [];
+        }
+
+        var hitBoxFilters = BuildHitBoxFilters(mainHitBoxFilterData, alternateHitBoxFilterData, instanceOrientation, instanceFacingDirection, tribeManager);
 
         var hitBoxLookup = HitBoxBuilder.BuildHitBoxLookup(
             gadgetStateArchetypeData,
@@ -122,26 +131,12 @@ public readonly ref struct HitBoxGadgetBuilder
     }
 
     private LemmingHitBoxFilter[] BuildHitBoxFilters(
-        HitBoxGadgetStateArchetypeData gadgetStateArchetypeData,
-        HitBoxGadgetStateInstanceData gadgetStateInstanceData,
-        TribeManager tribeManager,
+        ReadOnlySpan<HitBoxFilterData> mainHitBoxFilterData,
+        ReadOnlySpan<HitBoxFilterData> alternateHitBoxFilterData,
         Orientation instanceOrientation,
-        FacingDirection instanceFacingDirection)
+        FacingDirection instanceFacingDirection,
+        TribeManager tribeManager)
     {
-        ReadOnlySpan<HitBoxFilterData> mainHitBoxFilterData;
-        ReadOnlySpan<HitBoxFilterData> alternateHitBoxFilterData;
-
-        if (gadgetStateArchetypeData.HitBoxFilters.Length > 0)
-        {
-            mainHitBoxFilterData = gadgetStateArchetypeData.HitBoxFilters;
-            alternateHitBoxFilterData = gadgetStateInstanceData.CustomHitBoxFilters;
-        }
-        else
-        {
-            mainHitBoxFilterData = gadgetStateInstanceData.CustomHitBoxFilters;
-            alternateHitBoxFilterData = [];
-        }
-
         var behaviourBuilder = new GadgetBehaviourBuilder(_gadgetIdentifier, _gadgetBehaviours);
         var result = Helpers.GetArrayForSize<LemmingHitBoxFilter>(mainHitBoxFilterData.Length);
 
@@ -186,17 +181,17 @@ public readonly ref struct HitBoxGadgetBuilder
         }
 
         return result;
+    }
 
-        static HitBoxFilterData? GetCorrespondingHitBoxFilterInstanceData(HitBoxFilterName hitBoxFilterName, ReadOnlySpan<HitBoxFilterData> hitBoxFilterData)
+    private static HitBoxFilterData? GetCorrespondingHitBoxFilterInstanceData(HitBoxFilterName hitBoxFilterName, ReadOnlySpan<HitBoxFilterData> hitBoxFilterData)
+    {
+        foreach (var hitBoxFilterDatum in hitBoxFilterData)
         {
-            foreach (var hitBoxFilterDatum in hitBoxFilterData)
-            {
-                if (hitBoxFilterDatum.HitBoxFilterName == hitBoxFilterName)
-                    return hitBoxFilterDatum;
-            }
-
-            return null;
+            if (hitBoxFilterDatum.HitBoxFilterName == hitBoxFilterName)
+                return hitBoxFilterDatum;
         }
+
+        return null;
     }
 
     private GadgetTrigger[] BuildGeneralTriggers(IGadgetStateArchetypeData gadgetStateArchetypeData, IGadgetStateInstanceData gadgetStateInstanceData)
