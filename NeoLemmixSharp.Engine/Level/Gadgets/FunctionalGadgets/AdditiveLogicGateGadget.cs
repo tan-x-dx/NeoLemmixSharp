@@ -1,34 +1,42 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public abstract class AdditiveLogicGateGadget : GadgetBase,
-    IBitBufferCreator<ArrayBitBuffer, AdditiveLogicGateGadget.AdditiveGateGadgetLinkInput>
+    IBitBufferCreator<ArrayBitBuffer, AdditiveLogicGateGadget.AdditiveLogicGateGadgetLinkInput>
 {
-    private readonly BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetLinkInput> _set;
-    private readonly int _numberOfInputs;
+    private readonly AdditiveLogicGateGadgetState _offState;
+    private readonly AdditiveLogicGateGadgetState _onState;
+
+    private AdditiveLogicGateGadgetState _currentState;
+
+    private readonly AdditiveLogicGateGadgetLinkInput[] _inputs;
+    private readonly BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveLogicGateGadgetLinkInput> _set;
 
     protected AdditiveLogicGateGadget(
-        AdditiveLogicGateGadgetState[] states,
-        int initialStateIndex,
-        ReadOnlySpan<GadgetTriggerName> inputNames)
-    // : base(states, initialStateIndex, inputNames.Length)
+        AdditiveLogicGateGadgetState offState,
+        AdditiveLogicGateGadgetState onState,
+        AdditiveLogicGateGadgetLinkInput[] inputs)
     {
-        _numberOfInputs = inputNames.Length;
-        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveGateGadgetLinkInput>(this);
+        _offState = offState;
+        _onState = onState;
+        _currentState = _offState;
 
-        for (var i = 0; i < inputNames.Length; i++)
+        _inputs = inputs;
+        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveLogicGateGadgetLinkInput>(this);
+
+        foreach (var input in _inputs)
         {
-            // var input = new AdditiveGateGadgetLinkInput(this);
-            // RegisterInput(input);
+            input.Gadget = this;
         }
     }
 
     public sealed override void Tick() { }
 
-    private void ReactToSignal(AdditiveGateGadgetLinkInput input, bool signal)
+    private void ReactToSignal(AdditiveLogicGateGadgetLinkInput input, bool signal)
     {
         var hasChanged = signal
             ? _set.Add(input)
@@ -36,50 +44,54 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         if (!hasChanged)
             return;
 
-        var isActive = EvaluateInputCount(_set.Count, _numberOfInputs);
-        //SetNextState(isActive ? 1 : 0);
-        // ChangeStates();
-    }
-
-    public sealed override AdditiveLogicGateGadgetState CurrentState => throw new NotImplementedException();
-
-    public sealed override void SetNextState(int stateIndex)
-    {
-        throw new NotImplementedException();
+        var isActive = EvaluateInputCount(_set.Count, _inputs.Length);
+        _currentState = isActive ? _onState : _offState;
     }
 
     protected abstract bool EvaluateInputCount(int numberOfTrueInputs, int numberOfInputs);
 
-    public sealed class AdditiveGateGadgetLinkInput : GadgetTrigger
-    {
-        private readonly AdditiveLogicGateGadget _gadget;
+    public sealed override AdditiveLogicGateGadgetState CurrentState => _currentState;
 
-        public AdditiveGateGadgetLinkInput(AdditiveLogicGateGadget gadget)
-            :base(0)
+    public sealed class AdditiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
+    {
+        private readonly OutputSignalBehaviour _signalBehaviour;
+        private readonly GadgetBehaviour _signalBehaviourCast;
+
+        public AdditiveLogicGateGadget Gadget { get; set; } = null!;
+
+        public AdditiveLogicGateGadgetLinkInput(OutputSignalBehaviour signalBehaviour)
+            : base(GadgetTriggerType.GadgetLinkTrigger)
         {
-            _gadget = gadget;
+            _signalBehaviour = signalBehaviour;
+            _signalBehaviourCast = signalBehaviour;
         }
 
         public override void Tick()
         {
+            //_gadget.ReactToSignal(this, signal);
         }
 
-        // public override void ReactToSignal(bool signal) => _gadget.ReactToSignal(this, signal);
+        public override ReadOnlySpan<GadgetBehaviour> Behaviours => new(in _signalBehaviourCast);
+
+        public void ReactToSignal(bool signal)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    int IPerfectHasher<AdditiveGateGadgetLinkInput>.NumberOfItems => _numberOfInputs;
-    int IPerfectHasher<AdditiveGateGadgetLinkInput>.Hash(AdditiveGateGadgetLinkInput item) => item.Id;
-    AdditiveGateGadgetLinkInput IPerfectHasher<AdditiveGateGadgetLinkInput>.UnHash(int index) => throw new NotSupportedException("Why are you doing this? Stop it.");
-    void IBitBufferCreator<ArrayBitBuffer, AdditiveGateGadgetLinkInput>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_numberOfInputs);
+    int IPerfectHasher<AdditiveLogicGateGadgetLinkInput>.NumberOfItems => _inputs.Length;
+    int IPerfectHasher<AdditiveLogicGateGadgetLinkInput>.Hash(AdditiveLogicGateGadgetLinkInput item) => item.Id;
+    AdditiveLogicGateGadgetLinkInput IPerfectHasher<AdditiveLogicGateGadgetLinkInput>.UnHash(int index) => throw new NotSupportedException("Why are you doing this? Stop it.");
+    void IBitBufferCreator<ArrayBitBuffer, AdditiveLogicGateGadgetLinkInput>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_inputs.Length);
 }
 
 public sealed class AndGateGadget : AdditiveLogicGateGadget
 {
     public AndGateGadget(
-        AdditiveLogicGateGadgetState[] states,
-        int initialStateIndex,
-        ReadOnlySpan<GadgetTriggerName> inputNames)
-        : base(states, initialStateIndex, inputNames)
+        AdditiveLogicGateGadgetState offState,
+        AdditiveLogicGateGadgetState onState,
+        AdditiveLogicGateGadgetLinkInput[] inputs)
+        : base(offState, onState, inputs)
     {
     }
 
@@ -92,10 +104,10 @@ public sealed class AndGateGadget : AdditiveLogicGateGadget
 public sealed class OrGateGadget : AdditiveLogicGateGadget
 {
     public OrGateGadget(
-        AdditiveLogicGateGadgetState[] states,
-        int initialStateIndex,
-        ReadOnlySpan<GadgetTriggerName> inputNames)
-        : base(states, initialStateIndex, inputNames)
+        AdditiveLogicGateGadgetState offState,
+        AdditiveLogicGateGadgetState onState,
+        AdditiveLogicGateGadgetLinkInput[] inputs)
+        : base(offState, onState, inputs)
     {
     }
 

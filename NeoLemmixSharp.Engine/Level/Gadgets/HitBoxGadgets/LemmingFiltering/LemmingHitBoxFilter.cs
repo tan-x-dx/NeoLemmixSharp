@@ -57,4 +57,6 @@ public sealed class LemmingHitBoxFilter : GadgetTrigger
 
         return true;
     }
+
+    public override ReadOnlySpan<GadgetBehaviour> Behaviours => [];
 }

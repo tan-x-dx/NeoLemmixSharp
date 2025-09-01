@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.LogicGateGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.LogicGateGadget;
@@ -48,6 +49,34 @@ public readonly ref struct LogicGateBuilder
     }
 
     private GadgetState[] BuildLogicGateStates(LogicGateGadgetArchetypeData gadgetArchetypeData, LogicGateGadgetInstanceData gadgetInstanceData, GadgetBounds gadgetBounds)
+    {
+        return gadgetArchetypeData.LogicGateGadgetType switch
+        {
+            LogicGateGadgetType.AndGate => BuildAndGateStates(gadgetArchetypeData, gadgetInstanceData, gadgetBounds),
+            LogicGateGadgetType.OrGate => BuildOrGateStates(gadgetArchetypeData, gadgetInstanceData, gadgetBounds),
+            LogicGateGadgetType.NotGate => BuildNotGateStates(gadgetArchetypeData, gadgetInstanceData, gadgetBounds),
+            LogicGateGadgetType.XorGate => BuildXorGateStates(gadgetArchetypeData, gadgetInstanceData, gadgetBounds),
+
+            _ => Helpers.ThrowUnknownEnumValueException<LogicGateGadgetType, GadgetState[]>(gadgetArchetypeData.LogicGateGadgetType),
+        };
+    }
+
+    private GadgetState[] BuildAndGateStates(LogicGateGadgetArchetypeData gadgetArchetypeData, LogicGateGadgetInstanceData gadgetInstanceData, GadgetBounds gadgetBounds)
+    {
+        throw new NotImplementedException();
+    }
+
+    private GadgetState[] BuildOrGateStates(LogicGateGadgetArchetypeData gadgetArchetypeData, LogicGateGadgetInstanceData gadgetInstanceData, GadgetBounds gadgetBounds)
+    {
+        throw new NotImplementedException();
+    }
+
+    private GadgetState[] BuildNotGateStates(LogicGateGadgetArchetypeData gadgetArchetypeData, LogicGateGadgetInstanceData gadgetInstanceData, GadgetBounds gadgetBounds)
+    {
+        throw new NotImplementedException();
+    }
+
+    private GadgetState[] BuildXorGateStates(LogicGateGadgetArchetypeData gadgetArchetypeData, LogicGateGadgetInstanceData gadgetInstanceData, GadgetBounds gadgetBounds)
     {
         throw new NotImplementedException();
     }

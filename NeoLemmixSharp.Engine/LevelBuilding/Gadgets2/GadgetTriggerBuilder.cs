@@ -84,11 +84,10 @@ public readonly ref struct GadgetTriggerBuilder
         int newTriggerId,
         GadgetBehaviour[] behaviours)
     {
-        return new AlwaysTrueTrigger()
+        return new AlwaysTrueTrigger(behaviours)
         {
             TriggerName = gadgetTriggerDatum.GadgetTriggerName,
-            Id = newTriggerId,
-            GadgetBehaviours = behaviours,
+            Id = newTriggerId
         };
     }
 
@@ -97,11 +96,10 @@ public readonly ref struct GadgetTriggerBuilder
         int newTriggerId,
         GadgetBehaviour[] behaviours)
     {
-        return new GadgetLinkTrigger()
+        return new GadgetLinkTrigger(behaviours)
         {
             TriggerName = gadgetTriggerDatum.GadgetTriggerName,
-            Id = newTriggerId,
-            GadgetBehaviours = behaviours,
+            Id = newTriggerId
         };
     }
 

@@ -1,18 +1,25 @@
-﻿using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public abstract class SubtractiveLogicGateGadget : GadgetBase
 {
+    private readonly SubtractiveLogicGateGadgetState _offState;
+    private readonly SubtractiveLogicGateGadgetState _onState;
+
+    private SubtractiveLogicGateGadgetState _currentState;
     private bool _shouldTick;
 
     protected SubtractiveLogicGateGadget(
-        GadgetState[] states,
-        int initialStateIndex,
-        int expectedNumberOfInputs)
-    //: base(states, initialStateIndex, expectedNumberOfInputs)
+        SubtractiveLogicGateGadgetState offState,
+        SubtractiveLogicGateGadgetState onState)
     {
+        _offState = offState;
+        _onState = onState;
+
+        _currentState = _offState;
     }
 
     public sealed override void Tick()
@@ -23,32 +30,38 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
         _shouldTick = false;
 
         var isActive = EvaluateInputs();
-        //   SetNextState(isActive ? 1 : 0);
-    }
-
-    public sealed override GadgetState CurrentState => throw new NotImplementedException();
-
-    public sealed override void SetNextState(int stateIndex)
-    {
-        throw new NotImplementedException();
+        _currentState = isActive ? _onState : _offState;
     }
 
     protected abstract bool EvaluateInputs();
 
-    public sealed class SubtractiveLogicGateGadgetLinkInput : GadgetTrigger
+    public sealed override SubtractiveLogicGateGadgetState CurrentState => _currentState;
+
+    public sealed class SubtractiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
     {
-        private readonly SubtractiveLogicGateGadget _gadget;
+        private readonly OutputSignalBehaviour _signalBehaviour;
+        private readonly GadgetBehaviour _signalBehaviourCast;
+
+        public SubtractiveLogicGateGadget Gadget { get; set; }
 
         public bool Signal { get; private set; }
 
-        public SubtractiveLogicGateGadgetLinkInput(SubtractiveLogicGateGadget gadget)
-            : base(0)
+        public SubtractiveLogicGateGadgetLinkInput(OutputSignalBehaviour signalBehaviour)
+            : base(GadgetTriggerType.GadgetLinkTrigger)
         {
-            _gadget = gadget;
+            _signalBehaviour = signalBehaviour;
+            _signalBehaviourCast = signalBehaviour;
         }
 
         public override void Tick()
         {
+        }
+
+        public override ReadOnlySpan<GadgetBehaviour> Behaviours => new(in _signalBehaviourCast);
+
+        public void ReactToSignal(bool signal)
+        {
+            throw new NotImplementedException();
         }
 
         /* public override void ReactToSignal(bool signal)
@@ -64,13 +77,13 @@ public sealed class NotGateGadget : SubtractiveLogicGateGadget
     private readonly SubtractiveLogicGateGadgetLinkInput _input;
 
     public NotGateGadget(
-        GadgetState[] states,
-        int initialStateIndex,
-        GadgetTriggerName inputName)
-        : base(states, initialStateIndex, 1)
+        SubtractiveLogicGateGadgetState offState,
+        SubtractiveLogicGateGadgetState onState,
+        SubtractiveLogicGateGadgetLinkInput input)
+        : base(offState, onState)
     {
-        // _input = new SubtractiveLogicGateGadgetLinkInput(-1, inputName, this);
-        // RegisterInput(_input);
+        _input = input;
+        _input.Gadget = this;
     }
 
     protected override bool EvaluateInputs()
@@ -81,34 +94,30 @@ public sealed class NotGateGadget : SubtractiveLogicGateGadget
 
 public sealed class XorGateGadget : SubtractiveLogicGateGadget
 {
+    private readonly SubtractiveLogicGateGadgetLinkInput _input0;
     private readonly SubtractiveLogicGateGadgetLinkInput _input1;
-    private readonly SubtractiveLogicGateGadgetLinkInput _input2;
 
     public XorGateGadget(
-        GadgetState[] states,
-        int initialStateIndex,
-        GadgetTriggerName input1Name,
-        GadgetTriggerName input2Name)
-        : base(states, initialStateIndex, 2)
+        SubtractiveLogicGateGadgetState offState,
+        SubtractiveLogicGateGadgetState onState,
+        SubtractiveLogicGateGadgetLinkInput input0,
+        SubtractiveLogicGateGadgetLinkInput input1)
+        : base(offState, onState)
     {
-        // _input1 = new SubtractiveLogicGateGadgetLinkInput(-1, input1Name, this);
-        // _input2 = new SubtractiveLogicGateGadgetLinkInput(-1, input2Name, this);
-        // RegisterInput(_input1);
-        // RegisterInput(_input2);
+        _input0 = input0;
+        _input1 = input1;
+        _input0.Gadget = this;
+        _input1.Gadget = this;
     }
 
     protected override bool EvaluateInputs()
     {
-        return _input1.Signal ^ _input2.Signal;
+        return _input0.Signal ^ _input1.Signal;
     }
 }
 
 public sealed class SubtractiveLogicGateGadgetState : GadgetState
 {
-    public SubtractiveLogicGateGadgetState(GadgetTrigger[] gadgetTriggers) 
-    {
-    }
-
     protected override void OnTick()
     {
         throw new NotImplementedException();

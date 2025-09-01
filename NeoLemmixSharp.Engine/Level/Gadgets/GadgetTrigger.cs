@@ -6,7 +6,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
 {
-    public required GadgetBehaviour[] GadgetBehaviours { private get; init; }
     public required GadgetTriggerName TriggerName { get; init; }
     public required int Id { get; init; }
     public GadgetTriggerType TriggerType { get; }
@@ -16,7 +15,7 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
         TriggerType = triggerType;
     }
 
-    public ReadOnlySpan<GadgetBehaviour> Behaviours => new(GadgetBehaviours);
+    public abstract ReadOnlySpan<GadgetBehaviour> Behaviours { get; }
 
     protected static void RegisterCauseAndEffectData(int gadgetBehaviourId)
     {

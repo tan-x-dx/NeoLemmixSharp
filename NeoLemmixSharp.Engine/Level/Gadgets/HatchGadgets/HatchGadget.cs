@@ -10,6 +10,10 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
     public HatchSpawnData HatchSpawnData { get; }
     public Point SpawnPointOffset { get; }
 
+    private HatchGadgetState _currentState;
+
+    public override HatchGadgetState CurrentState => _currentState;
+
     public HatchGadget(
         HatchGadgetState[] states,
         int initialStateIndex,
@@ -36,12 +40,5 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
     public void SetPosition(Point position)
     {
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(position);
-    }
-
-    public override GadgetState CurrentState => throw new NotImplementedException();
-
-    public override void SetNextState(int stateIndex)
-    {
-        throw new NotImplementedException();
     }
 }

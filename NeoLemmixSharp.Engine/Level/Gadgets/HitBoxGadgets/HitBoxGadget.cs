@@ -77,11 +77,6 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         _previousState = _currentState;
     }
 
-    public override void SetNextState(int stateIndex)
-    {
-        _nextStateIndex = stateIndex;
-    }
-
     public bool ContainsPoint(Orientation orientation, Point levelPosition)
     {
         return CurrentState
