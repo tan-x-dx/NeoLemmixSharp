@@ -6,32 +6,32 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class TickOrderedList<TTickOrderedData> : IDisposable
-    where TTickOrderedData : unmanaged, ITickOrderedData
+public sealed class LevelEventList<TEventData> : IDisposable
+    where TEventData : unmanaged, ILevelEventData
 {
     private RawArray _buffer;
     private int _bufferLength;
     private int _count;
 
-    public TickOrderedList(int initialCapacity)
+    public LevelEventList(int initialCapacity)
     {
         _bufferLength = initialCapacity;
-        _buffer = Helpers.AllocateBuffer<TTickOrderedData>(_bufferLength);
+        _buffer = Helpers.AllocateBuffer<TEventData>(_bufferLength);
     }
 
     public int Count => _count;
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private unsafe ReadOnlySpan<TTickOrderedData> GetReadOnlySpan(int start, int length)
+    private unsafe ReadOnlySpan<TEventData> GetReadOnlySpan(int start, int length)
     {
-        TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + start;
+        TEventData* pointer = (TEventData*)_buffer.Handle + start;
 
-        return new ReadOnlySpan<TTickOrderedData>(pointer, length);
+        return new ReadOnlySpan<TEventData>(pointer, length);
     }
 
     [Pure]
-    public ReadOnlySpan<TTickOrderedData> Slice(int start, int length)
+    public ReadOnlySpan<TEventData> Slice(int start, int length)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(start);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
@@ -43,14 +43,14 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
     }
 
     [Pure]
-    public ReadOnlySpan<TTickOrderedData> GetSliceToEnd(int start)
+    public ReadOnlySpan<TEventData> GetSliceToEnd(int start)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(start);
 
         return GetReadOnlySpan(start, Math.Max(0, _count - start));
     }
 
-    public ReadOnlySpan<TTickOrderedData> RewindBackTo(int tick)
+    public ReadOnlySpan<TEventData> RewindBackTo(int tick)
     {
         var index = 0;
 
@@ -65,28 +65,16 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
     }
 
     [Pure]
-    public unsafe bool HasDataForTick(int tick)
+    public unsafe bool TryGetDataForTick(int tick, out TEventData* dataPointer)
     {
-        if (_count == 0)
-            return false;
-
-        return TryGetSmallestIndexOfTick(tick, out _);
-    }
-
-    [Pure]
-    public unsafe ref readonly TTickOrderedData TryGetDataForTick(int tick)
-    {
-        if (_count == 0)
-            return ref Unsafe.NullRef<TTickOrderedData>();
-
-        if (TryGetSmallestIndexOfTick(tick, out var index))
+        if (_count > 0 && TryGetSmallestIndexOfTick(tick, out var index))
         {
-            TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + index;
-
-            return ref *pointer;
+            dataPointer = (TEventData*)_buffer.Handle + index;
+            return true;
         }
 
-        return ref Unsafe.NullRef<TTickOrderedData>();
+        dataPointer = default;
+        return false;
     }
 
     /// <summary>
@@ -112,7 +100,7 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
             return false;
         }
 
-        TTickOrderedData* basePointer = (TTickOrderedData*)_buffer.Handle;
+        TEventData* basePointer = (TEventData*)_buffer.Handle;
         // Edge case: ALL items are >= tick
         if (basePointer->TickNumber >= tick)
         {
@@ -135,7 +123,7 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
         while (upperTestIndex - lowerTestIndex > 1)
         {
             var bestGuessIndex = (lowerTestIndex + upperTestIndex) >>> 1;
-            TTickOrderedData* pointer = basePointer + bestGuessIndex;
+            TEventData* pointer = basePointer + bestGuessIndex;
 
             if (pointer->TickNumber >= tick)
             {
@@ -151,15 +139,15 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
         return (basePointer + upperTestIndex)->TickNumber == tick;
     }
 
-    public unsafe ref TTickOrderedData GetNewDataRef()
+    public unsafe TEventData* GetNewDataPointer()
     {
         if (_count == _bufferLength)
             DoubleByteBufferLength();
 
-        TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + _count;
+        TEventData* pointer = (TEventData*)_buffer.Handle + _count;
         _count++;
 
-        return ref *pointer;
+        return pointer;
     }
 
     private void DoubleByteBufferLength()
@@ -177,7 +165,7 @@ public sealed class TickOrderedList<TTickOrderedData> : IDisposable
         if (_count == 0)
             return -1;
 
-        TTickOrderedData* pointer = (TTickOrderedData*)_buffer.Handle + (_count - 1);
+        TEventData* pointer = (TEventData*)_buffer.Handle + (_count - 1);
 
         return pointer->TickNumber;
     }

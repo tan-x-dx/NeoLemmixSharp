@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public interface ITickOrderedData
+public interface ILevelEventData
 {
     int TickNumber { get; }
 }
