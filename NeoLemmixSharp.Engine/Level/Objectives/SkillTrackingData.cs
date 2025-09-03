@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
-public sealed class SkillTrackingData : ISnapshotDataConvertible<SkillSetSnapshotData>
+public sealed class SkillTrackingData : ISnapshotDataConvertible
 {
     public LemmingSkill Skill { get; }
     public Tribe? Tribe { get; }
@@ -89,18 +89,22 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible<SkillSetSnapsho
 
     public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<SkillSetSnapshotData>();
 
-    public unsafe int WriteToSnapshotData(SkillSetSnapshotData* snapshotDataPointer)
+    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
     {
-        *snapshotDataPointer = new SkillSetSnapshotData(SkillTrackingDataId, _additionalQuantity, _amountUsed, _currentSkillLimit);
+        SkillSetSnapshotData* skillSetSnapshotDataPointer = (SkillSetSnapshotData*)snapshotDataPointer;
+
+        *skillSetSnapshotDataPointer = new SkillSetSnapshotData(SkillTrackingDataId, _additionalQuantity, _amountUsed, _currentSkillLimit);
 
         return 1;
     }
 
-    public unsafe int SetFromSnapshotData(SkillSetSnapshotData* snapshotDataPointer)
+    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
     {
-        _additionalQuantity = snapshotDataPointer->AdditionalQuantity;
-        _amountUsed = snapshotDataPointer->AmountUsed;
-        _currentSkillLimit = snapshotDataPointer->CurrentSkillLimit;
+        SkillSetSnapshotData* skillSetSnapshotDataPointer = (SkillSetSnapshotData*)snapshotDataPointer;
+
+        _additionalQuantity = skillSetSnapshotDataPointer->AdditionalQuantity;
+        _amountUsed = skillSetSnapshotDataPointer->AmountUsed;
+        _currentSkillLimit = skillSetSnapshotDataPointer->CurrentSkillLimit;
 
         return 1;
     }

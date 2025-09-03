@@ -5,7 +5,6 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -13,7 +12,7 @@ public sealed class GadgetManager :
     IBitBufferCreator<RawBitBuffer, HitBoxGadget>,
     IBitBufferCreator<RawBitBuffer, GadgetBase>,
     IItemManager<GadgetBase>,
-    ISnapshotDataConvertible<int>,
+    ISnapshotDataConvertible,
     IInitialisable,
     IDisposable
 {
@@ -122,13 +121,13 @@ public sealed class GadgetManager :
         return 1;
     }
 
-    public unsafe int WriteToSnapshotData(int* snapshotDataPointer)
+    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
     {
         *snapshotDataPointer = 0;
         return 1;
     }
 
-    public unsafe int SetFromSnapshotData(int* snapshotDataPointer)
+    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
     {
         ResetGadgetPositions();
         return 1;

@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<byte>
+public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible
 {
     private readonly int _requiredNumberOfBytesForSnapshotting;
     public required GadgetName GadgetName { get; init; }

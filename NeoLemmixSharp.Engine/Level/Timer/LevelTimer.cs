@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
-public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData>
+public sealed class LevelTimer : ISnapshotDataConvertible
 {
     private const int NumberOfTimerChars = 6;
 
@@ -157,16 +157,20 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
 
     public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LevelTimerSnapshotData>();
 
-    public unsafe int WriteToSnapshotData(LevelTimerSnapshotData* snapshotDataPointer)
+    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
     {
-        *snapshotDataPointer = new LevelTimerSnapshotData(_additionalSeconds);
+        LevelTimerSnapshotData* levelTimerSnapshotDataPointer = (LevelTimerSnapshotData*)snapshotDataPointer;
+
+        *levelTimerSnapshotDataPointer = new LevelTimerSnapshotData(_additionalSeconds);
 
         return 1;
     }
 
-    public unsafe int SetFromSnapshotData(LevelTimerSnapshotData* snapshotDataPointer)
+    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
     {
-        _additionalSeconds = snapshotDataPointer->AdditionalSeconds;
+        LevelTimerSnapshotData* levelTimerSnapshotDataPointer = (LevelTimerSnapshotData*)snapshotDataPointer;
+
+        _additionalSeconds = levelTimerSnapshotDataPointer->AdditionalSeconds;
 
         return 1;
     }

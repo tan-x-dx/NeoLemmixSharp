@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapshotDataConvertible<LemmingSnapshotData>
+public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapshotDataConvertible
 {
     public static Lemming SimulationLemming { get; } = new();
 
@@ -515,14 +515,16 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
     public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LemmingSnapshotData>();
 
-    public unsafe int WriteToSnapshotData(LemmingSnapshotData* lemmingSnapshotDataPointer)
+    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
     {
-        *lemmingSnapshotDataPointer = new LemmingSnapshotData(this);
+        // *lemmingSnapshotDataPointer = new LemmingSnapshotData(this);
         return 1;
     }
 
-    public unsafe int SetFromSnapshotData(LemmingSnapshotData* lemmingSnapshotDataPointer)
+    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
     {
+        LemmingSnapshotData* lemmingSnapshotDataPointer = (LemmingSnapshotData*)snapshotDataPointer;
+
         if (Id != lemmingSnapshotDataPointer->Id)
             throw new InvalidOperationException("Mismatching IDs!");
 
