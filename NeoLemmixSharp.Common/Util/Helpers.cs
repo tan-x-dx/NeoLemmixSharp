@@ -24,11 +24,13 @@ public static class Helpers
             : new T[size];
     }
 
-    public static unsafe RawArray CreateBuffer<T>(int numberOfItems)
+    public static unsafe RawArray AllocateBuffer<T>(int numberOfItems)
         where T : unmanaged
     {
         var bufferLengthInBytes = numberOfItems * sizeof(T);
-        return new RawArray(bufferLengthInBytes);
+        var result = new RawArray(bufferLengthInBytes);
+        result.AsSpan().Clear();
+        return result;
     }
 
     [Pure]
@@ -144,5 +146,20 @@ public static class Helpers
         }
 
         return null;
+    }
+
+    public static ReadOnlySpan<T> CombineSpans<T>(ReadOnlySpan<T> firstSpan, ReadOnlySpan<T> secondSpan)
+    {
+        if (firstSpan.Length == 0)
+            return secondSpan;
+        if (secondSpan.Length == 0)
+            return firstSpan;
+
+        var newArray = new T[firstSpan.Length + secondSpan.Length];
+
+        firstSpan.CopyTo(newArray);
+        secondSpan.CopyTo(new Span<T>(newArray, firstSpan.Length, secondSpan.Length));
+
+        return newArray;
     }
 }

@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.Skills;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
-public readonly struct SkillAssignmentData : ITickOrderedData
+public readonly struct SkillAssignmentData : ILevelEventData
 {
     public readonly int Tick;
     public readonly int SkillId;

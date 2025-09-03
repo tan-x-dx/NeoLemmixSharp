@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -14,12 +13,6 @@ public interface IBitBuffer
     Span<uint> AsSpan();
     [Pure]
     ReadOnlySpan<uint> AsReadOnlySpan();
-}
-
-public interface IBitBufferCreator<TBuffer>
-    where TBuffer : struct, IBitBuffer
-{
-    void CreateBitBuffer(int numberOfItems, out TBuffer buffer);
 }
 
 [InlineArray(BitBuffer32Length)]
@@ -62,28 +55,9 @@ public readonly struct ArrayBitBuffer : IBitBuffer
     public ArrayBitBuffer(uint[] array, int start, int length)
     {
         _array = array;
-
-        // Shamelessly stolen from the dotNet source for spans...
-#if TARGET_64BIT
-            // Since start and length are both 32-bit, their sum can be computed across a 64-bit domain
-            // without loss of fidelity. The cast to uint before the cast to ulong ensures that the
-            // extension from 32- to 64-bit is zero-extending rather than sign-extending. The end result
-            // of this is that if either input is negative or if the input sum overflows past Int32.MaxValue,
-            // that information is captured correctly in the comparison against the backing _length field.
-            // We don't use this same mechanism in a 32-bit process due to the overhead of 64-bit arithmetic.
-            if ((ulong)(uint)start + (ulong)(uint)length > (ulong)(uint)array.Length)
-                ThrowArgumentOutOfRangeException();
-#else
-        if ((uint)start > (uint)array.Length || (uint)length > (uint)(array.Length - start))
-            ThrowArgumentOutOfRangeException();
-#endif
-
         _start = start;
         _length = length;
     }
-
-    [DoesNotReturn]
-    private static void ThrowArgumentOutOfRangeException() => throw new ArgumentOutOfRangeException();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<uint> AsSpan() => new(_array, _start, _length);
@@ -94,16 +68,18 @@ public readonly struct ArrayBitBuffer : IBitBuffer
 public unsafe readonly struct RawBitBuffer : IBitBuffer
 {
     private readonly void* _pointer;
-    public int Length { get; }
+    private readonly int _length;
+
+    public int Length => _length;
 
     public RawBitBuffer(void* pointer, int length)
     {
         _pointer = pointer;
-        Length = length;
+        _length = length;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Span<uint> AsSpan() => new(_pointer, Length);
+    public Span<uint> AsSpan() => new(_pointer, _length);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlySpan<uint> AsReadOnlySpan() => new(_pointer, Length);
+    public ReadOnlySpan<uint> AsReadOnlySpan() => new(_pointer, _length);
 }

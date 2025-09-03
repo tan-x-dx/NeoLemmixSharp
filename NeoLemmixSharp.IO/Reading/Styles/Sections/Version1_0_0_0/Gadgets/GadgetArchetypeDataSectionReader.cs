@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
 
@@ -37,7 +37,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         var pieceName = new PieceIdentifier(_stringIdLookup[pieceId]);
 
         int nameId = reader.Read16BitUnsignedInteger();
-        var gadgetName = _stringIdLookup[nameId];
+        var gadgetName = new GadgetName(_stringIdLookup[nameId]);
 
         var gadgetType = (GadgetType)reader.Read8BitUnsignedInteger();
 
@@ -45,10 +45,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         {
             GadgetType.HitBoxGadget => ReadHitBoxGadgetArchetypeData(reader, styleIdentifier, pieceName, gadgetName),
             GadgetType.HatchGadget => throw new NotImplementedException(),
-            GadgetType.AndGate => throw new NotImplementedException(),
-            GadgetType.OrGate => throw new NotImplementedException(),
-            GadgetType.NotGate => throw new NotImplementedException(),
-            GadgetType.XorGate => throw new NotImplementedException(),
+            GadgetType.LogicGate => throw new NotImplementedException(),
 
             _ => Helpers.ThrowUnknownEnumValueException<GadgetType, IGadgetArchetypeData>(gadgetType),
         };
@@ -86,7 +83,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
          return result;*/
     }
 
-    private HitBoxGadgetArchetypeData ReadHitBoxGadgetArchetypeData(RawStyleFileDataReader reader, StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier, string gadgetName)
+    private HitBoxGadgetArchetypeData ReadHitBoxGadgetArchetypeData(RawStyleFileDataReader reader, StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier, GadgetName gadgetName)
     {
         uint rawResizeType = reader.Read8BitUnsignedInteger();
         var resizeType = ReadWriteHelpers.DecodeResizeType(rawResizeType);

@@ -29,7 +29,14 @@ public interface IPerfectHasher<T> : IComparer<T>
     }
 }
 
-public interface IEnumIdentifierHelper<TEnum, TBuffer> : IPerfectHasher<TEnum>, IBitBufferCreator<TBuffer>
+public interface IBitBufferCreator<TBuffer, T> : IPerfectHasher<T>
+    where TBuffer : struct, IBitBuffer
+    where T : notnull
+{
+    void CreateBitBuffer(out TBuffer buffer);
+}
+
+public interface IEnumIdentifierHelper<TBuffer, TEnum> : IBitBufferCreator<TBuffer, TEnum>
     where TEnum : unmanaged, Enum
     where TBuffer : struct, IBitBuffer
 {

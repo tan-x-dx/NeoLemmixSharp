@@ -1,12 +1,14 @@
-﻿namespace NeoLemmixSharp.IO.Data.Style.Gadget;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 
 public interface IGadgetArchetypeData
 {
-    StyleIdentifier StyleIdentifier { get; }
-    PieceIdentifier PieceIdentifier { get; }
-    string GadgetName { get; }
-
     GadgetType GadgetType { get; }
 
-    IGadgetStateArchetypeData[] GadgetStates { get; }
+    StyleIdentifier StyleIdentifier { get; }
+    PieceIdentifier PieceIdentifier { get; }
+    GadgetName GadgetName { get; }
+
+    Size BaseSpriteSize { get; }
 }

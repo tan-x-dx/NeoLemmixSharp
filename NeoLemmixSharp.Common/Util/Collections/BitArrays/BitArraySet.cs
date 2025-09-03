@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnlySet<T>
-    where TPerfectHasher : IPerfectHasher<T>, IBitBufferCreator<TBuffer>
+    where TPerfectHasher : IBitBufferCreator<TBuffer, T>
     where TBuffer : struct, IBitBuffer
     where T : notnull
 {
@@ -22,7 +22,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     {
         _hasher = hasher;
         var numberOfItems = _hasher.NumberOfItems;
-        _hasher.CreateBitBuffer(numberOfItems, out _bits);
+        _hasher.CreateBitBuffer(out _bits);
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 

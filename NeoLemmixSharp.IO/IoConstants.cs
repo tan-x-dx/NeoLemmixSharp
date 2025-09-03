@@ -7,6 +7,9 @@ public static class IoConstants
 {
     internal const byte PeriodByte = (byte)'.';
 
+    /// <summary>
+    /// Assumption: A level will probably contain this number of unique strings or fewer.
+    /// </summary>
     internal const int InitialStringListCapacity = 32;
 
     internal const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;

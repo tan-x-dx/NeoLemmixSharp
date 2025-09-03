@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -76,7 +76,7 @@ public static class StyleCache
             }
         }
 
-        foreach (var gadgetData in levelData.AllGadgetData)
+        foreach (var gadgetData in levelData.AllGadgetInstanceData)
         {
             result.Add(new StyleFormatPair(gadgetData.StyleIdentifier, levelData.FileFormatType));
         }
@@ -128,23 +128,24 @@ public static class StyleCache
     {
         var result = new Dictionary<StylePiecePair, IGadgetArchetypeData>(IoConstants.AssumedNumberOfGadgetArchetypeDataInLevel);
 
-        foreach (var prototype in levelData.AllGadgetData)
+        foreach (var prototype in levelData.AllGadgetInstanceData)
         {
             FetchGadgetArchetypeData(prototype);
         }
 
         return result;
 
-        void FetchGadgetArchetypeData(GadgetData gadgetData)
+        void FetchGadgetArchetypeData(IGadgetInstanceData gadgetData)
         {
-            ref var gadgetArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, gadgetData.GetStylePiecePair(), out var exists);
+            var stylePiecePair = new StylePiecePair(gadgetData.StyleIdentifier, gadgetData.PieceIdentifier);
+            ref var gadgetArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, stylePiecePair, out var exists);
 
             if (exists)
                 return;
 
-            var key = new StyleFormatPair(gadgetData.StyleIdentifier, levelData.FileFormatType);
+            var styleKey = new StyleFormatPair(gadgetData.StyleIdentifier, levelData.FileFormatType);
 
-            if (!CachedStyles.TryGetValue(key, out var styleData))
+            if (!CachedStyles.TryGetValue(styleKey, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
             gadgetArchetypeDataForLevel = styleData.GadgetArchetypeDataLookup[gadgetData.PieceIdentifier];

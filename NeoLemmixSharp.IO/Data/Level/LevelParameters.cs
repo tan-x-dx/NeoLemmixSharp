@@ -17,7 +17,7 @@ public enum LevelParameters
     EnableFrameControl
 }
 
-public readonly struct LevelParameterHasher : IEnumIdentifierHelper<LevelParameters, BitBuffer32>
+public readonly struct LevelParameterHasher : IEnumIdentifierHelper<BitBuffer32, LevelParameters>
 {
     private const int NumberOfEnumValues = 8;
 
@@ -37,5 +37,5 @@ public readonly struct LevelParameterHasher : IEnumIdentifierHelper<LevelParamet
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LevelParameterHasher, BitBuffer32, LevelParameters, TValue> CreateBitArrayDictionary<TValue>() => new(new LevelParameterHasher());
 
-    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 }

@@ -14,18 +14,20 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager :
-    IPerfectHasher<Lemming>,
     IItemManager<Lemming>,
+    IBitBufferCreator<RawBitBuffer, Lemming>,
     IPerfectHasher<HatchGroup>,
-    IBitBufferCreator<ArrayBitBuffer>,
     ISnapshotDataConvertible<LemmingManagerSnapshotData>,
     IInitialisable,
     IDisposable
 {
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
-    private readonly uint[] _bitBuffer;
 
+    private const int RequiredNumberOfLemmingBitSets =
+        2 + // spacial hash grids
+        3; // lemming sets
+    private readonly RawArray _lemmingByteBuffer;
     private readonly LemmingSpacialHashGrid _lemmingPositionHelper;
     private readonly LemmingSpacialHashGrid _zombieSpacialHashGrid;
     private readonly LemmingSet _lemmingsToZombify;
@@ -82,12 +84,10 @@ public sealed class LemmingManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        // 2 spacial hash grids + 3 lemming sets
-        const int ExpectedNumberOfLemmingBitSets = 5;
-        _bitArrayBufferUsageCount = ExpectedNumberOfLemmingBitSets;
+        _bitArrayBufferUsageCount = RequiredNumberOfLemmingBitSets;
 
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
-        _bitBuffer = new uint[bitBufferLength * ExpectedNumberOfLemmingBitSets];
+        _lemmingByteBuffer = Helpers.AllocateBuffer<uint>(bitBufferLength * RequiredNumberOfLemmingBitSets);
 
         _lemmingsToZombify = new LemmingSet(this);
         _allBlockers = new LemmingSet(this);
@@ -384,46 +384,55 @@ public sealed class LemmingManager :
     int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
     int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
     HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
-    unsafe void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(int numberOfItems, out ArrayBitBuffer buffer)
+    unsafe void IBitBufferCreator<RawBitBuffer, Lemming>.CreateBitBuffer(out RawBitBuffer buffer)
     {
         if (_bitArrayBufferUsageCount == 0)
             throw new InvalidOperationException("Insufficient space for bit buffers!");
         _bitArrayBufferUsageCount--;
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
-        buffer = new(_bitBuffer, bitBufferLength * _bitArrayBufferUsageCount, bitBufferLength);
+
+        uint* pointer = (uint*)_lemmingByteBuffer.Handle + (bitBufferLength * _bitArrayBufferUsageCount);
+        buffer = new RawBitBuffer(pointer, bitBufferLength);
     }
 
     public void Dispose()
     {
         new Span<Lemming>(_lemmings).Clear();
         new Span<HatchGroup>(_hatchGroups).Clear();
+        _lemmingByteBuffer.Dispose();
         _lemmingPositionHelper.Dispose();
         _zombieSpacialHashGrid.Dispose();
         _lemmingsToZombify.Clear();
         _allBlockers.Clear();
     }
 
-    public void WriteToSnapshotData(out LemmingManagerSnapshotData snapshotData)
+    public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LemmingManagerSnapshotData>();
+
+    public unsafe int WriteToSnapshotData(LemmingManagerSnapshotData* snapshotDataPointer)
     {
-        snapshotData = new LemmingManagerSnapshotData(
+        *snapshotDataPointer = new LemmingManagerSnapshotData(
             _numberOfLemmingsReleasedFromHatch,
             _numberOfClonedLemmings,
             LemmingsToRelease,
             LemmingsOut,
             LemmingsRemoved,
             LemmingsSaved);
+
+        return 1;
     }
 
-    public void SetFromSnapshotData(in LemmingManagerSnapshotData snapshotData)
+    public unsafe int SetFromSnapshotData(LemmingManagerSnapshotData* snapshotDataPointer)
     {
-        _numberOfLemmingsReleasedFromHatch = snapshotData.NumberOfLemmingsReleasedFromHatch;
-        _numberOfClonedLemmings = snapshotData.NumberOfClonedLemmings;
-        LemmingsToRelease = snapshotData.LemmingsToRelease;
-        LemmingsOut = snapshotData.LemmingsOut;
-        LemmingsRemoved = snapshotData.LemmingsRemoved;
-        LemmingsSaved = snapshotData.LemmingsSaved;
+        _numberOfLemmingsReleasedFromHatch = snapshotDataPointer->NumberOfLemmingsReleasedFromHatch;
+        _numberOfClonedLemmings = snapshotDataPointer->NumberOfClonedLemmings;
+        LemmingsToRelease = snapshotDataPointer->LemmingsToRelease;
+        LemmingsOut = snapshotDataPointer->LemmingsOut;
+        LemmingsRemoved = snapshotDataPointer->LemmingsRemoved;
+        LemmingsSaved = snapshotDataPointer->LemmingsSaved;
 
         ResetLemmingPositions();
+
+        return 1;
     }
 
     private void ResetLemmingPositions()

@@ -1,12 +1,24 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
+﻿using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
-public sealed class GadgetLinkTrigger : GadgetTrigger
+namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
+
+public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
 {
-    public GadgetLinkTrigger(int[] gadgetBehaviourIds) : base(gadgetBehaviourIds)
+    private readonly GadgetBehaviour[] _behaviours;
+
+    public GadgetLinkTrigger(GadgetBehaviour[] behaviours) : base(GadgetTriggerType.GadgetLinkTrigger)
     {
+        _behaviours = behaviours;
     }
 
+    public override ReadOnlySpan<GadgetBehaviour> Behaviours => new(_behaviours);
+
     public override void Tick()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ReactToSignal(bool signal)
     {
         throw new NotImplementedException();
     }

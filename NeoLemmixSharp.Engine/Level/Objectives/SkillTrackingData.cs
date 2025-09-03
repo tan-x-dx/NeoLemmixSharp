@@ -3,6 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
@@ -86,15 +87,21 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible<SkillSetSnapsho
         EffectiveQuantity = Math.Min(effectiveQuantity, totalSkillLimit);
     }
 
-    public void WriteToSnapshotData(out SkillSetSnapshotData snapshotData)
+    public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<SkillSetSnapshotData>();
+
+    public unsafe int WriteToSnapshotData(SkillSetSnapshotData* snapshotDataPointer)
     {
-        snapshotData = new SkillSetSnapshotData(SkillTrackingDataId, _additionalQuantity, _amountUsed, _currentSkillLimit);
+        *snapshotDataPointer = new SkillSetSnapshotData(SkillTrackingDataId, _additionalQuantity, _amountUsed, _currentSkillLimit);
+
+        return 1;
     }
 
-    public void SetFromSnapshotData(in SkillSetSnapshotData snapshotData)
+    public unsafe int SetFromSnapshotData(SkillSetSnapshotData* snapshotDataPointer)
     {
-        _additionalQuantity = snapshotData.AdditionalQuantity;
-        _amountUsed = snapshotData.AmountUsed;
-        _currentSkillLimit = snapshotData.CurrentSkillLimit;
+        _additionalQuantity = snapshotDataPointer->AdditionalQuantity;
+        _amountUsed = snapshotDataPointer->AmountUsed;
+        _currentSkillLimit = snapshotDataPointer->CurrentSkillLimit;
+
+        return 1;
     }
 }

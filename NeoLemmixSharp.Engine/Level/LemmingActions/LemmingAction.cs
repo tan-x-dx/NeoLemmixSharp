@@ -235,7 +235,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static BitArrayDictionary<LemmingActionHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingActionHasher());
 
-    public readonly struct LemmingActionHasher : IPerfectHasher<LemmingAction>, IBitBufferCreator<LemmingActionBitBuffer>
+    public readonly struct LemmingActionHasher : IBitBufferCreator<LemmingActionBitBuffer, LemmingAction>
     {
         [Pure]
         public int NumberOfItems => LemmingActionConstants.NumberOfLemmingActions;
@@ -244,7 +244,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
         [Pure]
         public LemmingAction UnHash(int index) => LemmingActions[index];
 
-        public void CreateBitBuffer(int numberOfItems, out LemmingActionBitBuffer buffer) => buffer = new();
+        public void CreateBitBuffer(out LemmingActionBitBuffer buffer) => buffer = new();
     }
 
     [InlineArray(LemmingActionBitBufferLength)]

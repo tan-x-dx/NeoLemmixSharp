@@ -10,7 +10,7 @@ public sealed class TerrainPainter : IDisposable
 {
     private const int InitialPixelChangeListSize = 1 << 14;
 
-    private readonly TickOrderedList<PixelChangeData> _pixelChangeList = new(InitialPixelChangeListSize);
+    private readonly LevelEventList<PixelChangeData> _pixelChangeList = new(InitialPixelChangeListSize);
     private readonly Texture2D _terrainTexture;
     private readonly ArrayWrapper2D<PixelType> _terrainPixelTypes;
     private readonly ArrayWrapper2D<Color> _terrainColors;
@@ -27,7 +27,7 @@ public sealed class TerrainPainter : IDisposable
         _terrainColors = terrainColors;
     }
 
-    public void RecordPixelChange(Point pixel, Color toColor, PixelType fromPixelType, PixelType toPixelType)
+    public unsafe void RecordPixelChange(Point pixel, Color toColor, PixelType fromPixelType, PixelType toPixelType)
     {
         var previousLatestTickWithUpdate = _pixelChangeList.LatestTickWithData();
         var currentLatestTickWithUpdate = LevelScreen.UpdateScheduler.ElapsedTicks;
@@ -39,7 +39,9 @@ public sealed class TerrainPainter : IDisposable
 
         var fromColor = _terrainColors[pixel];
 
-        _pixelChangeList.GetNewDataRef() = new PixelChangeData(currentLatestTickWithUpdate, pixel, fromColor, toColor, fromPixelType, toPixelType);
+        PixelChangeData* newPixelChangeData = _pixelChangeList.GetNewDataPointer();
+
+        *newPixelChangeData = new PixelChangeData(currentLatestTickWithUpdate, pixel, fromColor, toColor, fromPixelType, toPixelType);
     }
 
     public void RepaintTerrain()
@@ -66,7 +68,7 @@ public sealed class TerrainPainter : IDisposable
 
     public void RewindBackTo(int tick)
     {
-        var pixelChanges = _pixelChangeList.RewindBackTo(tick - 1);
+        var pixelChanges = _pixelChangeList.RewindBackTo(tick + 1);
         if (pixelChanges.Length == 0)
             return;
 
@@ -84,7 +86,7 @@ public sealed class TerrainPainter : IDisposable
         _terrainTexture.SetData(_terrainColors.Array);
     }
 
-    private readonly struct PixelChangeData : ITickOrderedData
+    private readonly struct PixelChangeData : ILevelEventData
     {
         public readonly int Tick;
         public readonly Point Position;

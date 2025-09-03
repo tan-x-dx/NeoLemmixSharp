@@ -7,10 +7,7 @@ public enum GadgetType
     HitBoxGadget,
     HatchGadget,
 
-    AndGate,
-    OrGate,
-    NotGate,
-    XorGate
+    LogicGate,
 }
 
 public static class GadgetTypeHelpers

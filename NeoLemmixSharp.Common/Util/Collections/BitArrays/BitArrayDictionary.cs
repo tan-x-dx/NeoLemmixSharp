@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
-    where TPerfectHasher : IPerfectHasher<TKey>, IBitBufferCreator<TBuffer>
+    where TPerfectHasher : IBitBufferCreator<TBuffer, TKey>
     where TBuffer : struct, IBitBuffer
     where TKey : notnull
 {
@@ -24,7 +24,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     {
         _hasher = hasher;
         var numberOfItems = hasher.NumberOfItems;
-        _hasher.CreateBitBuffer(numberOfItems, out _bits);
+        _hasher.CreateBitBuffer(out _bits);
 
         BitArrayHelpers.ThrowIfInvalidCapacity(numberOfItems, _bits.Length);
 

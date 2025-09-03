@@ -20,8 +20,7 @@ internal enum LevelFileSectionIdentifier
     GadgetTriggerDataSection
 }
 
-internal readonly struct LevelFileSectionIdentifierHasher :
-    IEnumIdentifierHelper<LevelFileSectionIdentifier, BitBuffer32>
+internal readonly struct LevelFileSectionIdentifierHasher : IEnumIdentifierHelper<BitBuffer32, LevelFileSectionIdentifier>
 {
     private const int NumberOfEnumValues = 12;
 
@@ -32,7 +31,7 @@ internal readonly struct LevelFileSectionIdentifierHasher :
     [Pure]
     public LevelFileSectionIdentifier UnHash(int index) => (LevelFileSectionIdentifier)index;
 
-    public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
+    public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 
     public static LevelFileSectionIdentifier GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LevelFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 

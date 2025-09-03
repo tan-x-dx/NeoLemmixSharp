@@ -27,9 +27,9 @@ public readonly struct Point : IEquatable<Point>
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Point other && Equals(other);
     [DebuggerStepThrough]
-    public override int GetHashCode() => 3790121 * X +
-                                         2885497 * Y +
-                                         1088251;
+    public override int GetHashCode() =>
+        3790121 * X +
+        2885497 * Y;
 
     [Pure]
     [DebuggerStepThrough]

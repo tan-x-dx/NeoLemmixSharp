@@ -1,48 +1,50 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public static class GadgetBuildingHelpers
 {
-    private const string Input01Name = "Input 01";
-    private const string Input02Name = "Input 02";
-    private const string Input03Name = "Input 03";
-    private const string Input04Name = "Input 04";
-    private const string Input05Name = "Input 05";
-    private const string Input06Name = "Input 06";
-    private const string Input07Name = "Input 07";
-    private const string Input08Name = "Input 08";
-    private const string Input09Name = "Input 09";
-    private const string Input10Name = "Input 10";
-    private const string Input11Name = "Input 11";
-    private const string Input12Name = "Input 12";
-    private const string Input13Name = "Input 13";
-    private const string Input14Name = "Input 14";
-    private const string Input15Name = "Input 15";
-    private const string Input16Name = "Input 16";
+    private const string Trigger01Name = "Trigger 01";
+    private const string Trigger02Name = "Trigger 02";
+    private const string Trigger03Name = "Trigger 03";
+    private const string Trigger04Name = "Trigger 04";
+    private const string Trigger05Name = "Trigger 05";
+    private const string Trigger06Name = "Trigger 06";
+    private const string Trigger07Name = "Trigger 07";
+    private const string Trigger08Name = "Trigger 08";
+    private const string Trigger09Name = "Trigger 09";
+    private const string Trigger10Name = "Trigger 10";
+    private const string Trigger11Name = "Trigger 11";
+    private const string Trigger12Name = "Trigger 12";
+    private const string Trigger13Name = "Trigger 13";
+    private const string Trigger14Name = "Trigger 14";
+    private const string Trigger15Name = "Trigger 15";
+    private const string Trigger16Name = "Trigger 16";
 
-    private static readonly GadgetTriggerName[] BasicInputNames =
+    private static readonly GadgetTriggerName[] BasicTriggerNames =
     [
-        new(Input01Name),
-        new(Input02Name),
-        new(Input03Name),
-        new(Input04Name),
-        new(Input05Name),
-        new(Input06Name),
-        new(Input07Name),
-        new(Input08Name),
-        new(Input09Name),
-        new(Input10Name),
-        new(Input11Name),
-        new(Input12Name),
-        new(Input13Name),
-        new(Input14Name),
-        new(Input15Name),
-        new(Input16Name)
+        new(Trigger01Name),
+        new(Trigger02Name),
+        new(Trigger03Name),
+        new(Trigger04Name),
+        new(Trigger05Name),
+        new(Trigger06Name),
+        new(Trigger07Name),
+        new(Trigger08Name),
+        new(Trigger09Name),
+        new(Trigger10Name),
+        new(Trigger11Name),
+        new(Trigger12Name),
+        new(Trigger13Name),
+        new(Trigger14Name),
+        new(Trigger15Name),
+        new(Trigger16Name)
     ];
 
     private const string State01Name = "State 01";
@@ -82,68 +84,53 @@ public static class GadgetBuildingHelpers
         new(State16Name)
     ];
 
-    public static ReadOnlySpan<GadgetTriggerName> GetInputNamesForCount(int numberOfInputs)
+    public static ReadOnlySpan<GadgetTriggerName> GetDefaultTriggerNamesForCount(int numberOfTriggers)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(numberOfInputs);
-        ArgumentOutOfRangeException.ThrowIfZero(numberOfInputs);
+        ArgumentOutOfRangeException.ThrowIfNegative(numberOfTriggers);
+        ArgumentOutOfRangeException.ThrowIfZero(numberOfTriggers);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(numberOfTriggers, EngineConstants.MaxAllowedNumberOfGadgetTriggers);
 
-        if (numberOfInputs <= BasicInputNames.Length)
-            return new ReadOnlySpan<GadgetTriggerName>(BasicInputNames, 0, numberOfInputs);
+        if (numberOfTriggers <= BasicTriggerNames.Length)
+            return new ReadOnlySpan<GadgetTriggerName>(BasicTriggerNames, 0, numberOfTriggers);
 
-        return ConstructLargeInputNameArray(numberOfInputs);
+        return ConstructLargeTriggerNameArray(numberOfTriggers);
     }
 
-    private static ReadOnlySpan<GadgetTriggerName> ConstructLargeInputNameArray(int numberOfInputs)
+    private static ReadOnlySpan<GadgetTriggerName> ConstructLargeTriggerNameArray(int numberOfTriggers)
     {
-        var result = new GadgetTriggerName[numberOfInputs];
+        var result = new GadgetTriggerName[numberOfTriggers];
 
-        new ReadOnlySpan<GadgetTriggerName>(BasicInputNames).CopyTo(result);
+        new ReadOnlySpan<GadgetTriggerName>(BasicTriggerNames).CopyTo(result);
 
-        for (var i = BasicInputNames.Length; i < result.Length; i++)
+        for (var i = BasicTriggerNames.Length; i < result.Length; i++)
         {
-            var inputName = $"Input {i + 1}";
-            result[i] = new GadgetTriggerName(inputName);
+            var triggerName = $"Trigger {i + 1}";
+            result[i] = new GadgetTriggerName(triggerName);
         }
 
         return result;
     }
 
-    public static ReadOnlySpan<GadgetStateName> GetStateNamesForCount(int numberOfStates)
+    public static ReadOnlySpan<GadgetStateName> GetDefaultStateNamesForCount(int numberOfStates)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(numberOfStates);
         ArgumentOutOfRangeException.ThrowIfZero(numberOfStates);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(numberOfStates, EngineConstants.MaxAllowedNumberOfGadgetStates);
 
-        if (numberOfStates <= BasicStateNames.Length)
-            return new ReadOnlySpan<GadgetStateName>(BasicStateNames, 0, numberOfStates);
-
-        return ConstructLargeStateNameArray(numberOfStates);
+        return new ReadOnlySpan<GadgetStateName>(BasicStateNames, 0, numberOfStates);
     }
 
-    private static ReadOnlySpan<GadgetStateName> ConstructLargeStateNameArray(int numberOfStates)
+    public static string GetGadgetName(IGadgetArchetypeData gadgetArchetypeData, IGadgetInstanceData gadgetInstanceData)
     {
-        var result = new GadgetStateName[numberOfStates];
-
-        new ReadOnlySpan<GadgetStateName>(BasicStateNames).CopyTo(result);
-
-        for (var i = BasicStateNames.Length; i < result.Length; i++)
-        {
-            var stateName = $"State {i + 1}";
-            result[i] = new GadgetStateName(stateName);
-        }
-
-        return result;
-    }
-
-    public static string GetGadgetName(IGadgetArchetypeData gadgetArchetypeData, GadgetData gadgetData)
-    {
-        return string.IsNullOrWhiteSpace(gadgetData.OverrideName)
+        GadgetName result = gadgetInstanceData.OverrideName.IsTrivial
             ? gadgetArchetypeData.GadgetName
-            : gadgetData.OverrideName;
+            : gadgetInstanceData.OverrideName;
+        return result.ToString();
     }
 
     public static GadgetBounds CreateGadgetBounds(
         HitBoxGadgetArchetypeData gadgetArchetypeData,
-        GadgetData gadgetData)
+        HitBoxGadgetInstanceData gadgetData)
     {
         var resizeType = gadgetArchetypeData.ResizeType;
         var baseSize = gadgetArchetypeData.BaseSpriteSize;

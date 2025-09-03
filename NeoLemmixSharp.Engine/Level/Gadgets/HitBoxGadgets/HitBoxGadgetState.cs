@@ -8,29 +8,17 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
 public sealed class HitBoxGadgetState : GadgetState
 {
-    private HitBoxGadget _parentGadget = null!;
-
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
     private readonly BitArrayDictionary<Orientation.OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> _hitBoxLookup;
 
     public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
 
     public HitBoxGadgetState(
-        GadgetTrigger[] gadgetTriggers,
         LemmingHitBoxFilter[] lemmingHitBoxFilters,
         BitArrayDictionary<Orientation.OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> hitBoxLookup)
-        : base(gadgetTriggers)
     {
         _lemmingHitBoxFilters = lemmingHitBoxFilters;
         _hitBoxLookup = hitBoxLookup;
-    }
-
-    public void SetParentGadget(HitBoxGadget hitBoxGadget)
-    {
-        if (_parentGadget is not null)
-            throw new InvalidOperationException("Cannot set parent gadget more than once!");
-
-        _parentGadget = hitBoxGadget;
     }
 
     public HitBoxRegion HitBoxFor(Orientation orientation)

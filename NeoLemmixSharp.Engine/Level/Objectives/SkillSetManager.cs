@@ -56,7 +56,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         return null;
     }
 
-    public void SetSkillCount(LemmingSkill lemmingSkill, Tribe? tribe, int value)
+    public void ChangeSkillCount(LemmingSkill lemmingSkill, Tribe? tribe, int delta)
     {
         foreach (var skillTrackingData in AllItems)
         {
@@ -64,7 +64,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
                 skillTrackingData.Tribe != tribe)
                 continue;
 
-            skillTrackingData.ChangeSkillCount(value);
+            skillTrackingData.ChangeSkillCount(delta);
         }
     }
 

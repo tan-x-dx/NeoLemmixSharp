@@ -112,10 +112,10 @@ public readonly struct Orientation : IIdEquatable<Orientation>
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(Orientation first, Orientation second) => first.Equals(second.RotNum);
+    public static bool operator ==(Orientation first, Orientation second) => first.Equals(second);
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(Orientation first, Orientation second) => !first.Equals(second.RotNum);
+    public static bool operator !=(Orientation first, Orientation second) => !first.Equals(second);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -126,7 +126,7 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     [DebuggerStepThrough]
     public static BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, TValue> CreateBitArrayDictionary<TValue>() => new(new OrientationHasher());
 
-    public readonly struct OrientationHasher : IPerfectHasher<Orientation>, IBitBufferCreator<BitBuffer32>
+    public readonly struct OrientationHasher : IBitBufferCreator<BitBuffer32, Orientation>
     {
         public int NumberOfItems => EngineConstants.NumberOfOrientations;
 
@@ -135,6 +135,6 @@ public readonly struct Orientation : IIdEquatable<Orientation>
         [Pure]
         public Orientation UnHash(int index) => new(index);
 
-        public void CreateBitBuffer(int numberOfItems, out BitBuffer32 buffer) => buffer = new();
+        public void CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
     }
 }

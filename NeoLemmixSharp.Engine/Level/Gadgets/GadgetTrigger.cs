@@ -1,22 +1,30 @@
 ﻿using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
 {
-    private readonly int[] _gadgetBehaviourIds;
-
     public required GadgetTriggerName TriggerName { get; init; }
     public required int Id { get; init; }
+    public GadgetTriggerType TriggerType { get; }
 
-    public ReadOnlySpan<int> BehaviourIds => new(_gadgetBehaviourIds);
-
-    protected GadgetTrigger(
-        int[] gadgetBehaviourIds)
+    protected GadgetTrigger(GadgetTriggerType triggerType)
     {
-        _gadgetBehaviourIds = gadgetBehaviourIds;
+        TriggerType = triggerType;
+    }
+
+    public abstract ReadOnlySpan<GadgetBehaviour> Behaviours { get; }
+
+    protected static void RegisterCauseAndEffectData(int gadgetBehaviourId)
+    {
+        LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(gadgetBehaviourId));
+    }
+
+    protected static void RegisterCauseAndEffectData(int gadgetBehaviourId, int lemmingId)
+    {
+        LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(gadgetBehaviourId, lemmingId));
     }
 
     public abstract void Tick();

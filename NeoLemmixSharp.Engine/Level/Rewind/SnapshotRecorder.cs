@@ -11,12 +11,6 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData> : I
     where TItemType : class, ISnapshotDataConvertible<TSnapshotData>
     where TSnapshotData : unmanaged
 {
-    /// <summary>
-    /// Allocate enough space initially for four minutes of gameplay.
-    /// If gameplay lasts longer, then the buffer will double in capacity.
-    /// </summary>
-    private const int SnapshotDataListSizeMultiplier = EngineConstants.InitialSnapshotDataBufferMultiplier / EngineConstants.RewindSnapshotInterval;
-
     private readonly TItemManager _itemManager;
     private readonly int _numberOfItemsPerSnapshot;
     private RawArray _buffer;
@@ -28,46 +22,51 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData> : I
     public SnapshotRecorder(TItemManager itemManager)
     {
         _itemManager = itemManager;
-        _numberOfItemsPerSnapshot = itemManager.AllItems.Length;
-        _bufferLength = _numberOfItemsPerSnapshot * SnapshotDataListSizeMultiplier;
-        _buffer = Helpers.CreateBuffer<TSnapshotData>(_bufferLength);
+
+        var allItems = _itemManager.AllItems;
+        var requiredNumberOfBytesPerSnapshotTotal = 0;
+
+        foreach (var item in allItems)
+        {
+            requiredNumberOfBytesPerSnapshotTotal += item.GetRequiredNumberOfBytesForSnapshotting();
+        }
+
+        _numberOfItemsPerSnapshot = allItems.Length;
+        _bufferLength = requiredNumberOfBytesPerSnapshotTotal * RewindConstants.SnapshotDataListSizeMultiplier;
+        _buffer = Helpers.AllocateBuffer<TSnapshotData>(_bufferLength);
     }
 
-    public void TakeSnapshot()
+    public unsafe void TakeSnapshot()
     {
         var items = _itemManager.AllItems;
-        var snapshotDataSpan = GetNewSnapshotDataSpan();
+        TSnapshotData* snapshotDataPointer = GetLatestSnapshotDataPointer();
+        var pointerOffset = 0;
 
-        if (items.Length != snapshotDataSpan.Length)
-            throw new InvalidOperationException("Span length mismatch!");
-
-        for (var index = 0; index < items.Length; index++)
+        foreach (var item in items)
         {
-            var item = items[index];
-            ref var snapshotData = ref snapshotDataSpan[index];
+            TSnapshotData* p = snapshotDataPointer + pointerOffset;
 
-            item.WriteToSnapshotData(out snapshotData);
+            var pointerIncrement = item.WriteToSnapshotData(p);
+            pointerOffset += pointerIncrement;
         }
     }
 
-    public void ApplySnapshot(int snapshotNumber)
+    public unsafe void ApplySnapshot(int snapshotNumber)
     {
         var items = _itemManager.AllItems;
-        var snapshotDataSpan = GetSnapshotDataSlice(snapshotNumber);
+        TSnapshotData* snapshotDataPointer = GetSnapshotDataPointerForSlice(snapshotNumber);
+        var pointerOffset = 0;
 
-        if (items.Length != snapshotDataSpan.Length)
-            throw new InvalidOperationException("Span length mismatch!");
-
-        for (var index = 0; index < items.Length; index++)
+        foreach (var item in items)
         {
-            var item = items[index];
-            ref readonly var snapshotData = ref snapshotDataSpan[index];
+            TSnapshotData* p = snapshotDataPointer + pointerOffset;
 
-            item.SetFromSnapshotData(in snapshotData);
+            var pointerIncrement = item.SetFromSnapshotData(p);
+            pointerOffset += pointerIncrement;
         }
     }
 
-    private unsafe Span<TSnapshotData> GetNewSnapshotDataSpan()
+    private unsafe TSnapshotData* GetLatestSnapshotDataPointer()
     {
         if (_count == _bufferLength)
             DoubleByteBufferLength();
@@ -75,7 +74,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData> : I
         TSnapshotData* pointer = (TSnapshotData*)_buffer.Handle + _count;
         _count += _numberOfItemsPerSnapshot;
 
-        return new Span<TSnapshotData>(pointer, _numberOfItemsPerSnapshot);
+        return pointer;
     }
 
     private void DoubleByteBufferLength()
@@ -87,14 +86,14 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData> : I
         _bufferLength <<= 1;
     }
 
-    private unsafe ReadOnlySpan<TSnapshotData> GetSnapshotDataSlice(int sliceNumber)
+    private unsafe TSnapshotData* GetSnapshotDataPointerForSlice(int sliceNumber)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(sliceNumber);
 
         _count = _numberOfItemsPerSnapshot * (1 + sliceNumber);
 
         TSnapshotData* pointer = (TSnapshotData*)_buffer.Handle + (sliceNumber * _numberOfItemsPerSnapshot);
-        return new ReadOnlySpan<TSnapshotData>(pointer, _numberOfItemsPerSnapshot);
+        return pointer;
     }
 
     public void Dispose()

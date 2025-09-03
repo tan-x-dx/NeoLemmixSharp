@@ -155,14 +155,20 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
             : TextRenderingHelpers.DigitToChar(minutes / 100);
     }
 
-    public void WriteToSnapshotData(out LevelTimerSnapshotData snapshotData)
+    public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LevelTimerSnapshotData>();
+
+    public unsafe int WriteToSnapshotData(LevelTimerSnapshotData* snapshotDataPointer)
     {
-        snapshotData = new LevelTimerSnapshotData(_additionalSeconds);
+        *snapshotDataPointer = new LevelTimerSnapshotData(_additionalSeconds);
+
+        return 1;
     }
 
-    public void SetFromSnapshotData(in LevelTimerSnapshotData snapshotData)
+    public unsafe int SetFromSnapshotData(LevelTimerSnapshotData* snapshotDataPointer)
     {
-        _additionalSeconds = snapshotData.AdditionalSeconds;
+        _additionalSeconds = snapshotDataPointer->AdditionalSeconds;
+
+        return 1;
     }
 
     private static Color GetColorForTime(int secondsLeft) => secondsLeft switch

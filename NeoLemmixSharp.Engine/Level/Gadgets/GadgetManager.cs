@@ -5,21 +5,24 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public sealed class GadgetManager :
-    IPerfectHasher<GadgetBase>,
-    IPerfectHasher<HitBoxGadget>,
+    IBitBufferCreator<RawBitBuffer, HitBoxGadget>,
+    IBitBufferCreator<RawBitBuffer, GadgetBase>,
     IItemManager<GadgetBase>,
-    IBitBufferCreator<ArrayBitBuffer>,
     ISnapshotDataConvertible<int>,
     IInitialisable,
     IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
-    private readonly GadgetBehaviour[] _allGadgetBehaviours;
-    private readonly uint[] _bitBuffer;
+
+    private const int RequiredNumberOfGadgetBitSets =
+        1 + // spacial hash grid
+        1; // gadget set
+    private readonly RawArray _gadgetByteBuffer;
     private readonly HitBoxGadgetSpacialHashGrid _hitBoxGadgetSpacialHashGrid;
     private readonly GadgetSet _fastForwardGadgets;
 
@@ -29,7 +32,6 @@ public sealed class GadgetManager :
 
     public GadgetManager(
         GadgetBase[] allGadgets,
-        GadgetBehaviour[] allGadgetBehaviours,
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
@@ -37,14 +39,10 @@ public sealed class GadgetManager :
         this.AssertUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
         Array.Sort(_allGadgets, this);
 
-        _allGadgetBehaviours = allGadgetBehaviours;
-
-        // 1 spacial hash grid + 1 gadget set
-        const int ExpectedNumberOfGadgetBitSets = 2;
-        _bitArrayBufferUsageCount = ExpectedNumberOfGadgetBitSets;
+        _bitArrayBufferUsageCount = RequiredNumberOfGadgetBitSets;
 
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_allGadgets.Length);
-        _bitBuffer = new uint[bitBufferLength * ExpectedNumberOfGadgetBitSets];
+        _gadgetByteBuffer = Helpers.AllocateBuffer<uint>(bitBufferLength * RequiredNumberOfGadgetBitSets);
 
         _hitBoxGadgetSpacialHashGrid = new HitBoxGadgetSpacialHashGrid(
             this,
@@ -75,11 +73,6 @@ public sealed class GadgetManager :
 
     public void Tick(bool isMajorTick)
     {
-        foreach (var gadgetBehaviour in _allGadgetBehaviours)
-        {
-            gadgetBehaviour.Reset();
-        }
-
         if (isMajorTick)
         {
             var gadgetSpan = new ReadOnlySpan<GadgetBase>(_allGadgets);
@@ -124,14 +117,21 @@ public sealed class GadgetManager :
         _hitBoxGadgetSpacialHashGrid.UpdateItemPosition(gadget);
     }
 
-    public void WriteToSnapshotData(out int snapshotData)
+    public int GetRequiredNumberOfBytesForSnapshotting()
     {
-        snapshotData = 0;
+        return 1;
     }
 
-    public void SetFromSnapshotData(in int snapshotData)
+    public unsafe int WriteToSnapshotData(int* snapshotDataPointer)
+    {
+        *snapshotDataPointer = 0;
+        return 1;
+    }
+
+    public unsafe int SetFromSnapshotData(int* snapshotDataPointer)
     {
         ResetGadgetPositions();
+        return 1;
     }
 
     private void ResetGadgetPositions()
@@ -152,20 +152,26 @@ public sealed class GadgetManager :
     public int NumberOfItems => _allGadgets.Length;
     int IPerfectHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
     GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
+    void IBitBufferCreator<RawBitBuffer, GadgetBase>.CreateBitBuffer(out RawBitBuffer buffer) => buffer = GetNextRawBitBuffer();
     int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
     HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(int numberOfItems, out ArrayBitBuffer buffer)
+    void IBitBufferCreator<RawBitBuffer, HitBoxGadget>.CreateBitBuffer(out RawBitBuffer buffer) => buffer = GetNextRawBitBuffer();
+
+    private unsafe RawBitBuffer GetNextRawBitBuffer()
     {
         if (_bitArrayBufferUsageCount == 0)
             throw new InvalidOperationException("Insufficient space for bit buffers!");
         _bitArrayBufferUsageCount--;
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_allGadgets.Length);
-        buffer = new(_bitBuffer, bitBufferLength * _bitArrayBufferUsageCount, bitBufferLength);
+
+        uint* pointer = (uint*)_gadgetByteBuffer.Handle + (bitBufferLength * _bitArrayBufferUsageCount);
+        return new RawBitBuffer(pointer, bitBufferLength);
     }
 
     public void Dispose()
     {
         Array.Clear(_allGadgets);
+        _gadgetByteBuffer.Dispose();
         _hitBoxGadgetSpacialHashGrid.Dispose();
     }
 }

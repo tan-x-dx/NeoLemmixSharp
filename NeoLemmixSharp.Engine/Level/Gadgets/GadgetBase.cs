@@ -1,13 +1,15 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<int>
+public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<byte>
 {
-    public required string GadgetName { get; init; }
+    private readonly int _requiredNumberOfBytesForSnapshotting;
+    public required GadgetName GadgetName { get; init; }
     public required GadgetBounds CurrentGadgetBounds { get; init; }
 
     public required int Id { get; init; }
@@ -20,8 +22,12 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
 
     public abstract GadgetState CurrentState { get; }
 
+    protected GadgetBase()
+    {
+        _requiredNumberOfBytesForSnapshotting = CalculateRequiredNumberOfBytesForSnapshotting();
+    }
+
     public abstract void Tick();
-    public abstract void SetNextState(int stateIndex);
 
     public bool Equals(GadgetBase? other) => other is not null && Id == other.Id;
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBase other && Id == other.Id;
@@ -30,14 +36,23 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public static bool operator ==(GadgetBase left, GadgetBase right) => left.Id == right.Id;
     public static bool operator !=(GadgetBase left, GadgetBase right) => left.Id != right.Id;
 
-    public void WriteToSnapshotData(out int snapshotData)
+    private int CalculateRequiredNumberOfBytesForSnapshotting()
     {
-        snapshotData = 0;
+        return 1;
     }
 
-    public void SetFromSnapshotData(in int snapshotData)
+    public int GetRequiredNumberOfBytesForSnapshotting() => _requiredNumberOfBytesForSnapshotting;
+
+    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
     {
+        *snapshotDataPointer = 0;
+        return 1;
     }
 
-    public sealed override string ToString() => GadgetName;
+    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
+    {
+        return 1;
+    }
+
+    public sealed override string ToString() => GadgetName.ToString();
 }

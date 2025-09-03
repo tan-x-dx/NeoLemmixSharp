@@ -9,7 +9,7 @@ using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -513,61 +513,66 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         FacingDirection = facingDirection;
     }
 
-    public void WriteToSnapshotData(out LemmingSnapshotData lemmingSnapshotData)
+    public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LemmingSnapshotData>();
+
+    public unsafe int WriteToSnapshotData(LemmingSnapshotData* lemmingSnapshotDataPointer)
     {
-        lemmingSnapshotData = new LemmingSnapshotData(this);
+        *lemmingSnapshotDataPointer = new LemmingSnapshotData(this);
+        return 1;
     }
 
-    public void SetFromSnapshotData(in LemmingSnapshotData lemmingSnapshotData)
+    public unsafe int SetFromSnapshotData(LemmingSnapshotData* lemmingSnapshotDataPointer)
     {
-        if (Id != lemmingSnapshotData.Id)
+        if (Id != lemmingSnapshotDataPointer->Id)
             throw new InvalidOperationException("Mismatching IDs!");
 
-        _jumperPositionBuffer = lemmingSnapshotData.JumperPositionBuffer;
+        _jumperPositionBuffer = lemmingSnapshotDataPointer->JumperPositionBuffer;
 
-        ConstructivePositionFreeze = lemmingSnapshotData.ConstructivePositionFreeze;
-        IsStartingAction = lemmingSnapshotData.IsStartingAction;
-        PlacedBrick = lemmingSnapshotData.PlacedBrick;
-        StackLow = lemmingSnapshotData.StackLow;
+        ConstructivePositionFreeze = lemmingSnapshotDataPointer->ConstructivePositionFreeze;
+        IsStartingAction = lemmingSnapshotDataPointer->IsStartingAction;
+        PlacedBrick = lemmingSnapshotDataPointer->PlacedBrick;
+        StackLow = lemmingSnapshotDataPointer->StackLow;
 
-        InitialFall = lemmingSnapshotData.InitialFall;
-        EndOfAnimation = lemmingSnapshotData.EndOfAnimation;
-        LaserHit = lemmingSnapshotData.LaserHit;
-        JumpToHoistAdvance = lemmingSnapshotData.JumpToHoistAdvance;
+        InitialFall = lemmingSnapshotDataPointer->InitialFall;
+        EndOfAnimation = lemmingSnapshotDataPointer->EndOfAnimation;
+        LaserHit = lemmingSnapshotDataPointer->LaserHit;
+        JumpToHoistAdvance = lemmingSnapshotDataPointer->JumpToHoistAdvance;
 
-        AnimationFrame = lemmingSnapshotData.AnimationFrame;
-        PhysicsFrame = lemmingSnapshotData.PhysicsFrame;
-        AscenderProgress = lemmingSnapshotData.AscenderProgress;
-        NumberOfBricksLeft = lemmingSnapshotData.NumberOfBricksLeft;
-        DisarmingFrames = lemmingSnapshotData.DisarmingFrames;
-        DistanceFallen = lemmingSnapshotData.DistanceFallen;
-        JumpProgress = lemmingSnapshotData.JumpProgress;
-        TrueDistanceFallen = lemmingSnapshotData.TrueDistanceFallen;
-        LaserRemainTime = lemmingSnapshotData.LaserRemainTime;
+        AnimationFrame = lemmingSnapshotDataPointer->AnimationFrame;
+        PhysicsFrame = lemmingSnapshotDataPointer->PhysicsFrame;
+        AscenderProgress = lemmingSnapshotDataPointer->AscenderProgress;
+        NumberOfBricksLeft = lemmingSnapshotDataPointer->NumberOfBricksLeft;
+        DisarmingFrames = lemmingSnapshotDataPointer->DisarmingFrames;
+        DistanceFallen = lemmingSnapshotDataPointer->DistanceFallen;
+        JumpProgress = lemmingSnapshotDataPointer->JumpProgress;
+        TrueDistanceFallen = lemmingSnapshotDataPointer->TrueDistanceFallen;
+        LaserRemainTime = lemmingSnapshotDataPointer->LaserRemainTime;
 
-        FastForwardTime = lemmingSnapshotData.FastForwardTime;
-        CountDownTimer = lemmingSnapshotData.CountDownTimer;
-        ParticleTimer = lemmingSnapshotData.ParticleTimer;
+        FastForwardTime = lemmingSnapshotDataPointer->FastForwardTime;
+        CountDownTimer = lemmingSnapshotDataPointer->CountDownTimer;
+        ParticleTimer = lemmingSnapshotDataPointer->ParticleTimer;
 
-        DehoistPin = lemmingSnapshotData.DehoistPin;
-        LaserHitLevelPosition = lemmingSnapshotData.LaserHitLevelPosition;
-        AnchorPosition = lemmingSnapshotData.LevelPosition;
-        PreviousLevelPosition = lemmingSnapshotData.PreviousLevelPosition;
+        DehoistPin = lemmingSnapshotDataPointer->DehoistPin;
+        LaserHitLevelPosition = lemmingSnapshotDataPointer->LaserHitLevelPosition;
+        AnchorPosition = lemmingSnapshotDataPointer->LevelPosition;
+        PreviousLevelPosition = lemmingSnapshotDataPointer->PreviousLevelPosition;
 
-        CurrentBounds = lemmingSnapshotData.CurrentBounds;
+        CurrentBounds = lemmingSnapshotDataPointer->CurrentBounds;
 
-        State.SetFromSnapshotData(in lemmingSnapshotData.StateSnapshotData);
+        State.SetFromSnapshotData(in lemmingSnapshotDataPointer->StateSnapshotData);
 
-        FacingDirection = lemmingSnapshotData.FacingDirection;
-        Orientation = lemmingSnapshotData.Orientation;
+        FacingDirection = lemmingSnapshotDataPointer->FacingDirection;
+        Orientation = lemmingSnapshotDataPointer->Orientation;
 
-        PreviousAction = LemmingAction.GetActionOrDefault(lemmingSnapshotData.PreviousActionId);
-        CurrentAction = LemmingAction.GetActionOrDefault(lemmingSnapshotData.CurrentActionId);
-        NextAction = LemmingAction.GetActionOrDefault(lemmingSnapshotData.NextActionId);
-        CountDownAction = LemmingAction.GetActionOrDefault(lemmingSnapshotData.CountDownActionId);
+        PreviousAction = LemmingAction.GetActionOrDefault(lemmingSnapshotDataPointer->PreviousActionId);
+        CurrentAction = LemmingAction.GetActionOrDefault(lemmingSnapshotDataPointer->CurrentActionId);
+        NextAction = LemmingAction.GetActionOrDefault(lemmingSnapshotDataPointer->NextActionId);
+        CountDownAction = LemmingAction.GetActionOrDefault(lemmingSnapshotDataPointer->CountDownActionId);
 
         Renderer.ResetPosition();
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
+
+        return 1;
     }
 
     int IIdEquatable<Lemming>.Id => Id;

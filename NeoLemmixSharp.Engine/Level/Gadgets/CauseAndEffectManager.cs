@@ -1,14 +1,10 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
-using System.Diagnostics;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public sealed class CauseAndEffectManager :
     IPerfectHasher<GadgetTrigger>,
-    IPerfectHasher<GadgetBehaviour>,
-    IBitBufferCreator<ArrayBitBuffer>
+    IPerfectHasher<GadgetBehaviour>
 {
     private readonly GadgetTrigger[] _allTriggers;
     private readonly GadgetBehaviour[] _allBehaviours;
@@ -35,6 +31,8 @@ public sealed class CauseAndEffectManager :
 
     public void ResetBehaviours()
     {
+        _causeAndEffectData.Clear();
+
         foreach (var behaviour in _allBehaviours)
         {
             behaviour.Reset();
@@ -43,23 +41,11 @@ public sealed class CauseAndEffectManager :
 
     public void Tick()
     {
-        var lemmingManager = LevelScreen.LemmingManager;
-
         foreach (var causeAndEffectDatum in _causeAndEffectData)
         {
             var behaviour = _allBehaviours[causeAndEffectDatum.GadgetBehaviourId];
 
-            if (behaviour is LemmingBehaviour lemmingBehaviour)
-            {
-                Debug.Assert(causeAndEffectDatum.LemmingId != EngineConstants.NoLemmingCauseAndEffectId);
-
-                var lemming = lemmingManager.AllLemmings[causeAndEffectDatum.LemmingId];
-                lemmingBehaviour.PerformBehaviour(lemming);
-            }
-            else
-            {
-                behaviour.PerformBehaviour();
-            }
+            behaviour.PerformBehaviour(causeAndEffectDatum.LemmingId);
         }
     }
 
@@ -70,6 +56,4 @@ public sealed class CauseAndEffectManager :
     int IPerfectHasher<GadgetBehaviour>.NumberOfItems => _allBehaviours.Length;
     int IPerfectHasher<GadgetBehaviour>.Hash(GadgetBehaviour item) => item.Id;
     GadgetBehaviour IPerfectHasher<GadgetBehaviour>.UnHash(int index) => _allBehaviours[index];
-
-    void IBitBufferCreator<ArrayBitBuffer>.CreateBitBuffer(int numberOfItems, out ArrayBitBuffer buffer) => buffer = new(numberOfItems);
 }

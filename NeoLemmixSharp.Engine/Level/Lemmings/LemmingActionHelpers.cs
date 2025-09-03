@@ -2,8 +2,8 @@
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
-using NeoLemmixSharp.IO.Data.Level.Gadgets;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBox;
+using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -54,7 +54,7 @@ public static class LemmingActionHelpers
         Point levelPosition)
     {
         return LevelScreen.TerrainManager.PixelIsSolidToLemming(lemming, levelPosition) ||
-               (gadgets.Count > 0 && HasSolidGadgetAtPosition(in gadgets, lemming, levelPosition));
+               (gadgets.Count > 0 && HasSolidGadgetAtPosition(in gadgets, lemming, levelPosition, LemmingSolidityType.Solid));
     }
 
     [Pure]
@@ -65,7 +65,7 @@ public static class LemmingActionHelpers
         Point levelPosition)
     {
         return LevelScreen.TerrainManager.PixelIsIndestructibleToLemming(lemming, destructionMask, levelPosition) ||
-               (gadgets.Count > 0 && HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition));
+               (gadgets.Count > 0 && HasSolidGadgetAtPosition(in gadgets, lemming, levelPosition, LemmingSolidityType.Steel));
     }
 
     [Pure]
@@ -75,40 +75,15 @@ public static class LemmingActionHelpers
         Point levelPosition)
     {
         return LevelScreen.TerrainManager.PixelIsSteel(levelPosition) ||
-               (gadgets.Count > 0 && HasSteelGadgetAtPosition(in gadgets, lemming, levelPosition));
+               (gadgets.Count > 0 && HasSolidGadgetAtPosition(in gadgets, lemming, levelPosition, LemmingSolidityType.Steel));
     }
 
     [Pure]
     private static bool HasSolidGadgetAtPosition(
         in GadgetEnumerable gadgets,
         Lemming lemming,
-        Point levelPosition)
-    {
-        foreach (var gadget in gadgets)
-        {
-            if (!gadget.ContainsPoint(lemming.Orientation, levelPosition))
-                continue;
-
-            var filters = gadget.CurrentState.Filters;
-
-            for (var i = 0; i < filters.Length; i++)
-            {
-                var filter = filters[i];
-
-                if (filter.MatchesLemming(lemming) &&
-                    filter.LemmingSolidityType != LemmingSolidityType.NotSolid)
-                    return true;
-            }
-        }
-
-        return false;
-    }
-
-    [Pure]
-    private static bool HasSteelGadgetAtPosition(
-        in GadgetEnumerable gadgets,
-        Lemming lemming,
-        Point levelPosition)
+        Point levelPosition,
+        LemmingSolidityType lemmingSolidityType)
     {
         foreach (var gadget in gadgets)
         {
@@ -124,7 +99,7 @@ public static class LemmingActionHelpers
                 var filter = filters[i];
 
                 if (filter.MatchesLemming(lemming) &&
-                    filter.LemmingSolidityType == LemmingSolidityType.Steel)
+                    filter.LemmingSolidityType == lemmingSolidityType)
                     return true;
             }
         }
@@ -133,7 +108,7 @@ public static class LemmingActionHelpers
     }
 
     [Pure]
-    public static Point GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public unsafe static Point GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (gadgetsNearLemming.Count == 0)
             return new Point();
@@ -141,7 +116,11 @@ public static class LemmingActionHelpers
         var lemmingOrientation = lemming.Orientation;
         var lemmingOrientationRotNum = lemmingOrientation.RotNum;
 
-        Span<int> deltas = [0, 0, 0, 0];
+        int* deltas = stackalloc int[EngineConstants.NumberOfOrientations];
+        deltas[EngineConstants.DownOrientationRotNum] = 0;
+        deltas[EngineConstants.LeftOrientationRotNum] = 0;
+        deltas[EngineConstants.UpOrientationRotNum] = 0;
+        deltas[EngineConstants.RightOrientationRotNum] = 0;
 
         var anchorPosition = lemming.AnchorPosition;
         var footPosition = lemming.FootPosition;

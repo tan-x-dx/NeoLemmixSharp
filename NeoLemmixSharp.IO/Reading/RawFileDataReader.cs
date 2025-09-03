@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
 using System.Runtime.CompilerServices;
 
@@ -19,7 +18,7 @@ internal interface IRawFileDataReader
 }
 
 internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataReader, IDisposable
-    where TPerfectHasher : struct, IEnumIdentifierHelper<TEnum, BitBuffer32>
+    where TPerfectHasher : struct, IEnumIdentifierHelper<BitBuffer32, TEnum>
     where TEnum : unmanaged, Enum
 {
     private readonly BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> _sectionIdentifiers;

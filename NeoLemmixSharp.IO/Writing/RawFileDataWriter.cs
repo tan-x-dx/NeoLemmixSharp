@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -20,7 +19,7 @@ internal interface IRawFileDataWriter
 }
 
 internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWriter, IDisposable
-    where TPerfectHasher : struct, IEnumIdentifierHelper<TEnum, BitBuffer32>
+    where TPerfectHasher : struct, IEnumIdentifierHelper<BitBuffer32, TEnum>
     where TEnum : unmanaged, Enum
 {
     private const int InitialMainDataByteBufferLength = 1 << 12;
