@@ -105,15 +105,6 @@ public static class EngineConstants
 
     #endregion
 
-    #region Replay Snapshot Constants
-
-    private const int NumberOfSecondsBetweenSnapshots = 2;
-    public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineTicksPerSecond;
-    private const int InitialNumberOfSecondsOfSnapshotData = 4 * 60;
-    public const int InitialSnapshotDataBufferMultiplier = InitialNumberOfSecondsOfSnapshotData * EngineTicksPerSecond;
-
-    #endregion
-
     #region Default Colours
 
     public const uint MinimumSubstantialAlphaValue = 0x80;

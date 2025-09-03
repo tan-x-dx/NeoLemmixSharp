@@ -50,7 +50,7 @@ public sealed class RewindManager :
     {
         _maxElapsedTicks = Math.Max(_maxElapsedTicks, elapsedTicks);
 
-        if (elapsedTicks % EngineConstants.RewindSnapshotInterval != 0)
+        if (elapsedTicks % RewindConstants.RewindSnapshotInterval != 0)
             return;
 
         _lemmingSnapshotRecorder.TakeSnapshot();
@@ -121,7 +121,7 @@ public sealed class RewindManager :
     {
         specifiedTick = Math.Max(specifiedTick, 0);
 
-        var correspondingSnapshotNumber = specifiedTick / EngineConstants.RewindSnapshotInterval;
+        var correspondingSnapshotNumber = specifiedTick / RewindConstants.RewindSnapshotInterval;
 
         _lemmingSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
         _gadgetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
@@ -131,7 +131,7 @@ public sealed class RewindManager :
         _gadgetManagerSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
         _levelTimerRecorder.ApplySnapshot(correspondingSnapshotNumber);
 
-        var actualElapsedTick = correspondingSnapshotNumber * EngineConstants.RewindSnapshotInterval;
+        var actualElapsedTick = correspondingSnapshotNumber * RewindConstants.RewindSnapshotInterval;
 
         var targetTick = actualElapsedTick + 1;
 

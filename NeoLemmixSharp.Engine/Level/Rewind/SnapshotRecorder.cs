@@ -11,12 +11,6 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData> : I
     where TItemType : class, ISnapshotDataConvertible<TSnapshotData>
     where TSnapshotData : unmanaged
 {
-    /// <summary>
-    /// Allocate enough space initially for four minutes of gameplay.
-    /// If gameplay lasts longer, then the buffer will double in capacity.
-    /// </summary>
-    private const int SnapshotDataListSizeMultiplier = EngineConstants.InitialSnapshotDataBufferMultiplier / EngineConstants.RewindSnapshotInterval;
-
     private readonly TItemManager _itemManager;
     private readonly int _numberOfItemsPerSnapshot;
     private RawArray _buffer;
@@ -38,7 +32,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData> : I
         }
 
         _numberOfItemsPerSnapshot = allItems.Length;
-        _bufferLength = requiredNumberOfBytesPerSnapshotTotal * SnapshotDataListSizeMultiplier;
+        _bufferLength = requiredNumberOfBytesPerSnapshotTotal * RewindConstants.SnapshotDataListSizeMultiplier;
         _buffer = Helpers.AllocateBuffer<TSnapshotData>(_bufferLength);
     }
 
