@@ -406,27 +406,33 @@ public sealed class LemmingManager :
         _allBlockers.Clear();
     }
 
-    public void WriteToSnapshotData(out LemmingManagerSnapshotData snapshotData)
+    public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LemmingManagerSnapshotData>();
+
+    public unsafe int WriteToSnapshotData(LemmingManagerSnapshotData* snapshotDataPointer)
     {
-        snapshotData = new LemmingManagerSnapshotData(
+        *snapshotDataPointer = new LemmingManagerSnapshotData(
             _numberOfLemmingsReleasedFromHatch,
             _numberOfClonedLemmings,
             LemmingsToRelease,
             LemmingsOut,
             LemmingsRemoved,
             LemmingsSaved);
+
+        return 1;
     }
 
-    public void SetFromSnapshotData(in LemmingManagerSnapshotData snapshotData)
+    public unsafe int SetFromSnapshotData(LemmingManagerSnapshotData* snapshotDataPointer)
     {
-        _numberOfLemmingsReleasedFromHatch = snapshotData.NumberOfLemmingsReleasedFromHatch;
-        _numberOfClonedLemmings = snapshotData.NumberOfClonedLemmings;
-        LemmingsToRelease = snapshotData.LemmingsToRelease;
-        LemmingsOut = snapshotData.LemmingsOut;
-        LemmingsRemoved = snapshotData.LemmingsRemoved;
-        LemmingsSaved = snapshotData.LemmingsSaved;
+        _numberOfLemmingsReleasedFromHatch = snapshotDataPointer->NumberOfLemmingsReleasedFromHatch;
+        _numberOfClonedLemmings = snapshotDataPointer->NumberOfClonedLemmings;
+        LemmingsToRelease = snapshotDataPointer->LemmingsToRelease;
+        LemmingsOut = snapshotDataPointer->LemmingsOut;
+        LemmingsRemoved = snapshotDataPointer->LemmingsRemoved;
+        LemmingsSaved = snapshotDataPointer->LemmingsSaved;
 
         ResetLemmingPositions();
+
+        return 1;
     }
 
     private void ResetLemmingPositions()

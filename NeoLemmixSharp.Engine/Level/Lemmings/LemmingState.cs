@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class LemmingState : ISnapshotDataConvertible<LemmingStateSnapshotData>
+public sealed class LemmingState
 {
     private readonly Lemming _lemming;
     private int _tribeId;

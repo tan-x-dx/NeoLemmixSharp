@@ -5,6 +5,7 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -116,14 +117,21 @@ public sealed class GadgetManager :
         _hitBoxGadgetSpacialHashGrid.UpdateItemPosition(gadget);
     }
 
-    public void WriteToSnapshotData(out int snapshotData)
+    public int GetRequiredNumberOfBytesForSnapshotting()
     {
-        snapshotData = 0;
+        return 1;
     }
 
-    public void SetFromSnapshotData(in int snapshotData)
+    public unsafe int WriteToSnapshotData(int* snapshotDataPointer)
+    {
+        *snapshotDataPointer = 0;
+        return 1;
+    }
+
+    public unsafe int SetFromSnapshotData(int* snapshotDataPointer)
     {
         ResetGadgetPositions();
+        return 1;
     }
 
     private void ResetGadgetPositions()

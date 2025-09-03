@@ -1,8 +1,9 @@
 ﻿namespace NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 
-public interface ISnapshotDataConvertible<TSnapshotData>
+public unsafe interface ISnapshotDataConvertible<TSnapshotData>
     where TSnapshotData : unmanaged
 {
-    void WriteToSnapshotData(out TSnapshotData snapshotData);
-    void SetFromSnapshotData(in TSnapshotData snapshotData);
+    int GetRequiredNumberOfBytesForSnapshotting();
+    int WriteToSnapshotData(TSnapshotData* snapshotDataPointer);
+    int SetFromSnapshotData(TSnapshotData* snapshotDataPointer);    
 }

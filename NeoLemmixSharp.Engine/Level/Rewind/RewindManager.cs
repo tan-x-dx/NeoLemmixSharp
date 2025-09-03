@@ -15,7 +15,7 @@ public sealed class RewindManager :
     IDisposable
 {
     private readonly SnapshotRecorder<LemmingManager, Lemming, LemmingSnapshotData> _lemmingSnapshotRecorder;
-    private readonly SnapshotRecorder<GadgetManager, GadgetBase, int> _gadgetSnapshotRecorder;
+    private readonly SnapshotRecorder<GadgetManager, GadgetBase, byte> _gadgetSnapshotRecorder;
     private readonly SnapshotRecorder<SkillSetManager, SkillTrackingData, SkillSetSnapshotData> _skillSetSnapshotRecorder;
 
     private readonly SnapshotRecorder<RewindManager, LemmingManager, LemmingManagerSnapshotData> _lemmingManagerSnapshotRecorder;
@@ -32,7 +32,7 @@ public sealed class RewindManager :
         SkillSetManager skillSetManager)
     {
         _lemmingSnapshotRecorder = new SnapshotRecorder<LemmingManager, Lemming, LemmingSnapshotData>(lemmingManager);
-        _gadgetSnapshotRecorder = new SnapshotRecorder<GadgetManager, GadgetBase, int>(gadgetManager);
+        _gadgetSnapshotRecorder = new SnapshotRecorder<GadgetManager, GadgetBase, byte>(gadgetManager);
         _skillSetSnapshotRecorder = new SnapshotRecorder<SkillSetManager, SkillTrackingData, SkillSetSnapshotData>(skillSetManager);
 
         _lemmingManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, LemmingManager, LemmingManagerSnapshotData>(this);
