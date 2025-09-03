@@ -14,7 +14,7 @@ public sealed class DrownerAction : LemmingAction
             LemmingActionConstants.DrownerActionSpriteFileName,
             LemmingActionConstants.DrownerAnimationFrames,
             LemmingActionConstants.MaxDrownerPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionConstants.NonWalkerMovementPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }

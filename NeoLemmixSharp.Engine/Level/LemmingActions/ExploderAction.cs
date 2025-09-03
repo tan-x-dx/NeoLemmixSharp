@@ -17,7 +17,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
             LemmingActionConstants.ExploderActionSpriteFileName,
             LemmingActionConstants.ExploderAnimationFrames,
             LemmingActionConstants.MaxExploderPhysicsFrames,
-            EngineConstants.NoPriority,
+            LemmingActionConstants.NoPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }

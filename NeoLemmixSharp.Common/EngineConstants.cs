@@ -175,16 +175,6 @@ public static class EngineConstants
 
     #endregion
 
-    #region Cursor Priority Levels
-
-    public const int NonPermanentSkillPriority = 4;
-    public const int PermanentSkillPriority = 3;
-    public const int NonWalkerMovementPriority = 2;
-    public const int WalkerMovementPriority = 1;
-    public const int NoPriority = 0;
-
-    #endregion
-
     #region Menu Constants
 
     public const string LevelLoadingDisplayString = "Loading";

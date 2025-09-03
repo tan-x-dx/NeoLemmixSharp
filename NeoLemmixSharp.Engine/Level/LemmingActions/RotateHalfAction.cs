@@ -15,7 +15,7 @@ public sealed class RotateHalfAction : LemmingAction
             LemmingActionConstants.RotateHalfActionSpriteFileName,
             LemmingActionConstants.RotateHalfAnimationFrames,
             LemmingActionConstants.MaxRotateHalfPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionConstants.NonWalkerMovementPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }

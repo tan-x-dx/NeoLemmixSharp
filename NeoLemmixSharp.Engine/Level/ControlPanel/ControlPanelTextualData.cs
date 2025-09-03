@@ -110,7 +110,7 @@ public sealed class ControlPanelTextualData
 
         ReadOnlySpan<char> GetSourceSpan()
         {
-            if (action.CursorSelectionPriorityValue == EngineConstants.NonPermanentSkillPriority)
+            if (action.CursorSelectionPriorityValue == LemmingActionConstants.NonPermanentSkillPriority)
                 return action.LemmingActionName;
 
             if (state.IsZombie && state.IsNeutral)

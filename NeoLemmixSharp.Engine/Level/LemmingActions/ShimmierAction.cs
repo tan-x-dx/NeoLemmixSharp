@@ -17,7 +17,7 @@ public sealed class ShimmierAction : LemmingAction
             LemmingActionConstants.ShimmierActionSpriteFileName,
             LemmingActionConstants.ShimmierAnimationFrames,
             LemmingActionConstants.MaxShimmierPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionConstants.NonWalkerMovementPriority,
             LemmingActionBounds.ShimmierActionBounds)
     {
     }
