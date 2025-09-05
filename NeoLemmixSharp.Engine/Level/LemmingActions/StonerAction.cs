@@ -25,7 +25,7 @@ public sealed class StonerAction : LemmingAction
         TerrainMasks.ApplyStonerMask(lemming);
         NoneAction.Instance.TransitionLemmingToAction(lemming, false);
         LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
-        lemming.ParticleTimer = EngineConstants.ParticleFrameCount;
+        lemming.Data.ParticleTimer = EngineConstants.ParticleFrameCount;
 
         return false;
     }

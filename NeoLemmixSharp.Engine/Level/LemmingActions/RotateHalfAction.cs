@@ -22,11 +22,11 @@ public sealed class RotateHalfAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        if (lemming.EndOfAnimation)
+        if (lemming.Data.EndOfAnimation)
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
-            var orientation = lemming.Orientation;
-            ref var lemmingPosition = ref lemming.AnchorPosition;
+            var orientation = lemming.Data.Orientation;
+            ref var lemmingPosition = ref lemming.Data.AnchorPosition;
             lemmingPosition = orientation.MoveUp(lemmingPosition, 8);
             lemming.SetOrientation(orientation.GetOpposite());
         }

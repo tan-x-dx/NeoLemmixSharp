@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using System.Numerics;
 
@@ -326,16 +325,17 @@ public sealed class LemmingState
         UpdateSkinColor();
     }
 
-    public void SetFromSnapshotData(in LemmingStateSnapshotData lemmingStateSnapshotData)
+    public void WriteToSnapshotData(out int tribeId, out uint stateData)
     {
-        _tribeId = lemmingStateSnapshotData.TribeId;
-        _states = lemmingStateSnapshotData.StateData;
-        UpdateHairAndBodyColors();
-        UpdateSkinColor();
+        tribeId = _tribeId;
+        stateData = _states;
     }
 
-    public void WriteToSnapshotData(out LemmingStateSnapshotData data)
+    public void SetFromSnapshotData(int tribeId, uint stateData)
     {
-        data = new LemmingStateSnapshotData(_tribeId, _states);
+        _tribeId = tribeId;
+        _states = stateData;
+        UpdateHairAndBodyColors();
+        UpdateSkinColor();
     }
 }

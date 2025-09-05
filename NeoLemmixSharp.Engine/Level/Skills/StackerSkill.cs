@@ -26,13 +26,13 @@ public sealed class StackerSkill : LemmingSkill
         // Get starting position for stacker
         gadgetManager.GetAllGadgetsNearPosition(
             scratchSpaceSpan,
-            lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX),
+            lemming.Data.Orientation.MoveRight(lemming.Data.AnchorPosition, lemming.Data.FacingDirection.DeltaX),
             out var gadgetsNearRegion);
 
-        lemming.StackLow = !PositionIsSolidToLemming(
+        lemming.Data.StackLow = !PositionIsSolidToLemming(
             in gadgetsNearRegion,
             lemming,
-            lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX));
+            lemming.Data.Orientation.MoveRight(lemming.Data.AnchorPosition, lemming.Data.FacingDirection.DeltaX));
 
         StackerAction.Instance.TransitionLemmingToAction(lemming, false);
     }

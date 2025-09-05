@@ -24,27 +24,27 @@ public sealed class StackerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        if (lemming.PhysicsFrame == LemmingActionConstants.StackerAnimationFrames - 1)
+        if (lemming.Data.PhysicsFrame == LemmingActionConstants.StackerAnimationFrames - 1)
         {
-            lemming.PlacedBrick = LayStackBrick(in gadgetsNearLemming, lemming);
+            lemming.Data.PlacedBrick = LayStackBrick(in gadgetsNearLemming, lemming);
             return true;
         }
 
-        if (lemming.PhysicsFrame != 0)
+        if (lemming.Data.PhysicsFrame != 0)
             return true;
 
-        lemming.NumberOfBricksLeft--;
+        lemming.Data.NumberOfBricksLeft--;
 
-        if (lemming.NumberOfBricksLeft < EngineConstants.NumberOfRemainingBricksToPlaySound)
+        if (lemming.Data.NumberOfBricksLeft < EngineConstants.NumberOfRemainingBricksToPlaySound)
         {
             // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position); ??
         }
 
-        if (!lemming.PlacedBrick)
+        if (!lemming.Data.PlacedBrick)
         {
             // Relax the check on the first brick
             // for details see http://www.lemmingsforums.net/index.php?topic=2862.0
-            if (lemming.NumberOfBricksLeft < EngineConstants.NumberOfStackerBricks - 1 ||
+            if (lemming.Data.NumberOfBricksLeft < EngineConstants.NumberOfStackerBricks - 1 ||
                 !MayPlaceNextBrick(in gadgetsNearLemming, lemming))
             {
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -52,7 +52,7 @@ public sealed class StackerAction : LemmingAction
             return true;
         }
 
-        if (lemming.NumberOfBricksLeft != 0)
+        if (lemming.Data.NumberOfBricksLeft != 0)
             return true;
 
         ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -64,11 +64,11 @@ public sealed class StackerAction : LemmingAction
         in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming)
     {
-        var orientation = lemming.Orientation;
-        var brickPosition = lemming.AnchorPosition;
-        brickPosition = orientation.MoveUp(brickPosition, 1 + EngineConstants.NumberOfStackerBricks - lemming.NumberOfBricksLeft);
+        var orientation = lemming.Data.Orientation;
+        var brickPosition = lemming.Data.AnchorPosition;
+        brickPosition = orientation.MoveUp(brickPosition, 1 + EngineConstants.NumberOfStackerBricks - lemming.Data.NumberOfBricksLeft);
 
-        var dx = lemming.FacingDirection.DeltaX;
+        var dx = lemming.Data.FacingDirection.DeltaX;
 
         return !(PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveRight(brickPosition, dx)) &&
                  PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveRight(brickPosition, dx * 2)) &&
@@ -80,10 +80,10 @@ public sealed class StackerAction : LemmingAction
         Lemming lemming)
     {
         var terrainManager = LevelScreen.TerrainManager;
-        var orientation = lemming.Orientation;
-        var dx = lemming.FacingDirection.DeltaX;
-        var dy = lemming.StackLow ? -1 : 0;
-        var brickPosition = orientation.Move(lemming.AnchorPosition, dx, 1 + EngineConstants.NumberOfStackerBricks + dy - lemming.NumberOfBricksLeft);
+        var orientation = lemming.Data.Orientation;
+        var dx = lemming.Data.FacingDirection.DeltaX;
+        var dy = lemming.Data.StackLow ? -1 : 0;
+        var brickPosition = orientation.Move(lemming.Data.AnchorPosition, dx, 1 + EngineConstants.NumberOfStackerBricks + dy - lemming.Data.NumberOfBricksLeft);
 
         var result = false;
 
@@ -105,6 +105,6 @@ public sealed class StackerAction : LemmingAction
     {
         DoMainTransitionActions(lemming, turnAround);
 
-        lemming.NumberOfBricksLeft = EngineConstants.NumberOfStackerBricks;
+        lemming.Data.NumberOfBricksLeft = EngineConstants.NumberOfStackerBricks;
     }
 }

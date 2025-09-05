@@ -21,7 +21,7 @@ public static class LemmingActionHelpers
         Point levelPosition,
         in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Orientation;
+        var orientation = lemming.Data.Orientation;
 
         int result;
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, levelPosition))
@@ -89,7 +89,7 @@ public static class LemmingActionHelpers
         {
             var currentState = gadget.CurrentState;
 
-            if (!gadget.ContainsPoint(lemming.Orientation, levelPosition))
+            if (!gadget.ContainsPoint(lemming.Data.Orientation, levelPosition))
                 continue;
 
             var filters = currentState.Filters;
@@ -113,7 +113,7 @@ public static class LemmingActionHelpers
         if (gadgetsNearLemming.Count == 0)
             return new Point();
 
-        var lemmingOrientation = lemming.Orientation;
+        var lemmingOrientation = lemming.Data.Orientation;
         var lemmingOrientationRotNum = lemmingOrientation.RotNum;
 
         int* deltas = stackalloc int[EngineConstants.NumberOfOrientations];
@@ -122,7 +122,7 @@ public static class LemmingActionHelpers
         deltas[EngineConstants.UpOrientationRotNum] = 0;
         deltas[EngineConstants.RightOrientationRotNum] = 0;
 
-        var anchorPosition = lemming.AnchorPosition;
+        var anchorPosition = lemming.Data.AnchorPosition;
         var footPosition = lemming.FootPosition;
 
         foreach (var gadget in gadgetsNearLemming)

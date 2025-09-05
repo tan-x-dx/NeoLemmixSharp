@@ -21,7 +21,7 @@ public sealed class VaporiserAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        if (lemming.EndOfAnimation)
+        if (lemming.Data.EndOfAnimation)
         {
             LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathFire);
         }
@@ -33,6 +33,6 @@ public sealed class VaporiserAction : LemmingAction
     {
         DoMainTransitionActions(lemming, turnAround);
 
-        lemming.CountDownTimer = 0;
+        lemming.Data.CountDownTimer = 0;
     }
 }

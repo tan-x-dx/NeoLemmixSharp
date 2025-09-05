@@ -27,7 +27,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         // Remove terrain
-        var physicsFrame = lemming.PhysicsFrame;
+        var physicsFrame = lemming.Data.PhysicsFrame;
         if (physicsFrame is >= 2 and <= 5)
         {
             TerrainMasks.ApplyFencerMask(lemming, physicsFrame - 2);
@@ -35,12 +35,12 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
 
         if (physicsFrame == 15)
         {
-            lemming.IsStartingAction = false;
+            lemming.Data.IsStartingAction = false;
         }
 
-        var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.AnchorPosition;
-        var dx = lemming.FacingDirection.DeltaX;
+        var orientation = lemming.Data.Orientation;
+        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        var dx = lemming.Data.FacingDirection.DeltaX;
 
         if (physicsFrame == 5)
         {
@@ -65,7 +65,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
             // Check whether we turn around within the next two fencer strokes (only if we don't simulate)
             if (!lemming.IsSimulation)
             {
-                if (!continueWork || !lemming.IsStartingAction) // If BOTH of these are true, then both things being tested for are irrelevant
+                if (!continueWork || !lemming.Data.IsStartingAction) // If BOTH of these are true, then both things being tested for are irrelevant
                 {
                     DoFencerContinueTests(lemming, out var steelContinue, out var moveUpContinue);
 
@@ -74,7 +74,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
                         continueWork = steelContinue;
                     }
 
-                    if (continueWork && !lemming.IsStartingAction)
+                    if (continueWork && !lemming.Data.IsStartingAction)
                     {
                         continueWork = moveUpContinue;
                     }
@@ -206,7 +206,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
         Point pos)
     {
         // Check for indestructible terrain 3 pixels above position
-        return PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, lemming.Orientation.MoveUp(pos, 3));
+        return PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, lemming.Data.Orientation.MoveUp(pos, 3));
     }
 
     private static void FencerTurn(
@@ -216,12 +216,12 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
     {
         // Turns fencer around and transitions to walker
 
-        var dx = -lemming.FacingDirection.DeltaX;
+        var dx = -lemming.Data.FacingDirection.DeltaX;
         var dy = needToUndoUp
             ? -1
             : 0;
-        ref var lemmingPosition = ref lemming.AnchorPosition;
-        lemmingPosition = lemming.Orientation.Move(lemmingPosition, dx, dy);
+        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        lemmingPosition = lemming.Data.Orientation.Move(lemmingPosition, dx, dy);
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 

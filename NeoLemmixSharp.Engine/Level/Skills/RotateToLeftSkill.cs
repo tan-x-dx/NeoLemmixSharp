@@ -17,12 +17,12 @@ public sealed class RotateToLeftSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return lemming.Orientation != Orientation.Left && SkillIsAssignableToCurrentAction(lemming);
+        return lemming.Data.Orientation != Orientation.Left && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        var orientation = lemming.Orientation;
+        var orientation = lemming.Data.Orientation;
         if (orientation == Orientation.Down)
         {
             RotateClockwiseAction.Instance.TransitionLemmingToAction(lemming, false);

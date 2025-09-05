@@ -24,9 +24,9 @@ public sealed class WalkerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Orientation;
-        var dx = lemming.FacingDirection.DeltaX;
-        ref var lemmingPosition = ref lemming.AnchorPosition;
+        var orientation = lemming.Data.Orientation;
+        var dx = lemming.Data.FacingDirection.DeltaX;
+        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
 
         lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
         var dy = FindGroundPixel(lemming, lemmingPosition, in gadgetsNearLemming);
@@ -48,7 +48,7 @@ public sealed class WalkerAction : LemmingAction
             }
             else
             {
-                lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+                lemming.SetFacingDirection(lemming.Data.FacingDirection.GetOpposite());
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             }
         }
@@ -86,9 +86,9 @@ public sealed class WalkerAction : LemmingAction
     {
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        gadgetManager.GetAllGadgetsNearPosition(scratchSpaceSpan, lemming.AnchorPosition, out var gadgetsNearRegion);
+        gadgetManager.GetAllGadgetsNearPosition(scratchSpaceSpan, lemming.Data.AnchorPosition, out var gadgetsNearRegion);
 
-        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.AnchorPosition))
+        if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.Data.AnchorPosition))
         {
             DoMainTransitionActions(lemming, turnAround);
             return;

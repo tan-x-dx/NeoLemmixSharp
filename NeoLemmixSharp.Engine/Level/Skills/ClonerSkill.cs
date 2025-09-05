@@ -28,7 +28,7 @@ public sealed class ClonerSkill : LemmingSkill
             return;
 
         newLemming.SetRawDataFromOther(lemming);
-        newLemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+        newLemming.SetFacingDirection(lemming.Data.FacingDirection.GetOpposite());
         newLemming.Initialise();
 
         var newLemmingCurrentAction = newLemming.CurrentAction;
@@ -36,13 +36,13 @@ public sealed class ClonerSkill : LemmingSkill
         // Avoid moving into terrain, see http://www.lemmingsforums.net/index.php?topic=2575.0
         if (newLemmingCurrentAction == MinerAction.Instance)
         {
-            if (newLemming.PhysicsFrame == 2)
+            if (newLemming.Data.PhysicsFrame == 2)
             {
                 TerrainMasks.ApplyMinerMask(newLemming, 1, 0, 0);
             }
-            else if (newLemming.PhysicsFrame is >= 3 and < 15)
+            else if (newLemming.Data.PhysicsFrame is >= 3 and < 15)
             {
-                var dx = newLemming.FacingDirection.DeltaX;
+                var dx = newLemming.Data.FacingDirection.DeltaX;
                 TerrainMasks.ApplyMinerMask(newLemming, 1, -2 * dx, -1);
             }
 
@@ -51,7 +51,7 @@ public sealed class ClonerSkill : LemmingSkill
 
         // Required for turned builders not to walk into air
         // For platformers, see http://www.lemmingsforums.net/index.php?topic=2530.0
-        if (newLemming.PhysicsFrame >= 9 &&
+        if (newLemming.Data.PhysicsFrame >= 9 &&
             (newLemmingCurrentAction == BuilderAction.Instance ||
              newLemmingCurrentAction == PlatformerAction.Instance))
         {

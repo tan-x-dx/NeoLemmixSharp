@@ -20,8 +20,8 @@ public sealed class PlatformerSkill : LemmingSkill
     [SkipLocalsInit]
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        var orientation = lemming.Orientation;
-        var lemmingPostion = lemming.AnchorPosition;
+        var orientation = lemming.Data.Orientation;
+        var lemmingPostion = lemming.Data.AnchorPosition;
 
         var levelRegion = new RectangularRegion(
             orientation.Move(lemmingPostion, 5, 2),

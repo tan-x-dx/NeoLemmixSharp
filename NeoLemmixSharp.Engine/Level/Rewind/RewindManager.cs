@@ -90,10 +90,10 @@ public sealed class RewindManager :
 
     private static unsafe void ValidateLemmingReplayAction(Lemming lemming, SkillAssignmentData* previouslyRecordedSkillAssignment)
     {
-        if (lemming.AnchorPosition == previouslyRecordedSkillAssignment->LemmingPosition &&
+        if (lemming.Data.AnchorPosition == previouslyRecordedSkillAssignment->LemmingPosition &&
             lemming.State.TribeAffiliation.Id == previouslyRecordedSkillAssignment->TribeId &&
-            lemming.Orientation.RotNum == previouslyRecordedSkillAssignment->LemmingOrientationRotNum &&
-            lemming.FacingDirection.Id == previouslyRecordedSkillAssignment->LemmingFacingDirectionId)
+            lemming.Data.Orientation == previouslyRecordedSkillAssignment->LemmingOrientation &&
+            lemming.Data.FacingDirection == previouslyRecordedSkillAssignment->LemmingFacingDirection)
             return;
 
         throw new InvalidOperationException("Desync with replay!");

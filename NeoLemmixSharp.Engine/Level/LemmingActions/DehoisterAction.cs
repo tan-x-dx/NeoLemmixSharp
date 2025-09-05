@@ -23,10 +23,10 @@ public sealed class DehoisterAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.AnchorPosition;
+        var orientation = lemming.Data.Orientation;
+        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
 
-        if (lemming.EndOfAnimation)
+        if (lemming.Data.EndOfAnimation)
         {
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 7)))
             {
@@ -38,12 +38,12 @@ public sealed class DehoisterAction : LemmingAction
             return true;
         }
 
-        if (lemming.PhysicsFrame < 2)
+        if (lemming.Data.PhysicsFrame < 2)
             return true;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
-        var animFrameValue = lemming.PhysicsFrame * 2;
+        var animFrameValue = lemming.Data.PhysicsFrame * 2;
 
         if (!SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 3, in gadgetsNearLemming) &&
             lemming.CurrentAction == DrownerAction.Instance)
@@ -57,7 +57,7 @@ public sealed class DehoisterAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        lemming.DehoistPin = lemming.AnchorPosition;
+        lemming.Data.DehoistPin = lemming.Data.AnchorPosition;
 
         DoMainTransitionActions(lemming, turnAround);
     }
@@ -67,18 +67,18 @@ public sealed class DehoisterAction : LemmingAction
         bool alreadyMoved,
         in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Orientation;
-        var dx = lemming.FacingDirection.DeltaX;
+        var orientation = lemming.Data.Orientation;
+        var dx = lemming.Data.FacingDirection.DeltaX;
         Point currentPosition;
         Point nextPosition;
         if (alreadyMoved)
         {
-            nextPosition = lemming.AnchorPosition;
+            nextPosition = lemming.Data.AnchorPosition;
             currentPosition = orientation.MoveLeft(nextPosition, dx);
         }
         else
         {
-            currentPosition = lemming.AnchorPosition;
+            currentPosition = lemming.Data.AnchorPosition;
             nextPosition = orientation.MoveRight(currentPosition, dx);
         }
 

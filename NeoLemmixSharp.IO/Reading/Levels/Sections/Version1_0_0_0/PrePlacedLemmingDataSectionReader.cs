@@ -24,7 +24,7 @@ internal sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
         }
     }
 
-    private static LemmingData ReadLemmingData(RawLevelFileDataReader reader)
+    private static LemmingInstanceData ReadLemmingData(RawLevelFileDataReader reader)
     {
         int positionData = reader.Read32BitSignedInteger();
         var position = ReadWriteHelpers.DecodePoint(positionData);
@@ -40,7 +40,7 @@ internal sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
 
         FileReadingException.ReaderAssert(LemmingActionConstants.IsValidLemmingActionId(initialLemmingActionId), "Invalid initial action for lemming!");
 
-        return new LemmingData
+        return new LemmingInstanceData
         {
             Position = position,
             State = state,

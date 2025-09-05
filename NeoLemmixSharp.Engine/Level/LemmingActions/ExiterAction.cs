@@ -23,8 +23,8 @@ public sealed class ExiterAction : LemmingAction
     {
         if (LevelScreen.LevelTimer.OutOfTime)
         {
-            lemming.AnimationFrame--;
-            lemming.PhysicsFrame--;
+            lemming.Data.AnimationFrame--;
+            lemming.Data.PhysicsFrame--;
 
             //if UserSetNuking and (L.LemExplosionTimer <= 0) and (Index_LemmingToBeNuked > L.LemIndex) then
             //  Transition(L, baOhnoing);
@@ -32,7 +32,7 @@ public sealed class ExiterAction : LemmingAction
             return false;
         }
 
-        if (lemming.EndOfAnimation)
+        if (lemming.Data.EndOfAnimation)
         {
             LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.Exit);
         }
@@ -44,6 +44,6 @@ public sealed class ExiterAction : LemmingAction
     {
         DoMainTransitionActions(lemming, turnAround);
 
-        lemming.CountDownTimer = 0;
+        lemming.Data.CountDownTimer = 0;
     }
 }

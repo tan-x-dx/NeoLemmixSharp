@@ -23,9 +23,9 @@ public sealed class OhNoerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        ref var lemmingPosition = ref lemming.AnchorPosition;
+        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
 
-        if (lemming.EndOfAnimation)
+        if (lemming.Data.EndOfAnimation)
         {
             LevelScreen.LemmingManager.DeregisterBlocker(lemming);
             var nextAction = lemming.CountDownAction;
@@ -39,7 +39,7 @@ public sealed class OhNoerAction : LemmingAction
 
         var updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
 
-        var lemmingOrientation = lemming.Orientation;
+        var lemmingOrientation = lemming.Data.Orientation;
         lemmingPosition = lemmingOrientation.MoveDown(lemmingPosition, EngineConstants.DefaultFallStep + updraftFallDelta.Y);
 
         return true;

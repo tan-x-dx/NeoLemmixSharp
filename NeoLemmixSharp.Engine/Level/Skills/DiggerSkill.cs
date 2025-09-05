@@ -22,10 +22,10 @@ public sealed class DiggerSkill : LemmingSkill
     {
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        gadgetManager.GetAllGadgetsNearPosition(scratchSpaceSpan, lemming.AnchorPosition, out var gadgetsNearRegion);
+        gadgetManager.GetAllGadgetsNearPosition(scratchSpaceSpan, lemming.Data.AnchorPosition, out var gadgetsNearRegion);
 
         return SkillIsAssignableToCurrentAction(lemming) &&
-               !PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, DiggerAction.Instance, lemming.AnchorPosition);
+               !PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, DiggerAction.Instance, lemming.Data.AnchorPosition);
     }
 
     public override void AssignToLemming(Lemming lemming)

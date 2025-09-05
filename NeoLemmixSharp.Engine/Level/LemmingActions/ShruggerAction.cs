@@ -21,7 +21,7 @@ public sealed class ShruggerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        if (lemming.EndOfAnimation)
+        if (lemming.Data.EndOfAnimation)
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
         }

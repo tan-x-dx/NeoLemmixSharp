@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Data.Level;
 
-public sealed class LemmingData
+public sealed class LemmingInstanceData
 {
     public Point Position { get; set; }
     public uint State { get; set; }
@@ -11,7 +11,7 @@ public sealed class LemmingData
     public int TribeId { get; set; } = EngineConstants.ClassicTribeId;
     public int InitialLemmingActionId { get; set; } = LemmingActionConstants.WalkerActionId;
 
-    internal LemmingData()
+    internal LemmingInstanceData()
     {
     }
 }

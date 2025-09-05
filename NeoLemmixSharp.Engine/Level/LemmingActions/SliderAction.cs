@@ -25,8 +25,8 @@ public sealed class SliderAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.AnchorPosition;
+        var orientation = lemming.Data.Orientation;
+        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         if (!SliderTerrainChecks(lemming, orientation, MaxYCheckOffset, in gadgetsNearLemming) &&
@@ -44,9 +44,9 @@ public sealed class SliderAction : LemmingAction
         int maxYOffset,
         in GadgetEnumerable gadgetsNearLemming)
     {
-        ref var lemmingPosition = ref lemming.AnchorPosition;
-        var lemmingDehoistPosition = lemming.DehoistPin;
-        var dx = lemming.FacingDirection.DeltaX;
+        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        var lemmingDehoistPosition = lemming.Data.DehoistPin;
+        var dx = lemming.Data.FacingDirection.DeltaX;
 
         var hasPixelAtLemmingPosition = SliderHasPixelAt(in gadgetsNearLemming, lemmingPosition);
 
@@ -100,7 +100,7 @@ public sealed class SliderAction : LemmingAction
             Point testPosition)
         {
             return PositionIsSolidToLemming(in gadgetsNearLemming1, lemming, testPosition) ||
-                   (orientation.MatchesHorizontally(testPosition, lemming.AnchorPosition) &&
+                   (orientation.MatchesHorizontally(testPosition, lemming.Data.AnchorPosition) &&
                     orientation.MatchesVertically(testPosition, lemmingDehoistPosition) &&
                     PositionIsSolidToLemming(in gadgetsNearLemming1, lemming, orientation.MoveDown(testPosition, 1)));
         }
@@ -108,12 +108,12 @@ public sealed class SliderAction : LemmingAction
 
     public override Point GetFootPosition(Lemming lemming, Point anchorPosition)
     {
-        return lemming.Orientation.MoveLeft(anchorPosition, lemming.FacingDirection.DeltaX);
+        return lemming.Data.Orientation.MoveLeft(anchorPosition, lemming.Data.FacingDirection.DeltaX);
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        lemming.DehoistPin = new Point(-1, -1);
+        lemming.Data.DehoistPin = new Point(-1, -1);
 
         DoMainTransitionActions(lemming, turnAround);
     }

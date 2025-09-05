@@ -21,8 +21,8 @@ public sealed class DisarmerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        lemming.DisarmingFrames--;
-        if (lemming.DisarmingFrames <= 0)
+        lemming.Data.DisarmingFrames--;
+        if (lemming.Data.DisarmingFrames <= 0)
         {
             if (lemming.NextAction == NoneAction.Instance)
             {
@@ -34,7 +34,7 @@ public sealed class DisarmerAction : LemmingAction
                 lemming.SetNextAction(NoneAction.Instance);
             }
         }
-        else if ((lemming.PhysicsFrame & 7) == 0)
+        else if ((lemming.Data.PhysicsFrame & 7) == 0)
         {
             // ?? CueSoundEffect(SFX_FIXING, L.Position); ??
         }

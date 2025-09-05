@@ -26,5 +26,5 @@ public sealed class LemmingFacingDirectionCriterion : LemmingCriterion
         _requiredFacingDirection = requiredFacingDirection;
     }
 
-    public override bool LemmingMatchesCriteria(Lemming lemming) => lemming.FacingDirection == _requiredFacingDirection;
+    public override bool LemmingMatchesCriteria(Lemming lemming) => lemming.Data.FacingDirection == _requiredFacingDirection;
 }

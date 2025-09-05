@@ -177,7 +177,7 @@ public sealed class LemmingManager :
             hatchGroup.OnSpawnLemming();
             var lemming = hatchLemmingSpan[_numberOfLemmingsReleasedFromHatch++];
 
-            lemming.AnchorPosition = hatchGadget.Position + hatchGadget.SpawnPointOffset;
+            lemming.Data.AnchorPosition = hatchGadget.Position + hatchGadget.SpawnPointOffset;
             hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
             InitialiseLemming(lemming);
         }
@@ -291,7 +291,7 @@ public sealed class LemmingManager :
 
         foreach (var blocker in _allBlockers)
         {
-            var secondBounds = blocker.CurrentBounds;
+            var secondBounds = blocker.Data.CurrentBounds;
 
             if (LevelScreen.RegionsOverlap(firstBounds, secondBounds))
                 return false;
@@ -318,7 +318,7 @@ public sealed class LemmingManager :
         Debug.Assert(!lemming.State.IsZombie);
 
         Span<uint> scratchSpaceSpan = stackalloc uint[_lemmingPositionHelper.ScratchSpaceSize];
-        var checkRegion = lemming.CurrentBounds;
+        var checkRegion = lemming.Data.CurrentBounds;
         _zombieSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, checkRegion, out var nearbyZombies);
 
         if (nearbyZombies.Count == 0)
@@ -328,7 +328,7 @@ public sealed class LemmingManager :
         {
             Debug.Assert(zombie.State.IsZombie);
 
-            var zombieRegion = zombie.CurrentBounds;
+            var zombieRegion = zombie.Data.CurrentBounds;
 
             if (LevelScreen.RegionsOverlap(checkRegion, zombieRegion))
             {

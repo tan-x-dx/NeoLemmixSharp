@@ -28,8 +28,8 @@ public sealed class ReacherAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.AnchorPosition;
+        var orientation = lemming.Data.Orientation;
+        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
 
         var emptyPixels = GetEmptyPixelCount(in gadgetsNearLemming, lemming, lemmingPosition);
 
@@ -45,7 +45,7 @@ public sealed class ReacherAction : LemmingAction
         }
 
         // On the first frame, check as well for height 9, as the shimmier may not continue in that case
-        if (lemming.PhysicsFrame == 1 &&
+        if (lemming.Data.PhysicsFrame == 1 &&
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 9)))
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -56,7 +56,7 @@ public sealed class ReacherAction : LemmingAction
         var movementList = MovementList;
 
         // Check whether we can reach the ceiling
-        if (emptyPixels <= movementList[lemming.PhysicsFrame])
+        if (emptyPixels <= movementList[lemming.Data.PhysicsFrame])
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, emptyPixels + 1); // Shimmiers are a lot smaller than reachers
             ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -65,8 +65,8 @@ public sealed class ReacherAction : LemmingAction
         }
 
         // Move upwards
-        lemmingPosition = orientation.MoveUp(lemmingPosition, movementList[lemming.PhysicsFrame]);
-        if (lemming.PhysicsFrame == 7)
+        lemmingPosition = orientation.MoveUp(lemmingPosition, movementList[lemming.Data.PhysicsFrame]);
+        if (lemming.Data.PhysicsFrame == 7)
         {
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
@@ -79,7 +79,7 @@ public sealed class ReacherAction : LemmingAction
         Lemming lemming,
         Point lemmingPosition)
     {
-        var orientation = lemming.Orientation;
+        var orientation = lemming.Data.Orientation;
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 10)))
             return 0;
 

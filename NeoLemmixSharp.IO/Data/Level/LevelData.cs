@@ -136,8 +136,8 @@ public sealed class LevelData
     public BitArraySet<LevelParameterHasher, BitBuffer32, LevelParameters> LevelParameters { get; } = LevelParameterHasher.CreateBitArraySet();
     public BitArraySet<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters> ControlParameters { get; } = ControlPanelParameterHasher.CreateBitArraySet();
 
-    public List<LemmingData> PrePlacedLemmingData { get; } = [];
-    public List<LemmingData> HatchLemmingData { get; } = [];
+    public List<LemmingInstanceData> PrePlacedLemmingData { get; } = [];
+    public List<LemmingInstanceData> HatchLemmingData { get; } = [];
     public List<TribeStyleIdentifier> TribeIdentifiers { get; } = [];
 
     public List<TerrainData> AllTerrainData { get; } = [];

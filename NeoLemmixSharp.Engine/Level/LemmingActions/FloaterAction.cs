@@ -25,10 +25,10 @@ public sealed class FloaterAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var maxFallDistance = FloaterFallTable[lemming.PhysicsFrame - 1];
+        var maxFallDistance = FloaterFallTable[lemming.Data.PhysicsFrame - 1];
 
-        var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.AnchorPosition;
+        var orientation = lemming.Data.Orientation;
+        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
 
         var updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
 

@@ -24,25 +24,25 @@ public sealed class BuilderAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        if (lemming.PhysicsFrame == 9)
+        if (lemming.Data.PhysicsFrame == 9)
         {
             LayBrick(lemming);
 
             return true;
         }
 
-        if (lemming.PhysicsFrame == 10 &&
-            lemming.NumberOfBricksLeft <= EngineConstants.NumberOfRemainingBricksToPlaySound)
+        if (lemming.Data.PhysicsFrame == 10 &&
+            lemming.Data.NumberOfBricksLeft <= EngineConstants.NumberOfRemainingBricksToPlaySound)
         {
             // play sound/make visual cue
             return true;
         }
 
-        if (lemming.PhysicsFrame != 0)
+        if (lemming.Data.PhysicsFrame != 0)
             return true;
 
         BuilderFrame0(lemming, in gadgetsNearLemming);
-        lemming.ConstructivePositionFreeze = false;
+        lemming.Data.ConstructivePositionFreeze = false;
 
         return true;
     }
@@ -51,11 +51,11 @@ public sealed class BuilderAction : LemmingAction
         Lemming lemming,
         in GadgetEnumerable gadgetsNearLemming)
     {
-        lemming.NumberOfBricksLeft--;
+        lemming.Data.NumberOfBricksLeft--;
 
-        var orientation = lemming.Orientation;
-        ref var lemmingPosition = ref lemming.AnchorPosition;
-        var dx = lemming.FacingDirection.DeltaX;
+        var orientation = lemming.Data.Orientation;
+        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        var dx = lemming.Data.FacingDirection.DeltaX;
 
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 2)))
         {
@@ -67,7 +67,7 @@ public sealed class BuilderAction : LemmingAction
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx * 2, 2)) ||
             (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
-             lemming.NumberOfBricksLeft > 0))
+             lemming.Data.NumberOfBricksLeft > 0))
         {
             lemmingPosition = orientation.Move(lemmingPosition, dx, 1);
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -75,7 +75,7 @@ public sealed class BuilderAction : LemmingAction
             return;
         }
 
-        if (!lemming.ConstructivePositionFreeze)
+        if (!lemming.Data.ConstructivePositionFreeze)
         {
             lemmingPosition = orientation.Move(lemmingPosition, dx * 2, 1);
         }
@@ -84,14 +84,14 @@ public sealed class BuilderAction : LemmingAction
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 3)) ||
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
             (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
-             lemming.NumberOfBricksLeft > 0))
+             lemming.Data.NumberOfBricksLeft > 0))
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
             return;
         }
 
-        if (lemming.NumberOfBricksLeft == 0)
+        if (lemming.Data.NumberOfBricksLeft == 0)
         {
             ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
@@ -101,20 +101,20 @@ public sealed class BuilderAction : LemmingAction
     {
         DoMainTransitionActions(lemming, turnAround);
 
-        lemming.NumberOfBricksLeft = EngineConstants.NumberOfBuilderBricks;
-        lemming.ConstructivePositionFreeze = false;
+        lemming.Data.NumberOfBricksLeft = EngineConstants.NumberOfBuilderBricks;
+        lemming.Data.ConstructivePositionFreeze = false;
     }
 
     public static void LayBrick(Lemming lemming)
     {
         var terrainManager = LevelScreen.TerrainManager;
-        var orientation = lemming.Orientation;
-        var dx = lemming.FacingDirection.DeltaX;
+        var orientation = lemming.Data.Orientation;
+        var dx = lemming.Data.FacingDirection.DeltaX;
         var dy = lemming.CurrentAction == Instance
             ? 1
             : 0;
 
-        var brickPosition = lemming.AnchorPosition;
+        var brickPosition = lemming.Data.AnchorPosition;
         brickPosition = orientation.MoveUp(brickPosition, dy);
         terrainManager.SetSolidPixel(brickPosition, Color.Magenta);
 
