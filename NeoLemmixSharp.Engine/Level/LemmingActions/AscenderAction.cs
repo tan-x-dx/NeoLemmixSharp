@@ -23,9 +23,9 @@ public sealed class AscenderAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
-        ref var ascenderProgress = ref lemming.Data.AscenderProgress;
-        var orientation = lemming.Data.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
+        ref var ascenderProgress = ref lemming.AscenderProgress;
+        var orientation = lemming.Orientation;
 
         var dy = 0;
         while (dy < 2 &&
@@ -43,7 +43,7 @@ public sealed class AscenderAction : LemmingAction
         if (dy < 2 &&
             !pixel1IsSolid)
         {
-            lemming.SetNextAction(WalkerAction.Instance);
+            lemming.NextAction = WalkerAction.Instance;
             return true;
         }
 
@@ -53,8 +53,8 @@ public sealed class AscenderAction : LemmingAction
             (ascenderProgress >= 5 &&
              pixel1IsSolid))
         {
-            var dx = lemming.Data.FacingDirection.DeltaX;
-            lemming.Data.AnchorPosition = orientation.MoveLeft(lemmingPosition, dx);
+            var dx = lemming.FacingDirection.DeltaX;
+            lemming.AnchorPosition = orientation.MoveLeft(lemmingPosition, dx);
             FallerAction.Instance.TransitionLemmingToAction(lemming, true);
         }
 
@@ -65,6 +65,6 @@ public sealed class AscenderAction : LemmingAction
     {
         DoMainTransitionActions(lemming, turnAround);
 
-        lemming.Data.AscenderProgress = 0;
+        lemming.AscenderProgress = 0;
     }
 }

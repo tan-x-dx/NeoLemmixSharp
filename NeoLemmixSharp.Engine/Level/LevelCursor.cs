@@ -122,7 +122,7 @@ public sealed class LevelCursor
     {
         // Directional select
         if (_facingDirection.HasValue &&
-            lemming.Data.FacingDirection != _facingDirection &&
+            lemming.FacingDirection != _facingDirection &&
             !(false))//and(not(IsHighlight or IsReplay))
             return false;
 

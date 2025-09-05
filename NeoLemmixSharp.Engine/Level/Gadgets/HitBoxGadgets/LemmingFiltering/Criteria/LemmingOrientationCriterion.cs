@@ -13,5 +13,5 @@ public sealed class LemmingOrientationCriterion : LemmingCriterion
         _orientations = orientations;
     }
 
-    public override bool LemmingMatchesCriteria(Lemming lemming) => _orientations.Contains(lemming.Data.Orientation);
+    public override bool LemmingMatchesCriteria(Lemming lemming) => _orientations.Contains(lemming.Orientation);
 }

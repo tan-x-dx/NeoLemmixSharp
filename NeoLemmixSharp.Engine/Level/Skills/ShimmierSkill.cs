@@ -29,11 +29,11 @@ public sealed class ShimmierSkill : LemmingSkill
 
             if (simulationLemming.CurrentAction != SliderAction.Instance &&
                 (simulationLemming.CurrentAction != FallerAction.Instance ||
-                 simulationLemming.Data.FacingDirection == lemming.Data.FacingDirection))
+                 simulationLemming.FacingDirection == lemming.FacingDirection))
                 return false;
 
-            var simulationOrientation = simulationLemming.Data.Orientation;
-            var simulationPosition = simulationLemming.Data.AnchorPosition;
+            var simulationOrientation = simulationLemming.Orientation;
+            var simulationPosition = simulationLemming.AnchorPosition;
 
             var gadgetTestRegion = new RectangularRegion(
                 simulationPosition,
@@ -52,15 +52,15 @@ public sealed class ShimmierSkill : LemmingSkill
             var simulationLemming = LemmingManager.SimulateLemming(lemming, true);
 
             return simulationLemming.CurrentAction != oldAction &&
-                   simulationLemming.Data.FacingDirection == lemming.Data.FacingDirection &&
+                   simulationLemming.FacingDirection == lemming.FacingDirection &&
                    (oldAction != DehoisterAction.Instance || simulationLemming.CurrentAction != SliderAction.Instance);
         }
 
         if (lemming.CurrentAction != JumperAction.Instance)
             return SkillIsAssignableToCurrentAction(lemming);
 
-        var orientation = lemming.Data.Orientation;
-        var lemmingPosition = lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        var lemmingPosition = lemming.AnchorPosition;
 
         var gadgetTestRegion1 = new RectangularRegion(
             lemmingPosition,

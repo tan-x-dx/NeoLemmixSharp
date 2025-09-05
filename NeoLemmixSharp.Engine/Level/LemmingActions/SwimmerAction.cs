@@ -26,11 +26,11 @@ public sealed class SwimmerAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Data.Orientation;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
-        var dx = lemming.Data.FacingDirection.DeltaX;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
+        var dx = lemming.FacingDirection.DeltaX;
 
-        lemming.Data.DistanceFallen = 0;
+        lemming.DistanceFallen = 0;
         // Need to set this here for swimmers, as it's not constant.
         // 0 is the fallback value that's correct for *most* situations. Transition will
         // still set TrueDistanceFallen, so we don't need to worry about that one.
@@ -79,7 +79,7 @@ public sealed class SwimmerAction : LemmingAction
                 }
 
 
-                lemming.SetFacingDirection(lemming.Data.FacingDirection.GetOpposite());
+                lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx); // Move lemming back
 
                 return true;
@@ -129,7 +129,7 @@ public sealed class SwimmerAction : LemmingAction
     {
         foreach (var gadget in gadgetEnumerable)
         {
-            if (!gadget.ContainsPoint(lemming.Data.Orientation, lemmingPosition))
+            if (!gadget.ContainsPoint(lemming.Orientation, lemmingPosition))
                 continue;
 
             var filters = gadget.CurrentState.Filters;
@@ -155,17 +155,17 @@ public sealed class SwimmerAction : LemmingAction
         Lemming lemming,
         Point lemmingPosition)
     {
-        var orientation = lemming.Data.Orientation;
+        var orientation = lemming.Orientation;
         var result = 1;
 
         while (result <= 4 && PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveDown(lemmingPosition, result)))
         {
             result++;
-            lemming.Data.DistanceFallen++;
+            lemming.DistanceFallen++;
 
             if (WaterAt(in gadgetsNearLemming, lemming, orientation.MoveDown(lemmingPosition, result)))
             {
-                lemming.Data.DistanceFallen = 0;
+                lemming.DistanceFallen = 0;
             }
         }
 
@@ -189,16 +189,16 @@ public sealed class SwimmerAction : LemmingAction
         bool turnAround)
     {
         // If possible, float up 4 pixels when starting
-        var orientation = lemming.Data.Orientation;
-        var checkPosition = orientation.MoveUp(lemming.Data.AnchorPosition, 1);
+        var orientation = lemming.Orientation;
+        var checkPosition = orientation.MoveUp(lemming.AnchorPosition, 1);
 
         var i = 0;
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new RectangularRegion(
-            orientation.Move(lemming.Data.AnchorPosition, lemming.Data.FacingDirection.DeltaX, 2),
-            orientation.MoveDown(lemming.Data.AnchorPosition, 4));
+            orientation.Move(lemming.AnchorPosition, lemming.FacingDirection.DeltaX, 2),
+            orientation.MoveDown(lemming.AnchorPosition, 4));
         gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearLemming);
 
         while (i < 4 &&
@@ -206,9 +206,9 @@ public sealed class SwimmerAction : LemmingAction
                !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, checkPosition))
         {
             i++;
-            checkPosition = orientation.MoveUp(lemming.Data.AnchorPosition, 1 + i);
+            checkPosition = orientation.MoveUp(lemming.AnchorPosition, 1 + i);
         }
 
-        lemming.Data.AnchorPosition = orientation.MoveUp(lemming.Data.AnchorPosition, i);
+        lemming.AnchorPosition = orientation.MoveUp(lemming.AnchorPosition, i);
     }
 }

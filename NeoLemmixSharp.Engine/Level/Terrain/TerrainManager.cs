@@ -42,7 +42,7 @@ public sealed class TerrainManager
         Lemming lemming,
         Point levelPosition)
     {
-        return PixelTypeAtPosition(levelPosition).IsSolidToOrientation(lemming.Data.Orientation);
+        return PixelTypeAtPosition(levelPosition).IsSolidToOrientation(lemming.Orientation);
     }
 
     [Pure]
@@ -54,7 +54,7 @@ public sealed class TerrainManager
         var pixel = PixelTypeAtPosition(levelPosition);
 
         return !pixel.CanBeDestroyed() ||
-               !destructionMask.CanDestroyPixel(pixel, lemming.Data.Orientation, lemming.Data.FacingDirection);
+               !destructionMask.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection);
     }
 
     [Pure]

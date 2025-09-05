@@ -36,7 +36,7 @@ public sealed class HatchSpawnData
         lemming.SetRawData(_tribe, _rawStateData, Orientation, _facingDirection);
 
         FallerAction.Instance.TransitionLemmingToAction(lemming, false);
-        lemming.Data.InitialFall = lemming.CurrentAction == FallerAction.Instance; // could be a walker if eg. spawned inside terrain
+        lemming.InitialFall = lemming.CurrentAction == FallerAction.Instance; // could be a walker if eg. spawned inside terrain
         LemmingsToRelease--;
     }
 }

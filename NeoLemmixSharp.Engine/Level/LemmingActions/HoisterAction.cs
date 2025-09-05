@@ -22,23 +22,23 @@ public sealed class HoisterAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Data.Orientation;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
-        if (lemming.Data.EndOfAnimation)
+        if (lemming.EndOfAnimation)
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
         // special case due to http://www.lemmingsforums.net/index.php?topic=2620.0
-        if (lemming.Data.PhysicsFrame == 1 && lemming.Data.IsStartingAction)
+        if (lemming.PhysicsFrame == 1 && lemming.IsStartingAction)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
             return true;
         }
 
-        if (lemming.Data.PhysicsFrame <= 4)
+        if (lemming.PhysicsFrame <= 4)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
         }
@@ -48,8 +48,8 @@ public sealed class HoisterAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        var previouslyStartingAction = lemming.Data.IsStartingAction;
+        var previouslyStartingAction = lemming.IsStartingAction;
         DoMainTransitionActions(lemming, turnAround);
-        lemming.Data.IsStartingAction = previouslyStartingAction; // It needs to know what the Climber's value was
+        lemming.IsStartingAction = previouslyStartingAction; // It needs to know what the Climber's value was
     }
 }

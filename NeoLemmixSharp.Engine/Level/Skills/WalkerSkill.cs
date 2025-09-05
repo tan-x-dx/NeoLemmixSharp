@@ -21,13 +21,13 @@ public sealed class WalkerSkill : LemmingSkill
     [SkipLocalsInit]
     public override void AssignToLemming(Lemming lemming)
     {
-        var orientation = lemming.Data.Orientation;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         // Important! If a builder just placed a brick and part of the previous brick
         // got removed, he should not fall if turned into a walker!
         var testUp = orientation.MoveUp(lemmingPosition, 1);
-        var testRight = orientation.MoveRight(lemmingPosition, lemming.Data.FacingDirection.DeltaX);
+        var testRight = orientation.MoveRight(lemmingPosition, lemming.FacingDirection.DeltaX);
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
@@ -55,7 +55,7 @@ public sealed class WalkerSkill : LemmingSkill
         }
 
         // Turn around walking lem, if assigned a walker
-        lemming.SetFacingDirection(lemming.Data.FacingDirection.GetOpposite());
+        lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
 
         if (LemmingIsForcedToChangeDirection(in gadgetsNearRegion, lemming))
         {
@@ -86,7 +86,7 @@ public sealed class WalkerSkill : LemmingSkill
 
         // Special treatment if in one-way-field facing the wrong direction
         // see http://www.lemmingsforums.net/index.php?topic=2640.0
-        var facingDirectionAsOrientation = lemming.Data.FacingDirection.ConvertToRelativeOrientation(lemming.Data.Orientation);
+        var facingDirectionAsOrientation = lemming.FacingDirection.ConvertToRelativeOrientation(lemming.Orientation);
 
         foreach (var gadget in gadgetsNearRegion)
         {

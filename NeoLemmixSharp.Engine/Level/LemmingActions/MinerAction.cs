@@ -26,22 +26,22 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Data.Orientation;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
-        var facingDirection = lemming.Data.FacingDirection;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
+        var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
 
-        if (lemming.Data.PhysicsFrame == 1 ||
-            lemming.Data.PhysicsFrame == 2)
+        if (lemming.PhysicsFrame == 1 ||
+            lemming.PhysicsFrame == 2)
         {
             TerrainMasks.ApplyMinerMask(
                 lemming,
-                lemming.Data.PhysicsFrame - 1, 0, 0);
+                lemming.PhysicsFrame - 1, 0, 0);
             return true;
         }
 
-        if (lemming.Data.PhysicsFrame != 3 &&
-            lemming.Data.PhysicsFrame != 15)
+        if (lemming.PhysicsFrame != 3 &&
+            lemming.PhysicsFrame != 15)
             return true;
 
         if (lemming.State.IsSlider &&
@@ -75,7 +75,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
         // This first check is only relevant during the very first cycle.
         // Otherwise, the pixel was already checked in frame 15 of the previous cycle
-        if (lemming.Data.PhysicsFrame == 3 &&
+        if (lemming.PhysicsFrame == 3 &&
             PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, orientation.Move(lemmingPosition, -dx, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);
@@ -91,7 +91,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         {
             lemmingPosition = orientation.Move(lemmingPosition, -dx, -1);
             FallerAction.Instance.TransitionLemmingToAction(lemming, false);
-            lemming.Data.DistanceFallen++;
+            lemming.DistanceFallen++;
             return true;
         }
 
@@ -129,8 +129,8 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         Lemming lemming,
         Point checkPosition)
     {
-        var orientation = lemming.Data.Orientation;
-        var lemmingPosition = lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        var lemmingPosition = lemming.AnchorPosition;
 
         if (PositionIsSteelToLemming(in gadgetsNearLemming, lemming, checkPosition))
         {
@@ -144,7 +144,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
         {
-            lemming.Data.AnchorPosition = lemmingPosition;
+            lemming.AnchorPosition = lemmingPosition;
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true); // turn around as well
         }
     }

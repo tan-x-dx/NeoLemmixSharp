@@ -17,7 +17,7 @@ public sealed class MoveLemmingBehaviour : LemmingBehaviour
     protected override void PerformInternalBehaviour(int lemmingId)
     {
         var lemming = GetLemming(lemmingId);
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
         lemmingPosition += _deltaPosition;
 
         LevelScreen.LemmingManager.UpdateLemmingPosition(lemming);

@@ -24,11 +24,11 @@ public sealed class ShimmierAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Data.Orientation;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
-        var dx = lemming.Data.FacingDirection.DeltaX;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
+        var dx = lemming.FacingDirection.DeltaX;
 
-        if ((lemming.Data.PhysicsFrame & 1) != 0)
+        if ((lemming.PhysicsFrame & 1) != 0)
             return true;
 
         var i = 0;
@@ -51,10 +51,10 @@ public sealed class ShimmierAction : LemmingAction
                 !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, i + 1)))
             {
                 lemmingPosition = orientation.Move(lemmingPosition, dx, i - 4);
-                lemming.Data.IsStartingAction = false;
+                lemming.IsStartingAction = false;
                 HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
-                lemming.Data.PhysicsFrame += 2;
-                lemming.Data.AnimationFrame += 2;
+                lemming.PhysicsFrame += 2;
+                lemming.AnimationFrame += 2;
                 return true;
             }
         }
@@ -139,9 +139,9 @@ public sealed class ShimmierAction : LemmingAction
     [SkipLocalsInit]
     private static void DoShimmierTransitionActions(Lemming lemming, bool turnAround)
     {
-        var orientation = lemming.Data.Orientation;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
-        var dx = lemming.Data.FacingDirection.DeltaX;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
+        var dx = lemming.FacingDirection.DeltaX;
 
         var gadgetManager = LevelScreen.GadgetManager;
         Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
@@ -152,7 +152,7 @@ public sealed class ShimmierAction : LemmingAction
 
         if (lemming.CurrentAction == ClimberAction.Instance)
         {
-            lemming.SetFacingDirection(lemming.Data.FacingDirection.GetOpposite());
+            lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
 
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 8)))

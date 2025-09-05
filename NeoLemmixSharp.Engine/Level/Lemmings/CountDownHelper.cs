@@ -17,7 +17,7 @@ public static class CountDownHelper
 
     private static int GetCountDownValue(Lemming lemming)
     {
-        var countDownTimer = lemming.Data.CountDownTimer;
+        var countDownTimer = lemming.CountDownTimer;
 
         return lemming.IsFastForward
             ? (countDownTimer + EngineConstants.EngineTicksPerSecond - 1) / EngineConstants.EngineTicksPerSecond

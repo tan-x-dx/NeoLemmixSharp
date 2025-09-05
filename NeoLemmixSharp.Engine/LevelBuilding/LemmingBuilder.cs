@@ -36,7 +36,7 @@ public sealed class LemmingBuilder
                 LemmingActionConstants.NoneActionId,
                 EngineConstants.ClassicTribeId);
 
-            lemming.Data.AnchorPosition = new Point();
+            lemming.AnchorPosition = new Point();
 
             _lemmingList.Add(lemming);
         }
@@ -55,7 +55,7 @@ public sealed class LemmingBuilder
                 prototype.InitialLemmingActionId,
                 prototype.TribeId);
 
-            lemming.Data.AnchorPosition = prototype.Position;
+            lemming.AnchorPosition = prototype.Position;
 
             lemming.State.SetData(prototype.TribeId, prototype.State);
 

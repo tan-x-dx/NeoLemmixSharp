@@ -72,8 +72,8 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Data.Orientation;
-        var lemmingPosition = lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        var lemmingPosition = lemming.AnchorPosition;
 
         if (!PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
         {
@@ -81,7 +81,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             return true;
         }
 
-        var facingDirection = lemming.Data.FacingDirection;
+        var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
         var target = orientation.Move(lemmingPosition, dx * 2, 5);
 
@@ -116,26 +116,26 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         HitTestConclusive:
 
-        lemming.Data.LaserHitLevelPosition = target;
+        lemming.LaserHitLevelPosition = target;
 
         if (hit)
         {
-            lemming.Data.LaserHit = true;
+            lemming.LaserHit = true;
             TerrainMasks.ApplyLasererMask(lemming, target);
         }
         else
         {
-            lemming.Data.LaserHit = false;
+            lemming.LaserHit = false;
         }
 
         if (hitUseful)
         {
-            lemming.Data.LaserRemainTime = 10;
+            lemming.LaserRemainTime = 10;
         }
         else
         {
-            lemming.Data.LaserRemainTime--;
-            if (lemming.Data.LaserRemainTime <= 0)
+            lemming.LaserRemainTime--;
+            if (lemming.LaserRemainTime <= 0)
             {
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             }
@@ -173,7 +173,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     {
         DoMainTransitionActions(lemming, turnAround);
 
-        lemming.Data.LaserRemainTime = 10;
+        lemming.LaserRemainTime = 10;
     }
 
     [Pure]

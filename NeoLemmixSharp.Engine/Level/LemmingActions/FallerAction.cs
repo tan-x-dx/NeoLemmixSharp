@@ -27,8 +27,8 @@ public sealed class FallerAction : LemmingAction
     {
         var currentFallDistanceStep = 0;
 
-        var orientation = lemming.Data.Orientation;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
         var updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
         var maxFallDistanceStep = EngineConstants.DefaultFallStep + updraftFallDelta.Y;
@@ -36,7 +36,7 @@ public sealed class FallerAction : LemmingAction
         if (CheckFloaterOrGliderTransition(lemming, currentFallDistanceStep))
             return true;
 
-        ref var distanceFallen = ref lemming.Data.DistanceFallen;
+        ref var distanceFallen = ref lemming.DistanceFallen;
 
         while (currentFallDistanceStep < maxFallDistanceStep &&
                !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
@@ -49,7 +49,7 @@ public sealed class FallerAction : LemmingAction
 
             currentFallDistanceStep++;
             distanceFallen++;
-            lemming.Data.TrueDistanceFallen++;
+            lemming.TrueDistanceFallen++;
 
             updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
 
@@ -64,7 +64,7 @@ public sealed class FallerAction : LemmingAction
         }
 
         distanceFallen = Math.Min(distanceFallen, EngineConstants.MaxFallDistance + 1);
-        lemming.Data.TrueDistanceFallen = Math.Min(lemming.Data.TrueDistanceFallen, EngineConstants.MaxFallDistance + 1);
+        lemming.TrueDistanceFallen = Math.Min(lemming.TrueDistanceFallen, EngineConstants.MaxFallDistance + 1);
 
         if (currentFallDistanceStep >= maxFallDistanceStep)
             return true;
@@ -74,7 +74,7 @@ public sealed class FallerAction : LemmingAction
             lemming)
             ? SplatterAction.Instance
             : WalkerAction.Instance;
-        lemming.SetNextAction(nextAction);
+        lemming.NextAction = nextAction;
 
         return true;
     }
@@ -85,9 +85,9 @@ public sealed class FallerAction : LemmingAction
         if (lemming.State.HasSpecialFallingBehaviour)
             return false;
 
-        var anchorPixel = lemming.Data.AnchorPosition;
+        var anchorPixel = lemming.AnchorPosition;
         var footPixel = lemming.FootPosition;
-        var orientation = lemming.Data.Orientation;
+        var orientation = lemming.Orientation;
 
         foreach (var gadget in gadgetEnumerable)
         {
@@ -110,7 +110,7 @@ public sealed class FallerAction : LemmingAction
             }
         }
 
-        return lemming.Data.DistanceFallen > EngineConstants.MaxFallDistance;
+        return lemming.DistanceFallen > EngineConstants.MaxFallDistance;
     }
 
     [Pure]
@@ -119,7 +119,7 @@ public sealed class FallerAction : LemmingAction
         int currentFallDistance)
     {
         if (lemming.State.IsFloater &&
-            lemming.Data.TrueDistanceFallen > 16 &&
+            lemming.TrueDistanceFallen > 16 &&
             currentFallDistance == 0)
         {
             FloaterAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -127,9 +127,9 @@ public sealed class FallerAction : LemmingAction
         }
 
         if (lemming.State.IsGlider &&
-            (lemming.Data.TrueDistanceFallen > 8 ||
-             (lemming.Data.InitialFall &&
-              lemming.Data.TrueDistanceFallen > 6)))
+            (lemming.TrueDistanceFallen > 8 ||
+             (lemming.InitialFall &&
+              lemming.TrueDistanceFallen > 6)))
         {
             GliderAction.Instance.TransitionLemmingToAction(lemming, false);
             return true;
@@ -142,8 +142,8 @@ public sealed class FallerAction : LemmingAction
     {
         var distanceFallen = GetStartingDistanceFallenFromAction(lemming);
 
-        lemming.Data.DistanceFallen = distanceFallen;
-        lemming.Data.TrueDistanceFallen = distanceFallen;
+        lemming.DistanceFallen = distanceFallen;
+        lemming.TrueDistanceFallen = distanceFallen;
 
         DoMainTransitionActions(lemming, turnAround);
     }

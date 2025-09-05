@@ -26,13 +26,13 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Data.Orientation;
-        var facingDirection = lemming.Data.FacingDirection;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
-        if (lemming.Data.IsStartingAction)
+        if (lemming.IsStartingAction)
         {
-            lemming.Data.IsStartingAction = false;
+            lemming.IsStartingAction = false;
             DigOneRow(
                 in gadgetsNearLemming,
                 lemming,
@@ -41,11 +41,11 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
                 orientation.MoveUp(lemmingPosition, 1));
             // The first digger cycle is one frame longer!
             // So we need to artificially cancel the very first frame advancement.
-            lemming.Data.PhysicsFrame--;
+            lemming.PhysicsFrame--;
         }
 
-        if (lemming.Data.PhysicsFrame != 0 &&
-            lemming.Data.PhysicsFrame != 8)
+        if (lemming.PhysicsFrame != 0 &&
+            lemming.PhysicsFrame != 8)
             return true;
 
         var continueDigging = DigOneRow(

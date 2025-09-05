@@ -42,8 +42,8 @@ public sealed class LemmingActionSprite : IDisposable
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
     {
-        var orientation = lemming.Data.Orientation;
-        var facingDirection = lemming.Data.FacingDirection;
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
 
         var dht = new DihedralTransformation(orientation, facingDirection);
         var offset = dht.Transform(AnchorPoint, SpriteSize);

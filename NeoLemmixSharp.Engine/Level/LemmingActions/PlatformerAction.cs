@@ -25,9 +25,9 @@ public sealed class PlatformerAction : LemmingAction
     {
         DoMainUpdate(lemming, in gadgetsNearLemming);
 
-        if (lemming.Data.PhysicsFrame == 0)
+        if (lemming.PhysicsFrame == 0)
         {
-            lemming.Data.ConstructivePositionFreeze = false;
+            lemming.ConstructivePositionFreeze = false;
         }
 
         return true;
@@ -35,28 +35,28 @@ public sealed class PlatformerAction : LemmingAction
 
     private static void DoMainUpdate(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Data.Orientation;
-        var dx = lemming.Data.FacingDirection.DeltaX;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        var dx = lemming.FacingDirection.DeltaX;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
-        if (lemming.Data.PhysicsFrame == 9)
+        if (lemming.PhysicsFrame == 9)
         {
-            lemming.Data.PlacedBrick = LemmingCanPlatform(lemming, gadgetsNearLemming);
+            lemming.PlacedBrick = LemmingCanPlatform(lemming, gadgetsNearLemming);
             BuilderAction.LayBrick(lemming);
 
             return;
         }
 
-        if (lemming.Data.PhysicsFrame == 10 &&
-            lemming.Data.NumberOfBricksLeft <= EngineConstants.NumberOfRemainingBricksToPlaySound)
+        if (lemming.PhysicsFrame == 10 &&
+            lemming.NumberOfBricksLeft <= EngineConstants.NumberOfRemainingBricksToPlaySound)
         {
             // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position) ??
             return;
         }
 
-        if (lemming.Data.PhysicsFrame == 15)
+        if (lemming.PhysicsFrame == 15)
         {
-            if (!lemming.Data.PlacedBrick)
+            if (!lemming.PlacedBrick)
             {
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
@@ -75,7 +75,7 @@ public sealed class PlatformerAction : LemmingAction
                 return;
             }
 
-            if (lemming.Data.ConstructivePositionFreeze)
+            if (lemming.ConstructivePositionFreeze)
                 return;
 
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
@@ -83,14 +83,14 @@ public sealed class PlatformerAction : LemmingAction
             return;
         }
 
-        if (lemming.Data.PhysicsFrame != 0)
+        if (lemming.PhysicsFrame != 0)
             return;
 
         if (PlatformerTerrainCheck(
                 in gadgetsNearLemming,
                 lemming,
                 orientation.MoveRight(lemmingPosition, dx * 2)) &&
-            lemming.Data.NumberOfBricksLeft > 1)
+            lemming.NumberOfBricksLeft > 1)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -102,7 +102,7 @@ public sealed class PlatformerAction : LemmingAction
                 in gadgetsNearLemming,
                 lemming,
                 orientation.MoveRight(lemmingPosition, dx * 3)) &&
-            lemming.Data.NumberOfBricksLeft > 1)
+            lemming.NumberOfBricksLeft > 1)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx * 2);
             WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -110,14 +110,14 @@ public sealed class PlatformerAction : LemmingAction
             return;
         }
 
-        if (!lemming.Data.ConstructivePositionFreeze)
+        if (!lemming.ConstructivePositionFreeze)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx * 2);
         }
 
-        lemming.Data.NumberOfBricksLeft--; // Why are we doing this here, instead at the beginning of frame 15??
+        lemming.NumberOfBricksLeft--; // Why are we doing this here, instead at the beginning of frame 15??
 
-        if (lemming.Data.NumberOfBricksLeft != 0)
+        if (lemming.NumberOfBricksLeft != 0)
             return;
 
         // stalling if there are pixels in the way:
@@ -133,9 +133,9 @@ public sealed class PlatformerAction : LemmingAction
         Lemming lemming,
         in GadgetEnumerable gadgetsNearLemming)
     {
-        var lemmingPosition = lemming.Data.AnchorPosition;
-        var orientation = lemming.Data.Orientation;
-        var dx = lemming.Data.FacingDirection.DeltaX;
+        var lemmingPosition = lemming.AnchorPosition;
+        var orientation = lemming.Orientation;
+        var dx = lemming.FacingDirection.DeltaX;
 
         var result = !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition) ||
                      !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveRight(lemmingPosition, dx)) ||
@@ -153,15 +153,15 @@ public sealed class PlatformerAction : LemmingAction
         Lemming lemming,
         Point pos)
     {
-        return PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Data.Orientation.MoveUp(pos, 1)) ||
-               PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Data.Orientation.MoveUp(pos, 2));
+        return PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Orientation.MoveUp(pos, 1)) ||
+               PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Orientation.MoveUp(pos, 2));
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         DoMainTransitionActions(lemming, turnAround);
 
-        lemming.Data.NumberOfBricksLeft = EngineConstants.NumberOfPlatformerBricks;
-        lemming.Data.ConstructivePositionFreeze = false;
+        lemming.NumberOfBricksLeft = EngineConstants.NumberOfPlatformerBricks;
+        lemming.ConstructivePositionFreeze = false;
     }
 }

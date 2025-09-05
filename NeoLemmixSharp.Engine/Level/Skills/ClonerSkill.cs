@@ -24,26 +24,26 @@ public sealed class ClonerSkill : LemmingSkill
 
     public override void AssignToLemming(Lemming lemming)
     {
-        if (!LevelScreen.LemmingManager.TryGetNextClonedLemming(out var newLemming))
+        if (!LevelScreen.LemmingManager.TryGetNextClonedLemming(out var clonedLemming))
             return;
 
-        newLemming.SetRawDataFromOther(lemming);
-        newLemming.SetFacingDirection(lemming.Data.FacingDirection.GetOpposite());
-        newLemming.Initialise();
+        clonedLemming.SetRawDataFromOther(lemming);
+        clonedLemming.FacingDirection = lemming.FacingDirection.GetOpposite();
+        clonedLemming.Initialise();
 
-        var newLemmingCurrentAction = newLemming.CurrentAction;
+        var newLemmingCurrentAction = clonedLemming.CurrentAction;
 
         // Avoid moving into terrain, see http://www.lemmingsforums.net/index.php?topic=2575.0
         if (newLemmingCurrentAction == MinerAction.Instance)
         {
-            if (newLemming.Data.PhysicsFrame == 2)
+            if (clonedLemming.PhysicsFrame == 2)
             {
-                TerrainMasks.ApplyMinerMask(newLemming, 1, 0, 0);
+                TerrainMasks.ApplyMinerMask(clonedLemming, 1, 0, 0);
             }
-            else if (newLemming.Data.PhysicsFrame is >= 3 and < 15)
+            else if (clonedLemming.PhysicsFrame is >= 3 and < 15)
             {
-                var dx = newLemming.Data.FacingDirection.DeltaX;
-                TerrainMasks.ApplyMinerMask(newLemming, 1, -2 * dx, -1);
+                var dx = clonedLemming.FacingDirection.DeltaX;
+                TerrainMasks.ApplyMinerMask(clonedLemming, 1, -2 * dx, -1);
             }
 
             return;
@@ -51,11 +51,11 @@ public sealed class ClonerSkill : LemmingSkill
 
         // Required for turned builders not to walk into air
         // For platformers, see http://www.lemmingsforums.net/index.php?topic=2530.0
-        if (newLemming.Data.PhysicsFrame >= 9 &&
+        if (clonedLemming.PhysicsFrame >= 9 &&
             (newLemmingCurrentAction == BuilderAction.Instance ||
              newLemmingCurrentAction == PlatformerAction.Instance))
         {
-            BuilderAction.LayBrick(newLemming);
+            BuilderAction.LayBrick(clonedLemming);
         }
     }
 

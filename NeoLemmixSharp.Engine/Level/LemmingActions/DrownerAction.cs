@@ -30,7 +30,7 @@ public sealed class DrownerAction : LemmingAction
                return true;
            }*/
 
-        if (lemming.Data.EndOfAnimation)
+        if (lemming.EndOfAnimation)
         {
             // remove lemming
         }

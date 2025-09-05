@@ -18,7 +18,7 @@ public sealed class StonerSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return lemming.Data.CountDownTimer == 0 && SkillIsAssignableToCurrentAction(lemming);
+        return lemming.CountDownTimer == 0 && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)

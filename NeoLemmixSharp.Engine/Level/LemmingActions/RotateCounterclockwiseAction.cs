@@ -22,14 +22,14 @@ public sealed class RotateCounterclockwiseAction : LemmingAction
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        if (lemming.Data.EndOfAnimation)
+        if (lemming.EndOfAnimation)
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
-            var orientation = lemming.Data.Orientation;
-            ref var lemmingPosition = ref lemming.Data.AnchorPosition;
-            var dx = lemming.Data.FacingDirection.DeltaX;
+            var orientation = lemming.Orientation;
+            ref var lemmingPosition = ref lemming.AnchorPosition;
+            var dx = lemming.FacingDirection.DeltaX;
             lemmingPosition = orientation.Move(lemmingPosition, dx * 4, 4);
-            lemming.SetOrientation(orientation.RotateCounterClockwise());
+            lemming.Orientation = orientation.RotateCounterClockwise();
         }
 
         return true;

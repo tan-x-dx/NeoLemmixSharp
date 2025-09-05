@@ -158,11 +158,11 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
 
     public RectangularRegion GetLemmingBounds(Lemming lemming)
     {
-        var dht = new DihedralTransformation(lemming.Data.Orientation, lemming.Data.FacingDirection);
+        var dht = new DihedralTransformation(lemming.Orientation, lemming.FacingDirection);
         var actionBounds = _actionBounds;
 
         actionBounds = dht.Transform(actionBounds);
-        actionBounds = actionBounds.Translate(lemming.Data.AnchorPosition);
+        actionBounds = actionBounds.Translate(lemming.AnchorPosition);
 
         return actionBounds;
     }
@@ -171,7 +171,7 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
         Lemming lemming,
         Point anchorPosition)
     {
-        return lemming.Data.Orientation.MoveUp(anchorPosition, 1);
+        return lemming.Orientation.MoveUp(anchorPosition, 1);
     }
 
     public abstract void TransitionLemmingToAction(
@@ -195,19 +195,19 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
 
         if (turnAround)
         {
-            lemming.SetFacingDirection(lemming.Data.FacingDirection.GetOpposite());
+            lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
         }
 
         if (lemming.CurrentAction == this)
             return;
 
-        lemming.SetCurrentAction(this);
-        lemming.Data.PhysicsFrame = 0;
-        lemming.Data.AnimationFrame = 0;
-        lemming.Data.EndOfAnimation = false;
-        lemming.Data.NumberOfBricksLeft = 0;
-        lemming.Data.IsStartingAction = true;
-        lemming.Data.InitialFall = false;
+        lemming.CurrentAction = this;
+        lemming.PhysicsFrame = 0;
+        lemming.AnimationFrame = 0;
+        lemming.EndOfAnimation = false;
+        lemming.NumberOfBricksLeft = 0;
+        lemming.IsStartingAction = true;
+        lemming.InitialFall = false;
     }
 
     public bool IsAirborneAction() => AirborneActions.Contains(this);

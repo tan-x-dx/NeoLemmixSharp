@@ -111,12 +111,12 @@ end;
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Data.Orientation;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
-        var dx = lemming.Data.FacingDirection.DeltaX;
+        var dx = lemming.FacingDirection.DeltaX;
 
-        var maxFallDistance = GliderFallTable[lemming.Data.PhysicsFrame];
+        var maxFallDistance = GliderFallTable[lemming.PhysicsFrame];
 
         var updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
 
@@ -125,8 +125,8 @@ end;
             maxFallDistance--;
 
             // Rise a pixel every second frame
-            if (lemming.Data.PhysicsFrame >= 9 &&
-                (lemming.Data.PhysicsFrame & 1) != 0 &&
+            if (lemming.PhysicsFrame >= 9 &&
+                (lemming.PhysicsFrame & 1) != 0 &&
                 !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 1 - maxFallDistance)) &&
                 HeadCheck(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 1)))
             {
@@ -152,7 +152,7 @@ end;
             if (DoTurnAround(in gadgetsNearLemming, lemming, false)) // Move back and turn around
             {
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-                lemming.SetFacingDirection(lemming.Data.FacingDirection.GetOpposite());
+                lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
                 CheckOnePixelShaft(in gadgetsNearLemming, lemming);
                 return true;
             }
@@ -173,7 +173,7 @@ end;
         if (groundDistance > 0) // Move 1 to 4 pixels up
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, groundDistance);
-            lemming.SetNextAction(WalkerAction.Instance);
+            lemming.NextAction = WalkerAction.Instance;
 
             return true;
         }
@@ -186,7 +186,7 @@ end;
             {
                 // Lem has found solid terrain
                 lemmingPosition = orientation.MoveUp(lemmingPosition, groundDistance);
-                lemming.SetNextAction(WalkerAction.Instance);
+                lemming.NextAction = WalkerAction.Instance;
 
                 return true;
             }
@@ -211,7 +211,7 @@ end;
             // Check whether the glider has reached the ground
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             {
-                lemming.SetNextAction(WalkerAction.Instance);
+                lemming.NextAction = WalkerAction.Instance;
                 return true;
             }
         }
@@ -224,9 +224,9 @@ end;
         Lemming lemming,
         bool moveForwardFirst)
     {
-        var orientation = lemming.Data.Orientation;
-        var checkPosition = lemming.Data.AnchorPosition;
-        var dx = lemming.Data.FacingDirection.DeltaX;
+        var orientation = lemming.Orientation;
+        var checkPosition = lemming.AnchorPosition;
+        var dx = lemming.FacingDirection.DeltaX;
 
         if (moveForwardFirst)
         {
@@ -254,10 +254,10 @@ end;
         in GadgetEnumerable gadgetsNearLemming,
         Lemming lemming)
     {
-        var orientation = lemming.Data.Orientation;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
 
-        var dx = lemming.Data.FacingDirection.DeltaX;
+        var dx = lemming.FacingDirection.DeltaX;
         var groundPixelDelta = FindGroundPixel(lemming, orientation.MoveRight(lemmingPosition, dx), in gadgetsNearLemming);
 
         if ((groundPixelDelta <= 4 ||
@@ -269,7 +269,7 @@ end;
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition) &&
             updraftFallDelta.Y >= 0)
         {
-            lemming.SetNextAction(WalkerAction.Instance);
+            lemming.NextAction = WalkerAction.Instance;
 
             return;
         }
@@ -288,7 +288,7 @@ end;
         bool HasConsecutivePixels(in GadgetEnumerable gadgetsNearLemming1)
         {
             // Check at LemY +1, +2, +3 for (a) solid terrain, or (b) a one-way field that will turn the lemming around
-            var checkPosition = orientation.MoveRight(lemming.Data.AnchorPosition, dx);
+            var checkPosition = orientation.MoveRight(lemming.AnchorPosition, dx);
 
             for (var i = 1; i < 4; i++)
             {
@@ -305,7 +305,7 @@ end;
         Lemming lemming,
         Point checkPosition)
     {
-        var orientation = lemming.Data.Orientation;
+        var orientation = lemming.Orientation;
 
         return !(PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, -1, 12)) ||
                  PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, 0, 12)) ||

@@ -39,9 +39,9 @@ public static class TerrainMasks
         Lemming lemming,
         int frame)
     {
-        var orientation = lemming.Data.Orientation;
-        var facingDirection = lemming.Data.FacingDirection;
-        var position = lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.AnchorPosition;
 
         BasherMask.ApplyEraseMask(orientation, facingDirection, position, frame);
     }
@@ -50,10 +50,10 @@ public static class TerrainMasks
         Lemming lemming,
         out ArrayWrapper2D<PixelType> scratchSpaceData)
     {
-        var dht = new DihedralTransformation(lemming.Data.Orientation, lemming.Data.FacingDirection);
+        var dht = new DihedralTransformation(lemming.Orientation, lemming.FacingDirection);
         var terrainManager = LevelScreen.TerrainManager;
 
-        var sourceRegion = BasherMask.Dimensions.Translate(lemming.Data.AnchorPosition);
+        var sourceRegion = BasherMask.Dimensions.Translate(lemming.AnchorPosition);
 
         var source = new ArrayWrapper2D<PixelType>(terrainManager.RawPixels, terrainManager.LevelDimensions, sourceRegion);
         scratchSpaceData = new ArrayWrapper2D<PixelType>(BasherSimulationScratchSpace, BasherMask.Dimensions.Size);
@@ -63,9 +63,9 @@ public static class TerrainMasks
 
     public static void ApplyBomberMask(Lemming lemming)
     {
-        var orientation = lemming.Data.Orientation;
-        var facingDirection = lemming.Data.FacingDirection;
-        var position = orientation.MoveRight(lemming.Data.AnchorPosition, facingDirection.DeltaX);
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = orientation.MoveRight(lemming.AnchorPosition, facingDirection.DeltaX);
 
         BomberMask.ApplyEraseMask(orientation, facingDirection, position, 0);
     }
@@ -74,9 +74,9 @@ public static class TerrainMasks
         Lemming lemming,
         int frame)
     {
-        var orientation = lemming.Data.Orientation;
-        var facingDirection = lemming.Data.FacingDirection;
-        var position = lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.AnchorPosition;
 
         FencerMask.ApplyEraseMask(orientation, facingDirection, position, frame);
     }
@@ -85,9 +85,9 @@ public static class TerrainMasks
         Lemming lemming,
         Point target)
     {
-        var orientation = lemming.Data.Orientation;
-        var facingDirection = lemming.Data.FacingDirection;
-        var position = lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.AnchorPosition;
 
         //  var key = GetKey(orientation, facingDirection, frame);
         //  _laserMasks[key].ApplyEraseMask(orientation, facingDirection, position);
@@ -103,10 +103,10 @@ public static class TerrainMasks
         int offsetX,
         int offsetY)
     {
-        var orientation = lemming.Data.Orientation;
-        var facingDirection = lemming.Data.FacingDirection;
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
-        var position = lemming.Data.AnchorPosition;
+        var position = lemming.AnchorPosition;
         position = orientation.Move(position, offsetX + dx, offsetY - frame);
 
         MinerMask.ApplyEraseMask(orientation, facingDirection, position, frame);
@@ -115,9 +115,9 @@ public static class TerrainMasks
     public static void ApplyStonerMask(
         Lemming lemming)
     {
-        var orientation = lemming.Data.Orientation;
-        var facingDirection = lemming.Data.FacingDirection;
-        var position = lemming.Data.AnchorPosition;
+        var orientation = lemming.Orientation;
+        var facingDirection = lemming.FacingDirection;
+        var position = lemming.AnchorPosition;
 
         if (facingDirection == FacingDirection.Right)
         {

@@ -27,8 +27,8 @@ public readonly struct SkillAssignmentData : ILevelEventData
         TribeId = lemming.State.TribeAffiliation.Id;
 
         LemmingId = lemming.Id;
-        LemmingPosition = lemming.Data.AnchorPosition;
-        LemmingOrientation = lemming.Data.Orientation;
-        LemmingFacingDirection = lemming.Data.FacingDirection;
+        LemmingPosition = lemming.AnchorPosition;
+        LemmingOrientation = lemming.Orientation;
+        LemmingFacingDirection = lemming.FacingDirection;
     }
 }

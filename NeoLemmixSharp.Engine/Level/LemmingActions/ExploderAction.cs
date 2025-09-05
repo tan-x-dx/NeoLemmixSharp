@@ -26,7 +26,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
     {
         TerrainMasks.ApplyBomberMask(lemming);
         LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
-        lemming.Data.ParticleTimer = EngineConstants.ParticleFrameCount;
+        lemming.ParticleTimer = EngineConstants.ParticleFrameCount;
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 

@@ -37,9 +37,9 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public void UpdatePosition()
     {
-        var dht = new DihedralTransformation(_lemming.Data.Orientation, _lemming.Data.FacingDirection);
+        var dht = new DihedralTransformation(_lemming.Orientation, _lemming.FacingDirection);
         var spriteOffset = dht.Transform(_actionSprite.AnchorPoint, _actionSprite.SpriteSize);
-        var p = _lemming.Data.AnchorPosition - spriteOffset;
+        var p = _lemming.AnchorPosition - spriteOffset;
 
         _spriteBounds = new RectangularRegion(p, dht.Transform(_actionSprite.SpriteSize));
 
@@ -93,7 +93,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             sourceRectangle.Width,
             sourceRectangle.Height);
 
-        sourceRectangle.Y += _lemming.Data.AnimationFrame * _actionSprite.SpriteSize.H;
+        sourceRectangle.Y += _lemming.AnimationFrame * _actionSprite.SpriteSize.H;
 
         _actionSprite.RenderLemming(spriteBatch, _lemming, sourceRectangle, renderDestination);
 
@@ -133,7 +133,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
                 Color.White);
         }
 
-        if (_lemming.Data.ParticleTimer > 0)
+        if (_lemming.ParticleTimer > 0)
         {
             RenderParticles(spriteBatch, projectionX, projectionY);
         }
@@ -161,7 +161,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
         var sourceRectangle = CommonSprites.RectangleForWhitePixelAlpha(0xff);
 
-        var dht = new DihedralTransformation(_lemming.Data.Orientation, _lemming.Data.FacingDirection);
+        var dht = new DihedralTransformation(_lemming.Orientation, _lemming.FacingDirection);
         var anchorPoint = dht.Transform(_actionSprite.AnchorPoint, _actionSprite.SpriteSize);
 
         screenX += anchorPoint.X;
@@ -169,7 +169,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
         for (var i = 0; i < EngineConstants.NumberOfParticles; i++)
         {
-            var offset = ParticleHelper.GetParticleOffsets(_lemming.Data.ParticleTimer, i);
+            var offset = ParticleHelper.GetParticleOffsets(_lemming.ParticleTimer, i);
 
             if (offset.X == -128 || offset.Y == -128)
                 continue;

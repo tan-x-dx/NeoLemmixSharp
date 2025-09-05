@@ -27,15 +27,15 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         // Remove terrain
-        var physicsFrame = lemming.Data.PhysicsFrame;
+        var physicsFrame = lemming.PhysicsFrame;
         if (physicsFrame is >= 2 and <= 5)
         {
             TerrainMasks.ApplyBasherMask(lemming, physicsFrame - 2);
         }
 
-        var orientation = lemming.Data.Orientation;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
-        var dx = lemming.Data.FacingDirection.DeltaX;
+        var orientation = lemming.Orientation;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
+        var dx = lemming.FacingDirection.DeltaX;
 
         // Check for enough terrain to continue working
         if (physicsFrame == 5)
@@ -180,7 +180,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         Lemming lemming,
         Point pos)
     {
-        var orientation = lemming.Data.Orientation;
+        var orientation = lemming.Orientation;
 
         // Check for indestructible terrain 3, 4 and 5 pixels above position
         return PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, orientation.MoveUp(pos, 3)) ||
@@ -192,9 +192,9 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         Lemming lemming,
         bool playSound)
     {
-        var dx = lemming.Data.FacingDirection.DeltaX;
-        ref var lemmingPosition = ref lemming.Data.AnchorPosition;
-        lemmingPosition = lemming.Data.Orientation.MoveLeft(lemmingPosition, dx);
+        var dx = lemming.FacingDirection.DeltaX;
+        ref var lemmingPosition = ref lemming.AnchorPosition;
+        lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
         WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
 
         if (playSound)
@@ -335,16 +335,16 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         // 11 iterations is hopefully correct: CopyL.LemPhysicsFrame changes as follows:
         // 10 -> 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 11 -> 12 -> 13 -> 14 -> 15
 
-        simulationLemming.Data.PhysicsFrame = 10;
+        simulationLemming.PhysicsFrame = 10;
         for (var i = 0; i < 11; i++)
         {
             // When simulation lemming's physicsFrame is 0 or 16, apply all basher masks and jump to frame 10 again
-            if (simulationLemming.Data.PhysicsFrame is >= 0 and <= 16)
+            if (simulationLemming.PhysicsFrame is >= 0 and <= 16)
             {
 
 
 
-                simulationLemming.Data.PhysicsFrame = 10;
+                simulationLemming.PhysicsFrame = 10;
             }
             else
             {
@@ -354,7 +354,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             simulationLemming.Simulate(false);
 
 
-            if (simulationLemming.Data.FacingDirection != lemming.Data.FacingDirection)
+            if (simulationLemming.FacingDirection != lemming.FacingDirection)
             {
                 result = true;
                 break;
