@@ -121,16 +121,14 @@ public sealed class GadgetManager :
         return 1;
     }
 
-    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
         *snapshotDataPointer = 0;
-        return 1;
     }
 
-    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
         ResetGadgetPositions();
-        return 1;
     }
 
     private void ResetGadgetPositions()

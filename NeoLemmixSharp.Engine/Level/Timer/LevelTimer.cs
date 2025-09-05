@@ -157,22 +157,18 @@ public sealed class LevelTimer : ISnapshotDataConvertible
 
     public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LevelTimerSnapshotData>();
 
-    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
         LevelTimerSnapshotData* levelTimerSnapshotDataPointer = (LevelTimerSnapshotData*)snapshotDataPointer;
 
         *levelTimerSnapshotDataPointer = new LevelTimerSnapshotData(_additionalSeconds);
-
-        return 1;
     }
 
-    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
         LevelTimerSnapshotData* levelTimerSnapshotDataPointer = (LevelTimerSnapshotData*)snapshotDataPointer;
 
         _additionalSeconds = levelTimerSnapshotDataPointer->AdditionalSeconds;
-
-        return 1;
     }
 
     private static Color GetColorForTime(int secondsLeft) => secondsLeft switch

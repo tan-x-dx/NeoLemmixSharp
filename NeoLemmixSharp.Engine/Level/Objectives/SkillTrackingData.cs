@@ -89,23 +89,19 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible
 
     public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<SkillSetSnapshotData>();
 
-    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
         SkillSetSnapshotData* skillSetSnapshotDataPointer = (SkillSetSnapshotData*)snapshotDataPointer;
 
         *skillSetSnapshotDataPointer = new SkillSetSnapshotData(SkillTrackingDataId, _additionalQuantity, _amountUsed, _currentSkillLimit);
-
-        return 1;
     }
 
-    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
         SkillSetSnapshotData* skillSetSnapshotDataPointer = (SkillSetSnapshotData*)snapshotDataPointer;
 
         _additionalQuantity = skillSetSnapshotDataPointer->AdditionalQuantity;
         _amountUsed = skillSetSnapshotDataPointer->AmountUsed;
         _currentSkillLimit = skillSetSnapshotDataPointer->CurrentSkillLimit;
-
-        return 1;
     }
 }

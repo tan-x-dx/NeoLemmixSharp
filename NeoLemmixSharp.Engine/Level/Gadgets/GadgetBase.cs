@@ -43,15 +43,13 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
 
     public int GetRequiredNumberOfBytesForSnapshotting() => _requiredNumberOfBytesForSnapshotting;
 
-    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
         *snapshotDataPointer = 0;
-        return 1;
     }
 
-    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
-        return 1;
     }
 
     public sealed override string ToString() => GadgetName.ToString();

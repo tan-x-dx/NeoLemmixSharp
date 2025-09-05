@@ -251,8 +251,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
             Data.EndOfAnimation = CurrentAction.IsOneTimeAction();
         }
-        Data.PhysicsFrame = frame;
 
+        Data.PhysicsFrame = frame;
         Data.PreviousLevelPosition = Data.AnchorPosition;
 
         var result = CurrentAction.UpdateLemming(this, in gadgetsNearLemming);
@@ -430,6 +430,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
     public unsafe void SetRawDataFromOther(Lemming otherLemming)
     {
+        otherLemming.UpdateRawData();
+
         fixed (void* otherPointer = &otherLemming.Data)
         fixed (void* thisPointer = &Data)
         {
@@ -439,8 +441,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
             sourceSpan.CopyTo(destinationSpan);
         }
 
-        State.SetRawDataFromOther(otherLemming.State);
-        SetActionsFromRawData();
+        SetFromRawData();
 
         Renderer.ResetPosition();
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
@@ -448,18 +449,16 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
     public void SetRawData(Tribe tribe, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
     {
-        State.SetRawDataFromOther(rawStateData);
-        State.TribeAffiliation = tribe;
+        State.SetData(tribe.Id, rawStateData);
         Data.Orientation = orientation;
         Data.FacingDirection = facingDirection;
     }
 
     public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LemmingData);
 
-    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
-        State.WriteToSnapshotData(out Data.TribeId, out Data.State);
-        WriteActionsFromRawData();
+        UpdateRawData();
 
         fixed (void* thisPointer = &Data)
         {
@@ -468,11 +467,9 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
             sourceSpan.CopyTo(destinationSpan);
         }
-
-        return sizeof(LemmingData);
     }
 
-    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
         fixed (void* thisPointer = &Data)
         {
@@ -482,25 +479,26 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
             sourceSpan.CopyTo(destinationSpan);
         }
 
-        State.SetFromSnapshotData(Data.TribeId, Data.State);
-        SetActionsFromRawData();
+        SetFromRawData();
 
         Renderer.ResetPosition();
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
-
-        return sizeof(LemmingData);
     }
 
-    private void WriteActionsFromRawData()
+    private void UpdateRawData()
     {
+        State.WriteToSnapshotData(out Data.TribeId, out Data.State);
+
         Data.PreviousActionId = PreviousAction.Id;
         Data.CurrentActionId = CurrentAction.Id;
         Data.NextActionId = NextAction.Id;
         Data.CountDownActionId = CountDownAction.Id;
     }
 
-    private void SetActionsFromRawData()
+    private void SetFromRawData()
     {
+        State.SetFromSnapshotData(Data.TribeId, Data.State);
+
         PreviousAction = LemmingAction.GetActionOrDefault(Data.PreviousActionId);
         CurrentAction = LemmingAction.GetActionOrDefault(Data.CurrentActionId);
         NextAction = LemmingAction.GetActionOrDefault(Data.NextActionId);
@@ -520,10 +518,4 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     public static bool operator ==(Lemming left, Lemming right) => left.Id == right.Id;
     [DebuggerStepThrough]
     public static bool operator !=(Lemming left, Lemming right) => left.Id != right.Id;
-
-    [InlineArray(JumperAction.JumperPositionCount)]
-    public struct JumperPositionBuffer
-    {
-        private Point _0;
-    }
 }

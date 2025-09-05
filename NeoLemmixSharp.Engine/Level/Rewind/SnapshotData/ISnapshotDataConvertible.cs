@@ -3,6 +3,6 @@
 public unsafe interface ISnapshotDataConvertible
 {
     int GetRequiredNumberOfBytesForSnapshotting();
-    int WriteToSnapshotData(byte* snapshotDataPointer);
-    int SetFromSnapshotData(byte* snapshotDataPointer);    
+    void WriteToSnapshotData(byte* snapshotDataPointer);
+    void SetFromSnapshotData(byte* snapshotDataPointer);    
 }

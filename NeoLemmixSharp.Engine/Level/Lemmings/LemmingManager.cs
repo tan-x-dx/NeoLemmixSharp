@@ -408,7 +408,7 @@ public sealed class LemmingManager :
 
     public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LemmingManagerSnapshotData>();
 
-    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
         LemmingManagerSnapshotData* lemmingManagerSnapshotDataPointer = (LemmingManagerSnapshotData*)snapshotDataPointer;
 
@@ -419,11 +419,9 @@ public sealed class LemmingManager :
             LemmingsOut,
             LemmingsRemoved,
             LemmingsSaved);
-
-        return 1;
     }
 
-    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
         LemmingManagerSnapshotData* lemmingManagerSnapshotDataPointer = (LemmingManagerSnapshotData*)snapshotDataPointer;
 
@@ -435,8 +433,6 @@ public sealed class LemmingManager :
         LemmingsSaved = lemmingManagerSnapshotDataPointer->LemmingsSaved;
 
         ResetLemmingPositions();
-
-        return 1;
     }
 
     private void ResetLemmingPositions()

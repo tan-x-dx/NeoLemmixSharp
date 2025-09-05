@@ -17,7 +17,7 @@ public struct LemmingData
     public int NextActionId = LemmingActionConstants.NoneActionId;
     public int CountDownActionId = LemmingActionConstants.NoneActionId;
 
-    public Lemming.JumperPositionBuffer JumperPositionBuffer = new();
+    public JumperPositionBuffer JumperPositionBuffer = new();
 
     public Point DehoistPin = new(-1, -1);
     public Point LaserHitLevelPosition = new(-1, -1);

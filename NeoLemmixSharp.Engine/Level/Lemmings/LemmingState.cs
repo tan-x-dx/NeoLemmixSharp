@@ -318,8 +318,9 @@ public sealed class LemmingState
         UpdateSkinColor();
     }
 
-    public void SetRawDataFromOther(uint rawData)
+    public void SetData(int tribeId,uint rawData)
     {
+        _tribeId = tribeId;
         _states = rawData;
         UpdateHairAndBodyColors();
         UpdateSkinColor();

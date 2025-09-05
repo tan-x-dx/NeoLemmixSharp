@@ -57,7 +57,7 @@ public sealed class LemmingBuilder
 
             lemming.Data.AnchorPosition = prototype.Position;
 
-            lemming.State.SetRawDataFromOther(prototype.State);
+            lemming.State.SetData(prototype.TribeId, prototype.State);
 
             _lemmingList.Add(lemming);
         }

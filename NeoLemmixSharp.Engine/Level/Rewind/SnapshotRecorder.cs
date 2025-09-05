@@ -42,8 +42,9 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
         foreach (var item in items)
         {
             byte* p = snapshotDataPointer + pointerOffset;
+            item.WriteToSnapshotData(p);
 
-            var pointerIncrement = item.WriteToSnapshotData(p);
+            var pointerIncrement = item.GetRequiredNumberOfBytesForSnapshotting();
             pointerOffset += pointerIncrement;
         }
     }
@@ -77,8 +78,9 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
         foreach (var item in items)
         {
             byte* p = snapshotDataPointer + pointerOffset;
+            item.SetFromSnapshotData(p);
 
-            var pointerIncrement = item.SetFromSnapshotData(p);
+            var pointerIncrement = item.GetRequiredNumberOfBytesForSnapshotting();
             pointerOffset += pointerIncrement;
         }
     }
