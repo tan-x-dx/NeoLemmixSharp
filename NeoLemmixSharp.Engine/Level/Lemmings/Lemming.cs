@@ -84,7 +84,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     public void Initialise()
     {
         State.IsActive = true;
-        Data.PreviousLevelPosition = Data.AnchorPosition;
+        Data.PreviousAnchorPosition = Data.AnchorPosition;
         Data.CurrentBounds = CurrentAction.GetLemmingBounds(this);
 
         var initialAction = CurrentAction;
@@ -119,7 +119,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         gadgetCheckPositions[0] = p;
         p = Data.Orientation.Move(Data.AnchorPosition, 5, 12);
         gadgetCheckPositions[1] = p;
-        p = Data.PreviousLevelPosition;
+        p = Data.PreviousAnchorPosition;
         gadgetCheckPositions[2] = p;
         p = PreviousAction.GetFootPosition(this, p);
         gadgetCheckPositions[3] = p;
@@ -161,7 +161,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
         gadgetCheckPositions[0] = Data.Orientation.Move(Data.AnchorPosition, -8, -16);
         gadgetCheckPositions[1] = Data.Orientation.Move(Data.AnchorPosition, 8, 16);
-        gadgetCheckPositions[2] = Data.PreviousLevelPosition;
+        gadgetCheckPositions[2] = Data.PreviousAnchorPosition;
         gadgetCheckPositions[3] = PreviousAction.GetFootPosition(this, gadgetCheckPositions[2]);
 
         var checkPositionsBounds = new RectangularRegion(gadgetCheckPositions[..4]);
@@ -253,7 +253,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         }
 
         Data.PhysicsFrame = frame;
-        Data.PreviousLevelPosition = Data.AnchorPosition;
+        Data.PreviousAnchorPosition = Data.AnchorPosition;
 
         var result = CurrentAction.UpdateLemming(this, in gadgetsNearLemming);
         Data.CurrentBounds = CurrentAction.GetLemmingBounds(this);
@@ -281,7 +281,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     {
         if (isPostTeleportCheck)
         {
-            Data.PreviousLevelPosition = Data.AnchorPosition;
+            Data.PreviousAnchorPosition = Data.AnchorPosition;
         }
 
         var result = CheckGadgets(gadgetCheckPositions, in gadgetsNearLemming) && LemmingManager.DoBlockerCheck(this);

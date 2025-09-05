@@ -22,7 +22,7 @@ public struct LemmingData
     public Point DehoistPin = new(-1, -1);
     public Point LaserHitLevelPosition = new(-1, -1);
     public Point AnchorPosition = new(-1, -1);
-    public Point PreviousLevelPosition = new(-1, -1);
+    public Point PreviousAnchorPosition = new(-1, -1);
 
     public bool ConstructivePositionFreeze;
     public bool IsStartingAction;

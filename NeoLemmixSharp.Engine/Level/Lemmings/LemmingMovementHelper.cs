@@ -23,7 +23,7 @@ public readonly ref struct LemmingMovementHelper
     /// </summary>
     public int EvaluateCheckPositions()
     {
-        var previousLemmingPosition = _lemming.Data.PreviousLevelPosition;
+        var previousLemmingPosition = _lemming.Data.PreviousAnchorPosition;
         var currentLemmingPosition = _lemming.Data.AnchorPosition;
 
         var orientation = _lemming.Data.Orientation;
