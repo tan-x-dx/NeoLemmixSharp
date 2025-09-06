@@ -60,18 +60,15 @@ public readonly struct LevelTimerTriggerParameters(LevelTimerObservationType obs
         return ComparisonMatches(comparisonValue);
     }
 
-    private bool ComparisonMatches(int value)
+    private bool ComparisonMatches(int value) => _comparisonType switch
     {
-        return _comparisonType switch
-        {
-            ComparisonType.EqualTo => value == _requiredValue,
-            ComparisonType.NotEqualTo => value != _requiredValue,
-            ComparisonType.LessThan => value < _requiredValue,
-            ComparisonType.LessThanOrEqual => value <= _requiredValue,
-            ComparisonType.GreaterThan => value > _requiredValue,
-            ComparisonType.GreaterThanOrEqual => value >= _requiredValue,
+        ComparisonType.EqualTo => value == _requiredValue,
+        ComparisonType.NotEqualTo => value != _requiredValue,
+        ComparisonType.LessThan => value < _requiredValue,
+        ComparisonType.LessThanOrEqual => value <= _requiredValue,
+        ComparisonType.GreaterThan => value > _requiredValue,
+        ComparisonType.GreaterThanOrEqual => value >= _requiredValue,
 
-            _ => Helpers.ThrowUnknownEnumValueException<ComparisonType, bool>(_comparisonType),
-        };
-    }
+        _ => Helpers.ThrowUnknownEnumValueException<ComparisonType, bool>(_comparisonType),
+    };
 }
