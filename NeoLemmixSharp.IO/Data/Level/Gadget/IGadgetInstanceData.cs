@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 
 namespace NeoLemmixSharp.IO.Data.Level.Gadget;

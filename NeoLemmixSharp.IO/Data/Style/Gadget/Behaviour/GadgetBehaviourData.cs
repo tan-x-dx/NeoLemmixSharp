@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
+﻿using NeoLemmixSharp.Common.Enums;
+
+namespace NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 
 public readonly struct GadgetBehaviourData(GadgetBehaviourName gadgetBehaviourName, GadgetBehaviourType gadgetBehaviourType, int data1, int data2, int data3)
 {

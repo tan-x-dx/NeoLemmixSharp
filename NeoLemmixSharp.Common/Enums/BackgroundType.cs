@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.IO.Data.Level;
+namespace NeoLemmixSharp.Common.Enums;
 
 public enum BackgroundType
 {

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.IO.Data.Level.Objectives;
+﻿using NeoLemmixSharp.Common.Enums;
+
+namespace NeoLemmixSharp.IO.Data.Level.Objectives;
 
 public sealed class TalismanData
 {

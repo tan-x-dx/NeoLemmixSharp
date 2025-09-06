@@ -1,11 +1,11 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics;
 
@@ -59,28 +59,28 @@ public ref struct LemmingCriteriaBuilder
     {
         switch (hitBoxCriteriaDatum.LemmingCriteria)
         {
-            case LemmingCriteria.LemmingOrientation:
+            case LemmingCriteriaType.LemmingOrientation:
                 AddOrientationToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
-            case LemmingCriteria.LemmingFacingDirection:
+            case LemmingCriteriaType.LemmingFacingDirection:
                 AddFacingToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
-            case LemmingCriteria.LemmingAction:
+            case LemmingCriteriaType.LemmingAction:
                 AddLemmingActionToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
-            case LemmingCriteria.LemmingState:
+            case LemmingCriteriaType.LemmingState:
                 AddLemmingStateToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
-            case LemmingCriteria.LemmingTribe:
+            case LemmingCriteriaType.LemmingTribe:
                 AddLemmingTribeToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
             default:
-                Helpers.ThrowUnknownEnumValueException<LemmingCriteria, LemmingCriteria>(hitBoxCriteriaDatum.LemmingCriteria);
+                Helpers.ThrowUnknownEnumValueException<LemmingCriteriaType, LemmingCriteriaType>(hitBoxCriteriaDatum.LemmingCriteria);
                 break;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;

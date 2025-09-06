@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.IO.Data.Level.Gadget;
 
 public sealed class GadgetData
 {
-    private readonly BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int> _properties = GadgetPropertyHasher.CreateBitArrayDictionary<int>();
+    private readonly BitArrayDictionary<GadgetPropertyTypeHasher, BitBuffer32, GadgetPropertyType, int> _properties = GadgetPropertyTypeHasher.CreateBitArrayDictionary<int>();
 
     public required GadgetIdentifier Identifier { get; init; }
     public required string OverrideName { get; init; }
@@ -27,29 +27,29 @@ public sealed class GadgetData
 
     public int NumberOfGadgetProperties => _properties.Count;
 
-    internal void AddProperty(GadgetProperty property, int value)
+    internal void AddProperty(GadgetPropertyType property, int value)
     {
         _properties.Add(property, value);
     }
 
-    public int GetProperty(GadgetProperty property)
+    public int GetProperty(GadgetPropertyType property)
     {
         return _properties[property];
     }
 
-    public bool HasProperty(GadgetProperty property)
+    public bool HasProperty(GadgetPropertyType property)
     {
         return _properties.ContainsKey(property);
     }
 
-    public bool TryGetProperty(GadgetProperty property, out int value)
+    public bool TryGetProperty(GadgetPropertyType property, out int value)
     {
         return _properties.TryGetValue(property, out value);
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int>.Enumerator GetProperties() => _properties.GetEnumerator();
+    public BitArrayDictionary<GadgetPropertyTypeHasher, BitBuffer32, GadgetPropertyType, int>.Enumerator GetProperties() => _properties.GetEnumerator();
 
     public StylePiecePair GetStylePiecePair() => new(StyleIdentifier, PieceIdentifier);
 }

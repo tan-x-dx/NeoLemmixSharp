@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
 
@@ -8,7 +8,7 @@ public sealed class LemmingActionCriterion : LemmingCriterion
     private readonly LemmingActionSet _lemmingActions;
 
     public LemmingActionCriterion(LemmingActionSet actions)
-        : base(LemmingCriteria.LemmingAction)
+        : base(LemmingCriteriaType.LemmingAction)
     {
         _lemmingActions = actions;
     }

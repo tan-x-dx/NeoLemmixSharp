@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 
@@ -6,7 +7,7 @@ namespace NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
 
 public sealed class HitBoxGadgetInstanceData : IGadgetInstanceData
 {
-    private readonly BitArrayDictionary<GadgetPropertyHasher, BitBuffer32, GadgetProperty, int> _propertyLookup = new(new());
+    private readonly BitArrayDictionary<GadgetPropertyTypeHasher, BitBuffer32, GadgetPropertyType, int> _propertyLookup = new(new());
 
     public GadgetType GadgetType => GadgetType.HitBoxGadget;
     public required GadgetIdentifier Identifier { get; init; }
@@ -26,5 +27,5 @@ public sealed class HitBoxGadgetInstanceData : IGadgetInstanceData
 
     public required HitBoxGadgetStateInstanceData[] GadgetStates { get; init; }
 
-    public int GetProperty(GadgetProperty gadgetProperty) => _propertyLookup[gadgetProperty];
+    public int GetProperty(GadgetPropertyType gadgetProperty) => _propertyLookup[gadgetProperty];
 }

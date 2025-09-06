@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
+namespace NeoLemmixSharp.Common.Enums;
 
 public enum GadgetTriggerType
 {

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using System.Diagnostics.CodeAnalysis;
 

@@ -1,8 +1,8 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
@@ -21,7 +21,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         AdditiveLogicGateGadgetState offState,
         AdditiveLogicGateGadgetState onState,
         AdditiveLogicGateGadgetLinkInput[] inputs)
-        : base(IO.Data.Style.Gadget.GadgetType.LogicGate)
+        : base(Common.Enums.GadgetType.LogicGate)
     {
         _offState = offState;
         _onState = onState;

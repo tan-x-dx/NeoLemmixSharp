@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
 

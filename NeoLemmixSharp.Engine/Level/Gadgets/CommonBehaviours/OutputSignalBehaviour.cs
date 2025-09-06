@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 

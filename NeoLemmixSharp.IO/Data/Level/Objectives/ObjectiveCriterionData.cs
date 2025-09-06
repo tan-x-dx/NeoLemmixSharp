@@ -55,10 +55,3 @@ public sealed class KillAllZombiesCriterionData : ObjectiveCriterionData
         return other is KillAllZombiesCriterionData;
     }
 }
-
-public enum ObjectiveCriterionType
-{
-    SaveLemmings,
-    TimeLimit,
-    KillAllZombies,
-}

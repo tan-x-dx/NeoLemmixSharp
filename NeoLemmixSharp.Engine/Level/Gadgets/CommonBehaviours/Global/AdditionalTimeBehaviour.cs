@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
+﻿using NeoLemmixSharp.Common.Enums;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
 

@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
+﻿using NeoLemmixSharp.Common.Enums;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 

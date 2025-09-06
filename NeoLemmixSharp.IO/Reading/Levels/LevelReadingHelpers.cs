@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
 
 namespace NeoLemmixSharp.IO.Reading.Levels;
 
@@ -13,11 +13,11 @@ internal static class LevelReadingHelpers
 
         foreach (var gadgetDatum in levelData.AllGadgetData)
         {
-            if (gadgetDatum.TryGetProperty(GadgetProperty.SkillId, out var skillId))
+            if (gadgetDatum.TryGetProperty(GadgetPropertyType.SkillId, out var skillId))
             {
                 if (skillId == LemmingSkillConstants.ClonerSkillId)
                 {
-                    numberOfClonerSkillPickups += gadgetDatum.GetProperty(GadgetProperty.Count);
+                    numberOfClonerSkillPickups += gadgetDatum.GetProperty(GadgetPropertyType.Count);
                 }
             }
         }

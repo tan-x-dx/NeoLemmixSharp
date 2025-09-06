@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.IO.Data.Level.Gadget;
+namespace NeoLemmixSharp.Common.Enums;
 
 public enum GadgetRenderMode
 {

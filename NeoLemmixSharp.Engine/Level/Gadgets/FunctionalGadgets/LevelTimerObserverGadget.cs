@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
@@ -10,7 +9,7 @@ public sealed class LevelTimerObserverGadget : GadgetBase
     private readonly LevelTimerTrigger _levelTimerTrigger;
 
     public LevelTimerObserverGadget(LevelTimerTrigger levelTimerTrigger)
-        : base(IO.Data.Style.Gadget.GadgetType.LevelTimerObserver)
+        : base(GadgetType.LevelTimerObserver)
     {
         _levelTimerTrigger = levelTimerTrigger;
     }
@@ -75,17 +74,4 @@ public readonly struct LevelTimerTriggerParameters(LevelTimerObservationType obs
             _ => Helpers.ThrowUnknownEnumValueException<ComparisonType, bool>(_comparisonType),
         };
     }
-}
-
-public enum LevelTimerObservationType
-{
-    SecondsElapsed,
-    SecondsRemaining
-}
-
-public static class LevelTimerObservationTypeHelpers
-{
-    private const int NumberOfEnumValues = 2;
-
-    public static LevelTimerObservationType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LevelTimerObservationType>(rawValue, NumberOfEnumValues);
 }

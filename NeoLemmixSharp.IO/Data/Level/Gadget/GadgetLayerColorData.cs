@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using NeoLemmixSharp.IO.Data.Style.Theme;
+using NeoLemmixSharp.Common.Enums;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

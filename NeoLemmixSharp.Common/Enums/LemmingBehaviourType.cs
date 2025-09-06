@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
+namespace NeoLemmixSharp.Common.Enums;
 
 public enum LemmingBehaviourType
 {
