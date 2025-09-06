@@ -32,6 +32,7 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         int initialStateIndex,
         ResizeType resizeType,
         LemmingTracker lemmingTracker)
+        : base(IO.Data.Style.Gadget.GadgetType.HitBoxGadget)
     {
         _lemmingTracker = lemmingTracker;
         _states = states;

@@ -10,6 +10,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
 {
     private readonly int _requiredNumberOfBytesForSnapshotting;
     public required GadgetName GadgetName { get; init; }
+    public GadgetType GadgetType { get; }
     public required GadgetBounds CurrentGadgetBounds { get; init; }
 
     public required int Id { get; init; }
@@ -22,8 +23,9 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
 
     public abstract GadgetState CurrentState { get; }
 
-    protected GadgetBase()
+    protected GadgetBase(GadgetType gadgetType)
     {
+        GadgetType = gadgetType;
         _requiredNumberOfBytesForSnapshotting = CalculateRequiredNumberOfBytesForSnapshotting();
     }
 

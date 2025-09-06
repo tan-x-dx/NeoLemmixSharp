@@ -15,8 +15,6 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
         TriggerType = triggerType;
     }
 
-    public abstract ReadOnlySpan<GadgetBehaviour> Behaviours { get; }
-
     protected static void RegisterCauseAndEffectData(int gadgetBehaviourId)
     {
         LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(gadgetBehaviourId));
@@ -27,7 +25,7 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
         LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(gadgetBehaviourId, lemmingId));
     }
 
-    public abstract void Tick();
+    public abstract void DetectTrigger();
 
     public bool Equals(GadgetTrigger? other) => other is not null && Id == other.Id;
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetTrigger other && Id == other.Id;

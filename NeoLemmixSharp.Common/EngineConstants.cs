@@ -57,6 +57,7 @@ public static class EngineConstants
 
     public const int TrivialSkillLimit = 1_000_000_000;
     public const int InfiniteSkillCount = 100;
+    public const int TrivialTimeLimitInSeconds = 1_000_000_000;
     public const int MaxFiniteSkillCount = InfiniteSkillCount - 1;
 
     public const int InitialLemmingHatchReleaseCountDown = 20;

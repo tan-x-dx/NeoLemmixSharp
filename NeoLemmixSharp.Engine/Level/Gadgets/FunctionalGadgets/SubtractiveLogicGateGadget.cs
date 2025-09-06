@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
@@ -15,6 +16,7 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
     protected SubtractiveLogicGateGadget(
         SubtractiveLogicGateGadgetState offState,
         SubtractiveLogicGateGadgetState onState)
+        : base(IO.Data.Style.Gadget.GadgetType.LogicGate)
     {
         _offState = offState;
         _onState = onState;
@@ -40,7 +42,6 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
     public sealed class SubtractiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
     {
         private readonly OutputSignalBehaviour _signalBehaviour;
-        private readonly GadgetBehaviour _signalBehaviourCast;
 
         public SubtractiveLogicGateGadget Gadget { get; set; }
 
@@ -50,14 +51,11 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
             : base(GadgetTriggerType.GadgetLinkTrigger)
         {
             _signalBehaviour = signalBehaviour;
-            _signalBehaviourCast = signalBehaviour;
         }
 
-        public override void Tick()
+        public override void DetectTrigger()
         {
         }
-
-        public override ReadOnlySpan<GadgetBehaviour> Behaviours => new(in _signalBehaviourCast);
 
         public void ReactToSignal(bool signal)
         {
@@ -118,11 +116,6 @@ public sealed class XorGateGadget : SubtractiveLogicGateGadget
 
 public sealed class SubtractiveLogicGateGadgetState : GadgetState
 {
-    protected override void OnTick()
-    {
-        throw new NotImplementedException();
-    }
-
     public override void OnTransitionFrom()
     {
         throw new NotImplementedException();

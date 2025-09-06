@@ -18,9 +18,12 @@ public sealed class LevelTimer : ISnapshotDataConvertible
     public TimerType Type { get; }
     public Color FontColor { get; private set; }
 
-    public int TotalElapsedSeconds => _elapsedSeconds - _additionalSeconds;
-    public bool OutOfTime => Type == TimerType.CountDown &&
-                             TotalElapsedSeconds >= TimeLimitInSeconds;
+    public int EffectiveSecondsRemaining => Type == TimerType.CountDown
+        ? TimeLimitInSeconds + _additionalSeconds - _elapsedSeconds
+        : EngineConstants.TrivialTimeLimitInSeconds;
+
+    public int EffectiveElapsedSeconds => _elapsedSeconds - _additionalSeconds;
+    public bool OutOfTime => EffectiveSecondsRemaining < 0;
 
     public static LevelTimer CreateCountUpTimer() => new();
     public static LevelTimer CreateCountDownTimer(int timeLimitInSeconds) => new(timeLimitInSeconds);
@@ -79,7 +82,7 @@ public sealed class LevelTimer : ISnapshotDataConvertible
 
     private void UpdateCountDown(bool partialUpdate)
     {
-        var secondsLeft = TimeLimitInSeconds - TotalElapsedSeconds;
+        var secondsLeft = TimeLimitInSeconds - EffectiveElapsedSeconds;
 
         FontColor = GetColorForTime(secondsLeft);
 

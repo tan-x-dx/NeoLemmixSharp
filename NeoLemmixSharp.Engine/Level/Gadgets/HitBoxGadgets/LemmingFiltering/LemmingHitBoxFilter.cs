@@ -42,8 +42,9 @@ public sealed class LemmingHitBoxFilter : GadgetTrigger
         _onLemmingExitBehaviours = onLemmingExitBehaviours;
     }
 
-    public override void Tick()
+    public override void DetectTrigger()
     {
+        // Do nothing - this type looks for lemmings specifically
     }
 
     [Pure]
@@ -57,6 +58,4 @@ public sealed class LemmingHitBoxFilter : GadgetTrigger
 
         return true;
     }
-
-    public override ReadOnlySpan<GadgetBehaviour> Behaviours => [];
 }

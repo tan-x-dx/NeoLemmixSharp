@@ -12,9 +12,7 @@ public sealed class AlwaysTrueTrigger : GadgetTrigger
         _behaviours = behaviours;
     }
 
-    public override ReadOnlySpan<GadgetBehaviour> Behaviours => new(_behaviours);
-
-    public override void Tick()
+    public override void DetectTrigger()
     {
         foreach (var behaviour in _behaviours)
         {

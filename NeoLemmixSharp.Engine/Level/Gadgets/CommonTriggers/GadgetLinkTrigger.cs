@@ -11,9 +11,7 @@ public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
         _behaviours = behaviours;
     }
 
-    public override ReadOnlySpan<GadgetBehaviour> Behaviours => new(_behaviours);
-
-    public override void Tick()
+    public override void DetectTrigger()
     {
         throw new NotImplementedException();
     }

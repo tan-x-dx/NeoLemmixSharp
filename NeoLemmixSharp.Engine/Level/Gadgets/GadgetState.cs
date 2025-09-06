@@ -12,13 +12,9 @@ public abstract class GadgetState
     {
         foreach (var gadgetTrigger in GadgetTriggers)
         {
-            gadgetTrigger.Tick();
+            gadgetTrigger.DetectTrigger();
         }
-
-        OnTick();
     }
-
-    protected abstract void OnTick();
 
     public abstract void OnTransitionFrom();
     public abstract void OnTransitionTo();

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
@@ -20,6 +21,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         AdditiveLogicGateGadgetState offState,
         AdditiveLogicGateGadgetState onState,
         AdditiveLogicGateGadgetLinkInput[] inputs)
+        : base(IO.Data.Style.Gadget.GadgetType.LogicGate)
     {
         _offState = offState;
         _onState = onState;
@@ -55,7 +57,6 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
     public sealed class AdditiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
     {
         private readonly OutputSignalBehaviour _signalBehaviour;
-        private readonly GadgetBehaviour _signalBehaviourCast;
 
         public AdditiveLogicGateGadget Gadget { get; set; } = null!;
 
@@ -63,15 +64,12 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
             : base(GadgetTriggerType.GadgetLinkTrigger)
         {
             _signalBehaviour = signalBehaviour;
-            _signalBehaviourCast = signalBehaviour;
         }
 
-        public override void Tick()
+        public override void DetectTrigger()
         {
             //_gadget.ReactToSignal(this, signal);
         }
-
-        public override ReadOnlySpan<GadgetBehaviour> Behaviours => new(in _signalBehaviourCast);
 
         public void ReactToSignal(bool signal)
         {
@@ -119,11 +117,6 @@ public sealed class OrGateGadget : AdditiveLogicGateGadget
 
 public sealed class AdditiveLogicGateGadgetState : GadgetState
 {
-    protected override void OnTick()
-    {
-        throw new NotImplementedException();
-    }
-
     public override void OnTransitionFrom()
     {
         throw new NotImplementedException();

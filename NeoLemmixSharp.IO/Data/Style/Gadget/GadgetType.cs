@@ -8,6 +8,7 @@ public enum GadgetType
     HatchGadget,
 
     LogicGate,
+    LevelTimerObserver
 }
 
 public static class GadgetTypeHelpers
