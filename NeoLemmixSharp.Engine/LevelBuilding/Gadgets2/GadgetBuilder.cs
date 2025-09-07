@@ -9,10 +9,12 @@ using NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.LogicGateGadgets;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.Functional;
 using NeoLemmixSharp.IO.Data.Level.Gadget.HatchGadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.LogicGateGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Functional;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HatchGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.LogicGateGadget;
@@ -45,9 +47,10 @@ public sealed class GadgetBuilder
 
         var numberOfGadgetInstances = _levelData.AllGadgetInstanceData.Count;
 
+        // This list's required capacity is known - perfect fit
         _gadgets = new List<GadgetBase>(numberOfGadgetInstances);
 
-        // Preallocate lists with large(ish) initial capacities to reduce realloactions further down the line
+        // Preallocate these lists with large(ish) initial capacities to reduce realloactions further down the line
         _gadgetTriggers = new List<GadgetTrigger>(numberOfGadgetInstances * GadgetStateCapacityMultiplier * GadgetTriggerCapacityMultiplier);
         _gadgetBehaviours = new List<GadgetBehaviour>(numberOfGadgetInstances * GadgetStateCapacityMultiplier * GadgetBehaviourCapacityMultiplier);
     }
@@ -76,6 +79,7 @@ public sealed class GadgetBuilder
             HitBoxGadgetArchetypeData hitBoxGadgetArchetypeData => BuildHitBoxGadget(hitBoxGadgetArchetypeData, (HitBoxGadgetInstanceData)gadgetInstanceData, lemmingManager, tribeManager),
             HatchGadgetArchetypeData hatchGadgetArchetypeData => BuildHatchGadget(hatchGadgetArchetypeData, (HatchGadgetInstanceData)gadgetInstanceData, tribeManager),
             LogicGateGadgetArchetypeData logicGateGadgetArchetypeData => BuildLogicGateGadget(logicGateGadgetArchetypeData, (LogicGateGadgetInstanceData)gadgetInstanceData),
+            LevelTimerObserverGadgetArchetypeData levelTimerObserverGadgetArchetypeData => BuildLevelTimerObserverGadget(levelTimerObserverGadgetArchetypeData, (LevelTimerObserverGadgetInstanceData)gadgetInstanceData),
 
             _ => throw new NotImplementedException(),
         };
@@ -107,6 +111,11 @@ public sealed class GadgetBuilder
         var logicGateBuilder = new LogicGateBuilder(logicGateGadgetInstanceData.Identifier, _gadgetTriggers, _gadgetBehaviours);
 
         return logicGateBuilder.BuildLogicGateGadget(logicGateGadgetArchetypeData, logicGateGadgetInstanceData);
+    }
+
+    private GadgetBase BuildLevelTimerObserverGadget(LevelTimerObserverGadgetArchetypeData levelTimerObserverGadgetArchetypeData, LevelTimerObserverGadgetInstanceData levelTimerObserverGadgetInstanceData)
+    {
+        throw new NotImplementedException();
     }
 
     public GadgetBase[] GetGadgets() => _gadgets.ToArray();

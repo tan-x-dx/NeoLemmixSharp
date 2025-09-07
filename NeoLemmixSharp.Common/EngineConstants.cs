@@ -57,6 +57,7 @@ public static class EngineConstants
 
     public const int TrivialSkillLimit = 1_000_000_000;
     public const int InfiniteSkillCount = 100;
+    public const int TrivialTimeLimitInSeconds = 1_000_000_000;
     public const int MaxFiniteSkillCount = InfiniteSkillCount - 1;
 
     public const int InitialLemmingHatchReleaseCountDown = 20;
@@ -172,16 +173,6 @@ public static class EngineConstants
     public const int NumberOfPlatformerBricks = 12;
     public const int NumberOfStackerBricks = 8;
     public const int NumberOfRemainingBricksToPlaySound = 3;
-
-    #endregion
-
-    #region Cursor Priority Levels
-
-    public const int NonPermanentSkillPriority = 4;
-    public const int PermanentSkillPriority = 3;
-    public const int NonWalkerMovementPriority = 2;
-    public const int WalkerMovementPriority = 1;
-    public const int NoPriority = 0;
 
     #endregion
 

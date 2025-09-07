@@ -12,8 +12,8 @@ public readonly struct SkillAssignmentData : ILevelEventData
 
     public readonly int LemmingId;
     public readonly Point LemmingPosition;
-    public readonly int LemmingOrientationRotNum;
-    public readonly int LemmingFacingDirectionId;
+    public readonly Orientation LemmingOrientation;
+    public readonly FacingDirection LemmingFacingDirection;
 
     public int TickNumber => Tick;
 
@@ -28,7 +28,7 @@ public readonly struct SkillAssignmentData : ILevelEventData
 
         LemmingId = lemming.Id;
         LemmingPosition = lemming.AnchorPosition;
-        LemmingOrientationRotNum = lemming.Orientation.RotNum;
-        LemmingFacingDirectionId = lemming.FacingDirection.Id;
+        LemmingOrientation = lemming.Orientation;
+        LemmingFacingDirection = lemming.FacingDirection;
     }
 }

@@ -19,6 +19,7 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
         int initialStateIndex,
         HatchSpawnData hatchSpawnData,
         Point spawnPointOffset)
+        : base(Common.Enums.GadgetType.HatchGadget)
     {
         _states = states;
         SpawnPointOffset = spawnPointOffset;

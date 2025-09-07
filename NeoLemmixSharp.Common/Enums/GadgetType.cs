@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.IO.Data.Style.Gadget;
+namespace NeoLemmixSharp.Common.Enums;
 
 public enum GadgetType
 {
@@ -8,6 +8,7 @@ public enum GadgetType
     HatchGadget,
 
     LogicGate,
+    LevelTimerObserver
 }
 
 public static class GadgetTypeHelpers

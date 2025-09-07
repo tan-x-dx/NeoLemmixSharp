@@ -18,7 +18,7 @@ public sealed class FloaterAction : LemmingAction
             LemmingActionConstants.FloaterActionSpriteFileName,
             LemmingActionConstants.FloaterAnimationFrames,
             LemmingActionConstants.MaxFloaterPhysicsFrames,
-            EngineConstants.PermanentSkillPriority,
+            LemmingActionConstants.PermanentSkillPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }
@@ -40,7 +40,7 @@ public sealed class FloaterAction : LemmingAction
         if (maxFallDistance > -groundPixelDistance)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, groundPixelDistance);
-            lemming.SetNextAction(WalkerAction.Instance);
+            lemming.NextAction = WalkerAction.Instance;
         }
         else
         {

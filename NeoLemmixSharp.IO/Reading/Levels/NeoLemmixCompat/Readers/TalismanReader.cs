@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Data.Level.Objectives;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;

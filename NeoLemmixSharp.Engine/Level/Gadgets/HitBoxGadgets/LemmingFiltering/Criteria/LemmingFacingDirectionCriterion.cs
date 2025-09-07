@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
 
@@ -21,7 +21,7 @@ public sealed class LemmingFacingDirectionCriterion : LemmingCriterion
     private readonly FacingDirection _requiredFacingDirection;
 
     private LemmingFacingDirectionCriterion(FacingDirection requiredFacingDirection)
-        : base(LemmingCriteria.LemmingFacingDirection)
+        : base(LemmingCriteriaType.LemmingFacingDirection)
     {
         _requiredFacingDirection = requiredFacingDirection;
     }

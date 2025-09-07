@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.IO.Data.Style.Gadget;
+namespace NeoLemmixSharp.Common.Enums;
 
 public enum GadgetArchetypeMiscDataType
 {

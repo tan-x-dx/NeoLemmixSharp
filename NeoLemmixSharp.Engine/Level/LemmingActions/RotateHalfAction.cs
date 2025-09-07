@@ -15,7 +15,7 @@ public sealed class RotateHalfAction : LemmingAction
             LemmingActionConstants.RotateHalfActionSpriteFileName,
             LemmingActionConstants.RotateHalfAnimationFrames,
             LemmingActionConstants.MaxRotateHalfPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionConstants.NonWalkerMovementPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }
@@ -28,7 +28,7 @@ public sealed class RotateHalfAction : LemmingAction
             var orientation = lemming.Orientation;
             ref var lemmingPosition = ref lemming.AnchorPosition;
             lemmingPosition = orientation.MoveUp(lemmingPosition, 8);
-            lemming.SetOrientation(orientation.GetOpposite());
+            lemming.Orientation = orientation.GetOpposite();
         }
 
         return true;

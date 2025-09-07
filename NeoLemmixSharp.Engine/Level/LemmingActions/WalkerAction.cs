@@ -17,7 +17,7 @@ public sealed class WalkerAction : LemmingAction
             LemmingActionConstants.WalkerActionSpriteFileName,
             LemmingActionConstants.WalkerAnimationFrames,
             LemmingActionConstants.MaxWalkerPhysicsFrames,
-            EngineConstants.WalkerMovementPriority,
+            LemmingActionConstants.WalkerMovementPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }
@@ -48,7 +48,7 @@ public sealed class WalkerAction : LemmingAction
             }
             else
             {
-                lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+                lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             }
         }

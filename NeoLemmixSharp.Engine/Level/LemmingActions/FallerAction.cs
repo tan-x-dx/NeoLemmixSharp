@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics.Contracts;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
@@ -18,7 +18,7 @@ public sealed class FallerAction : LemmingAction
             LemmingActionConstants.FallerActionSpriteFileName,
             LemmingActionConstants.FallerAnimationFrames,
             LemmingActionConstants.MaxFallerPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionConstants.NonWalkerMovementPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }
@@ -74,7 +74,7 @@ public sealed class FallerAction : LemmingAction
             lemming)
             ? SplatterAction.Instance
             : WalkerAction.Instance;
-        lemming.SetNextAction(nextAction);
+        lemming.NextAction = nextAction;
 
         return true;
     }

@@ -1,7 +1,7 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;

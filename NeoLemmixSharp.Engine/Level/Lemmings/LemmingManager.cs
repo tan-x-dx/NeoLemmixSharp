@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
@@ -17,7 +18,7 @@ public sealed class LemmingManager :
     IItemManager<Lemming>,
     IBitBufferCreator<RawBitBuffer, Lemming>,
     IPerfectHasher<HatchGroup>,
-    ISnapshotDataConvertible<LemmingManagerSnapshotData>,
+    ISnapshotDataConvertible,
     IInitialisable,
     IDisposable
 {
@@ -408,31 +409,31 @@ public sealed class LemmingManager :
 
     public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LemmingManagerSnapshotData>();
 
-    public unsafe int WriteToSnapshotData(LemmingManagerSnapshotData* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
-        *snapshotDataPointer = new LemmingManagerSnapshotData(
+        LemmingManagerSnapshotData* lemmingManagerSnapshotDataPointer = (LemmingManagerSnapshotData*)snapshotDataPointer;
+
+        *lemmingManagerSnapshotDataPointer = new LemmingManagerSnapshotData(
             _numberOfLemmingsReleasedFromHatch,
             _numberOfClonedLemmings,
             LemmingsToRelease,
             LemmingsOut,
             LemmingsRemoved,
             LemmingsSaved);
-
-        return 1;
     }
 
-    public unsafe int SetFromSnapshotData(LemmingManagerSnapshotData* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
-        _numberOfLemmingsReleasedFromHatch = snapshotDataPointer->NumberOfLemmingsReleasedFromHatch;
-        _numberOfClonedLemmings = snapshotDataPointer->NumberOfClonedLemmings;
-        LemmingsToRelease = snapshotDataPointer->LemmingsToRelease;
-        LemmingsOut = snapshotDataPointer->LemmingsOut;
-        LemmingsRemoved = snapshotDataPointer->LemmingsRemoved;
-        LemmingsSaved = snapshotDataPointer->LemmingsSaved;
+        LemmingManagerSnapshotData* lemmingManagerSnapshotDataPointer = (LemmingManagerSnapshotData*)snapshotDataPointer;
+
+        _numberOfLemmingsReleasedFromHatch = lemmingManagerSnapshotDataPointer->NumberOfLemmingsReleasedFromHatch;
+        _numberOfClonedLemmings = lemmingManagerSnapshotDataPointer->NumberOfClonedLemmings;
+        LemmingsToRelease = lemmingManagerSnapshotDataPointer->LemmingsToRelease;
+        LemmingsOut = lemmingManagerSnapshotDataPointer->LemmingsOut;
+        LemmingsRemoved = lemmingManagerSnapshotDataPointer->LemmingsRemoved;
+        LemmingsSaved = lemmingManagerSnapshotDataPointer->LemmingsSaved;
 
         ResetLemmingPositions();
-
-        return 1;
     }
 
     private void ResetLemmingPositions()

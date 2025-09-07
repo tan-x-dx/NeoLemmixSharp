@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Runtime.CompilerServices;
@@ -17,7 +18,7 @@ public sealed class ShimmierAction : LemmingAction
             LemmingActionConstants.ShimmierActionSpriteFileName,
             LemmingActionConstants.ShimmierAnimationFrames,
             LemmingActionConstants.MaxShimmierPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionConstants.NonWalkerMovementPriority,
             LemmingActionBounds.ShimmierActionBounds)
     {
     }
@@ -152,7 +153,7 @@ public sealed class ShimmierAction : LemmingAction
 
         if (lemming.CurrentAction == ClimberAction.Instance)
         {
-            lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+            lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
 
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 8)))

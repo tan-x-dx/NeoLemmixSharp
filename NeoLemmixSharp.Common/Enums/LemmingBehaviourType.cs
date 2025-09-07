@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
+namespace NeoLemmixSharp.Common.Enums;
 
 public enum LemmingBehaviourType
 {
@@ -11,12 +11,13 @@ public enum LemmingBehaviourType
     KillLemming,
     ForceLemmingFacingDirection,
     NullifyLemmingFallDistance,
-    LemmingMover
+    LemmingMover,
+    SetLemmingFastForward
 }
 
 public static class LemmingBehaviourTypeHelpers
 {
-    private const int NumberOfEnumValues = 8;
+    private const int NumberOfEnumValues = 9;
 
     public static LemmingBehaviourType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingBehaviourType>(rawValue, NumberOfEnumValues);
 }

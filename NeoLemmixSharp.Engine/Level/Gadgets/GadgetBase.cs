@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
@@ -6,10 +7,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible<byte>
+public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible
 {
     private readonly int _requiredNumberOfBytesForSnapshotting;
     public required GadgetName GadgetName { get; init; }
+    public GadgetType GadgetType { get; }
     public required GadgetBounds CurrentGadgetBounds { get; init; }
 
     public required int Id { get; init; }
@@ -22,8 +24,9 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
 
     public abstract GadgetState CurrentState { get; }
 
-    protected GadgetBase()
+    protected GadgetBase(GadgetType gadgetType)
     {
+        GadgetType = gadgetType;
         _requiredNumberOfBytesForSnapshotting = CalculateRequiredNumberOfBytesForSnapshotting();
     }
 
@@ -43,15 +46,13 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
 
     public int GetRequiredNumberOfBytesForSnapshotting() => _requiredNumberOfBytesForSnapshotting;
 
-    public unsafe int WriteToSnapshotData(byte* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
         *snapshotDataPointer = 0;
-        return 1;
     }
 
-    public unsafe int SetFromSnapshotData(byte* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
-        return 1;
     }
 
     public sealed override string ToString() => GadgetName.ToString();

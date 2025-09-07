@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Content;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 

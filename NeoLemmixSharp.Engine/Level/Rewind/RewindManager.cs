@@ -14,13 +14,13 @@ public sealed class RewindManager :
     IItemManager<LevelTimer>,
     IDisposable
 {
-    private readonly SnapshotRecorder<LemmingManager, Lemming, LemmingSnapshotData> _lemmingSnapshotRecorder;
-    private readonly SnapshotRecorder<GadgetManager, GadgetBase, byte> _gadgetSnapshotRecorder;
-    private readonly SnapshotRecorder<SkillSetManager, SkillTrackingData, SkillSetSnapshotData> _skillSetSnapshotRecorder;
+    private readonly SnapshotRecorder<LemmingManager, Lemming> _lemmingSnapshotRecorder;
+    private readonly SnapshotRecorder<GadgetManager, GadgetBase> _gadgetSnapshotRecorder;
+    private readonly SnapshotRecorder<SkillSetManager, SkillTrackingData> _skillSetSnapshotRecorder;
 
-    private readonly SnapshotRecorder<RewindManager, LemmingManager, LemmingManagerSnapshotData> _lemmingManagerSnapshotRecorder;
-    private readonly SnapshotRecorder<RewindManager, GadgetManager, int> _gadgetManagerSnapshotRecorder;
-    private readonly SnapshotRecorder<RewindManager, LevelTimer, LevelTimerSnapshotData> _levelTimerRecorder;
+    private readonly SnapshotRecorder<RewindManager, LemmingManager> _lemmingManagerSnapshotRecorder;
+    private readonly SnapshotRecorder<RewindManager, GadgetManager> _gadgetManagerSnapshotRecorder;
+    private readonly SnapshotRecorder<RewindManager, LevelTimer> _levelTimerRecorder;
 
     private readonly LevelEventList<SkillAssignmentData> _skillAssignmentList;
 
@@ -31,13 +31,13 @@ public sealed class RewindManager :
         GadgetManager gadgetManager,
         SkillSetManager skillSetManager)
     {
-        _lemmingSnapshotRecorder = new SnapshotRecorder<LemmingManager, Lemming, LemmingSnapshotData>(lemmingManager);
-        _gadgetSnapshotRecorder = new SnapshotRecorder<GadgetManager, GadgetBase, byte>(gadgetManager);
-        _skillSetSnapshotRecorder = new SnapshotRecorder<SkillSetManager, SkillTrackingData, SkillSetSnapshotData>(skillSetManager);
+        _lemmingSnapshotRecorder = new SnapshotRecorder<LemmingManager, Lemming>(lemmingManager);
+        _gadgetSnapshotRecorder = new SnapshotRecorder<GadgetManager, GadgetBase>(gadgetManager);
+        _skillSetSnapshotRecorder = new SnapshotRecorder<SkillSetManager, SkillTrackingData>(skillSetManager);
 
-        _lemmingManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, LemmingManager, LemmingManagerSnapshotData>(this);
-        _gadgetManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, GadgetManager, int>(this);
-        _levelTimerRecorder = new SnapshotRecorder<RewindManager, LevelTimer, LevelTimerSnapshotData>(this);
+        _lemmingManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, LemmingManager>(this);
+        _gadgetManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, GadgetManager>(this);
+        _levelTimerRecorder = new SnapshotRecorder<RewindManager, LevelTimer>(this);
 
         var baseNumberOfSkillAssignments = skillSetManager.CalculateBaseNumberOfSkillAssignments();
 
@@ -92,8 +92,8 @@ public sealed class RewindManager :
     {
         if (lemming.AnchorPosition == previouslyRecordedSkillAssignment->LemmingPosition &&
             lemming.State.TribeAffiliation.Id == previouslyRecordedSkillAssignment->TribeId &&
-            lemming.Orientation.RotNum == previouslyRecordedSkillAssignment->LemmingOrientationRotNum &&
-            lemming.FacingDirection.Id == previouslyRecordedSkillAssignment->LemmingFacingDirectionId)
+            lemming.Orientation == previouslyRecordedSkillAssignment->LemmingOrientation &&
+            lemming.FacingDirection == previouslyRecordedSkillAssignment->LemmingFacingDirection)
             return;
 
         throw new InvalidOperationException("Desync with replay!");

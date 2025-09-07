@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.Engine.Level.Lemmings;
+namespace NeoLemmixSharp.Common.Enums;
 
 public enum LemmingRemovalReason
 {

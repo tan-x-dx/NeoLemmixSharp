@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
@@ -15,7 +16,7 @@ public sealed class StonerAction : LemmingAction
             LemmingActionConstants.StonerActionSpriteFileName,
             LemmingActionConstants.StonerAnimationFrames,
             LemmingActionConstants.MaxStonerPhysicsFrames,
-            EngineConstants.NoPriority,
+            LemmingActionConstants.NoPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }

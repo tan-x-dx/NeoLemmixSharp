@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
+﻿using NeoLemmixSharp.Common.Enums;
+
+namespace NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 public readonly struct GadgetTriggerData(GadgetTriggerName gadgetTriggerName, GadgetTriggerType gadgetTriggerType, int data1, int data2)
 {

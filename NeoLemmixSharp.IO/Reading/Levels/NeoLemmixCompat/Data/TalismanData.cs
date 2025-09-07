@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Level.Objectives;
+﻿using NeoLemmixSharp.Common.Enums;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 

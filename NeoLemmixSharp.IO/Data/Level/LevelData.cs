@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
@@ -136,8 +137,8 @@ public sealed class LevelData
     public BitArraySet<LevelParameterHasher, BitBuffer32, LevelParameters> LevelParameters { get; } = LevelParameterHasher.CreateBitArraySet();
     public BitArraySet<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters> ControlParameters { get; } = ControlPanelParameterHasher.CreateBitArraySet();
 
-    public List<LemmingData> PrePlacedLemmingData { get; } = [];
-    public List<LemmingData> HatchLemmingData { get; } = [];
+    public List<LemmingInstanceData> PrePlacedLemmingData { get; } = [];
+    public List<LemmingInstanceData> HatchLemmingData { get; } = [];
     public List<TribeStyleIdentifier> TribeIdentifiers { get; } = [];
 
     public List<TerrainData> AllTerrainData { get; } = [];

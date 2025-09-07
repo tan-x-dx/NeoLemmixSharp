@@ -47,6 +47,13 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         _popCount = 0;
     }
 
+    public void Fill()
+    {
+        var numberOfItems = _hasher.NumberOfItems;
+        BitArrayHelpers.PopulateBitArray(_bits.AsSpan(), numberOfItems);
+        _popCount = numberOfItems;
+    }
+
     [Pure]
     public bool Contains(T item)
     {
@@ -157,6 +164,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         }
     }
 
+    [SkipLocalsInit]
     public void UnionWith(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
@@ -176,6 +184,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
 
+    [SkipLocalsInit]
     public void IntersectWith(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
@@ -195,6 +204,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
 
+    [SkipLocalsInit]
     public void ExceptWith(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
@@ -214,6 +224,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
 
+    [SkipLocalsInit]
     public void SymmetricExceptWith(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
@@ -234,6 +245,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     }
 
     [Pure]
+    [SkipLocalsInit]
     public bool IsSubsetOf(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
@@ -253,6 +265,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     }
 
     [Pure]
+    [SkipLocalsInit]
     public bool IsSupersetOf(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
@@ -272,6 +285,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     }
 
     [Pure]
+    [SkipLocalsInit]
     public bool IsProperSubsetOf(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
@@ -291,6 +305,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     }
 
     [Pure]
+    [SkipLocalsInit]
     public bool IsProperSupersetOf(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
@@ -310,6 +325,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     }
 
     [Pure]
+    [SkipLocalsInit]
     public bool Overlaps(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
@@ -329,6 +345,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     }
 
     [Pure]
+    [SkipLocalsInit]
     public bool SetEquals(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);

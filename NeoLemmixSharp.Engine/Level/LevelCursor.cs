@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using Color = Microsoft.Xna.Framework.Color;
 
@@ -87,13 +88,13 @@ public sealed class LevelCursor
             Color1 = EngineConstants.CursorColor1;
             Color2 = EngineConstants.CursorColor2;
             Color3 = EngineConstants.CursorColor3;
-
-            return;
         }
-
-        Color1 = tribe.ColorData.HairColor;
-        Color2 = tribe.ColorData.BodyColor;
-        Color3 = tribe.ColorData.SkinColor;
+        else
+        {
+            Color1 = tribe.ColorData.HairColor;
+            Color2 = tribe.ColorData.BodyColor;
+            Color3 = tribe.ColorData.SkinColor;
+        }
     }
 
     private void CheckLemming(Lemming lemming)
@@ -108,6 +109,7 @@ public sealed class LevelCursor
         }
     }
 
+    [Pure]
     private bool LemmingIsUnderCursor(Lemming lemming)
     {
         var lemmingPosition = lemming.CenterPosition;
@@ -118,6 +120,7 @@ public sealed class LevelCursor
         return Math.Abs(dx) < EngineConstants.CursorRadius && Math.Abs(dy) < EngineConstants.CursorRadius;
     }
 
+    [Pure]
     private bool LemmingIsAbleToBeSelected(Lemming lemming)
     {
         // Directional select
@@ -150,12 +153,14 @@ public sealed class LevelCursor
                NewCandidateIsCloserToCursorCentre(newCandidate);
     }
 
+    [Pure]
     private static bool NewCandidateHasMoreRelevantState(Lemming previousCandidate, Lemming newCandidate)
     {
         return (previousCandidate.State.IsNeutral && !newCandidate.State.IsNeutral) ||
                (previousCandidate.State.IsZombie && !newCandidate.State.IsZombie);
     }
 
+    [Pure]
     private static bool NewCandidateHasMoreRelevantTribe(Lemming previousCandidate, Lemming newCandidate)
     {
         var skillTrackingDataId = LevelScreen.LevelControlPanel.SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
@@ -170,6 +175,7 @@ public sealed class LevelCursor
         return newCandidateMatchesTribe && !previousCandidateMatchesTribe;
     }
 
+    [Pure]
     private static bool NewCandidateHasHigherActionPriority(Lemming previousCandidate, Lemming newCandidate)
     {
         return newCandidate.CurrentAction.CursorSelectionPriorityValue >
@@ -187,6 +193,7 @@ public sealed class LevelCursor
         return true;
     }
 
+    [Pure]
     private int GetDistanceSquaredFromCursorCentre(Lemming lemming)
     {
         var lemmingPosition = lemming.CenterPosition;

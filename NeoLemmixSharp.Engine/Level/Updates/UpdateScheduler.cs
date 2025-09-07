@@ -183,14 +183,8 @@ end;
 
     private void PerformOneTick()
     {
-        var isMajorTick = _elapsedTicksModuloFastForwardSpeed == 0;
-        LevelScreen.CauseAndEffectManager.ResetBehaviours();
-        LevelScreen.LemmingManager.Tick(isMajorTick);
-        LevelScreen.GadgetManager.Tick(isMajorTick);
-        LevelScreen.CauseAndEffectManager.Tick();
-        LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks, true);
-        LevelScreen.RewindManager.Tick(_elapsedTicks);
-        LevelScreen.TerrainPainter.RepaintTerrain();
+        ResetManagers();
+        DoManagerJobs();
 
         var newElapsedTicks = _elapsedTicks + 1;
         _elapsedTicks = newElapsedTicks;
@@ -198,6 +192,28 @@ end;
         _elapsedTicksModuloFastForwardSpeed = newElapsedTicks;
 
         LevelScreen.LevelObjectiveManager.RecheckLevelObjective();
+    }
+
+    private static void ResetManagers()
+    {
+        LevelScreen.GadgetManager.ResetGadgets();
+        LevelScreen.CauseAndEffectManager.ResetBehaviours();
+    }
+
+    private void DoManagerJobs()
+    {
+        var isMajorTick = _elapsedTicksModuloFastForwardSpeed == 0;
+
+        LevelScreen.LemmingManager.Tick(isMajorTick);
+        LevelScreen.GadgetManager.Tick(isMajorTick);
+        LevelScreen.CauseAndEffectManager.Tick();
+
+        LevelScreen.CauseAndEffectManager.FlagIndeterminateTriggersAsNotTriggered();
+        LevelScreen.GadgetManager.ReEvaluateGadgets();
+
+        LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks, true);
+        LevelScreen.RewindManager.Tick(_elapsedTicks);
+        LevelScreen.TerrainPainter.RepaintTerrain();
     }
 
     private static void HandleCursor()

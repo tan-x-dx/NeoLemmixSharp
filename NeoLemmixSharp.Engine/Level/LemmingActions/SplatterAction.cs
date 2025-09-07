@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -14,7 +15,7 @@ public sealed class SplatterAction : LemmingAction
             LemmingActionConstants.SplatterActionSpriteFileName,
             LemmingActionConstants.SplatterAnimationFrames,
             LemmingActionConstants.MaxSplatterPhysicsFrames,
-            EngineConstants.NoPriority,
+            LemmingActionConstants.NoPriority,
             LemmingActionBounds.SplatterActionBounds)
     {
     }

@@ -1,5 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
 
@@ -8,7 +8,7 @@ public sealed class LemmingTribeCriterion : LemmingCriterion
     private readonly TribeSet _tribes;
 
     public LemmingTribeCriterion(TribeSet tribes)
-        : base(LemmingCriteria.LemmingTribe)
+        : base(LemmingCriteriaType.LemmingTribe)
     {
         _tribes = tribes;
     }

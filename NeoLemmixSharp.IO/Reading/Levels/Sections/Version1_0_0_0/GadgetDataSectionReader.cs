@@ -1,12 +1,11 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
-using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
 
@@ -153,7 +152,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         while (numberOfProperties-- > 0)
         {
             uint rawGadgetProperty = reader.Read8BitUnsignedInteger();
-            var gadgetProperty = GadgetPropertyHasher.GetEnumValue(rawGadgetProperty);
+            var gadgetProperty = GadgetPropertyTypeHasher.GetEnumValue(rawGadgetProperty);
             int propertyValue = reader.Read32BitSignedInteger();
             result.AddProperty(gadgetProperty, propertyValue);
         }
@@ -161,7 +160,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
     private static void AssertGadgetInputDataIsConsistent(GadgetData result)
     {
-        if (!result.TryGetProperty(GadgetProperty.NumberOfInputs, out var numberOfInputsSpecified))
+        if (!result.TryGetProperty(GadgetPropertyType.NumberOfInputs, out var numberOfInputsSpecified))
             numberOfInputsSpecified = 0;
 
         //  var numberOfOverrideInputNames = result.OverrideInputNames.Length;

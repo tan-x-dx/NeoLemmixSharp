@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
-public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData>
+public sealed class LevelTimer : ISnapshotDataConvertible
 {
     private const int NumberOfTimerChars = 6;
 
@@ -18,9 +18,12 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
     public TimerType Type { get; }
     public Color FontColor { get; private set; }
 
-    public int TotalElapsedSeconds => _elapsedSeconds - _additionalSeconds;
-    public bool OutOfTime => Type == TimerType.CountDown &&
-                             TotalElapsedSeconds >= TimeLimitInSeconds;
+    public int EffectiveSecondsRemaining => Type == TimerType.CountDown
+        ? TimeLimitInSeconds + _additionalSeconds - _elapsedSeconds
+        : EngineConstants.TrivialTimeLimitInSeconds;
+
+    public int EffectiveElapsedSeconds => _elapsedSeconds - _additionalSeconds;
+    public bool OutOfTime => EffectiveSecondsRemaining < 0;
 
     public static LevelTimer CreateCountUpTimer() => new();
     public static LevelTimer CreateCountDownTimer(int timeLimitInSeconds) => new(timeLimitInSeconds);
@@ -79,7 +82,7 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
 
     private void UpdateCountDown(bool partialUpdate)
     {
-        var secondsLeft = TimeLimitInSeconds - TotalElapsedSeconds;
+        var secondsLeft = TimeLimitInSeconds - EffectiveElapsedSeconds;
 
         FontColor = GetColorForTime(secondsLeft);
 
@@ -157,18 +160,18 @@ public sealed class LevelTimer : ISnapshotDataConvertible<LevelTimerSnapshotData
 
     public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LevelTimerSnapshotData>();
 
-    public unsafe int WriteToSnapshotData(LevelTimerSnapshotData* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
-        *snapshotDataPointer = new LevelTimerSnapshotData(_additionalSeconds);
+        LevelTimerSnapshotData* levelTimerSnapshotDataPointer = (LevelTimerSnapshotData*)snapshotDataPointer;
 
-        return 1;
+        *levelTimerSnapshotDataPointer = new LevelTimerSnapshotData(_additionalSeconds);
     }
 
-    public unsafe int SetFromSnapshotData(LevelTimerSnapshotData* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
-        _additionalSeconds = snapshotDataPointer->AdditionalSeconds;
+        LevelTimerSnapshotData* levelTimerSnapshotDataPointer = (LevelTimerSnapshotData*)snapshotDataPointer;
 
-        return 1;
+        _additionalSeconds = levelTimerSnapshotDataPointer->AdditionalSeconds;
     }
 
     private static Color GetColorForTime(int secondsLeft) => secondsLeft switch

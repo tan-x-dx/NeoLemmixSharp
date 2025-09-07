@@ -195,13 +195,13 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
 
         if (turnAround)
         {
-            lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+            lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
         }
 
         if (lemming.CurrentAction == this)
             return;
 
-        lemming.SetCurrentAction(this);
+        lemming.CurrentAction = this;
         lemming.PhysicsFrame = 0;
         lemming.AnimationFrame = 0;
         lemming.EndOfAnimation = false;

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using NeoLemmixSharp.Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.Data.Style.Theme;
 

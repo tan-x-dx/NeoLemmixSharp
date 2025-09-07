@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
 

@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Level.Gadget;
+﻿using NeoLemmixSharp.Common.Enums;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 

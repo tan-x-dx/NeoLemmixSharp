@@ -3,11 +3,13 @@
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public sealed class CauseAndEffectManager :
-    IPerfectHasher<GadgetTrigger>,
+    IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>,
     IPerfectHasher<GadgetBehaviour>
 {
     private readonly GadgetTrigger[] _allTriggers;
     private readonly GadgetBehaviour[] _allBehaviours;
+
+    private readonly BitArraySet<CauseAndEffectManager, ArrayBitBuffer, GadgetTrigger> _indeterminateTriggers;
 
     private readonly List<CauseAndEffectData> _causeAndEffectData = new(256);
 
@@ -22,6 +24,8 @@ public sealed class CauseAndEffectManager :
         _allBehaviours = allBehaviours;
         this.AssertUniqueIds(new ReadOnlySpan<GadgetBehaviour>(_allBehaviours));
         Array.Sort(_allBehaviours, this);
+
+        _indeterminateTriggers = new BitArraySet<CauseAndEffectManager, ArrayBitBuffer, GadgetTrigger>(this);
     }
 
     public void RegisterCauseAndEffectData(CauseAndEffectData causeAndEffectLemmingData)
@@ -32,10 +36,29 @@ public sealed class CauseAndEffectManager :
     public void ResetBehaviours()
     {
         _causeAndEffectData.Clear();
+        _indeterminateTriggers.Fill();
+
+        foreach (var trigger in _allTriggers)
+        {
+            trigger.Reset();
+        }
 
         foreach (var behaviour in _allBehaviours)
         {
             behaviour.Reset();
+        }
+    }
+
+    public void MarkTriggerAsEvaluated(GadgetTrigger gadgetTrigger)
+    {
+        _indeterminateTriggers.Remove(gadgetTrigger);
+    }
+
+    public void FlagIndeterminateTriggersAsNotTriggered()
+    {
+        foreach (var trigger in _indeterminateTriggers)
+        {
+            trigger.DetermineTrigger(false, false);
         }
     }
 
@@ -52,6 +75,7 @@ public sealed class CauseAndEffectManager :
     int IPerfectHasher<GadgetTrigger>.NumberOfItems => _allTriggers.Length;
     int IPerfectHasher<GadgetTrigger>.Hash(GadgetTrigger item) => item.Id;
     GadgetTrigger IPerfectHasher<GadgetTrigger>.UnHash(int index) => _allTriggers[index];
+    void IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_allTriggers.Length);
 
     int IPerfectHasher<GadgetBehaviour>.NumberOfItems => _allBehaviours.Length;
     int IPerfectHasher<GadgetBehaviour>.Hash(GadgetBehaviour item) => item.Id;

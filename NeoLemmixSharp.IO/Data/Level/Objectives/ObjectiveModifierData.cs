@@ -45,9 +45,3 @@ public sealed class LimitTotalSkillAssignmentsModifierData : ObjectiveModifierDa
         return other is LimitTotalSkillAssignmentsModifierData;
     }
 }
-
-public enum ObjectiveModifierType
-{
-    LimitSpecificSkillAssignments,
-    LimitTotalSkillAssignments,
-}

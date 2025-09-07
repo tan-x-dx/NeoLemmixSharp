@@ -5,11 +5,11 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 internal sealed class LemmingReader : NeoLemmixDataReader
 {
-    private readonly List<LemmingData> _prePlacedLemmingData;
-    private LemmingData? _currentLemmingData;
+    private readonly List<LemmingInstanceData> _prePlacedLemmingData;
+    private LemmingInstanceData? _currentLemmingData;
 
     public LemmingReader(
-        List<LemmingData> prePlacedLemmingData)
+        List<LemmingInstanceData> prePlacedLemmingData)
         : base("$LEMMING")
     {
         _prePlacedLemmingData = prePlacedLemmingData;
@@ -34,7 +34,7 @@ internal sealed class LemmingReader : NeoLemmixDataReader
 
     public override bool BeginReading(ReadOnlySpan<char> line)
     {
-        _currentLemmingData = new LemmingData
+        _currentLemmingData = new LemmingInstanceData
         {
             // Pre-placed lemmings are always active
             State = 1U << LemmingStateConstants.ActiveBitIndex

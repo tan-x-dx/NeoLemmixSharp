@@ -15,7 +15,7 @@ public sealed class RotateCounterclockwiseAction : LemmingAction
             LemmingActionConstants.RotateCounterclockwiseActionSpriteFileName,
             LemmingActionConstants.RotateCounterclockwiseAnimationFrames,
             LemmingActionConstants.MaxRotateCounterclockwisePhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionConstants.NonWalkerMovementPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }
@@ -29,7 +29,7 @@ public sealed class RotateCounterclockwiseAction : LemmingAction
             ref var lemmingPosition = ref lemming.AnchorPosition;
             var dx = lemming.FacingDirection.DeltaX;
             lemmingPosition = orientation.Move(lemmingPosition, dx * 4, 4);
-            lemming.SetOrientation(orientation.RotateCounterClockwise());
+            lemming.Orientation = orientation.RotateCounterClockwise();
         }
 
         return true;

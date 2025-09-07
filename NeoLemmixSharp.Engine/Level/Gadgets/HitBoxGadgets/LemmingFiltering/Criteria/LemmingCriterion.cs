@@ -1,14 +1,14 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
 
 public abstract class LemmingCriterion : IComparable<LemmingCriterion>
 {
-    public LemmingCriteria Criterion { get; }
+    public LemmingCriteriaType Criterion { get; }
 
-    protected LemmingCriterion(LemmingCriteria criterion)
+    protected LemmingCriterion(LemmingCriteriaType criterion)
     {
         Criterion = criterion;
     }

@@ -16,7 +16,7 @@ public sealed class OhNoerAction : LemmingAction
             LemmingActionConstants.OhNoerActionSpriteFileName,
             LemmingActionConstants.OhNoerAnimationFrames,
             LemmingActionConstants.MaxOhNoerPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionConstants.NonWalkerMovementPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }

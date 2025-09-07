@@ -1,6 +1,7 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
@@ -15,6 +16,7 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
     protected SubtractiveLogicGateGadget(
         SubtractiveLogicGateGadgetState offState,
         SubtractiveLogicGateGadgetState onState)
+        : base(Common.Enums.GadgetType.LogicGate)
     {
         _offState = offState;
         _onState = onState;
@@ -39,30 +41,27 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
 
     public sealed class SubtractiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
     {
-        private readonly OutputSignalBehaviour _signalBehaviour;
-        private readonly GadgetBehaviour _signalBehaviourCast;
+        public OutputSignalBehaviour InputSignalBehaviour { get; set; }
 
         public SubtractiveLogicGateGadget Gadget { get; set; }
 
         public bool Signal { get; private set; }
 
-        public SubtractiveLogicGateGadgetLinkInput(OutputSignalBehaviour signalBehaviour)
+        public SubtractiveLogicGateGadgetLinkInput( )
             : base(GadgetTriggerType.GadgetLinkTrigger)
         {
-            _signalBehaviour = signalBehaviour;
-            _signalBehaviourCast = signalBehaviour;
         }
 
-        public override void Tick()
+        public override void DetectTrigger(GadgetBase parentGadget)
         {
         }
-
-        public override ReadOnlySpan<GadgetBehaviour> Behaviours => new(in _signalBehaviourCast);
 
         public void ReactToSignal(bool signal)
         {
-            throw new NotImplementedException();
+            DetermineTrigger(signal, true);
+            LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
         }
+
 
         /* public override void ReactToSignal(bool signal)
          {
@@ -118,11 +117,6 @@ public sealed class XorGateGadget : SubtractiveLogicGateGadget
 
 public sealed class SubtractiveLogicGateGadgetState : GadgetState
 {
-    protected override void OnTick()
-    {
-        throw new NotImplementedException();
-    }
-
     public override void OnTransitionFrom()
     {
         throw new NotImplementedException();

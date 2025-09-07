@@ -1,6 +1,9 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
+using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
@@ -70,6 +73,7 @@ public readonly ref struct GadgetTriggerBuilder
             GadgetTriggerType.GadgetLinkTrigger => BuildGadgetLinkTrigger(in gadgetTriggerDatum, newTriggerId, behaviours),
             GadgetTriggerType.GadgetAnimationFinished => BuildGadgetAnimationFinishedTrigger(in gadgetTriggerDatum, newTriggerId, behaviours),
             GadgetTriggerType.LemmingHitBoxTrigger => throw new InvalidOperationException("Cannot build LemmingHitBoxTrigger here!"),
+            GadgetTriggerType.GlobalLevelTimerTrigger => BuildGlobalLevelTimerTrigger(in gadgetTriggerDatum, newTriggerId, behaviours),
 
             _ => Helpers.ThrowUnknownEnumValueException<GadgetTriggerType, GadgetTrigger>(gadgetTriggerDatum.GadgerTriggerType)
         };
@@ -109,6 +113,32 @@ public readonly ref struct GadgetTriggerBuilder
         GadgetBehaviour[] behaviours)
     {
         throw new NotImplementedException();
+    }
+
+    private static LevelTimerTrigger BuildGlobalLevelTimerTrigger(
+        in GadgetTriggerData gadgetTriggerDatum,
+        int newTriggerId,
+        GadgetBehaviour[] behaviours)
+    {
+        if (behaviours.Length != 1 ||
+            behaviours[0] is not OutputSignalBehaviour outputSignalBehaviour)
+            throw new InvalidOperationException("Expected ONE OutputSignalBehaviour!");
+
+        var rawData = (uint)gadgetTriggerDatum.Data1;
+        var rawLevelTimerObservationTypeId = rawData & 0xff;
+        var rawComparisonTypeId = (rawData >>> 8) & 0xff;
+        var levelTimerObservationType = LevelTimerObservationTypeHelpers.GetEnumValue(rawLevelTimerObservationTypeId);
+        var comparisonType = ComparisonTypeHelpers.GetEnumValue(rawComparisonTypeId);
+
+        var requiredValue = gadgetTriggerDatum.Data2;
+
+        var levelTimerTriggerParameters = new LevelTimerTriggerParameters(levelTimerObservationType, comparisonType, requiredValue);
+
+        return new LevelTimerTrigger(outputSignalBehaviour, levelTimerTriggerParameters)
+        {
+            TriggerName = gadgetTriggerDatum.GadgetTriggerName,
+            Id = newTriggerId
+        };
     }
 
     private static GadgetBehaviour[] GetBehaviours(

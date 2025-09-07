@@ -6,18 +6,15 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData> : IDisposable
+public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
     where TItemManager : IItemManager<TItemType>
-    where TItemType : class, ISnapshotDataConvertible<TSnapshotData>
-    where TSnapshotData : unmanaged
+    where TItemType : class, ISnapshotDataConvertible
 {
     private readonly TItemManager _itemManager;
-    private readonly int _numberOfItemsPerSnapshot;
     private RawArray _buffer;
-    private int _bufferLength;
-    private int _count;
-
-    public int Count => _count;
+    private readonly int _requiredNumberOfBytesPerSnapshot;
+    private int _bufferSnapshotCapacity;
+    private int _numberOfSnapshots;
 
     public SnapshotRecorder(TItemManager itemManager)
     {
@@ -31,68 +28,70 @@ public sealed class SnapshotRecorder<TItemManager, TItemType, TSnapshotData> : I
             requiredNumberOfBytesPerSnapshotTotal += item.GetRequiredNumberOfBytesForSnapshotting();
         }
 
-        _numberOfItemsPerSnapshot = allItems.Length;
-        _bufferLength = requiredNumberOfBytesPerSnapshotTotal * RewindConstants.SnapshotDataListSizeMultiplier;
-        _buffer = Helpers.AllocateBuffer<TSnapshotData>(_bufferLength);
+        _requiredNumberOfBytesPerSnapshot = requiredNumberOfBytesPerSnapshotTotal;
+        _bufferSnapshotCapacity = RewindConstants.SnapshotDataListSizeMultiplier;
+        _buffer = Helpers.AllocateBuffer<byte>(requiredNumberOfBytesPerSnapshotTotal * RewindConstants.SnapshotDataListSizeMultiplier);
     }
 
     public unsafe void TakeSnapshot()
     {
         var items = _itemManager.AllItems;
-        TSnapshotData* snapshotDataPointer = GetLatestSnapshotDataPointer();
+        byte* snapshotDataPointer = GetNewSnapshotDataPointer();
         var pointerOffset = 0;
 
         foreach (var item in items)
         {
-            TSnapshotData* p = snapshotDataPointer + pointerOffset;
+            byte* p = snapshotDataPointer + pointerOffset;
+            item.WriteToSnapshotData(p);
 
-            var pointerIncrement = item.WriteToSnapshotData(p);
+            var pointerIncrement = item.GetRequiredNumberOfBytesForSnapshotting();
             pointerOffset += pointerIncrement;
         }
     }
 
-    public unsafe void ApplySnapshot(int snapshotNumber)
+    private unsafe byte* GetNewSnapshotDataPointer()
     {
-        var items = _itemManager.AllItems;
-        TSnapshotData* snapshotDataPointer = GetSnapshotDataPointerForSlice(snapshotNumber);
-        var pointerOffset = 0;
+        if (_numberOfSnapshots == _bufferSnapshotCapacity)
+            DoubleSnapshotBufferCapacity();
 
-        foreach (var item in items)
-        {
-            TSnapshotData* p = snapshotDataPointer + pointerOffset;
-
-            var pointerIncrement = item.SetFromSnapshotData(p);
-            pointerOffset += pointerIncrement;
-        }
-    }
-
-    private unsafe TSnapshotData* GetLatestSnapshotDataPointer()
-    {
-        if (_count == _bufferLength)
-            DoubleByteBufferLength();
-
-        TSnapshotData* pointer = (TSnapshotData*)_buffer.Handle + _count;
-        _count += _numberOfItemsPerSnapshot;
+        byte* pointer = (byte*)_buffer.Handle + (_numberOfSnapshots * _requiredNumberOfBytesPerSnapshot);
+        _numberOfSnapshots++;
 
         return pointer;
     }
 
-    private void DoubleByteBufferLength()
+    private void DoubleSnapshotBufferCapacity()
     {
         var newBufferLength = _buffer.Length << 1;
 
         nint newHandle = Marshal.ReAllocHGlobal(_buffer.Handle, newBufferLength);
         _buffer = new RawArray(newHandle, newBufferLength);
-        _bufferLength <<= 1;
+        _bufferSnapshotCapacity <<= 1;
     }
 
-    private unsafe TSnapshotData* GetSnapshotDataPointerForSlice(int sliceNumber)
+    public unsafe void ApplySnapshot(int snapshotNumber)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(sliceNumber);
+        var items = _itemManager.AllItems;
+        byte* snapshotDataPointer = GetDataPointerForSnapshotNumber(snapshotNumber);
+        var pointerOffset = 0;
 
-        _count = _numberOfItemsPerSnapshot * (1 + sliceNumber);
+        foreach (var item in items)
+        {
+            byte* p = snapshotDataPointer + pointerOffset;
+            item.SetFromSnapshotData(p);
 
-        TSnapshotData* pointer = (TSnapshotData*)_buffer.Handle + (sliceNumber * _numberOfItemsPerSnapshot);
+            var pointerIncrement = item.GetRequiredNumberOfBytesForSnapshotting();
+            pointerOffset += pointerIncrement;
+        }
+    }
+
+    private unsafe byte* GetDataPointerForSnapshotNumber(int snapshotNumber)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(snapshotNumber);
+
+        _numberOfSnapshots = snapshotNumber + 1;
+
+        byte* pointer = (byte*)_buffer.Handle + (snapshotNumber * _requiredNumberOfBytesPerSnapshot);
         return pointer;
     }
 

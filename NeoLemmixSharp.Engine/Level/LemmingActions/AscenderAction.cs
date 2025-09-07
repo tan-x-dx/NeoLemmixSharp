@@ -16,7 +16,7 @@ public sealed class AscenderAction : LemmingAction
             LemmingActionConstants.AscenderActionSpriteFileName,
             LemmingActionConstants.AscenderAnimationFrames,
             LemmingActionConstants.MaxAscenderPhysicsFrames,
-            EngineConstants.NonWalkerMovementPriority,
+            LemmingActionConstants.NonWalkerMovementPriority,
             LemmingActionBounds.StandardLemmingBounds)
     {
     }
@@ -24,16 +24,17 @@ public sealed class AscenderAction : LemmingAction
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         ref var lemmingPosition = ref lemming.AnchorPosition;
+        ref var ascenderProgress = ref lemming.AscenderProgress;
         var orientation = lemming.Orientation;
 
         var dy = 0;
         while (dy < 2 &&
-               lemming.AscenderProgress < 5 &&
+               ascenderProgress < 5 &&
                PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 1)))
         {
             dy++;
             lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-            lemming.AscenderProgress++;
+            ascenderProgress++;
         }
 
         var pixel1IsSolid = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 1));
@@ -42,14 +43,14 @@ public sealed class AscenderAction : LemmingAction
         if (dy < 2 &&
             !pixel1IsSolid)
         {
-            lemming.SetNextAction(WalkerAction.Instance);
+            lemming.NextAction = WalkerAction.Instance;
             return true;
         }
 
-        if ((lemming.AscenderProgress == 4 &&
+        if ((ascenderProgress == 4 &&
              pixel1IsSolid &&
              pixel2IsSolid) ||
-            (lemming.AscenderProgress >= 5 &&
+            (ascenderProgress >= 5 &&
              pixel1IsSolid))
         {
             var dx = lemming.FacingDirection.DeltaX;

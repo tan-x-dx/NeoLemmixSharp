@@ -14,7 +14,7 @@ public sealed class DisarmerAction : LemmingAction
             LemmingActionConstants.DisarmerActionSpriteFileName,
             LemmingActionConstants.DisarmerAnimationFrames,
             LemmingActionConstants.MaxDisarmerPhysicsFrames,
-            EngineConstants.PermanentSkillPriority,
+            LemmingActionConstants.PermanentSkillPriority,
             LemmingActionBounds.DisarmerLemmingBounds)
     {
     }
@@ -31,7 +31,7 @@ public sealed class DisarmerAction : LemmingAction
             else
             {
                 lemming.NextAction.TransitionLemmingToAction(lemming, false);
-                lemming.SetNextAction(NoneAction.Instance);
+                lemming.NextAction = NoneAction.Instance;
             }
         }
         else if ((lemming.PhysicsFrame & 7) == 0)

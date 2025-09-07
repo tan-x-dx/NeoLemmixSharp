@@ -1,7 +1,8 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
@@ -20,6 +21,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         AdditiveLogicGateGadgetState offState,
         AdditiveLogicGateGadgetState onState,
         AdditiveLogicGateGadgetLinkInput[] inputs)
+        : base(GadgetType.LogicGate)
     {
         _offState = offState;
         _onState = onState;
@@ -34,7 +36,10 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         }
     }
 
-    public sealed override void Tick() { }
+    public sealed override void Tick()
+    {
+        _currentState.Tick(this);
+    }
 
     private void ReactToSignal(AdditiveLogicGateGadgetLinkInput input, bool signal)
     {
@@ -54,28 +59,27 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
 
     public sealed class AdditiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
     {
-        private readonly OutputSignalBehaviour _signalBehaviour;
-        private readonly GadgetBehaviour _signalBehaviourCast;
+        public OutputSignalBehaviour InputSignalBehaviour { get; set; }
 
         public AdditiveLogicGateGadget Gadget { get; set; } = null!;
 
-        public AdditiveLogicGateGadgetLinkInput(OutputSignalBehaviour signalBehaviour)
+        public AdditiveLogicGateGadgetLinkInput()
             : base(GadgetTriggerType.GadgetLinkTrigger)
         {
-            _signalBehaviour = signalBehaviour;
-            _signalBehaviourCast = signalBehaviour;
         }
 
-        public override void Tick()
+        public override void DetectTrigger(GadgetBase _)
         {
-            //_gadget.ReactToSignal(this, signal);
+            if (Evaluation != TriggerEvaluation.Indeterminate)
+            {
+                LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
+            }
         }
-
-        public override ReadOnlySpan<GadgetBehaviour> Behaviours => new(in _signalBehaviourCast);
 
         public void ReactToSignal(bool signal)
         {
-            throw new NotImplementedException();
+            DetermineTrigger(signal, true);
+            LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
         }
     }
 
@@ -119,11 +123,6 @@ public sealed class OrGateGadget : AdditiveLogicGateGadget
 
 public sealed class AdditiveLogicGateGadgetState : GadgetState
 {
-    protected override void OnTick()
-    {
-        throw new NotImplementedException();
-    }
-
     public override void OnTransitionFrom()
     {
         throw new NotImplementedException();

@@ -58,14 +58,6 @@ public sealed class HitBoxGadgetState : GadgetState
         return new RectangularRegion(new Point(x, y), new Size(w, h));
     }
 
-    protected override void OnTick()
-    {
-        foreach (var lemmingHitBoxFilter in _lemmingHitBoxFilters)
-        {
-            lemmingHitBoxFilter.Tick();
-        }
-    }
-
     public override void OnTransitionTo()
     {
         //  StateSelectedOutput.SetSignal(true);

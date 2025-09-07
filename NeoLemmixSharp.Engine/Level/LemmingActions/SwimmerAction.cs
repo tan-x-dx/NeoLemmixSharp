@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
@@ -19,7 +19,7 @@ public sealed class SwimmerAction : LemmingAction
             LemmingActionConstants.SwimmerActionSpriteFileName,
             LemmingActionConstants.SwimmerAnimationFrames,
             LemmingActionConstants.MaxSwimmerPhysicsFrames,
-            EngineConstants.PermanentSkillPriority,
+            LemmingActionConstants.PermanentSkillPriority,
             LemmingActionBounds.SwimmerActionBounds)
     {
     }
@@ -79,7 +79,7 @@ public sealed class SwimmerAction : LemmingAction
                 }
 
 
-                lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+                lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx); // Move lemming back
 
                 return true;

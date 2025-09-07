@@ -1,8 +1,6 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
@@ -42,8 +40,9 @@ public sealed class LemmingHitBoxFilter : GadgetTrigger
         _onLemmingExitBehaviours = onLemmingExitBehaviours;
     }
 
-    public override void Tick()
+    public override void DetectTrigger(GadgetBase parentGadget)
     {
+        // Do nothing - this type looks for lemmings specifically
     }
 
     [Pure]
@@ -57,6 +56,4 @@ public sealed class LemmingHitBoxFilter : GadgetTrigger
 
         return true;
     }
-
-    public override ReadOnlySpan<GadgetBehaviour> Behaviours => [];
 }

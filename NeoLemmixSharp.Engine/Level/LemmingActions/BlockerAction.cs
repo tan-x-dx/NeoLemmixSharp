@@ -17,7 +17,7 @@ public sealed class BlockerAction : LemmingAction
             LemmingActionConstants.BlockerActionSpriteFileName,
             LemmingActionConstants.BlockerAnimationFrames,
             LemmingActionConstants.MaxBlockerPhysicsFrames,
-            EngineConstants.NonPermanentSkillPriority,
+            LemmingActionConstants.NonPermanentSkillPriority,
             LemmingActionBounds.BlockerActionBounds)
     {
     }
@@ -114,7 +114,7 @@ public sealed class BlockerAction : LemmingAction
         if (lemming.FacingDirection == forcedFacingDirection)
             return;
 
-        lemming.SetFacingDirection(forcedFacingDirection);
+        lemming.FacingDirection = forcedFacingDirection;
 
         var dx = forcedFacingDirection.DeltaX;
 

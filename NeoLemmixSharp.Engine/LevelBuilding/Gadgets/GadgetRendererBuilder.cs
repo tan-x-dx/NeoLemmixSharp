@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using System.Runtime.InteropServices;
 

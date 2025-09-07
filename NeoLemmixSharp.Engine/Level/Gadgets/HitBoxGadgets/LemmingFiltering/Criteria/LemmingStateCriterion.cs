@@ -1,6 +1,6 @@
-﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
@@ -10,7 +10,7 @@ public sealed class LemmingStateCriterion : LemmingCriterion
     private readonly ILemmingState[] _allowedLemmingStates;
 
     public LemmingStateCriterion(LemmingStateSet allowedStates)
-        : base(LemmingCriteria.LemmingState)
+        : base(LemmingCriteriaType.LemmingState)
     {
         Debug.Assert(allowedStates.Count > 0);
         _allowedLemmingStates = allowedStates.ToArray();

@@ -1,6 +1,7 @@
-﻿using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
+namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 
 public sealed class OutputSignalBehaviour : GadgetBehaviour
 {

@@ -32,6 +32,7 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         int initialStateIndex,
         ResizeType resizeType,
         LemmingTracker lemmingTracker)
+        : base(Common.Enums.GadgetType.HitBoxGadget)
     {
         _lemmingTracker = lemmingTracker;
         _states = states;
@@ -53,7 +54,7 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         if (_currentStateIndex != _nextStateIndex)
             ChangeStates();
 
-        CurrentState.Tick();
+        CurrentState.Tick(this);
     }
 
     private void ChangeStates()

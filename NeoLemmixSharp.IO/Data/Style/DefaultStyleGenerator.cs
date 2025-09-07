@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using System.Runtime.CompilerServices;
 using Color = Microsoft.Xna.Framework.Color;

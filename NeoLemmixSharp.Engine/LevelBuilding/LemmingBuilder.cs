@@ -34,17 +34,17 @@ public sealed class LemmingBuilder
                 Orientation.Down,
                 FacingDirection.Right,
                 LemmingActionConstants.NoneActionId,
-                EngineConstants.ClassicTribeId)
-            {
-                AnchorPosition = new Point()
-            };
+                EngineConstants.ClassicTribeId);
+
+            lemming.AnchorPosition = new Point();
+
             _lemmingList.Add(lemming);
         }
 
         return _lemmingList.ToArray();
     }
 
-    private void AddLemmings(ReadOnlySpan<LemmingData> lemmingDataSpan)
+    private void AddLemmings(ReadOnlySpan<LemmingInstanceData> lemmingDataSpan)
     {
         foreach (var prototype in lemmingDataSpan)
         {
@@ -53,12 +53,11 @@ public sealed class LemmingBuilder
                 prototype.Orientation,
                 prototype.FacingDirection,
                 prototype.InitialLemmingActionId,
-                prototype.TribeId)
-            {
-                AnchorPosition = prototype.Position
-            };
+                prototype.TribeId);
 
-            lemming.State.SetRawDataFromOther(prototype.State);
+            lemming.AnchorPosition = prototype.Position;
+
+            lemming.State.SetData(prototype.TribeId, prototype.State);
 
             _lemmingList.Add(lemming);
         }

@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
+﻿using NeoLemmixSharp.Common.Enums;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 
@@ -12,10 +12,10 @@ public sealed class AlwaysTrueTrigger : GadgetTrigger
         _behaviours = behaviours;
     }
 
-    public override ReadOnlySpan<GadgetBehaviour> Behaviours => new(_behaviours);
-
-    public override void Tick()
+    public override void DetectTrigger(GadgetBase parentGadget)
     {
+        DetermineTrigger(true, true);
+
         foreach (var behaviour in _behaviours)
         {
             RegisterCauseAndEffectData(behaviour.Id);

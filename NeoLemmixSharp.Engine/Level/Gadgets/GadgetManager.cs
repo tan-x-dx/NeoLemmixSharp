@@ -5,7 +5,6 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -13,7 +12,7 @@ public sealed class GadgetManager :
     IBitBufferCreator<RawBitBuffer, HitBoxGadget>,
     IBitBufferCreator<RawBitBuffer, GadgetBase>,
     IItemManager<GadgetBase>,
-    ISnapshotDataConvertible<int>,
+    ISnapshotDataConvertible,
     IInitialisable,
     IDisposable
 {
@@ -21,10 +20,11 @@ public sealed class GadgetManager :
 
     private const int RequiredNumberOfGadgetBitSets =
         1 + // spacial hash grid
-        1; // gadget set
+        2; // gadget sets
     private readonly RawArray _gadgetByteBuffer;
     private readonly HitBoxGadgetSpacialHashGrid _hitBoxGadgetSpacialHashGrid;
     private readonly GadgetSet _fastForwardGadgets;
+    private readonly GadgetSet _gadgetsToReEvaluate;
 
     private int _bitArrayBufferUsageCount;
 
@@ -51,6 +51,7 @@ public sealed class GadgetManager :
             verticalBoundaryBehaviour);
 
         _fastForwardGadgets = new GadgetSet(this);
+        _gadgetsToReEvaluate = new GadgetSet(this);
     }
 
     public int ScratchSpaceSize => _hitBoxGadgetSpacialHashGrid.ScratchSpaceSize;
@@ -71,6 +72,11 @@ public sealed class GadgetManager :
         }
     }
 
+    public void ResetGadgets()
+    {
+        _gadgetsToReEvaluate.Clear();
+    }
+
     public void Tick(bool isMajorTick)
     {
         if (isMajorTick)
@@ -87,6 +93,19 @@ public sealed class GadgetManager :
             {
                 gadget.Tick();
             }
+        }
+    }
+
+    public void FlagGadgetForReEvaluation(GadgetBase gadget)
+    {
+        _gadgetsToReEvaluate.Add(gadget);
+    }
+
+    public void ReEvaluateGadgets()
+    {
+        foreach (var gadget in _gadgetsToReEvaluate)
+        {
+            gadget.Tick();
         }
     }
 
@@ -122,16 +141,14 @@ public sealed class GadgetManager :
         return 1;
     }
 
-    public unsafe int WriteToSnapshotData(int* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
         *snapshotDataPointer = 0;
-        return 1;
     }
 
-    public unsafe int SetFromSnapshotData(int* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
         ResetGadgetPositions();
-        return 1;
     }
 
     private void ResetGadgetPositions()

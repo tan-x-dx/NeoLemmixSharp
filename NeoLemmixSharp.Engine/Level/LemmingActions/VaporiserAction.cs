@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -14,7 +15,7 @@ public sealed class VaporiserAction : LemmingAction
             LemmingActionConstants.VaporiserActionSpriteFileName,
             LemmingActionConstants.VaporiserAnimationFrames,
             LemmingActionConstants.MaxVaporizerPhysicsFrames,
-            EngineConstants.NoPriority,
+            LemmingActionConstants.NoPriority,
             LemmingActionBounds.VaporiserActionBounds)
     {
     }

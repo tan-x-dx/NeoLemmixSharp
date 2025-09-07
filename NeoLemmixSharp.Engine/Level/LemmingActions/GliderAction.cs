@@ -18,7 +18,7 @@ public sealed class GliderAction : LemmingAction
             LemmingActionConstants.GliderActionSpriteFileName,
             LemmingActionConstants.GliderAnimationFrames,
             LemmingActionConstants.MaxGliderPhysicsFrames,
-            EngineConstants.PermanentSkillPriority,
+            LemmingActionConstants.PermanentSkillPriority,
             LemmingActionBounds.GliderActionBounds)
     {
     }
@@ -152,7 +152,7 @@ end;
             if (DoTurnAround(in gadgetsNearLemming, lemming, false)) // Move back and turn around
             {
                 lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-                lemming.SetFacingDirection(lemming.FacingDirection.GetOpposite());
+                lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
                 CheckOnePixelShaft(in gadgetsNearLemming, lemming);
                 return true;
             }
@@ -173,7 +173,7 @@ end;
         if (groundDistance > 0) // Move 1 to 4 pixels up
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, groundDistance);
-            lemming.SetNextAction(WalkerAction.Instance);
+            lemming.NextAction = WalkerAction.Instance;
 
             return true;
         }
@@ -186,7 +186,7 @@ end;
             {
                 // Lem has found solid terrain
                 lemmingPosition = orientation.MoveUp(lemmingPosition, groundDistance);
-                lemming.SetNextAction(WalkerAction.Instance);
+                lemming.NextAction = WalkerAction.Instance;
 
                 return true;
             }
@@ -211,7 +211,7 @@ end;
             // Check whether the glider has reached the ground
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             {
-                lemming.SetNextAction(WalkerAction.Instance);
+                lemming.NextAction = WalkerAction.Instance;
                 return true;
             }
         }
@@ -269,7 +269,7 @@ end;
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition) &&
             updraftFallDelta.Y >= 0)
         {
-            lemming.SetNextAction(WalkerAction.Instance);
+            lemming.NextAction = WalkerAction.Instance;
 
             return;
         }

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
@@ -141,8 +142,8 @@ public static class GadgetBuildingHelpers
         };
 
         var size = new Size(
-            resizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetProperty.Width) : baseSize.W,
-            resizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetProperty.Height) : baseSize.H);
+            resizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetPropertyType.Width) : baseSize.W,
+            resizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetPropertyType.Height) : baseSize.H);
 
         size = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(size);
 

@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 
-namespace NeoLemmixSharp.IO.Data.Style.Gadget.LogicGateGadget;
+namespace NeoLemmixSharp.Common.Enums;
 
 public enum LogicGateGadgetType
 {
