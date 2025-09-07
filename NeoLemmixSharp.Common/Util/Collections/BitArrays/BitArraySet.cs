@@ -47,6 +47,13 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         _popCount = 0;
     }
 
+    public void Fill()
+    {
+        var numberOfItems = _hasher.NumberOfItems;
+        BitArrayHelpers.PopulateBitArray(_bits.AsSpan(), numberOfItems);
+        _popCount = numberOfItems;
+    }
+
     [Pure]
     public bool Contains(T item)
     {

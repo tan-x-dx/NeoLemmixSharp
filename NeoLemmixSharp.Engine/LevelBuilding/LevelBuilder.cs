@@ -44,12 +44,8 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var terrainBuilder = new TerrainBuilder(_graphicsDevice, levelData);
         terrainBuilder.BuildTerrain();
 
-        var levelParameters = levelData.LevelParameters;
-        var controlPanelParameters = levelData.ControlParameters;
-
-        var levelDimensions = levelData.LevelDimensions;
-        var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelDimensions.W);
-        var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelDimensions.H);
+        var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelDimensions.W);
+        var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelDimensions.H);
 
         var levelLemmings = new LemmingBuilder(levelData).BuildLevelLemmings();
 
@@ -78,8 +74,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             HatchGroupBuilder.SetHatchesForHatchGroup(hatchGroup, levelGadgets);
         }
 
-        var causeAndEffectManager = new CauseAndEffectManager(gadgetTriggers, gadgetBehaviours);
-
         var inputController = new LevelInputController();
 
         var selectedTalismanId = -1;
@@ -89,20 +83,18 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var skillSetManager = levelObjectiveBuilder.BuildSkillSetManager(tribeManager);
         var levelTimer = levelObjectiveBuilder.BuildLevelTimer();
 
-        var controlPanel = new LevelControlPanel(controlPanelParameters, inputController, lemmingManager, skillSetManager);
+        var controlPanel = new LevelControlPanel(levelData.ControlParameters, inputController, lemmingManager, skillSetManager);
         // Need to call this here instead of initialising in LevelScreen
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 
         var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var causeAndEffectManager = new CauseAndEffectManager(gadgetTriggers, gadgetBehaviours);
 
         SetUpGadgetConnections(levelData, gadgetManager);
-
-        var levelViewport = new Level.Viewport();
 
         var terrainTexture = terrainBuilder.GetTerrainTexture();
         terrainBuilder.GetPixelData(out var pixelData);
         terrainBuilder.GetTerrainColors(out var terrainColorData);
-        var terrainPainter = new TerrainPainter(terrainTexture, in pixelData, in terrainColorData);
         var terrainRenderer = new TerrainRenderer(terrainTexture);
 
         var rewindManager = new RewindManager(lemmingManager, gadgetManager, skillSetManager);
@@ -145,9 +137,9 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             levelData,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour,
-            levelParameters,
+            levelData.LevelParameters,
             terrainManager,
-            terrainPainter,
+            new TerrainPainter(terrainTexture, in pixelData, in terrainColorData),
             lemmingManager,
             gadgetManager,
             causeAndEffectManager,
@@ -159,7 +151,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             levelCursor,
             levelTimer,
             inputController,
-            levelViewport,
+            new Level.Viewport(),
             rewindManager,
             lemmingSpriteBank,
             levelScreenRenderer);

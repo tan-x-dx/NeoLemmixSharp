@@ -54,7 +54,7 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         if (_currentStateIndex != _nextStateIndex)
             ChangeStates();
 
-        CurrentState.Tick();
+        CurrentState.Tick(this);
     }
 
     private void ChangeStates()

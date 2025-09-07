@@ -21,7 +21,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         AdditiveLogicGateGadgetState offState,
         AdditiveLogicGateGadgetState onState,
         AdditiveLogicGateGadgetLinkInput[] inputs)
-        : base(Common.Enums.GadgetType.LogicGate)
+        : base(GadgetType.LogicGate)
     {
         _offState = offState;
         _onState = onState;
@@ -36,7 +36,10 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         }
     }
 
-    public sealed override void Tick() { }
+    public sealed override void Tick()
+    {
+        _currentState.Tick(this);
+    }
 
     private void ReactToSignal(AdditiveLogicGateGadgetLinkInput input, bool signal)
     {
@@ -56,24 +59,27 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
 
     public sealed class AdditiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
     {
-        private readonly OutputSignalBehaviour _signalBehaviour;
+        public OutputSignalBehaviour InputSignalBehaviour { get; set; }
 
         public AdditiveLogicGateGadget Gadget { get; set; } = null!;
 
-        public AdditiveLogicGateGadgetLinkInput(OutputSignalBehaviour signalBehaviour)
+        public AdditiveLogicGateGadgetLinkInput()
             : base(GadgetTriggerType.GadgetLinkTrigger)
         {
-            _signalBehaviour = signalBehaviour;
         }
 
-        public override void DetectTrigger()
+        public override void DetectTrigger(GadgetBase _)
         {
-            //_gadget.ReactToSignal(this, signal);
+            if (Evaluation != TriggerEvaluation.Indeterminate)
+            {
+                LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
+            }
         }
 
         public void ReactToSignal(bool signal)
         {
-            throw new NotImplementedException();
+            DetermineTrigger(signal, true);
+            LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
         }
     }
 

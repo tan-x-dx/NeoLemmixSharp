@@ -12,8 +12,10 @@ public sealed class AlwaysTrueTrigger : GadgetTrigger
         _behaviours = behaviours;
     }
 
-    public override void DetectTrigger()
+    public override void DetectTrigger(GadgetBase parentGadget)
     {
+        DetermineTrigger(true, true);
+
         foreach (var behaviour in _behaviours)
         {
             RegisterCauseAndEffectData(behaviour.Id);

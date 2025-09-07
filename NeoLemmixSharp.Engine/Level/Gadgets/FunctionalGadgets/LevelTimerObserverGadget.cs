@@ -18,7 +18,7 @@ public sealed class LevelTimerObserverGadget : GadgetBase
 
     public override void Tick()
     {
-        _levelTimerTrigger.DetectTrigger();
+        _levelTimerTrigger.DetectTrigger(this);
     }
 }
 
@@ -36,10 +36,11 @@ public sealed class LevelTimerTrigger : GadgetTrigger
         _levelTimerTriggerParameters = levelTimerTriggerParameters;
     }
 
-    public override void DetectTrigger()
+    public override void DetectTrigger(GadgetBase parentGadget)
     {
         if (_levelTimerTriggerParameters.LevelTimerMatchesParameters())
         {
+            DetermineTrigger(true, true);
             LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(_outputSignalBehaviour.Id));
         }
     }

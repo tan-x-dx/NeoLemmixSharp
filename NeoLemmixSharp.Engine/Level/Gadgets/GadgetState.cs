@@ -8,11 +8,11 @@ public abstract class GadgetState
     public required GadgetStateName StateName { get; init; }
     public required GadgetTrigger[] GadgetTriggers { private get; init; }
 
-    public void Tick()
+    public void Tick(GadgetBase parentGadget)
     {
         foreach (var gadgetTrigger in GadgetTriggers)
         {
-            gadgetTrigger.DetectTrigger();
+            gadgetTrigger.DetectTrigger(parentGadget);
         }
     }
 

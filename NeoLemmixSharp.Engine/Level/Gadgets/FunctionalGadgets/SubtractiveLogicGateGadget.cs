@@ -41,26 +41,27 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
 
     public sealed class SubtractiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
     {
-        private readonly OutputSignalBehaviour _signalBehaviour;
+        public OutputSignalBehaviour InputSignalBehaviour { get; set; }
 
         public SubtractiveLogicGateGadget Gadget { get; set; }
 
         public bool Signal { get; private set; }
 
-        public SubtractiveLogicGateGadgetLinkInput(OutputSignalBehaviour signalBehaviour)
+        public SubtractiveLogicGateGadgetLinkInput( )
             : base(GadgetTriggerType.GadgetLinkTrigger)
         {
-            _signalBehaviour = signalBehaviour;
         }
 
-        public override void DetectTrigger()
+        public override void DetectTrigger(GadgetBase parentGadget)
         {
         }
 
         public void ReactToSignal(bool signal)
         {
-            throw new NotImplementedException();
+            DetermineTrigger(signal, true);
+            LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
         }
+
 
         /* public override void ReactToSignal(bool signal)
          {

@@ -20,10 +20,11 @@ public sealed class GadgetManager :
 
     private const int RequiredNumberOfGadgetBitSets =
         1 + // spacial hash grid
-        1; // gadget set
+        2; // gadget sets
     private readonly RawArray _gadgetByteBuffer;
     private readonly HitBoxGadgetSpacialHashGrid _hitBoxGadgetSpacialHashGrid;
     private readonly GadgetSet _fastForwardGadgets;
+    private readonly GadgetSet _gadgetsToReEvaluate;
 
     private int _bitArrayBufferUsageCount;
 
@@ -50,6 +51,7 @@ public sealed class GadgetManager :
             verticalBoundaryBehaviour);
 
         _fastForwardGadgets = new GadgetSet(this);
+        _gadgetsToReEvaluate = new GadgetSet(this);
     }
 
     public int ScratchSpaceSize => _hitBoxGadgetSpacialHashGrid.ScratchSpaceSize;
@@ -70,6 +72,11 @@ public sealed class GadgetManager :
         }
     }
 
+    public void ResetGadgets()
+    {
+        _gadgetsToReEvaluate.Clear();
+    }
+
     public void Tick(bool isMajorTick)
     {
         if (isMajorTick)
@@ -86,6 +93,19 @@ public sealed class GadgetManager :
             {
                 gadget.Tick();
             }
+        }
+    }
+
+    public void FlagGadgetForReEvaluation(GadgetBase gadget)
+    {
+        _gadgetsToReEvaluate.Add(gadget);
+    }
+
+    public void ReEvaluateGadgets()
+    {
+        foreach (var gadget in _gadgetsToReEvaluate)
+        {
+            gadget.Tick();
         }
     }
 
