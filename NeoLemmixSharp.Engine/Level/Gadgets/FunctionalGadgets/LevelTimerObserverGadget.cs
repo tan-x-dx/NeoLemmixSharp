@@ -38,38 +38,42 @@ public sealed class LevelTimerTrigger : GadgetTrigger
 
     public override void DetectTrigger(GadgetBase parentGadget)
     {
-        if (_levelTimerTriggerParameters.LevelTimerMatchesParameters())
+        LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
+        if (LevelTimerMatchesParameters())
         {
-            DetermineTrigger(true, true);
+            DetermineTrigger(true);
             LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(_outputSignalBehaviour.Id));
         }
+        else
+        {
+            DetermineTrigger(false);
+        }
     }
-}
-
-public readonly struct LevelTimerTriggerParameters(LevelTimerObservationType observationType, ComparisonType comparisonType, int requiredValue)
-{
-    private readonly LevelTimerObservationType _observationType = observationType;
-    private readonly ComparisonType _comparisonType = comparisonType;
-    private readonly int _requiredValue = requiredValue;
-
     public bool LevelTimerMatchesParameters()
     {
-        var comparisonValue = _observationType == LevelTimerObservationType.SecondsElapsed
+        var comparisonValue = _levelTimerTriggerParameters.ObservationType == LevelTimerObservationType.SecondsElapsed
             ? LevelScreen.LevelTimer.EffectiveElapsedSeconds
             : LevelScreen.LevelTimer.EffectiveSecondsRemaining;
 
         return ComparisonMatches(comparisonValue);
     }
 
-    private bool ComparisonMatches(int value) => _comparisonType switch
+    private bool ComparisonMatches(int value) => _levelTimerTriggerParameters.ComparisonType switch
     {
-        ComparisonType.EqualTo => value == _requiredValue,
-        ComparisonType.NotEqualTo => value != _requiredValue,
-        ComparisonType.LessThan => value < _requiredValue,
-        ComparisonType.LessThanOrEqual => value <= _requiredValue,
-        ComparisonType.GreaterThan => value > _requiredValue,
-        ComparisonType.GreaterThanOrEqual => value >= _requiredValue,
+        ComparisonType.EqualTo => value == _levelTimerTriggerParameters.RequiredValue,
+        ComparisonType.NotEqualTo => value != _levelTimerTriggerParameters.RequiredValue,
+        ComparisonType.LessThan => value < _levelTimerTriggerParameters.RequiredValue,
+        ComparisonType.LessThanOrEqual => value <= _levelTimerTriggerParameters.RequiredValue,
+        ComparisonType.GreaterThan => value > _levelTimerTriggerParameters.RequiredValue,
+        ComparisonType.GreaterThanOrEqual => value >= _levelTimerTriggerParameters.RequiredValue,
 
-        _ => Helpers.ThrowUnknownEnumValueException<ComparisonType, bool>(_comparisonType),
+        _ => Helpers.ThrowUnknownEnumValueException<ComparisonType, bool>(_levelTimerTriggerParameters.ComparisonType),
     };
+}
+
+public readonly struct LevelTimerTriggerParameters(LevelTimerObservationType observationType, ComparisonType comparisonType, int requiredValue)
+{
+    public readonly LevelTimerObservationType ObservationType = observationType;
+    public readonly ComparisonType ComparisonType = comparisonType;
+    public readonly int RequiredValue = requiredValue;
 }

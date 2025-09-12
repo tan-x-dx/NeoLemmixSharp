@@ -25,15 +25,10 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
         Evaluation = TriggerEvaluation.Indeterminate;
     }
 
-    public void DetermineTrigger(bool isTriggered, bool notifyCauseAndEffectManager)
+    public void DetermineTrigger(bool isTriggered)
     {
         var triggerNum = isTriggered ? DefinitelyTriggeredValue : DefinitelyNotTriggeredValue;
         Evaluation = (TriggerEvaluation)triggerNum;
-
-        if (notifyCauseAndEffectManager)
-        {
-            LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
-        }
     }
 
     protected static void RegisterCauseAndEffectData(int gadgetBehaviourId)

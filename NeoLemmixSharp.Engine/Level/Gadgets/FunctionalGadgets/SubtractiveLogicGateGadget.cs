@@ -58,7 +58,8 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
 
         public void ReactToSignal(bool signal)
         {
-            DetermineTrigger(signal, true);
+            DetermineTrigger(signal);
+            LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
             LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
         }
 

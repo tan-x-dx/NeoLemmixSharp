@@ -58,7 +58,7 @@ public sealed class CauseAndEffectManager :
     {
         foreach (var trigger in _indeterminateTriggers)
         {
-            trigger.DetermineTrigger(false, false);
+            trigger.DetermineTrigger(false);
         }
     }
 

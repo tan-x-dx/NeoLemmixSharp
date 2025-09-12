@@ -81,8 +81,7 @@ public sealed class GadgetManager :
     {
         if (isMajorTick)
         {
-            var gadgetSpan = new ReadOnlySpan<GadgetBase>(_allGadgets);
-            foreach (var gadget in gadgetSpan)
+            foreach (var gadget in _allGadgets)
             {
                 gadget.Tick();
             }
@@ -155,11 +154,9 @@ public sealed class GadgetManager :
     {
         _hitBoxGadgetSpacialHashGrid.Clear();
 
-        var gadgets = AllItems;
-
-        for (var i = 0; i < gadgets.Length; i++)
+        foreach (GadgetBase gadget in _allGadgets)
         {
-            if (gadgets[i] is HitBoxGadget hitBoxGadget)
+            if (gadget is HitBoxGadget hitBoxGadget)
             {
                 _hitBoxGadgetSpacialHashGrid.AddItem(hitBoxGadget);
             }
@@ -187,7 +184,7 @@ public sealed class GadgetManager :
 
     public void Dispose()
     {
-        Array.Clear(_allGadgets);
+        new Span<GadgetBase>(_allGadgets).Clear();
         _gadgetByteBuffer.Dispose();
         _hitBoxGadgetSpacialHashGrid.Dispose();
     }

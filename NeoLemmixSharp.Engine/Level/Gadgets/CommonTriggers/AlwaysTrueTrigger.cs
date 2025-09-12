@@ -14,7 +14,8 @@ public sealed class AlwaysTrueTrigger : GadgetTrigger
 
     public override void DetectTrigger(GadgetBase parentGadget)
     {
-        DetermineTrigger(true, true);
+        DetermineTrigger(true);
+        LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
 
         foreach (var behaviour in _behaviours)
         {

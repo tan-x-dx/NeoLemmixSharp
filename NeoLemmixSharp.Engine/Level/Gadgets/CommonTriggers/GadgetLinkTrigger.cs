@@ -21,6 +21,7 @@ public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
 
     public void ReactToSignal(bool signal)
     {
-        DetermineTrigger(signal, true);
+        DetermineTrigger(signal);
+        LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
     }
 }
