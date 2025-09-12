@@ -407,7 +407,7 @@ public sealed class LemmingManager :
         _allBlockers.Clear();
     }
 
-    public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LemmingManagerSnapshotData>();
+    public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LemmingManagerSnapshotData);
 
     public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {

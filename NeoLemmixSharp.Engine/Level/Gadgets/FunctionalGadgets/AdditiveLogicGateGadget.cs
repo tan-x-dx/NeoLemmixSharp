@@ -59,7 +59,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
 
     public sealed class AdditiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
     {
-        public OutputSignalBehaviour InputSignalBehaviour { get; set; }
+        public OutputSignalBehaviour? InputSignalBehaviour { get; set; }
 
         public AdditiveLogicGateGadget Gadget { get; set; } = null!;
 

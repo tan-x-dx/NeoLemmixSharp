@@ -87,7 +87,7 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible
         EffectiveQuantity = Math.Min(effectiveQuantity, totalSkillLimit);
     }
 
-    public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<SkillSetSnapshotData>();
+    public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(SkillSetSnapshotData);
 
     public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {

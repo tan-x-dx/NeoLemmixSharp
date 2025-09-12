@@ -158,7 +158,7 @@ public sealed class LevelTimer : ISnapshotDataConvertible
             : TextRenderingHelpers.DigitToChar(minutes / 100);
     }
 
-    public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LevelTimerSnapshotData>();
+    public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LevelTimerSnapshotData);
 
     public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {

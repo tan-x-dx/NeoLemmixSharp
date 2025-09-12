@@ -41,7 +41,7 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
 
     public sealed class SubtractiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
     {
-        public OutputSignalBehaviour InputSignalBehaviour { get; set; }
+        public OutputSignalBehaviour? InputSignalBehaviour { get; set; }
 
         public SubtractiveLogicGateGadget Gadget { get; set; }
 

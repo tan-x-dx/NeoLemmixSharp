@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 
 public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
 {
-    public OutputSignalBehaviour InputSignalBehaviour { get; set; }
+    public OutputSignalBehaviour? InputSignalBehaviour { get; set; }
 
     private readonly GadgetBehaviour[] _behaviours;
 
@@ -16,7 +16,7 @@ public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
 
     public override void DetectTrigger(GadgetBase parentGadget)
     {
-        throw new NotImplementedException();
+        // Do nothing. This type is at the mercy of its input signal
     }
 
     public void ReactToSignal(bool signal)
