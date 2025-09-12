@@ -167,14 +167,10 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     [SkipLocalsInit]
     public void UnionWith(IEnumerable<T> other)
     {
-        var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
-            ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];
-
-        GetBitsFromEnumerable(otherBitBuffer, other);
-        BitArrayHelpers.UnionWith(_bits.AsSpan(), otherBitBuffer);
-        _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
+        foreach (var item in other)
+        {
+            Add(item);
+        }
     }
 
     public void UnionWith(BitArraySet<TPerfectHasher, TBuffer, T> other)
@@ -207,14 +203,10 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     [SkipLocalsInit]
     public void ExceptWith(IEnumerable<T> other)
     {
-        var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
-            ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];
-
-        GetBitsFromEnumerable(otherBitBuffer, other);
-        BitArrayHelpers.ExceptWith(_bits.AsSpan(), otherBitBuffer);
-        _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
+        foreach (var item in other)
+        {
+            Remove(item);
+        }
     }
 
     public void ExceptWith(BitArraySet<TPerfectHasher, TBuffer, T> other)
