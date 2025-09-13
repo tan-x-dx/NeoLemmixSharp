@@ -23,27 +23,33 @@ public sealed class SkillCountDigitFont
         _texture = content.Load<Texture2D>("Fonts/skill_count_digits");
     }
 
-    private static bool GetCharRenderDetails(int c, out int sourceX, out int glyphWidth)
+    private static bool GetCharRenderDetails(uint c, out int sourceX, out int glyphWidth)
     {
-        switch (c)
+        uint c0 = c - '0';
+        if (c0 <= '9' - '0')
         {
-            case >= '0' and <= '9':
-                sourceX = (c - '0') * DigitGlyphWidth;
-                glyphWidth = DigitGlyphWidth;
-                return true;
-            case InfinityGlyph:
-                sourceX = InfinityGlyphOffset;
-                glyphWidth = SpecialGlyphWidth;
-                return true;
-            case LockGlyph:
-                sourceX = LockGlyphOffset;
-                glyphWidth = SpecialGlyphWidth;
-                return true;
-            default:
-                sourceX = -EmptyGlyphWidth;
-                glyphWidth = EmptyGlyphWidth;
-                return false;
+            c0 *= DigitGlyphWidth;
+            sourceX = (int)c0;
+            glyphWidth = DigitGlyphWidth;
+            return true;
         }
+
+        glyphWidth = SpecialGlyphWidth;
+        if (c0 is InfinityGlyph - '0')
+        {
+            sourceX = InfinityGlyphOffset;
+            return true;
+        }
+
+        if (c0 is LockGlyphOffset - '0')
+        {
+            sourceX = LockGlyphOffset;
+            return true;
+        }
+
+        sourceX = -EmptyGlyphWidth;
+        glyphWidth = EmptyGlyphWidth;
+        return false;
     }
 
     public void RenderTextSpan(
@@ -66,7 +72,7 @@ public sealed class SkillCountDigitFont
     private int RenderChar(
         SpriteBatch spriteBatch,
         Rectangle dest,
-        int c,
+        uint c,
         int scaleMultiplier,
         Color color)
     {

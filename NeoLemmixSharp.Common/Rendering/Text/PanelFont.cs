@@ -6,6 +6,11 @@ namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public sealed class PanelFont
 {
+    private const int IndexOfPercentInPng = 0;
+    private const int IndexOfZeroInPng = 1;
+    private const int IndexOfDashInPng = 11;
+    private const int IndexOfAInPng = 12;
+
     public const int GlyphWidth = 8;
     private const int GlyphHeight = 16;
 
@@ -16,29 +21,45 @@ public sealed class PanelFont
         _texture = content.Load<Texture2D>("Fonts/panel_font");
     }
 
-    private static bool CanRenderChar(int c, out int adjustedChar)
+    private static bool CanRenderChar(uint c, out int adjustedChar)
     {
-        switch (c)
+        if (c is '%')
         {
-            case '%':
-                adjustedChar = 0;
-                return true;
-            case >= '0' and <= '9':
-                adjustedChar = c + (1 - '0');
-                return true;
-            case '-':
-                adjustedChar = 11;
-                return true;
-            case >= 'A' and <= 'Z':
-                adjustedChar = c + (12 - 'A');
-                return true;
-            case >= 'a' and <= 'z':
-                adjustedChar = c + (12 - 'a');
-                return true;
-            default:
-                adjustedChar = -1;
-                return false;
+            adjustedChar = IndexOfPercentInPng;
+            return true;
         }
+        if (c is '-')
+        {
+            adjustedChar = IndexOfDashInPng;
+            return true;
+        }
+
+        uint c0 = c - '0';
+        if (c0 <= '9' - '0')
+        {
+            c0 += IndexOfZeroInPng;
+            adjustedChar = (int)c0;
+            return true;
+        }
+
+        c0 = c - 'a';
+        if (c0 <= 'z' - 'a')
+        {
+            c0 += IndexOfAInPng;
+            adjustedChar = (int)c0;
+            return true;
+        }
+
+        c0 = c - 'A';
+        if (c0 <= 'Z' - 'A')
+        {
+            c0 += IndexOfAInPng;
+            adjustedChar = (int)c0;
+            return true;
+        }
+
+        adjustedChar = -1;
+        return false;
     }
 
     public void RenderTextSpan(
