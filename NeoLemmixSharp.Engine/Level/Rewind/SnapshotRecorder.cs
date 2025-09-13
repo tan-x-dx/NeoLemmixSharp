@@ -19,10 +19,9 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
     {
         _itemManager = itemManager;
 
-        var allItems = _itemManager.AllItems;
         var requiredNumberOfBytesPerSnapshotTotal = 0;
 
-        foreach (var item in allItems)
+        foreach (var item in _itemManager.AllItems)
         {
             requiredNumberOfBytesPerSnapshotTotal += item.GetRequiredNumberOfBytesForSnapshotting();
         }
@@ -34,11 +33,10 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
 
     public unsafe void TakeSnapshot()
     {
-        var items = _itemManager.AllItems;
         byte* snapshotDataPointer = GetNewSnapshotDataPointer();
         var pointerOffset = 0;
 
-        foreach (var item in items)
+        foreach (var item in _itemManager.AllItems)
         {
             byte* p = snapshotDataPointer + pointerOffset;
             item.WriteToSnapshotData(p);
@@ -70,11 +68,10 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
 
     public unsafe void ApplySnapshot(int snapshotNumber)
     {
-        var items = _itemManager.AllItems;
         byte* snapshotDataPointer = GetDataPointerForSnapshotNumber(snapshotNumber);
         var pointerOffset = 0;
 
-        foreach (var item in items)
+        foreach (var item in _itemManager.AllItems)
         {
             byte* p = snapshotDataPointer + pointerOffset;
             item.SetFromSnapshotData(p);

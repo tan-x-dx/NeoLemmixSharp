@@ -7,6 +7,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
 {
+    private const int IndeterminateTriggerValue = -1;
     private const int DefinitelyNotTriggeredValue = 0;
     private const int DefinitelyTriggeredValue = 1;
 
@@ -53,7 +54,7 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
 
     public enum TriggerEvaluation
     {
-        Indeterminate = -1,
+        Indeterminate = IndeterminateTriggerValue,
         DefinitelyNotTriggered = DefinitelyNotTriggeredValue,
         DefinitelyTriggered = DefinitelyTriggeredValue,
     }

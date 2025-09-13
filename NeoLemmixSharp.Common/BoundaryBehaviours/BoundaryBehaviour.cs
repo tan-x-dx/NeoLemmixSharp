@@ -127,13 +127,9 @@ public sealed class BoundaryBehaviour : IDisposable
             return;
         }
 
-        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
-        {
-            _viewPortStart = Math.Clamp(viewPortCoordinate, 0, _levelLength - _viewPortLength);
-            return;
-        }
-
-        _viewPortStart = Normalise(viewPortCoordinate);
+        _viewPortStart = _boundaryBehaviourType == BoundaryBehaviourType.Void
+            ? Math.Clamp(viewPortCoordinate, 0, _levelLength - _viewPortLength)
+            : Normalise(viewPortCoordinate);
     }
 
     public void Scroll(int delta)
@@ -157,71 +153,85 @@ public sealed class BoundaryBehaviour : IDisposable
 
         if (a < 0)
         {
-            a += _levelLength;
-            while (a < 0)
+            do
             {
                 a += _levelLength;
             }
-
-            return a;
+            while (a < 0);
         }
-
-        while (a >= _levelLength)
+        else
         {
-            a -= _levelLength;
+            while (a >= _levelLength)
+            {
+                a -= _levelLength;
+            }
         }
 
         return a;
     }
 
     [Pure]
-    public unsafe bool IntervalContainsPoint(Interval interval, int a)
+    public bool IntervalContainsPoint(Interval interval, int a)
     {
-        int* p1 = (int*)&interval;
-        p1[0] = Normalise(p1[0]);
+        var intervalStart = Normalise(interval.Start);
+        var intervalEnd = intervalStart + interval.Length;
+        a = Normalise(a);
 
         // If it works, it always works
-        if (interval.Start <= a && a < interval.Start + interval.Length)
+        if (intervalStart <= a && a < intervalEnd)
             return true;
 
         // If it doesn't work, it certainly doesn't work for void
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
-        a += _levelLength;
-        if (interval.Start <= a && a < interval.Start + interval.Length)
-            return true;
+        // Edge case for wrap behaviour (literally)
+        // Suppose the test point is just to the right of zero
+        // And suppose the interval is just to the left of _levelLength
+        // The interval could "wrap around" to overlap with the point
+        // We check this case here
 
-        a -= (_levelLength << 1);
-        return interval.Start <= a && a < interval.Start + interval.Length;
+        a += _levelLength;
+        return intervalStart <= a && a < intervalEnd;
     }
 
     [Pure]
-    public unsafe bool IntervalsOverlap(Interval i1, Interval i2)
+    public bool IntervalsOverlap(Interval i1, Interval i2)
     {
-        int* startPointer = (int*)&i1;
-        *startPointer = Normalise(*startPointer);
+        var interval1Start = Normalise(i1.Start);
+        var interval1End = interval1Start + i1.Length;
 
-        startPointer = (int*)&i2;
-        *startPointer = Normalise(*startPointer);
+        var interval2Start = Normalise(i2.Start);
+        var interval2End = interval2Start + i2.Length;
 
         // If it works, it always works
-        if (i2.Start < i1.Start + i1.Length &&
-            i1.Start < i2.Start + i2.Length)
+        if (interval1Start < interval2End &&
+            interval2Start < interval1End)
             return true;
 
         // If it doesn't work, it certainly doesn't work for void
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
-        *startPointer += _levelLength;
-        if (i2.Start < i1.Start + i1.Length &&
-            i1.Start < i2.Start + i2.Length)
-            return true;
+        // Edge case for wrap behaviour (literally)
+        // Suppose the first interval is just to the right of zero
+        // And suppose the other interval is just to the left of _levelLength
+        // The second interval could "wrap around" to overlap with the first
+        // We check this case here
 
-        *startPointer -= (_levelLength << 1);
-        return i2.Start < i1.Start + i1.Length &&
-               i1.Start < i2.Start + i2.Length;
+        if (interval1Start < interval2Start)
+        {
+            interval1Start += _levelLength;
+            interval1End += _levelLength;
+        }
+        else
+        {
+            interval2Start += _levelLength;
+            interval2End += _levelLength;
+        }
+
+        return interval1Start < interval2End &&
+               interval2Start < interval1End;
     }
 
     [Pure]
@@ -232,16 +242,20 @@ public sealed class BoundaryBehaviour : IDisposable
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return delta;
 
-        if (delta >= 0)
+        var twiceDelta = delta * 2;
+
+        if (delta < 0)
         {
-            if (delta * 2 > _levelLength)
-                return delta - _levelLength;
+            twiceDelta = -twiceDelta;
 
-            return delta;
+            if (twiceDelta > _levelLength)
+                return delta + _levelLength;
         }
-
-        if (delta * -2 > _levelLength)
-            return delta + _levelLength;
+        else
+        {
+            if (twiceDelta > _levelLength)
+                return delta - _levelLength;
+        }
 
         return delta;
     }
