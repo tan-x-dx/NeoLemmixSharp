@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
+using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
@@ -478,10 +478,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         fixed (void* otherPointer = &otherLemming._data)
         fixed (void* thisPointer = &_data)
         {
-            var sourceSpan = new ReadOnlySpan<byte>(otherPointer, sizeof(LemmingData));
-            var destinationSpan = new Span<byte>(thisPointer, sizeof(LemmingData));
-
-            sourceSpan.CopyTo(destinationSpan);
+            CopyLemmingSnapshotBytes(otherPointer, thisPointer);
         }
 
         SetReferenceDataFromSnapshot();
@@ -502,10 +499,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         fixed (void* thisPointer = &_data)
         {
-            var sourceSpan = new ReadOnlySpan<byte>(thisPointer, sizeof(LemmingData));
-            var destinationSpan = new Span<byte>(snapshotDataPointer, sizeof(LemmingData));
-
-            sourceSpan.CopyTo(destinationSpan);
+            CopyLemmingSnapshotBytes(thisPointer, snapshotDataPointer);
         }
     }
 
@@ -513,13 +507,18 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     {
         fixed (void* thisPointer = &_data)
         {
-            var sourceSpan = new ReadOnlySpan<byte>(snapshotDataPointer, sizeof(LemmingData));
-            var destinationSpan = new Span<byte>(thisPointer, sizeof(LemmingData));
-
-            sourceSpan.CopyTo(destinationSpan);
+            CopyLemmingSnapshotBytes(snapshotDataPointer, thisPointer);
         }
 
         SetReferenceDataFromSnapshot();
+    }
+
+    private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* desinationPointer)
+    {
+        var sourceSpan = new ReadOnlySpan<byte>(sourcePointer, sizeof(LemmingData));
+        var destinationSpan = new Span<byte>(desinationPointer, sizeof(LemmingData));
+
+        sourceSpan.CopyTo(destinationSpan);
     }
 
     private void TakeSnapshotFromReferenceData()
