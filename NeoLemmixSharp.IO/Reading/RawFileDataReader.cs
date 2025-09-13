@@ -148,6 +148,8 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
 
     public unsafe ReadOnlySpan<byte> ReadBytes(int numberOfBytes)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(numberOfBytes);
+
         var newPosition = _position + numberOfBytes;
         FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
 
