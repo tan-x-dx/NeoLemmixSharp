@@ -27,7 +27,7 @@ public static class IoConstants
     /// Assumption: if there are infinite skills available of a certain type,
     /// there'll probably be around this number of actual usages.
     /// </summary>
-    public const int AssumedSkillUsageForInfiniteSkillCounts = 40;
+    public const int AssumedSkillUsageForInfiniteSkillCounts = 20;
 
     /// <summary>
     /// If a style has not been used for this many levels, remove it from the cache

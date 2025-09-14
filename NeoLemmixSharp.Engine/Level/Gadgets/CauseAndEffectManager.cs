@@ -13,6 +13,8 @@ public sealed class CauseAndEffectManager :
 
     private readonly List<CauseAndEffectData> _causeAndEffectData = new(256);
 
+    public ReadOnlySpan<GadgetBehaviour> AllBehaviours => new(_allBehaviours);
+
     public CauseAndEffectManager(
         GadgetTrigger[] allTriggers,
         GadgetBehaviour[] allBehaviours)

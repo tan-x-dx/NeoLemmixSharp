@@ -97,7 +97,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         terrainBuilder.GetTerrainColors(out var terrainColorData);
         var terrainRenderer = new TerrainRenderer(terrainTexture);
 
-        var rewindManager = new RewindManager(lemmingManager, gadgetManager, skillSetManager);
+        var rewindManager = new RewindManager(lemmingManager, gadgetManager, causeAndEffectManager, skillSetManager);
         var updateScheduler = new UpdateScheduler();
         var terrainManager = new TerrainManager(pixelData);
 

@@ -1,4 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level.Gadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO;
@@ -83,9 +85,6 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     /// <summary>
     /// <para>
     /// Get a best-guess count for the possible number of skill assignments.
-    /// </para>
-    /// 
-    /// <para>
     /// If it turns out a level has more skill assignments than the initial
     /// guess, this will be fine - the buffer will simply resize as necessary.
     /// This method is an attempt to minimize the number of reallocations of
@@ -96,31 +95,54 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     /// In the case of levels with finite skills and no pickups, then the number
     /// returned will be the maximum possible amount of skill assignments. This
     /// is a hard upper limit that will be a perfect buffer size for the level.
+    /// No resizing of the buffer will occur - Hooray!
     /// </para>
     ///
     /// <para>
     /// In other cases, this method will attempt to overestimate the total number
-    /// of skill assignments. 
+    /// of skill assignments. If infinite skills are present, then assume a fixed
+    /// quantity of extra skills. If gadgets that alter skill counts are present,
+    /// count the number of skills added (if positive). It's not possible to tell
+    /// if a gadget can be triggered multiple times, always readding the skill
+    /// counts. So the best that can be done is to assume the gadget will only be
+    /// triggered once.
     /// </para>
     /// </summary>
     /// <returns></returns>
-    public int CalculateBaseNumberOfSkillAssignments()
+    public int EstimateBaseNumberOfSkillAssignments(CauseAndEffectManager causeAndEffectManager)
     {
-        var result = 0;
+        var basicSkillAssignmentQuantity = 0;
 
         foreach (var skillTrackingDatum in _skillTrackingDataList)
         {
             if (skillTrackingDatum.IsInfinite)
             {
-                result += IoConstants.AssumedSkillUsageForInfiniteSkillCounts;
+                basicSkillAssignmentQuantity += IoConstants.AssumedSkillUsageForInfiniteSkillCounts;
             }
             else
             {
-                result += skillTrackingDatum.InitialSkillQuantity;
+                basicSkillAssignmentQuantity += skillTrackingDatum.InitialSkillQuantity;
             }
         }
 
-        return result;
+        var gadgetSkillPickupQuantity = EstimateNumberOfExtraSkillsFromGadgetPickups();
+
+        return basicSkillAssignmentQuantity + gadgetSkillPickupQuantity;
+
+        int EstimateNumberOfExtraSkillsFromGadgetPickups()
+        {
+            var total = 0;
+
+            foreach (var behaviour in causeAndEffectManager.AllBehaviours)
+            {
+                if (behaviour is SkillCountChangeBehaviour skillCountChangeBehaviour && skillCountChangeBehaviour.SkillCountDelta > 0)
+                {
+                    total += skillCountChangeBehaviour.SkillCountDelta;
+                }
+            }
+
+            return total;
+        }
     }
 
     int IComparer<SkillTrackingData>.Compare(SkillTrackingData? x, SkillTrackingData? y)
@@ -151,6 +173,6 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
 
     public void Dispose()
     {
-        Array.Clear(_skillTrackingDataList);
+        new Span<SkillTrackingData>(_skillTrackingDataList).Clear();
     }
 }

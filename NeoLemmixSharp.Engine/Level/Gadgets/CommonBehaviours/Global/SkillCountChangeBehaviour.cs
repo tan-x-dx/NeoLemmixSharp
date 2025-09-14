@@ -9,7 +9,7 @@ public sealed class SkillCountChangeBehaviour : GadgetBehaviour
 {
     private readonly LemmingSkill _lemmingSkill;
     private readonly int _overrideTribeId;
-    private readonly int _skillCountDelta;
+    public readonly int SkillCountDelta;
 
     public SkillCountChangeBehaviour(
         LemmingSkill lemmingSkill,
@@ -19,14 +19,14 @@ public sealed class SkillCountChangeBehaviour : GadgetBehaviour
     {
         _lemmingSkill = lemmingSkill;
         _overrideTribeId = overrideTribeId;
-        _skillCountDelta = skillCountDelta;
+        SkillCountDelta = skillCountDelta;
     }
 
     protected override void PerformInternalBehaviour(int lemmingId)
     {
         var tribe = GetTribe(lemmingId);
 
-        LevelScreen.SkillSetManager.ChangeSkillCount(_lemmingSkill, tribe, _skillCountDelta);
+        LevelScreen.SkillSetManager.ChangeSkillCount(_lemmingSkill, tribe, SkillCountDelta);
     }
 
     private Tribe? GetTribe(int lemmingId)
