@@ -16,6 +16,8 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
     public GadgetTriggerType TriggerType { get; }
     public TriggerEvaluation Evaluation { get; private set; }
 
+    public required GadgetBehaviour[] Behaviours { private get; init; }
+
     protected GadgetTrigger(GadgetTriggerType triggerType)
     {
         TriggerType = triggerType;
@@ -30,6 +32,16 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
     {
         var triggerNum = isTriggered ? DefinitelyTriggeredValue : DefinitelyNotTriggeredValue;
         Evaluation = (TriggerEvaluation)triggerNum;
+    }
+
+    protected void MarkAsEvaluated() => LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
+
+    protected void TriggerBehaviours()
+    {
+        foreach (var behaviour in Behaviours)
+        {
+            RegisterCauseAndEffectData(behaviour.Id);
+        }
     }
 
     protected static void RegisterCauseAndEffectData(int gadgetBehaviourId)

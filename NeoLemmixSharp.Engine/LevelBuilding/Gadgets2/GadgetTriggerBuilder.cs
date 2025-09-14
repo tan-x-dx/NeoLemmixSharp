@@ -88,10 +88,11 @@ public readonly ref struct GadgetTriggerBuilder
         int newTriggerId,
         GadgetBehaviour[] behaviours)
     {
-        return new AlwaysTrueTrigger(behaviours)
+        return new AlwaysTrueTrigger()
         {
             TriggerName = gadgetTriggerDatum.GadgetTriggerName,
-            Id = newTriggerId
+            Id = newTriggerId,
+            Behaviours = behaviours
         };
     }
 
@@ -100,10 +101,11 @@ public readonly ref struct GadgetTriggerBuilder
         int newTriggerId,
         GadgetBehaviour[] behaviours)
     {
-        return new GadgetLinkTrigger(behaviours)
+        return new GadgetLinkTrigger()
         {
             TriggerName = gadgetTriggerDatum.GadgetTriggerName,
-            Id = newTriggerId
+            Id = newTriggerId,
+            Behaviours = behaviours
         };
     }
 
@@ -137,7 +139,8 @@ public readonly ref struct GadgetTriggerBuilder
         return new LevelTimerTrigger(outputSignalBehaviour, levelTimerTriggerParameters)
         {
             TriggerName = gadgetTriggerDatum.GadgetTriggerName,
-            Id = newTriggerId
+            Id = newTriggerId,
+            Behaviours = []
         };
     }
 

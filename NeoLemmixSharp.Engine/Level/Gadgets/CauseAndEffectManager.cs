@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -8,10 +9,8 @@ public sealed class CauseAndEffectManager :
 {
     private readonly GadgetTrigger[] _allTriggers;
     private readonly GadgetBehaviour[] _allBehaviours;
-
     private readonly BitArraySet<CauseAndEffectManager, ArrayBitBuffer, GadgetTrigger> _indeterminateTriggers;
-
-    private readonly List<CauseAndEffectData> _causeAndEffectData = new(256);
+    private readonly SimpleList<CauseAndEffectData> _causeAndEffectData = new(256);
 
     public ReadOnlySpan<GadgetBehaviour> AllBehaviours => new(_allBehaviours);
 
@@ -66,10 +65,10 @@ public sealed class CauseAndEffectManager :
 
     public void Tick()
     {
-        foreach (var causeAndEffectDatum in _causeAndEffectData)
+        for (var i = 0; i < _causeAndEffectData.Count; i++)
         {
+            var causeAndEffectDatum = _causeAndEffectData[i];
             var behaviour = _allBehaviours[causeAndEffectDatum.GadgetBehaviourId];
-
             behaviour.PerformBehaviour(causeAndEffectDatum.LemmingId);
         }
     }

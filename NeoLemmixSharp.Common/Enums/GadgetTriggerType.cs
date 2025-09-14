@@ -11,6 +11,7 @@ public enum GadgetTriggerType
 
     AlwaysTrue,
     GadgetLinkTrigger,
+    GadgetPositionTrigger,
     GadgetAnimationFinished,
     LemmingHitBoxTrigger,
 

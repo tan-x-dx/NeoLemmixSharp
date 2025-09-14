@@ -42,8 +42,9 @@ public sealed class LemmingHitBoxFilter : GadgetTrigger
 
     public override void DetectTrigger(GadgetBase parentGadget)
     {
+        DetermineTrigger(false);
         // Flag this trigger as evaluated - lemming interactions are handled separately
-        LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
+        MarkAsEvaluated();
     }
 
     [Pure]

@@ -172,7 +172,8 @@ public readonly ref struct HitBoxGadgetBuilder
                 onLemmingExitBehaviours)
             {
                 Id = _gadgetTriggers.Count,
-                TriggerName = gadgetTriggerName
+                TriggerName = gadgetTriggerName,
+                Behaviours = []
             };
 
             _gadgetTriggers.Add(newHitBoxFilter);

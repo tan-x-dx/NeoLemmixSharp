@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
@@ -38,7 +37,7 @@ public sealed class LevelTimerTrigger : GadgetTrigger
 
     public override void DetectTrigger(GadgetBase parentGadget)
     {
-        LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
+        MarkAsEvaluated();
         if (LevelTimerMatchesParameters())
         {
             DetermineTrigger(true);
@@ -49,26 +48,15 @@ public sealed class LevelTimerTrigger : GadgetTrigger
             DetermineTrigger(false);
         }
     }
+
     public bool LevelTimerMatchesParameters()
     {
         var comparisonValue = _levelTimerTriggerParameters.ObservationType == LevelTimerObservationType.SecondsElapsed
             ? LevelScreen.LevelTimer.EffectiveElapsedSeconds
             : LevelScreen.LevelTimer.EffectiveSecondsRemaining;
 
-        return ComparisonMatches(comparisonValue);
+        return _levelTimerTriggerParameters.ComparisonType.ComparisonMatches(comparisonValue, _levelTimerTriggerParameters.RequiredValue);
     }
-
-    private bool ComparisonMatches(int value) => _levelTimerTriggerParameters.ComparisonType switch
-    {
-        ComparisonType.EqualTo => value == _levelTimerTriggerParameters.RequiredValue,
-        ComparisonType.NotEqualTo => value != _levelTimerTriggerParameters.RequiredValue,
-        ComparisonType.LessThan => value < _levelTimerTriggerParameters.RequiredValue,
-        ComparisonType.LessThanOrEqual => value <= _levelTimerTriggerParameters.RequiredValue,
-        ComparisonType.GreaterThan => value > _levelTimerTriggerParameters.RequiredValue,
-        ComparisonType.GreaterThanOrEqual => value >= _levelTimerTriggerParameters.RequiredValue,
-
-        _ => Helpers.ThrowUnknownEnumValueException<ComparisonType, bool>(_levelTimerTriggerParameters.ComparisonType),
-    };
 }
 
 public readonly struct LevelTimerTriggerParameters(LevelTimerObservationType observationType, ComparisonType comparisonType, int requiredValue)

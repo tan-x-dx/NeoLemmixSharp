@@ -79,7 +79,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         public void ReactToSignal(bool signal)
         {
             DetermineTrigger(signal);
-            LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
+            MarkAsEvaluated();
             LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
         }
     }

@@ -2,25 +2,46 @@
 
 /// <summary>
 /// A simple list implementation that can grow as necessary.
-/// It does not guarantee ordering of items.
 /// </summary>
 public sealed class SimpleList<T>
+    where T : notnull
 {
     private T[] _items;
+    private int _size;
 
-    public int Count { get; private set; }
+    public int Count => _size;
+    public int Capacity => _items.Length;
 
     public SimpleList(int capacity)
     {
         _items = Helpers.GetArrayForSize<T>(capacity);
     }
 
-    public Span<T> AsSpan() => new(_items, 0, Count);
-    public ReadOnlySpan<T> AsReadOnlySpan() => new(_items, 0, Count);
+    public void EnsureCapacity(int requiredCapacity)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(requiredCapacity);
+        ArgumentOutOfRangeException.ThrowIfLessThan(requiredCapacity, Capacity);
+
+        ResizeBackingArray(requiredCapacity);
+    }
+
+    public Span<T> AsSpan() => new(_items, 0, _size);
+    public ReadOnlySpan<T> AsReadOnlySpan() => new(_items, 0, _size);
+
+    public ref T this[int index]
+    {
+        get
+        {
+            if ((uint)index > (uint)_size)
+                throw new IndexOutOfRangeException();
+
+            return ref _items[index];
+        }
+    }
 
     public void Add(T item)
     {
-        if (Count == _items.Length)
+        if (_size == _items.Length)
         {
             var newSize = _items.Length == 0
                 ? 8
@@ -28,19 +49,19 @@ public sealed class SimpleList<T>
             ResizeBackingArray(newSize);
         }
 
-        _items[Count++] = item;
+        _items[_size++] = item;
     }
 
     public void AddRange(ICollection<T> collection)
     {
-        var newSize = Count + collection.Count;
+        var newSize = _size + collection.Count;
         if (newSize > _items.Length)
         {
             ResizeBackingArray(newSize);
         }
 
-        collection.CopyTo(_items, Count);
-        Count = newSize;
+        collection.CopyTo(_items, _size);
+        _size = newSize;
     }
 
     private void ResizeBackingArray(int newSize)
@@ -50,42 +71,9 @@ public sealed class SimpleList<T>
         _items = newArray;
     }
 
-    private int IndexOf(T item)
-    {
-        var index = 0;
-
-        while (index < Count)
-        {
-            var testItem = _items[index];
-            if (testItem.Equals(item))
-                return index;
-            index++;
-        }
-
-        return -1;
-    }
-
-    public bool Contains(T item) => IndexOf(item) >= 0;
-
     public void Clear()
     {
-        Array.Clear(_items, 0, _items.Length);
-        Count = 0;
-    }
-
-    public bool Remove(T item)
-    {
-        var index = IndexOf(item);
-        if (index == -1)
-            return false;
-
-        Count--;
-        _items[index] = _items[Count];
-        _items[Count] = default!;
-
-        if (Count == 0)
-            Clear();
-
-        return true;
+        new Span<T>(_items).Clear();
+        _size = 0;
     }
 }

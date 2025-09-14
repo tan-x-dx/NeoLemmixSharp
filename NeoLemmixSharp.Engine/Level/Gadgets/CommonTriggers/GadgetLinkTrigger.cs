@@ -7,11 +7,10 @@ public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
 {
     public OutputSignalBehaviour? InputSignalBehaviour { get; set; }
 
-    private readonly GadgetBehaviour[] _behaviours;
 
-    public GadgetLinkTrigger(GadgetBehaviour[] behaviours) : base(GadgetTriggerType.GadgetLinkTrigger)
+    public GadgetLinkTrigger()
+        : base(GadgetTriggerType.GadgetLinkTrigger)
     {
-        _behaviours = behaviours;
     }
 
     public override void DetectTrigger(GadgetBase parentGadget)
@@ -22,6 +21,9 @@ public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
     public void ReactToSignal(bool signal)
     {
         DetermineTrigger(signal);
-        LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
+        if (signal)
+            TriggerBehaviours();
+
+        MarkAsEvaluated();
     }
 }

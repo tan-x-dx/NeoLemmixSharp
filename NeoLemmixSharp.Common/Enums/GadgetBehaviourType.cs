@@ -19,9 +19,6 @@ public enum GadgetBehaviourType
     GadgetConstrainedResize,
 
     GadgetAnimationRenderLayer,
-    GadgetAnimationSetFrame,
-    GadgetAnimationIncrementFrame,
-    GadgetAnimationDecrementFrame,
 
     LemmingBehaviour,
 
