@@ -20,9 +20,9 @@ public sealed class SetStateLemmingBehaviour : LemmingBehaviour
         _type = type;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int triggerData)
     {
-        var lemming = GetLemming(lemmingId);
+        var lemming = GetLemming(triggerData);
         var lemmingState = lemming.State;
 
         if (_type == SetStateType.Toggle)

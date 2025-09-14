@@ -69,7 +69,7 @@ public sealed class CauseAndEffectManager :
         {
             var causeAndEffectDatum = _causeAndEffectData[i];
             var behaviour = _allBehaviours[causeAndEffectDatum.GadgetBehaviourId];
-            behaviour.PerformBehaviour(causeAndEffectDatum.LemmingId);
+            behaviour.PerformBehaviour(causeAndEffectDatum.TriggerData);
         }
     }
 

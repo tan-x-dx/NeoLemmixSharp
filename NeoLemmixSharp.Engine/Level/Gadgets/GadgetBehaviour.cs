@@ -22,9 +22,9 @@ public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
         {
             ArgumentOutOfRangeException.ThrowIfNegative(value);
 
-            _maxTriggerCountPerTick = value == 0
-                ? EngineConstants.TrivialBehaviourTriggerLimit
-                : value;
+            _maxTriggerCountPerTick = value > 0
+                ? value
+                : EngineConstants.TrivialBehaviourTriggerLimit;
         }
     }
 
@@ -43,16 +43,16 @@ public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
 
     private bool HasReachedMaxTriggerCount() => _currentTickTriggerCount >= _maxTriggerCountPerTick;
 
-    public void PerformBehaviour(int lemmingId)
+    public void PerformBehaviour(int triggerData)
     {
         if (HasReachedMaxTriggerCount())
             return;
 
-        PerformInternalBehaviour(lemmingId);
+        PerformInternalBehaviour(triggerData);
         _currentTickTriggerCount++;
     }
 
-    protected abstract void PerformInternalBehaviour(int lemmingId);
+    protected abstract void PerformInternalBehaviour(int triggerData);
 
     public bool Equals(GadgetBehaviour? other) => other is not null && Id == other.Id;
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBehaviour other && Id == other.Id;

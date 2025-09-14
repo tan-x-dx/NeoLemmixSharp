@@ -86,7 +86,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
         _frame = initialFrame;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int triggerData)
     {
         if (_frameDelta == FrameDeltaType.Increment)
         {

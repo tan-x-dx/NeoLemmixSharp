@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 
-public sealed class PositionTrigger : GadgetTrigger
+public sealed class GadgetPositionTrigger : GadgetTrigger
 {
     private readonly int _x;
     private readonly int _y;
@@ -13,7 +13,7 @@ public sealed class PositionTrigger : GadgetTrigger
     private readonly bool _requireX;
     private readonly bool _requireY;
 
-    public PositionTrigger(
+    public GadgetPositionTrigger(
         int x,
         int y,
         ComparisonType comparisonX,

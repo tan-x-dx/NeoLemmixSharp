@@ -83,9 +83,9 @@ public readonly ref struct GadgetBehaviourBuilder
             GadgetBehaviourType.GadgetFreeResize => BuildFreeResizeGadgetBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.GadgetConstrainedResize => BuildConstrainedResizeGadgetBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.GadgetAnimationRenderLayer => BuildGadgetAnimationRenderLayerBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-           // GadgetBehaviourType.GadgetAnimationSetFrame => BuildGadgetAnimationSetFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-           // GadgetBehaviourType.GadgetAnimationIncrementFrame => BuildGadgetAnimationIncrementFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-           // GadgetBehaviourType.GadgetAnimationDecrementFrame => BuildGadgetAnimationDecrementFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            // GadgetBehaviourType.GadgetAnimationSetFrame => BuildGadgetAnimationSetFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            // GadgetBehaviourType.GadgetAnimationIncrementFrame => BuildGadgetAnimationIncrementFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            // GadgetBehaviourType.GadgetAnimationDecrementFrame => BuildGadgetAnimationDecrementFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.LemmingBehaviour => LemmingBehaviourBuilder.BuildLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.GlobalAdditionalTime => BuildGlobalAdditionalTimeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.GlobalSkillCountChange => BuildGlobalSkillCountChangeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
@@ -100,7 +100,12 @@ public readonly ref struct GadgetBehaviourBuilder
 
     private static OutputSignalBehaviour BuildGadgetOutputSignalBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        throw new NotImplementedException();
+        return new OutputSignalBehaviour()
+        {
+            GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
+            Id = newBehaviourId,
+            MaxTriggerCountPerTick = 1
+        };
     }
 
     private static GadgetBehaviour BuildGadgetChangeInternalStateBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)

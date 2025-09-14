@@ -8,9 +8,9 @@ public sealed class ClearAllSkillsLemmingBehaviour : LemmingBehaviour
     {
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int triggerData)
     {
-        var lemming = GetLemming(lemmingId);
+        var lemming = GetLemming(triggerData);
         lemming.State.ClearAllPermanentSkills();
     }
 }

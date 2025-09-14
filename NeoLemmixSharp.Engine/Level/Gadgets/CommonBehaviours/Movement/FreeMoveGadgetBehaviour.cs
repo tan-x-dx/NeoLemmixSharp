@@ -23,7 +23,7 @@ public sealed class FreeMoveGadgetBehaviour : GadgetBehaviour
         _delta = delta;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int _)
     {
         if (_tickCount < _tickDelay)
         {

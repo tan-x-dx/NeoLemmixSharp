@@ -9,9 +9,9 @@ public sealed class NullifyFallDistanceLemmingBehaviour : LemmingBehaviour
     {
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int triggerData)
     {
-        var lemming = GetLemming(lemmingId);
+        var lemming = GetLemming(triggerData);
         lemming.DistanceFallen = 0;
     }
 }

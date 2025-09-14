@@ -27,7 +27,7 @@ public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
         _max = max;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int _)
     {
         if (_tickCount < _tickDelay)
         {

@@ -16,7 +16,7 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
     protected SubtractiveLogicGateGadget(
         SubtractiveLogicGateGadgetState offState,
         SubtractiveLogicGateGadgetState onState)
-        : base(Common.Enums.GadgetType.LogicGate)
+        : base(GadgetType.LogicGate)
     {
         _offState = offState;
         _onState = onState;
@@ -56,9 +56,9 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
         {
         }
 
-        public void ReactToSignal(bool signal)
+        public void ReactToSignal()
         {
-            DetermineTrigger(signal);
+            DetermineTrigger(true);
             MarkAsEvaluated();
             LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
         }

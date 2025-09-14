@@ -5,19 +5,16 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public sealed class LevelTimerObserverGadget : GadgetBase
 {
-    private readonly LevelTimerTrigger _levelTimerTrigger;
-
-    public LevelTimerObserverGadget(LevelTimerTrigger levelTimerTrigger)
+    public LevelTimerObserverGadget()
         : base(GadgetType.LevelTimerObserver)
     {
-        _levelTimerTrigger = levelTimerTrigger;
     }
 
     public override GadgetState CurrentState { get; }
 
     public override void Tick()
     {
-        _levelTimerTrigger.DetectTrigger(this);
+        CurrentState.Tick(this);
     }
 }
 
@@ -41,7 +38,7 @@ public sealed class LevelTimerTrigger : GadgetTrigger
         if (LevelTimerMatchesParameters())
         {
             DetermineTrigger(true);
-            LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(_outputSignalBehaviour.Id));
+            LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(_outputSignalBehaviour.Id, 1));
         }
         else
         {

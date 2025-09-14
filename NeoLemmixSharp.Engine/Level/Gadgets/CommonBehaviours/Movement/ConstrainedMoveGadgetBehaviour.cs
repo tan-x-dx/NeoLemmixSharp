@@ -26,7 +26,7 @@ public sealed class ConstrainedMoveGadgetBehaviour : GadgetBehaviour
         _limitPoint = limitPoint;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int _)
     {
         if (_tickCount < _tickDelay)
         {

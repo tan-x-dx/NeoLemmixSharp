@@ -22,19 +22,19 @@ public sealed class SkillCountChangeBehaviour : GadgetBehaviour
         SkillCountDelta = skillCountDelta;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int triggerData)
     {
-        var tribe = GetTribe(lemmingId);
+        var tribe = GetTribe(triggerData);
 
         LevelScreen.SkillSetManager.ChangeSkillCount(_lemmingSkill, tribe, SkillCountDelta);
     }
 
-    private Tribe? GetTribe(int lemmingId)
+    private Tribe? GetTribe(int triggerData)
     {
         if (_overrideTribeId == EngineConstants.SkillCountChangeBehaviourNoOverrideValue)
-            return lemmingId == EngineConstants.NoLemmingCauseAndEffectId
+            return triggerData == -1
                 ? null
-                : GetLemming(lemmingId).State.TribeAffiliation;
+                : GetLemming(triggerData).State.TribeAffiliation;
 
         return LevelScreen.TribeManager.GetTribeForId(_overrideTribeId);
     }

@@ -40,18 +40,8 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
     {
         foreach (var behaviour in Behaviours)
         {
-            RegisterCauseAndEffectData(behaviour.Id);
+            LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(behaviour.Id, 1));
         }
-    }
-
-    protected static void RegisterCauseAndEffectData(int gadgetBehaviourId)
-    {
-        LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(gadgetBehaviourId));
-    }
-
-    protected static void RegisterCauseAndEffectData(int gadgetBehaviourId, int lemmingId)
-    {
-        LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(gadgetBehaviourId, lemmingId));
     }
 
     public abstract void DetectTrigger(GadgetBase parentGadget);

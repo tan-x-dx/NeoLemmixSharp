@@ -18,12 +18,10 @@ public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
         // Do nothing. This type is at the mercy of its input signal
     }
 
-    public void ReactToSignal(bool signal)
+    public void ReactToSignal()
     {
-        DetermineTrigger(signal);
-        if (signal)
-            TriggerBehaviours();
-
+        DetermineTrigger(true);
+        TriggerBehaviours();
         MarkAsEvaluated();
     }
 }
