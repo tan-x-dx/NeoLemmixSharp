@@ -11,14 +11,13 @@ public sealed class BoundaryBehaviour : IDisposable
     private const int MaxNumberOfRenderCopiesForWrappedLevels = 6;
 
     private readonly RawArray _viewPortRenderIntervalBuffer;
+    private int _viewPortSpanLength;
     private readonly RawArray _screenRenderIntervalBuffer;
+    private int _screenSpanLength;
 
     private readonly DimensionType _dimensionType;
     private readonly BoundaryBehaviourType _boundaryBehaviourType;
     private readonly int _levelLength;
-
-    private int _viewPortSpanLength;
-    private int _screenSpanLength;
 
     private int _scaleMultiplier;
 
@@ -93,8 +92,7 @@ public sealed class BoundaryBehaviour : IDisposable
         _mouseViewPortCoordinate = (windowCoordinate + _scaleMultiplier - 1) / _scaleMultiplier;
         _mouseScreenCoordinate = _mouseViewPortCoordinate * _scaleMultiplier;
 
-        _mouseViewPortCoordinate =
-            Normalise(_mouseViewPortCoordinate + _viewPortStart - (_screenStart / _scaleMultiplier));
+        _mouseViewPortCoordinate = Normalise(_mouseViewPortCoordinate + _viewPortStart - (_screenStart / _scaleMultiplier));
     }
 
     public void UpdateScreenDimension(
@@ -140,30 +138,44 @@ public sealed class BoundaryBehaviour : IDisposable
         UpdateScreenRenderIntervals();
     }
 
+    /// <summary>
+    /// <para>
+    /// In the case of the Void type, this method returns the input unchanged.
+    /// </para>
+    /// <para>
+    /// In the case of the Wrap type, this method returns the input
+    /// modulo the level length.
+    /// </para>
+    /// </summary>
+    /// <param name="n">The input point.</param>
+    /// <returns>The input unchanged, in the case of the Void type, or the input
+    /// modulo the level length, in the case of the Wrap type.</returns>
     [Pure]
-    public int Normalise(int a)
+    public int Normalise(int n)
     {
+        var a = n;
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return a;
 
-        // Most likely situation for wrap normalisation is the input
+        // Most likely situation for Wrap normalisation is the input
         // being just outside the bounds [0, _levelLength - 1].
         // Therefore, we can avoid a call to the modulo operator
         // by simply adding/subtracting the level length
 
+        var delta = _levelLength;
         if (a < 0)
         {
             do
             {
-                a += _levelLength;
+                a += delta;
             }
             while (a < 0);
         }
         else
         {
-            while (a >= _levelLength)
+            while (a >= delta)
             {
-                a -= _levelLength;
+                a -= delta;
             }
         }
 
@@ -171,28 +183,31 @@ public sealed class BoundaryBehaviour : IDisposable
     }
 
     [Pure]
-    public bool IntervalContainsPoint(Interval interval, int a)
+    public bool IntervalContainsPoint(Interval interval, int n)
     {
         var intervalStart = Normalise(interval.Start);
         var intervalEnd = intervalStart + interval.Length;
-        a = Normalise(a);
+        var a = Normalise(n);
 
-        // If it works, it always works
+        // If the interval actually contains the point, that's easy
         if (intervalStart <= a && a < intervalEnd)
             return true;
 
-        // If it doesn't work, it certainly doesn't work for void
+        // If the interval does not contains the point, then the Void type will never work
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
-        // Edge case for wrap behaviour (literally)
-        // Suppose the test point is just to the right of zero
-        // And suppose the interval is just to the left of _levelLength
+        // Edge case for Wrap behaviour (literally)
+        // Suppose the test point is just above zero
+        // And suppose the interval is just below _levelLength
         // The interval could "wrap around" to overlap with the point
         // We check this case here
 
-        a += _levelLength;
-        return intervalStart <= a && a < intervalEnd;
+        // By this point, for the case we need to check we definitely have:
+        // 0 <= a < intervalStart < _levelLength <= a + _levelLength
+        // Therefore can safely eliminate one interval check
+
+        return a + _levelLength < intervalEnd;
     }
 
     [Pure]
@@ -204,34 +219,39 @@ public sealed class BoundaryBehaviour : IDisposable
         var interval2Start = Normalise(i2.Start);
         var interval2End = interval2Start + i2.Length;
 
-        // If it works, it always works
+        // If the intervals actually overlap, that's easy
         if (interval1Start < interval2End &&
             interval2Start < interval1End)
             return true;
 
-        // If it doesn't work, it certainly doesn't work for void
+        // If the intervals do not overlap, then the Void type will never work
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
-        // Edge case for wrap behaviour (literally)
-        // Suppose the first interval is just to the right of zero
-        // And suppose the other interval is just to the left of _levelLength
+        // Edge case for Wrap behaviour (literally)
+        // Suppose one interval is just above zero
+        // And suppose the other interval is just below _levelLength
         // The second interval could "wrap around" to overlap with the first
         // We check this case here
 
+        // By this point, for the case we need to check we definitely have:
+        // 0 <= leftStart < leftEnd < rightStart < _levelLength <= leftStart + _levelLength < leftEnd + _levelLength
+        // Therefore can safely eliminate one interval check
+
         if (interval1Start < interval2Start)
         {
-            interval1Start += _levelLength;
-            interval1End += _levelLength;
+            // interval1 <=> leftInterval
+            // interval2 <=> rightInterval
+
+            return interval1Start + _levelLength < interval2End;
         }
         else
         {
-            interval2Start += _levelLength;
-            interval2End += _levelLength;
-        }
+            // interval1 <=> rightInterval
+            // interval2 <=> leftInterval
 
-        return interval1Start < interval2End &&
-               interval2Start < interval1End;
+            return interval2Start + _levelLength < interval1End;
+        }
     }
 
     [Pure]
