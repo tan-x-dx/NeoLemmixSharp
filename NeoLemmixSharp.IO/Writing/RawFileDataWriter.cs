@@ -142,7 +142,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
 
         FileWritingException.WriterAssert(newByteBufferLength <= IoConstants.MaxAllowedFileSizeInBytes, IoConstants.FileSizeTooLargeExceptionMessage);
 
-        IntPtr newHandle = Marshal.ReAllocHGlobal(byteBuffer.Handle, new IntPtr(newByteBufferLength));
+        nint newHandle = Marshal.ReAllocHGlobal(byteBuffer.Handle, newByteBufferLength);
         byteBuffer = new RawArray(newHandle, newByteBufferLength);
     }
 

@@ -12,7 +12,7 @@ public static class IoConstants
     /// </summary>
     internal const int InitialStringListCapacity = 32;
 
-    internal const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
+    internal const int MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
     internal const string FileSizeTooLargeExceptionMessage = "File too large! Max file size is 64Mb";
 
     internal const string DefaultStyleIdentifierString = "default";

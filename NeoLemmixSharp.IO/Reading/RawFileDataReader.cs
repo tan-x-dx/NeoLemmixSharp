@@ -125,6 +125,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     public int Read32BitSignedInteger() => ReadUnmanaged<int>();
     public ulong Read64BitUnsignedInteger() => ReadUnmanaged<ulong>();
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private unsafe T ReadUnmanaged<T>()
         where T : unmanaged
     {
