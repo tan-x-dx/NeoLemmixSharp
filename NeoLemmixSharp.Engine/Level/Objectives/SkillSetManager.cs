@@ -23,6 +23,8 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         _currentTotalSkillLimit = totalSkillLimit;
 
         Array.Sort(_skillTrackingDataList, this);
+
+        UpdateSkillSetData();
     }
 
     public void UpdateSkillSetData()
