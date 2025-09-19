@@ -32,6 +32,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
             skillTrackingData.RecalculateEffectiveQuantity(_currentTotalSkillLimit);
+            LevelScreen.LevelControlPanel.UpdateSkillCount(skillTrackingData);
         }
     }
 

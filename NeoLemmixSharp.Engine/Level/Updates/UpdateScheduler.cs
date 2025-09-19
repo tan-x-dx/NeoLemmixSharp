@@ -259,8 +259,7 @@ end;
         bool isReplay)
     {
         skillTrackingData.Skill.AssignToLemming(lemming);
-        skillTrackingData.ChangeSkillCount(-1);
-        LevelScreen.LevelControlPanel.UpdateSkillCount(skillTrackingData);
+        skillTrackingData.UseSkill();
 
         if (isReplay)
             return;
