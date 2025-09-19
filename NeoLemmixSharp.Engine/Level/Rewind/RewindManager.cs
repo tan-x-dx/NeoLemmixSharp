@@ -27,7 +27,6 @@ public sealed class RewindManager :
     public RewindManager(
         LemmingManager lemmingManager,
         GadgetManager gadgetManager,
-        CauseAndEffectManager causeAndEffectManager,
         SkillSetManager skillSetManager)
     {
         _lemmingSnapshotRecorder = new SnapshotRecorder<LemmingManager, Lemming>(lemmingManager);
@@ -38,7 +37,7 @@ public sealed class RewindManager :
         _gadgetManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, GadgetManager>(this);
         _levelTimerRecorder = new SnapshotRecorder<RewindManager, LevelTimer>(this);
 
-        var baseNumberOfSkillAssignments = skillSetManager.EstimateBaseNumberOfSkillAssignments(causeAndEffectManager);
+        var baseNumberOfSkillAssignments = skillSetManager.EstimateBaseNumberOfSkillAssignments(gadgetManager);
 
         _skillAssignmentList = new LevelEventList<SkillAssignmentEventData>(baseNumberOfSkillAssignments);
     }

@@ -28,6 +28,14 @@ public sealed class HitBoxGadgetState : GadgetState
         return EmptyHitBoxRegion.Instance;
     }
 
+    protected override void OnSetParentGadget()
+    {
+        foreach (var filter in _lemmingHitBoxFilters)
+        {
+            filter.SetParentData(ParentGadget, this);
+        }
+    }
+
     public RectangularRegion GetMininmumBoundingBoxForAllHitBoxes(Point offset)
     {
         if (_hitBoxLookup.Count == 0)
@@ -56,16 +64,6 @@ public sealed class HitBoxGadgetState : GadgetState
         y += offset.Y;
 
         return new RectangularRegion(new Point(x, y), new Size(w, h));
-    }
-
-    public override void OnTransitionTo()
-    {
-        //  StateSelectedOutput.SetSignal(true);
-    }
-
-    public override void OnTransitionFrom()
-    {
-        // StateSelectedOutput.SetSignal(false);
     }
 
     public override GadgetRenderer Renderer => throw new NotImplementedException();

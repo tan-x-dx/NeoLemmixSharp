@@ -11,12 +11,18 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public sealed class GadgetManager :
     IBitBufferCreator<RawBitBuffer, HitBoxGadget>,
     IBitBufferCreator<RawBitBuffer, GadgetBase>,
+    IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>,
+    IPerfectHasher<GadgetBehaviour>,
     IItemManager<GadgetBase>,
     ISnapshotDataConvertible,
     IInitialisable,
     IDisposable
 {
     private readonly GadgetBase[] _allGadgets;
+    private readonly GadgetTrigger[] _allTriggers;
+    private readonly GadgetBehaviour[] _allBehaviours;
+    private readonly BitArraySet<GadgetManager, ArrayBitBuffer, GadgetTrigger> _indeterminateTriggers;
+    private readonly SimpleList<CauseAndEffectData> _causeAndEffectData = new(256);
 
     private const int RequiredNumberOfGadgetBitSets =
         1 + // spacial hash grid
@@ -29,15 +35,28 @@ public sealed class GadgetManager :
     private int _bitArrayBufferUsageCount;
 
     public ReadOnlySpan<GadgetBase> AllItems => new(_allGadgets);
+    public ReadOnlySpan<GadgetBehaviour> AllBehaviours => new(_allBehaviours);
 
     public GadgetManager(
         GadgetBase[] allGadgets,
+        GadgetTrigger[] allTriggers,
+        GadgetBehaviour[] allBehaviours,
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
-        _allGadgets = allGadgets;
         this.AssertUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
-        Array.Sort(_allGadgets, this);
+        Array.Sort(allGadgets, this);
+        _allGadgets = allGadgets;
+
+        this.AssertUniqueIds(new ReadOnlySpan<GadgetTrigger>(allTriggers));
+        Array.Sort(allTriggers, this);
+        _allTriggers = allTriggers;
+
+        this.AssertUniqueIds(new ReadOnlySpan<GadgetBehaviour>(allBehaviours));
+        Array.Sort(allBehaviours, this);
+        _allBehaviours = allBehaviours;
+
+        _indeterminateTriggers = new BitArraySet<GadgetManager, ArrayBitBuffer, GadgetTrigger>(this);
 
         _bitArrayBufferUsageCount = RequiredNumberOfGadgetBitSets;
 
@@ -81,17 +100,37 @@ public sealed class GadgetManager :
     {
         if (isMajorTick)
         {
-            foreach (var gadget in _allGadgets)
-            {
-                gadget.Tick();
-            }
+            TickAllGadgets();
         }
         else
         {
-            foreach (var gadget in _fastForwardGadgets)
-            {
-                gadget.Tick();
-            }
+            TickFastForwardGadgets();
+        }
+
+        for (var i = 0; i < _causeAndEffectData.Count; i++)
+        {
+            var causeAndEffectDatum = _causeAndEffectData[i];
+            var behaviour = _allBehaviours[causeAndEffectDatum.GadgetBehaviourId];
+            behaviour.PerformBehaviour(causeAndEffectDatum.TriggerData);
+        }
+
+        FlagIndeterminateTriggersAsNotTriggered();
+        ReEvaluateGadgets();
+    }
+
+    private void TickAllGadgets()
+    {
+        foreach (var gadget in _allGadgets)
+        {
+            gadget.Tick();
+        }
+    }
+
+    private void TickFastForwardGadgets()
+    {
+        foreach (var gadget in _fastForwardGadgets)
+        {
+            gadget.Tick();
         }
     }
 
@@ -100,7 +139,7 @@ public sealed class GadgetManager :
         _gadgetsToReEvaluate.Add(gadget);
     }
 
-    public void ReEvaluateGadgets()
+    private void ReEvaluateGadgets()
     {
         foreach (var gadget in _gadgetsToReEvaluate)
         {
@@ -108,6 +147,48 @@ public sealed class GadgetManager :
         }
     }
 
+    public void RegisterCauseAndEffectData(CauseAndEffectData causeAndEffectLemmingData)
+    {
+        _causeAndEffectData.Add(causeAndEffectLemmingData);
+    }
+
+    public void ResetBehaviours()
+    {
+        _causeAndEffectData.Clear();
+        _indeterminateTriggers.Fill();
+
+        foreach (var trigger in _allTriggers)
+        {
+            trigger.Reset();
+        }
+
+        foreach (var behaviour in _allBehaviours)
+        {
+            behaviour.Reset();
+        }
+    }
+
+    public void MarkTriggerAsEvaluated(GadgetTrigger gadgetTrigger)
+    {
+        _indeterminateTriggers.Remove(gadgetTrigger);
+    }
+
+    private void FlagIndeterminateTriggersAsNotTriggered()
+    {
+        foreach (var trigger in _indeterminateTriggers)
+        {
+            trigger.DetermineTrigger(false);
+        }
+    }
+
+    int IPerfectHasher<GadgetTrigger>.NumberOfItems => _allTriggers.Length;
+    int IPerfectHasher<GadgetTrigger>.Hash(GadgetTrigger item) => item.Id;
+    GadgetTrigger IPerfectHasher<GadgetTrigger>.UnHash(int index) => _allTriggers[index];
+    void IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_allTriggers.Length);
+
+    int IPerfectHasher<GadgetBehaviour>.NumberOfItems => _allBehaviours.Length;
+    int IPerfectHasher<GadgetBehaviour>.Hash(GadgetBehaviour item) => item.Id;
+    GadgetBehaviour IPerfectHasher<GadgetBehaviour>.UnHash(int index) => _allBehaviours[index];
     public void GetAllGadgetsNearPosition(
         Span<uint> scratchSpaceSpan,
         Point levelPosition,

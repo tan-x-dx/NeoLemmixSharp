@@ -40,7 +40,7 @@ public sealed class LemmingHitBoxFilter : GadgetTrigger
         _onLemmingExitBehaviours = onLemmingExitBehaviours;
     }
 
-    public override void DetectTrigger(GadgetBase parentGadget)
+    public override void DetectTrigger()
     {
         DetermineTrigger(false);
         // Flag this trigger as evaluated - lemming interactions are handled separately

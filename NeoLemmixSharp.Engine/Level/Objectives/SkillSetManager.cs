@@ -109,7 +109,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     /// </para>
     /// </summary>
     /// <returns></returns>
-    public int EstimateBaseNumberOfSkillAssignments(CauseAndEffectManager causeAndEffectManager)
+    public int EstimateBaseNumberOfSkillAssignments(GadgetManager gadgetManager)
     {
         var basicSkillAssignmentQuantity = 0;
 
@@ -133,7 +133,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         {
             var total = 0;
 
-            foreach (var behaviour in causeAndEffectManager.AllBehaviours)
+            foreach (var behaviour in gadgetManager.AllBehaviours)
             {
                 if (behaviour is SkillCountChangeBehaviour skillCountChangeBehaviour && skillCountChangeBehaviour.SkillCountDelta > 0)
                 {

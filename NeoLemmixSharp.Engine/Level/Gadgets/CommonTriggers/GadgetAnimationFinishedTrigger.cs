@@ -13,7 +13,7 @@ public sealed class GadgetAnimationFinishedTrigger : GadgetTrigger
         _animationLayerBehaviour = animationLayerBehaviour;
     }
 
-    public override void DetectTrigger(GadgetBase parentGadget)
+    public override void DetectTrigger()
     {
         if (_animationLayerBehaviour.AnimationFinished)
         {

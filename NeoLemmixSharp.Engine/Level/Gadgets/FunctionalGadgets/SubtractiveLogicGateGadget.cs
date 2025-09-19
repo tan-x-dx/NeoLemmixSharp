@@ -21,6 +21,9 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
         _offState = offState;
         _onState = onState;
 
+        _offState.SetParentGadget(this);
+        _onState.SetParentGadget(this);
+
         _currentState = _offState;
     }
 
@@ -47,12 +50,12 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
 
         public bool Signal { get; private set; }
 
-        public SubtractiveLogicGateGadgetLinkInput( )
+        public SubtractiveLogicGateGadgetLinkInput()
             : base(GadgetTriggerType.GadgetLinkTrigger)
         {
         }
 
-        public override void DetectTrigger(GadgetBase parentGadget)
+        public override void DetectTrigger()
         {
         }
 
@@ -118,15 +121,5 @@ public sealed class XorGateGadget : SubtractiveLogicGateGadget
 
 public sealed class SubtractiveLogicGateGadgetState : GadgetState
 {
-    public override void OnTransitionFrom()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void OnTransitionTo()
-    {
-        throw new NotImplementedException();
-    }
-
     public override GadgetRenderer Renderer { get; }
 }

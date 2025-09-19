@@ -43,6 +43,11 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         _nextStateIndex = initialStateIndex;
 
         ResizeType = resizeType;
+
+        foreach (var state in _states)
+        {
+            state.SetParentGadget(this);
+        }
     }
 
     public override HitBoxGadgetState CurrentState => _currentState;
@@ -54,7 +59,7 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         if (_currentStateIndex != _nextStateIndex)
             ChangeStates();
 
-        CurrentState.Tick(this);
+        CurrentState.Tick();
     }
 
     private void ChangeStates()
@@ -64,8 +69,6 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         _previousState = _currentState;
         _currentState = _states[_currentStateIndex];
 
-        _previousState.OnTransitionFrom();
-        _currentState.OnTransitionTo();
         _previousState = _currentState;
 
         // Changing states may change hitbox positions 
@@ -96,18 +99,18 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         LemmingHitBoxFilter activeFilter,
         Lemming lemming)
     {
-        var causeAndEffectManager = LevelScreen.CauseAndEffectManager;
+        var gadgetManager = LevelScreen.GadgetManager;
 
         var lemmingBehaviours = activeFilter.OnLemmingHitBehaviours;
         foreach (var lemmingBehaviour in lemmingBehaviours)
         {
-            causeAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(lemmingBehaviour.Id, lemming.Id));
+            gadgetManager.RegisterCauseAndEffectData(new CauseAndEffectData(lemmingBehaviour.Id, lemming.Id));
         }
 
         var hitBoxLemmingBehaviours = GetHitBoxLemmingBehaviours(activeFilter, lemming);
         foreach (var lemmingBehaviour in hitBoxLemmingBehaviours)
         {
-            causeAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(lemmingBehaviour.Id, lemming.Id));
+            gadgetManager.RegisterCauseAndEffectData(new CauseAndEffectData(lemmingBehaviour.Id, lemming.Id));
         }
     }
 

@@ -30,15 +30,18 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         _inputs = inputs;
         _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveLogicGateGadgetLinkInput>(this);
 
+        _offState.SetParentGadget ( this);
+        _onState.SetParentGadget ( this);
+
         foreach (var input in _inputs)
         {
-            input.Gadget = this;
+            input.ParentGadget = this;
         }
     }
 
     public sealed override void Tick()
     {
-        _currentState.Tick(this);
+        _currentState.Tick();
     }
 
     private void ReactToSignal(AdditiveLogicGateGadgetLinkInput input, bool signal)
@@ -61,18 +64,18 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
     {
         public OutputSignalBehaviour? InputSignalBehaviour { get; set; }
 
-        public AdditiveLogicGateGadget Gadget { get; set; } = null!;
+        public new AdditiveLogicGateGadget ParentGadget { get; set; } = null!;
 
         public AdditiveLogicGateGadgetLinkInput()
             : base(GadgetTriggerType.GadgetLinkTrigger)
         {
         }
 
-        public override void DetectTrigger(GadgetBase _)
+        public override void DetectTrigger()
         {
             if (Evaluation != TriggerEvaluation.Indeterminate)
             {
-                LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
+                LevelScreen.GadgetManager.FlagGadgetForReEvaluation(ParentGadget);
             }
         }
 
@@ -80,7 +83,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         {
             DetermineTrigger(true);
             MarkAsEvaluated();
-            LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
+            LevelScreen.GadgetManager.FlagGadgetForReEvaluation(ParentGadget);
         }
     }
 
@@ -124,15 +127,5 @@ public sealed class OrGateGadget : AdditiveLogicGateGadget
 
 public sealed class AdditiveLogicGateGadgetState : GadgetState
 {
-    public override void OnTransitionFrom()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void OnTransitionTo()
-    {
-        throw new NotImplementedException();
-    }
-
     public override GadgetRenderer Renderer { get; }
 }

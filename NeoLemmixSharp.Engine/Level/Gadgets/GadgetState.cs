@@ -8,16 +8,28 @@ public abstract class GadgetState
     public required GadgetStateName StateName { get; init; }
     public required GadgetTrigger[] GadgetTriggers { private get; init; }
 
-    public void Tick(GadgetBase parentGadget)
+    protected GadgetBase ParentGadget = null!;
+
+    public void SetParentGadget(GadgetBase gadget)
+    {
+        ParentGadget = gadget;
+        foreach (GadgetTrigger trigger in GadgetTriggers)
+        {
+            trigger.SetParentData(gadget, this);
+        }
+
+        OnSetParentGadget();
+    }
+
+    protected virtual void OnSetParentGadget() { }
+
+    public void Tick()
     {
         foreach (var gadgetTrigger in GadgetTriggers)
         {
-            gadgetTrigger.DetectTrigger(parentGadget);
+            gadgetTrigger.DetectTrigger();
         }
     }
-
-    public abstract void OnTransitionFrom();
-    public abstract void OnTransitionTo();
 
     public abstract GadgetRenderer Renderer { get; }
 

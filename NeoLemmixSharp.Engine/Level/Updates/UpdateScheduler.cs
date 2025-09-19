@@ -197,7 +197,7 @@ end;
     private static void ResetManagers()
     {
         LevelScreen.GadgetManager.ResetGadgets();
-        LevelScreen.CauseAndEffectManager.ResetBehaviours();
+        LevelScreen.GadgetManager.ResetBehaviours();
     }
 
     private void DoManagerJobs()
@@ -206,10 +206,6 @@ end;
 
         LevelScreen.LemmingManager.Tick(isMajorTick);
         LevelScreen.GadgetManager.Tick(isMajorTick);
-        LevelScreen.CauseAndEffectManager.Tick();
-
-        LevelScreen.CauseAndEffectManager.FlagIndeterminateTriggersAsNotTriggered();
-        LevelScreen.GadgetManager.ReEvaluateGadgets();
 
         LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks, true);
         LevelScreen.RewindManager.Tick(_elapsedTicks);

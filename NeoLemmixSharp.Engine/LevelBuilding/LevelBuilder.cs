@@ -87,8 +87,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         // Need to call this here instead of initialising in LevelScreen
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 
-        var gadgetManager = new GadgetManager(levelGadgets, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
-        var causeAndEffectManager = new CauseAndEffectManager(gadgetTriggers, gadgetBehaviours);
+        var gadgetManager = new GadgetManager(levelGadgets,gadgetTriggers, gadgetBehaviours, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         SetUpGadgetConnections(levelData, gadgetManager);
 
@@ -97,7 +96,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         terrainBuilder.GetTerrainColors(out var terrainColorData);
         var terrainRenderer = new TerrainRenderer(terrainTexture);
 
-        var rewindManager = new RewindManager(lemmingManager, gadgetManager, causeAndEffectManager, skillSetManager);
+        var rewindManager = new RewindManager(lemmingManager, gadgetManager, skillSetManager);
         var updateScheduler = new UpdateScheduler();
         var terrainManager = new TerrainManager(pixelData);
 
@@ -142,7 +141,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             new TerrainPainter(terrainTexture, in pixelData, in terrainColorData),
             lemmingManager,
             gadgetManager,
-            causeAndEffectManager,
             tribeManager,
             skillSetManager,
             levelObjectiveManager,

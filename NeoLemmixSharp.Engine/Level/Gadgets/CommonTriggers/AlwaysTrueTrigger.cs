@@ -9,7 +9,7 @@ public sealed class AlwaysTrueTrigger : GadgetTrigger
     {
     }
 
-    public override void DetectTrigger(GadgetBase parentGadget)
+    public override void DetectTrigger()
     {
         DetermineTrigger(true);
         TriggerBehaviours();

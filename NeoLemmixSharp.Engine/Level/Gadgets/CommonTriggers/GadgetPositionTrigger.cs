@@ -30,10 +30,10 @@ public sealed class GadgetPositionTrigger : GadgetTrigger
         _requireY = requireY;
     }
 
-    public override void DetectTrigger(GadgetBase parentGadget)
+    public override void DetectTrigger()
     {
-        var xMatches = !_requireX || _comparisonX.ComparisonMatches(parentGadget.CurrentGadgetBounds.X, _x);
-        var yMatches = !_requireY || _comparisonY.ComparisonMatches(parentGadget.CurrentGadgetBounds.Y, _y);
+        var xMatches = !_requireX || _comparisonX.ComparisonMatches(ParentGadget.CurrentGadgetBounds.X, _x);
+        var yMatches = !_requireY || _comparisonY.ComparisonMatches(ParentGadget.CurrentGadgetBounds.Y, _y);
 
         var triggered = xMatches && yMatches;
 

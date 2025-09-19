@@ -13,7 +13,7 @@ public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
     {
     }
 
-    public override void DetectTrigger(GadgetBase parentGadget)
+    public override void DetectTrigger()
     {
         // Do nothing. This type is at the mercy of its input signal
     }

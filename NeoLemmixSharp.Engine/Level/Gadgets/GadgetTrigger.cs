@@ -17,34 +17,56 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
     public TriggerEvaluation Evaluation { get; private set; }
 
     public required GadgetBehaviour[] Behaviours { private get; init; }
+    protected GadgetBase ParentGadget = null!;
+    protected GadgetState ParentState = null!;
 
     protected GadgetTrigger(GadgetTriggerType triggerType)
     {
         TriggerType = triggerType;
     }
 
+    public void SetParentData(GadgetBase parentGadget, GadgetState parentState)
+    {
+        ParentGadget = parentGadget;
+        ParentState = parentState;
+    }
+
     public void Reset()
     {
-        Evaluation = TriggerEvaluation.Indeterminate;
+        var parentGadget = ParentGadget;
+        var parentState = ParentState;
+        var currentParentGadgetState = parentGadget.CurrentState;
+        if (currentParentGadgetState == parentState)
+        {
+            Evaluation = TriggerEvaluation.Indeterminate;
+        }
+        else
+        {
+            Evaluation = TriggerEvaluation.DefinitelyNotTriggered;
+            MarkAsEvaluated();
+        }
     }
 
     public void DetermineTrigger(bool isTriggered)
     {
+        if (Evaluation != TriggerEvaluation.Indeterminate)
+            return;
+
         var triggerNum = isTriggered ? DefinitelyTriggeredValue : DefinitelyNotTriggeredValue;
         Evaluation = (TriggerEvaluation)triggerNum;
     }
 
-    protected void MarkAsEvaluated() => LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
+    protected void MarkAsEvaluated() => LevelScreen.GadgetManager.MarkTriggerAsEvaluated(this);
 
     protected void TriggerBehaviours()
     {
         foreach (var behaviour in Behaviours)
         {
-            LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(behaviour.Id, 1));
+            LevelScreen.GadgetManager.RegisterCauseAndEffectData(new CauseAndEffectData(behaviour.Id, 1));
         }
     }
 
-    public abstract void DetectTrigger(GadgetBase parentGadget);
+    public abstract void DetectTrigger();
 
     public bool Equals(GadgetTrigger? other) => other is not null && Id == other.Id;
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetTrigger other && Id == other.Id;
