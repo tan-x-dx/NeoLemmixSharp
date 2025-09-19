@@ -101,11 +101,10 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     /// <para>
     /// In other cases, this method will attempt to overestimate the total number
     /// of skill assignments. If infinite skills are present, then assume a fixed
-    /// quantity of extra skills. If gadgets that alter skill counts are present,
-    /// count the number of skills added (if positive). It's not possible to tell
-    /// if a gadget can be triggered multiple times, always readding the skill
-    /// counts. So the best that can be done is to assume the gadget will only be
-    /// triggered once.
+    /// quantity of actual skill assignments. If gadgets that alter skill counts
+    /// are present, count the number of skills added (if positive). It's not
+    /// possible to tell if a gadget can be triggered multiple times, so the best
+    /// that can be done is to assume the gadget will only be triggered once.
     /// </para>
     /// </summary>
     /// <returns></returns>
@@ -125,24 +124,15 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
             }
         }
 
-        var gadgetSkillPickupQuantity = EstimateNumberOfExtraSkillsFromGadgetPickups();
-
-        return basicSkillAssignmentQuantity + gadgetSkillPickupQuantity;
-
-        int EstimateNumberOfExtraSkillsFromGadgetPickups()
+        foreach (var behaviour in gadgetManager.AllBehaviours)
         {
-            var total = 0;
-
-            foreach (var behaviour in gadgetManager.AllBehaviours)
+            if (behaviour is SkillCountChangeBehaviour skillCountChangeBehaviour && skillCountChangeBehaviour.SkillCountDelta > 0)
             {
-                if (behaviour is SkillCountChangeBehaviour skillCountChangeBehaviour && skillCountChangeBehaviour.SkillCountDelta > 0)
-                {
-                    total += skillCountChangeBehaviour.SkillCountDelta;
-                }
+                basicSkillAssignmentQuantity += skillCountChangeBehaviour.SkillCountDelta;
             }
-
-            return total;
         }
+
+        return basicSkillAssignmentQuantity;
     }
 
     int IComparer<SkillTrackingData>.Compare(SkillTrackingData? x, SkillTrackingData? y)
