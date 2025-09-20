@@ -96,7 +96,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 
     private void RecordGadgetDataStrings(LevelData levelData)
     {
-        foreach (var gadgetDatum in levelData.AllGadgetData)
+        foreach (var gadgetDatum in levelData.AllGadgetInstanceData)
         {
             _stringIdLookup.RecordString(gadgetDatum.StyleIdentifier);
             _stringIdLookup.RecordString(gadgetDatum.PieceIdentifier);

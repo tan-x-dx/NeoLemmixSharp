@@ -135,7 +135,7 @@ public static class StyleCache
 
         return result;
 
-        void FetchGadgetArchetypeData(IGadgetInstanceData gadgetData)
+        void FetchGadgetArchetypeData(GadgetInstanceData gadgetData)
         {
             var stylePiecePair = new StylePiecePair(gadgetData.StyleIdentifier, gadgetData.PieceIdentifier);
             ref var gadgetArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, stylePiecePair, out var exists);

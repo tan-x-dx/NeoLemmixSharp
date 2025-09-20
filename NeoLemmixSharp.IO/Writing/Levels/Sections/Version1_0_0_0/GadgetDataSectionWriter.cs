@@ -18,14 +18,14 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
     public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
-        return (ushort)levelData.AllGadgetData.Count;
+        return (ushort)levelData.AllGadgetInstanceData.Count;
     }
 
     public override void WriteSection(
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        foreach (var gadgetData in levelData.AllGadgetData)
+        foreach (var gadgetData in levelData.AllGadgetInstanceData)
         {
             WriteGadgetData(writer, gadgetData);
         }
@@ -33,7 +33,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
     private void WriteGadgetData(
         RawLevelFileDataWriter writer,
-        GadgetData gadgetData)
+        GadgetInstanceData gadgetData)
     {
         writer.Write16BitUnsignedInteger((ushort)gadgetData.Identifier.GadgetId);
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.StyleIdentifier));
@@ -44,7 +44,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(gadgetData.Position));
         writer.Write8BitUnsignedInteger((byte)DihedralTransformation.Encode(gadgetData.Orientation, gadgetData.FacingDirection));
 
-        writer.Write8BitUnsignedInteger((byte)gadgetData.InitialStateId);
+       // writer.Write8BitUnsignedInteger((byte)gadgetData.InitialStateId);
         writer.Write8BitUnsignedInteger((byte)gadgetData.GadgetRenderMode);
 
         WriteOverrideInputNames(writer, gadgetData);
@@ -55,7 +55,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
     private void WriteOverrideInputNames(
         RawLevelFileDataWriter writer,
-        GadgetData gadgetData)
+        GadgetInstanceData gadgetData)
     {
         /*     writer.Write8BitUnsignedInteger((byte)gadgetData.OverrideInputNames.Length);
              foreach (var inputName in gadgetData.OverrideInputNames)
@@ -64,9 +64,9 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
              }*/
     }
 
-    private static void WriteLayerColorData(RawLevelFileDataWriter writer, GadgetData gadgetData)
+    private static void WriteLayerColorData(RawLevelFileDataWriter writer, GadgetInstanceData gadgetData)
     {
-        writer.Write8BitUnsignedInteger((byte)gadgetData.LayerColorData.Length);
+  /*      writer.Write8BitUnsignedInteger((byte)gadgetData.LayerColorData.Length);
         foreach (var layerColorData in gadgetData.LayerColorData)
         {
             writer.Write8BitUnsignedInteger((byte)layerColorData.StateIndex);
@@ -85,10 +85,10 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
                 writer.Write8BitUnsignedInteger((byte)layerColorData.TribeId);
                 writer.Write8BitUnsignedInteger((byte)layerColorData.SpriteLayerColorType);
             }
-        }
+        }*/
     }
 
-    private static void WriteOverrideHitBoxCriteriaData(RawLevelFileDataWriter writer, GadgetData gadgetData)
+    private static void WriteOverrideHitBoxCriteriaData(RawLevelFileDataWriter writer, GadgetInstanceData gadgetData)
     {
         /*      if (gadgetData.OverrideHitBoxCriteriaData is null)
               {
@@ -102,15 +102,15 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
     private static void WriteGadgetProperties(
         RawLevelFileDataWriter writer,
-        GadgetData gadgetData)
+        GadgetInstanceData gadgetData)
     {
-        var gadgetPropertyEnumerator = gadgetData.GetProperties();
+    /*    var gadgetPropertyEnumerator = gadgetData.GetProperties();
         while (gadgetPropertyEnumerator.MoveNext())
         {
             var (gadgetProperty, gadgetPropertyValue) = gadgetPropertyEnumerator.Current;
 
             writer.Write8BitUnsignedInteger((byte)gadgetProperty);
             writer.Write32BitSignedInteger(gadgetPropertyValue);
-        }
+        }*/
     }
 }

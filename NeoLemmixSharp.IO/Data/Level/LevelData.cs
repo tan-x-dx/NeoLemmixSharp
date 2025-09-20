@@ -144,8 +144,7 @@ public sealed class LevelData
     public List<TerrainGroupData> AllTerrainGroups { get; } = [];
     public List<HatchGroupData> AllHatchGroupData { get; } = [];
 
-    public List<GadgetData> AllGadgetData { get; } = [];
-    public List<IGadgetInstanceData> AllGadgetInstanceData { get; } = [];
+    public List<GadgetInstanceData> AllGadgetInstanceData { get; } = [];
     public List<GadgetLinkData> AllGadgetLinkData { get; } = [];
     public List<SketchData> AllSketchData { get; } = [];
 

@@ -10,50 +10,50 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HatchGadgets;
 
 public readonly struct HatchGadgetBuilder
 {
-    private readonly GadgetIdentifier _gadgetIdentifier;
+    private readonly GadgetInstanceData _hatchGadgetInstanceData;
+    private readonly HatchGadgetTypeInstanceData _hatchGadgetTypeInstanceData;
     private readonly List<GadgetTrigger> _gadgetTriggers;
     private readonly List<GadgetBehaviour> _gadgetBehaviours;
 
     public HatchGadgetBuilder(
-        GadgetIdentifier gadgetIdentifier,
+        GadgetInstanceData hatchGadgetData,
         List<GadgetTrigger> gadgetTriggers,
         List<GadgetBehaviour> gadgetBehaviours)
     {
-        _gadgetIdentifier = gadgetIdentifier;
+        _hatchGadgetInstanceData = hatchGadgetData;
+        _hatchGadgetTypeInstanceData = (HatchGadgetTypeInstanceData)hatchGadgetData.GadgetTypeInstanceData;
         _gadgetTriggers = gadgetTriggers;
         _gadgetBehaviours = gadgetBehaviours;
     }
 
     public HatchGadget BuildHatchGadget(
         HatchGadgetArchetypeData gadgetArchetypeData,
-        HatchGadgetInstanceData gadgetInstanceData,
         TribeManager tribeManager)
     {
-        var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, gadgetInstanceData);
-        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, gadgetInstanceData);
-        var gadgetStates = BuildHatchGadgetStates(gadgetArchetypeData, gadgetInstanceData, gadgetBounds, tribeManager);
-        var hatchSpawnData = BuildHatchSpawnData(gadgetInstanceData, tribeManager);
-        var spawnPointOffset = BuildSpawnPointOffset(gadgetArchetypeData, gadgetInstanceData);
+        var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, _hatchGadgetInstanceData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, _hatchGadgetInstanceData);
+        var gadgetStates = BuildHatchGadgetStates(gadgetArchetypeData, gadgetBounds, tribeManager);
+        var hatchSpawnData = BuildHatchSpawnData(tribeManager);
+        var spawnPointOffset = BuildSpawnPointOffset(gadgetArchetypeData);
 
         return new HatchGadget(
             gadgetStates,
-            gadgetInstanceData.InitialStateId,
+            _hatchGadgetTypeInstanceData.InitialStateId,
             hatchSpawnData,
             spawnPointOffset)
         {
-            Id = gadgetInstanceData.Identifier.GadgetId,
+            Id = _hatchGadgetInstanceData.Identifier.GadgetId,
             GadgetName = gadgetName,
             CurrentGadgetBounds = gadgetBounds,
 
-            Orientation = gadgetInstanceData.Orientation,
-            FacingDirection = gadgetInstanceData.FacingDirection,
+            Orientation = _hatchGadgetInstanceData.Orientation,
+            FacingDirection = _hatchGadgetInstanceData.FacingDirection,
             IsFastForward = false,
         };
     }
 
     private HatchGadgetState[] BuildHatchGadgetStates(
         HatchGadgetArchetypeData gadgetArchetypeData,
-        HatchGadgetInstanceData gadgetInstanceData,
         GadgetBounds gadgetBounds,
         TribeManager tribeManager)
     {
@@ -68,15 +68,15 @@ public readonly struct HatchGadgetBuilder
         for (var i = 0; i < result.Length; i++)
         {
             var gadgetStateArchetypeData = gadgetArchetypeData.GadgetStates[i];
-            var gadgetStateInstanceData = gadgetInstanceData.GadgetStates[i];
+            var gadgetStateInstanceData = _hatchGadgetTypeInstanceData.GadgetStates[i];
 
             result[i] = BuildHatchGadgetState(
                 gadgetStateArchetypeData,
                 gadgetStateInstanceData,
                 gadgetBounds,
                 tribeManager,
-                gadgetInstanceData.Orientation,
-                gadgetInstanceData.FacingDirection);
+                _hatchGadgetInstanceData.Orientation,
+                _hatchGadgetInstanceData.FacingDirection);
         }
 
         return result;
@@ -105,29 +105,28 @@ public readonly struct HatchGadgetBuilder
 
     private GadgetTrigger[] BuildTriggers(HatchGadgetStateArchetypeData gadgetStateArchetypeData, HatchGadgetStateInstanceData gadgetStateInstanceData)
     {
-        var gadgetTriggerBuilder = new GadgetTriggerBuilder(_gadgetIdentifier, _gadgetTriggers, _gadgetBehaviours);
+        var gadgetTriggerBuilder = new GadgetTriggerBuilder(_hatchGadgetInstanceData.Identifier, _gadgetTriggers, _gadgetBehaviours);
         return gadgetTriggerBuilder.BuildGadgetTriggers(gadgetStateArchetypeData, gadgetStateInstanceData);
     }
 
-    private static HatchSpawnData BuildHatchSpawnData(
-        HatchGadgetInstanceData gadgetInstanceData,
+    private HatchSpawnData BuildHatchSpawnData(
         TribeManager tribeManager)
     {
         return new HatchSpawnData(
-            gadgetInstanceData.HatchGroupId,
-            tribeManager.AllItems[gadgetInstanceData.TribeId],
-            gadgetInstanceData.RawStateData,
-            gadgetInstanceData.Orientation,
-            gadgetInstanceData.FacingDirection,
-            gadgetInstanceData.NumberOfLemmingsToRelease);
+            _hatchGadgetTypeInstanceData.HatchGroupId,
+            tribeManager.AllItems[_hatchGadgetTypeInstanceData.TribeId],
+            _hatchGadgetTypeInstanceData.RawStateData,
+            _hatchGadgetInstanceData.Orientation,
+            _hatchGadgetInstanceData.FacingDirection,
+            _hatchGadgetTypeInstanceData.NumberOfLemmingsToRelease);
     }
 
-    private static Point BuildSpawnPointOffset(HatchGadgetArchetypeData gadgetArchetypeData, HatchGadgetInstanceData gadgetInstanceData)
+    private Point BuildSpawnPointOffset(HatchGadgetArchetypeData gadgetArchetypeData)
     {
         var spawnPointOffset = gadgetArchetypeData.SpawnOffset;
         var gadgetSize = gadgetArchetypeData.BaseSpriteSize;
 
-        var dht = new DihedralTransformation(gadgetInstanceData.Orientation, gadgetInstanceData.FacingDirection);
+        var dht = new DihedralTransformation(_hatchGadgetInstanceData.Orientation, _hatchGadgetInstanceData.FacingDirection);
         return dht.Transform(spawnPointOffset, gadgetSize);
     }
 }

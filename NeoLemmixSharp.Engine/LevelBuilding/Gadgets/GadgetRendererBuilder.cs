@@ -12,18 +12,17 @@ public sealed class GadgetRendererBuilder
 {
     private readonly Dictionary<StylePiecePair, Texture2D> _gadgetTextures = new(IoConstants.AssumedNumberOfGadgetArchetypeDataInLevel);
 
-    public GadgetRenderer? BuildStatefulGadgetRenderer(
-        GadgetData gadgetData)
+    public GadgetRenderer? BuildStatefulGadgetRenderer(GadgetInstanceData gadgetInstanceData)
     {
-        var texture = GetTextureForGadget(gadgetData);
+        var texture = GetTextureForGadget(gadgetInstanceData);
         return texture is null
             ? null
-            : new GadgetRenderer(null, texture, gadgetData.GadgetRenderMode);
+            : new GadgetRenderer(null, texture, gadgetInstanceData.GadgetRenderMode);
     }
 
-    private Texture2D? GetTextureForGadget(GadgetData gadgetData)
+    private Texture2D? GetTextureForGadget(GadgetInstanceData gadgetInstanceData)
     {
-        if (gadgetData.GadgetRenderMode == GadgetRenderMode.NoRender)
+        if (gadgetInstanceData.GadgetRenderMode == GadgetRenderMode.NoRender)
             return null;
 
         var texture = GetOrAddCachedTexture();
@@ -32,7 +31,7 @@ public sealed class GadgetRendererBuilder
 
         Texture2D GetOrAddCachedTexture()
         {
-            var key = gadgetData.GetStylePiecePair();
+            var key = gadgetInstanceData.GetStylePiecePair();
 
             ref var cachedTexture = ref CollectionsMarshal.GetValueRefOrAddDefault(_gadgetTextures, key, out var exists);
 

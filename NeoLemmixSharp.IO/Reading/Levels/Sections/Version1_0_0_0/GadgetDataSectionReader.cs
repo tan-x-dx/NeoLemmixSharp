@@ -4,6 +4,10 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.HatchGadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.LogicGateGadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using NeoLemmixSharp.IO.FileFormats;
@@ -24,66 +28,124 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
     public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
-        levelData.AllGadgetData.Capacity = numberOfItemsInSection;
+        levelData.AllGadgetInstanceData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {
-            var newGadgetDatum = ReadGadgetData(reader, levelData);
-            levelData.AllGadgetData.Add(newGadgetDatum);
+            var newGadgetDatum = ReadGadgetInstanceDatum(reader, levelData);
+            levelData.AllGadgetInstanceData.Add(newGadgetDatum);
         }
     }
 
-    private GadgetData ReadGadgetData(RawLevelFileDataReader reader, LevelData levelData)
+    private GadgetInstanceData ReadGadgetInstanceDatum(RawLevelFileDataReader reader, LevelData levelData)
     {
         int gadgetId = reader.Read16BitUnsignedInteger();
 
-        FileReadingException.ReaderAssert(gadgetId == levelData.AllGadgetData.Count + 1, "GadgetData id mismatch!");
+        FileReadingException.ReaderAssert(gadgetId == levelData.AllGadgetInstanceData.Count + 1, "GadgetData id mismatch!");
 
         int styleId = reader.Read16BitUnsignedInteger();
         int pieceId = reader.Read16BitUnsignedInteger();
 
+        var gadgetType = (GadgetType)reader.Read8BitUnsignedInteger();
+
         int overrideNameId = reader.Read16BitUnsignedInteger();
 
         int positionData = reader.Read32BitSignedInteger();
-        var position = ReadWriteHelpers.DecodePoint(positionData);
+        Point position = ReadWriteHelpers.DecodePoint(positionData);
 
         int dhtByte = reader.Read8BitUnsignedInteger();
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
-        var dht = new DihedralTransformation(dhtByte);
+        DihedralTransformation dht = new(dhtByte);
 
-        int initialStateId = reader.Read8BitUnsignedInteger();
-        var renderMode = GadgetRenderModeHelpers.GetEnumValue(reader.Read8BitUnsignedInteger());
+        bool isFastForward = reader.ReadBool();
 
-        var inputNames = ReadOverrideInputNames(reader);
-        var layerColorData = ReadLayerColorData(reader);
-        var overrideHitBoxCriteriaData = ReadOverrideHitBoxCriteriaData(reader);
+        GadgetRenderMode renderMode = GadgetRenderModeHelpers.GetEnumValue(reader.Read8BitUnsignedInteger());
 
-        var result = new GadgetData
+        IGadgetTypeInstanceData gadgetInstanceTypeData = gadgetType switch
         {
-            Identifier = new GadgetIdentifier(gadgetId),
-            OverrideName = _stringIdLookup[overrideNameId],
+            GadgetType.HitBoxGadget => ReadHitBoxGadgetTypeDatum(reader),
+            GadgetType.HatchGadget => ReadHatchGadgetTypeDatum(reader),
+            GadgetType.LogicGate => ReadLogicGateGadgetTypeDatum(reader),
+            GadgetType.LevelTimerObserver => ReadLevelTimerObserverGadgetTypeDatum(reader),
 
-            StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),
-            PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
-
-            Position = position,
-
-            InitialStateId = initialStateId,
-            GadgetRenderMode = renderMode,
-
-            Orientation = dht.Orientation,
-            FacingDirection = dht.FacingDirection,
-
-            // OverrideInputNames = inputNames,
-            LayerColorData = layerColorData,
-            // OverrideHitBoxCriteriaData = overrideHitBoxCriteriaData
+            _ => Helpers.ThrowUnknownEnumValueException<GadgetType, IGadgetTypeInstanceData>(gadgetType),
         };
 
-        ReadProperties(reader, result);
+        return new GadgetInstanceData
+        {
+            Identifier = new GadgetIdentifier(gadgetId),
+            OverrideName = new GadgetName(_stringIdLookup[overrideNameId]),
+            StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),
+            PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
+            Position = position,
+            GadgetRenderMode = renderMode,
+            Orientation = dht.Orientation,
+            FacingDirection = dht.FacingDirection,
+            IsFastForward = isFastForward,
 
-        AssertGadgetInputDataIsConsistent(result);
+            GadgetTypeInstanceData = gadgetInstanceTypeData
+        };
 
-        return result;
+        //var result = new GadgetData
+        //{
+        //    Identifier = new GadgetIdentifier(gadgetId),
+        //    OverrideName = _stringIdLookup[overrideNameId],
+
+        //    StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),
+        //    PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
+
+        //    Position = position,
+
+        //    InitialStateId = initialStateId,
+        //    GadgetRenderMode = renderMode,
+
+        //    Orientation = dht.Orientation,
+        //    FacingDirection = dht.FacingDirection,
+
+        //    // OverrideInputNames = inputNames,
+        //    LayerColorData = layerColorData,
+        //    // OverrideHitBoxCriteriaData = overrideHitBoxCriteriaData
+        //};
+
+        //ReadProperties(reader, result);
+
+        //return result;
+    }
+
+    private HitBoxGadgetTypeInstanceData ReadHitBoxGadgetTypeDatum(RawLevelFileDataReader reader)
+    {
+        var layerColorData = ReadLayerColorData(reader);
+
+        return new HitBoxGadgetTypeInstanceData()
+        {
+            InitialStateId = 0,
+            GadgetStates = [],
+            LayerColorData = layerColorData,
+        };
+    }
+
+    private HatchGadgetTypeInstanceData ReadHatchGadgetTypeDatum(RawLevelFileDataReader reader)
+    {
+
+        return new HatchGadgetTypeInstanceData()
+        {
+            InitialStateId = 0,
+            GadgetStates = [],
+            HatchGroupId = 0,
+            TribeId = 0,
+            RawStateData = 0,
+            NumberOfLemmingsToRelease = 0,
+        };
+    }
+
+    private LogicGateGadgetTypeInstanceData ReadLogicGateGadgetTypeDatum(RawLevelFileDataReader reader)
+    {
+        throw new NotImplementedException();
+    }
+
+    private IGadgetTypeInstanceData ReadLevelTimerObserverGadgetTypeDatum(RawLevelFileDataReader reader)
+    {
+        throw new NotImplementedException();
     }
 
     private GadgetTriggerName[] ReadOverrideInputNames(RawLevelFileDataReader reader)
@@ -146,25 +208,15 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             : null;
     }
 
-    private static void ReadProperties(RawLevelFileDataReader reader, GadgetData result)
-    {
-        int numberOfProperties = reader.Read8BitUnsignedInteger();
-        while (numberOfProperties-- > 0)
-        {
-            uint rawGadgetProperty = reader.Read8BitUnsignedInteger();
-            var gadgetProperty = GadgetPropertyTypeHasher.GetEnumValue(rawGadgetProperty);
-            int propertyValue = reader.Read32BitSignedInteger();
-            result.AddProperty(gadgetProperty, propertyValue);
-        }
-    }
-
-    private static void AssertGadgetInputDataIsConsistent(GadgetData result)
-    {
-        if (!result.TryGetProperty(GadgetPropertyType.NumberOfInputs, out var numberOfInputsSpecified))
-            numberOfInputsSpecified = 0;
-
-        //  var numberOfOverrideInputNames = result.OverrideInputNames.Length;
-
-        //  FileReadingException.ReaderAssert(numberOfInputsSpecified == numberOfOverrideInputNames, "Mismatch between number of inputs specified and number of override input names!");
-    }
+    /* private static void ReadProperties(RawLevelFileDataReader reader, GadgetData result)
+     {
+         int numberOfProperties = reader.Read8BitUnsignedInteger();
+         while (numberOfProperties-- > 0)
+         {
+             uint rawGadgetProperty = reader.Read8BitUnsignedInteger();
+             var gadgetProperty = GadgetPropertyTypeHasher.GetEnumValue(rawGadgetProperty);
+             int propertyValue = reader.Read32BitSignedInteger();
+             result.AddProperty(gadgetProperty, propertyValue);
+         }
+     }*/
 }
