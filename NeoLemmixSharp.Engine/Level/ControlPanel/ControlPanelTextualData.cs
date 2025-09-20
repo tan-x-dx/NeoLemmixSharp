@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
@@ -47,7 +48,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         _goalCountPointer = (char*)_byteBuffer.Handle + (CharLengthForCursorData + CharLengthForLemmingCount + CharLengthForLemmingCount);
     }
 
-    public void SetCursorData(Lemming? lemmingUnderCursor, int numberOfLemmingsUnderCursor)
+    public void SetCursorData(Lemming? lemmingUnderCursor, uint numberOfLemmingsUnderCursor)
     {
         if (lemmingUnderCursor is null)
         {
@@ -59,7 +60,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         }
     }
 
-    private void WriteLemmingCursorData(Lemming lemming, int numberOfLemmingsUnderCursor)
+    private void WriteLemmingCursorData(Lemming lemming, uint numberOfLemmingsUnderCursor)
     {
         var textLength = WriteLemmingInfo(lemming);
 
@@ -111,14 +112,14 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         LemmingAction action,
         LemmingState state)
     {
-        ReadOnlySpan<char> sourceSpan = GetSourceSpan();
+        ReadOnlySpan<char> sourceSpan = GetSourceString().AsSpan();
         Span<char> destSpan = new(_cursorDataPointer, CharLengthForCursorData);
 
         sourceSpan.CopyTo(destSpan);
 
         return sourceSpan.Length;
 
-        ReadOnlySpan<char> GetSourceSpan()
+        string GetSourceString()
         {
             if (action.CursorSelectionPriorityValue == LemmingActionConstants.NonPermanentSkillPriority)
                 return action.LemmingActionName;
@@ -153,16 +154,20 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
 
     public void SetHatchData(int hatchCount)
     {
+        Debug.Assert(hatchCount >= 0);
+
         Span<char> span = new(_hatchCountPointer, CharLengthForLemmingCount);
         span.Clear();
-        TextRenderingHelpers.WriteDigits(span, hatchCount);
+        TextRenderingHelpers.WriteDigits(span, (uint)hatchCount);
     }
 
     public void SetLemmingData(int lemmingCount)
     {
+        Debug.Assert(lemmingCount >= 0);
+
         Span<char> span = new(_lemmingsOutPointer, CharLengthForLemmingCount);
         span.Clear();
-        TextRenderingHelpers.WriteDigits(span, lemmingCount);
+        TextRenderingHelpers.WriteDigits(span, (uint)lemmingCount);
     }
 
     public void SetGoalData(int goalNumber)
@@ -178,7 +183,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         }
 
         var span = new Span<char>(p, spanLength);
-        TextRenderingHelpers.WriteDigits(span, goalNumber);
+        TextRenderingHelpers.WriteDigits(span, (uint)goalNumber);
     }
 
     public void Dispose()

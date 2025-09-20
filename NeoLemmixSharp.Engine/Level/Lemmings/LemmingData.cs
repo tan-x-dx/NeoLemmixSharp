@@ -45,7 +45,7 @@ public struct LemmingData
     public int LaserRemainTime;
 
     public int FastForwardTime;
-    public int CountDownTimer;
+    public uint CountDownTimer;
     public int ParticleTimer;
 
     public LemmingData()

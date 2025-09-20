@@ -104,7 +104,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
     private interface ISpawnIntervalValueGetter : IButtonAction
     {
-        int GetNumericalValue();
+        uint GetNumericalValue();
     }
 
     private sealed class SpawnIntervalMinValueGetter : ISpawnIntervalValueGetter
@@ -119,7 +119,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
         }
 
         public ButtonType ButtonType => ButtonType.SpawnIntervalDecrease;
-        public int GetNumericalValue() => _showSpawnInterval
+        public uint GetNumericalValue() => _showSpawnInterval
             ? _hatchGroup.MinSpawnInterval
             : _hatchGroup.MinReleaseRate;
 
@@ -156,7 +156,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
         }
 
         public ButtonType ButtonType => ButtonType.SpawnIntervalDisplay;
-        public int GetNumericalValue() => _showSpawnInterval
+        public uint GetNumericalValue() => _showSpawnInterval
             ? _hatchGroup.CurrentSpawnInterval
             : _hatchGroup.CurrentReleaseRate;
 
@@ -185,7 +185,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
         }
 
         public ButtonType ButtonType => ButtonType.SpawnIntervalIncrease;
-        public int GetNumericalValue() => _showSpawnInterval
+        public uint GetNumericalValue() => _showSpawnInterval
             ? _hatchGroup.CurrentSpawnInterval
             : _hatchGroup.CurrentReleaseRate;
 

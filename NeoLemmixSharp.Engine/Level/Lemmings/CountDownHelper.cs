@@ -15,7 +15,7 @@ public static class CountDownHelper
         TextRenderingHelpers.WriteDigits(textSpan, countDownValue);
     }
 
-    private static int GetCountDownValue(Lemming lemming)
+    private static uint GetCountDownValue(Lemming lemming)
     {
         var countDownTimer = lemming.CountDownTimer;
 

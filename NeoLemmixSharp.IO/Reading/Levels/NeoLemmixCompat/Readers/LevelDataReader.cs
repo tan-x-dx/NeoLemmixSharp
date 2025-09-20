@@ -13,7 +13,7 @@ internal sealed class LevelDataReader : NeoLemmixDataReader
 
     private bool _lockSpawnInterval;
     private int _numberOfLemmings;
-    private int _maxSpawnInterval;
+    private uint _maxSpawnInterval;
     private int _saveRequirement;
     private int? _timeLimitInSeconds;
 
@@ -155,7 +155,7 @@ internal sealed class LevelDataReader : NeoLemmixDataReader
 
     private void SetMaxSpawnInterval(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _maxSpawnInterval = int.Parse(secondToken);
+        _maxSpawnInterval = uint.Parse(secondToken);
     }
 
     private void OnFinishedReading()

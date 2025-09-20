@@ -77,7 +77,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     public ref int TrueDistanceFallen => ref _data.TrueDistanceFallen;
     public ref int LaserRemainTime => ref _data.LaserRemainTime;
     public ref int FastForwardTime => ref _data.FastForwardTime;
-    public ref int CountDownTimer => ref _data.CountDownTimer;
+    public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref int ParticleTimer => ref _data.ParticleTimer;
 
     public LemmingState State { get; }
@@ -444,7 +444,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         gadget.OnLemmingHit(filter, this);
     }
 
-    public void SetCountDownAction(int countDownTimer, LemmingAction countDownAction, bool displayTimer)
+    public void SetCountDownAction(uint countDownTimer, LemmingAction countDownAction, bool displayTimer)
     {
         _data.CountDownTimer = countDownTimer;
         CountDownAction = countDownAction;

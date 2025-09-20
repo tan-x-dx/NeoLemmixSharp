@@ -13,24 +13,24 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
 
     private int _hatchIndex;
 
-    private int _nextLemmingCountDown = EngineConstants.InitialLemmingHatchReleaseCountDown;
+    private uint _nextLemmingCountDown = EngineConstants.InitialLemmingHatchReleaseCountDown;
     private int _lemmingsToRelease;
 
     public int Id { get; }
 
-    public int MinSpawnInterval { get; }
-    public int MaxSpawnInterval { get; }
-    public int CurrentSpawnInterval { get; private set; }
+    public uint MinSpawnInterval { get; }
+    public uint MaxSpawnInterval { get; }
+    public uint CurrentSpawnInterval { get; private set; }
 
-    public int MinReleaseRate => ConvertToReleaseRate(MinSpawnInterval);
-    public int MaxReleaseRate => ConvertToReleaseRate(MaxSpawnInterval);
-    public int CurrentReleaseRate => ConvertToReleaseRate(CurrentSpawnInterval);
+    public uint MinReleaseRate => ConvertToReleaseRate(MinSpawnInterval);
+    public uint MaxReleaseRate => ConvertToReleaseRate(MaxSpawnInterval);
+    public uint CurrentReleaseRate => ConvertToReleaseRate(CurrentSpawnInterval);
 
     public HatchGroup(
         int id,
-        int minSpawnInterval,
-        int maxSpawnInterval,
-        int initialSpawnInterval)
+        uint minSpawnInterval,
+        uint maxSpawnInterval,
+        uint initialSpawnInterval)
     {
         Id = id;
 
@@ -58,9 +58,9 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
 
     public bool AddSpawnIntervalDelta(int spawnIntervalDelta)
     {
-        var previousSpawnInterval = CurrentSpawnInterval;
-        var newSpawnInterval = Math.Clamp(previousSpawnInterval + spawnIntervalDelta, MinSpawnInterval, MaxSpawnInterval);
-        CurrentSpawnInterval = newSpawnInterval;
+        int previousSpawnInterval = (int)CurrentSpawnInterval;
+        int newSpawnInterval = Math.Clamp(previousSpawnInterval + spawnIntervalDelta, (int)MinSpawnInterval, (int)MaxSpawnInterval);
+        CurrentSpawnInterval = (uint)newSpawnInterval;
 
         return previousSpawnInterval != newSpawnInterval;
     }
@@ -111,7 +111,7 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int ConvertToReleaseRate(int spawnInterval)
+    private static uint ConvertToReleaseRate(uint spawnInterval)
     {
         // So that:
         // RR1 <=> SI102,
