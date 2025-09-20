@@ -80,7 +80,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
                 return;
             }
 
-            if (Evaluation != TriggerEvaluation.Indeterminate)
+            if (IsIndeterminate)
             {
                 LevelScreen.GadgetManager.FlagGadgetForReEvaluation(ParentGadget);
             }

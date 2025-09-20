@@ -18,7 +18,7 @@ public readonly struct HitBoxFilterName
 
     public override string ToString() => _hitBoxFilterName;
 
-    public bool Equals(HitBoxFilterName other) => string.Equals(_hitBoxFilterName, other._hitBoxFilterName);
+    public bool Equals(HitBoxFilterName other) => string.Equals(_hitBoxFilterName, other._hitBoxFilterName, StringComparison.Ordinal);
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is HitBoxFilterName other && Equals(other);
     public override int GetHashCode() => _hitBoxFilterName.GetHashCode();
 

@@ -14,11 +14,13 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
     public required GadgetTriggerName TriggerName { get; init; }
     public required int Id { get; init; }
     public GadgetTriggerType TriggerType { get; }
-    public TriggerEvaluation Evaluation { get; private set; }
+    private TriggerEvaluation _evaluation;
 
     public required GadgetBehaviour[] Behaviours { private get; init; }
     protected GadgetBase ParentGadget = null!;
     protected GadgetState ParentState = null!;
+
+    public bool IsIndeterminate => _evaluation == TriggerEvaluation.Indeterminate;
 
     protected GadgetTrigger(GadgetTriggerType triggerType)
     {
@@ -38,22 +40,22 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
         var currentParentGadgetState = parentGadget.CurrentState;
         if (currentParentGadgetState == parentState)
         {
-            Evaluation = TriggerEvaluation.Indeterminate;
+            _evaluation = TriggerEvaluation.Indeterminate;
         }
         else
         {
-            Evaluation = TriggerEvaluation.DefinitelyNotTriggered;
+            _evaluation = TriggerEvaluation.DefinitelyNotTriggered;
             MarkAsEvaluated();
         }
     }
 
     public void DetermineTrigger(bool isTriggered)
     {
-        if (Evaluation != TriggerEvaluation.Indeterminate)
+        if (_evaluation != TriggerEvaluation.Indeterminate)
             return;
 
         var triggerNum = isTriggered ? DefinitelyTriggeredValue : DefinitelyNotTriggeredValue;
-        Evaluation = (TriggerEvaluation)triggerNum;
+        _evaluation = (TriggerEvaluation)triggerNum;
     }
 
     protected void MarkAsEvaluated() => LevelScreen.GadgetManager.MarkTriggerAsEvaluated(this);
@@ -76,7 +78,7 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
     public static bool operator ==(GadgetTrigger left, GadgetTrigger right) => left.Id == right.Id;
     public static bool operator !=(GadgetTrigger left, GadgetTrigger right) => left.Id != right.Id;
 
-    public enum TriggerEvaluation
+    private enum TriggerEvaluation
     {
         Indeterminate = IndeterminateTriggerValue,
         DefinitelyNotTriggered = DefinitelyNotTriggeredValue,

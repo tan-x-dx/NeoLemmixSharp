@@ -204,7 +204,7 @@ public sealed class LevelScreen : IBaseScreen
     {
         this.DisposeOfFields();
 
-        TextureCache.DisposeOfShortLivedTextures();
+        TextureCache.DisposeOfLevelSpecificTextures();
 
         _instance = null!;
     }

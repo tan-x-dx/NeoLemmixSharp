@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
 
 public sealed class GadgetRendererBuilder
 {
-    private readonly Dictionary<StylePiecePair, Texture2D> _gadgetTextures = [];
+    private readonly Dictionary<StylePiecePair, Texture2D> _gadgetTextures = new(IoConstants.AssumedNumberOfGadgetArchetypeDataInLevel);
 
     public GadgetRenderer? BuildStatefulGadgetRenderer(
         GadgetData gadgetData)

@@ -84,7 +84,7 @@ public sealed class MenuPageCreator
         }
         catch (Exception ex)
         {
-            TextureCache.DisposeOfShortLivedTextures();
+            TextureCache.DisposeOfLevelSpecificTextures();
 
             var exceptionWindow = new ExceptionViewer(_inputController, ex);
 
@@ -113,7 +113,7 @@ public sealed class MenuPageCreator
         }
         catch (Exception ex)
         {
-            TextureCache.DisposeOfShortLivedTextures();
+            TextureCache.DisposeOfLevelSpecificTextures();
 
             var exceptionWindow = new ExceptionViewer(_inputController, ex);
 

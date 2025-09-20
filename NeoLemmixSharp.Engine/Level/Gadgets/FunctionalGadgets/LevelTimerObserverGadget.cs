@@ -1,21 +1,44 @@
 ﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public sealed class LevelTimerObserverGadget : GadgetBase
 {
-    public LevelTimerObserverGadget()
+    private readonly LevelTimerTrigger _trigger;
+
+    private readonly LevelTimerGadgetState _offState;
+    private readonly LevelTimerGadgetState _onState;
+
+    private LevelTimerGadgetState _currentState;
+
+    public LevelTimerObserverGadget(
+        LevelTimerTrigger trigger,
+        LevelTimerGadgetState offState,
+        LevelTimerGadgetState onState)
         : base(GadgetType.LevelTimerObserver)
     {
+        _trigger = trigger;
+        _offState = offState;
+        _onState = onState;
+        _currentState = _offState;
+
+        _offState.SetParentGadget(this);
+        _onState.SetParentGadget(this);
     }
 
-    public override GadgetState CurrentState { get; }
+    public override LevelTimerGadgetState CurrentState => _currentState;
 
     public override void Tick()
     {
         CurrentState.Tick();
     }
+}
+
+public sealed class LevelTimerGadgetState : GadgetState
+{
+    public override GadgetRenderer Renderer { get; }
 }
 
 public sealed class LevelTimerTrigger : GadgetTrigger
