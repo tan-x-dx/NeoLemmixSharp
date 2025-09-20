@@ -30,8 +30,8 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         _inputs = inputs;
         _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveLogicGateGadgetLinkInput>(this);
 
-        _offState.SetParentGadget ( this);
-        _onState.SetParentGadget ( this);
+        _offState.SetParentGadget(this);
+        _onState.SetParentGadget(this);
 
         foreach (var input in _inputs)
         {
@@ -73,6 +73,13 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
 
         public override void DetectTrigger()
         {
+            if (InputSignalBehaviour is null)
+            {
+                DetermineTrigger(false);
+                MarkAsEvaluated();
+                return;
+            }
+
             if (Evaluation != TriggerEvaluation.Indeterminate)
             {
                 LevelScreen.GadgetManager.FlagGadgetForReEvaluation(ParentGadget);

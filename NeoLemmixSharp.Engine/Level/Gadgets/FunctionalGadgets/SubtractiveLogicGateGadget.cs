@@ -57,6 +57,12 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
 
         public override void DetectTrigger()
         {
+            if (InputSignalBehaviour is null)
+            {
+                DetermineTrigger(false);
+                MarkAsEvaluated();
+                return;
+            }
         }
 
         public void ReactToSignal()

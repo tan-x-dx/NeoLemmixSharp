@@ -15,7 +15,14 @@ public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
 
     public override void DetectTrigger()
     {
-        // Do nothing. This type is at the mercy of its input signal
+        if (InputSignalBehaviour is null)
+        {
+            DetermineTrigger(false);
+            MarkAsEvaluated();
+        }
+
+        // Otherwise do nothing.
+        // This type is at the mercy of its (not-null) input signal.
     }
 
     public void ReactToSignal()
