@@ -91,9 +91,21 @@ public sealed class GadgetManager :
         }
     }
 
-    public void ResetGadgets()
+    public void ResetForNewTick()
     {
         _gadgetsToReEvaluate.Clear();
+        _causeAndEffectData.Clear();
+        _indeterminateTriggers.Fill();
+
+        foreach (var trigger in _allTriggers)
+        {
+            trigger.Reset();
+        }
+
+        foreach (var behaviour in _allBehaviours)
+        {
+            behaviour.Reset();
+        }
     }
 
     public void Tick(bool isMajorTick)
@@ -152,22 +164,6 @@ public sealed class GadgetManager :
         _causeAndEffectData.Add(causeAndEffectLemmingData);
     }
 
-    public void ResetBehaviours()
-    {
-        _causeAndEffectData.Clear();
-        _indeterminateTriggers.Fill();
-
-        foreach (var trigger in _allTriggers)
-        {
-            trigger.Reset();
-        }
-
-        foreach (var behaviour in _allBehaviours)
-        {
-            behaviour.Reset();
-        }
-    }
-
     public void MarkTriggerAsEvaluated(GadgetTrigger gadgetTrigger)
     {
         _indeterminateTriggers.Remove(gadgetTrigger);
@@ -181,14 +177,6 @@ public sealed class GadgetManager :
         }
     }
 
-    int IPerfectHasher<GadgetTrigger>.NumberOfItems => _allTriggers.Length;
-    int IPerfectHasher<GadgetTrigger>.Hash(GadgetTrigger item) => item.Id;
-    GadgetTrigger IPerfectHasher<GadgetTrigger>.UnHash(int index) => _allTriggers[index];
-    void IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_allTriggers.Length);
-
-    int IPerfectHasher<GadgetBehaviour>.NumberOfItems => _allBehaviours.Length;
-    int IPerfectHasher<GadgetBehaviour>.Hash(GadgetBehaviour item) => item.Id;
-    GadgetBehaviour IPerfectHasher<GadgetBehaviour>.UnHash(int index) => _allBehaviours[index];
     public void GetAllGadgetsNearPosition(
         Span<uint> scratchSpaceSpan,
         Point levelPosition,
@@ -240,13 +228,24 @@ public sealed class GadgetManager :
         }
     }
 
-    public int NumberOfItems => _allGadgets.Length;
+    int IPerfectHasher<GadgetBase>.NumberOfItems => _allGadgets.Length;
     int IPerfectHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
     GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
     void IBitBufferCreator<RawBitBuffer, GadgetBase>.CreateBitBuffer(out RawBitBuffer buffer) => buffer = GetNextRawBitBuffer();
+
+    int IPerfectHasher<HitBoxGadget>.NumberOfItems => _allGadgets.Length;
     int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
     HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
     void IBitBufferCreator<RawBitBuffer, HitBoxGadget>.CreateBitBuffer(out RawBitBuffer buffer) => buffer = GetNextRawBitBuffer();
+
+    int IPerfectHasher<GadgetTrigger>.NumberOfItems => _allTriggers.Length;
+    int IPerfectHasher<GadgetTrigger>.Hash(GadgetTrigger item) => item.Id;
+    GadgetTrigger IPerfectHasher<GadgetTrigger>.UnHash(int index) => _allTriggers[index];
+    void IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_allTriggers.Length);
+
+    int IPerfectHasher<GadgetBehaviour>.NumberOfItems => _allBehaviours.Length;
+    int IPerfectHasher<GadgetBehaviour>.Hash(GadgetBehaviour item) => item.Id;
+    GadgetBehaviour IPerfectHasher<GadgetBehaviour>.UnHash(int index) => _allBehaviours[index];
 
     private unsafe RawBitBuffer GetNextRawBitBuffer()
     {

@@ -51,34 +51,57 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        var enumerator = new Enumerator(this);
+        var requiredSpanLength = _popCount;
+        var span = new Span<KeyValuePair<TKey, TValue>>(array, arrayIndex, requiredSpanLength);
+
+        CopyTo(span);
+    }
+
+    public void CopyTo(Span<KeyValuePair<TKey, TValue>> span)
+    {
+        if (span.Length < _popCount)
+            throw new ArgumentException("Destination span too short!");
+
+        var i = 0;
+        var enumerator = new BitArrayEnumerator(_bits.AsReadOnlySpan(), _popCount);
+        var hasher = _hasher;
         while (enumerator.MoveNext())
         {
-            array[arrayIndex++] = enumerator.Current;
+            var current = enumerator.Current;
+            var key = hasher.UnHash(current);
+            var value = _values[current];
+            span[i++] = new KeyValuePair<TKey, TValue>(key, value);
         }
     }
 
-    public void CopyKeysTo(Span<TKey> values)
+    public void CopyKeysTo(Span<TKey> keySpan)
     {
-        var i = 0;
-        var enumerator = new Enumerator(this);
+        if (keySpan.Length < _popCount)
+            throw new ArgumentException("Destination span too short!");
 
+        var i = 0;
+        var enumerator = new BitArrayEnumerator(_bits.AsReadOnlySpan(), _popCount);
+        var hasher = _hasher;
         while (enumerator.MoveNext())
         {
-            var key = enumerator.Current.Key;
-            values[i++] = key;
+            var current = enumerator.Current;
+            var key = hasher.UnHash(current);
+            keySpan[i++] = key;
         }
     }
 
-    public void CopyValuesTo(Span<TValue> values)
+    public void CopyValuesTo(Span<TValue> valueSpan)
     {
-        var i = 0;
-        var enumerator = new Enumerator(this);
+        if (valueSpan.Length < _popCount)
+            throw new ArgumentException("Destination span too short!");
 
+        var i = 0;
+        var enumerator = new BitArrayEnumerator(_bits.AsReadOnlySpan(), _popCount);
         while (enumerator.MoveNext())
         {
-            var value = enumerator.Current.Value;
-            values[i++] = value;
+            var current = enumerator.Current;
+            var value = _values[current];
+            valueSpan[i++] = value;
         }
     }
 
