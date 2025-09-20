@@ -17,10 +17,6 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
     private readonly HitBoxGadgetState[] _states;
 
     private HitBoxGadgetState _currentState;
-    private HitBoxGadgetState _previousState;
-
-    private int _currentStateIndex;
-    private int _nextStateIndex;
 
     // The below properties refer to the positions of the hitboxes, not the gadget itself
     public RectangularRegion CurrentBounds => CurrentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
@@ -38,9 +34,6 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         _states = states;
 
         _currentState = states[initialStateIndex];
-        _previousState = _currentState;
-        _currentStateIndex = initialStateIndex;
-        _nextStateIndex = initialStateIndex;
 
         ResizeType = resizeType;
 
@@ -56,29 +49,16 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
     {
         _lemmingTracker.Tick();
 
-        if (_currentStateIndex != _nextStateIndex)
-            ChangeStates();
-
         CurrentState.Tick();
     }
 
-    private void ChangeStates()
+    public override void SetState(int stateIndex)
     {
-        _currentStateIndex = _nextStateIndex;
-
-        _previousState = _currentState;
-        _currentState = _states[_currentStateIndex];
-
-        _previousState = _currentState;
+        _currentState = _states[stateIndex];
 
         // Changing states may change hitbox positions 
         // Force a position update to accommodate this
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
-    }
-
-    private void UpdatePreviousState()
-    {
-        _previousState = _currentState;
     }
 
     public bool ContainsPoint(Orientation orientation, Point levelPosition)
@@ -133,16 +113,12 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 
     public void Move(Point delta)
     {
-        UpdatePreviousState();
-
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(CurrentGadgetBounds.Position + delta);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
 
     public void SetPosition(Point position)
     {
-        UpdatePreviousState();
-
         CurrentGadgetBounds.Position = LevelScreen.NormalisePosition(position);
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
@@ -151,8 +127,6 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
     {
         if (ResizeType == ResizeType.None)
             return;
-
-        UpdatePreviousState();
 
         if (ResizeType.CanResizeHorizontally())
             CurrentGadgetBounds.Width += dw;
@@ -167,8 +141,6 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
     {
         if (ResizeType == ResizeType.None)
             return;
-
-        UpdatePreviousState();
 
         if (ResizeType.CanResizeHorizontally())
             CurrentGadgetBounds.Width = w;

@@ -34,6 +34,14 @@ public sealed class LevelTimerObserverGadget : GadgetBase
     {
         CurrentState.Tick();
     }
+
+    public sealed override void SetState(int stateIndex)
+    {
+        var state = stateIndex & 1;
+        _currentState = state == 0
+            ? _offState
+            : _onState;
+    }
 }
 
 public sealed class LevelTimerGadgetState : GadgetState

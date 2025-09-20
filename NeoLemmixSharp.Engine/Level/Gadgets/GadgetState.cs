@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -12,6 +13,8 @@ public abstract class GadgetState
 
     public void SetParentGadget(GadgetBase gadget)
     {
+        Debug.Assert(ParentGadget is null);
+
         ParentGadget = gadget;
         foreach (GadgetTrigger trigger in GadgetTriggers)
         {

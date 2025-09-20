@@ -28,6 +28,11 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
 
     public override void Tick() { }
 
+    public sealed override void SetState(int stateIndex)
+    {
+        _currentState = _states[stateIndex];
+    }
+
     public bool CanReleaseLemmings()
     {
         return true;

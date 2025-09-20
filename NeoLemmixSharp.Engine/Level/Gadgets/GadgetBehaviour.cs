@@ -3,18 +3,28 @@ using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
 {
+    protected GadgetBase ParentGadget = null!;
+
     private readonly int _maxTriggerCountPerTick;
     public required GadgetBehaviourName GadgetBehaviourName { get; init; }
     public required int Id { get; init; }
     public GadgetBehaviourType BehaviourType { get; }
 
     private int _currentTickTriggerCount;
+
+    public void SetParentGadget(GadgetBase gadget)
+    {
+        Debug.Assert(ParentGadget is null);
+
+        ParentGadget = gadget;
+    }
 
     public required int MaxTriggerCountPerTick
     {

@@ -38,6 +38,14 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase
         _currentState = isActive ? _onState : _offState;
     }
 
+    public sealed override void SetState(int stateIndex)
+    {
+        var state = stateIndex & 1;
+        _currentState = state == 0
+            ? _offState
+            : _onState;
+    }
+
     protected abstract bool EvaluateInputs();
 
     public sealed override SubtractiveLogicGateGadgetState CurrentState => _currentState;

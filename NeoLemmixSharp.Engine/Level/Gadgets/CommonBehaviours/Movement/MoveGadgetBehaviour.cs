@@ -4,7 +4,7 @@ using NeoLemmixSharp.IO.Data.Level.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
 
-public sealed class ConstrainedMoveGadgetBehaviour : GadgetBehaviour
+public sealed class MoveGadgetBehaviour : GadgetBehaviour
 {
     private readonly GadgetIdentifier _gadgetIdentifier;
     private readonly int _tickDelay;
@@ -13,12 +13,12 @@ public sealed class ConstrainedMoveGadgetBehaviour : GadgetBehaviour
 
     private int _tickCount;
 
-    public ConstrainedMoveGadgetBehaviour(
+    public MoveGadgetBehaviour(
         GadgetIdentifier gadgetIdentifier,
         int tickDelay,
         Point delta,
         Point limitPoint)
-        : base(GadgetBehaviourType.GadgetConstrainedMove)
+        : base(GadgetBehaviourType.GadgetMove)
     {
         _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;

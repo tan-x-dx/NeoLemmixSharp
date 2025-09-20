@@ -1,12 +1,10 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Enums;
+﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.GadgetAnimation;
 
 public sealed class AnimationLayerBehaviour : GadgetBehaviour
 {
-    private readonly Size _spriteDimensions;
     private readonly int _layer;
     private readonly int _minFrame;
     private readonly int _maxFrame;
@@ -21,16 +19,12 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     public static AnimationLayerBehaviour CreateIncrementAnimationLayerBehaviour(
         int id,
         GadgetBehaviourName gadgetBehaviourName,
-        int maxTriggerCountPerTick,
-        Size spriteDimensions,
         int layer,
         int minFrame,
         int maxFrame,
         int initialFrame)
     {
         return new AnimationLayerBehaviour(
-            GadgetBehaviourType.GadgetAnimationRenderLayer,
-            spriteDimensions,
             layer,
             minFrame,
             maxFrame,
@@ -39,23 +33,19 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
         {
             Id = id,
             GadgetBehaviourName = gadgetBehaviourName,
-            MaxTriggerCountPerTick = maxTriggerCountPerTick,
+            MaxTriggerCountPerTick = 1,
         };
     }
 
     public static AnimationLayerBehaviour CreateDecrementAnimationLayerBehaviour(
         int id,
         GadgetBehaviourName gadgetBehaviourName,
-        int maxTriggerCountPerTick,
-        Size spriteDimensions,
         int layer,
         int minFrame,
         int maxFrame,
         int initialFrame)
     {
         return new AnimationLayerBehaviour(
-            GadgetBehaviourType.GadgetAnimationRenderLayer,
-            spriteDimensions,
             layer,
             minFrame,
             maxFrame,
@@ -64,21 +54,18 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
         {
             Id = id,
             GadgetBehaviourName = gadgetBehaviourName,
-            MaxTriggerCountPerTick = maxTriggerCountPerTick,
+            MaxTriggerCountPerTick = 1,
         };
     }
 
     private AnimationLayerBehaviour(
-        GadgetBehaviourType gadgetBehaviourType,
-        Size spriteDimensions,
         int layer,
         int minFrame,
         int maxFrame,
         FrameDeltaType frameDelta,
         int initialFrame)
-        : base(gadgetBehaviourType)
+        : base(GadgetBehaviourType.GadgetAnimationRenderLayer)
     {
-        _spriteDimensions = spriteDimensions;
         _layer = layer;
         _minFrame = minFrame;
         _maxFrame = maxFrame;
@@ -109,7 +96,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
 
         _frame += (int)_frameDelta;
     }
-
+    
     protected override void OnReset()
     {
         _animationFinished = false;

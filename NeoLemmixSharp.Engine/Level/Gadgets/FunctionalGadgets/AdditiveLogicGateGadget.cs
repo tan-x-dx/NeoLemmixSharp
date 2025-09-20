@@ -44,6 +44,14 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         _currentState.Tick();
     }
 
+    public sealed override void SetState(int stateIndex)
+    {
+        var state = stateIndex & 1;
+        _currentState = state == 0
+            ? _offState
+            : _onState;
+    }
+
     private void ReactToSignal(AdditiveLogicGateGadgetLinkInput input, bool signal)
     {
         var hasChanged = signal

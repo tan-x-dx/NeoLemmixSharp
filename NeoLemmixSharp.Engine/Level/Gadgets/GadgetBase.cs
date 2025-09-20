@@ -31,6 +31,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     }
 
     public abstract void Tick();
+    public abstract void SetState(int stateIndex);
 
     public bool Equals(GadgetBase? other) => other is not null && Id == other.Id;
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBase other && Id == other.Id;

@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
@@ -29,8 +30,16 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
 
     public void SetParentData(GadgetBase parentGadget, GadgetState parentState)
     {
+        Debug.Assert(ParentGadget is null);
+        Debug.Assert(ParentState is null);
+
         ParentGadget = parentGadget;
         ParentState = parentState;
+
+        foreach (var behaviour in Behaviours)
+        {
+            behaviour.SetParentGadget(parentGadget);
+        }
     }
 
     public void Reset()
