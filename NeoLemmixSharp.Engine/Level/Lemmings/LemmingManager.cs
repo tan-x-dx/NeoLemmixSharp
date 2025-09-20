@@ -29,6 +29,8 @@ public sealed class LemmingManager :
         2 + // spacial hash grids
         3; // lemming sets
     private readonly RawArray _lemmingByteBuffer;
+    private int _bitArrayBufferUsageCount = RequiredNumberOfLemmingBitSets;
+
     private readonly LemmingSpacialHashGrid _lemmingPositionHelper;
     private readonly LemmingSpacialHashGrid _zombieSpacialHashGrid;
     private readonly LemmingSet _lemmingsToZombify;
@@ -38,8 +40,6 @@ public sealed class LemmingManager :
     private readonly int _totalNumberOfHatchLemmings;
     private readonly int _numberOfPreplacedLemmings;
     private readonly int _maxNumberOfClonedLemmings;
-
-    private int _bitArrayBufferUsageCount;
 
     private LemmingManagerData _data = new();
 
@@ -84,8 +84,6 @@ public sealed class LemmingManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _bitArrayBufferUsageCount = RequiredNumberOfLemmingBitSets;
-
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
         _lemmingByteBuffer = Helpers.AllocateBuffer<uint>(bitBufferLength * RequiredNumberOfLemmingBitSets);
 
@@ -105,10 +103,8 @@ public sealed class LemmingManager :
             InitialiseLemming(lemming);
         }
 
-        var controlPanelTextualData = LevelScreen.LevelControlPanel.TextualData;
-
         //controlPanelTextualData.SetHatchData(0);
-        controlPanelTextualData.SetLemmingData(LemmingsOut - LemmingsRemoved);
+        UpdateControlPanelLemmingData();
         //controlPanelTextualData.SetGoalData(0);
     }
 
@@ -129,7 +125,7 @@ public sealed class LemmingManager :
         else
         {
             _data.LemmingsOut++;
-            UpdateControlPanel();
+            UpdateControlPanelLemmingData();
         }
     }
 
@@ -242,10 +238,10 @@ public sealed class LemmingManager :
 
         _data.LemmingsRemoved++;
         lemming.OnRemoval(removalReason);
-        UpdateControlPanel();
+        UpdateControlPanelLemmingData();
     }
 
-    private void UpdateControlPanel()
+    private void UpdateControlPanelLemmingData()
     {
         LevelScreen.LevelControlPanel.TextualData.SetLemmingData(LemmingsOut - LemmingsRemoved);
     }
@@ -368,7 +364,7 @@ public sealed class LemmingManager :
         _data.NumberOfClonedLemmings++;
         _data.LemmingsOut++;
 
-        UpdateControlPanel();
+        UpdateControlPanelLemmingData();
 
         _lemmingPositionHelper.AddItem(clonedLemming);
 
@@ -420,11 +416,9 @@ public sealed class LemmingManager :
         LemmingManagerData* lemmingManagerSnapshotDataPointer = (LemmingManagerData*)snapshotDataPointer;
 
         _data = *lemmingManagerSnapshotDataPointer;
-
-        ResetLemmingPositions();
     }
 
-    private void ResetLemmingPositions()
+    public void ResetLemmingPositions()
     {
         _lemmingPositionHelper.Clear();
         _zombieSpacialHashGrid.Clear();

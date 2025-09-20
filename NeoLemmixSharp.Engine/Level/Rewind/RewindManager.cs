@@ -17,7 +17,6 @@ public sealed class RewindManager :
     private readonly SnapshotRecorder<SkillSetManager, SkillTrackingData> _skillSetSnapshotRecorder;
 
     private readonly SnapshotRecorder<RewindManager, LemmingManager> _lemmingManagerSnapshotRecorder;
-    private readonly SnapshotRecorder<RewindManager, GadgetManager> _gadgetManagerSnapshotRecorder;
     private readonly SnapshotRecorder<RewindManager, LevelTimer> _levelTimerRecorder;
 
     private readonly LevelEventList<SkillAssignmentEventData> _skillAssignmentList;
@@ -34,7 +33,6 @@ public sealed class RewindManager :
         _skillSetSnapshotRecorder = new SnapshotRecorder<SkillSetManager, SkillTrackingData>(skillSetManager);
 
         _lemmingManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, LemmingManager>(this);
-        _gadgetManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, GadgetManager>(this);
         _levelTimerRecorder = new SnapshotRecorder<RewindManager, LevelTimer>(this);
 
         var baseNumberOfSkillAssignments = skillSetManager.EstimateBaseNumberOfSkillAssignments(gadgetManager);
@@ -56,7 +54,6 @@ public sealed class RewindManager :
         _skillSetSnapshotRecorder.TakeSnapshot();
 
         _lemmingManagerSnapshotRecorder.TakeSnapshot();
-        _gadgetManagerSnapshotRecorder.TakeSnapshot();
         _levelTimerRecorder.TakeSnapshot();
     }
 
@@ -126,8 +123,10 @@ public sealed class RewindManager :
         _skillSetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
 
         _lemmingManagerSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
-        _gadgetManagerSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
         _levelTimerRecorder.ApplySnapshot(correspondingSnapshotNumber);
+
+        LevelScreen.LemmingManager.ResetLemmingPositions();
+        LevelScreen.GadgetManager.ResetGadgetPositions();
 
         var actualElapsedTick = correspondingSnapshotNumber * RewindConstants.RewindSnapshotInterval;
 
@@ -161,7 +160,6 @@ public sealed class RewindManager :
         _skillSetSnapshotRecorder.Dispose();
 
         _lemmingManagerSnapshotRecorder.Dispose();
-        _gadgetManagerSnapshotRecorder.Dispose();
         _levelTimerRecorder.Dispose();
 
         _skillAssignmentList.Dispose();

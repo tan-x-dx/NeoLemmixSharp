@@ -6,8 +6,10 @@ public static class TextRenderingHelpers
 {
     private const int ZeroCharAsInt = '0';
 
-    public static void WriteDigits(Span<char> span, int value, char blankCharValue = ' ')
+    public static void WriteDigits(Span<char> span, int n, char blankCharValue = ' ')
     {
+        var value = n;
+
         for (var i = span.Length - 1; i >= 0; i--)
         {
             if (value > 0)
@@ -27,17 +29,23 @@ public static class TextRenderingHelpers
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char DigitToChar(int digit) => (char)(digit | ZeroCharAsInt);
 
-    public static int GetNumberStringLength(int n) => n switch
+    public static int GetNumberStringLength(int n)
     {
-        < -9999 => 6,
-        < -999 => 5,
-        < -99 => 4,
-        < -9 => 3,
-        < 0 => 2,
-        < 10 => 1,
-        < 100 => 2,
-        < 1000 => 3,
-        < 10000 => 4,
-        _ => 5 // We're not going to be dealing with numbers above a few thousand
-    };
+        var negativeSign = 0;
+        if (n < 0)
+        {
+            negativeSign = 1;
+            n = -n;
+        }
+
+        var simpleLog10 = n switch
+        {
+            < 10 => 1,
+            < 100 => 2,
+            < 1000 => 3,
+            _ => 4 // We're not going to be dealing with numbers above a few thousand
+        };
+
+        return simpleLog10 + negativeSign;
+    }
 }

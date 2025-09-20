@@ -4,7 +4,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
-using NeoLemmixSharp.Engine.Level.Rewind;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -14,7 +13,6 @@ public sealed class GadgetManager :
     IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>,
     IPerfectHasher<GadgetBehaviour>,
     IItemManager<GadgetBase>,
-    ISnapshotDataConvertible,
     IInitialisable,
     IDisposable
 {
@@ -28,11 +26,11 @@ public sealed class GadgetManager :
         1 + // spacial hash grid
         2; // gadget sets
     private readonly RawArray _gadgetByteBuffer;
+    private int _bitArrayBufferUsageCount = RequiredNumberOfGadgetBitSets;
+
     private readonly HitBoxGadgetSpacialHashGrid _hitBoxGadgetSpacialHashGrid;
     private readonly GadgetSet _fastForwardGadgets;
     private readonly GadgetSet _gadgetsToReEvaluate;
-
-    private int _bitArrayBufferUsageCount;
 
     public ReadOnlySpan<GadgetBase> AllItems => new(_allGadgets);
     public ReadOnlySpan<GadgetBehaviour> AllBehaviours => new(_allBehaviours);
@@ -57,8 +55,6 @@ public sealed class GadgetManager :
         _allBehaviours = allBehaviours;
 
         _indeterminateTriggers = new BitArraySet<GadgetManager, ArrayBitBuffer, GadgetTrigger>(this);
-
-        _bitArrayBufferUsageCount = RequiredNumberOfGadgetBitSets;
 
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_allGadgets.Length);
         _gadgetByteBuffer = Helpers.AllocateBuffer<uint>(bitBufferLength * RequiredNumberOfGadgetBitSets);
@@ -204,18 +200,7 @@ public sealed class GadgetManager :
         _hitBoxGadgetSpacialHashGrid.UpdateItemPosition(gadget);
     }
 
-    public int GetRequiredNumberOfBytesForSnapshotting() => 1;
-
-    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
-    {
-    }
-
-    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
-    {
-        ResetGadgetPositions();
-    }
-
-    private void ResetGadgetPositions()
+    public void ResetGadgetPositions()
     {
         _hitBoxGadgetSpacialHashGrid.Clear();
 

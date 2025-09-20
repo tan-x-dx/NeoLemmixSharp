@@ -125,7 +125,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnMouseDown()
         {
-            if (_hatchGroup.ChangeSpawnInterval(-1))
+            if (_hatchGroup.AddSpawnIntervalDelta(-1))
             {
                 LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
             }
@@ -137,7 +137,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnRightClick()
         {
-            if (_hatchGroup.ChangeSpawnInterval(-1000)) // Set to extremal value - will be clamped appropriately
+            if (_hatchGroup.AddSpawnIntervalDelta(-1000)) // Add extreme value - will be clamped appropriately
             {
                 LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
             }
@@ -191,7 +191,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnMouseDown()
         {
-            if (_hatchGroup.ChangeSpawnInterval(1))
+            if (_hatchGroup.AddSpawnIntervalDelta(1))
             {
                 LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
             }
@@ -203,7 +203,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
 
         public void OnRightClick()
         {
-            if (_hatchGroup.ChangeSpawnInterval(1000)) // Set to extremal value - will be clamped appropriately
+            if (_hatchGroup.AddSpawnIntervalDelta(1000)) // Add extreme value - will be clamped appropriately
             {
                 LevelScreen.LevelControlPanel.OnSpawnIntervalChanged();
             }

@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Identity;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -33,6 +34,9 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
     {
         Id = id;
 
+        Debug.Assert(minSpawnInterval <= initialSpawnInterval);
+        Debug.Assert(initialSpawnInterval <= maxSpawnInterval);
+
         MinSpawnInterval = Math.Clamp(minSpawnInterval, EngineConstants.MinAllowedSpawnInterval, EngineConstants.MaxAllowedSpawnInterval);
         MaxSpawnInterval = Math.Clamp(maxSpawnInterval, minSpawnInterval, EngineConstants.MaxAllowedSpawnInterval);
         CurrentSpawnInterval = Math.Clamp(initialSpawnInterval, MinSpawnInterval, MaxSpawnInterval);
@@ -52,12 +56,13 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
         _lemmingsToRelease = lemmingsToRelease;
     }
 
-    public bool ChangeSpawnInterval(int spawnIntervalDelta)
+    public bool AddSpawnIntervalDelta(int spawnIntervalDelta)
     {
         var previousSpawnInterval = CurrentSpawnInterval;
-        CurrentSpawnInterval = Math.Clamp(CurrentSpawnInterval + spawnIntervalDelta, MinSpawnInterval, MaxSpawnInterval);
+        var newSpawnInterval = Math.Clamp(previousSpawnInterval + spawnIntervalDelta, MinSpawnInterval, MaxSpawnInterval);
+        CurrentSpawnInterval = newSpawnInterval;
 
-        return previousSpawnInterval != CurrentSpawnInterval;
+        return previousSpawnInterval != newSpawnInterval;
     }
 
     public HatchGadget? Tick()
@@ -77,21 +82,25 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
     private HatchGadget? GetNextLogicalHatchGadget()
     {
         var c = _hatches.Length;
+        var hatchIndex = _hatchIndex;
 
         do
         {
-            _hatchIndex++;
             c--;
-            if (_hatchIndex == _hatches.Length)
-            {
-                _hatchIndex = 0;
-            }
-            var hatchGadget = _hatches[_hatchIndex];
+            hatchIndex++;
+            if (hatchIndex == _hatches.Length)
+                hatchIndex = 0;
+
+            var hatchGadget = _hatches[hatchIndex];
 
             if (hatchGadget.CanReleaseLemmings())
+            {
+                _hatchIndex = hatchIndex;
                 return hatchGadget;
+            }
         } while (c > 0);
 
+        _hatchIndex = hatchIndex;
         return null;
     }
 
