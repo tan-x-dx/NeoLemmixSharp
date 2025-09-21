@@ -84,13 +84,13 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         var lemmingBehaviours = activeFilter.OnLemmingHitBehaviours;
         foreach (var lemmingBehaviour in lemmingBehaviours)
         {
-            gadgetManager.RegisterCauseAndEffectData(new CauseAndEffectData(lemmingBehaviour.Id, lemming.Id));
+            gadgetManager.RegisterCauseAndEffectData(lemmingBehaviour, lemming.Id);
         }
 
         var hitBoxLemmingBehaviours = GetHitBoxLemmingBehaviours(activeFilter, lemming);
         foreach (var lemmingBehaviour in hitBoxLemmingBehaviours)
         {
-            gadgetManager.RegisterCauseAndEffectData(new CauseAndEffectData(lemmingBehaviour.Id, lemming.Id));
+            gadgetManager.RegisterCauseAndEffectData(lemmingBehaviour, lemming.Id);
         }
     }
 

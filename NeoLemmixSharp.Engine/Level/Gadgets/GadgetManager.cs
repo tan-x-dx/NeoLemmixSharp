@@ -155,9 +155,14 @@ public sealed class GadgetManager :
         }
     }
 
-    public void RegisterCauseAndEffectData(CauseAndEffectData causeAndEffectLemmingData)
+    public void RegisterCauseAndEffectData(GadgetBehaviour behaviour)
     {
-        _causeAndEffectData.Add(causeAndEffectLemmingData);
+        _causeAndEffectData.Add(new CauseAndEffectData(behaviour.Id, 0));
+    }
+
+    public void RegisterCauseAndEffectData(GadgetBehaviour behaviour, int payload)
+    {
+        _causeAndEffectData.Add(new CauseAndEffectData(behaviour.Id, payload));
     }
 
     public void MarkTriggerAsEvaluated(GadgetTrigger gadgetTrigger)

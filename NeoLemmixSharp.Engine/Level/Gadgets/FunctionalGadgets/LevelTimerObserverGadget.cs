@@ -6,23 +6,32 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public sealed class LevelTimerObserverGadget : GadgetBase
 {
-    private readonly LevelTimerTrigger _trigger;
-
     private readonly LevelTimerGadgetState _offState;
     private readonly LevelTimerGadgetState _onState;
+    private readonly OutputSignalBehaviour _outputSignalBehaviour;
+    private readonly LevelTimerObservationType _observationType;
+    private readonly ComparisonType _comparisonType;
+    private readonly int _requiredValue;
 
     private LevelTimerGadgetState _currentState;
 
     public LevelTimerObserverGadget(
-        LevelTimerTrigger trigger,
         LevelTimerGadgetState offState,
-        LevelTimerGadgetState onState)
+        LevelTimerGadgetState onState,
+        OutputSignalBehaviour outputSignalBehaviour,
+        LevelTimerObservationType observationType,
+        ComparisonType comparisonType,
+        int requiredValue)
         : base(GadgetType.LevelTimerObserver)
     {
-        _trigger = trigger;
         _offState = offState;
         _onState = onState;
         _currentState = _offState;
+        _outputSignalBehaviour = outputSignalBehaviour;
+
+        _observationType = observationType;
+        _comparisonType = comparisonType;
+        _requiredValue = requiredValue;
 
         _offState.SetParentGadget(this);
         _onState.SetParentGadget(this);
@@ -32,7 +41,26 @@ public sealed class LevelTimerObserverGadget : GadgetBase
 
     public override void Tick()
     {
+        if (LevelTimerMatchesParameters())
+        {
+            LevelScreen.GadgetManager.RegisterCauseAndEffectData(_outputSignalBehaviour);
+            _currentState = _onState;
+        }
+        else
+        {
+            _currentState = _offState;
+        }
+
         CurrentState.Tick();
+    }
+
+    public bool LevelTimerMatchesParameters()
+    {
+        var comparisonValue = _observationType == LevelTimerObservationType.SecondsElapsed
+            ? LevelScreen.LevelTimer.EffectiveElapsedSeconds
+            : LevelScreen.LevelTimer.EffectiveSecondsRemaining;
+
+        return _comparisonType.ComparisonMatches(comparisonValue, _requiredValue);
     }
 
     public sealed override void SetState(int stateIndex)
@@ -47,49 +75,4 @@ public sealed class LevelTimerObserverGadget : GadgetBase
 public sealed class LevelTimerGadgetState : GadgetState
 {
     public override GadgetRenderer Renderer { get; }
-}
-
-public sealed class LevelTimerTrigger : GadgetTrigger
-{
-    private readonly OutputSignalBehaviour _outputSignalBehaviour;
-    private readonly LevelTimerTriggerParameters _levelTimerTriggerParameters;
-
-    public LevelTimerTrigger(
-        OutputSignalBehaviour outputSignalBehaviour,
-        LevelTimerTriggerParameters levelTimerTriggerParameters)
-        : base(GadgetTriggerType.GlobalLevelTimerTrigger)
-    {
-        _outputSignalBehaviour = outputSignalBehaviour;
-        _levelTimerTriggerParameters = levelTimerTriggerParameters;
-    }
-
-    public override void DetectTrigger()
-    {
-        MarkAsEvaluated();
-        if (LevelTimerMatchesParameters())
-        {
-            DetermineTrigger(true);
-            LevelScreen.GadgetManager.RegisterCauseAndEffectData(new CauseAndEffectData(_outputSignalBehaviour.Id, 1));
-        }
-        else
-        {
-            DetermineTrigger(false);
-        }
-    }
-
-    public bool LevelTimerMatchesParameters()
-    {
-        var comparisonValue = _levelTimerTriggerParameters.ObservationType == LevelTimerObservationType.SecondsElapsed
-            ? LevelScreen.LevelTimer.EffectiveElapsedSeconds
-            : LevelScreen.LevelTimer.EffectiveSecondsRemaining;
-
-        return _levelTimerTriggerParameters.ComparisonType.ComparisonMatches(comparisonValue, _levelTimerTriggerParameters.RequiredValue);
-    }
-}
-
-public readonly struct LevelTimerTriggerParameters(LevelTimerObservationType observationType, ComparisonType comparisonType, int requiredValue)
-{
-    public readonly LevelTimerObservationType ObservationType = observationType;
-    public readonly ComparisonType ComparisonType = comparisonType;
-    public readonly int RequiredValue = requiredValue;
 }

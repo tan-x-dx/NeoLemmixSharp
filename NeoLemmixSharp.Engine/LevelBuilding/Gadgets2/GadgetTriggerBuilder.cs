@@ -1,9 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
-using NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
@@ -36,7 +34,7 @@ public readonly ref struct GadgetTriggerBuilder
         var gadgetBehaviourBuilder = new GadgetBehaviourBuilder(_gadgetIdentifier, _gadgetBehaviours);
         var behaviourLookup = gadgetBehaviourBuilder.BuildBehaviourLookup(gadgetStateArchetypeData.InnateBehaviours, gadgetStateInstanceData.CustomBehaviours);
 
-        var allTriggerBehaviourLinks = Helpers.CombineSpans(gadgetStateArchetypeData.TriggerBehaviourLinks, gadgetStateInstanceData.CustomTriggerBehaviourLinks);
+        var allTriggerBehaviourLinks = GetGadgetTriggerBehaviourLinks(gadgetStateArchetypeData.TriggerBehaviourLinks, gadgetStateInstanceData.CustomTriggerBehaviourLinks);
 
         var result = Helpers.GetArrayForSize<GadgetTrigger>(gadgetStateArchetypeData.InnateTriggers.Length + gadgetStateInstanceData.CustomTriggers.Length);
         var i = 0;
@@ -58,10 +56,28 @@ public readonly ref struct GadgetTriggerBuilder
         return result;
     }
 
+    private static HashSet<GadgetTriggerBehaviourLink> GetGadgetTriggerBehaviourLinks(
+        ReadOnlySpan<GadgetTriggerBehaviourLink> innateTriggerBehaviourLinks,
+        ReadOnlySpan<GadgetTriggerBehaviourLink> customTriggerBehaviourLinks)
+    {
+        var result = new HashSet<GadgetTriggerBehaviourLink>(innateTriggerBehaviourLinks.Length + customTriggerBehaviourLinks.Length);
+
+        foreach (var link in innateTriggerBehaviourLinks)
+        {
+            result.Add(link);
+        }
+        foreach (var link in customTriggerBehaviourLinks)
+        {
+            result.Add(link);
+        }
+
+        return result;
+    }
+
     private GadgetTrigger BuildTrigger(
         in GadgetTriggerData gadgetTriggerDatum,
         Dictionary<GadgetBehaviourName, GadgetBehaviour> behaviourLookup,
-        ReadOnlySpan<GadgetTriggerBehaviourLink> allTriggerBehaviourLinks)
+        HashSet<GadgetTriggerBehaviourLink> allTriggerBehaviourLinks)
     {
         var newTriggerId = _gadgetTriggers.Count;
         var behavioursForTrigger = GetBehavioursMentionedByTrigger(behaviourLookup, allTriggerBehaviourLinks, gadgetTriggerDatum.GadgetTriggerName);
@@ -75,7 +91,7 @@ public readonly ref struct GadgetTriggerBuilder
             GadgetTriggerType.GadgetPositionTrigger => BuildGadgetPositionTrigger(in gadgetTriggerDatum, newTriggerId, behavioursForTrigger),
             GadgetTriggerType.GadgetAnimationFinished => BuildGadgetAnimationFinishedTrigger(in gadgetTriggerDatum, newTriggerId, behavioursForTrigger),
             GadgetTriggerType.LemmingHitBoxTrigger => throw new InvalidOperationException("Cannot build LemmingHitBoxTrigger here!"),
-            GadgetTriggerType.GlobalLevelTimerTrigger => BuildGlobalLevelTimerTrigger(in gadgetTriggerDatum, newTriggerId, behavioursForTrigger),
+            //GadgetTriggerType.GlobalLevelTimerTrigger => BuildGlobalLevelTimerTrigger(in gadgetTriggerDatum, newTriggerId, behavioursForTrigger),
 
             _ => Helpers.ThrowUnknownEnumValueException<GadgetTriggerType, GadgetTrigger>(gadgetTriggerDatum.GadgerTriggerType)
         };
@@ -148,7 +164,7 @@ public readonly ref struct GadgetTriggerBuilder
     {
         throw new NotImplementedException();
     }
-
+    /*
     private static LevelTimerTrigger BuildGlobalLevelTimerTrigger(
         in GadgetTriggerData gadgetTriggerDatum,
         int newTriggerId,
@@ -175,10 +191,10 @@ public readonly ref struct GadgetTriggerBuilder
             Behaviours = []
         };
     }
-
+    */
     private static GadgetBehaviour[] GetBehavioursMentionedByTrigger(
         Dictionary<GadgetBehaviourName, GadgetBehaviour> behaviourLookup,
-        ReadOnlySpan<GadgetTriggerBehaviourLink> allTriggerBehaviourLinks,
+        HashSet<GadgetTriggerBehaviourLink> allTriggerBehaviourLinks,
         GadgetTriggerName gadgetTriggerName)
     {
         var resultLength = GetNumberOfBehavioursMentionedByTrigger(allTriggerBehaviourLinks, gadgetTriggerName);
@@ -200,7 +216,7 @@ public readonly ref struct GadgetTriggerBuilder
     }
 
     private static int GetNumberOfBehavioursMentionedByTrigger(
-        ReadOnlySpan<GadgetTriggerBehaviourLink> allTriggerBehaviourLinks,
+        HashSet<GadgetTriggerBehaviourLink> allTriggerBehaviourLinks,
         GadgetTriggerName gadgetTriggerName)
     {
         var i = 0;

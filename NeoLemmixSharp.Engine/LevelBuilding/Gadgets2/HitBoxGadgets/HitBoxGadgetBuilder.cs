@@ -10,7 +10,7 @@ using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadgetGadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;
 
@@ -144,47 +144,59 @@ public readonly ref struct HitBoxGadgetBuilder
         var i = 0;
         foreach (var mainHitBoxFilterInstanceDatum in mainHitBoxFilterData)
         {
-            var correspondingAlternateHitBoxFilterInstanceDatum = GetCorrespondingHitBoxFilterInstanceData(mainHitBoxFilterInstanceDatum.HitBoxFilterName, alternateHitBoxFilterData);
-
-            var solidityType = mainHitBoxFilterInstanceDatum.SolidityType;
-            var hitBoxInteractionType = mainHitBoxFilterInstanceDatum.HitBoxBehaviour;
-            var gadgetTriggerName = mainHitBoxFilterInstanceDatum.HitBoxFilterName.ToTriggerName();
-
-            ReadOnlySpan<GadgetBehaviourData> alternateLemmingHitBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingHitBehaviours ?? [];
-            ReadOnlySpan<GadgetBehaviourData> alternateLemmingEnterBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingEnterBehaviours ?? [];
-            ReadOnlySpan<GadgetBehaviourData> alternateLemmingPresentBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingPresentBehaviours ?? [];
-            ReadOnlySpan<GadgetBehaviourData> alternateLemmingExitBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingExitBehaviours ?? [];
-
-            var lemmingCriteriaBuilder = new LemmingCriteriaBuilder(tribeManager, instanceOrientation, instanceFacingDirection);
-            var lemmingCriteria = lemmingCriteriaBuilder.BuildLemmingCriteria(mainHitBoxFilterInstanceDatum.HitBoxCriteria);
-            var onLemmingHitBehaviours = behaviourBuilder.BuildBehaviours(mainHitBoxFilterInstanceDatum.OnLemmingHitBehaviours, alternateLemmingHitBehaviours);
-            var onLemmingEnterBehaviours = behaviourBuilder.BuildBehaviours(mainHitBoxFilterInstanceDatum.OnLemmingEnterBehaviours, alternateLemmingEnterBehaviours);
-            var onLemmingPresentBehaviours = behaviourBuilder.BuildBehaviours(mainHitBoxFilterInstanceDatum.OnLemmingPresentBehaviours, alternateLemmingPresentBehaviours);
-            var onLemmingExitBehaviours = behaviourBuilder.BuildBehaviours(mainHitBoxFilterInstanceDatum.OnLemmingExitBehaviours, alternateLemmingExitBehaviours);
-
-            var newHitBoxFilter = new LemmingHitBoxFilter(
-                solidityType,
-                hitBoxInteractionType,
-                lemmingCriteria,
-                onLemmingHitBehaviours,
-                onLemmingEnterBehaviours,
-                onLemmingPresentBehaviours,
-                onLemmingExitBehaviours)
-            {
-                Id = _gadgetTriggers.Count,
-                TriggerName = gadgetTriggerName,
-                Behaviours = []
-            };
+            var newHitBoxFilter = BuildHitBoxFilter(alternateHitBoxFilterData, instanceOrientation, instanceFacingDirection, tribeManager, behaviourBuilder, mainHitBoxFilterInstanceDatum);
 
             _gadgetTriggers.Add(newHitBoxFilter);
-
             result[i++] = newHitBoxFilter;
         }
 
         return result;
     }
 
-    private static HitBoxFilterData? GetCorrespondingHitBoxFilterInstanceData(HitBoxFilterName hitBoxFilterName, ReadOnlySpan<HitBoxFilterData> hitBoxFilterData)
+    private LemmingHitBoxFilter BuildHitBoxFilter(
+        ReadOnlySpan<HitBoxFilterData> alternateHitBoxFilterData,
+        Orientation instanceOrientation, 
+        FacingDirection instanceFacingDirection,
+        TribeManager tribeManager,
+        GadgetBehaviourBuilder behaviourBuilder, 
+        HitBoxFilterData mainHitBoxFilterInstanceDatum)
+    {
+        var correspondingAlternateHitBoxFilterInstanceDatum = GetCorrespondingHitBoxFilterInstanceData(mainHitBoxFilterInstanceDatum.HitBoxFilterName, alternateHitBoxFilterData);
+
+        var solidityType = mainHitBoxFilterInstanceDatum.SolidityType;
+        var hitBoxInteractionType = mainHitBoxFilterInstanceDatum.HitBoxBehaviour;
+        var gadgetTriggerName = mainHitBoxFilterInstanceDatum.HitBoxFilterName;
+
+        ReadOnlySpan<GadgetBehaviourData> alternateLemmingHitBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingHitBehaviours ?? [];
+        ReadOnlySpan<GadgetBehaviourData> alternateLemmingEnterBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingEnterBehaviours ?? [];
+        ReadOnlySpan<GadgetBehaviourData> alternateLemmingPresentBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingPresentBehaviours ?? [];
+        ReadOnlySpan<GadgetBehaviourData> alternateLemmingExitBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingExitBehaviours ?? [];
+
+        var lemmingCriteriaBuilder = new LemmingCriteriaBuilder(tribeManager, instanceOrientation, instanceFacingDirection);
+        var lemmingCriteria = lemmingCriteriaBuilder.BuildLemmingCriteria(mainHitBoxFilterInstanceDatum.HitBoxCriteria);
+        var onLemmingHitBehaviours = behaviourBuilder.BuildBehaviours(mainHitBoxFilterInstanceDatum.OnLemmingHitBehaviours, alternateLemmingHitBehaviours);
+        var onLemmingEnterBehaviours = behaviourBuilder.BuildBehaviours(mainHitBoxFilterInstanceDatum.OnLemmingEnterBehaviours, alternateLemmingEnterBehaviours);
+        var onLemmingPresentBehaviours = behaviourBuilder.BuildBehaviours(mainHitBoxFilterInstanceDatum.OnLemmingPresentBehaviours, alternateLemmingPresentBehaviours);
+        var onLemmingExitBehaviours = behaviourBuilder.BuildBehaviours(mainHitBoxFilterInstanceDatum.OnLemmingExitBehaviours, alternateLemmingExitBehaviours);
+
+        var newHitBoxFilter = new LemmingHitBoxFilter(
+            solidityType,
+            hitBoxInteractionType,
+            lemmingCriteria,
+            onLemmingHitBehaviours,
+            onLemmingEnterBehaviours,
+            onLemmingPresentBehaviours,
+            onLemmingExitBehaviours)
+        {
+            Id = _gadgetTriggers.Count,
+            TriggerName = gadgetTriggerName,
+            Behaviours = []
+        };
+
+        return newHitBoxFilter;
+    }
+
+    private static HitBoxFilterData? GetCorrespondingHitBoxFilterInstanceData(GadgetTriggerName hitBoxFilterName, ReadOnlySpan<HitBoxFilterData> hitBoxFilterData)
     {
         foreach (var hitBoxFilterDatum in hitBoxFilterData)
         {

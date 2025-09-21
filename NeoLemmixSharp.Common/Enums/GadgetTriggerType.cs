@@ -13,9 +13,7 @@ public enum GadgetTriggerType
     GadgetLinkTrigger,
     GadgetPositionTrigger,
     GadgetAnimationFinished,
-    LemmingHitBoxTrigger,
-
-    GlobalLevelTimerTrigger
+    LemmingHitBoxTrigger
 }
 
 public readonly struct GadgetTriggerTypeHasher : IEnumIdentifierHelper<GadgetTriggerTypeHasher.GadgetTriggerTypeBitBuffer, GadgetTriggerType>

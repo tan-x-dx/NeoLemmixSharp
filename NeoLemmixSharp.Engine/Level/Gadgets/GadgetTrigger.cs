@@ -73,7 +73,7 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
     {
         foreach (var behaviour in Behaviours)
         {
-            LevelScreen.GadgetManager.RegisterCauseAndEffectData(new CauseAndEffectData(behaviour.Id, 1));
+            LevelScreen.GadgetManager.RegisterCauseAndEffectData(behaviour);
         }
     }
 

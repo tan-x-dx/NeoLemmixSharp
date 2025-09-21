@@ -4,12 +4,12 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.Functional;
 using NeoLemmixSharp.IO.Data.Level.Gadget.HatchGadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.LogicGateGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
 
@@ -114,89 +114,74 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
     private HitBoxGadgetTypeInstanceData ReadHitBoxGadgetTypeDatum(RawLevelFileDataReader reader)
     {
-        var layerColorData = ReadLayerColorData(reader);
-
         return new HitBoxGadgetTypeInstanceData()
         {
             InitialStateId = 0,
-            GadgetStates = [],
-            LayerColorData = layerColorData,
+            GadgetStates = []
         };
     }
 
     private HatchGadgetTypeInstanceData ReadHatchGadgetTypeDatum(RawLevelFileDataReader reader)
     {
+        int hatchGroupId = reader.Read8BitUnsignedInteger();
+        int tribeId = reader.Read8BitUnsignedInteger();
+        FileReadingException.ReaderAssert(tribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe ID!");
+        uint rawStateData = reader.Read32BitUnsignedInteger();
+        int numberOfLemmingsToRelease = reader.Read16BitUnsignedInteger();
+        FileReadingException.ReaderAssert(numberOfLemmingsToRelease < EngineConstants.MaxNumberOfLemmings, "Too many lemmings specified!");
 
         return new HatchGadgetTypeInstanceData()
         {
             InitialStateId = 0,
             GadgetStates = [],
-            HatchGroupId = 0,
-            TribeId = 0,
-            RawStateData = 0,
-            NumberOfLemmingsToRelease = 0,
+            HatchGroupId = hatchGroupId,
+            TribeId = tribeId,
+            RawStateData = rawStateData,
+            NumberOfLemmingsToRelease = numberOfLemmingsToRelease,
         };
     }
 
     private LogicGateGadgetTypeInstanceData ReadLogicGateGadgetTypeDatum(RawLevelFileDataReader reader)
     {
-        throw new NotImplementedException();
-    }
+        uint rawGadgetType = reader.Read8BitUnsignedInteger();
+        LogicGateGadgetType logicGateGadgetType = LogicGateGadgetTypeHelpers.GetEnumValue(rawGadgetType);
 
-    private IGadgetTypeInstanceData ReadLevelTimerObserverGadgetTypeDatum(RawLevelFileDataReader reader)
-    {
-        throw new NotImplementedException();
-    }
+        int numberOfInputs = reader.Read8BitUnsignedInteger();
+        FileReadingException.ReaderAssert(numberOfInputs <= EngineConstants.MaxAllowedNumberOfGadgetTriggers, "Too many triggers specified for logic gate!");
+        AssertNumberOfInputsMakesSense();
 
-    private GadgetTriggerName[] ReadOverrideInputNames(RawLevelFileDataReader reader)
-    {
-        int numberOfInputNames = reader.Read8BitUnsignedInteger();
-
-        var result = Helpers.GetArrayForSize<GadgetTriggerName>(numberOfInputNames);
-
-        for (var i = 0; i < result.Length; i++)
+        return new LogicGateGadgetTypeInstanceData()
         {
-            int inputNameStringId = reader.Read16BitUnsignedInteger();
-            var inputName = _stringIdLookup[inputNameStringId];
-            result[i] = new GadgetTriggerName(inputName);
-        }
+            LogicGateGadgetType = logicGateGadgetType,
+            NumberOfInputs = numberOfInputs
+        };
 
-        return result;
+        void AssertNumberOfInputsMakesSense()
+        {
+            switch (logicGateGadgetType)
+            {
+                case LogicGateGadgetType.AndGate: FileReadingException.ReaderAssert(numberOfInputs >= 2, "Less than two inputs specified for AND gate!"); break;
+                case LogicGateGadgetType.OrGate: FileReadingException.ReaderAssert(numberOfInputs >= 2, "Less than two inputs specified for OR gate!"); break;
+                case LogicGateGadgetType.NotGate: FileReadingException.ReaderAssert(numberOfInputs == 1, "Expected ONE input for NOT gate!"); break;
+                case LogicGateGadgetType.XorGate: FileReadingException.ReaderAssert(numberOfInputs == 2, "Less TWO inputs for XOR gate!"); break;
+            }
+        }
     }
 
-    private static GadgetLayerColorData[] ReadLayerColorData(RawLevelFileDataReader reader)
+    private static LevelTimerObserverGadgetInstanceData ReadLevelTimerObserverGadgetTypeDatum(RawLevelFileDataReader reader)
     {
-        int numberOfColorData = reader.Read8BitUnsignedInteger();
+        uint rawObservationType = reader.Read8BitUnsignedInteger();
+        LevelTimerObservationType observationType = LevelTimerObservationTypeHelpers.GetEnumValue(rawObservationType);
+        uint rawComparisonType = reader.Read8BitUnsignedInteger();
+        ComparisonType comparisonType = ComparisonTypeHelpers.GetEnumValue(rawComparisonType);
+        int requiredValue = reader.Read16BitUnsignedInteger();
 
-        var result = Helpers.GetArrayForSize<GadgetLayerColorData>(numberOfColorData);
-
-        for (var i = 0; i < result.Length; i++)
+        return new LevelTimerObserverGadgetInstanceData()
         {
-            result[i] = ReadLayerColorDatum(reader);
-        }
-
-        return result;
-    }
-
-    private static GadgetLayerColorData ReadLayerColorDatum(RawLevelFileDataReader reader)
-    {
-        int stateIndex = reader.Read8BitUnsignedInteger();
-        int layerIndex = reader.Read8BitUnsignedInteger();
-
-        bool usesSpecificColor = reader.ReadBool();
-
-        if (usesSpecificColor)
-        {
-            var colorBytes = reader.ReadBytes(4);
-            var color = ReadWriteHelpers.ReadArgbBytes(colorBytes);
-            return new GadgetLayerColorData(stateIndex, layerIndex, color);
-        }
-
-        int tribeId = reader.Read8BitUnsignedInteger();
-        uint rawTribeSpriteLayerColorType = reader.Read8BitUnsignedInteger();
-        var spriteLayerColorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawTribeSpriteLayerColorType);
-
-        return new GadgetLayerColorData(stateIndex, layerIndex, tribeId, spriteLayerColorType);
+            ObservationType = observationType,
+            ComparisonType = comparisonType,
+            RequiredValue = requiredValue,
+        };
     }
 
     private static HitBoxCriteriaData? ReadOverrideHitBoxCriteriaData(RawLevelFileDataReader reader)

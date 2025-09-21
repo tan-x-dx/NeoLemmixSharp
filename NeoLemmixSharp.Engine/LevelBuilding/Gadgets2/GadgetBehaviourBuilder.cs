@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Enums;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
@@ -10,6 +11,7 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using NeoLemmixSharp.IO.Util;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 
@@ -172,7 +174,26 @@ public readonly ref struct GadgetBehaviourBuilder
         frameData >>>= 8;
         var layer = frameData & 0xff;
 
-        var isIncrement = (gadgetBehaviourDatum.Data2 & 1) == 0;
+        var layerColorData = gadgetBehaviourDatum.Data2;
+        var isIncrement = (layerColorData & 1) == 0;
+        layerColorData >>>= 1;
+        var isTribeColorLayer = (layerColorData & 1) != 0;
+
+        GadgetLayerColorData gadgetLayerColorData;
+        if (isTribeColorLayer)
+        {
+            var rawTribeData = gadgetBehaviourDatum.Data3;
+            var tribeId = rawTribeData & 0xff;
+            rawTribeData >>>= 8;
+            var tribeColorLayerType = TribeSpriteLayerColorTypeHelpers.GetEnumValue((uint)(rawTribeData & 0xff));
+            gadgetLayerColorData = new GadgetLayerColorData(tribeId, tribeColorLayerType);
+        }
+        else
+        {
+            var rawColor = gadgetBehaviourDatum.Data3;
+            var color = Unsafe.As<int, Color>(ref rawColor);
+            gadgetLayerColorData = new GadgetLayerColorData(color);
+        }
 
         if (isIncrement)
         {
@@ -182,7 +203,8 @@ public readonly ref struct GadgetBehaviourBuilder
                 layer,
                 minFrame,
                 maxFrame,
-                initialFrame);
+                initialFrame,
+                gadgetLayerColorData);
         }
         else
         {
@@ -192,7 +214,8 @@ public readonly ref struct GadgetBehaviourBuilder
                 layer,
                 minFrame,
                 maxFrame,
-                initialFrame);
+                initialFrame,
+                gadgetLayerColorData);
         }
     }
 
