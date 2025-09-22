@@ -7,8 +7,6 @@ namespace NeoLemmixSharp.Common.Enums;
 
 public enum GadgetTriggerType
 {
-    None,
-
     AlwaysTrue,
     GadgetLinkTrigger,
     GadgetPositionTrigger,
@@ -18,7 +16,7 @@ public enum GadgetTriggerType
 
 public readonly struct GadgetTriggerTypeHasher : IEnumIdentifierHelper<GadgetTriggerTypeHasher.GadgetTriggerTypeBitBuffer, GadgetTriggerType>
 {
-    private const int NumberOfEnumValues = 6;
+    private const int NumberOfEnumValues = 5;
     public static GadgetTriggerType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetTriggerType>(rawValue, NumberOfEnumValues);
 
     public int NumberOfItems => NumberOfEnumValues;

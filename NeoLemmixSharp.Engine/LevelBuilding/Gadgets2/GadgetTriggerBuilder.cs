@@ -84,8 +84,6 @@ public readonly ref struct GadgetTriggerBuilder
 
         GadgetTrigger result = gadgetTriggerDatum.GadgerTriggerType switch
         {
-            GadgetTriggerType.None => throw new InvalidOperationException("Invalid Trigger Type!"),
-
             GadgetTriggerType.AlwaysTrue => BuildAlwaysTrueGadgetTrigger(in gadgetTriggerDatum, newTriggerId, behavioursForTrigger),
             GadgetTriggerType.GadgetLinkTrigger => BuildGadgetLinkTrigger(in gadgetTriggerDatum, newTriggerId, behavioursForTrigger),
             GadgetTriggerType.GadgetPositionTrigger => BuildGadgetPositionTrigger(in gadgetTriggerDatum, newTriggerId, behavioursForTrigger),

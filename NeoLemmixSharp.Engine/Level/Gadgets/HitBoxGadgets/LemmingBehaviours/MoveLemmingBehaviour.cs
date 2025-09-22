@@ -7,9 +7,8 @@ public sealed class MoveLemmingBehaviour : LemmingBehaviour
 {
     private readonly Point _deltaPosition;
 
-    public MoveLemmingBehaviour(
-        Point deltaPosition)
-        : base(LemmingBehaviourType.LemmingMover)
+    public MoveLemmingBehaviour(Point deltaPosition)
+        : base(LemmingBehaviourType.MoveLemming)
     {
         _deltaPosition = deltaPosition;
     }
