@@ -18,6 +18,7 @@ internal readonly struct FileWriterStringIdLookup
     internal ushort GetStringId(StyleIdentifier styleIdentifier) => GetStringId(styleIdentifier.ToString());
     [Pure]
     internal ushort GetStringId(PieceIdentifier pieceIdentifier) => GetStringId(pieceIdentifier.ToString());
+    [Pure]
     internal ushort GetStringId(GadgetName gadgetInputName) => GetStringId(gadgetInputName.ToString());
     [Pure]
     internal ushort GetStringId(GadgetTriggerName gadgetInputName) => GetStringId(gadgetInputName.ToString());

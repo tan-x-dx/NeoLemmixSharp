@@ -1,12 +1,12 @@
 ﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
-namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadgetGadget;
+namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 
 public sealed class HitBoxFilterData
 {
-    public required HitBoxFilterName HitBoxFilterName { get; init; }
+    public required GadgetTriggerName HitBoxFilterName { get; init; }
     public required LemmingSolidityType SolidityType { get; init; }
     public required HitBoxInteractionType HitBoxBehaviour { get; init; }
     public required HitBoxCriteriaData[] HitBoxCriteria { get; init; }

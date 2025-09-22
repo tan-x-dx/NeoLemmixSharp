@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -11,10 +12,10 @@ public sealed class InputController :
 {
     private const int NumberOfKeys = 256;
 
-    private readonly List<KeyToInputMapping> _keyMapping = new(16);
+    private readonly SimpleList<KeyToInputMapping> _keyMapping = new(16);
     private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _pressedKeys;
     private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _releasedKeys;
-    private readonly List<InputAction> _inputActions = new(16);
+    private readonly SimpleList<InputAction> _inputActions = new(16);
 
     private int _previousScrollValue;
 
@@ -56,20 +57,21 @@ public sealed class InputController :
 
     public void ValidateInputActions()
     {
-        this.AssertUniqueIds<InputController, InputAction>(CollectionsMarshal.AsSpan(_inputActions));
-        _inputActions.Sort(this);
+        var inputActionsSpan = _inputActions.AsSpan();
+        this.AssertUniqueIds<InputController, InputAction>(inputActionsSpan);
+        inputActionsSpan.Sort(this);
     }
 
     public void Tick()
     {
-        var inputActionsSpan = CollectionsMarshal.AsSpan(_inputActions);
+        var inputActionsSpan = _inputActions.AsSpan();
 
         foreach (var keyAction in inputActionsSpan)
         {
             keyAction.UpdateState();
         }
 
-        var keyMappingSpan = CollectionsMarshal.AsSpan(_keyMapping);
+        var keyMappingSpan = _keyMapping.AsSpan();
 
         foreach (var keyToInputMapping in keyMappingSpan)
         {
@@ -88,7 +90,7 @@ public sealed class InputController :
         _pressedKeys.Clear();
         _releasedKeys.Clear();
 
-        var inputActionsSpan = CollectionsMarshal.AsSpan(_inputActions);
+        var inputActionsSpan = _inputActions.AsSpan();
 
         foreach (var inputAction in inputActionsSpan)
         {
@@ -96,16 +98,18 @@ public sealed class InputController :
         }
     }
 
-    private void UpdateKeyStates()
+    private unsafe void UpdateKeyStates()
     {
-        ReadOnlySpan<Keys> currentlyPressedKeys = Keyboard.GetState().GetPressedKeys();
+        // Doing it this way prevents allocation of an array.
+        // The actual data we want happens to be bit-encoded
+        // in the same way as a BitArraySet would do.
+        // Just copy it in...
+        var keyBoardState = Keyboard.GetState();
+        void* p = &keyBoardState;
+        var keysSpan = new ReadOnlySpan<uint>(p, KeysBitBuffer.KeysBitBufferLength);
 
         _releasedKeys.SetFrom(_pressedKeys);
-        _pressedKeys.Clear();
-        foreach (var key in currentlyPressedKeys)
-        {
-            _pressedKeys.Add(key);
-        }
+        _pressedKeys.ReadFrom(keysSpan);
 
         _releasedKeys.ExceptWith(_pressedKeys);
     }
@@ -135,16 +139,12 @@ public sealed class InputController :
     InputAction IPerfectHasher<InputAction>.UnHash(int index) => _inputActions[index];
     void IBitBufferCreator<KeysBitBuffer, Keys>.CreateBitBuffer(out KeysBitBuffer buffer) => buffer = new();
 
-    private readonly struct KeyToInputMapping(Keys key, InputAction inputAction)
-    {
-        public readonly Keys Key = key;
-        public readonly InputAction InputAction = inputAction;
-    }
+    private readonly record struct KeyToInputMapping(Keys Key, InputAction InputAction);
 
     [InlineArray(KeysBitBufferLength)]
     private struct KeysBitBuffer : IBitBuffer
     {
-        private const int KeysBitBufferLength = NumberOfKeys / 32;
+        public const int KeysBitBufferLength = NumberOfKeys / 32;
 
         private uint _0;
 

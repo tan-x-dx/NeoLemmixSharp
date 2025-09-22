@@ -12,7 +12,7 @@ public static class IoConstants
     /// </summary>
     internal const int InitialStringListCapacity = 32;
 
-    internal const long MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
+    internal const int MaxAllowedFileSizeInBytes = 1024 * 1024 * 64;
     internal const string FileSizeTooLargeExceptionMessage = "File too large! Max file size is 64Mb";
 
     internal const string DefaultStyleIdentifierString = "default";
@@ -27,7 +27,7 @@ public static class IoConstants
     /// Assumption: if there are infinite skills available of a certain type,
     /// there'll probably be around this number of actual usages.
     /// </summary>
-    public const int AssumedSkillUsageForInfiniteSkillCounts = 40;
+    public const int AssumedSkillUsageForInfiniteSkillCounts = 20;
 
     /// <summary>
     /// If a style has not been used for this many levels, remove it from the cache

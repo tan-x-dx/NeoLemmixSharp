@@ -1,8 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
-using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
@@ -121,7 +119,9 @@ public static class GadgetBuildingHelpers
         return new ReadOnlySpan<GadgetStateName>(BasicStateNames, 0, numberOfStates);
     }
 
-    public static string GetGadgetName(IGadgetArchetypeData gadgetArchetypeData, IGadgetInstanceData gadgetInstanceData)
+    public static string GetGadgetName(
+        IGadgetArchetypeData gadgetArchetypeData,
+        GadgetInstanceData gadgetInstanceData)
     {
         GadgetName result = gadgetInstanceData.OverrideName.IsTrivial
             ? gadgetArchetypeData.GadgetName
@@ -131,21 +131,21 @@ public static class GadgetBuildingHelpers
 
     public static GadgetBounds CreateGadgetBounds(
         HitBoxGadgetArchetypeData gadgetArchetypeData,
-        HitBoxGadgetInstanceData gadgetData)
+        GadgetInstanceData gadgetInstanceData)
     {
         var resizeType = gadgetArchetypeData.ResizeType;
         var baseSize = gadgetArchetypeData.BaseSpriteSize;
 
         var result = new GadgetBounds
         {
-            Position = gadgetData.Position
+            Position = gadgetInstanceData.Position
         };
 
-        var size = new Size(
-            resizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetPropertyType.Width) : baseSize.W,
-            resizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetPropertyType.Height) : baseSize.H);
+        var size = new Size();
+        // resizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetPropertyType.Width) : baseSize.W,
+        // resizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetPropertyType.Height) : baseSize.H);
 
-        size = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(size);
+        size = new DihedralTransformation(gadgetInstanceData.Orientation, gadgetInstanceData.FacingDirection).Transform(size);
 
         result.Width = size.W;
         result.Height = size.H;

@@ -13,9 +13,9 @@ public sealed class KillLemmingBehaviour : LemmingBehaviour
         _lemmingRemovalReason = lemmingRemovalReason;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int triggerData)
     {
-        var lemming = GetLemming(lemmingId);
+        var lemming = GetLemming(triggerData);
         LevelScreen.LemmingManager.RemoveLemming(lemming, _lemmingRemovalReason);
     }
 }

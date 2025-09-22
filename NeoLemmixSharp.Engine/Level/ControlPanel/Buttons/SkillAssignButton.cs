@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
@@ -40,7 +41,9 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
             return;
         }
 
-        TextRenderingHelpers.WriteDigits(_skillCountChars, numberOfSkillsAvailable);
+        Debug.Assert(numberOfSkillsAvailable >= 0);
+
+        TextRenderingHelpers.WriteDigits(_skillCountChars, (uint)numberOfSkillsAvailable);
     }
 
     public override ReadOnlySpan<char> GetDigitsToRender() => _skillCountChars;

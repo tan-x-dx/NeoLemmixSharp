@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
+﻿namespace NeoLemmixSharp.Engine.Level.Rewind;
 
 public unsafe interface ISnapshotDataConvertible
 {

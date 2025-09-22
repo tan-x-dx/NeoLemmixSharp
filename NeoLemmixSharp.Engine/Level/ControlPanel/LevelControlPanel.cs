@@ -9,7 +9,7 @@ using NeoLemmixSharp.Engine.Rendering;
 
 namespace NeoLemmixSharp.Engine.Level.ControlPanel;
 
-public sealed class LevelControlPanel : IInitialisable
+public sealed class LevelControlPanel : IInitialisable, IDisposable
 {
     public const int MaxNumberOfSkillButtons = 10;
     public const int NumberOfTechnicalButtons = 9;
@@ -23,7 +23,7 @@ public sealed class LevelControlPanel : IInitialisable
     public const int MinimapWidth = 111;
 
     /// <summary>
-    /// Is only not-null if there is precisely ONE hatch group per level.
+    /// Is only not-null if there is precisely ONE hatch group in the level.
     /// In that case, this references that singular hatch group.
     /// </summary>
     private readonly HatchGroup? _singularHatchGroup;
@@ -110,7 +110,7 @@ public sealed class LevelControlPanel : IInitialisable
 
     private void RecalculateButtonDimensions()
     {
-        const int halfH0 = ControlPanelButtonPixelHeight / 2;
+        const int HalfH0 = ControlPanelButtonPixelHeight / 2;
 
         var x0 = 0;
         var index = 0;
@@ -168,14 +168,14 @@ public sealed class LevelControlPanel : IInitialisable
 
                 case ButtonTypeSizePosition.TopHalf:
                     button.Y = ControlPanelInfoPixelHeight;
-                    button.Height = halfH0;
+                    button.Height = HalfH0;
 
                     x0 -= ControlPanelButtonPixelWidth;
                     return;
 
                 case ButtonTypeSizePosition.BottomHalf:
-                    button.Y = ControlPanelInfoPixelHeight + halfH0;
-                    button.Height = halfH0;
+                    button.Y = ControlPanelInfoPixelHeight + HalfH0;
+                    button.Height = HalfH0;
                     return;
 
                 default:
@@ -186,16 +186,16 @@ public sealed class LevelControlPanel : IInitialisable
 
     private int CalculateControlPanelWidth()
     {
-        const int textTotalLength = ControlPanelTextualData.TotalControlPanelTextLength *
+        const int TextTotalLength = ControlPanelTextualData.TotalControlPanelTextLength *
                                     PanelFont.GlyphWidth;
-        const int iconsTotalLength = ControlPanelRenderer.TotalNumberOfIcons *
+        const int IconsTotalLength = ControlPanelRenderer.TotalNumberOfIcons *
                                      ControlPanelRenderer.PanelIconWidth;
 
-        const int infoLength = textTotalLength + iconsTotalLength;
+        const int InfoLength = TextTotalLength + IconsTotalLength;
 
         var buttonsWidth = GetTotalWidthOfAllButtons();
 
-        var max = Math.Max(infoLength, buttonsWidth);
+        var max = Math.Max(InfoLength, buttonsWidth);
 
         return max + MinimapWidth;
 
@@ -404,5 +404,10 @@ public sealed class LevelControlPanel : IInitialisable
         }
 
         return null;
+    }
+
+    public void Dispose()
+    {
+        _controlPanelTextualData.Dispose();
     }
 }

@@ -73,11 +73,13 @@ public sealed class Viewport
 
     private void TrackScrollWheel(LevelInputController inputController)
     {
-        var previousValue = _scaleMultiplier;
-        _scaleMultiplier = Math.Clamp(_scaleMultiplier + inputController.ScrollDelta, MinScaleMultiplier, MaxScaleMultiplier);
+        var currentValue = _scaleMultiplier;
+        var newValue = Math.Clamp(_scaleMultiplier + inputController.ScrollDelta, MinScaleMultiplier, MaxScaleMultiplier);
 
-        if (_scaleMultiplier == previousValue)
+        if (currentValue == newValue)
             return;
+
+        _scaleMultiplier = newValue;
 
         LevelScreen.HorizontalBoundaryBehaviour.UpdateScreenDimension(_viewportDimensions.W, _scaleMultiplier);
         LevelScreen.VerticalBoundaryBehaviour.UpdateScreenDimension(_viewportDimensions.H, _scaleMultiplier);

@@ -6,7 +6,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
+using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
@@ -77,7 +77,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     public ref int TrueDistanceFallen => ref _data.TrueDistanceFallen;
     public ref int LaserRemainTime => ref _data.LaserRemainTime;
     public ref int FastForwardTime => ref _data.FastForwardTime;
-    public ref int CountDownTimer => ref _data.CountDownTimer;
+    public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref int ParticleTimer => ref _data.ParticleTimer;
 
     public LemmingState State { get; }
@@ -131,7 +131,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         State = new LemmingState(this, tribeId);
         Renderer = new LemmingRenderer(this);
 
-        UpdateRawData();
+        TakeSnapshotFromReferenceData();
     }
 
     private Lemming()
@@ -143,7 +143,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         State = new LemmingState(this, EngineConstants.ClassicTribeId);
         Renderer = new LemmingRenderer(this);
 
-        UpdateRawData();
+        TakeSnapshotFromReferenceData();
     }
 
     public void Initialise()
@@ -160,7 +160,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         initialAction.TransitionLemmingToAction(this, false);
 
-        UpdateRawData();
+        TakeSnapshotFromReferenceData();
         Renderer.UpdateLemmingState(true);
     }
 
@@ -444,7 +444,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         gadget.OnLemmingHit(filter, this);
     }
 
-    public void SetCountDownAction(int countDownTimer, LemmingAction countDownAction, bool displayTimer)
+    public void SetCountDownAction(uint countDownTimer, LemmingAction countDownAction, bool displayTimer)
     {
         _data.CountDownTimer = countDownTimer;
         CountDownAction = countDownAction;
@@ -473,21 +473,15 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
     public unsafe void SetRawDataFromOther(Lemming otherLemming)
     {
-        otherLemming.UpdateRawData();
+        otherLemming.TakeSnapshotFromReferenceData();
 
         fixed (void* otherPointer = &otherLemming._data)
         fixed (void* thisPointer = &_data)
         {
-            var sourceSpan = new ReadOnlySpan<byte>(otherPointer, sizeof(LemmingData));
-            var destinationSpan = new Span<byte>(thisPointer, sizeof(LemmingData));
-
-            sourceSpan.CopyTo(destinationSpan);
+            CopyLemmingSnapshotBytes(otherPointer, thisPointer);
         }
 
-        SetFromRawData();
-
-        Renderer.ResetPosition();
-        LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
+        SetReferenceDataFromSnapshot();
     }
 
     public void SetRawData(Tribe tribe, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
@@ -501,14 +495,11 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
     public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
-        UpdateRawData();
+        TakeSnapshotFromReferenceData();
 
         fixed (void* thisPointer = &_data)
         {
-            var sourceSpan = new ReadOnlySpan<byte>(thisPointer, sizeof(LemmingData));
-            var destinationSpan = new Span<byte>(snapshotDataPointer, sizeof(LemmingData));
-
-            sourceSpan.CopyTo(destinationSpan);
+            CopyLemmingSnapshotBytes(thisPointer, snapshotDataPointer);
         }
     }
 
@@ -516,19 +507,21 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     {
         fixed (void* thisPointer = &_data)
         {
-            var sourceSpan = new ReadOnlySpan<byte>(snapshotDataPointer, sizeof(LemmingData));
-            var destinationSpan = new Span<byte>(thisPointer, sizeof(LemmingData));
-
-            sourceSpan.CopyTo(destinationSpan);
+            CopyLemmingSnapshotBytes(snapshotDataPointer, thisPointer);
         }
 
-        SetFromRawData();
-
-        Renderer.ResetPosition();
-        LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
+        SetReferenceDataFromSnapshot();
     }
 
-    private void UpdateRawData()
+    private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* desinationPointer)
+    {
+        var sourceSpan = new ReadOnlySpan<byte>(sourcePointer, sizeof(LemmingData));
+        var destinationSpan = new Span<byte>(desinationPointer, sizeof(LemmingData));
+
+        sourceSpan.CopyTo(destinationSpan);
+    }
+
+    private void TakeSnapshotFromReferenceData()
     {
         State.WriteToSnapshotData(out _data.TribeId, out _data.State);
 
@@ -538,7 +531,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         _data.CountDownActionId = CountDownAction.Id;
     }
 
-    private void SetFromRawData()
+    private void SetReferenceDataFromSnapshot()
     {
         State.SetFromSnapshotData(_data.TribeId, _data.State);
 
@@ -546,6 +539,9 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         CurrentAction = LemmingAction.GetActionOrDefault(_data.CurrentActionId);
         NextAction = LemmingAction.GetActionOrDefault(_data.NextActionId);
         CountDownAction = LemmingAction.GetActionOrDefault(_data.CountDownActionId);
+
+        Renderer.ResetPosition();
+        LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
 
     int IIdEquatable<Lemming>.Id => Id;

@@ -20,7 +20,7 @@ public sealed class InputAction : IIdEquatable<InputAction>
     private ulong _stateMask = EnabledMask;
     private ulong _actionState;
 
-    public readonly int Id;
+    public int Id { get; }
 
     public InputAction(int id, string actionName)
     {
@@ -83,8 +83,6 @@ public sealed class InputAction : IIdEquatable<InputAction>
     }
 
     public bool IsEnabled => _stateMask != DisabledMask;
-
-    int IIdEquatable<InputAction>.Id => Id;
 
     [DebuggerStepThrough]
     public bool Equals(InputAction? other) => Id == (other?.Id ?? -1);

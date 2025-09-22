@@ -123,7 +123,7 @@ public static class GadgetBuildingHelpers
 
     public static GadgetName GetGadgetName(
         IGadgetArchetypeData gadgetArchetypeData,
-        IGadgetInstanceData gadgetInstanceData)
+        GadgetInstanceData gadgetInstanceData)
     {
         return gadgetInstanceData.OverrideName.IsTrivial
             ? gadgetArchetypeData.GadgetName
@@ -141,7 +141,7 @@ public static class GadgetBuildingHelpers
 
     public static GadgetBounds CreateGadgetBounds(
         IGadgetArchetypeData gadgetArchetypeData,
-        IGadgetInstanceData gadgetData)
+        GadgetInstanceData gadgetData)
     {
         var baseSize = gadgetArchetypeData.BaseSpriteSize;
 
@@ -160,21 +160,22 @@ public static class GadgetBuildingHelpers
 
     public static GadgetBounds CreateHitBoxGadgetBounds(
         HitBoxGadgetArchetypeData gadgetArchetypeData,
-        HitBoxGadgetInstanceData gadgetData)
+        GadgetInstanceData hitBoxGadgetData,
+        HitBoxGadgetTypeInstanceData hitBoxGadgetInstanceData)
     {
         var resizeType = gadgetArchetypeData.ResizeType;
         var baseSize = gadgetArchetypeData.BaseSpriteSize;
 
         var result = new GadgetBounds
         {
-            Position = gadgetData.Position
+            Position = hitBoxGadgetData.Position
         };
 
         var size = new Size(
-            resizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetPropertyType.Width) : baseSize.W,
-            resizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetPropertyType.Height) : baseSize.H);
+            resizeType.CanResizeHorizontally() ? hitBoxGadgetInstanceData.GetProperty(GadgetPropertyType.Width) : baseSize.W,
+            resizeType.CanResizeVertically() ? hitBoxGadgetInstanceData.GetProperty(GadgetPropertyType.Height) : baseSize.H);
 
-        size = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(size);
+        size = new DihedralTransformation(hitBoxGadgetData.Orientation, hitBoxGadgetData.FacingDirection).Transform(size);
 
         result.Width = size.W;
         result.Height = size.H;

@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -318,7 +319,7 @@ public sealed class LemmingState
         UpdateSkinColor();
     }
 
-    public void SetData(int tribeId,uint rawData)
+    public void SetData(int tribeId, uint rawData)
     {
         _tribeId = tribeId;
         _states = rawData;
@@ -326,6 +327,7 @@ public sealed class LemmingState
         UpdateSkinColor();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteToSnapshotData(out int tribeId, out uint stateData)
     {
         tribeId = _tribeId;

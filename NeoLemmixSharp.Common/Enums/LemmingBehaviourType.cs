@@ -4,14 +4,14 @@ namespace NeoLemmixSharp.Common.Enums;
 
 public enum LemmingBehaviourType
 {
-    None,
     SetLemmingState,
     ClearLemmingStates,
     SetLemmingAction,
     KillLemming,
     ForceLemmingFacingDirection,
     NullifyLemmingFallDistance,
-    LemmingMover,
+    MoveLemming,
+    SetLemmingPosition,
     SetLemmingFastForward
 }
 

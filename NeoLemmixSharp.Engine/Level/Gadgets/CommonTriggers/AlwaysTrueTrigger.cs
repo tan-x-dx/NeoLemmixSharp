@@ -4,21 +4,15 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 
 public sealed class AlwaysTrueTrigger : GadgetTrigger
 {
-    private readonly GadgetBehaviour[] _behaviours;
-
-    public AlwaysTrueTrigger(GadgetBehaviour[] behaviours)
+    public AlwaysTrueTrigger()
         : base(GadgetTriggerType.AlwaysTrue)
     {
-        _behaviours = behaviours;
     }
 
-    public override void DetectTrigger(GadgetBase parentGadget)
+    public override void DetectTrigger()
     {
-        DetermineTrigger(true, true);
-
-        foreach (var behaviour in _behaviours)
-        {
-            RegisterCauseAndEffectData(behaviour.Id);
-        }
+        DetermineTrigger(true);
+        TriggerBehaviours();
+        MarkAsEvaluated();
     }
 }

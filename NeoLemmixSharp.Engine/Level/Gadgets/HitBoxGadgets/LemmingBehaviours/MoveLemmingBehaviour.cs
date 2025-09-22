@@ -7,16 +7,15 @@ public sealed class MoveLemmingBehaviour : LemmingBehaviour
 {
     private readonly Point _deltaPosition;
 
-    public MoveLemmingBehaviour(
-        Point deltaPosition)
-        : base(LemmingBehaviourType.LemmingMover)
+    public MoveLemmingBehaviour(Point deltaPosition)
+        : base(LemmingBehaviourType.MoveLemming)
     {
         _deltaPosition = deltaPosition;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int triggerData)
     {
-        var lemming = GetLemming(lemmingId);
+        var lemming = GetLemming(triggerData);
         ref var lemmingPosition = ref lemming.AnchorPosition;
         lemmingPosition += _deltaPosition;
 

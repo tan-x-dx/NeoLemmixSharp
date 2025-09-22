@@ -1,19 +1,26 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Enums;
+﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Data.Level.Gadget.Functional;
 
-public sealed class LevelTimerObserverGadgetInstanceData : IGadgetInstanceData
+public sealed class LevelTimerObserverGadgetInstanceData : IGadgetTypeInstanceData
 {
     public GadgetType GadgetType => GadgetType.LevelTimerObserver;
-    public required GadgetIdentifier Identifier { get; init; }
-    public required GadgetName OverrideName { get; init; }
-    public required StyleIdentifier StyleIdentifier { get; init; }
-    public required PieceIdentifier PieceIdentifier { get; init; }
-    public required Point Position { get; init; }
-    public required int InitialStateId { get; init; }
-    public required GadgetRenderMode GadgetRenderMode { get; init; }
-    public required Orientation Orientation { get; init; }
-    public required FacingDirection FacingDirection { get; init; }
+
+    public required LevelTimerObservationType ObservationType { get; init; }
+    public required ComparisonType ComparisonType { get; init; }
+    public required int RequiredValue { get; init; }
+}
+
+[DebuggerDisplay("{OverrideStateName}")]
+public sealed class LevelTimerObserverGadgetStateInstanceData : IGadgetStateInstanceData
+{
+    public required GadgetStateName OverrideStateName { get; init; }
+
+    ReadOnlySpan<GadgetTriggerData> IGadgetStateInstanceData.CustomTriggers => [];
+    ReadOnlySpan<GadgetBehaviourData> IGadgetStateInstanceData.CustomBehaviours => [];
+    ReadOnlySpan<GadgetTriggerBehaviourLink> IGadgetStateInstanceData.CustomTriggerBehaviourLinks => [];
 }

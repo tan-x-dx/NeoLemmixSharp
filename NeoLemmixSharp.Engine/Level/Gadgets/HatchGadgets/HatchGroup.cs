@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Identity;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -12,26 +13,29 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
 
     private int _hatchIndex;
 
-    private int _nextLemmingCountDown = EngineConstants.InitialLemmingHatchReleaseCountDown;
+    private uint _nextLemmingCountDown = EngineConstants.InitialLemmingHatchReleaseCountDown;
     private int _lemmingsToRelease;
 
     public int Id { get; }
 
-    public int MinSpawnInterval { get; }
-    public int MaxSpawnInterval { get; }
-    public int CurrentSpawnInterval { get; private set; }
+    public uint MinSpawnInterval { get; }
+    public uint MaxSpawnInterval { get; }
+    public uint CurrentSpawnInterval { get; private set; }
 
-    public int MinReleaseRate => ConvertToReleaseRate(MinSpawnInterval);
-    public int MaxReleaseRate => ConvertToReleaseRate(MaxSpawnInterval);
-    public int CurrentReleaseRate => ConvertToReleaseRate(CurrentSpawnInterval);
+    public uint MinReleaseRate => ConvertToReleaseRate(MinSpawnInterval);
+    public uint MaxReleaseRate => ConvertToReleaseRate(MaxSpawnInterval);
+    public uint CurrentReleaseRate => ConvertToReleaseRate(CurrentSpawnInterval);
 
     public HatchGroup(
         int id,
-        int minSpawnInterval,
-        int maxSpawnInterval,
-        int initialSpawnInterval)
+        uint minSpawnInterval,
+        uint maxSpawnInterval,
+        uint initialSpawnInterval)
     {
         Id = id;
+
+        Debug.Assert(minSpawnInterval <= initialSpawnInterval);
+        Debug.Assert(initialSpawnInterval <= maxSpawnInterval);
 
         MinSpawnInterval = Math.Clamp(minSpawnInterval, EngineConstants.MinAllowedSpawnInterval, EngineConstants.MaxAllowedSpawnInterval);
         MaxSpawnInterval = Math.Clamp(maxSpawnInterval, minSpawnInterval, EngineConstants.MaxAllowedSpawnInterval);
@@ -52,12 +56,13 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
         _lemmingsToRelease = lemmingsToRelease;
     }
 
-    public bool ChangeSpawnInterval(int spawnIntervalDelta)
+    public bool AddSpawnIntervalDelta(int spawnIntervalDelta)
     {
-        var previousSpawnInterval = CurrentSpawnInterval;
-        CurrentSpawnInterval = Math.Clamp(CurrentSpawnInterval + spawnIntervalDelta, MinSpawnInterval, MaxSpawnInterval);
+        int previousSpawnInterval = (int)CurrentSpawnInterval;
+        int newSpawnInterval = Math.Clamp(previousSpawnInterval + spawnIntervalDelta, (int)MinSpawnInterval, (int)MaxSpawnInterval);
+        CurrentSpawnInterval = (uint)newSpawnInterval;
 
-        return previousSpawnInterval != CurrentSpawnInterval;
+        return previousSpawnInterval != newSpawnInterval;
     }
 
     public HatchGadget? Tick()
@@ -77,21 +82,25 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
     private HatchGadget? GetNextLogicalHatchGadget()
     {
         var c = _hatches.Length;
+        var hatchIndex = _hatchIndex;
 
         do
         {
-            _hatchIndex++;
             c--;
-            if (_hatchIndex == _hatches.Length)
-            {
-                _hatchIndex = 0;
-            }
-            var hatchGadget = _hatches[_hatchIndex];
+            hatchIndex++;
+            if (hatchIndex == _hatches.Length)
+                hatchIndex = 0;
+
+            var hatchGadget = _hatches[hatchIndex];
 
             if (hatchGadget.CanReleaseLemmings())
+            {
+                _hatchIndex = hatchIndex;
                 return hatchGadget;
+            }
         } while (c > 0);
 
+        _hatchIndex = hatchIndex;
         return null;
     }
 
@@ -102,7 +111,7 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int ConvertToReleaseRate(int spawnInterval)
+    private static uint ConvertToReleaseRate(uint spawnInterval)
     {
         // So that:
         // RR1 <=> SI102,

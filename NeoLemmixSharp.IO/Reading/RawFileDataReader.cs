@@ -125,6 +125,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     public int Read32BitSignedInteger() => ReadUnmanaged<int>();
     public ulong Read64BitUnsignedInteger() => ReadUnmanaged<ulong>();
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private unsafe T ReadUnmanaged<T>()
         where T : unmanaged
     {
@@ -148,6 +149,8 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
 
     public unsafe ReadOnlySpan<byte> ReadBytes(int numberOfBytes)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(numberOfBytes);
+
         var newPosition = _position + numberOfBytes;
         FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
 

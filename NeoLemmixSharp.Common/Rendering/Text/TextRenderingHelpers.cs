@@ -4,15 +4,17 @@ namespace NeoLemmixSharp.Common.Rendering.Text;
 
 public static class TextRenderingHelpers
 {
-    private const int ZeroCharAsInt = '0';
+    private const uint ZeroCharAsUint = '0';
 
-    public static void WriteDigits(Span<char> span, int value, char blankCharValue = ' ')
+    public static void WriteDigits(Span<char> span, uint n, char blankCharValue = ' ')
     {
+        uint value = n;
+
         for (var i = span.Length - 1; i >= 0; i--)
         {
             if (value > 0)
             {
-                var digit = value % 10;
+                uint digit = value % 10;
 
                 span[i] = DigitToChar(digit);
                 value /= 10;
@@ -25,19 +27,18 @@ public static class TextRenderingHelpers
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static char DigitToChar(int digit) => (char)(digit | ZeroCharAsInt);
+    public static char DigitToChar(uint digit) => (char)(digit | ZeroCharAsUint);
 
-    public static int GetNumberStringLength(int n) => n switch
+    public static int GetNumberStringLength(uint n)
     {
-        < -9999 => 6,
-        < -999 => 5,
-        < -99 => 4,
-        < -9 => 3,
-        < 0 => 2,
-        < 10 => 1,
-        < 100 => 2,
-        < 1000 => 3,
-        < 10000 => 4,
-        _ => 5 // We're not going to be dealing with numbers above a few thousand
-    };
+        var simpleLog10 = n switch
+        {
+            < 10 => 1,
+            < 100 => 2,
+            < 1000 => 3,
+            _ => 4 // We're not going to be dealing with numbers above a few thousand
+        };
+
+        return simpleLog10;
+    }
 }

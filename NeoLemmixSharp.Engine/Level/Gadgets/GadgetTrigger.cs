@@ -1,52 +1,83 @@
 ﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
 {
+    private const int IndeterminateTriggerValue = -1;
     private const int DefinitelyNotTriggeredValue = 0;
     private const int DefinitelyTriggeredValue = 1;
 
     public required GadgetTriggerName TriggerName { get; init; }
     public required int Id { get; init; }
     public GadgetTriggerType TriggerType { get; }
-    public TriggerEvaluation Evaluation { get; private set; }
+    private TriggerEvaluation _evaluation;
+
+    public required GadgetBehaviour[] Behaviours { private get; init; }
+    protected GadgetBase ParentGadget = null!;
+    protected GadgetState ParentState = null!;
+
+    public bool IsIndeterminate => _evaluation == TriggerEvaluation.Indeterminate;
 
     protected GadgetTrigger(GadgetTriggerType triggerType)
     {
         TriggerType = triggerType;
     }
 
-    public void Reset()
+    public void SetParentData(GadgetBase parentGadget, GadgetState parentState)
     {
-        Evaluation = TriggerEvaluation.Indeterminate;
-    }
+        Debug.Assert(ParentGadget is null);
+        Debug.Assert(ParentState is null);
 
-    public void DetermineTrigger(bool isTriggered, bool notifyCauseAndEffectManager)
-    {
-        var triggerNum = isTriggered ? DefinitelyTriggeredValue : DefinitelyNotTriggeredValue;
-        Evaluation = (TriggerEvaluation)triggerNum;
+        ParentGadget = parentGadget;
+        ParentState = parentState;
 
-        if (notifyCauseAndEffectManager)
+        foreach (var behaviour in Behaviours)
         {
-            LevelScreen.CauseAndEffectManager.MarkTriggerAsEvaluated(this);
+            behaviour.SetParentGadget(parentGadget);
         }
     }
 
-    protected static void RegisterCauseAndEffectData(int gadgetBehaviourId)
+    public void Reset()
     {
-        LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(gadgetBehaviourId));
+        var parentGadget = ParentGadget;
+        var parentState = ParentState;
+        var currentParentGadgetState = parentGadget.CurrentState;
+        if (currentParentGadgetState == parentState)
+        {
+            _evaluation = TriggerEvaluation.Indeterminate;
+        }
+        else
+        {
+            _evaluation = TriggerEvaluation.DefinitelyNotTriggered;
+            MarkAsEvaluated();
+        }
     }
 
-    protected static void RegisterCauseAndEffectData(int gadgetBehaviourId, int lemmingId)
+    public void DetermineTrigger(bool isTriggered)
     {
-        LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(gadgetBehaviourId, lemmingId));
+        if (_evaluation != TriggerEvaluation.Indeterminate)
+            return;
+
+        var triggerNum = isTriggered ? DefinitelyTriggeredValue : DefinitelyNotTriggeredValue;
+        _evaluation = (TriggerEvaluation)triggerNum;
     }
 
-    public abstract void DetectTrigger(GadgetBase parentGadget);
+    protected void MarkAsEvaluated() => LevelScreen.GadgetManager.MarkTriggerAsEvaluated(this);
+
+    protected void TriggerBehaviours()
+    {
+        foreach (var behaviour in Behaviours)
+        {
+            LevelScreen.GadgetManager.RegisterCauseAndEffectData(behaviour);
+        }
+    }
+
+    public abstract void DetectTrigger();
 
     public bool Equals(GadgetTrigger? other) => other is not null && Id == other.Id;
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetTrigger other && Id == other.Id;
@@ -56,9 +87,9 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
     public static bool operator ==(GadgetTrigger left, GadgetTrigger right) => left.Id == right.Id;
     public static bool operator !=(GadgetTrigger left, GadgetTrigger right) => left.Id != right.Id;
 
-    public enum TriggerEvaluation
+    private enum TriggerEvaluation
     {
-        Indeterminate = -1,
+        Indeterminate = IndeterminateTriggerValue,
         DefinitelyNotTriggered = DefinitelyNotTriggeredValue,
         DefinitelyTriggered = DefinitelyTriggeredValue,
     }

@@ -10,10 +10,10 @@ internal sealed class SectionIdentifierValidator<TPerfectHasher, TEnum> : ICompa
     where TEnum : unmanaged, Enum
 {
     [SkipLocalsInit]
-    internal void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> result)
+    internal void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> dictionary)
     {
-        Span<Interval> intervals = stackalloc Interval[result.Count];
-        result.CopyValuesTo(intervals);
+        Span<Interval> intervals = stackalloc Interval[dictionary.Count];
+        dictionary.CopyValuesTo(intervals);
 
         intervals.Sort(this);
 

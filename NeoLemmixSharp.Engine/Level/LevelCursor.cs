@@ -16,7 +16,7 @@ public sealed class LevelCursor
 
     private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
 
-    public int NumberOfLemmingsUnderCursor { get; private set; }
+    public uint NumberOfLemmingsUnderCursor { get; private set; }
     public Point CursorPosition { private get; set; }
 
     public Lemming? CurrentlyHighlightedLemming { get; private set; }

@@ -17,15 +17,14 @@ public static class LemmingBehaviourBuilder
 
         return lemmingBehaviourType switch
         {
-            LemmingBehaviourType.None => throw new InvalidOperationException("Invalid Behaviour Type!"),
-
             LemmingBehaviourType.SetLemmingState => BuildSetStateLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.ClearLemmingStates => BuildClearAllStatesLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.SetLemmingAction => BuildSetActionLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.KillLemming => BuildKillLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.ForceLemmingFacingDirection => BuildForceFacingDirectionLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.NullifyLemmingFallDistance => BuildNullifyFallDistanceLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            LemmingBehaviourType.LemmingMover => BuildMoveLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.MoveLemming => BuildMoveLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.SetLemmingPosition => BuildSetLemmingPositionBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.SetLemmingFastForward => BuildFastForwardLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
 
             _ => Helpers.ThrowUnknownEnumValueException<LemmingBehaviourType, LemmingBehaviour>(lemmingBehaviourType),
@@ -114,6 +113,24 @@ public static class LemmingBehaviourBuilder
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
             MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+        };
+    }
+
+    private static SetLemmingPositionBehaviour BuildSetLemmingPositionBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    {
+        var position = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data2);
+
+        var miscData = gadgetBehaviourDatum.Data3;
+        var rawRelativePositioningType = miscData & 0xff;
+        var relativePositioningType = RelativePositioningTypeHelpers.GetEnumValue((uint)rawRelativePositioningType);
+        miscData >>>= 8;
+        var maxTriggerCountPerTick = miscData & 0xff;
+
+        return new SetLemmingPositionBehaviour(position, relativePositioningType)
+        {
+            GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
+            Id = newBehaviourId,
+            MaxTriggerCountPerTick = maxTriggerCountPerTick
         };
     }
 

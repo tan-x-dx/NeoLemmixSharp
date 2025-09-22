@@ -113,7 +113,7 @@ public sealed class LevelObjectiveBuilder
         static LimitSpecificSkillAssignmentsModifierData? TryGetAnySpecificSkillModifier(
             ObjectiveModifierData[] baseModifiers,
             ObjectiveModifierData[] talismanModifiers,
-            SkillSetData skillSetData)
+            IO.Data.Level.Objectives.SkillSetData skillSetData)
         {
             return TryGetSpecificSkillModifier(talismanModifiers, skillSetData) ??
                    TryGetSpecificSkillModifier(baseModifiers, skillSetData);
@@ -122,7 +122,7 @@ public sealed class LevelObjectiveBuilder
 
         static LimitSpecificSkillAssignmentsModifierData? TryGetSpecificSkillModifier(
             ObjectiveModifierData[] modifiers,
-            SkillSetData skillSetData)
+            IO.Data.Level.Objectives.SkillSetData skillSetData)
         {
             foreach (var modifierData in modifiers)
             {

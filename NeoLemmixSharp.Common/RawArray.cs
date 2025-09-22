@@ -11,6 +11,8 @@ public readonly struct RawArray : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public RawArray(nint handle, int length)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+
         Handle = handle;
         Length = length;
     }
@@ -18,6 +20,8 @@ public readonly struct RawArray : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public RawArray(int length)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+
         Handle = Marshal.AllocHGlobal(length);
         Length = length;
     }

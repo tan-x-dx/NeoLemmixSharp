@@ -37,15 +37,17 @@ public sealed class TerrainBuilder
             graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24,
             8,
-            RenderTargetUsage.DiscardContents);
+            RenderTargetUsage.DiscardContents)
+        {
+            Name = levelData.LevelTitle + "_Terrain"
+        };
 
-        _terrainTexture.Name = levelData.LevelTitle;
+        TextureCache.CacheLevelSpecificTexture(_terrainTexture);
 
-        TextureCache.CacheShortLivedTexture(_terrainTexture);
-
-        var rawPixels = new PixelType[terrainDimensions.Area()];
+        var area = terrainDimensions.Area();
+        var rawPixels = new PixelType[area];
         _terrainPixels = new ArrayWrapper2D<PixelType>(rawPixels, terrainDimensions);
-        var rawColors = new Color[terrainDimensions.Area()];
+        var rawColors = new Color[area];
         _terrainColors = new ArrayWrapper2D<Color>(rawColors, terrainDimensions);
 
         _terrainArchetypeDataLookup = StyleCache.GetAllTerrainArchetypeData(levelData);

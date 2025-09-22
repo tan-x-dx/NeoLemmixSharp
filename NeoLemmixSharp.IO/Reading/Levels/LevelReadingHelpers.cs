@@ -11,15 +11,15 @@ internal static class LevelReadingHelpers
     {
         var numberOfClonerSkillPickups = 0;
 
-        foreach (var gadgetDatum in levelData.AllGadgetData)
+        foreach (var gadgetDatum in levelData.AllGadgetInstanceData)
         {
-            if (gadgetDatum.TryGetProperty(GadgetPropertyType.SkillId, out var skillId))
+       /*     if (gadgetDatum.TryGetProperty(GadgetPropertyType.SkillId, out var skillId))
             {
                 if (skillId == LemmingSkillConstants.ClonerSkillId)
                 {
                     numberOfClonerSkillPickups += gadgetDatum.GetProperty(GadgetPropertyType.Count);
                 }
-            }
+            }*/
         }
 
         var maxNumberOfClonerSkills = 0;

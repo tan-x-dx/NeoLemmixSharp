@@ -15,9 +15,9 @@ public sealed class ForceFacingDirectionLemmingBehaviour : LemmingBehaviour
         _facingDirection = facingDirection;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int triggerData)
     {
-        var lemming = GetLemming(lemmingId);
+        var lemming = GetLemming(triggerData);
         BlockerAction.ForceLemmingDirection(lemming, _facingDirection);
     }
 }

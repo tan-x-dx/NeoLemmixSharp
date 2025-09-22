@@ -1,9 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
+using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
@@ -15,9 +14,7 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible
     public int SkillTrackingDataId { get; }
     public int InitialSkillQuantity { get; }
 
-    private int _additionalQuantity;
-    private int _amountUsed;
-    private int _currentSkillLimit;
+    private SkillSetData _data = new();
 
     public int EffectiveQuantity { get; private set; }
 
@@ -34,13 +31,13 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible
         Tribe = tribe;
         SkillTrackingDataId = skillTrackingDataId;
         InitialSkillQuantity = Math.Min(initialSkillQuantity, initialSkillLimit);
-        _currentSkillLimit = initialSkillLimit;
+        _data.CurrentSkillLimit = initialSkillLimit;
     }
 
     public void UseSkill()
     {
-        _amountUsed++;
-        _currentSkillLimit--;
+        _data.AmountUsed++;
+        _data.CurrentSkillLimit--;
 
         var skillSetManager = LevelScreen.SkillSetManager;
         skillSetManager.RecordUsageOfSkill();
@@ -49,7 +46,7 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible
 
     public void ChangeSkillCount(int delta)
     {
-        _additionalQuantity += delta;
+        _data.AdditionalQuantity += delta;
 
         LevelScreen.SkillSetManager.UpdateSkillSetData();
     }
@@ -78,30 +75,28 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible
         }
         else
         {
-            effectiveQuantity = InitialSkillQuantity + _additionalQuantity - _amountUsed;
+            effectiveQuantity = InitialSkillQuantity + _data.AdditionalQuantity - _data.AmountUsed;
 
-            effectiveQuantity = Math.Min(effectiveQuantity, _currentSkillLimit);
+            effectiveQuantity = Math.Min(effectiveQuantity, _data.CurrentSkillLimit);
             effectiveQuantity = Math.Clamp(effectiveQuantity, 0, EngineConstants.MaxFiniteSkillCount);
         }
 
         EffectiveQuantity = Math.Min(effectiveQuantity, totalSkillLimit);
     }
 
-    public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<SkillSetSnapshotData>();
+    public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(SkillSetData);
 
     public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
-        SkillSetSnapshotData* skillSetSnapshotDataPointer = (SkillSetSnapshotData*)snapshotDataPointer;
+        SkillSetData* skillSetSnapshotDataPointer = (SkillSetData*)snapshotDataPointer;
 
-        *skillSetSnapshotDataPointer = new SkillSetSnapshotData(SkillTrackingDataId, _additionalQuantity, _amountUsed, _currentSkillLimit);
+        *skillSetSnapshotDataPointer = _data;
     }
 
     public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
-        SkillSetSnapshotData* skillSetSnapshotDataPointer = (SkillSetSnapshotData*)snapshotDataPointer;
+        SkillSetData* skillSetSnapshotDataPointer = (SkillSetData*)snapshotDataPointer;
 
-        _additionalQuantity = skillSetSnapshotDataPointer->AdditionalQuantity;
-        _amountUsed = skillSetSnapshotDataPointer->AmountUsed;
-        _currentSkillLimit = skillSetSnapshotDataPointer->CurrentSkillLimit;
+        _data = *skillSetSnapshotDataPointer;
     }
 }

@@ -74,8 +74,8 @@ public static class EngineConstants
     public const int ParticleFrameCount = 51;
     public const int NumberOfParticles = 80;
 
-    public const int MinAllowedSpawnInterval = 4;
-    public const int MaxAllowedSpawnInterval = 102;
+    public const uint MinAllowedSpawnInterval = 4;
+    public const uint MaxAllowedSpawnInterval = 102;
 
     public const int MaxNumberOfLemmings = 2000;
     public const int MaxTimeLimitInSeconds = 99 * 60 + 59; // 99 minutes, 59 seconds
@@ -83,8 +83,6 @@ public static class EngineConstants
     public const int MaxLevelHeight = 2400;
 
     public const int FloaterGliderStartCycleFrame = 9;
-
-    public const int NoLemmingCauseAndEffectId = -1;
 
     public const int SkillCountChangeBehaviourOverrideValueNullTribe = MaxNumberOfTribes + 1;
     public const int SkillCountChangeBehaviourNoOverrideValue = MaxNumberOfTribes + 2;

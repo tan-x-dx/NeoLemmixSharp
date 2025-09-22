@@ -6,7 +6,7 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
+using NeoLemmixSharp.Engine.Level.Rewind;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -29,6 +29,8 @@ public sealed class LemmingManager :
         2 + // spacial hash grids
         3; // lemming sets
     private readonly RawArray _lemmingByteBuffer;
+    private int _bitArrayBufferUsageCount = RequiredNumberOfLemmingBitSets;
+
     private readonly LemmingSpacialHashGrid _lemmingPositionHelper;
     private readonly LemmingSpacialHashGrid _zombieSpacialHashGrid;
     private readonly LemmingSet _lemmingsToZombify;
@@ -39,15 +41,12 @@ public sealed class LemmingManager :
     private readonly int _numberOfPreplacedLemmings;
     private readonly int _maxNumberOfClonedLemmings;
 
-    private int _bitArrayBufferUsageCount;
+    private LemmingManagerData _data = new();
 
-    private int _numberOfLemmingsReleasedFromHatch;
-    private int _numberOfClonedLemmings;
-
-    public int LemmingsToRelease { get; private set; }
-    public int LemmingsOut { get; private set; }
-    public int LemmingsRemoved { get; private set; }
-    public int LemmingsSaved { get; private set; }
+    public int LemmingsToRelease => _data.LemmingsToRelease;
+    public int LemmingsOut => _data.LemmingsOut;
+    public int LemmingsRemoved => _data.LemmingsRemoved;
+    public int LemmingsSaved => _data.LemmingsSaved;
 
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
@@ -85,8 +84,6 @@ public sealed class LemmingManager :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        _bitArrayBufferUsageCount = RequiredNumberOfLemmingBitSets;
-
         var bitBufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmings.Length);
         _lemmingByteBuffer = Helpers.AllocateBuffer<uint>(bitBufferLength * RequiredNumberOfLemmingBitSets);
 
@@ -106,10 +103,8 @@ public sealed class LemmingManager :
             InitialiseLemming(lemming);
         }
 
-        var controlPanelTextualData = LevelScreen.LevelControlPanel.TextualData;
-
         //controlPanelTextualData.SetHatchData(0);
-        controlPanelTextualData.SetLemmingData(LemmingsOut - LemmingsRemoved);
+        UpdateControlPanelLemmingData();
         //controlPanelTextualData.SetGoalData(0);
     }
 
@@ -129,8 +124,8 @@ public sealed class LemmingManager :
         }
         else
         {
-            LemmingsOut++;
-            UpdateControlPanel();
+            _data.LemmingsOut++;
+            UpdateControlPanelLemmingData();
         }
     }
 
@@ -176,7 +171,7 @@ public sealed class LemmingManager :
                 continue;
 
             hatchGroup.OnSpawnLemming();
-            var lemming = hatchLemmingSpan[_numberOfLemmingsReleasedFromHatch++];
+            var lemming = hatchLemmingSpan[_data.NumberOfLemmingsReleasedFromHatch++];
 
             lemming.AnchorPosition = hatchGadget.Position + hatchGadget.SpawnPointOffset;
             hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
@@ -238,15 +233,15 @@ public sealed class LemmingManager :
 
         if (removalReason == LemmingRemovalReason.Exit)
         {
-            LemmingsSaved++;
+            _data.LemmingsSaved++;
         }
 
-        LemmingsRemoved++;
+        _data.LemmingsRemoved++;
         lemming.OnRemoval(removalReason);
-        UpdateControlPanel();
+        UpdateControlPanelLemmingData();
     }
 
-    private void UpdateControlPanel()
+    private void UpdateControlPanelLemmingData()
     {
         LevelScreen.LevelControlPanel.TextualData.SetLemmingData(LemmingsOut - LemmingsRemoved);
     }
@@ -349,7 +344,7 @@ public sealed class LemmingManager :
 
     public bool CanCreateNewLemmingClone()
     {
-        return _numberOfClonedLemmings < _maxNumberOfClonedLemmings;
+        return _data.NumberOfClonedLemmings < _maxNumberOfClonedLemmings;
     }
 
     public bool TryGetNextClonedLemming([MaybeNullWhen(false)] out Lemming clonedLemming)
@@ -362,14 +357,14 @@ public sealed class LemmingManager :
 
         var index = _numberOfPreplacedLemmings +
                     _totalNumberOfHatchLemmings +
-                    _numberOfClonedLemmings;
+                    _data.NumberOfClonedLemmings;
 
         clonedLemming = _lemmings[index];
 
-        _numberOfClonedLemmings++;
-        LemmingsOut++;
+        _data.NumberOfClonedLemmings++;
+        _data.LemmingsOut++;
 
-        UpdateControlPanel();
+        UpdateControlPanelLemmingData();
 
         _lemmingPositionHelper.AddItem(clonedLemming);
 
@@ -407,36 +402,23 @@ public sealed class LemmingManager :
         _allBlockers.Clear();
     }
 
-    public int GetRequiredNumberOfBytesForSnapshotting() => Unsafe.SizeOf<LemmingManagerSnapshotData>();
+    public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LemmingManagerData);
 
     public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
-        LemmingManagerSnapshotData* lemmingManagerSnapshotDataPointer = (LemmingManagerSnapshotData*)snapshotDataPointer;
+        LemmingManagerData* lemmingManagerSnapshotDataPointer = (LemmingManagerData*)snapshotDataPointer;
 
-        *lemmingManagerSnapshotDataPointer = new LemmingManagerSnapshotData(
-            _numberOfLemmingsReleasedFromHatch,
-            _numberOfClonedLemmings,
-            LemmingsToRelease,
-            LemmingsOut,
-            LemmingsRemoved,
-            LemmingsSaved);
+        *lemmingManagerSnapshotDataPointer = _data;
     }
 
     public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
-        LemmingManagerSnapshotData* lemmingManagerSnapshotDataPointer = (LemmingManagerSnapshotData*)snapshotDataPointer;
+        LemmingManagerData* lemmingManagerSnapshotDataPointer = (LemmingManagerData*)snapshotDataPointer;
 
-        _numberOfLemmingsReleasedFromHatch = lemmingManagerSnapshotDataPointer->NumberOfLemmingsReleasedFromHatch;
-        _numberOfClonedLemmings = lemmingManagerSnapshotDataPointer->NumberOfClonedLemmings;
-        LemmingsToRelease = lemmingManagerSnapshotDataPointer->LemmingsToRelease;
-        LemmingsOut = lemmingManagerSnapshotDataPointer->LemmingsOut;
-        LemmingsRemoved = lemmingManagerSnapshotDataPointer->LemmingsRemoved;
-        LemmingsSaved = lemmingManagerSnapshotDataPointer->LemmingsSaved;
-
-        ResetLemmingPositions();
+        _data = *lemmingManagerSnapshotDataPointer;
     }
 
-    private void ResetLemmingPositions()
+    public void ResetLemmingPositions()
     {
         _lemmingPositionHelper.Clear();
         _zombieSpacialHashGrid.Clear();

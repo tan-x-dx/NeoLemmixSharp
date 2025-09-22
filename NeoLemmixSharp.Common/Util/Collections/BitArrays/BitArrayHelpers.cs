@@ -177,7 +177,7 @@ public static class BitArrayHelpers
             case 0: return 0;
         }
 
-        for (int i = 0; i < bits.Length; i++)
+        for (int i = bits.Length - 1; i >= 0; i--)
         {
             result += BitOperations.PopCount(bits[i]);
         }

@@ -1,9 +1,7 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Objectives;
-using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
 using NeoLemmixSharp.Engine.Level.Timer;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
@@ -19,10 +17,9 @@ public sealed class RewindManager :
     private readonly SnapshotRecorder<SkillSetManager, SkillTrackingData> _skillSetSnapshotRecorder;
 
     private readonly SnapshotRecorder<RewindManager, LemmingManager> _lemmingManagerSnapshotRecorder;
-    private readonly SnapshotRecorder<RewindManager, GadgetManager> _gadgetManagerSnapshotRecorder;
     private readonly SnapshotRecorder<RewindManager, LevelTimer> _levelTimerRecorder;
 
-    private readonly LevelEventList<SkillAssignmentData> _skillAssignmentList;
+    private readonly LevelEventList<SkillAssignmentEventData> _skillAssignmentList;
 
     private int _maxElapsedTicks;
 
@@ -36,12 +33,11 @@ public sealed class RewindManager :
         _skillSetSnapshotRecorder = new SnapshotRecorder<SkillSetManager, SkillTrackingData>(skillSetManager);
 
         _lemmingManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, LemmingManager>(this);
-        _gadgetManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, GadgetManager>(this);
         _levelTimerRecorder = new SnapshotRecorder<RewindManager, LevelTimer>(this);
 
-        var baseNumberOfSkillAssignments = skillSetManager.CalculateBaseNumberOfSkillAssignments();
+        var baseNumberOfSkillAssignments = skillSetManager.EstimateBaseNumberOfSkillAssignments(gadgetManager);
 
-        _skillAssignmentList = new LevelEventList<SkillAssignmentData>(baseNumberOfSkillAssignments);
+        _skillAssignmentList = new LevelEventList<SkillAssignmentEventData>(baseNumberOfSkillAssignments);
     }
 
     public unsafe bool DoneSkillAssignmentForTick(int tick) => _skillAssignmentList.TryGetDataForTick(tick, out _);
@@ -58,19 +54,18 @@ public sealed class RewindManager :
         _skillSetSnapshotRecorder.TakeSnapshot();
 
         _lemmingManagerSnapshotRecorder.TakeSnapshot();
-        _gadgetManagerSnapshotRecorder.TakeSnapshot();
         _levelTimerRecorder.TakeSnapshot();
     }
 
     public unsafe void CheckForReplayAction(int elapsedTicks)
     {
-        if (_skillAssignmentList.TryGetDataForTick(elapsedTicks, out SkillAssignmentData* dataPointer))
+        if (_skillAssignmentList.TryGetDataForTick(elapsedTicks, out SkillAssignmentEventData* dataPointer))
         {
             AssignSkillFromReplay(dataPointer);
         }
     }
 
-    private static unsafe void AssignSkillFromReplay(SkillAssignmentData* previouslyRecordedSkillAssignment)
+    private static unsafe void AssignSkillFromReplay(SkillAssignmentEventData* previouslyRecordedSkillAssignment)
     {
         var lemming = LevelScreen.LemmingManager.AllLemmings[previouslyRecordedSkillAssignment->LemmingId];
 
@@ -88,7 +83,7 @@ public sealed class RewindManager :
         LevelScreen.UpdateScheduler.DoSkillAssignment(skillTrackingData, lemming, true);
     }
 
-    private static unsafe void ValidateLemmingReplayAction(Lemming lemming, SkillAssignmentData* previouslyRecordedSkillAssignment)
+    private static unsafe void ValidateLemmingReplayAction(Lemming lemming, SkillAssignmentEventData* previouslyRecordedSkillAssignment)
     {
         if (lemming.AnchorPosition == previouslyRecordedSkillAssignment->LemmingPosition &&
             lemming.State.TribeAffiliation.Id == previouslyRecordedSkillAssignment->TribeId &&
@@ -112,9 +107,9 @@ public sealed class RewindManager :
             return;
         }
 
-        SkillAssignmentData* newSkillAssignementData = _skillAssignmentList.GetNewDataPointer();
+        SkillAssignmentEventData* newSkillAssignementData = _skillAssignmentList.GetNewDataPointer();
 
-        *newSkillAssignementData = new SkillAssignmentData(tick, lemming, skillTrackingData.Skill);
+        *newSkillAssignementData = new SkillAssignmentEventData(tick, lemming, skillTrackingData.Skill);
     }
 
     public unsafe int RewindBackTo(int specifiedTick)
@@ -128,8 +123,10 @@ public sealed class RewindManager :
         _skillSetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
 
         _lemmingManagerSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
-        _gadgetManagerSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
         _levelTimerRecorder.ApplySnapshot(correspondingSnapshotNumber);
+
+        LevelScreen.LemmingManager.ResetLemmingPositions();
+        LevelScreen.GadgetManager.ResetGadgetPositions();
 
         var actualElapsedTick = correspondingSnapshotNumber * RewindConstants.RewindSnapshotInterval;
 
@@ -138,7 +135,7 @@ public sealed class RewindManager :
         LevelScreen.TerrainPainter.RewindBackTo(targetTick);
         LevelScreen.LevelTimer.SetElapsedTicks(targetTick, false);
 
-        if (_skillAssignmentList.TryGetDataForTick(targetTick, out SkillAssignmentData* previouslyRecordedSkillAssignment))
+        if (_skillAssignmentList.TryGetDataForTick(targetTick, out SkillAssignmentEventData* previouslyRecordedSkillAssignment))
         {
             AssignSkillFromReplay(previouslyRecordedSkillAssignment);
         }
@@ -163,7 +160,6 @@ public sealed class RewindManager :
         _skillSetSnapshotRecorder.Dispose();
 
         _lemmingManagerSnapshotRecorder.Dispose();
-        _gadgetManagerSnapshotRecorder.Dispose();
         _levelTimerRecorder.Dispose();
 
         _skillAssignmentList.Dispose();

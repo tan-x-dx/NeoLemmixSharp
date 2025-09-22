@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Data;
@@ -15,7 +14,7 @@ public static class TextureCache
     private static GraphicsDevice GraphicsDevice { get; set; } = null!;
 
     private static readonly Dictionary<TextureTypeKey, TextureUsageData> LongLivedTextures = new(LongLivedTextureCacheCapacity);
-    private static readonly Dictionary<string, Texture2D> ShortLivedTextures = new(ShortLivedTextureCacheCapacity);
+    private static readonly Dictionary<string, Texture2D> LevelSpecificTextures = new(ShortLivedTextureCacheCapacity);
 
     public static void Initialise(
         ContentManager contentManager,
@@ -71,19 +70,19 @@ public static class TextureCache
         return Texture2D.FromFile(GraphicsDevice, filePath);
     }
 
-    public static void CacheShortLivedTexture(Texture2D texture)
+    public static void CacheLevelSpecificTexture(Texture2D texture)
     {
         var textureName = texture.Name;
         if (string.IsNullOrWhiteSpace(textureName))
             throw new ArgumentException("Texture name not set!");
 
-        if (!ShortLivedTextures.TryAdd(textureName, texture))
+        if (!LevelSpecificTextures.TryAdd(textureName, texture))
             throw new InvalidOperationException("Texture with that name is already present in the cache!");
     }
 
-    public static void DisposeOfShortLivedTextures()
+    public static void DisposeOfLevelSpecificTextures()
     {
-        DisposableHelperMethods.DisposeOfAll(ShortLivedTextures);
+        DisposableHelperMethods.DisposeOfAll(LevelSpecificTextures);
     }
 
     public static void CleanUpOldTextures()
@@ -114,21 +113,7 @@ public static class TextureCache
         }
     }
 
-    private readonly struct TextureTypeKey(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier, TextureType textureType) : IEquatable<TextureTypeKey>
-    {
-        public readonly StyleIdentifier StyleIdentifier = styleIdentifier;
-        public readonly PieceIdentifier PieceIdentifier = pieceIdentifier;
-        public readonly TextureType TextureType = textureType;
-
-        public bool Equals(TextureTypeKey other) => StyleIdentifier.Equals(other.StyleIdentifier) &&
-                                                    PieceIdentifier.Equals(other.PieceIdentifier) &&
-                                                    TextureType == other.TextureType;
-
-        public override bool Equals([NotNullWhen(true)] object? obj) => obj is TextureTypeKey other && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(StyleIdentifier, PieceIdentifier, TextureType);
-        public static bool operator ==(TextureTypeKey left, TextureTypeKey right) => left.Equals(right);
-        public static bool operator !=(TextureTypeKey left, TextureTypeKey right) => !left.Equals(right);
-    }
+    private readonly record struct TextureTypeKey(StyleIdentifier StyleIdentifier, PieceIdentifier PieceIdentifier, TextureType TextureType);
 
     private readonly struct TextureUsageData : IDisposable
     {

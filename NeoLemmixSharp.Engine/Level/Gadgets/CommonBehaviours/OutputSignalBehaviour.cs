@@ -5,21 +5,22 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 
 public sealed class OutputSignalBehaviour : GadgetBehaviour
 {
-    private readonly IGadgetLinkTrigger[] _gadgetLinkTriggers;
+    private LinkData[] _gadgetLinkData = [];
 
-    public OutputSignalBehaviour(IGadgetLinkTrigger[] gadgetLinkTriggers)
+    public OutputSignalBehaviour()
         : base(GadgetBehaviourType.GadgetOutputSignal)
     {
-        _gadgetLinkTriggers = gadgetLinkTriggers;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
-    {
-        var signal = lemmingId >= 0;
+    public void SetGadgetLinkTriggers(LinkData[] gadgetLinkData) => _gadgetLinkData = gadgetLinkData;
 
-        foreach (var trigger in _gadgetLinkTriggers)
+    protected override void PerformInternalBehaviour(int _)
+    {
+        foreach (var gadgetLinkDatum in _gadgetLinkData)
         {
-            trigger.ReactToSignal(signal);
+            gadgetLinkDatum.GadgetLinkTrigger.ReactToSignal(gadgetLinkDatum.Payload);
         }
     }
 }
+
+public readonly record struct LinkData(IGadgetLinkTrigger GadgetLinkTrigger, int Payload);

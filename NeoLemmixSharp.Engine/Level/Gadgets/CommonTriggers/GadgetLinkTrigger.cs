@@ -1,26 +1,23 @@
 ﻿using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 
 public sealed class GadgetLinkTrigger : GadgetTrigger, IGadgetLinkTrigger
 {
-    public OutputSignalBehaviour InputSignalBehaviour { get; set; }
-
-    private readonly GadgetBehaviour[] _behaviours;
-
-    public GadgetLinkTrigger(GadgetBehaviour[] behaviours) : base(GadgetTriggerType.GadgetLinkTrigger)
+    public GadgetLinkTrigger()
+        : base(GadgetTriggerType.GadgetLinkTrigger)
     {
-        _behaviours = behaviours;
     }
 
-    public override void DetectTrigger(GadgetBase parentGadget)
+    public override void DetectTrigger()
     {
-        throw new NotImplementedException();
+        // This type is at the mercy of its (not-null) input signal.
     }
 
-    public void ReactToSignal(bool signal)
+    public void ReactToSignal(int payload)
     {
-        DetermineTrigger(signal, true);
+        DetermineTrigger(true);
+        TriggerBehaviours();
+        MarkAsEvaluated();
     }
 }

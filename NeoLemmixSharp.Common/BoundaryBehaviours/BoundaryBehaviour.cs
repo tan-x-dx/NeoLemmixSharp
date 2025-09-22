@@ -1,25 +1,23 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
 [DebuggerDisplay("{DimensionType}:{BoundaryBehaviourType} [{_levelLength}]")]
-public sealed unsafe class BoundaryBehaviour : IDisposable
+public sealed class BoundaryBehaviour : IDisposable
 {
     private const int MaxNumberOfViewportRenderIntervals = 2;
     private const int MaxNumberOfRenderCopiesForWrappedLevels = 6;
 
-    private readonly ViewPortRenderInterval* _viewPortRenderIntervalPointer;
-    private readonly ScreenRenderInterval* _screenRenderIntervalPointer;
+    private readonly RawArray _viewPortRenderIntervalBuffer;
+    private int _viewPortSpanLength;
+    private readonly RawArray _screenRenderIntervalBuffer;
+    private int _screenSpanLength;
 
     private readonly DimensionType _dimensionType;
     private readonly BoundaryBehaviourType _boundaryBehaviourType;
     private readonly int _levelLength;
-
-    private int _viewPortSpanLength;
-    private int _screenSpanLength;
 
     private int _scaleMultiplier;
 
@@ -70,9 +68,9 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
     public int MouseScreenCoordinate => _mouseScreenCoordinate;
 
     [Pure]
-    public ReadOnlySpan<ViewPortRenderInterval> GetRenderViewPortIntervals() => new(_viewPortRenderIntervalPointer, _viewPortSpanLength);
+    public unsafe ReadOnlySpan<ViewPortRenderInterval> GetRenderViewPortIntervals() => new((void*)_viewPortRenderIntervalBuffer.Handle, _viewPortSpanLength);
     [Pure]
-    public ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals() => new(_screenRenderIntervalPointer, _screenSpanLength);
+    public unsafe ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals() => new((void*)_screenRenderIntervalBuffer.Handle, _screenSpanLength);
 
     public BoundaryBehaviour(
         DimensionType dimensionType,
@@ -85,10 +83,8 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
         _boundaryBehaviourType = boundaryBehaviourType;
         _levelLength = levelLength;
 
-        var viewPortRenderIntervalHandle = Helpers.AllocateBuffer<ViewPortRenderInterval>(MaxNumberOfViewportRenderIntervals);
-        _viewPortRenderIntervalPointer = (ViewPortRenderInterval*)viewPortRenderIntervalHandle.Handle;
-        var screenRenderIntervalHandle = Helpers.AllocateBuffer<ScreenRenderInterval>(MaxNumberOfRenderCopiesForWrappedLevels);
-        _screenRenderIntervalPointer = (ScreenRenderInterval*)screenRenderIntervalHandle.Handle;
+        _viewPortRenderIntervalBuffer = Helpers.AllocateBuffer<ViewPortRenderInterval>(MaxNumberOfViewportRenderIntervals);
+        _screenRenderIntervalBuffer = Helpers.AllocateBuffer<ScreenRenderInterval>(MaxNumberOfRenderCopiesForWrappedLevels);
     }
 
     public void UpdateMouseCoordinate(int windowCoordinate)
@@ -96,8 +92,7 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
         _mouseViewPortCoordinate = (windowCoordinate + _scaleMultiplier - 1) / _scaleMultiplier;
         _mouseScreenCoordinate = _mouseViewPortCoordinate * _scaleMultiplier;
 
-        _mouseViewPortCoordinate =
-            Normalise(_mouseViewPortCoordinate + _viewPortStart - (_screenStart / _scaleMultiplier));
+        _mouseViewPortCoordinate = Normalise(_mouseViewPortCoordinate + _viewPortStart - (_screenStart / _scaleMultiplier));
     }
 
     public void UpdateScreenDimension(
@@ -130,13 +125,9 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
             return;
         }
 
-        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
-        {
-            _viewPortStart = Math.Clamp(viewPortCoordinate, 0, _levelLength - _viewPortLength);
-            return;
-        }
-
-        _viewPortStart = Normalise(viewPortCoordinate);
+        _viewPortStart = _boundaryBehaviourType == BoundaryBehaviourType.Void
+            ? Math.Clamp(viewPortCoordinate, 0, _levelLength - _viewPortLength)
+            : Normalise(viewPortCoordinate);
     }
 
     public void Scroll(int delta)
@@ -147,84 +138,120 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
         UpdateScreenRenderIntervals();
     }
 
+    /// <summary>
+    /// <para>
+    /// In the case of the Void type, this method returns the input unchanged.
+    /// </para>
+    /// <para>
+    /// In the case of the Wrap type, this method returns the input
+    /// modulo the level length.
+    /// </para>
+    /// </summary>
+    /// <param name="n">The input point.</param>
+    /// <returns>The input unchanged, in the case of the Void type, or the input
+    /// modulo the level length, in the case of the Wrap type.</returns>
     [Pure]
-    public int Normalise(int a)
+    public int Normalise(int n)
     {
+        var a = n;
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return a;
 
-        // Most likely situation for wrap normalisation is the input
+        // Most likely situation for Wrap normalisation is the input
         // being just outside the bounds [0, _levelLength - 1].
         // Therefore, we can avoid a call to the modulo operator
         // by simply adding/subtracting the level length
 
+        var delta = _levelLength;
         if (a < 0)
         {
-            a += _levelLength;
-            while (a < 0)
+            do
             {
-                a += _levelLength;
+                a += delta;
             }
-
-            return a;
+            while (a < 0);
         }
-
-        while (a >= _levelLength)
+        else
         {
-            a -= _levelLength;
+            while (a >= delta)
+            {
+                a -= delta;
+            }
         }
 
         return a;
     }
 
     [Pure]
-    public bool IntervalContainsPoint(Interval interval, int a)
+    public bool IntervalContainsPoint(Interval interval, int n)
     {
-        int* p1 = (int*)&interval;
-        p1[0] = Normalise(p1[0]);
+        var intervalStart = Normalise(interval.Start);
+        var intervalEnd = intervalStart + interval.Length;
+        var a = Normalise(n);
 
-        // If it works, it always works
-        if (interval.Start <= a && a < interval.Start + interval.Length)
+        // If the interval actually contains the point, that's easy
+        if (intervalStart <= a && a < intervalEnd)
             return true;
 
-        // If it doesn't work, it certainly doesn't work for void
+        // If the interval does not contains the point, then the Void type will never work
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
-        a += _levelLength;
-        if (interval.Start <= a && a < interval.Start + interval.Length)
-            return true;
+        // Edge case for Wrap behaviour (literally)
+        // Suppose the test point is just above zero
+        // And suppose the interval is just below _levelLength
+        // The interval could "wrap around" to overlap with the point
+        // We check this case here
 
-        a -= (_levelLength << 1);
-        return interval.Start <= a && a < interval.Start + interval.Length;
+        // By this point, for the case we need to check we definitely have:
+        // 0 <= a < intervalStart < _levelLength <= a + _levelLength
+        // Therefore can safely eliminate one interval check
+
+        return a + _levelLength < intervalEnd;
     }
 
     [Pure]
     public bool IntervalsOverlap(Interval i1, Interval i2)
     {
-        int* startPointer = (int*)&i1;
-        *startPointer = Normalise(*startPointer);
+        var interval1Start = Normalise(i1.Start);
+        var interval1End = interval1Start + i1.Length;
 
-        startPointer = (int*)&i2;
-        *startPointer = Normalise(*startPointer);
+        var interval2Start = Normalise(i2.Start);
+        var interval2End = interval2Start + i2.Length;
 
-        // If it works, it always works
-        if (i2.Start < i1.Start + i1.Length &&
-            i1.Start < i2.Start + i2.Length)
+        // If the intervals actually overlap, that's easy
+        if (interval1Start < interval2End &&
+            interval2Start < interval1End)
             return true;
 
-        // If it doesn't work, it certainly doesn't work for void
+        // If the intervals do not overlap, then the Void type will never work
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
-        *startPointer += _levelLength;
-        if (i2.Start < i1.Start + i1.Length &&
-            i1.Start < i2.Start + i2.Length)
-            return true;
+        // Edge case for Wrap behaviour (literally)
+        // Suppose one interval is just above zero
+        // And suppose the other interval is just below _levelLength
+        // The second interval could "wrap around" to overlap with the first
+        // We check this case here
 
-        *startPointer -= (_levelLength << 1);
-        return i2.Start < i1.Start + i1.Length &&
-               i1.Start < i2.Start + i2.Length;
+        // By this point, for the case we need to check we definitely have:
+        // 0 <= leftStart < leftEnd < rightStart < _levelLength <= leftStart + _levelLength < leftEnd + _levelLength
+        // Therefore can safely eliminate one interval check
+
+        if (interval1Start < interval2Start)
+        {
+            // interval1 <=> leftInterval
+            // interval2 <=> rightInterval
+
+            return interval1Start + _levelLength < interval2End;
+        }
+        else
+        {
+            // interval1 <=> rightInterval
+            // interval2 <=> leftInterval
+
+            return interval2Start + _levelLength < interval1End;
+        }
     }
 
     [Pure]
@@ -235,26 +262,32 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return delta;
 
-        if (delta >= 0)
+        var twiceDelta = delta * 2;
+
+        if (delta < 0)
         {
-            if (delta * 2 > _levelLength)
-                return delta - _levelLength;
+            twiceDelta = -twiceDelta;
 
-            return delta;
+            if (twiceDelta > _levelLength)
+                return delta + _levelLength;
         }
-
-        if (delta * -2 > _levelLength)
-            return delta + _levelLength;
+        else
+        {
+            if (twiceDelta > _levelLength)
+                return delta - _levelLength;
+        }
 
         return delta;
     }
 
-    private void UpdateViewPortRenderIntervals()
+    private unsafe void UpdateViewPortRenderIntervals()
     {
+        ViewPortRenderInterval* viewPortRenderIntervalPointer = (ViewPortRenderInterval*)_viewPortRenderIntervalBuffer.Handle;
+
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             _viewPortStart + _viewPortLength < _levelLength)
         {
-            _viewPortRenderIntervalPointer[0] = new ViewPortRenderInterval(_viewPortStart, _viewPortLength, -_viewPortStart);
+            viewPortRenderIntervalPointer[0] = new ViewPortRenderInterval(_viewPortStart, _viewPortLength, -_viewPortStart);
             _viewPortSpanLength = 1;
             return;
         }
@@ -264,26 +297,28 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
         if (_viewPortLength < _levelLength)
         {
             l1 = _levelLength - _viewPortStart;
-            _viewPortRenderIntervalPointer[0] = new ViewPortRenderInterval(_viewPortStart, l1, -_viewPortStart);
-            _viewPortRenderIntervalPointer[1] = new ViewPortRenderInterval(0, _viewPortLength - l1, _levelLength - _viewPortStart);
+            viewPortRenderIntervalPointer[0] = new ViewPortRenderInterval(_viewPortStart, l1, -_viewPortStart);
+            viewPortRenderIntervalPointer[1] = new ViewPortRenderInterval(0, _viewPortLength - l1, _levelLength - _viewPortStart);
         }
         else
         {
             l1 = _levelLength >>> 1;
-            _viewPortRenderIntervalPointer[0] = new ViewPortRenderInterval(0, l1, 0);
-            _viewPortRenderIntervalPointer[1] = new ViewPortRenderInterval(l1, _levelLength - l1, 0);
+            viewPortRenderIntervalPointer[0] = new ViewPortRenderInterval(0, l1, 0);
+            viewPortRenderIntervalPointer[1] = new ViewPortRenderInterval(l1, _levelLength - l1, 0);
         }
     }
 
-    private void UpdateScreenRenderIntervals()
+    private unsafe void UpdateScreenRenderIntervals()
     {
+        ScreenRenderInterval* screenRenderIntervalPointer = (ScreenRenderInterval*)_screenRenderIntervalBuffer.Handle;
+
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void ||
             _viewPortStart + _viewPortLength < _levelLength)
         {
             var viewPortDimensionOnScreen = _viewPortLength * _scaleMultiplier;
             _screenStart = (_screenLength - viewPortDimensionOnScreen) >>> 1;
 
-            _screenRenderIntervalPointer[0] = new ScreenRenderInterval(0, _viewPortLength, _screenStart, viewPortDimensionOnScreen);
+            screenRenderIntervalPointer[0] = new ScreenRenderInterval(0, _viewPortLength, _screenStart, viewPortDimensionOnScreen);
             _screenSpanLength = 1;
 
             return;
@@ -293,7 +328,7 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
 
         if (_viewPortLength < _levelLength)
         {
-            _screenRenderIntervalPointer[0] = new ScreenRenderInterval(0, _viewPortLength, 0, _screenLength);
+            screenRenderIntervalPointer[0] = new ScreenRenderInterval(0, _viewPortLength, 0, _screenLength);
             _screenSpanLength = 1;
 
             return;
@@ -302,24 +337,16 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
         UpdateScreenRenderIntervalsForMultipleWrappedCopies();
     }
 
-    private void UpdateScreenRenderIntervalsForMultipleWrappedCopies()
+    private unsafe void UpdateScreenRenderIntervalsForMultipleWrappedCopies()
     {
         var deltaL = _levelLength * _scaleMultiplier;
-
-        int screenCoordinate;
-
         var maxScreenDimension = Math.Min(deltaL * MaxNumberOfRenderCopiesForWrappedLevels, _screenLength);
+        int screenCoordinate = Math.Max(0, _screenLength - maxScreenDimension);
+        screenCoordinate >>>= 1;
 
-        if (maxScreenDimension < _screenLength)
-        {
-            screenCoordinate = (_screenLength - maxScreenDimension) >>> 1;
-        }
-        else
-        {
-            screenCoordinate = 0;
-        }
+        ScreenRenderInterval* screenRenderIntervalPointer = (ScreenRenderInterval*)_screenRenderIntervalBuffer.Handle;
 
-        _screenRenderIntervalPointer[0] = new ScreenRenderInterval(
+        screenRenderIntervalPointer[0] = new ScreenRenderInterval(
             _viewPortStart,
             _levelLength - _viewPortStart,
             screenCoordinate,
@@ -332,13 +359,13 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
         while (screenCoordinate < maxScreenDimension &&
                _screenSpanLength < MaxNumberOfRenderCopiesForWrappedLevels - 1)
         {
-            _screenRenderIntervalPointer[_screenSpanLength++] = new ScreenRenderInterval(0, _levelLength, screenCoordinate, deltaL);
+            screenRenderIntervalPointer[_screenSpanLength++] = new ScreenRenderInterval(0, _levelLength, screenCoordinate, deltaL);
             screenCoordinate += deltaL;
         }
 
         if (screenCoordinate < maxScreenDimension)
         {
-            _screenRenderIntervalPointer[_screenSpanLength++] = new ScreenRenderInterval(0, 0, screenCoordinate, 0);
+            screenRenderIntervalPointer[_screenSpanLength++] = new ScreenRenderInterval(0, 0, screenCoordinate, 0);
         }
     }
 
@@ -396,12 +423,7 @@ public sealed unsafe class BoundaryBehaviour : IDisposable
 
     public void Dispose()
     {
-        var viewPortRenderIntervalHandle = (nint)_viewPortRenderIntervalPointer;
-        var screenRenderIntervalHandle = (nint)_screenRenderIntervalPointer;
-
-        if (viewPortRenderIntervalHandle != nint.Zero)
-            Marshal.FreeHGlobal(viewPortRenderIntervalHandle);
-        if (screenRenderIntervalHandle != nint.Zero)
-            Marshal.FreeHGlobal(screenRenderIntervalHandle);
+        _viewPortRenderIntervalBuffer.Dispose();
+        _screenRenderIntervalBuffer.Dispose();
     }
 }

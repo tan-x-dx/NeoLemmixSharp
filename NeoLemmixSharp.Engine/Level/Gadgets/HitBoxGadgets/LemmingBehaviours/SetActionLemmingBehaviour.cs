@@ -14,9 +14,9 @@ public sealed class SetActionLemmingBehaviour : LemmingBehaviour
         _action = action;
     }
 
-    protected override void PerformInternalBehaviour(int lemmingId)
+    protected override void PerformInternalBehaviour(int triggerData)
     {
-        var lemming = GetLemming(lemmingId);
+        var lemming = GetLemming(triggerData);
         _action.TransitionLemmingToAction(lemming, false);
     }
 }

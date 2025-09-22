@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Level.Rewind.SnapshotData;
+using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics.CodeAnalysis;
 
@@ -31,6 +31,7 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     }
 
     public abstract void Tick();
+    public abstract void SetState(int stateIndex);
 
     public bool Equals(GadgetBase? other) => other is not null && Id == other.Id;
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBase other && Id == other.Id;

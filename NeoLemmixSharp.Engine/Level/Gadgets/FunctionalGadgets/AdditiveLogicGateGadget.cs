@@ -7,86 +7,75 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public abstract class AdditiveLogicGateGadget : GadgetBase,
-    IBitBufferCreator<ArrayBitBuffer, AdditiveLogicGateGadget.AdditiveLogicGateGadgetLinkInput>
+    IGadgetLinkTrigger,
+    IBitBufferCreator<ArrayBitBuffer, int>
 {
     private readonly AdditiveLogicGateGadgetState _offState;
     private readonly AdditiveLogicGateGadgetState _onState;
-
     private AdditiveLogicGateGadgetState _currentState;
+    private readonly OutputSignalBehaviour _outputSignal;
+    private readonly BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, int> _set;
 
-    private readonly AdditiveLogicGateGadgetLinkInput[] _inputs;
-    private readonly BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveLogicGateGadgetLinkInput> _set;
+    private readonly int _numberOfInputs;
 
     protected AdditiveLogicGateGadget(
         AdditiveLogicGateGadgetState offState,
         AdditiveLogicGateGadgetState onState,
-        AdditiveLogicGateGadgetLinkInput[] inputs)
+        OutputSignalBehaviour outputSignal,
+        int numberOfInputs)
         : base(GadgetType.LogicGate)
     {
         _offState = offState;
         _onState = onState;
         _currentState = _offState;
+        _outputSignal = outputSignal;
 
-        _inputs = inputs;
-        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, AdditiveLogicGateGadgetLinkInput>(this);
+        _set = new BitArraySet<AdditiveLogicGateGadget, ArrayBitBuffer, int>(this);
+        _numberOfInputs = numberOfInputs;
 
-        foreach (var input in _inputs)
-        {
-            input.Gadget = this;
-        }
+        _offState.SetParentGadget(this);
+        _onState.SetParentGadget(this);
     }
 
     public sealed override void Tick()
     {
-        _currentState.Tick(this);
+        _set.Clear();
+        _currentState.Tick();
     }
 
-    private void ReactToSignal(AdditiveLogicGateGadgetLinkInput input, bool signal)
+    public sealed override void SetState(int stateIndex)
     {
-        var hasChanged = signal
-            ? _set.Add(input)
-            : _set.Remove(input);
-        if (!hasChanged)
+        var state = stateIndex & 1;
+        _currentState = state == 0
+            ? _offState
+            : _onState;
+    }
+
+    public void ReactToSignal(int payload)
+    {
+        if (!_set.Add(payload))
             return;
 
-        var isActive = EvaluateInputCount(_set.Count, _inputs.Length);
-        _currentState = isActive ? _onState : _offState;
+        var isActive = EvaluateInputCount(_set.Count, _numberOfInputs);
+        if (isActive)
+        {
+            LevelScreen.GadgetManager.RegisterCauseAndEffectData(_outputSignal);
+            _currentState = _onState;
+        }
+        else
+        {
+            _currentState = _offState;
+        }
     }
 
     protected abstract bool EvaluateInputCount(int numberOfTrueInputs, int numberOfInputs);
 
     public sealed override AdditiveLogicGateGadgetState CurrentState => _currentState;
 
-    public sealed class AdditiveLogicGateGadgetLinkInput : GadgetTrigger, IGadgetLinkTrigger
-    {
-        public OutputSignalBehaviour InputSignalBehaviour { get; set; }
-
-        public AdditiveLogicGateGadget Gadget { get; set; } = null!;
-
-        public AdditiveLogicGateGadgetLinkInput()
-            : base(GadgetTriggerType.GadgetLinkTrigger)
-        {
-        }
-
-        public override void DetectTrigger(GadgetBase _)
-        {
-            if (Evaluation != TriggerEvaluation.Indeterminate)
-            {
-                LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
-            }
-        }
-
-        public void ReactToSignal(bool signal)
-        {
-            DetermineTrigger(signal, true);
-            LevelScreen.GadgetManager.FlagGadgetForReEvaluation(Gadget);
-        }
-    }
-
-    int IPerfectHasher<AdditiveLogicGateGadgetLinkInput>.NumberOfItems => _inputs.Length;
-    int IPerfectHasher<AdditiveLogicGateGadgetLinkInput>.Hash(AdditiveLogicGateGadgetLinkInput item) => item.Id;
-    AdditiveLogicGateGadgetLinkInput IPerfectHasher<AdditiveLogicGateGadgetLinkInput>.UnHash(int index) => throw new NotSupportedException("Why are you doing this? Stop it.");
-    void IBitBufferCreator<ArrayBitBuffer, AdditiveLogicGateGadgetLinkInput>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_inputs.Length);
+    int IPerfectHasher<int>.NumberOfItems => _numberOfInputs;
+    int IPerfectHasher<int>.Hash(int item) => item;
+    int IPerfectHasher<int>.UnHash(int index) => index;
+    void IBitBufferCreator<ArrayBitBuffer, int>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_numberOfInputs);
 }
 
 public sealed class AndGateGadget : AdditiveLogicGateGadget
@@ -94,8 +83,9 @@ public sealed class AndGateGadget : AdditiveLogicGateGadget
     public AndGateGadget(
         AdditiveLogicGateGadgetState offState,
         AdditiveLogicGateGadgetState onState,
-        AdditiveLogicGateGadgetLinkInput[] inputs)
-        : base(offState, onState, inputs)
+        OutputSignalBehaviour outputSignal,
+        int numberOfInputs)
+        : base(offState, onState, outputSignal, numberOfInputs)
     {
     }
 
@@ -110,8 +100,9 @@ public sealed class OrGateGadget : AdditiveLogicGateGadget
     public OrGateGadget(
         AdditiveLogicGateGadgetState offState,
         AdditiveLogicGateGadgetState onState,
-        AdditiveLogicGateGadgetLinkInput[] inputs)
-        : base(offState, onState, inputs)
+        OutputSignalBehaviour outputSignal,
+        int numberOfInputs)
+        : base(offState, onState, outputSignal, numberOfInputs)
     {
     }
 
@@ -123,15 +114,5 @@ public sealed class OrGateGadget : AdditiveLogicGateGadget
 
 public sealed class AdditiveLogicGateGadgetState : GadgetState
 {
-    public override void OnTransitionFrom()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void OnTransitionTo()
-    {
-        throw new NotImplementedException();
-    }
-
     public override GadgetRenderer Renderer { get; }
 }

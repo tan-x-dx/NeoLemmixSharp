@@ -1,7 +1,9 @@
-﻿using NeoLemmixSharp.Common.Enums;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
+using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.GadgetAnimation;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.GadgetBehaviours;
@@ -9,6 +11,7 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using NeoLemmixSharp.IO.Util;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 
@@ -78,14 +81,10 @@ public readonly ref struct GadgetBehaviourBuilder
 
             GadgetBehaviourType.GadgetOutputSignal => BuildGadgetOutputSignalBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.GadgetChangeInternalState => BuildGadgetChangeInternalStateBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetFreeMove => BuildGadgetMoveFreeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetConstrainedMove => BuildConstrainedMoveGadgetBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetMove => BuildMoveGadgetBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.GadgetFreeResize => BuildFreeResizeGadgetBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.GadgetConstrainedResize => BuildConstrainedResizeGadgetBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.GadgetAnimationRenderLayer => BuildGadgetAnimationRenderLayerBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetAnimationSetFrame => BuildGadgetAnimationSetFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetAnimationIncrementFrame => BuildGadgetAnimationIncrementFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetAnimationDecrementFrame => BuildGadgetAnimationDecrementFrameBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.LemmingBehaviour => LemmingBehaviourBuilder.BuildLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.GlobalAdditionalTime => BuildGlobalAdditionalTimeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             GadgetBehaviourType.GlobalSkillCountChange => BuildGlobalSkillCountChangeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
@@ -100,35 +99,34 @@ public readonly ref struct GadgetBehaviourBuilder
 
     private static OutputSignalBehaviour BuildGadgetOutputSignalBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        throw new NotImplementedException();
-    }
-
-    private static GadgetBehaviour BuildGadgetChangeInternalStateBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
-    {
-        throw new NotImplementedException();
-    }
-
-    private FreeMoveGadgetBehaviour BuildGadgetMoveFreeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
-    {
-        var tickDelay = gadgetBehaviourDatum.Data1;
-        var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data2);
-
-        return new FreeMoveGadgetBehaviour(_gadgetIdentifier, tickDelay, delta)
+        return new OutputSignalBehaviour()
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+            MaxTriggerCountPerTick = 1
         };
     }
 
-    private ConstrainedMoveGadgetBehaviour BuildConstrainedMoveGadgetBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static StateChangeBehaviour BuildGadgetChangeInternalStateBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    {
+        var intendedStateIndex = gadgetBehaviourDatum.Data2;
+
+        return new StateChangeBehaviour(intendedStateIndex)
+        {
+            GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
+            Id = newBehaviourId,
+            MaxTriggerCountPerTick = 1
+        };
+    }
+
+    private MoveGadgetBehaviour BuildMoveGadgetBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         var maxTriggerCountPerTick = gadgetBehaviourDatum.Data1 & 0xffff;
         var tickDelay = gadgetBehaviourDatum.Data1 >>> 16;
         var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data1);
         var limit = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data2);
 
-        return new ConstrainedMoveGadgetBehaviour(_gadgetIdentifier, tickDelay, delta, limit)
+        return new MoveGadgetBehaviour(_gadgetIdentifier, tickDelay, delta, limit)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
@@ -164,24 +162,61 @@ public readonly ref struct GadgetBehaviourBuilder
         };
     }
 
-    private static GadgetBehaviour BuildGadgetAnimationRenderLayerBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static AnimationLayerBehaviour BuildGadgetAnimationRenderLayerBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        throw new NotImplementedException();
-    }
+        var frameData = gadgetBehaviourDatum.Data1;
 
-    private static GadgetBehaviour BuildGadgetAnimationSetFrameBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
-    {
-        throw new NotImplementedException();
-    }
+        var minFrame = frameData & 0xff;
+        frameData >>>= 8;
+        var maxFrame = frameData & 0xff;
+        frameData >>>= 8;
+        var initialFrame = frameData & 0xff;
+        frameData >>>= 8;
+        var layer = frameData & 0xff;
 
-    private static GadgetBehaviour BuildGadgetAnimationIncrementFrameBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
-    {
-        throw new NotImplementedException();
-    }
+        var layerColorData = gadgetBehaviourDatum.Data2;
+        var isIncrement = (layerColorData & 1) == 0;
+        layerColorData >>>= 1;
+        var isTribeColorLayer = (layerColorData & 1) != 0;
 
-    private static GadgetBehaviour BuildGadgetAnimationDecrementFrameBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
-    {
-        throw new NotImplementedException();
+        GadgetLayerColorData gadgetLayerColorData;
+        if (isTribeColorLayer)
+        {
+            var rawTribeData = gadgetBehaviourDatum.Data3;
+            var tribeId = rawTribeData & 0xff;
+            rawTribeData >>>= 8;
+            var tribeColorLayerType = TribeSpriteLayerColorTypeHelpers.GetEnumValue((uint)(rawTribeData & 0xff));
+            gadgetLayerColorData = new GadgetLayerColorData(tribeId, tribeColorLayerType);
+        }
+        else
+        {
+            var rawColor = gadgetBehaviourDatum.Data3;
+            var color = Unsafe.As<int, Color>(ref rawColor);
+            gadgetLayerColorData = new GadgetLayerColorData(color);
+        }
+
+        if (isIncrement)
+        {
+            return AnimationLayerBehaviour.CreateIncrementAnimationLayerBehaviour(
+                newBehaviourId,
+                gadgetBehaviourDatum.GadgetBehaviourName,
+                layer,
+                minFrame,
+                maxFrame,
+                initialFrame,
+                gadgetLayerColorData);
+        }
+        else
+        {
+            return AnimationLayerBehaviour.CreateDecrementAnimationLayerBehaviour(
+                newBehaviourId,
+                gadgetBehaviourDatum.GadgetBehaviourName,
+                layer,
+                minFrame,
+                maxFrame,
+                initialFrame,
+                gadgetLayerColorData);
+        }
     }
 
     private static AdditionalTimeBehaviour BuildGlobalAdditionalTimeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)

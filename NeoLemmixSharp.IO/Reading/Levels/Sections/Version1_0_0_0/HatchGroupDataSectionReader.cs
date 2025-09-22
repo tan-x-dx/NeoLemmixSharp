@@ -26,9 +26,9 @@ internal sealed class HatchGroupDataSectionReader : LevelDataSectionReader
     private static HatchGroupData ReadHatchGroupData(RawLevelFileDataReader reader)
     {
         int hatchGroupId = reader.Read8BitUnsignedInteger();
-        int minSpawnInterval = reader.Read8BitUnsignedInteger();
-        int maxSpawnInterval = reader.Read8BitUnsignedInteger();
-        int initialSpawnInterval = reader.Read8BitUnsignedInteger();
+        uint minSpawnInterval = reader.Read8BitUnsignedInteger();
+        uint maxSpawnInterval = reader.Read8BitUnsignedInteger();
+        uint initialSpawnInterval = reader.Read8BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(minSpawnInterval >= EngineConstants.MinAllowedSpawnInterval, "Invalid MinSpawnInterval");
         FileReadingException.ReaderAssert(maxSpawnInterval <= EngineConstants.MaxAllowedSpawnInterval, "Invalid MaxSpawnInterval");

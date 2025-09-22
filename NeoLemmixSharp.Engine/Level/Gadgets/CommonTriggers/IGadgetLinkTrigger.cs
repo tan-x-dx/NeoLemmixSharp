@@ -4,6 +4,5 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
 
 public interface IGadgetLinkTrigger
 {
-    OutputSignalBehaviour InputSignalBehaviour { get; set; }
-    void ReactToSignal(bool signal);
+    void ReactToSignal(int payload);
 }

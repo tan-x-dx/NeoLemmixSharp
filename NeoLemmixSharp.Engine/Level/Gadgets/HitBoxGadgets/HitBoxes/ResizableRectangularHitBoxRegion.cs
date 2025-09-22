@@ -47,14 +47,17 @@ public sealed class ResizableRectangularHitBoxRegion : HitBoxRegion
 
     public override bool ContainsEitherPoint(Point p1, Point p2)
     {
+        var x = GetX();
+        var y = GetY();
+
         var w = GetWidth();
         var h = GetHeight();
 
         return w > 0 &&
                h > 0 &&
-               (LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetX(), w), p1.X) &&
-                 LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetY(), h), p1.Y) ||
-                LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetX(), w), p1.X) &&
-                 LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetY(), h), p1.Y));
+               (LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(x, w), p1.X) &&
+                LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(y, h), p1.Y) ||
+                LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(x, w), p1.X) &&
+                LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(y, h), p1.Y));
     }
 }

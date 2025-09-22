@@ -1,56 +1,58 @@
 ﻿using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.FunctionalGadgets;
 
 public sealed class LevelTimerObserverGadget : GadgetBase
 {
-    private readonly LevelTimerTrigger _levelTimerTrigger;
+    private readonly LevelTimerGadgetState _offState;
+    private readonly LevelTimerGadgetState _onState;
+    private readonly OutputSignalBehaviour _outputSignalBehaviour;
+    private readonly LevelTimerObservationType _observationType;
+    private readonly ComparisonType _comparisonType;
+    private readonly int _requiredValue;
 
-    public LevelTimerObserverGadget(LevelTimerTrigger levelTimerTrigger)
+    private LevelTimerGadgetState _currentState;
+
+    public LevelTimerObserverGadget(
+        LevelTimerGadgetState offState,
+        LevelTimerGadgetState onState,
+        OutputSignalBehaviour outputSignalBehaviour,
+        LevelTimerObservationType observationType,
+        ComparisonType comparisonType,
+        int requiredValue)
         : base(GadgetType.LevelTimerObserver)
     {
-        _levelTimerTrigger = levelTimerTrigger;
+        _offState = offState;
+        _onState = onState;
+        _currentState = _offState;
+        _outputSignalBehaviour = outputSignalBehaviour;
+
+        _observationType = observationType;
+        _comparisonType = comparisonType;
+        _requiredValue = requiredValue;
+
+        _offState.SetParentGadget(this);
+        _onState.SetParentGadget(this);
     }
 
-    public override GadgetState CurrentState { get; }
+    public override LevelTimerGadgetState CurrentState => _currentState;
 
     public override void Tick()
     {
-        _levelTimerTrigger.DetectTrigger(this);
-    }
-}
-
-public sealed class LevelTimerTrigger : GadgetTrigger
-{
-    private readonly OutputSignalBehaviour _outputSignalBehaviour;
-    private readonly LevelTimerTriggerParameters _levelTimerTriggerParameters;
-
-    public LevelTimerTrigger(
-        OutputSignalBehaviour outputSignalBehaviour,
-        LevelTimerTriggerParameters levelTimerTriggerParameters)
-        : base(GadgetTriggerType.GlobalLevelTimerTrigger)
-    {
-        _outputSignalBehaviour = outputSignalBehaviour;
-        _levelTimerTriggerParameters = levelTimerTriggerParameters;
-    }
-
-    public override void DetectTrigger(GadgetBase parentGadget)
-    {
-        if (_levelTimerTriggerParameters.LevelTimerMatchesParameters())
+        if (LevelTimerMatchesParameters())
         {
-            DetermineTrigger(true, true);
-            LevelScreen.CauseAndEffectManager.RegisterCauseAndEffectData(new CauseAndEffectData(_outputSignalBehaviour.Id));
+            LevelScreen.GadgetManager.RegisterCauseAndEffectData(_outputSignalBehaviour);
+            _currentState = _onState;
         }
-    }
-}
+        else
+        {
+            _currentState = _offState;
+        }
 
-public readonly struct LevelTimerTriggerParameters(LevelTimerObservationType observationType, ComparisonType comparisonType, int requiredValue)
-{
-    private readonly LevelTimerObservationType _observationType = observationType;
-    private readonly ComparisonType _comparisonType = comparisonType;
-    private readonly int _requiredValue = requiredValue;
+        CurrentState.Tick();
+    }
 
     public bool LevelTimerMatchesParameters()
     {
@@ -58,18 +60,19 @@ public readonly struct LevelTimerTriggerParameters(LevelTimerObservationType obs
             ? LevelScreen.LevelTimer.EffectiveElapsedSeconds
             : LevelScreen.LevelTimer.EffectiveSecondsRemaining;
 
-        return ComparisonMatches(comparisonValue);
+        return _comparisonType.ComparisonMatches(comparisonValue, _requiredValue);
     }
 
-    private bool ComparisonMatches(int value) => _comparisonType switch
+    public sealed override void SetState(int stateIndex)
     {
-        ComparisonType.EqualTo => value == _requiredValue,
-        ComparisonType.NotEqualTo => value != _requiredValue,
-        ComparisonType.LessThan => value < _requiredValue,
-        ComparisonType.LessThanOrEqual => value <= _requiredValue,
-        ComparisonType.GreaterThan => value > _requiredValue,
-        ComparisonType.GreaterThanOrEqual => value >= _requiredValue,
+        var state = stateIndex & 1;
+        _currentState = state == 0
+            ? _offState
+            : _onState;
+    }
+}
 
-        _ => Helpers.ThrowUnknownEnumValueException<ComparisonType, bool>(_comparisonType),
-    };
+public sealed class LevelTimerGadgetState : GadgetState
+{
+    public override GadgetRenderer Renderer { get; }
 }
