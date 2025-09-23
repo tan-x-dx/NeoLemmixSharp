@@ -108,9 +108,9 @@ public sealed class LevelEventList<TEventData> : IDisposable
             return basePointer->TickNumber == tick;
         }
 
-        var upperTestIndex = _count - 1;
         // Edge case: ALL items are < tick
-        if ((basePointer + upperTestIndex)->TickNumber < tick)
+        // Also takes care of the edge case when the array is of length 1
+        if ((basePointer + (_count - 1))->TickNumber < tick)
         {
             // This is deliberately outside the bounds of the array
             // Subsequent usages of this data must deal with it
@@ -118,11 +118,18 @@ public sealed class LevelEventList<TEventData> : IDisposable
             return false;
         }
 
-        var lowerTestIndex = 0;
+        return SearchForSmallestIndexOfTick(tick, out index);
+    }
+
+    private unsafe bool SearchForSmallestIndexOfTick(int tick, out int index)
+    {
+        TEventData* basePointer = (TEventData*)_buffer.Handle;
+        uint lowerTestIndex = 0;
+        uint upperTestIndex = (uint)_count - 1;
 
         while (upperTestIndex - lowerTestIndex > 1)
         {
-            var bestGuessIndex = (lowerTestIndex + upperTestIndex) >>> 1;
+            uint bestGuessIndex = (lowerTestIndex + upperTestIndex) >>> 1;
             TEventData* pointer = basePointer + bestGuessIndex;
 
             if (pointer->TickNumber >= tick)
@@ -135,7 +142,7 @@ public sealed class LevelEventList<TEventData> : IDisposable
             }
         }
 
-        index = upperTestIndex;
+        index = (int)upperTestIndex;
         return (basePointer + upperTestIndex)->TickNumber == tick;
     }
 
