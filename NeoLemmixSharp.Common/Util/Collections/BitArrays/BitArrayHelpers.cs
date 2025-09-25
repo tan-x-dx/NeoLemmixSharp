@@ -185,6 +185,29 @@ public static class BitArrayHelpers
         return result;
     }
 
+    /// <summary>
+    /// Faster UnionWith alternative using raw pointers.
+    /// Used by SpacialHashGrid since that class calculates popcount a lot.
+    /// </summary>
+    /// <param name="sourcePointer">The uints to collectively popcount.</param>
+    /// <param name="length">The number of uints to evaluate.</param>
+    /// <returns>The popcount over all uints specified by the pointer/length.</returns>
+    [Pure]
+    internal static unsafe int GetPopCount(uint* sourcePointer, uint length)
+    {
+        // Basic implementation is faster than using TensorPrimitives - benchmarks
+
+        var result = 0;
+        var i = length;
+        while (i-- > 0)
+        {
+            result += BitOperations.PopCount(*sourcePointer);
+            sourcePointer++;
+        }
+
+        return result;
+    }
+
     /*
      * Use jump tables (switch/case) for small span lengths.
      * This is a more common occurrence than not, and is faster - benchmarks.
@@ -214,6 +237,38 @@ public static class BitArrayHelpers
         TensorPrimitives.BitwiseOr(span, other, span);
     }
 
+    /// <summary>
+    /// Faster UnionWith alternative using raw pointers.
+    /// Used by SpacialHashGrid since that class does lots of union operations.
+    /// </summary>
+    /// <param name="sourcePointer">The pointer whose bits are to be modified. This pointer is written to.</param>
+    /// <param name="otherPointer">The pointer whose bits are used in the masking operation. This pointer is used read only.</param>
+    /// <param name="length">The number of uints that need to be modified.</param>
+    internal static unsafe void UnionWith(uint* sourcePointer, uint* otherPointer, uint length)
+    {
+        if (length > 8)
+        {
+            LargeSpanUnionWith(sourcePointer, otherPointer, length);
+            return;
+        }
+
+        while (length-- > 0)
+        {
+            *sourcePointer |= *otherPointer;
+            sourcePointer++;
+            otherPointer++;
+        }
+    }
+
+    private static unsafe void LargeSpanUnionWith(void* sourcePointer, void* otherPointer, uint length)
+    {
+        var spanLength = (int)length;
+        var span = new Span<uint>(sourcePointer, spanLength);
+        var otherSpan = new ReadOnlySpan<uint>(otherPointer, spanLength);
+
+        TensorPrimitives.BitwiseOr(span, otherSpan, span);
+    }
+
     internal static void IntersectWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
         if (span.Length != other.Length)
@@ -221,6 +276,7 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
+            case 8: span[7] &= other[7]; goto case 7;
             case 7: span[6] &= other[6]; goto case 6;
             case 6: span[5] &= other[5]; goto case 5;
             case 5: span[4] &= other[4]; goto case 4;
@@ -241,6 +297,7 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
+            case 8: span[7] &= ~other[7]; goto case 7;
             case 7: span[6] &= ~other[6]; goto case 6;
             case 6: span[5] &= ~other[5]; goto case 5;
             case 5: span[4] &= ~other[4]; goto case 4;
@@ -264,6 +321,7 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
+            case 8: span[6] ^= other[7]; goto case 7;
             case 7: span[6] ^= other[6]; goto case 6;
             case 6: span[5] ^= other[5]; goto case 5;
             case 5: span[4] ^= other[4]; goto case 4;

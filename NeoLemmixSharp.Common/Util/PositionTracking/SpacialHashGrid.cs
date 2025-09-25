@@ -17,17 +17,17 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
     private readonly BitArraySet<TPerfectHasher, TBuffer, T> _allTrackedItems;
 
-    private readonly uint* _cachedQueryScratchSpacePointer;
     private readonly uint* _allBitsPointer;
-    private readonly int _bitArraySize;
+    private readonly uint* _cachedQueryScratchSpacePointer;
     private readonly RectangularRegion* _previousItemPositionsPointer;
+    private readonly int _bitArraySize;
 
     private readonly int _chunkSizeBitShift;
     private readonly Size _sizeInChunks;
 
     private Point _cachedTopLeftChunkQuery = new(-256, -256);
     private Point _cachedBottomRightChunkQuery = new(-256, -256);
-    private int _cachedQueryCount;
+    private int _cachedQueryPopCount;
 
     public SpacialHashGrid(
         TPerfectHasher hasher,
@@ -49,8 +49,8 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             (horizontalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >>> _chunkSizeBitShift,
             (verticalBoundaryBehaviour.LevelLength + chunkSizeBitMask) >>> _chunkSizeBitShift);
 
-        _cachedQueryScratchSpacePointer = (uint*)Marshal.AllocHGlobal(_bitArraySize * sizeof(uint));
         _allBitsPointer = (uint*)Marshal.AllocHGlobal(AllBitsSize * sizeof(uint));
+        _cachedQueryScratchSpacePointer = (uint*)Marshal.AllocHGlobal(_bitArraySize * sizeof(uint));
         _previousItemPositionsPointer = (RectangularRegion*)Marshal.AllocHGlobal(_hasher.NumberOfItems * sizeof(RectangularRegion));
 
         Clear();
@@ -58,9 +58,6 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
     [Pure]
     public bool IsEmpty => _allTrackedItems.Count == 0;
-
-    [Pure]
-    public int ScratchSpaceSize => _bitArraySize;
 
     [Pure]
     private int AllBitsSize => _bitArraySize * _sizeInChunks.Area();
@@ -74,14 +71,12 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     public void Clear()
     {
         _allTrackedItems.Clear();
-        new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize).Clear();
         new Span<uint>(_allBitsPointer, AllBitsSize).Clear();
         new Span<RectangularRegion>(_previousItemPositionsPointer, _hasher.NumberOfItems).Clear();
         ClearCachedData();
     }
 
     public void GetAllItemsNearPosition(
-        Span<uint> scratchSpaceSpan,
         Point levelPosition,
         out BitArrayEnumerable<TPerfectHasher, T> result)
     {
@@ -93,28 +88,33 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
         var chunkPosition = new Point(levelPosition.X >> _chunkSizeBitShift, levelPosition.Y >> _chunkSizeBitShift);
 
-        if (!_sizeInChunks.EncompassesPoint(chunkPosition))
+        if (_sizeInChunks.EncompassesPoint(chunkPosition))
+        {
+            EvaluateItemsNearPosition(chunkPosition, out result);
+        }
+        else
         {
             result = BitArrayEnumerable<TPerfectHasher, T>.Empty;
-            return;
         }
+    }
 
+    private void EvaluateItemsNearPosition(Point chunkPosition, out BitArrayEnumerable<TPerfectHasher, T> result)
+    {
         var sourceSpan = ReadOnlySpanForChunk(chunkPosition);
-        var queryCount = BitArrayHelpers.GetPopCount(sourceSpan);
+        var scratchSpaceSpan = new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize);
         sourceSpan.CopyTo(scratchSpaceSpan);
+        _cachedQueryPopCount = BitArrayHelpers.GetPopCount(_cachedQueryScratchSpacePointer, (uint)_bitArraySize);
 
-        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, queryCount);
+        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryPopCount);
     }
 
     /// <summary>
-    /// Gets all items that overlap with the input region. Uses the span parameter to record data.
+    /// Gets all items that overlap with the input region.
     /// </summary>
-    /// <param name="scratchSpaceSpan">The span used to record data</param>
     /// <param name="levelRegion">The region to evaluate chunks from</param>
     /// <param name="result">The enumerable</param>
     /// <returns>An enumerable for items within the region</returns>
     public void GetAllItemsNearRegion(
-        Span<uint> scratchSpaceSpan,
         RectangularRegion levelRegion,
         out BitArrayEnumerable<TPerfectHasher, T> result)
     {
@@ -131,12 +131,20 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             _cachedBottomRightChunkQuery == bottomRightChunk)
         {
             // If we've already got the data cached, just use it
-            new ReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize).CopyTo(scratchSpaceSpan);
-
-            result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
-            return;
+            result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, new ReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize), _cachedQueryPopCount);
         }
+        else
+        {
+            EvaluateItemsNearRegion(topLeftChunk, bottomRightChunk, out result);
+        }
+    }
 
+    private void EvaluateItemsNearRegion(
+        Point topLeftChunk,
+        Point bottomRightChunk,
+        out BitArrayEnumerable<TPerfectHasher, T> result)
+    {
+        var scratchSpaceSpan = new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize);
         if (topLeftChunk == bottomRightChunk)
         {
             // Only one chunk -> skip some extra work
@@ -147,14 +155,13 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         else
         {
             scratchSpaceSpan.Clear();
-            EvaluateChunkUnions(scratchSpaceSpan, topLeftChunk, bottomRightChunk);
+            EvaluateChunkUnions(topLeftChunk, bottomRightChunk);
         }
 
-        scratchSpaceSpan.CopyTo(new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize));
         _cachedTopLeftChunkQuery = topLeftChunk;
         _cachedBottomRightChunkQuery = bottomRightChunk;
-        _cachedQueryCount = BitArrayHelpers.GetPopCount(scratchSpaceSpan);
-        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryCount);
+        _cachedQueryPopCount = BitArrayHelpers.GetPopCount(_cachedQueryScratchSpacePointer, (uint)_bitArraySize);
+        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryPopCount);
     }
 
     public void AddItem(T item)
@@ -334,7 +341,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     }
 
     /// <summary>
-    /// Performs a chunk union operation over a rectangle of chunks, placing the results into the span parameter.
+    /// Performs a chunk union operation over a rectangle of chunks, using the scratch space pointer buffer to store the results.
     ///
     /// <para>The rectangle of chunks begins with the top left coordinates of <paramref name="chunkA" />
     /// down to the bottom right coordinates of <paramref name="chunkB" /> inclusive.
@@ -347,7 +354,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     /// <param name="span">The span used to record data.</param>
     /// <param name="chunkA">The top left position.</param>
     /// <param name="chunkB">The bottom right position.</param>
-    private void EvaluateChunkUnions(Span<uint> span, Point chunkA, Point chunkB)
+    private void EvaluateChunkUnions(Point chunkA, Point chunkB)
     {
         if (chunkB.X < chunkA.X)
         {
@@ -369,7 +376,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             var x = xCount;
             while (x-- > 0)
             {
-                BitArrayHelpers.UnionWith(span, ReadOnlySpanForChunk(new Point(x1, y1)));
+                BitArrayHelpers.UnionWith(_cachedQueryScratchSpacePointer, PointerForChunk(new Point(x1, y1)), (uint)_bitArraySize);
 
                 if (++x1 == _sizeInChunks.W)
                 {
@@ -402,6 +409,15 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     }
 
     [Pure]
+    private uint* PointerForChunk(Point pos)
+    {
+        var index = IndexForChunk(pos);
+        uint* pointer = _allBitsPointer + index;
+
+        return pointer;
+    }
+
+    [Pure]
     private ReadOnlySpan<uint> ReadOnlySpanForChunk(Point pos)
     {
         var index = IndexForChunk(pos);
@@ -419,11 +435,12 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         return index;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void ClearCachedData()
     {
         _cachedTopLeftChunkQuery = new Point(-256, -256);
         _cachedBottomRightChunkQuery = _cachedTopLeftChunkQuery;
+
+        new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize).Clear();
     }
 
     public void Dispose()

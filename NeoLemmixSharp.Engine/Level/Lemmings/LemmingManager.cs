@@ -52,8 +52,6 @@ public sealed class LemmingManager :
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
     public LemmingEnumerable AllBlockers => _allBlockers.AsEnumerable();
 
-    public int ScratchSpaceSize => _lemmingPositionHelper.ScratchSpaceSize;
-
     public LemmingManager(
         Lemming[] lemmings,
         int numberOfPreplacedLemmings,
@@ -256,12 +254,9 @@ public sealed class LemmingManager :
         return simulationLemming;
     }
 
-    public void GetAllLemmingsNearRegion(
-        Span<uint> scratchSpace,
-        RectangularRegion levelRegion,
-        out LemmingEnumerable result)
+    public void GetAllLemmingsNearRegion(RectangularRegion levelRegion, out LemmingEnumerable result)
     {
-        _lemmingPositionHelper.GetAllItemsNearRegion(scratchSpace, levelRegion, out result);
+        _lemmingPositionHelper.GetAllItemsNearRegion(levelRegion, out result);
     }
 
     public void RegisterBlocker(Lemming lemming)
@@ -313,9 +308,8 @@ public sealed class LemmingManager :
     {
         Debug.Assert(!lemming.State.IsZombie);
 
-        Span<uint> scratchSpaceSpan = stackalloc uint[_lemmingPositionHelper.ScratchSpaceSize];
         var checkRegion = lemming.CurrentBounds;
-        _zombieSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, checkRegion, out var nearbyZombies);
+        _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion, out var nearbyZombies);
 
         if (nearbyZombies.Count == 0)
             return;
