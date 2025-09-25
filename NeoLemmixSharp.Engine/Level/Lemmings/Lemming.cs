@@ -20,14 +20,15 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 {
     public static Lemming SimulationLemming { get; } = new();
 
-    public readonly int Id;
-
-    private LemmingData _data;
-
     private LemmingAction _previousAction = NoneAction.Instance;
     private LemmingAction _currentAction;
     private LemmingAction _nextAction = NoneAction.Instance;
     private LemmingAction _countDownAction = NoneAction.Instance;
+
+    public LemmingRenderer Renderer { get; }
+
+    private LemmingData _data;
+    public readonly int Id;
 
     public Orientation Orientation
     {
@@ -106,8 +107,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         get => _countDownAction;
         set => _countDownAction = value;
     }
-
-    public LemmingRenderer Renderer { get; }
 
     public bool IsSimulation => Id < 0;
     public bool IsFastForward => _data.FastForwardTime > 0 || State.IsPermanentFastForwards;
