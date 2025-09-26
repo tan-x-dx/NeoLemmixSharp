@@ -214,7 +214,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
 
         previousBounds = new RectangularRegion(topLeftChunk, bottomRightChunk);
-        ModifyChunks(ChunkOperationType.Add, item, topLeftChunk, bottomRightChunk);
+        ModifyChunks(item, ChunkOperationType.Add, topLeftChunk, bottomRightChunk);
     }
 
     public void RemoveItem(T item)
@@ -254,7 +254,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             return;
         }
 
-        ModifyChunks(ChunkOperationType.Remove, item, topLeftChunk, bottomRightChunk);
+        ModifyChunks(item, ChunkOperationType.Remove, topLeftChunk, bottomRightChunk);
     }
 
     private Point GetTopLeftChunkForRegion(RectangularRegion levelRegion)
@@ -289,7 +289,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     /// <param name="item">An item to use in part of these chunk operations.
     /// <param name="chunkA">The top left position.</param>
     /// <param name="chunkB">The bottom right position.</param>
-    private void ModifyChunks(ChunkOperationType chunkOperationType, T item, Point chunkA, Point chunkB)
+    private void ModifyChunks(T item, ChunkOperationType chunkOperationType, Point chunkA, Point chunkB)
     {
         if (chunkB.X < chunkA.X)
         {
@@ -311,7 +311,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             var x = xCount;
             while (x-- > 0)
             {
-                ModifyChunkPosition(chunkOperationType, item, new Point(x1, y1));
+                ModifyChunkPosition(item, chunkOperationType, new Point(x1, y1));
 
                 if (++x1 == _sizeInChunks.W)
                 {
@@ -326,7 +326,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
     }
 
-    private void ModifyChunkPosition(ChunkOperationType chunkOperationType, T item, Point chunkPosition)
+    private void ModifyChunkPosition(T item, ChunkOperationType chunkOperationType, Point chunkPosition)
     {
         var span = SpanForChunk(chunkPosition);
         var hash = _hasher.Hash(item);
