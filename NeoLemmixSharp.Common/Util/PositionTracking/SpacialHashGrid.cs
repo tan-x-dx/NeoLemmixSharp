@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.PositionTracking;
@@ -25,8 +24,8 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     private readonly int _chunkSizeBitShift;
     private readonly Size _sizeInChunks;
 
-    private Point _cachedTopLeftChunkQuery = new(-256, -256);
-    private Point _cachedBottomRightChunkQuery = new(-256, -256);
+    private Point _cachedTopLeftChunkQuery;
+    private Point _cachedBottomRightChunkQuery;
     private int _cachedQueryPopCount;
 
     public SpacialHashGrid(
@@ -100,12 +99,11 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
     private void EvaluateItemsNearPosition(Point chunkPosition, out BitArrayEnumerable<TPerfectHasher, T> result)
     {
-        var sourceSpan = ReadOnlySpanForChunk(chunkPosition);
-        var scratchSpaceSpan = new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize);
-        sourceSpan.CopyTo(scratchSpaceSpan);
-        _cachedQueryPopCount = BitArrayHelpers.GetPopCount(_cachedQueryScratchSpacePointer, (uint)_bitArraySize);
+        var chunkPointer = PointerForChunk(chunkPosition);
+        var chunkSpan = new ReadOnlySpan<uint>(chunkPointer, _bitArraySize);
+        var popCount = BitArrayHelpers.GetPopCount(chunkPointer, (uint)_bitArraySize);
 
-        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryPopCount);
+        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, chunkSpan, popCount);
     }
 
     /// <summary>
@@ -135,33 +133,92 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
         else
         {
-            EvaluateItemsNearRegion(topLeftChunk, bottomRightChunk, out result);
+            CacheItemsNearRegion(topLeftChunk, bottomRightChunk, out result);
         }
     }
 
-    private void EvaluateItemsNearRegion(
+    private void CacheItemsNearRegion(
         Point topLeftChunk,
         Point bottomRightChunk,
         out BitArrayEnumerable<TPerfectHasher, T> result)
     {
-        var scratchSpaceSpan = new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize);
-        if (topLeftChunk == bottomRightChunk)
+        _cachedTopLeftChunkQuery = topLeftChunk;
+        _cachedBottomRightChunkQuery = bottomRightChunk;
+        CacheLatestQuery();
+
+        _cachedQueryPopCount = BitArrayHelpers.GetPopCount(_cachedQueryScratchSpacePointer, (uint)_bitArraySize);
+        result = new BitArrayEnumerable<TPerfectHasher, T>(
+            _hasher,
+            new ReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize),
+            _cachedQueryPopCount);
+    }
+
+    private void CacheLatestQuery()
+    {
+        var cacheSpan = new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize);
+        if (_cachedTopLeftChunkQuery == _cachedBottomRightChunkQuery)
         {
             // Only one chunk -> skip some extra work
 
-            var sourceSpan = ReadOnlySpanForChunk(topLeftChunk);
-            sourceSpan.CopyTo(scratchSpaceSpan);
+            var sourceSpan = new ReadOnlySpan<uint>(PointerForChunk(_cachedTopLeftChunkQuery), _bitArraySize);
+            sourceSpan.CopyTo(cacheSpan);
         }
         else
         {
-            scratchSpaceSpan.Clear();
-            EvaluateChunkUnions(topLeftChunk, bottomRightChunk);
+            cacheSpan.Clear();
+            EvaluateChunkUnions();
         }
+    }
 
-        _cachedTopLeftChunkQuery = topLeftChunk;
-        _cachedBottomRightChunkQuery = bottomRightChunk;
-        _cachedQueryPopCount = BitArrayHelpers.GetPopCount(_cachedQueryScratchSpacePointer, (uint)_bitArraySize);
-        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, scratchSpaceSpan, _cachedQueryPopCount);
+    /// <summary>
+    /// Performs a chunk union operation over a rectangle of chunks, defined by the cached chunks.
+    /// Updates the scratch space pointer buffer to store the results.
+    ///
+    /// <para>
+    /// The rectangle of chunks begins with the top left cached coordinates 
+    /// down to the bottom right cached coordinates, inclusive.
+    /// </para>
+    /// 
+    /// <para>
+    /// If the bottom right coordinates are less than their respective top left coordinates, then this method wraps around and continues evaluating from zero.
+    /// </para>
+    /// </summary>
+    private void EvaluateChunkUnions()
+    {
+        var yMax = 1 + _cachedBottomRightChunkQuery.Y - _cachedTopLeftChunkQuery.Y;
+        var xMax = 1 + _cachedBottomRightChunkQuery.X - _cachedTopLeftChunkQuery.X;
+
+        if (_cachedBottomRightChunkQuery.X < _cachedTopLeftChunkQuery.X)
+            xMax += _sizeInChunks.W;
+
+        if (_cachedBottomRightChunkQuery.Y < _cachedTopLeftChunkQuery.Y)
+            yMax += _sizeInChunks.H;
+
+        var y = yMax;
+        var x = xMax;
+        var yCoord = _cachedTopLeftChunkQuery.Y;
+        var xCoord = _cachedTopLeftChunkQuery.X;
+
+        while (y-- > 0)
+        {
+            while (x-- > 0)
+            {
+                BitArrayHelpers.UnionWith(_cachedQueryScratchSpacePointer, PointerForChunk(new Point(xCoord, yCoord)), (uint)_bitArraySize);
+
+                if (++xCoord == _sizeInChunks.W)
+                {
+                    xCoord = 0;
+                }
+            }
+
+            x = xMax;
+            xCoord = _cachedTopLeftChunkQuery.X;
+
+            if (++yCoord == _sizeInChunks.H)
+            {
+                yCoord = 0;
+            }
+        }
     }
 
     public void AddItem(T item)
@@ -207,14 +264,14 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         {
             // Only one chunk -> skip some extra work
             previousBounds = new RectangularRegion(topLeftChunk);
-            var span = SpanForChunk(topLeftChunk);
+            var span = new Span<uint>(PointerForChunk(topLeftChunk), _bitArraySize);
             BitArrayHelpers.SetBit(span, _hasher.Hash(item));
-
-            return;
         }
-
-        previousBounds = new RectangularRegion(topLeftChunk, bottomRightChunk);
-        ModifyChunks(item, ChunkOperationType.Add, topLeftChunk, bottomRightChunk);
+        else
+        {
+            previousBounds = new RectangularRegion(topLeftChunk, bottomRightChunk);
+            ModifyChunks(item, ChunkOperationType.Add, topLeftChunk, bottomRightChunk);
+        }
     }
 
     public void RemoveItem(T item)
@@ -248,13 +305,13 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         {
             // Only one chunk -> skip some extra work
 
-            var span = SpanForChunk(topLeftChunk);
+            var span = new Span<uint>(PointerForChunk(topLeftChunk), _bitArraySize);
             BitArrayHelpers.ClearBit(span, _hasher.Hash(item));
-
-            return;
         }
-
-        ModifyChunks(item, ChunkOperationType.Remove, topLeftChunk, bottomRightChunk);
+        else
+        {
+            ModifyChunks(item, ChunkOperationType.Remove, topLeftChunk, bottomRightChunk);
+        }
     }
 
     private Point GetTopLeftChunkForRegion(RectangularRegion levelRegion)
@@ -278,57 +335,61 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     /// <summary>
     /// Performs a chunk operation over a rectangle of chunks.
     ///
-    /// <para>The rectangle of chunks begins with the top left coordinates of <paramref name="chunkA" />
+    /// <para>
+    /// The rectangle of chunks begins with the top left coordinates of <paramref name="chunkA" />
     /// down to the bottom right coordinates of <paramref name="chunkB" /> inclusive.
-    ///</para>
+    /// </para>
     /// 
-    /// <para>If the <paramref name="chunkB" /> coordinates are less than their respective <paramref name="chunkA" /> coordinates, then this method wraps around and continues evaluating from zero.
-    ///</para>
+    /// <para>
+    /// If the <paramref name="chunkB" /> coordinates are less than their respective <paramref name="chunkA" /> coordinates,
+    /// then this method wraps around and continues evaluating from zero.
+    /// </para>
     /// </summary>
+    /// <param name="item">An item to use in part of these chunk operations.</param>
     /// <param name="chunkOperationType">The chunk operation to perform</param>
-    /// <param name="item">An item to use in part of these chunk operations.
     /// <param name="chunkA">The top left position.</param>
     /// <param name="chunkB">The bottom right position.</param>
     private void ModifyChunks(T item, ChunkOperationType chunkOperationType, Point chunkA, Point chunkB)
     {
+        var yMax = 1 + chunkB.Y - chunkA.Y;
+        var xMax = 1 + chunkB.X - chunkA.X;
+
         if (chunkB.X < chunkA.X)
-        {
-            chunkB = new Point(chunkB.X + _sizeInChunks.W, chunkB.Y);
-        }
+            xMax += _sizeInChunks.W;
 
         if (chunkB.Y < chunkA.Y)
-        {
-            chunkB = new Point(chunkB.X, chunkB.Y + _sizeInChunks.H);
-        }
+            yMax += _sizeInChunks.H;
 
-        var y = 1 + chunkB.Y - chunkA.Y;
-        var y1 = chunkA.Y;
-        var xCount = 1 + chunkB.X - chunkA.X;
+        var y = yMax;
+        var x = xMax;
+        var yCoord = chunkA.Y;
+        var xCoord = chunkA.X;
 
         while (y-- > 0)
         {
-            var x1 = chunkA.X;
-            var x = xCount;
             while (x-- > 0)
             {
-                ModifyChunkPosition(item, chunkOperationType, new Point(x1, y1));
+                ModifyChunkPosition(item, chunkOperationType, new Point(xCoord, yCoord));
 
-                if (++x1 == _sizeInChunks.W)
+                if (++xCoord == _sizeInChunks.W)
                 {
-                    x1 = 0;
+                    xCoord = 0;
                 }
             }
 
-            if (++y1 == _sizeInChunks.H)
+            x = xMax;
+            xCoord = chunkA.X;
+
+            if (++yCoord == _sizeInChunks.H)
             {
-                y1 = 0;
+                yCoord = 0;
             }
         }
     }
 
     private void ModifyChunkPosition(T item, ChunkOperationType chunkOperationType, Point chunkPosition)
     {
-        var span = SpanForChunk(chunkPosition);
+        var span = new Span<uint>(PointerForChunk(chunkPosition), _bitArraySize);
         var hash = _hasher.Hash(item);
         if (chunkOperationType == ChunkOperationType.Add)
         {
@@ -337,57 +398,6 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         else
         {
             BitArrayHelpers.ClearBit(span, hash);
-        }
-    }
-
-    /// <summary>
-    /// Performs a chunk union operation over a rectangle of chunks, using the scratch space pointer buffer to store the results.
-    ///
-    /// <para>The rectangle of chunks begins with the top left coordinates of <paramref name="chunkA" />
-    /// down to the bottom right coordinates of <paramref name="chunkB" /> inclusive.
-    ///</para>
-    /// 
-    /// <para>If the <paramref name="chunkB" /> coordinates are less than their respective <paramref name="chunkA" /> coordinates, then this method wraps around and continues evaluating from zero.
-    ///</para>
-    /// </summary>
-    /// 
-    /// <param name="span">The span used to record data.</param>
-    /// <param name="chunkA">The top left position.</param>
-    /// <param name="chunkB">The bottom right position.</param>
-    private void EvaluateChunkUnions(Point chunkA, Point chunkB)
-    {
-        if (chunkB.X < chunkA.X)
-        {
-            chunkB = new Point(chunkB.X + _sizeInChunks.W, chunkB.Y);
-        }
-
-        if (chunkB.Y < chunkA.Y)
-        {
-            chunkB = new Point(chunkB.X, chunkB.Y + _sizeInChunks.H);
-        }
-
-        var y = 1 + chunkB.Y - chunkA.Y;
-        var y1 = chunkA.Y;
-        var xCount = 1 + chunkB.X - chunkA.X;
-
-        while (y-- > 0)
-        {
-            var x1 = chunkA.X;
-            var x = xCount;
-            while (x-- > 0)
-            {
-                BitArrayHelpers.UnionWith(_cachedQueryScratchSpacePointer, PointerForChunk(new Point(x1, y1)), (uint)_bitArraySize);
-
-                if (++x1 == _sizeInChunks.W)
-                {
-                    x1 = 0;
-                }
-            }
-
-            if (++y1 == _sizeInChunks.H)
-            {
-                y1 = 0;
-            }
         }
     }
 
@@ -400,39 +410,13 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     }
 
     [Pure]
-    private Span<uint> SpanForChunk(Point pos)
-    {
-        var index = IndexForChunk(pos);
-        uint* pointer = _allBitsPointer + index;
-
-        return new Span<uint>(pointer, _bitArraySize);
-    }
-
-    [Pure]
     private uint* PointerForChunk(Point pos)
-    {
-        var index = IndexForChunk(pos);
-        uint* pointer = _allBitsPointer + index;
-
-        return pointer;
-    }
-
-    [Pure]
-    private ReadOnlySpan<uint> ReadOnlySpanForChunk(Point pos)
-    {
-        var index = IndexForChunk(pos);
-        uint* pointer = _allBitsPointer + index;
-
-        return new ReadOnlySpan<uint>(pointer, _bitArraySize);
-    }
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int IndexForChunk(Point pos)
     {
         var index = _sizeInChunks.GetIndexOfPoint(pos);
         index *= _bitArraySize;
-        return index;
+        uint* pointer = _allBitsPointer + index;
+
+        return pointer;
     }
 
     private void ClearCachedData()
@@ -441,6 +425,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         _cachedBottomRightChunkQuery = _cachedTopLeftChunkQuery;
 
         new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize).Clear();
+        _cachedQueryPopCount = 0;
     }
 
     public void Dispose()

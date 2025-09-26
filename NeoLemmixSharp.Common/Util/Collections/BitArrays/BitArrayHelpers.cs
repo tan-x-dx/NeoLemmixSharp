@@ -224,6 +224,7 @@ public static class BitArrayHelpers
 
         switch (span.Length)
         {
+            case 8: span[7] |= other[7]; goto case 7;
             case 7: span[6] |= other[6]; goto case 6;
             case 6: span[5] |= other[5]; goto case 5;
             case 5: span[4] |= other[4]; goto case 4;
