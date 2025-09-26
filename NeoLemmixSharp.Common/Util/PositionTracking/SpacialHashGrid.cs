@@ -16,9 +16,9 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
     private readonly BitArraySet<TPerfectHasher, TBuffer, T> _allTrackedItems;
 
-    private readonly uint* _allBitsPointer;
-    private readonly uint* _cachedQueryScratchSpacePointer;
-    private readonly RectangularRegion* _previousItemPositionsPointer;
+    private readonly uint* _allBitsPointer = default;
+    private readonly uint* _cachedQueryScratchSpacePointer = default;
+    private readonly RectangularRegion* _previousItemPositionsPointer = default;
     private readonly int _bitArraySize;
 
     private readonly int _chunkSizeBitShift;
@@ -264,8 +264,9 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         {
             // Only one chunk -> skip some extra work
             previousBounds = new RectangularRegion(topLeftChunk);
-            var span = new Span<uint>(PointerForChunk(topLeftChunk), _bitArraySize);
-            BitArrayHelpers.SetBit(span, _hasher.Hash(item));
+            var pointer = PointerForChunk(topLeftChunk);
+            var hash = _hasher.Hash(item);
+            BitArrayHelpers.SetBit(pointer, hash);
         }
         else
         {
@@ -305,8 +306,9 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         {
             // Only one chunk -> skip some extra work
 
-            var span = new Span<uint>(PointerForChunk(topLeftChunk), _bitArraySize);
-            BitArrayHelpers.ClearBit(span, _hasher.Hash(item));
+            var pointer = PointerForChunk(topLeftChunk);
+            var hash = _hasher.Hash(item);
+            BitArrayHelpers.ClearBit(pointer, hash);
         }
         else
         {
@@ -389,22 +391,22 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
     private void ModifyChunkPosition(T item, ChunkOperationType chunkOperationType, Point chunkPosition)
     {
-        var span = new Span<uint>(PointerForChunk(chunkPosition), _bitArraySize);
+        var pointer = PointerForChunk(chunkPosition);
         var hash = _hasher.Hash(item);
         if (chunkOperationType == ChunkOperationType.Add)
         {
-            BitArrayHelpers.SetBit(span, hash);
+            BitArrayHelpers.SetBit(pointer, hash);
         }
         else
         {
-            BitArrayHelpers.ClearBit(span, hash);
+            BitArrayHelpers.ClearBit(pointer, hash);
         }
     }
 
     private ref RectangularRegion GetPreviousBoundsForItem(T item)
     {
-        var index = _hasher.Hash(item);
-        RectangularRegion* pointer = _previousItemPositionsPointer + index;
+        int offset = _hasher.Hash(item);
+        RectangularRegion* pointer = _previousItemPositionsPointer + offset;
 
         return ref *pointer;
     }
@@ -412,9 +414,9 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     [Pure]
     private uint* PointerForChunk(Point pos)
     {
-        var index = _sizeInChunks.GetIndexOfPoint(pos);
-        index *= _bitArraySize;
-        uint* pointer = _allBitsPointer + index;
+        int offset = _sizeInChunks.GetIndexOfPoint(pos);
+        offset *= _bitArraySize;
+        uint* pointer = _allBitsPointer + offset;
 
         return pointer;
     }
