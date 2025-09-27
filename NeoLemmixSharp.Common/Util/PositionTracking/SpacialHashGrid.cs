@@ -203,7 +203,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         {
             while (x-- > 0)
             {
-                BitArrayHelpers.UnionWith(_cachedQueryScratchSpacePointer, PointerForChunk(new Point(xCoord, yCoord)), (uint)_bitArraySize);
+                EvaluateUnionWithChunk(xCoord, yCoord);
 
                 if (++xCoord == _sizeInChunks.W)
                 {
@@ -219,6 +219,12 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
                 yCoord = 0;
             }
         }
+    }
+
+    private void EvaluateUnionWithChunk(int xCoord, int yCoord)
+    {
+        var pointer = PointerForChunk(new Point(xCoord, yCoord));
+        BitArrayHelpers.UnionWith(_cachedQueryScratchSpacePointer, pointer, (uint)_bitArraySize);
     }
 
     public void AddItem(T item)
@@ -371,7 +377,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         {
             while (x-- > 0)
             {
-                ModifyChunkPosition(item, chunkOperationType, new Point(xCoord, yCoord));
+                ModifyChunkPosition(item, chunkOperationType, xCoord, yCoord);
 
                 if (++xCoord == _sizeInChunks.W)
                 {
@@ -389,10 +395,12 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
     }
 
-    private void ModifyChunkPosition(T item, ChunkOperationType chunkOperationType, Point chunkPosition)
+    private void ModifyChunkPosition(T item, ChunkOperationType chunkOperationType, int xCoord, int yCoord)
     {
+        var chunkPosition = new Point(xCoord, yCoord);
         var pointer = PointerForChunk(chunkPosition);
         var hash = _hasher.Hash(item);
+
         if (chunkOperationType == ChunkOperationType.Add)
         {
             BitArrayHelpers.SetBit(pointer, hash);
