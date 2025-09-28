@@ -38,8 +38,8 @@ internal sealed class GadgetArchetypeDataSectionWriter : StyleDataSectionWriter
         writer.Write8BitUnsignedInteger((byte)gadgetArchetypeData.GadgetType);
         writer.Write8BitUnsignedInteger((byte)gadgetArchetypeData.ResizeType);
 
-        writer.Write16BitUnsignedInteger((ushort)gadgetArchetypeData.BaseSpriteSize.W);
-        writer.Write16BitUnsignedInteger((ushort)gadgetArchetypeData.BaseSpriteSize.H);
+        writer.Write8BitUnsignedInteger((byte)gadgetArchetypeData.BaseSpriteSize.W);
+        writer.Write8BitUnsignedInteger((byte)gadgetArchetypeData.BaseSpriteSize.H);
 
         WriteNineSliceData(writer, gadgetArchetypeData);
 

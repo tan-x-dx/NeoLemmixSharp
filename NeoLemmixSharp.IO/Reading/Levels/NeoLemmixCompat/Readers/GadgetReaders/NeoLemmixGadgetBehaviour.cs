@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.IO.Data.Style.Gadget;
+﻿using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
@@ -354,7 +354,7 @@ internal static class NeoLemmixGadgetBehaviourExtensions
     }
 */
     [DoesNotReturn]
-    private static GadgetStateArchetypeData[] ToBeImplemented(NeoLemmixGadgetBehaviour behaviour)
+    private static HitBoxGadgetStateArchetypeData[] ToBeImplemented(NeoLemmixGadgetBehaviour behaviour)
     {
         throw new NotImplementedException($"Need to implement this behaviour: {behaviour}");
     }

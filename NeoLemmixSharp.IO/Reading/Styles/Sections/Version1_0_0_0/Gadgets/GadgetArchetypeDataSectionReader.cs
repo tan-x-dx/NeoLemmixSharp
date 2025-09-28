@@ -36,8 +36,12 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
     {
         int pieceId = reader.Read16BitUnsignedInteger();
         int nameId = reader.Read16BitUnsignedInteger();
-        int baseWidth = reader.Read16BitUnsignedInteger();
-        int baseHeight = reader.Read16BitUnsignedInteger();
+        int baseWidth = reader.Read8BitUnsignedInteger();
+        int baseHeight = reader.Read8BitUnsignedInteger();
+
+        FileReadingException.ReaderAssert(baseWidth > 0, "Invalid sprite width!");
+        FileReadingException.ReaderAssert(baseHeight > 0, "Invalid sprite height!");
+
         var baseSpriteSize = new Size(baseWidth, baseHeight);
 
         var gadgetType = (GadgetType)reader.Read8BitUnsignedInteger();
@@ -54,8 +58,8 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return new GadgetArchetypeData
         {
             StyleIdentifier = styleIdentifier,
-            PieceIdentifier =  new PieceIdentifier(_stringIdLookup[pieceId]),
-            GadgetName =  new GadgetName(_stringIdLookup[nameId]),
+            PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
+            GadgetName = new GadgetName(_stringIdLookup[nameId]),
             BaseSpriteSize = baseSpriteSize,
 
             SpecificationData = specificationData,
@@ -102,7 +106,7 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
 
         var nineSliceData = ReadNineSliceData(reader, baseSpriteSize);
 
-        var gadgetStates = ReadGadgetStates(reader);
+        var gadgetStates = ReadHitBoxGadgetStates(reader);
 
         return new HitBoxGadgetArchetypeSpecificationData
         {
@@ -135,16 +139,14 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return new RectangularRegion(p, s);
     }
 
-    private GadgetStateArchetypeData[] ReadGadgetStates(RawStyleFileDataReader reader)
+    private HitBoxGadgetStateArchetypeData[] ReadHitBoxGadgetStates(RawStyleFileDataReader reader)
     {
-        var gadgetStateReader = new GadgetStateReader(reader, _stringIdLookup);
-
         int numberOfGadgetStates = reader.Read8BitUnsignedInteger();
-        var result = Helpers.GetArrayForSize<GadgetStateArchetypeData>(numberOfGadgetStates);
+        var result = Helpers.GetArrayForSize<HitBoxGadgetStateArchetypeData>(numberOfGadgetStates);
 
         for (var i = 0; i < result.Length; i++)
         {
-            result[i] = gadgetStateReader.ReadStateData();
+            // result[i] = 
         }
 
         return result;
