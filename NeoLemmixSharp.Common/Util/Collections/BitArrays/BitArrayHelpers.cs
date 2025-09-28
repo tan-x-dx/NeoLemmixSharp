@@ -102,7 +102,8 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to set</param>
     internal static unsafe void SetBit(uint* p, int index)
     {
-        var offset = index >>> Shift;
+        nint offset = index;
+        offset >>>= Shift;
         p += offset;
 
         uint mask = 1U;
@@ -145,7 +146,8 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to clear</param>
     internal static unsafe void ClearBit(uint* p, int index)
     {
-        var offset = index >>> Shift;
+        nint offset = index;
+        offset >>>= Shift;
         p += offset;
 
         uint mask = 1U;
@@ -221,8 +223,7 @@ public static class BitArrayHelpers
         // This implementation is faster than using TensorPrimitives - benchmarks
 
         var result = 0;
-        var i = length;
-        while (i-- > 0)
+        while (length-- > 0)
         {
             result += BitOperations.PopCount(*sourcePointer);
             sourcePointer++;
@@ -491,7 +492,7 @@ public static class BitArrayHelpers
             case 1: goto Length1;
             case 0: goto Length0;
 
-            default: LargeSpanUnionWith(span, other); return;
+            default: LargeSpanSymmetricExceptWith(span, other); return;
         }
 
         Length8:

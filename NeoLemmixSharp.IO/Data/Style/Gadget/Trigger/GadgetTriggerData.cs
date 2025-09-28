@@ -1,11 +1,11 @@
 ﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
-public readonly struct GadgetTriggerData(GadgetTriggerName gadgetTriggerName, GadgetTriggerType gadgetTriggerType, int data1, int data2)
+public readonly struct GadgetTriggerData(GadgetTriggerName gadgetTriggerName, GadgetTriggerType gadgetTriggerType, DataChunk2 dataChunk)
 {
     public readonly GadgetTriggerName GadgetTriggerName = gadgetTriggerName;
     public readonly GadgetTriggerType GadgerTriggerType = gadgetTriggerType;
-    public readonly int Data1 = data1;
-    public readonly int Data2 = data2;
+    public readonly DataChunk2 DataChunk = dataChunk;
 }

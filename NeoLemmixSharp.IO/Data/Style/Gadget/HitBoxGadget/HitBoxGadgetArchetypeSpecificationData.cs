@@ -31,7 +31,6 @@ public sealed class HitBoxGadgetStateArchetypeData : IGadgetStateArchetypeData
     public required GadgetStateName StateName { get; init; }
     public required Point HitBoxOffset { get; init; }
     public required HitBoxRegionData[] RegionData { get; init; }
-    public required AnimationLayerArchetypeData[] AnimationLayerData { get; init; }
     public required GadgetTriggerData[] InnateTriggers { get; init; }
     public required GadgetBehaviourData[] InnateBehaviours { get; init; }
     public required GadgetTriggerBehaviourLink[] TriggerBehaviourLinks { get; init; }
