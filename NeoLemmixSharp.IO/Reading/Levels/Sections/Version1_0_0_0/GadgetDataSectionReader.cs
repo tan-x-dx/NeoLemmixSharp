@@ -61,14 +61,14 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
         GadgetRenderMode renderMode = GadgetRenderModeHelpers.GetEnumValue(reader.Read8BitUnsignedInteger());
 
-        IGadgetTypeInstanceData gadgetInstanceTypeData = gadgetType switch
+        IGadgetInstanceSpecificationData gadgetInstanceTypeData = gadgetType switch
         {
             GadgetType.HitBoxGadget => ReadHitBoxGadgetTypeDatum(reader),
             GadgetType.HatchGadget => ReadHatchGadgetTypeDatum(reader),
             GadgetType.LogicGate => ReadLogicGateGadgetTypeDatum(reader),
             GadgetType.LevelTimerObserver => ReadLevelTimerObserverGadgetTypeDatum(reader),
 
-            _ => Helpers.ThrowUnknownEnumValueException<GadgetType, IGadgetTypeInstanceData>(gadgetType),
+            _ => Helpers.ThrowUnknownEnumValueException<GadgetType, IGadgetInstanceSpecificationData>(gadgetType),
         };
 
         return new GadgetInstanceData
@@ -83,7 +83,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             FacingDirection = dht.FacingDirection,
             IsFastForward = isFastForward,
 
-            GadgetTypeInstanceData = gadgetInstanceTypeData
+            SpecificationData = gadgetInstanceTypeData
         };
 
         //var result = new GadgetData
@@ -112,16 +112,16 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         //return result;
     }
 
-    private HitBoxGadgetTypeInstanceData ReadHitBoxGadgetTypeDatum(RawLevelFileDataReader reader)
+    private HitBoxGadgetInstanceSpecifcationData ReadHitBoxGadgetTypeDatum(RawLevelFileDataReader reader)
     {
-        return new HitBoxGadgetTypeInstanceData()
+        return new HitBoxGadgetInstanceSpecifcationData()
         {
             InitialStateId = 0,
             GadgetStates = []
         };
     }
 
-    private HatchGadgetTypeInstanceData ReadHatchGadgetTypeDatum(RawLevelFileDataReader reader)
+    private HatchGadgetInstanceSpecificationData ReadHatchGadgetTypeDatum(RawLevelFileDataReader reader)
     {
         int hatchGroupId = reader.Read8BitUnsignedInteger();
         int tribeId = reader.Read8BitUnsignedInteger();
@@ -130,7 +130,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         int numberOfLemmingsToRelease = reader.Read16BitUnsignedInteger();
         FileReadingException.ReaderAssert(numberOfLemmingsToRelease < EngineConstants.MaxNumberOfLemmings, "Too many lemmings specified!");
 
-        return new HatchGadgetTypeInstanceData()
+        return new HatchGadgetInstanceSpecificationData()
         {
             InitialStateId = 0,
             GadgetStates = [],
@@ -141,7 +141,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         };
     }
 
-    private LogicGateGadgetTypeInstanceData ReadLogicGateGadgetTypeDatum(RawLevelFileDataReader reader)
+    private LogicGateGadgetInstanceSpecificationData ReadLogicGateGadgetTypeDatum(RawLevelFileDataReader reader)
     {
         uint rawGadgetType = reader.Read8BitUnsignedInteger();
         LogicGateGadgetType logicGateGadgetType = LogicGateGadgetTypeHelpers.GetEnumValue(rawGadgetType);
@@ -150,7 +150,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         FileReadingException.ReaderAssert(numberOfInputs <= EngineConstants.MaxAllowedNumberOfGadgetTriggers, "Too many triggers specified for logic gate!");
         AssertNumberOfInputsMakesSense();
 
-        return new LogicGateGadgetTypeInstanceData()
+        return new LogicGateGadgetInstanceSpecificationData()
         {
             LogicGateGadgetType = logicGateGadgetType,
             NumberOfInputs = numberOfInputs
@@ -168,7 +168,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         }
     }
 
-    private static LevelTimerObserverGadgetInstanceData ReadLevelTimerObserverGadgetTypeDatum(RawLevelFileDataReader reader)
+    private static LevelTimerObserverGadgetInstanceSpecificationData ReadLevelTimerObserverGadgetTypeDatum(RawLevelFileDataReader reader)
     {
         uint rawObservationType = reader.Read8BitUnsignedInteger();
         LevelTimerObservationType observationType = LevelTimerObservationTypeHelpers.GetEnumValue(rawObservationType);
@@ -176,7 +176,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         ComparisonType comparisonType = ComparisonTypeHelpers.GetEnumValue(rawComparisonType);
         int requiredValue = reader.Read16BitUnsignedInteger();
 
-        return new LevelTimerObserverGadgetInstanceData()
+        return new LevelTimerObserverGadgetInstanceSpecificationData()
         {
             ObservationType = observationType,
             ComparisonType = comparisonType,

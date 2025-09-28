@@ -3,33 +3,41 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.LogicGateGadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.LogicGateGadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.LogicGateGadgets;
 
 public readonly ref struct LogicGateBuilder
 {
+    private readonly GadgetArchetypeData _logicGateArchetypeData;
+    private readonly LogicGateGadgetArchetypeSpecificationData _logicGateArchetypeSpecificationData;
     private readonly GadgetInstanceData _logicGateGadgetInstanceData;
-    private readonly LogicGateGadgetTypeInstanceData _logicGateGadgetTypeInstanceData;
+    private readonly LogicGateGadgetInstanceSpecificationData _logicGateGadgetInstanceSpecificationData;
+
     private readonly List<GadgetTrigger> _gadgetTriggers;
     private readonly List<GadgetBehaviour> _gadgetBehaviours;
 
     public LogicGateBuilder(
+        GadgetArchetypeData logicGateArchetypeData,
         GadgetInstanceData logicGateGadgetData,
         List<GadgetTrigger> gadgetTriggers,
         List<GadgetBehaviour> gadgetBehaviours)
     {
+        _logicGateArchetypeData = logicGateArchetypeData;
+        _logicGateArchetypeSpecificationData = (LogicGateGadgetArchetypeSpecificationData)logicGateArchetypeData.SpecificationData;
         _logicGateGadgetInstanceData = logicGateGadgetData;
-        _logicGateGadgetTypeInstanceData = (LogicGateGadgetTypeInstanceData)logicGateGadgetData.GadgetTypeInstanceData;
+        _logicGateGadgetInstanceSpecificationData = (LogicGateGadgetInstanceSpecificationData)logicGateGadgetData.SpecificationData;
+
         _gadgetTriggers = gadgetTriggers;
         _gadgetBehaviours = gadgetBehaviours;
     }
 
-    public GadgetBase BuildLogicGateGadget(LogicGateGadgetArchetypeData gadgetArchetypeData)
+    public GadgetBase BuildLogicGateGadget()
     {
-        var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, _logicGateGadgetInstanceData);
-        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, _logicGateGadgetInstanceData);
-        var gadgetStates = BuildLogicGateStates(gadgetArchetypeData, gadgetBounds);
+        var gadgetName = GadgetBuildingHelpers.GetGadgetName(_logicGateArchetypeData, _logicGateGadgetInstanceData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(_logicGateArchetypeData, _logicGateGadgetInstanceData);
+        var gadgetStates = BuildLogicGateStates(gadgetBounds);
 
         /* return new HatchGadget(
              gadgetStates,
@@ -49,37 +57,35 @@ public readonly ref struct LogicGateBuilder
         return null;
     }
 
-    private GadgetState[] BuildLogicGateStates(
-        LogicGateGadgetArchetypeData gadgetArchetypeData,
-        GadgetBounds gadgetBounds)
+    private GadgetState[] BuildLogicGateStates(GadgetBounds gadgetBounds)
     {
-        return gadgetArchetypeData.LogicGateGadgetType switch
+        return _logicGateGadgetInstanceSpecificationData.LogicGateGadgetType switch
         {
-            LogicGateGadgetType.AndGate => BuildAndGateStates(gadgetArchetypeData, gadgetBounds),
-            LogicGateGadgetType.OrGate => BuildOrGateStates(gadgetArchetypeData, gadgetBounds),
-            LogicGateGadgetType.NotGate => BuildNotGateStates(gadgetArchetypeData, gadgetBounds),
-            LogicGateGadgetType.XorGate => BuildXorGateStates(gadgetArchetypeData, gadgetBounds),
+            LogicGateGadgetType.AndGate => BuildAndGateStates(gadgetBounds),
+            LogicGateGadgetType.OrGate => BuildOrGateStates(gadgetBounds),
+            LogicGateGadgetType.NotGate => BuildNotGateStates(gadgetBounds),
+            LogicGateGadgetType.XorGate => BuildXorGateStates(gadgetBounds),
 
-            _ => Helpers.ThrowUnknownEnumValueException<LogicGateGadgetType, GadgetState[]>(gadgetArchetypeData.LogicGateGadgetType),
+            _ => Helpers.ThrowUnknownEnumValueException<LogicGateGadgetType, GadgetState[]>(_logicGateGadgetInstanceSpecificationData.LogicGateGadgetType),
         };
     }
 
-    private GadgetState[] BuildAndGateStates(LogicGateGadgetArchetypeData gadgetArchetypeData, GadgetBounds gadgetBounds)
+    private GadgetState[] BuildAndGateStates(GadgetBounds gadgetBounds)
     {
         throw new NotImplementedException();
     }
 
-    private GadgetState[] BuildOrGateStates(LogicGateGadgetArchetypeData gadgetArchetypeData, GadgetBounds gadgetBounds)
+    private GadgetState[] BuildOrGateStates(GadgetBounds gadgetBounds)
     {
         throw new NotImplementedException();
     }
 
-    private GadgetState[] BuildNotGateStates(LogicGateGadgetArchetypeData gadgetArchetypeData, GadgetBounds gadgetBounds)
+    private GadgetState[] BuildNotGateStates(GadgetBounds gadgetBounds)
     {
         throw new NotImplementedException();
     }
 
-    private GadgetState[] BuildXorGateStates(LogicGateGadgetArchetypeData gadgetArchetypeData, GadgetBounds gadgetBounds)
+    private GadgetState[] BuildXorGateStates(GadgetBounds gadgetBounds)
     {
         throw new NotImplementedException();
     }

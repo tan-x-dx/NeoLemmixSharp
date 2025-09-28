@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Data.Level.Gadget;
 
-public interface IGadgetTypeInstanceData
+public interface IGadgetInstanceSpecificationData
 {
     GadgetType GadgetType { get; }
 }

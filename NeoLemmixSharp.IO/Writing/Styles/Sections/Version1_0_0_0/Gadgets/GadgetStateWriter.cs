@@ -13,7 +13,7 @@ internal readonly ref struct GadgetStateWriter
         _stringIdLookup = stringIdLookup;
     }
 
-    internal void WriteStateData(IGadgetArchetypeData gadgetArchetypeData)
+    internal void WriteStateData(GadgetArchetypeData gadgetArchetypeData)
     {
         /*   foreach (var gadgetStateData in gadgetArchetypeData.AllGadgetStateData)
            {

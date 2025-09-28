@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -10,10 +11,6 @@ using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.Functional;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HatchGadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.LogicGateGadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 
@@ -60,7 +57,7 @@ public sealed class GadgetBuilder
             var stylePiecePair = new StylePiecePair(gadgetInstanceData.StyleIdentifier, gadgetInstanceData.PieceIdentifier);
             var gadgetArchetypeData = gadgetArchetypeDataLookup[stylePiecePair];
 
-            if (gadgetArchetypeData.GadgetType != gadgetInstanceData.GadgetTypeInstanceData.GadgetType)
+            if (gadgetArchetypeData.SpecificationData.GadgetType != gadgetInstanceData.SpecificationData.GadgetType)
                 throw new Exception("GadgetType mismatch!");
 
             var newGadget = BuildGadget(gadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager);
@@ -68,52 +65,53 @@ public sealed class GadgetBuilder
         }
     }
 
-    private GadgetBase BuildGadget(IGadgetArchetypeData gadgetArchetypeData, GadgetInstanceData gadgetInstanceData, LemmingManager lemmingManager, TribeManager tribeManager)
+    private GadgetBase BuildGadget(GadgetArchetypeData gadgetArchetypeData, GadgetInstanceData gadgetInstanceData, LemmingManager lemmingManager, TribeManager tribeManager)
     {
-        return gadgetArchetypeData switch
+        return gadgetArchetypeData.SpecificationData.GadgetType switch
         {
-            HitBoxGadgetArchetypeData hitBoxGadgetArchetypeData => BuildHitBoxGadget(hitBoxGadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager),
-            HatchGadgetArchetypeData hatchGadgetArchetypeData => BuildHatchGadget(hatchGadgetArchetypeData, gadgetInstanceData, tribeManager),
-            LogicGateGadgetArchetypeData logicGateGadgetArchetypeData => BuildLogicGateGadget(logicGateGadgetArchetypeData, gadgetInstanceData),
-            LevelTimerObserverGadgetArchetypeData levelTimerObserverGadgetArchetypeData => BuildLevelTimerObserverGadget(levelTimerObserverGadgetArchetypeData, gadgetInstanceData),
+            GadgetType.HitBoxGadget => BuildHitBoxGadget(gadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager),
+            GadgetType.HatchGadget => BuildHatchGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager),
+            GadgetType.LogicGate => BuildLogicGateGadget(gadgetArchetypeData, gadgetInstanceData),
+            //  GadgetType.Counter => 
+            GadgetType.LevelTimerObserver => BuildLevelTimerObserverGadget(gadgetArchetypeData, gadgetInstanceData),
 
             _ => throw new NotImplementedException(),
         };
     }
 
     private HitBoxGadget BuildHitBoxGadget(
-        HitBoxGadgetArchetypeData hitBoxGadgetArchetypeData,
-        GadgetInstanceData hitBoxGadgetInstanceData,
+        GadgetArchetypeData gadgetArchetypeData,
+        GadgetInstanceData gadgetInstanceData,
         LemmingManager lemmingManager,
         TribeManager tribeManager)
     {
-        var hitBoxGadgetBuilder = new HitBoxGadgetBuilder(hitBoxGadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
+        var hitBoxGadgetBuilder = new HitBoxGadgetBuilder(gadgetArchetypeData, gadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
 
-        return hitBoxGadgetBuilder.BuildHitBoxGadget(hitBoxGadgetArchetypeData, lemmingManager, tribeManager);
+        return hitBoxGadgetBuilder.BuildHitBoxGadget(lemmingManager, tribeManager);
     }
 
     private HatchGadget BuildHatchGadget(
-        HatchGadgetArchetypeData hatchGadgetArchetypeData,
-        GadgetInstanceData hatchGadgetInstanceData,
+        GadgetArchetypeData gadgetArchetypeData,
+        GadgetInstanceData gadgetInstanceData,
         TribeManager tribeManager)
     {
-        var hatchGadgetBuilder = new HatchGadgetBuilder(hatchGadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
+        var hatchGadgetBuilder = new HatchGadgetBuilder(gadgetArchetypeData, gadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
 
-        return hatchGadgetBuilder.BuildHatchGadget(hatchGadgetArchetypeData, tribeManager);
+        return hatchGadgetBuilder.BuildHatchGadget(tribeManager);
     }
 
     private GadgetBase BuildLogicGateGadget(
-        LogicGateGadgetArchetypeData logicGateGadgetArchetypeData,
-        GadgetInstanceData logicGateGadgetInstanceData)
+        GadgetArchetypeData gadgetArchetypeData,
+        GadgetInstanceData gadgetInstanceData)
     {
-        var logicGateBuilder = new LogicGateBuilder(logicGateGadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
+        var logicGateBuilder = new LogicGateBuilder(gadgetArchetypeData, gadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
 
-        return logicGateBuilder.BuildLogicGateGadget(logicGateGadgetArchetypeData);
+        return logicGateBuilder.BuildLogicGateGadget();
     }
 
     private GadgetBase BuildLevelTimerObserverGadget(
-        LevelTimerObserverGadgetArchetypeData levelTimerObserverGadgetArchetypeData,
-        GadgetInstanceData levelTimerObserverGadgetInstanceData)
+        GadgetArchetypeData gadgetArchetypeData,
+        GadgetInstanceData gadgetInstanceData)
     {
         throw new NotImplementedException();
     }

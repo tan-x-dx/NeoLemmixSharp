@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
 
-public sealed class HitBoxGadgetTypeInstanceData : IGadgetTypeInstanceData
+public sealed class HitBoxGadgetInstanceSpecifcationData : IGadgetInstanceSpecificationData
 {
     private readonly BitArrayDictionary<GadgetPropertyTypeHasher, BitBuffer32, GadgetPropertyType, int> _propertyLookup = new(new());
 

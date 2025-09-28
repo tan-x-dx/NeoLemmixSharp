@@ -40,7 +40,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.StyleIdentifier));
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.PieceIdentifier));
 
-        writer.Write8BitUnsignedInteger((byte)gadgetData.GadgetTypeInstanceData.GadgetType);
+        writer.Write8BitUnsignedInteger((byte)gadgetData.SpecificationData.GadgetType);
 
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.OverrideName));
 
@@ -51,10 +51,10 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
         writer.Write8BitUnsignedInteger((byte)gadgetData.GadgetRenderMode);
 
-        WriteGadgetTypeInstanceData(writer, gadgetData.GadgetTypeInstanceData);
+        WriteGadgetTypeInstanceData(writer, gadgetData.SpecificationData);
     }
 
-    private void WriteGadgetTypeInstanceData(RawLevelFileDataWriter writer, IGadgetTypeInstanceData gadgetTypeInstanceData)
+    private void WriteGadgetTypeInstanceData(RawLevelFileDataWriter writer, IGadgetInstanceSpecificationData gadgetTypeInstanceData)
     {
         switch (gadgetTypeInstanceData.GadgetType)
         {

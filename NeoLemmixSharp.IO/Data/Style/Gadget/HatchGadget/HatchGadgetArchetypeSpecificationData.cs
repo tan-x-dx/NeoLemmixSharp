@@ -4,20 +4,19 @@ using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using System.Diagnostics;
 
-namespace NeoLemmixSharp.IO.Data.Style.Gadget.Functional;
+namespace NeoLemmixSharp.IO.Data.Style.Gadget.HatchGadget;
 
-[DebuggerDisplay("LevelTimerObserver - {StyleIdentifier}:{PieceIdentifier}")]
-public sealed class LevelTimerObserverGadgetArchetypeData : IGadgetArchetypeData
+[DebuggerDisplay("Hatch - {StyleIdentifier}:{PieceIdentifier}")]
+public sealed class HatchGadgetArchetypeSpecificationData : IGadgetArchetypeSpecificationData
 {
-    public GadgetType GadgetType => GadgetType.LevelTimerObserver;
-    public required StyleIdentifier StyleIdentifier { get; init; }
-    public required PieceIdentifier PieceIdentifier { get; init; }
-    public required GadgetName GadgetName { get; init; }
-    public required Size BaseSpriteSize { get; init; }
+    public GadgetType GadgetType => GadgetType.HatchGadget;
+
+    public required Point SpawnOffset { get; init; }
+    public required HatchGadgetStateArchetypeData[] GadgetStates { get; init; }
 }
 
 [DebuggerDisplay("{StateName}")]
-public sealed class LevelTimerObserverGadgetStateArchetypeData : IGadgetStateArchetypeData
+public sealed class HatchGadgetStateArchetypeData : IGadgetStateArchetypeData
 {
     public required GadgetStateName StateName { get; init; }
     public required GadgetTriggerData[] InnateTriggers { get; init; }

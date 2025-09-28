@@ -40,22 +40,6 @@ public static class StyleCache
         }
     }
 
-    internal static StyleData GetOrLoadStyleData(StyleFormatPair styleFormatPair)
-    {
-        ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(CachedStyles, styleFormatPair, out var exists);
-
-        if (exists)
-        {
-            styleData!.NumberOfLevelsSinceLastUsed = 0;
-        }
-        else
-        {
-            styleData = FileTypeHandler.ReadStyle(styleFormatPair);
-        }
-
-        return styleData;
-    }
-
     private static HashSet<StyleFormatPair> GetAllMentionedStyles(LevelData levelData)
     {
         var result = new HashSet<StyleFormatPair>(IoConstants.AssumedInitialStyleCapacity)
@@ -82,6 +66,22 @@ public static class StyleCache
         }
 
         return result;
+    }
+
+    internal static StyleData GetOrLoadStyleData(StyleFormatPair styleFormatPair)
+    {
+        ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(CachedStyles, styleFormatPair, out var exists);
+
+        if (exists)
+        {
+            styleData!.NumberOfLevelsSinceLastUsed = 0;
+        }
+        else
+        {
+            styleData = FileTypeHandler.ReadStyle(styleFormatPair);
+        }
+
+        return styleData;
     }
 
     public static Dictionary<StylePiecePair, TerrainArchetypeData> GetAllTerrainArchetypeData(LevelData levelData)
@@ -124,9 +124,9 @@ public static class StyleCache
         }
     }
 
-    public static Dictionary<StylePiecePair, IGadgetArchetypeData> GetAllGadgetArchetypeData(LevelData levelData)
+    public static Dictionary<StylePiecePair, GadgetArchetypeData> GetAllGadgetArchetypeData(LevelData levelData)
     {
-        var result = new Dictionary<StylePiecePair, IGadgetArchetypeData>(IoConstants.AssumedNumberOfGadgetArchetypeDataInLevel);
+        var result = new Dictionary<StylePiecePair, GadgetArchetypeData>(IoConstants.AssumedNumberOfGadgetArchetypeDataInLevel);
 
         foreach (var prototype in levelData.AllGadgetInstanceData)
         {

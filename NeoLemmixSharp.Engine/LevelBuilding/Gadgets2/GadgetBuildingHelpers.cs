@@ -122,7 +122,7 @@ public static class GadgetBuildingHelpers
     }
 
     public static GadgetName GetGadgetName(
-        IGadgetArchetypeData gadgetArchetypeData,
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetInstanceData)
     {
         return gadgetInstanceData.OverrideName.IsTrivial
@@ -140,7 +140,7 @@ public static class GadgetBuildingHelpers
     }
 
     public static GadgetBounds CreateGadgetBounds(
-        IGadgetArchetypeData gadgetArchetypeData,
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetData)
     {
         var baseSize = gadgetArchetypeData.BaseSpriteSize;
@@ -159,11 +159,12 @@ public static class GadgetBuildingHelpers
     }
 
     public static GadgetBounds CreateHitBoxGadgetBounds(
-        HitBoxGadgetArchetypeData gadgetArchetypeData,
+        GadgetArchetypeData gadgetArchetypeData,
+        HitBoxGadgetArchetypeSpecificationData hitBoxGadgetArchetypeData,
         GadgetInstanceData hitBoxGadgetData,
-        HitBoxGadgetTypeInstanceData hitBoxGadgetInstanceData)
+        HitBoxGadgetInstanceSpecifcationData hitBoxGadgetInstanceData)
     {
-        var resizeType = gadgetArchetypeData.ResizeType;
+        var resizeType = hitBoxGadgetArchetypeData.ResizeType;
         var baseSize = gadgetArchetypeData.BaseSpriteSize;
 
         var result = new GadgetBounds
