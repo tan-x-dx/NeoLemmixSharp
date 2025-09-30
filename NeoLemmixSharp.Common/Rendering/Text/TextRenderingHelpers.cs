@@ -26,19 +26,38 @@ public static class TextRenderingHelpers
         }
     }
 
+    public static unsafe void WriteDigits(char* pointer, int length, uint valueToWrite, char blankCharValue = ' ')
+    {
+        length--;
+        var endPointer = pointer + length;
+
+        while (pointer <= endPointer)
+        {
+            if (valueToWrite > 0)
+            {
+                uint digit = valueToWrite % 10;
+
+                *endPointer = DigitToChar(digit);
+                valueToWrite /= 10;
+            }
+            else
+            {
+                *endPointer = blankCharValue;
+            }
+            endPointer--;
+        }
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char DigitToChar(uint digit) => (char)(digit | ZeroCharAsUint);
 
     public static int GetNumberStringLength(uint n)
     {
-        var simpleLog10 = n switch
-        {
-            < 10 => 1,
-            < 100 => 2,
-            < 1000 => 3,
-            _ => 4 // We're not going to be dealing with numbers above a few thousand
-        };
+        var result = 1;
+        if (n >= 10) result++;
+        if (n >= 100) result++;
+        if (n >= 1000) result++; // We're not going to be dealing with numbers above a few thousand
 
-        return simpleLog10;
+        return result;
     }
 }

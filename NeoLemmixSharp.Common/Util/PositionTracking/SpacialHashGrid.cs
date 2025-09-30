@@ -238,7 +238,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
         ClearCachedData();
 
-        RegisterItemPosition(item, topLeftChunk, bottomRightChunk, ref GetPreviousBoundsForItem(item));
+        RegisterItemPosition(item, topLeftChunk, bottomRightChunk, GetPreviousBoundsForItem(item));
     }
 
     public void UpdateItemPosition(T item)
@@ -250,9 +250,9 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         var currentTopLeftChunk = GetTopLeftChunkForRegion(currentBounds);
         var currentBottomRightChunk = GetBottomRightChunkForRegion(currentBounds);
 
-        ref var previousBounds = ref GetPreviousBoundsForItem(item);
-        var previousTopLeftChunk = GetTopLeftChunkForRegion(previousBounds);
-        var previousBottomRightChunk = GetBottomRightChunkForRegion(previousBounds);
+        RectangularRegion* previousBoundsPointer = GetPreviousBoundsForItem(item);
+        var previousTopLeftChunk = GetTopLeftChunkForRegion(*previousBoundsPointer);
+        var previousBottomRightChunk = GetBottomRightChunkForRegion(*previousBoundsPointer);
 
         if (currentTopLeftChunk == previousTopLeftChunk &&
             currentBottomRightChunk == previousBottomRightChunk)
@@ -261,22 +261,25 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         ClearCachedData();
 
         DeregisterItemPosition(item, previousTopLeftChunk, previousBottomRightChunk);
-        RegisterItemPosition(item, currentTopLeftChunk, currentBottomRightChunk, ref previousBounds);
+        RegisterItemPosition(item, currentTopLeftChunk, currentBottomRightChunk, previousBoundsPointer);
     }
 
-    private void RegisterItemPosition(T item, Point topLeftChunk, Point bottomRightChunk, ref RectangularRegion previousBounds)
+    private void RegisterItemPosition(T item, Point topLeftChunk, Point bottomRightChunk, RectangularRegion* previousBounds)
     {
         if (topLeftChunk == bottomRightChunk)
         {
             // Only one chunk -> skip some extra work
-            previousBounds = new RectangularRegion(topLeftChunk);
+            *previousBounds = new RectangularRegion(topLeftChunk);
             var pointer = PointerForChunk(topLeftChunk);
             var hash = _hasher.Hash(item);
             BitArrayHelpers.SetBit(pointer, hash);
         }
         else
         {
-            previousBounds = new RectangularRegion(topLeftChunk, bottomRightChunk);
+            var size = new Size(
+                1 + bottomRightChunk.X - topLeftChunk.X,
+                1 + bottomRightChunk.Y - topLeftChunk.Y);
+            *previousBounds = new RectangularRegion(topLeftChunk, size);
             ModifyChunks(item, ChunkOperationType.Add, topLeftChunk, bottomRightChunk);
         }
     }
@@ -292,9 +295,9 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
         DeregisterItemPosition(item, currentTopLeftChunk, currentBottomRightChunk);
 
-        ref var previousBounds = ref GetPreviousBoundsForItem(item);
-        var previousTopLeftChunk = GetTopLeftChunkForRegion(previousBounds);
-        var previousBottomRightChunk = GetBottomRightChunkForRegion(previousBounds);
+        RectangularRegion* previousBounds = GetPreviousBoundsForItem(item);
+        var previousTopLeftChunk = GetTopLeftChunkForRegion(*previousBounds);
+        var previousBottomRightChunk = GetBottomRightChunkForRegion(*previousBounds);
 
         ClearCachedData();
 
@@ -303,7 +306,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             return;
 
         DeregisterItemPosition(item, previousTopLeftChunk, previousBottomRightChunk);
-        previousBounds = new RectangularRegion();
+        *previousBounds = new RectangularRegion();
     }
 
     private void DeregisterItemPosition(T item, Point topLeftChunk, Point bottomRightChunk)
@@ -411,12 +414,12 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
     }
 
-    private ref RectangularRegion GetPreviousBoundsForItem(T item)
+    private RectangularRegion* GetPreviousBoundsForItem(T item)
     {
         int offset = _hasher.Hash(item);
         RectangularRegion* pointer = _previousItemPositionsPointer + offset;
 
-        return ref *pointer;
+        return pointer;
     }
 
     [Pure]
