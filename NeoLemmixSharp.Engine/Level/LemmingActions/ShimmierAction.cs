@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -137,19 +136,15 @@ public sealed class ShimmierAction : LemmingAction
         DoMainTransitionActions(lemming, turnAround);
     }
 
-    [SkipLocalsInit]
     private static void DoShimmierTransitionActions(Lemming lemming, bool turnAround)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
-        var gadgetTestRegion = new RectangularRegion(
-            lemmingPosition,
-            orientation.Move(lemmingPosition, dx, 12));
-        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearLemming);
+        var gadgetTestRegion = new RectangularRegion(lemmingPosition, orientation.Move(lemmingPosition, dx, 12));
+
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearLemming);
 
         if (lemming.CurrentAction == ClimberAction.Instance)
         {

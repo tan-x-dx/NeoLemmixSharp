@@ -3,7 +3,6 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level;
@@ -53,11 +52,9 @@ public sealed class LevelCursor
         }
     }
 
-    [SkipLocalsInit]
     public void CheckLemmingsNearCursor()
     {
-        Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.LemmingManager.ScratchSpaceSize];
-        GetLemmingsNearCursorPosition(scratchSpaceSpan, out var lemmingsNearCursor);
+        GetLemmingsNearCursorPosition(out var lemmingsNearCursor);
         foreach (var lemming in lemmingsNearCursor)
         {
             CheckLemming(lemming);
@@ -68,7 +65,7 @@ public sealed class LevelCursor
             NumberOfLemmingsUnderCursor);
     }
 
-    private void GetLemmingsNearCursorPosition(Span<uint> scratchSpaceSpan, out LemmingEnumerable result)
+    private void GetLemmingsNearCursorPosition(out LemmingEnumerable result)
     {
         var c = CursorPosition;
 
@@ -78,7 +75,7 @@ public sealed class LevelCursor
         var bottomRightCursorPixel = new Point(c.X + EngineConstants.CursorRadius, c.Y + EngineConstants.CursorRadius);
         var levelRegion = new RectangularRegion(topLeftCursorPixel, bottomRightCursorPixel);
 
-        LevelScreen.LemmingManager.GetAllLemmingsNearRegion(scratchSpaceSpan, levelRegion, out result);
+        LevelScreen.LemmingManager.GetAllLemmingsNearRegion(levelRegion, out result);
     }
 
     public void SetSelectedTribe(Tribe? tribe)

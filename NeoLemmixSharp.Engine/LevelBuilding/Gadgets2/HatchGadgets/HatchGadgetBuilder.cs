@@ -4,37 +4,43 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.HatchGadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HatchGadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HatchGadgets;
 
 public readonly struct HatchGadgetBuilder
 {
+    private readonly GadgetArchetypeData _hatchGadgetArchetypeData;
+    private readonly HatchGadgetArchetypeSpecificationData _hatchGadgetSpecificationData;
     private readonly GadgetInstanceData _hatchGadgetInstanceData;
-    private readonly HatchGadgetTypeInstanceData _hatchGadgetTypeInstanceData;
+    private readonly HatchGadgetInstanceSpecificationData _hatchGadgetTypeInstanceData;
+
     private readonly List<GadgetTrigger> _gadgetTriggers;
     private readonly List<GadgetBehaviour> _gadgetBehaviours;
 
     public HatchGadgetBuilder(
-        GadgetInstanceData hatchGadgetData,
+        GadgetArchetypeData gadgetArchetypeData,
+        GadgetInstanceData gadgetInstanceData,
         List<GadgetTrigger> gadgetTriggers,
         List<GadgetBehaviour> gadgetBehaviours)
     {
-        _hatchGadgetInstanceData = hatchGadgetData;
-        _hatchGadgetTypeInstanceData = (HatchGadgetTypeInstanceData)hatchGadgetData.GadgetTypeInstanceData;
+        _hatchGadgetArchetypeData = gadgetArchetypeData;
+        _hatchGadgetSpecificationData = (HatchGadgetArchetypeSpecificationData)gadgetArchetypeData.SpecificationData;
+        _hatchGadgetInstanceData = gadgetInstanceData;
+        _hatchGadgetTypeInstanceData = (HatchGadgetInstanceSpecificationData)gadgetInstanceData.SpecificationData;
+
         _gadgetTriggers = gadgetTriggers;
         _gadgetBehaviours = gadgetBehaviours;
     }
 
-    public HatchGadget BuildHatchGadget(
-        HatchGadgetArchetypeData gadgetArchetypeData,
-        TribeManager tribeManager)
+    public HatchGadget BuildHatchGadget(TribeManager tribeManager)
     {
-        var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, _hatchGadgetInstanceData);
-        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(gadgetArchetypeData, _hatchGadgetInstanceData);
-        var gadgetStates = BuildHatchGadgetStates(gadgetArchetypeData, gadgetBounds, tribeManager);
+        var gadgetName = GadgetBuildingHelpers.GetGadgetName(_hatchGadgetArchetypeData, _hatchGadgetInstanceData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(_hatchGadgetArchetypeData, _hatchGadgetInstanceData);
+        var gadgetStates = BuildHatchGadgetStates(gadgetBounds, tribeManager);
         var hatchSpawnData = BuildHatchSpawnData(tribeManager);
-        var spawnPointOffset = BuildSpawnPointOffset(gadgetArchetypeData);
+        var spawnPointOffset = BuildSpawnPointOffset();
 
         return new HatchGadget(
             gadgetStates,
@@ -53,21 +59,20 @@ public readonly struct HatchGadgetBuilder
     }
 
     private HatchGadgetState[] BuildHatchGadgetStates(
-        HatchGadgetArchetypeData gadgetArchetypeData,
         GadgetBounds gadgetBounds,
         TribeManager tribeManager)
     {
-        if (gadgetArchetypeData.GadgetStates.Length != EngineConstants.ExpectedNumberOfHatchGadgetStates)
+        if (_hatchGadgetSpecificationData.GadgetStates.Length != EngineConstants.ExpectedNumberOfHatchGadgetStates)
             throw new InvalidOperationException("Invalid amount of hatch gadget states defined!");
 
-        if (gadgetArchetypeData.GadgetStates.Length != EngineConstants.ExpectedNumberOfHatchGadgetStates)
+        if (_hatchGadgetTypeInstanceData.GadgetStates.Length != EngineConstants.ExpectedNumberOfHatchGadgetStates)
             throw new InvalidOperationException("Invalid amount of hatch gadget states defined!");
 
         var result = new HatchGadgetState[EngineConstants.ExpectedNumberOfHatchGadgetStates];
 
         for (var i = 0; i < result.Length; i++)
         {
-            var gadgetStateArchetypeData = gadgetArchetypeData.GadgetStates[i];
+            var gadgetStateArchetypeData = _hatchGadgetSpecificationData.GadgetStates[i];
             var gadgetStateInstanceData = _hatchGadgetTypeInstanceData.GadgetStates[i];
 
             result[i] = BuildHatchGadgetState(
@@ -121,10 +126,10 @@ public readonly struct HatchGadgetBuilder
             _hatchGadgetTypeInstanceData.NumberOfLemmingsToRelease);
     }
 
-    private Point BuildSpawnPointOffset(HatchGadgetArchetypeData gadgetArchetypeData)
+    private Point BuildSpawnPointOffset()
     {
-        var spawnPointOffset = gadgetArchetypeData.SpawnOffset;
-        var gadgetSize = gadgetArchetypeData.BaseSpriteSize;
+        var spawnPointOffset = _hatchGadgetSpecificationData.SpawnOffset;
+        var gadgetSize = _hatchGadgetArchetypeData.BaseSpriteSize;
 
         var dht = new DihedralTransformation(_hatchGadgetInstanceData.Orientation, _hatchGadgetInstanceData.FacingDirection);
         return dht.Transform(spawnPointOffset, gadgetSize);

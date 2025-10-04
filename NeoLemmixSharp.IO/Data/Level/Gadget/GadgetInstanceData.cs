@@ -19,7 +19,7 @@ public sealed class GadgetInstanceData
     public required FacingDirection FacingDirection { get; init; }
     public required bool IsFastForward { get; init; }
 
-    public required IGadgetTypeInstanceData GadgetTypeInstanceData { get; init; }
+    public required IGadgetInstanceSpecificationData SpecificationData { get; init; }
 
     public StylePiecePair GetStylePiecePair() => new(StyleIdentifier, PieceIdentifier);
 }

@@ -69,8 +69,6 @@ public sealed class GadgetManager :
         _gadgetsToReEvaluate = new GadgetSet(this);
     }
 
-    public int ScratchSpaceSize => _hitBoxGadgetSpacialHashGrid.ScratchSpaceSize;
-
     public void Initialise()
     {
         foreach (var gadget in _allGadgets)
@@ -178,26 +176,14 @@ public sealed class GadgetManager :
         }
     }
 
-    public void GetAllGadgetsNearPosition(
-        Span<uint> scratchSpaceSpan,
-        Point levelPosition,
-        out GadgetEnumerable result)
+    public void GetAllGadgetsNearPosition(Point levelPosition, out GadgetEnumerable result)
     {
-        _hitBoxGadgetSpacialHashGrid.GetAllItemsNearPosition(
-            scratchSpaceSpan,
-            levelPosition,
-            out result);
+        _hitBoxGadgetSpacialHashGrid.GetAllItemsNearPosition(levelPosition, out result);
     }
 
-    public void GetAllItemsNearRegion(
-        Span<uint> scratchSpace,
-        RectangularRegion levelRegion,
-        out GadgetEnumerable result)
+    public void GetAllItemsNearRegion(RectangularRegion levelRegion, out GadgetEnumerable result)
     {
-        _hitBoxGadgetSpacialHashGrid.GetAllItemsNearRegion(
-            scratchSpace,
-            levelRegion,
-            out result);
+        _hitBoxGadgetSpacialHashGrid.GetAllItemsNearRegion(levelRegion, out result);
     }
 
     public void UpdateGadgetPosition(HitBoxGadget gadget)

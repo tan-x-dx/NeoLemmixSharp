@@ -8,13 +8,13 @@ namespace NeoLemmixSharp.IO.Data;
 
 public static class TextureCache
 {
-    private const int ShortLivedTextureCacheCapacity = 8;
+    private const int LevelSpecificTextureCacheCapacity = 8;
     private const int LongLivedTextureCacheCapacity = 64;
 
     private static GraphicsDevice GraphicsDevice { get; set; } = null!;
 
     private static readonly Dictionary<TextureTypeKey, TextureUsageData> LongLivedTextures = new(LongLivedTextureCacheCapacity);
-    private static readonly Dictionary<string, Texture2D> LevelSpecificTextures = new(ShortLivedTextureCacheCapacity);
+    private static readonly Dictionary<string, Texture2D> LevelSpecificTextures = new(LevelSpecificTextureCacheCapacity);
 
     public static void Initialise(
         ContentManager contentManager,
@@ -30,20 +30,25 @@ public static class TextureCache
 
     private static void LoadDefaultTextures(ContentManager contentManager)
     {
-        const string SpritesFolder = "sprites/lemming/";
-
         for (var i = 0; i < LemmingActionConstants.NumberOfLemmingActions; i++)
         {
             var lemmingActionData = LemmingActionConstants.GetLemmingActionDataFromId(i);
-            var pieceIdentifier = new PieceIdentifier(lemmingActionData.LemmingActionFileName);
-
-            var spriteName = SpritesFolder + lemmingActionData.LemmingActionFileName;
-
-            var sprite = contentManager.Load<Texture2D>(spriteName);
-            var key = new TextureTypeKey(IoConstants.DefaultStyleIdentifier, pieceIdentifier, TextureType.LemmingSprite);
-
-            LongLivedTextures.Add(key, new TextureUsageData(sprite));
+            LoadLemmingActionTexture(lemmingActionData, contentManager);
         }
+    }
+
+    private static void LoadLemmingActionTexture(LemmingActionConstants.LemmingActionLookupData lemmingActionData, ContentManager contentManager)
+    {
+        const string SpritesFolder = "sprites/lemming/";
+
+        var pieceIdentifier = new PieceIdentifier(lemmingActionData.LemmingActionFileName);
+
+        var spriteName = SpritesFolder + lemmingActionData.LemmingActionFileName;
+
+        var sprite = contentManager.Load<Texture2D>(spriteName);
+        var key = new TextureTypeKey(IoConstants.DefaultStyleIdentifier, pieceIdentifier, TextureType.LemmingSprite);
+
+        LongLivedTextures.Add(key, new TextureUsageData(sprite));
     }
 
     public static Texture2D GetOrLoadTexture(

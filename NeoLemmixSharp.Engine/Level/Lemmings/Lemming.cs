@@ -20,14 +20,17 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 {
     public static Lemming SimulationLemming { get; } = new();
 
-    public readonly int Id;
-
-    private LemmingData _data;
+    public LemmingState State { get; }
 
     private LemmingAction _previousAction = NoneAction.Instance;
     private LemmingAction _currentAction;
     private LemmingAction _nextAction = NoneAction.Instance;
     private LemmingAction _countDownAction = NoneAction.Instance;
+
+    public LemmingRenderer Renderer { get; }
+
+    private LemmingData _data;
+    public readonly int Id;
 
     public Orientation Orientation
     {
@@ -80,8 +83,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref int ParticleTimer => ref _data.ParticleTimer;
 
-    public LemmingState State { get; }
-
     public LemmingAction PreviousAction
     {
         get => _previousAction;
@@ -106,8 +107,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         get => _countDownAction;
         set => _countDownAction = value;
     }
-
-    public LemmingRenderer Renderer { get; }
 
     public bool IsSimulation => Id < 0;
     public bool IsFastForward => _data.FastForwardTime > 0 || State.IsPermanentFastForwards;
@@ -193,8 +192,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         var checkPositionsBounds = new RectangularRegion(gadgetCheckPositions[..4]);
 
-        Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, checkPositionsBounds, out var gadgetsNearLemming);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetsNearLemming);
 
         var checkZombies = HandleLemmingAction(in gadgetsNearLemming) &&
                            CheckLevelBoundaries() &&
@@ -233,8 +231,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         var checkPositionsBounds = new RectangularRegion(gadgetCheckPositions[..4]);
 
-        Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, checkPositionsBounds, out var gadgetsNearLemming);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetsNearLemming);
 
         var handleGadgets = HandleLemmingAction(in gadgetsNearLemming) && CheckLevelBoundaries() && checkGadgets;
         if (handleGadgets)

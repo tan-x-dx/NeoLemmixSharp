@@ -35,8 +35,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
     public ReadOnlySpan<char> LemmingsOutSpan => new(_lemmingsOutPointer, CharLengthForLemmingCount);
     public ReadOnlySpan<char> GoalCountSpan => new(_goalCountPointer, CharLengthForGoalCount);
 
-    public ControlPanelTextualData(
-        ControlPanelParameterSet controlPanelParameters)
+    public ControlPanelTextualData(ControlPanelParameterSet controlPanelParameters)
     {
         _controlPanelParameters = controlPanelParameters;
 
@@ -69,11 +68,8 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         p++;
         var numericPartSpanLength = TextRenderingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
 
-        TextRenderingHelpers.WriteDigits(new Span<char>(p, numericPartSpanLength), numberOfLemmingsUnderCursor);
+        TextRenderingHelpers.WriteDigits(p, numericPartSpanLength, numberOfLemmingsUnderCursor);
     }
-
-    [Pure]
-    private bool ShowExpandedAthleteInformation() => _controlPanelParameters.Contains(ControlPanelParameters.ShowExpandedAthleteInformation);
 
     private int WriteLemmingInfo(Lemming lemming)
     {
@@ -86,24 +82,28 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         return WriteMinimalAthleteInformation(action, state);
     }
 
+    [Pure]
+    private bool ShowExpandedAthleteInformation() => _controlPanelParameters.Contains(ControlPanelParameters.ShowExpandedAthleteInformation);
+
     private int WriteExpandedAthleteInformation(LemmingState state)
     {
         const int TextLengthForExpandedAthleteInformation = 7;
 
         char* p = _cursorDataPointer;
-        for (var i = 0; i < TextLengthForExpandedAthleteInformation; i++)
-            p[i] = '-';
 
-        if (state.IsSlider) p[0] = 'L';
-        if (state.IsClimber) p[1] = 'C';
-        if (state.IsSwimmer) p[2] = 'S';
-        else if (state.IsAcidLemming) p[2] = 'A';
-        else if (state.IsWaterLemming) p[2] = 'W';
-        if (state.IsFloater) p[3] = 'F';
-        else if (state.IsGlider) p[3] = 'G';
-        if (state.IsDisarmer) p[4] = 'D';
-        if (state.IsZombie) p[5] = 'Z';
-        if (state.IsNeutral) p[6] = 'N';
+        *p = state.IsSlider ? 'L' : '-';
+        p++;
+        *p = state.IsClimber ? 'C' : '-';
+        p++;
+        *p = state.IsSwimmer ? 'S' : state.IsAcidLemming ? 'A' : state.IsWaterLemming ? 'W' : '-';
+        p++;
+        *p = state.IsFloater ? 'F' : state.IsGlider ? 'G' : '-';
+        p++;
+        *p = state.IsDisarmer ? 'D' : '-';
+        p++;
+        *p = state.IsZombie ? 'Z' : '-';
+        p++;
+        *p = state.IsNeutral ? 'N' : '-';
 
         return TextLengthForExpandedAthleteInformation;
     }
@@ -112,14 +112,16 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         LemmingAction action,
         LemmingState state)
     {
-        ReadOnlySpan<char> sourceSpan = GetSourceString().AsSpan();
+        ReadOnlySpan<char> sourceSpan = GetSourceString(action, state).AsSpan();
         Span<char> destSpan = new(_cursorDataPointer, CharLengthForCursorData);
 
         sourceSpan.CopyTo(destSpan);
 
         return sourceSpan.Length;
 
-        string GetSourceString()
+        static string GetSourceString(
+            LemmingAction action,
+            LemmingState state)
         {
             if (action.CursorSelectionPriorityValue == LemmingActionConstants.NonPermanentSkillPriority)
                 return action.LemmingActionName;
@@ -156,18 +158,14 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
     {
         Debug.Assert(hatchCount >= 0);
 
-        Span<char> span = new(_hatchCountPointer, CharLengthForLemmingCount);
-        span.Clear();
-        TextRenderingHelpers.WriteDigits(span, (uint)hatchCount);
+        TextRenderingHelpers.WriteDigits(_hatchCountPointer, CharLengthForLemmingCount, (uint)hatchCount);
     }
 
     public void SetLemmingData(int lemmingCount)
     {
         Debug.Assert(lemmingCount >= 0);
 
-        Span<char> span = new(_lemmingsOutPointer, CharLengthForLemmingCount);
-        span.Clear();
-        TextRenderingHelpers.WriteDigits(span, (uint)lemmingCount);
+        TextRenderingHelpers.WriteDigits(_lemmingsOutPointer, CharLengthForLemmingCount, (uint)lemmingCount);
     }
 
     public void SetGoalData(int goalNumber)
@@ -182,8 +180,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
             spanLength--;
         }
 
-        var span = new Span<char>(p, spanLength);
-        TextRenderingHelpers.WriteDigits(span, (uint)goalNumber);
+        TextRenderingHelpers.WriteDigits(p, spanLength, (uint)goalNumber);
     }
 
     public void Dispose()

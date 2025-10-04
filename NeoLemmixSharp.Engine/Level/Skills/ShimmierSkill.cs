@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -18,11 +17,9 @@ public sealed class ShimmierSkill : LemmingSkill
     {
     }
 
-    [SkipLocalsInit]
     public override bool CanAssignToLemming(Lemming lemming)
     {
         var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         if (lemming.CurrentAction == ClimberAction.Instance)
         {
             var simulationLemming = LemmingManager.SimulateLemming(lemming, true);
@@ -38,7 +35,7 @@ public sealed class ShimmierSkill : LemmingSkill
             var gadgetTestRegion = new RectangularRegion(
                 simulationPosition,
                 simulationOrientation.MoveUp(simulationPosition, 9));
-            gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearRegion);
+            gadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
             return PositionIsSolidToLemming(in gadgetsNearRegion, simulationLemming, simulationOrientation.MoveUp(simulationPosition, 9)) ||
                    PositionIsSolidToLemming(in gadgetsNearRegion, simulationLemming, simulationOrientation.MoveUp(simulationPosition, 8));
@@ -65,7 +62,7 @@ public sealed class ShimmierSkill : LemmingSkill
         var gadgetTestRegion1 = new RectangularRegion(
             lemmingPosition,
             orientation.MoveUp(lemmingPosition, 12));
-        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion1, out var gadgetsNearRegion1);
+        gadgetManager.GetAllItemsNearRegion(gadgetTestRegion1, out var gadgetsNearRegion1);
 
         for (var i = -1; i < 4; i++)
         {

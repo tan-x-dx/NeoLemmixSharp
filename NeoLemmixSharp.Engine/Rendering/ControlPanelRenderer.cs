@@ -109,28 +109,32 @@ public sealed class ControlPanelRenderer
 
         var currentTextSpan = textualData.LemmingActionAndCountSpan;
         RenderText(currentTextSpan, x);
-        x += currentTextSpan.Length * PanelFont.GlyphWidth;
+        var dx = currentTextSpan.Length * PanelFont.GlyphWidth;
+        x += dx;
 
         RenderIcon(HatchPanelIconX, x);
         x += PanelIconWidth;
 
         currentTextSpan = textualData.HatchCountSpan;
         RenderText(currentTextSpan, x);
-        x += (currentTextSpan.Length + 1) * PanelFont.GlyphWidth;
+        dx = (currentTextSpan.Length + 1) * PanelFont.GlyphWidth;
+        x += dx;
 
         RenderIcon(LemmingPanelIconX, x);
         x += PanelIconWidth;
 
         currentTextSpan = textualData.LemmingsOutSpan;
         RenderText(currentTextSpan, x);
-        x += (currentTextSpan.Length + 1) * PanelFont.GlyphWidth;
+        dx = (currentTextSpan.Length + 1) * PanelFont.GlyphWidth;
+        x += dx;
 
         RenderIcon(FlagPanelIconX, x);
         x += PanelIconWidth;
 
         currentTextSpan = textualData.GoalCountSpan;
         RenderText(currentTextSpan, x);
-        x += (currentTextSpan.Length + 1) * PanelFont.GlyphWidth;
+        dx = (currentTextSpan.Length + 1) * PanelFont.GlyphWidth;
+        x += dx;
 
         var levelTimer = LevelScreen.LevelTimer;
         var timerIconX = levelTimer.Type == TimerType.CountDown

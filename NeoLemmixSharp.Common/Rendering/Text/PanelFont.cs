@@ -87,7 +87,7 @@ public sealed class PanelFont
                 source,
                 Color.White);
 
-            source.Y += GlyphHeight;
+            source.Y = GlyphHeight;
             spriteBatch.Draw(
                 _texture,
                 dest,

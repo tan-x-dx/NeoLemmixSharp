@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -17,7 +16,6 @@ public sealed class PlatformerSkill : LemmingSkill
     {
     }
 
-    [SkipLocalsInit]
     public override bool CanAssignToLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
@@ -26,8 +24,7 @@ public sealed class PlatformerSkill : LemmingSkill
         var levelRegion = new RectangularRegion(
             orientation.Move(lemmingPostion, 5, 2),
             orientation.Move(lemmingPostion, -5, -2));
-        Span<uint> scratchSpaceSpan = stackalloc uint[LevelScreen.GadgetManager.ScratchSpaceSize];
-        LevelScreen.GadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, levelRegion, out var gadgetsNearLemming);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(levelRegion, out var gadgetsNearLemming);
 
         return SkillIsAssignableToCurrentAction(lemming) &&
                PlatformerAction.LemmingCanPlatform(lemming, in gadgetsNearLemming);

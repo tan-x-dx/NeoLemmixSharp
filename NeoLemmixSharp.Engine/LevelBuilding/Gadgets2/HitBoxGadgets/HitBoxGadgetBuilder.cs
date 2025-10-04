@@ -16,37 +16,43 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;
 
 public readonly ref struct HitBoxGadgetBuilder
 {
+    private readonly GadgetArchetypeData _hitBoxGadgetArchetypeData;
+    private readonly HitBoxGadgetArchetypeSpecificationData _hitBoxGadgetSpecificationData;
     private readonly GadgetInstanceData _hitBoxGadgetInstanceData;
-    private readonly HitBoxGadgetTypeInstanceData _hitBoxGadgetTypeInstanceData;
+    private readonly HitBoxGadgetInstanceSpecifcationData _hitBoxGadgetInstanceSpecificationData;
+
     private readonly List<GadgetTrigger> _gadgetTriggers;
     private readonly List<GadgetBehaviour> _gadgetBehaviours;
 
     public HitBoxGadgetBuilder(
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData hitBoxGadgetData,
         List<GadgetTrigger> gadgetTriggers,
         List<GadgetBehaviour> gadgetBehaviours)
     {
+        _hitBoxGadgetArchetypeData = gadgetArchetypeData;
+        _hitBoxGadgetSpecificationData = (HitBoxGadgetArchetypeSpecificationData)gadgetArchetypeData.SpecificationData;
         _hitBoxGadgetInstanceData = hitBoxGadgetData;
-        _hitBoxGadgetTypeInstanceData = (HitBoxGadgetTypeInstanceData)hitBoxGadgetData.GadgetTypeInstanceData;
+        _hitBoxGadgetInstanceSpecificationData = (HitBoxGadgetInstanceSpecifcationData)hitBoxGadgetData.SpecificationData;
+
         _gadgetTriggers = gadgetTriggers;
         _gadgetBehaviours = gadgetBehaviours;
     }
 
     public HitBoxGadget BuildHitBoxGadget(
-        HitBoxGadgetArchetypeData gadgetArchetypeData,
         LemmingManager lemmingManager,
         TribeManager tribeManager)
     {
         var lemmingTracker = new LemmingTracker(lemmingManager);
 
-        var gadgetName = GadgetBuildingHelpers.GetGadgetName(gadgetArchetypeData, _hitBoxGadgetInstanceData);
-        var gadgetBounds = GadgetBuildingHelpers.CreateHitBoxGadgetBounds(gadgetArchetypeData, _hitBoxGadgetInstanceData, _hitBoxGadgetTypeInstanceData);
-        var gadgetStates = BuildHitBoxGadgetStates(gadgetArchetypeData, gadgetBounds, tribeManager);
-        var resizeType = GetResizeType(gadgetArchetypeData);
+        var gadgetName = GadgetBuildingHelpers.GetGadgetName(_hitBoxGadgetArchetypeData, _hitBoxGadgetInstanceData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateHitBoxGadgetBounds(_hitBoxGadgetArchetypeData, _hitBoxGadgetSpecificationData, _hitBoxGadgetInstanceData, _hitBoxGadgetInstanceSpecificationData);
+        var gadgetStates = BuildHitBoxGadgetStates(_hitBoxGadgetSpecificationData, gadgetBounds, tribeManager);
+        var resizeType = GetResizeType(_hitBoxGadgetSpecificationData);
 
         return new HitBoxGadget(
             gadgetStates,
-            _hitBoxGadgetTypeInstanceData.InitialStateId,
+            _hitBoxGadgetInstanceSpecificationData.InitialStateId,
             resizeType,
             lemmingTracker)
         {
@@ -61,14 +67,14 @@ public readonly ref struct HitBoxGadgetBuilder
     }
 
     private HitBoxGadgetState[] BuildHitBoxGadgetStates(
-        HitBoxGadgetArchetypeData gadgetArchetypeData,
+        HitBoxGadgetArchetypeSpecificationData gadgetArchetypeData,
         GadgetBounds gadgetBounds,
         TribeManager tribeManager)
     {
         if (gadgetArchetypeData.GadgetStates.Length > EngineConstants.MaxAllowedNumberOfGadgetStates)
             throw new InvalidOperationException("Too many gadget states defined!");
 
-        if (gadgetArchetypeData.GadgetStates.Length != _hitBoxGadgetTypeInstanceData.GadgetStates.Length)
+        if (gadgetArchetypeData.GadgetStates.Length != _hitBoxGadgetInstanceSpecificationData.GadgetStates.Length)
             throw new InvalidOperationException("Mismatch in number of gadget states!");
 
         var result = new HitBoxGadgetState[gadgetArchetypeData.GadgetStates.Length];
@@ -76,7 +82,7 @@ public readonly ref struct HitBoxGadgetBuilder
         for (var i = 0; i < result.Length; i++)
         {
             var gadgetStateArchetypeData = gadgetArchetypeData.GadgetStates[i];
-            var gadgetStateInstanceData = _hitBoxGadgetTypeInstanceData.GadgetStates[i];
+            var gadgetStateInstanceData = _hitBoxGadgetInstanceSpecificationData.GadgetStates[i];
 
             result[i] = BuildHitBoxGadgetState(
                 gadgetStateArchetypeData,
@@ -155,10 +161,10 @@ public readonly ref struct HitBoxGadgetBuilder
 
     private LemmingHitBoxFilter BuildHitBoxFilter(
         ReadOnlySpan<HitBoxFilterData> alternateHitBoxFilterData,
-        Orientation instanceOrientation, 
+        Orientation instanceOrientation,
         FacingDirection instanceFacingDirection,
         TribeManager tribeManager,
-        GadgetBehaviourBuilder behaviourBuilder, 
+        GadgetBehaviourBuilder behaviourBuilder,
         HitBoxFilterData mainHitBoxFilterInstanceDatum)
     {
         var correspondingAlternateHitBoxFilterInstanceDatum = GetCorrespondingHitBoxFilterInstanceData(mainHitBoxFilterInstanceDatum.HitBoxFilterName, alternateHitBoxFilterData);
@@ -213,7 +219,7 @@ public readonly ref struct HitBoxGadgetBuilder
         return gadgetTriggerBuilder.BuildGadgetTriggers(gadgetStateArchetypeData, gadgetStateInstanceData);
     }
 
-    private ResizeType GetResizeType(HitBoxGadgetArchetypeData gadgetArchetypeData)
+    private ResizeType GetResizeType(HitBoxGadgetArchetypeSpecificationData gadgetArchetypeData)
     {
         return new DihedralTransformation(_hitBoxGadgetInstanceData.Orientation, _hitBoxGadgetInstanceData.FacingDirection).Transform(gadgetArchetypeData.ResizeType);
     }

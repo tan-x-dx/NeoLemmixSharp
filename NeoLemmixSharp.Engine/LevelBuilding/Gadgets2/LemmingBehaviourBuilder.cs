@@ -13,7 +13,7 @@ public static class LemmingBehaviourBuilder
 {
     public static LemmingBehaviour BuildLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var lemmingBehaviourType = (LemmingBehaviourType)gadgetBehaviourDatum.Data1;
+        var lemmingBehaviourType = (LemmingBehaviourType)gadgetBehaviourDatum.DataChunk.Data1;
 
         return lemmingBehaviourType switch
         {
@@ -33,17 +33,17 @@ public static class LemmingBehaviourBuilder
 
     private static SetStateLemmingBehaviour BuildSetStateLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var lemmingStateChangerId = gadgetBehaviourDatum.Data2 & 0xffff;
+        var lemmingStateChangerId = gadgetBehaviourDatum.DataChunk.Data2 & 0xffff;
         var lemmingStateChanger = ILemmingState.AllItems[lemmingStateChangerId];
 
-        var rawSetStateTypeId = (uint)(gadgetBehaviourDatum.Data2 >>> 16);
+        var rawSetStateTypeId = (uint)(gadgetBehaviourDatum.DataChunk.Data2 >>> 16);
         var setStateType = SetStateLemmingBehaviour.GetEnumValue(rawSetStateTypeId);
 
         return new SetStateLemmingBehaviour(lemmingStateChanger, setStateType)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
         };
     }
 
@@ -53,44 +53,44 @@ public static class LemmingBehaviourBuilder
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
         };
     }
 
     private static SetActionLemmingBehaviour BuildSetActionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var lemmingAction = LemmingAction.AllItems[gadgetBehaviourDatum.Data2];
+        var lemmingAction = LemmingAction.AllItems[gadgetBehaviourDatum.DataChunk.Data2];
 
         return new SetActionLemmingBehaviour(lemmingAction)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
         };
     }
 
     private static KillLemmingBehaviour BuildKillLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var rawLemmingRemovalReasonId = (uint)gadgetBehaviourDatum.Data2;
+        var rawLemmingRemovalReasonId = (uint)gadgetBehaviourDatum.DataChunk.Data2;
         var lemmingRemovalReason = LemmingRemovalReasonHelpers.GetEnumValue(rawLemmingRemovalReasonId);
 
         return new KillLemmingBehaviour(lemmingRemovalReason)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
         };
     }
 
     private static ForceFacingDirectionLemmingBehaviour BuildForceFacingDirectionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var facingDirection = new FacingDirection(gadgetBehaviourDatum.Data2);
+        var facingDirection = new FacingDirection(gadgetBehaviourDatum.DataChunk.Data2);
 
         return new ForceFacingDirectionLemmingBehaviour(facingDirection)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
         };
     }
 
@@ -100,27 +100,27 @@ public static class LemmingBehaviourBuilder
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
         };
     }
 
     private static MoveLemmingBehaviour BuildMoveLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data2);
+        var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
 
         return new MoveLemmingBehaviour(delta)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
         };
     }
 
     private static SetLemmingPositionBehaviour BuildSetLemmingPositionBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var position = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.Data2);
+        var position = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
 
-        var miscData = gadgetBehaviourDatum.Data3;
+        var miscData = gadgetBehaviourDatum.DataChunk.Data3;
         var rawRelativePositioningType = miscData & 0xff;
         var relativePositioningType = RelativePositioningTypeHelpers.GetEnumValue((uint)rawRelativePositioningType);
         miscData >>>= 8;
@@ -136,13 +136,13 @@ public static class LemmingBehaviourBuilder
 
     private static FastForwardLemmingBehaviour BuildFastForwardLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var fastForwardTime = gadgetBehaviourDatum.Data2;
+        var fastForwardTime = gadgetBehaviourDatum.DataChunk.Data2;
 
         return new FastForwardLemmingBehaviour(fastForwardTime)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
         };
     }
 }

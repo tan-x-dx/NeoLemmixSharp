@@ -24,10 +24,6 @@ public sealed class LevelRenderer :
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly SpriteSpacialHashGrid _spriteSpacialHashGrid;
 
-    // The number of renderers may exceed a safe threshold for stack based allocations
-    // Use a heap based array for the appropriate usages 
-    private readonly uint[] _spriteSetScratchSpace;
-
     private readonly List<IViewportObjectRenderer> _orderedSprites;
 
     private IBackgroundRenderer _backgroundRenderer;
@@ -53,8 +49,6 @@ public sealed class LevelRenderer :
             ChunkSize.ChunkSize64,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
-
-        _spriteSetScratchSpace = new uint[_spriteSpacialHashGrid.ScratchSpaceSize];
 
         var rendererSpan = CollectionsMarshal.AsSpan(_orderedSprites);
         foreach (var renderer in rendererSpan)
@@ -108,8 +102,6 @@ public sealed class LevelRenderer :
 
     private void RenderSprites(SpriteBatch spriteBatch)
     {
-        var scratchSpaceSpan = new Span<uint>(_spriteSetScratchSpace);
-
         var horizontalBoundary = LevelScreen.HorizontalBoundaryBehaviour;
         var verticalBoundary = LevelScreen.VerticalBoundaryBehaviour;
 
@@ -124,7 +116,7 @@ public sealed class LevelRenderer :
                 var s = new Size(horizontalViewPortRenderInterval.ViewPortLength, verticalViewPortRenderInterval.ViewPortLength);
                 var region = new RectangularRegion(p, s);
 
-                _spriteSpacialHashGrid.GetAllItemsNearRegion(scratchSpaceSpan, region, out var rendererSet);
+                _spriteSpacialHashGrid.GetAllItemsNearRegion(region, out var rendererSet);
 
                 var viewportClip = new Rectangle(
                     horizontalViewPortRenderInterval.ViewPortStart,

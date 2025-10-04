@@ -46,6 +46,7 @@ public static class DisposableHelperMethods
     /// <typeparam name="TKey">The key type of the dictionary.</typeparam>
     /// <typeparam name="TValue">The value type of the dictionary - the items to be disposed of.</typeparam>
     /// <param name="dictionary">The dictionary to dispose the contents of.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void DisposeOfAll<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
         where TKey : notnull
         where TValue : class, IDisposable

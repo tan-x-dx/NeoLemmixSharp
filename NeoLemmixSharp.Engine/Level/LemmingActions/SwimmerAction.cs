@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -183,7 +182,6 @@ public sealed class SwimmerAction : LemmingAction
         DoSwimmerTransitionActions(lemming, turnAround);
     }
 
-    [SkipLocalsInit]
     private static void DoSwimmerTransitionActions(
         Lemming lemming,
         bool turnAround)
@@ -194,12 +192,10 @@ public sealed class SwimmerAction : LemmingAction
 
         var i = 0;
 
-        var gadgetManager = LevelScreen.GadgetManager;
-        Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
         var gadgetTestRegion = new RectangularRegion(
             orientation.Move(lemming.AnchorPosition, lemming.FacingDirection.DeltaX, 2),
             orientation.MoveDown(lemming.AnchorPosition, 4));
-        gadgetManager.GetAllItemsNearRegion(scratchSpaceSpan, gadgetTestRegion, out var gadgetsNearLemming);
+        LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearLemming);
 
         while (i < 4 &&
                WaterAt(in gadgetsNearLemming, lemming, checkPosition) &&

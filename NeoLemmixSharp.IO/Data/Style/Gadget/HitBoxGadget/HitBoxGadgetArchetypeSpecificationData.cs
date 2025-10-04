@@ -8,18 +8,13 @@ using System.Diagnostics;
 namespace NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 
 [DebuggerDisplay("HitBox - {StyleIdentifier}:{PieceIdentifier}")]
-public sealed class HitBoxGadgetArchetypeData : IGadgetArchetypeData
+public sealed class HitBoxGadgetArchetypeSpecificationData : IGadgetArchetypeSpecificationData
 {
     private readonly BitArrayDictionary<GadgetArchetypeMiscDataTypeHasher, BitBuffer32, GadgetArchetypeMiscDataType, int> _miscData = GadgetArchetypeMiscDataTypeHasher.CreateBitArrayDictionary<int>();
 
-    public required StyleIdentifier StyleIdentifier { get; init; }
-    public required PieceIdentifier PieceIdentifier { get; init; }
-    public required GadgetName GadgetName { get; init; }
-
     public GadgetType GadgetType => GadgetType.HitBoxGadget;
-    public required ResizeType ResizeType { get; init; }
 
-    public required Size BaseSpriteSize { get; init; }
+    public required ResizeType ResizeType { get; init; }
     public required RectangularRegion NineSliceData { get; init; }
 
     public required HitBoxGadgetStateArchetypeData[] GadgetStates { get; init; }
@@ -36,7 +31,6 @@ public sealed class HitBoxGadgetStateArchetypeData : IGadgetStateArchetypeData
     public required GadgetStateName StateName { get; init; }
     public required Point HitBoxOffset { get; init; }
     public required HitBoxRegionData[] RegionData { get; init; }
-    public required AnimationLayerArchetypeData[] AnimationLayerData { get; init; }
     public required GadgetTriggerData[] InnateTriggers { get; init; }
     public required GadgetBehaviourData[] InnateBehaviours { get; init; }
     public required GadgetTriggerBehaviourLink[] TriggerBehaviourLinks { get; init; }

@@ -1,8 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets;
@@ -120,36 +118,12 @@ public static class GadgetBuildingHelpers
     }
 
     public static string GetGadgetName(
-        IGadgetArchetypeData gadgetArchetypeData,
+        GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetInstanceData)
     {
         GadgetName result = gadgetInstanceData.OverrideName.IsTrivial
             ? gadgetArchetypeData.GadgetName
             : gadgetInstanceData.OverrideName;
         return result.ToString();
-    }
-
-    public static GadgetBounds CreateGadgetBounds(
-        HitBoxGadgetArchetypeData gadgetArchetypeData,
-        GadgetInstanceData gadgetInstanceData)
-    {
-        var resizeType = gadgetArchetypeData.ResizeType;
-        var baseSize = gadgetArchetypeData.BaseSpriteSize;
-
-        var result = new GadgetBounds
-        {
-            Position = gadgetInstanceData.Position
-        };
-
-        var size = new Size();
-        // resizeType.CanResizeHorizontally() ? gadgetData.GetProperty(GadgetPropertyType.Width) : baseSize.W,
-        // resizeType.CanResizeVertically() ? gadgetData.GetProperty(GadgetPropertyType.Height) : baseSize.H);
-
-        size = new DihedralTransformation(gadgetInstanceData.Orientation, gadgetInstanceData.FacingDirection).Transform(size);
-
-        result.Width = size.W;
-        result.Height = size.H;
-
-        return result;
     }
 }

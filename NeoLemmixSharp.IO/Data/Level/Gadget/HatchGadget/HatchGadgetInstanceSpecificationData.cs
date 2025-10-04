@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Data.Level.Gadget.HatchGadget;
 
-public sealed class HatchGadgetTypeInstanceData : IGadgetTypeInstanceData
+public sealed class HatchGadgetInstanceSpecificationData : IGadgetInstanceSpecificationData
 {
     public GadgetType GadgetType => GadgetType.HatchGadget;
     public required int InitialStateId { get; init; }

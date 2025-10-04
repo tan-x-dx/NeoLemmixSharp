@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Data.Level.Gadget.Functional;
 
-public sealed class LevelTimerObserverGadgetInstanceData : IGadgetTypeInstanceData
+public sealed class LevelTimerObserverGadgetInstanceSpecificationData : IGadgetInstanceSpecificationData
 {
     public GadgetType GadgetType => GadgetType.LevelTimerObserver;
 

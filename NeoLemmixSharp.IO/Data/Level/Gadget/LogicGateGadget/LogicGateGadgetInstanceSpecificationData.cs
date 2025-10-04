@@ -5,7 +5,7 @@ using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 
 namespace NeoLemmixSharp.IO.Data.Level.Gadget.LogicGateGadget;
 
-public sealed class LogicGateGadgetTypeInstanceData : IGadgetTypeInstanceData
+public sealed class LogicGateGadgetInstanceSpecificationData : IGadgetInstanceSpecificationData
 {
     public GadgetType GadgetType => GadgetType.LogicGate;
     public required LogicGateGadgetType LogicGateGadgetType { get; init; }

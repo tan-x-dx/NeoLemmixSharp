@@ -130,8 +130,8 @@ public readonly ref struct GadgetTriggerBuilder
         int newTriggerId,
         GadgetBehaviour[] behaviours)
     {
-        var point = ReadWriteHelpers.DecodePoint(gadgetTriggerDatum.Data1);
-        uint miscData = (uint)gadgetTriggerDatum.Data2;
+        var point = ReadWriteHelpers.DecodePoint(gadgetTriggerDatum.DataChunk.Data1);
+        uint miscData = (uint)gadgetTriggerDatum.DataChunk.Data2;
         uint t = miscData >>> 0;
         var requireX = (t & 1) != 0;
         t = (miscData >>> 1) & 3;

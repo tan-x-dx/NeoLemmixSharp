@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Numerics;
 using System.Numerics.Tensors;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
@@ -95,6 +96,22 @@ public static class BitArrayHelpers
     }
 
     /// <summary>
+    /// Sets a bit to 1
+    /// </summary>
+    /// <param name="p">The pointer to modify</param>
+    /// <param name="index">The bit to set</param>
+    internal static unsafe void SetBit(uint* p, int index)
+    {
+        var offset = index;
+        offset >>>= Shift;
+        p += offset;
+
+        uint mask = 1U;
+        mask <<= index;
+        *p |= mask;
+    }
+
+    /// <summary>
     /// Sets a bit to 0. Returns <see langword="true" /> if a change has occurred -
     /// i.e. if the bit was previously 1
     /// </summary>
@@ -120,6 +137,23 @@ public static class BitArrayHelpers
     public static void ClearBit(Span<uint> bits, int index)
     {
         bits[index >>> Shift] &= ~(1U << index);
+    }
+
+    /// <summary>
+    /// Sets a bit to 0. 
+    /// </summary>
+    /// <param name="p">The pointer to modify</param>
+    /// <param name="index">The bit to clear</param>
+    internal static unsafe void ClearBit(uint* p, int index)
+    {
+        var offset = index;
+        offset >>>= Shift;
+        p += offset;
+
+        uint mask = 1U;
+        mask <<= index;
+        mask = ~mask;
+        *p &= mask;
     }
 
     /// <summary>
@@ -162,33 +196,65 @@ public static class BitArrayHelpers
     [Pure]
     public static int GetPopCount(ReadOnlySpan<uint> bits)
     {
-        // Basic implementation is faster than using TensorPrimitives - benchmarks
+        // This implementation is faster than using TensorPrimitives - benchmarks
 
+        ref uint startRef = ref MemoryMarshal.GetReference(bits);
+        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(bits), bits.Length);
         var result = 0;
-        switch (bits.Length)
+        while (Unsafe.IsAddressLessThan(ref startRef, ref endRef))
         {
-            case 7: result += BitOperations.PopCount(bits[6]); goto case 6;
-            case 6: result += BitOperations.PopCount(bits[5]); goto case 5;
-            case 5: result += BitOperations.PopCount(bits[4]); goto case 4;
-            case 4: result += BitOperations.PopCount(bits[3]); goto case 3;
-            case 3: result += BitOperations.PopCount(bits[2]); goto case 2;
-            case 2: result += BitOperations.PopCount(bits[1]); goto case 1;
-            case 1: result += BitOperations.PopCount(bits[0]); return result;
-            case 0: return 0;
+            result += BitOperations.PopCount(startRef);
+            startRef = ref Unsafe.Add(ref startRef, 1);
         }
 
-        for (int i = bits.Length - 1; i >= 0; i--)
+        return result;
+    }
+
+    /// <summary>
+    /// PopCount alternative that uses raw pointers.
+    /// Used by SpacialHashGrid since that class calculates PopCount a lot.
+    /// </summary>
+    /// <param name="sourcePointer">The uints to collectively PopCount.</param>
+    /// <param name="length">The number of uints to evaluate.</param>
+    /// <returns>The PopCount over all uints specified by the pointer/length.</returns>
+    [Pure]
+    internal static unsafe int GetPopCount(uint* sourcePointer, uint length)
+    {
+        // This implementation is faster than using TensorPrimitives - benchmarks
+
+        uint* endPointer = sourcePointer + length;
+        var result = 0;
+        while (sourcePointer < endPointer)
         {
-            result += BitOperations.PopCount(bits[i]);
+            result += BitOperations.PopCount(*sourcePointer);
+            sourcePointer++;
         }
 
         return result;
     }
 
     /*
-     * Use jump tables (switch/case) for small span lengths.
-     * This is a more common occurrence than not, and is faster - benchmarks.
-     * The TensorPrimitives library is best used for larger spans.
+     * Justification for the weird bullshit below:
+     * 
+     * Consider an average level. Chances are there are <= 100 lemmings present.
+     * In fact, the overwhelming majority of levels in existence have 100 lemmings
+     * or fewer (A cursory glance at a sample of ~10,000 levels suggests that
+     * at least 90% of levels follow this rule).
+     * If we're storing lemming bits in uints (which we'll be doing a lot),
+     * then we will require 100 bits max. This corresponds to four 32bit ints.
+     * 
+     * Now, that's just for lemmings. There are other things to consider too,
+     * namely: gadgets, and renderers. Chances are there will be at most a couple
+     * dozen gadgets (i.e. < 100). As for renderers, this quantity is approximately
+     * equal to number of lemmings + number of gadgets. So, might be a smidge over 100.
+     * 
+     * All in all, the input spans will most likely have lengths of four or five (or lower).
+     * 
+     * We can optimise for these common use cases. This is ESPECIALLY important
+     * for the Union methods as they are the most commonly used. Benchmarks have
+     * shown that the switch/case/goto approach yields the fastest results for
+     * these small span lengths.
+     * The TensorPrimitives library can pick up the slack for larger span lengths.
      */
 
     [DoesNotReturn]
@@ -196,118 +262,338 @@ public static class BitArrayHelpers
 
     internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        if (span.Length != other.Length)
+        var spanLength = (uint)span.Length;
+        var otherLength = (uint)other.Length;
+
+        if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
 
-        switch (span.Length)
+        ref uint sourceRef = ref MemoryMarshal.GetReference(span);
+        ref uint otherRef = ref MemoryMarshal.GetReference(other);
+
+        switch (spanLength)
         {
-            case 7: span[6] |= other[6]; goto case 6;
-            case 6: span[5] |= other[5]; goto case 5;
-            case 5: span[4] |= other[4]; goto case 4;
-            case 4: span[3] |= other[3]; goto case 3;
-            case 3: span[2] |= other[2]; goto case 2;
-            case 2: span[1] |= other[1]; goto case 1;
-            case 1: span[0] |= other[0]; return;
-            case 0: return;
+            case 8: goto Length8;
+            case 7: goto Length7;
+            case 6: goto Length6;
+            case 5: goto Length5;
+            case 4: goto Length4;
+            case 3: goto Length3;
+            case 2: goto Length2;
+            case 1: goto Length1;
+            case 0: goto Length0;
+
+            default: LargeSpanUnionWith(span, other); return;
         }
 
+        Length8:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 7);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 7);
+        sourceRef |= otherRef;
+        Length7:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 6);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 6);
+        sourceRef |= otherRef;
+        Length6:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 5);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 5);
+        sourceRef |= otherRef;
+        Length5:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 4);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 4);
+        sourceRef |= otherRef;
+        Length4:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 3);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 3);
+        sourceRef |= otherRef;
+        Length3:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 2);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 2);
+        sourceRef |= otherRef;
+        Length2:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 1);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 1);
+        sourceRef |= otherRef;
+        Length1:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 0);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 0);
+        sourceRef |= otherRef;
+        Length0:
+        return;
+    }
+
+    private static unsafe void LargeSpanUnionWith(Span<uint> span, ReadOnlySpan<uint> other)
+    {
         TensorPrimitives.BitwiseOr(span, other, span);
+    }
+
+    /// <summary>
+    /// UnionWith alternative that uses raw pointers.
+    /// Used by SpacialHashGrid since that class does lots of union operations.
+    /// </summary>
+    /// <param name="sourcePointer">The pointer whose bits are to be modified. This pointer is written to.</param>
+    /// <param name="otherPointer">The pointer whose bits are used in the masking operation. This pointer is used read only.</param>
+    /// <param name="length">The number of uints that need to be modified.</param>
+    internal static unsafe void UnionWith(uint* sourcePointer, uint* otherPointer, uint length)
+    {
+        switch (length)
+        {
+            case 8: goto Length8;
+            case 7: goto Length7;
+            case 6: goto Length6;
+            case 5: goto Length5;
+            case 4: goto Length4;
+            case 3: goto Length3;
+            case 2: goto Length2;
+            case 1: goto Length1;
+            case 0: goto Length0;
+
+            default: LargeSpanUnionWith(sourcePointer, otherPointer, length); return;
+        }
+
+        Length8:
+        sourcePointer[7] |= otherPointer[7];
+        Length7:
+        sourcePointer[6] |= otherPointer[6];
+        Length6:
+        sourcePointer[5] |= otherPointer[5];
+        Length5:
+        sourcePointer[4] |= otherPointer[4];
+        Length4:
+        sourcePointer[3] |= otherPointer[3];
+        Length3:
+        sourcePointer[2] |= otherPointer[2];
+        Length2:
+        sourcePointer[1] |= otherPointer[1];
+        Length1:
+        sourcePointer[0] |= otherPointer[0];
+        Length0:
+        return;
+    }
+
+    private static unsafe void LargeSpanUnionWith(void* sourcePointer, void* otherPointer, uint length)
+    {
+        var spanLength = (int)length;
+        var x = new ReadOnlySpan<uint>(sourcePointer, spanLength);
+        var y = new ReadOnlySpan<uint>(otherPointer, spanLength);
+        var destination = new Span<uint>(sourcePointer, spanLength);
+
+        TensorPrimitives.BitwiseOr(x, y, destination);
     }
 
     internal static void IntersectWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        if (span.Length != other.Length)
+        var spanLength = (uint)span.Length;
+        var otherLength = (uint)other.Length;
+
+        if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
 
-        switch (span.Length)
+        ref uint sourceRef = ref MemoryMarshal.GetReference(span);
+        ref uint otherRef = ref MemoryMarshal.GetReference(other);
+
+        switch (spanLength)
         {
-            case 7: span[6] &= other[6]; goto case 6;
-            case 6: span[5] &= other[5]; goto case 5;
-            case 5: span[4] &= other[4]; goto case 4;
-            case 4: span[3] &= other[3]; goto case 3;
-            case 3: span[2] &= other[2]; goto case 2;
-            case 2: span[1] &= other[1]; goto case 1;
-            case 1: span[0] &= other[0]; return;
-            case 0: return;
+            case 8: goto Length8;
+            case 7: goto Length7;
+            case 6: goto Length6;
+            case 5: goto Length5;
+            case 4: goto Length4;
+            case 3: goto Length3;
+            case 2: goto Length2;
+            case 1: goto Length1;
+            case 0: goto Length0;
+
+            default: LargeSpanIntersectWith(span, other); return;
         }
 
+        Length8:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 7);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 7);
+        sourceRef &= otherRef;
+        Length7:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 6);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 6);
+        sourceRef &= otherRef;
+        Length6:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 5);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 5);
+        sourceRef &= otherRef;
+        Length5:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 4);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 4);
+        sourceRef &= otherRef;
+        Length4:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 3);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 3);
+        sourceRef &= otherRef;
+        Length3:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 2);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 2);
+        sourceRef &= otherRef;
+        Length2:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 1);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 1);
+        sourceRef &= otherRef;
+        Length1:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 0);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 0);
+        sourceRef &= otherRef;
+        Length0:
+        return;
+    }
+
+    private static void LargeSpanIntersectWith(Span<uint> span, ReadOnlySpan<uint> other)
+    {
         TensorPrimitives.BitwiseAnd(span, other, span);
     }
 
     internal static void ExceptWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        if (span.Length != other.Length)
+        var spanLength = (uint)span.Length;
+        var otherLength = (uint)other.Length;
+
+        if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
 
-        switch (span.Length)
-        {
-            case 7: span[6] &= ~other[6]; goto case 6;
-            case 6: span[5] &= ~other[5]; goto case 5;
-            case 5: span[4] &= ~other[4]; goto case 4;
-            case 4: span[3] &= ~other[3]; goto case 3;
-            case 3: span[2] &= ~other[2]; goto case 2;
-            case 2: span[1] &= ~other[1]; goto case 1;
-            case 1: span[0] &= ~other[0]; return;
-            case 0: return;
-        }
+        // There is no good TensorPrimitives equivalent operation
+        // for this one, so just do one big loop
 
-        for (var i = 0; i < span.Length; i++)
+        ref uint sourceRef = ref MemoryMarshal.GetReference(span);
+        ref uint otherRef = ref MemoryMarshal.GetReference(other);
+        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), spanLength);
+
+        while (Unsafe.IsAddressLessThan(ref sourceRef, ref endRef))
         {
-            span[i] &= ~other[i];
+            sourceRef &= ~otherRef;
+            sourceRef = ref Unsafe.Add(ref sourceRef, 1);
+            otherRef = ref Unsafe.Add(ref otherRef, 1);
         }
     }
 
     internal static void SymmetricExceptWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        if (span.Length != other.Length)
+        var spanLength = (uint)span.Length;
+        var otherLength = (uint)other.Length;
+
+        if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
 
-        switch (span.Length)
+        ref uint sourceRef = ref MemoryMarshal.GetReference(span);
+        ref uint otherRef = ref MemoryMarshal.GetReference(other);
+
+        switch (spanLength)
         {
-            case 7: span[6] ^= other[6]; goto case 6;
-            case 6: span[5] ^= other[5]; goto case 5;
-            case 5: span[4] ^= other[4]; goto case 4;
-            case 4: span[3] ^= other[3]; goto case 3;
-            case 3: span[2] ^= other[2]; goto case 2;
-            case 2: span[1] ^= other[1]; goto case 1;
-            case 1: span[0] ^= other[0]; return;
-            case 0: return;
+            case 8: goto Length8;
+            case 7: goto Length7;
+            case 6: goto Length6;
+            case 5: goto Length5;
+            case 4: goto Length4;
+            case 3: goto Length3;
+            case 2: goto Length2;
+            case 1: goto Length1;
+            case 0: goto Length0;
+
+            default: LargeSpanSymmetricExceptWith(span, other); return;
         }
 
+        Length8:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 7);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 7);
+        sourceRef ^= otherRef;
+        Length7:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 6);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 6);
+        sourceRef ^= otherRef;
+        Length6:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 5);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 5);
+        sourceRef ^= otherRef;
+        Length5:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 4);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 4);
+        sourceRef ^= otherRef;
+        Length4:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 3);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 3);
+        sourceRef ^= otherRef;
+        Length3:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 2);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 2);
+        sourceRef ^= otherRef;
+        Length2:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 1);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 1);
+        sourceRef ^= otherRef;
+        Length1:
+        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 0);
+        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 0);
+        sourceRef ^= otherRef;
+        Length0:
+        return;
+    }
+
+    private static void LargeSpanSymmetricExceptWith(Span<uint> span, ReadOnlySpan<uint> other)
+    {
         TensorPrimitives.Xor(span, other, span);
     }
 
     [Pure]
-    internal static bool IsSubsetOf(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
+    internal static bool IsSubsetOf(ReadOnlySpan<uint> firstSpan, ReadOnlySpan<uint> secondSpan)
     {
-        if (span.Length != other.Length)
+        var firstSpanLength = (uint)firstSpan.Length;
+        var secondSpanLength = (uint)secondSpan.Length;
+
+        if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
-        for (var i = 0; i < span.Length; i++)
+        ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
+        ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
+        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(firstSpan), firstSpanLength);
+
+        while (Unsafe.IsAddressLessThan(ref firstSpanRef, ref endRef))
         {
-            var otherBits = other[i];
-            if ((span[i] | otherBits) != otherBits)
+            uint firstValue = firstSpanRef;
+            uint secondValue = secondSpanRef;
+
+            firstValue |= secondValue;
+
+            if (firstValue != secondValue)
                 return false;
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
         }
 
         return true;
     }
 
     [Pure]
-    internal static bool IsProperSubsetOf(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
+    internal static bool IsProperSubsetOf(ReadOnlySpan<uint> firstSpan, ReadOnlySpan<uint> secondSpan)
     {
-        if (span.Length != other.Length)
+        var firstSpanLength = (uint)firstSpan.Length;
+        var secondSpanLength = (uint)secondSpan.Length;
+
+        if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
-        var allEqual = true;
-        for (var i = 0; i < span.Length; i++)
-        {
-            var bits = span[i];
-            var otherBits = other[i];
-            allEqual &= bits == otherBits;
+        ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
+        ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
+        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(firstSpan), firstSpanLength);
 
-            if ((bits | otherBits) != otherBits)
+        var allEqual = true;
+
+        while (Unsafe.IsAddressLessThan(ref firstSpanRef, ref endRef))
+        {
+            uint firstValue = firstSpanRef;
+            uint secondValue = secondSpanRef;
+
+            allEqual &= firstValue == secondValue;
+            firstValue |= secondValue;
+
+            if (firstValue != secondValue)
                 return false;
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
         }
 
         return !allEqual;
@@ -316,13 +602,22 @@ public static class BitArrayHelpers
     [Pure]
     internal static bool Overlaps(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
     {
-        if (span.Length != other.Length)
+        var firstSpanLength = (uint)span.Length;
+        var secondSpanLength = (uint)other.Length;
+
+        if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
-        for (var i = 0; i < span.Length; i++)
+        ref uint firstSpanRef = ref MemoryMarshal.GetReference(span);
+        ref uint secondSpanRef = ref MemoryMarshal.GetReference(other);
+        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), firstSpanLength);
+
+        while (Unsafe.IsAddressLessThan(ref firstSpanRef, ref endRef))
         {
-            if ((span[i] & other[i]) != 0U)
+            if ((firstSpanRef & secondSpanRef) != 0U)
                 return true;
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
         }
 
         return false;
@@ -331,13 +626,22 @@ public static class BitArrayHelpers
     [Pure]
     internal static bool SetEquals(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
     {
-        if (span.Length != other.Length)
+        var firstSpanLength = (uint)span.Length;
+        var secondSpanLength = (uint)other.Length;
+
+        if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
-        for (int i = 0; i < span.Length; i++)
+        ref uint firstSpanRef = ref MemoryMarshal.GetReference(span);
+        ref uint secondSpanRef = ref MemoryMarshal.GetReference(other);
+        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), firstSpanLength);
+
+        while (Unsafe.IsAddressLessThan(ref firstSpanRef, ref endRef))
         {
-            if (span[i] != other[i])
+            if (firstSpanRef != secondSpanRef)
                 return false;
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
         }
 
         return true;
