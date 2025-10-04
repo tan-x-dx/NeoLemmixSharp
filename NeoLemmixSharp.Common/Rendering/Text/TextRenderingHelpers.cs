@@ -6,10 +6,8 @@ public static class TextRenderingHelpers
 {
     private const uint ZeroCharAsUint = '0';
 
-    public static void WriteDigits(Span<char> span, uint n, char blankCharValue = ' ')
+    public static void WriteDigits(Span<char> span, uint value, char blankCharValue = ' ')
     {
-        uint value = n;
-
         for (var i = span.Length - 1; i >= 0; i--)
         {
             if (value > 0)
