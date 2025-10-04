@@ -20,6 +20,8 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 {
     public static Lemming SimulationLemming { get; } = new();
 
+    public LemmingState State { get; }
+
     private LemmingAction _previousAction = NoneAction.Instance;
     private LemmingAction _currentAction;
     private LemmingAction _nextAction = NoneAction.Instance;
@@ -80,8 +82,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     public ref int FastForwardTime => ref _data.FastForwardTime;
     public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref int ParticleTimer => ref _data.ParticleTimer;
-
-    public LemmingState State { get; }
 
     public LemmingAction PreviousAction
     {
