@@ -127,16 +127,17 @@ public static class EngineConstants
     public static readonly Color ClassicLevelBackgroundColor = new(0xff000032);
 
     public const int CursorRadius = 6;
-    public static readonly Color CursorColor1 = new(0xffb0b0b0);
-    public static readonly Color CursorColor2 = new(0xff0000b0);
+    public static readonly Color CursorColor1 = PanelWhite;
+    public static readonly Color CursorColor2 = PanelRed;
     public static readonly Color CursorColor3 = new(0xff606060);
 
-    public static readonly Color PanelBlue = new(0xffb00000);
-    public static readonly Color PanelGreen = new(0xff00b000);
-    public static readonly Color PanelCyan = new(0xffb0b000);
     public static readonly Color PanelRed = new(0xff0000b0);
-    public static readonly Color PanelMagenta = new(0xffb000b0);
+    public static readonly Color PanelGreen = new(0xff00b000);
     public static readonly Color PanelYellow = new(0xff00b0b0);
+    public static readonly Color PanelBlue = new(0xffb00000);
+    public static readonly Color PanelMagenta = new(0xffb000b0);
+    public static readonly Color PanelCyan = new(0xffb0b000);
+    public static readonly Color PanelWhite = new(0xffb0b0b0);
 
     #endregion
 

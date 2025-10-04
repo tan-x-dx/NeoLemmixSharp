@@ -24,7 +24,7 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
         {
             var terrainArchetypeData = kvp.Value;
 
-            if (!terrainArchetypeData.IsTrivial())
+            if (terrainArchetypeData.IsNonTrivial())
                 numberOfNonTrivialArchetypeData++;
         }
 
@@ -37,7 +37,7 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
         {
             var terrainArchetypeData = kvp.Value;
 
-            if (!terrainArchetypeData.IsTrivial())
+            if (terrainArchetypeData.IsNonTrivial())
                 WriteTerrainArchetypeData(writer, terrainArchetypeData);
         }
     }

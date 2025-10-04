@@ -25,12 +25,13 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(levelData.LevelObjective.ObjectiveName));
+        var levelObjective = levelData.LevelObjective;
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(levelObjective.ObjectiveName));
 
-        WriteSkillSetData(writer, levelData.LevelObjective.SkillSetData);
-        WriteObjectiveCriteria(writer, levelData.LevelObjective.ObjectiveCriteria);
-        WriteObjectiveModifiers(writer, levelData.LevelObjective.ObjectiveModifiers);
-        WriteTalismanData(writer, levelData.LevelObjective.TalismanData);
+        WriteSkillSetData(writer, levelObjective.SkillSetData);
+        WriteObjectiveCriteria(writer, levelObjective.ObjectiveCriteria);
+        WriteObjectiveModifiers(writer, levelObjective.ObjectiveModifiers);
+        WriteTalismanData(writer, levelObjective.TalismanData);
     }
 
     private static void WriteSkillSetData(RawLevelFileDataWriter writer, SkillSetData[] skillSetData)

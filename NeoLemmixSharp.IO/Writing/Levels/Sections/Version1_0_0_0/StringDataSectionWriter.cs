@@ -63,9 +63,10 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 
     private void RecordLevelObjectiveStrings(LevelData levelData)
     {
-        _stringIdLookup.RecordString(levelData.LevelObjective.ObjectiveName);
+        var levelObjective = levelData.LevelObjective;
+        _stringIdLookup.RecordString(levelObjective.ObjectiveName);
 
-        foreach (var talismanDatum in levelData.LevelObjective.TalismanData)
+        foreach (var talismanDatum in levelObjective.TalismanData)
         {
             _stringIdLookup.RecordString(talismanDatum.TalismanName);
         }
