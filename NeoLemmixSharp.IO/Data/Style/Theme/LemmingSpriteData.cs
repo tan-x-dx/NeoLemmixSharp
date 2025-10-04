@@ -4,16 +4,30 @@ namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
 public sealed class LemmingSpriteData
 {
-    internal readonly TribeColorData[] _tribeColorData = new TribeColorData[EngineConstants.MaxNumberOfTribes];
-    internal readonly LemmingActionSpriteData[] _lemmingActionSpriteData = new LemmingActionSpriteData[LemmingActionConstants.NumberOfLemmingActions];
+    private readonly TribeColorData[] _tribeColorData;
+    private readonly LemmingActionSpriteData[] _lemmingActionSpriteData;
 
     public StyleIdentifier LemmingSpriteStyleIdentifier { get; }
 
-    public LemmingSpriteData(StyleIdentifier lemmingSpriteStyleIdentifier)
+    internal LemmingSpriteData(
+        StyleIdentifier lemmingSpriteStyleIdentifier,
+        TribeColorData[] tribeColorData,
+        LemmingActionSpriteData[] lemmingActionSpriteData)
     {
         LemmingSpriteStyleIdentifier = lemmingSpriteStyleIdentifier;
+        _tribeColorData = tribeColorData;
+        _lemmingActionSpriteData = lemmingActionSpriteData;
     }
 
-    public ReadOnlySpan<LemmingActionSpriteData> LemmingActionSpriteData => _lemmingActionSpriteData;
-    public ReadOnlySpan<TribeColorData> TribeColorData => _tribeColorData;
+    internal LemmingActionSpriteData[] CloneLemmingActionSpriteData()
+    {
+        var result = new LemmingActionSpriteData[LemmingActionConstants.NumberOfLemmingActions];
+
+        LemmingActionSpriteData.CopyTo(result);
+
+        return result;
+    }
+
+    public ReadOnlySpan<LemmingActionSpriteData> LemmingActionSpriteData => new(_lemmingActionSpriteData);
+    public ReadOnlySpan<TribeColorData> TribeColorData => new(_tribeColorData);
 }

@@ -74,20 +74,21 @@ public static class LemmingSpriteBankBuilder
             new PieceIdentifier(lemmingActionData.LemmingActionFileName),
             TextureType.LemmingSprite);
 
+        var lemmingAnimationLayers = lemmingActionSpriteData.Layers;
         var spriteSize = SpriteHelpers.DetermineSpriteSize(
             lemmingActionData.LemmingActionFileName,
             spriteTexture,
-            lemmingActionSpriteData.Layers.Length,
+            lemmingAnimationLayers.Length,
             lemmingActionData.NumberOfAnimationFrames);
 
-        var layers = new LemmingActionLayerRenderer[lemmingActionSpriteData.Layers.Length];
+        var layers = new LemmingActionLayerRenderer[lemmingAnimationLayers.Length];
 
         for (var i = 0; i < layers.Length; i++)
         {
             layers[i] = CreateLemmingActionLayerRenderer(
                 spriteTexture,
                 spriteSize,
-                lemmingActionSpriteData.Layers[i]);
+                lemmingAnimationLayers[i]);
         }
 
         return new LemmingActionSprite(
