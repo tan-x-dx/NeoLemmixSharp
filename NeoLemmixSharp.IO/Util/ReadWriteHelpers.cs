@@ -2,6 +2,7 @@
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Reading;
 using NeoLemmixSharp.IO.Writing;
+using System.Runtime.CompilerServices;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Util;
@@ -126,6 +127,7 @@ public static class ReadWriteHelpers
         FileReadingException.ReaderAssert((dhtByte & upperBitsMask) == 0, "Read suspicious dihedral transformation byte!");
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void WriteArgbBytes(Color color, Span<byte> bytes)
     {
         FileWritingException.WriterAssert(bytes.Length == 4, "Expected span length of exactly 4");
@@ -135,6 +137,7 @@ public static class ReadWriteHelpers
         bytes[3] = color.B;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void WriteRgbBytes(Color color, Span<byte> bytes)
     {
         FileWritingException.WriterAssert(bytes.Length == 3, "Expected span length of exactly 3");

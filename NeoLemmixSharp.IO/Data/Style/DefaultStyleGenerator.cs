@@ -32,12 +32,12 @@ internal static class DefaultStyleGenerator
 
         var result = new ThemeData
         {
-            Mask = new Color(),
-            Minimap = new Color(),
-            Background = new Color(),
-            OneWayArrows = new Color(),
-            PickupBorder = new Color(),
-            PickupInside = new Color(),
+            Mask = Color.White,
+            Minimap = Color.White,
+            Background = Color.White,
+            OneWayArrows = Color.White,
+            PickupBorder = Color.White,
+            PickupInside = Color.White,
 
             LemmingSpriteData = lemmingSpriteData
         };

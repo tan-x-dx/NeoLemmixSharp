@@ -24,7 +24,7 @@ public static class StyleCache
 #if DEBUG
             DefaultStyleGenerator.GenerateDefaultStyle();
 #else
-            FileTypeHandler.ReadStyle(DefaultStyleFormatPair);
+            FileTypeHandler.ReadStyle(IoConstants.DefaultStyleFormatPair);
 #endif
 
         CachedStyles.Add(IoConstants.DefaultStyleFormatPair, DefaultStyleData);
@@ -42,27 +42,28 @@ public static class StyleCache
 
     private static HashSet<StyleFormatPair> GetAllMentionedStyles(LevelData levelData)
     {
+        var fileFormatType = levelData.FileFormatType;
         var result = new HashSet<StyleFormatPair>(IoConstants.AssumedInitialStyleCapacity)
         {
-            new(levelData.LevelTheme, levelData.FileFormatType)
+            new(levelData.LevelTheme, fileFormatType)
         };
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            result.Add(new StyleFormatPair(terrainData.StyleIdentifier, levelData.FileFormatType));
+            result.Add(new StyleFormatPair(terrainData.StyleIdentifier, fileFormatType));
         }
 
         foreach (var terrainGroupData in levelData.AllTerrainGroups)
         {
             foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
             {
-                result.Add(new StyleFormatPair(terrainData.StyleIdentifier, levelData.FileFormatType));
+                result.Add(new StyleFormatPair(terrainData.StyleIdentifier, fileFormatType));
             }
         }
 
         foreach (var gadgetData in levelData.AllGadgetInstanceData)
         {
-            result.Add(new StyleFormatPair(gadgetData.StyleIdentifier, levelData.FileFormatType));
+            result.Add(new StyleFormatPair(gadgetData.StyleIdentifier, fileFormatType));
         }
 
         return result;

@@ -15,6 +15,8 @@ public readonly struct StyleIdentifier : IEquatable<StyleIdentifier>
 
     public override string ToString() => _styleName;
 
+    public string GetFolderFilePath() => Path.Combine(RootDirectoryManager.StyleFolderDirectory, _styleName);
+
     public bool Equals(StyleIdentifier other) => string.Equals(_styleName, other._styleName, StringComparison.Ordinal);
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is StyleIdentifier other && Equals(other);
     public override int GetHashCode() => _styleName.GetHashCode();

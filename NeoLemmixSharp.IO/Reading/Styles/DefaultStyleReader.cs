@@ -28,9 +28,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
         StyleIdentifier style,
         [MaybeNullWhen(false)] out string foundFilePath)
     {
-        var styleFolderPath = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            style.ToString());
+        var styleFolderPath = style.GetFolderFilePath();
 
         var files = Directory.GetFiles(styleFolderPath);
 
