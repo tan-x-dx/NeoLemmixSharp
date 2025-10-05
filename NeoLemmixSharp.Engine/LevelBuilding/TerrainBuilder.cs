@@ -309,7 +309,7 @@ public sealed class TerrainBuilder
             DefaultFileExtensions.TerrainFolderName,
             stylePiecePair.PieceIdentifier.ToString());
 
-        var pngPath = Path.ChangeExtension(rootFilePath, "png");
+        var pngPath = RootDirectoryManager.GetCorrespondingImageFile(rootFilePath);
 
         var mainTexture = TextureCache.GetOrLoadTexture(
             pngPath,

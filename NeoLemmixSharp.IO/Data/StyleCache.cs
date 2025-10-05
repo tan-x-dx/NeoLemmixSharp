@@ -32,38 +32,38 @@ public static class StyleCache
 
     public static void EnsureStylesAreLoadedForLevel(LevelData levelData)
     {
-        var allMentionedStyleFormatPairs = GetAllMentionedStyles(levelData);
+        var allMentionedStyleIdentifiers = GetAllMentionedStyles(levelData);
 
-        foreach (var styleFormatPair in allMentionedStyleFormatPairs)
+        foreach (var styleIdentifier in allMentionedStyleIdentifiers)
         {
+            var styleFormatPair = new StyleFormatPair(styleIdentifier, levelData.FileFormatType);
             GetOrLoadStyleData(styleFormatPair);
         }
     }
 
-    private static HashSet<StyleFormatPair> GetAllMentionedStyles(LevelData levelData)
+    private static HashSet<StyleIdentifier> GetAllMentionedStyles(LevelData levelData)
     {
-        var fileFormatType = levelData.FileFormatType;
-        var result = new HashSet<StyleFormatPair>(IoConstants.AssumedInitialStyleCapacity)
+        var result = new HashSet<StyleIdentifier>(IoConstants.AssumedInitialStyleCapacity)
         {
-            new(levelData.LevelTheme, fileFormatType)
+            levelData.LevelTheme
         };
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            result.Add(new StyleFormatPair(terrainData.StyleIdentifier, fileFormatType));
+            result.Add(terrainData.StyleIdentifier);
         }
 
         foreach (var terrainGroupData in levelData.AllTerrainGroups)
         {
             foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
             {
-                result.Add(new StyleFormatPair(terrainData.StyleIdentifier, fileFormatType));
+                result.Add(terrainData.StyleIdentifier);
             }
         }
 
         foreach (var gadgetData in levelData.AllGadgetInstanceData)
         {
-            result.Add(new StyleFormatPair(gadgetData.StyleIdentifier, fileFormatType));
+            result.Add(gadgetData.StyleIdentifier);
         }
 
         return result;

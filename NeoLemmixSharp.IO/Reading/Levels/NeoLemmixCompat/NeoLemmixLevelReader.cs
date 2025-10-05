@@ -4,14 +4,13 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
-using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
 using NeoLemmixSharp.IO.Util;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 
-internal readonly ref struct NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelReader>
+internal sealed class NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelReader>
 {
     private readonly LevelData _levelData;
     private readonly UniqueStringSet _uniqueStringSet = new();

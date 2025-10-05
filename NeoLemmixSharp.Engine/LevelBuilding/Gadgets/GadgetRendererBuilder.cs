@@ -54,7 +54,7 @@ public sealed class GadgetRendererBuilder
             DefaultFileExtensions.GadgetFolderName,
             stylePiecePair.PieceIdentifier.ToString());
 
-        var pngPath = Path.ChangeExtension(rootFilePath, "png");
+        var pngPath = RootDirectoryManager.GetCorrespondingImageFile(rootFilePath);
 
         return TextureCache.GetOrLoadTexture(
             pngPath,

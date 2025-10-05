@@ -1,11 +1,14 @@
-﻿using NeoLemmixSharp.Common;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
+using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
+namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers;
 
 internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 {
+    private readonly string _terrainPieceFilePath;
     private readonly StyleIdentifier _styleIdentifier;
     private readonly PieceIdentifier _terrainPieceIdentifier;
 
@@ -21,12 +24,14 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
     private int _defaultHeight;
 
     public TerrainArchetypeDataReader(
-        string styleName,
-        string terrainPieceName)
+        string terrainPieceFilePath,
+        StyleIdentifier styleIdentifier,
+        PieceIdentifier terrainPieceIdentifier)
         : base(string.Empty)
     {
-        _styleIdentifier = new StyleIdentifier(styleName);
-        _terrainPieceIdentifier = new PieceIdentifier(terrainPieceName);
+        _terrainPieceFilePath = terrainPieceFilePath;
+        _styleIdentifier = styleIdentifier;
+        _terrainPieceIdentifier = terrainPieceIdentifier;
 
         SetNumberOfTokens(10);
 
@@ -108,13 +113,39 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
     {
         StyleIdentifier = _styleIdentifier,
         PieceIdentifier = _terrainPieceIdentifier,
-        Name = string.Empty,
+        Name = GetPieceName(),
 
         IsSteel = _isSteel,
         ResizeType = _resizeType,
 
-        NineSliceData = default,//new RectangularRegion(_nineSliceBottom, _nineSliceLeft, _nineSliceTop, _nineSliceRight),
+        NineSliceData = GetNineSliceData(),
 
         DefaultSize = new Size(_defaultWidth, _defaultHeight)
     };
+
+    private string GetPieceName()
+    {
+        var pieceName = Path.GetFileNameWithoutExtension(_terrainPieceFilePath);
+        return pieceName;
+    }
+
+    private RectangularRegion GetNineSliceData()
+    {
+        var texture = GetTerrainTexture();
+
+        var nineSliceWidth = texture.Width - (_nineSliceRight + _nineSliceLeft);
+        var nineSliceHeight = texture.Height - (_nineSliceBottom + _nineSliceTop);
+
+        var nineSlicePosition = new Point(_nineSliceTop, _nineSliceLeft);
+        var nineSliceSize = new Size(nineSliceWidth, nineSliceHeight);
+
+        return new RectangularRegion(nineSlicePosition, nineSliceSize);
+    }
+
+    private Texture2D GetTerrainTexture()
+    {
+        // Need to load the texture here to get its dimensions, since that data is not present in the NeoLemmix config file
+        var pngFilePath = RootDirectoryManager.GetCorrespondingImageFile(_terrainPieceFilePath);
+        return TextureCache.GetOrLoadTexture(pngFilePath, _styleIdentifier, _terrainPieceIdentifier, TextureType.TerrainSprite);
+    }
 }

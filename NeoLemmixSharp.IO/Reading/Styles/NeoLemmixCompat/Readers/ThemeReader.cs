@@ -6,11 +6,11 @@ namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers;
 
 public sealed class ThemeReader : NeoLemmixDataReader
 {
-    private ThemeData _result;
+    private ThemeData _themeData;
 
-    public ThemeReader(ThemeData result) : base("LEMMINGS", UnknownTokenBehaviour.IgnoreLine)
+    public ThemeReader(ThemeData themeData) : base("LEMMINGS", UnknownTokenBehaviour.IgnoreLine)
     {
-        _result = result;
+        _themeData = themeData;
 
         SetNumberOfTokens(10);
 
@@ -26,6 +26,8 @@ public sealed class ThemeReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
+    public override bool ShouldProcessSection(ReadOnlySpan<char> token) => true;
+
     public override bool BeginReading(ReadOnlySpan<char> line)
     {
         FinishedReading = false;
@@ -38,7 +40,7 @@ public sealed class ThemeReader : NeoLemmixDataReader
         if (secondToken.Equals(IoConstants.DefaultStyleIdentifierString, StringComparison.OrdinalIgnoreCase))
         {
             var defaultTheme = StyleCache.DefaultStyleData.ThemeData;
-            _result.LemmingSpriteData = defaultTheme.LemmingSpriteData;
+            _themeData.LemmingSpriteData = defaultTheme.LemmingSpriteData;
             return;
         }
     }
@@ -55,32 +57,38 @@ public sealed class ThemeReader : NeoLemmixDataReader
 
     private void SetMaskColor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        throw new NotImplementedException();
+        var color = NxlvReadingHelpers.ParseColor(secondToken);
+        _themeData.Mask = color;
     }
 
     private void SetMinimapColor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        throw new NotImplementedException();
+        var color = NxlvReadingHelpers.ParseColor(secondToken);
+        _themeData.Minimap = color;
     }
 
     private void SetBackgroundColor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        throw new NotImplementedException();
+        var color = NxlvReadingHelpers.ParseColor(secondToken);
+        _themeData.Background = color;
     }
 
     private void SetOneWayArrowColor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        throw new NotImplementedException();
+        var color = NxlvReadingHelpers.ParseColor(secondToken);
+        _themeData.OneWayArrows = color;
     }
 
     private void SetPickupBorderColor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        throw new NotImplementedException();
+        var color = NxlvReadingHelpers.ParseColor(secondToken);
+        _themeData.PickupBorder = color;
     }
 
     private void SetPickupInsideColor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        throw new NotImplementedException();
+        var color = NxlvReadingHelpers.ParseColor(secondToken);
+        _themeData.PickupInside = color;
     }
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

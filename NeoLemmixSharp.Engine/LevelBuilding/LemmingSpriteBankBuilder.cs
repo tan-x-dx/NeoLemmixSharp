@@ -66,7 +66,7 @@ public static class LemmingSpriteBankBuilder
             spriteDirectory,
             lemmingActionData.LemmingActionFileName);
 
-        var pngPath = Path.ChangeExtension(spriteFilePath, "png");
+        var pngPath = RootDirectoryManager.GetCorrespondingImageFile(spriteFilePath);
 
         var spriteTexture = TextureCache.GetOrLoadTexture(
             pngPath,
