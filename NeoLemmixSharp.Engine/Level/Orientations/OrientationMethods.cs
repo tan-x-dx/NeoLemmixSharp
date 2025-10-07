@@ -1,93 +1,95 @@
 ﻿using NeoLemmixSharp.Common;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Orientations;
 
 public static class OrientationMethods
 {
+    /*
+     * Note for the potentially confusing usages of Sine/Cosine below:
+     * 
+     * In this class we utilise the concepts of rotation matrices from linear algebra,
+     * but restricted to integer multiples of pi/2. In these cases, the Sine/Cosine
+     * functions evaluate to 0 or +-1, thus we can do some simple int based calculations
+     * to get the results we desire. As a result, in these methods there are no floating
+     * point calculations, nor any explicit matrix/vector types. Instead, these equivalent
+     * operations are hardcoded into the individual methods.
+     * 
+     * The main source of confusion will probably come from the fact that the rotation
+     * matrix multiplication is the wrong way round.
+     * 
+     * This is a consequence of how orientations are implemented inside this engine.
+     * First, the "zero degree" angle corresponds to the Down orientation, instead of
+     * what we'd call the Right orientation.
+     * Secondly, the ids of the orientations increment in a clockwise manner, as
+     * opposed to the standard counter-clockwise manner that we expect.
+     * 
+     * The calculations are correct, and are implemented in such a way as to simplify
+     * stuff.
+     */
+
+    /// <summary>
+    /// Computes the Sine of an angle, interpreting the input as an integer multiple of pi/2 radians.
+    /// This method maps <see langword="int" />s to <see langword="int" />s, and avoids any floating point calculations.
+    /// This function effectively maps (theta mod 4) -> [0, 1, 0, -1]
+    /// </summary>
+    /// <param name="theta">The angle as a multiple of pi/2 radians.</param>
+    /// <returns>The Sine of that angle, as an <see langword="int" />.</returns>
     [Pure]
-    public static Point MoveDown(
-        this Orientation orientation,
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int IntSin(int theta)
+    {
+        ReadOnlySpan<int> Values = [0, 1, 0, -1];
+        return Values[theta & 3];
+    }
+
+    /// <summary>
+    /// Computes the Cosine of an angle, interpreting the input as an integer multiple of pi/2 radians.
+    /// This method maps <see langword="int" />s to <see langword="int" />s, and avoids any floating point calculations.
+    /// This function effectively maps (theta mod 4) -> [1, 0, -1, 0]
+    /// </summary>
+    /// <param name="theta">The angle as a multiple of pi/2 radians.</param>
+    /// <returns>The Cosine of that angle, as an <see langword="int" />.</returns>
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int IntCos(int theta) => IntSin(theta + 1);
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Point MoveRelativeToOrientation(
+        Orientation orientation,
+        int relativeOrientationRotNum,
         Point position,
         int step)
     {
-        var newPosition = orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MoveDown(position, step),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MoveDown(position, step),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveDown(position, step),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveDown(position, step),
+        var s = IntSin(orientation.RotNum + relativeOrientationRotNum);
+        var c = IntCos(orientation.RotNum + relativeOrientationRotNum);
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
-        };
+        var absoluteDx = s * step;
+        var absoluteDy = c * step;
 
+        var newPosition = new Point(position.X - absoluteDx, position.Y + absoluteDy);
         return LevelScreen.NormalisePosition(newPosition);
     }
 
     [Pure]
-    public static Point MoveLeft(
-        this Orientation orientation,
-        Point position,
-        int step)
-    {
-        var newPosition = orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MoveLeft(position, step),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MoveLeft(position, step),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveLeft(position, step),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveLeft(position, step),
-
-            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
-        };
-
-        return LevelScreen.NormalisePosition(newPosition);
-    }
-
+    public static Point MoveDown(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, EngineConstants.DownOrientationRotNum, position, step);
     [Pure]
-    public static Point MoveUp(
-        this Orientation orientation,
-        Point position,
-        int step)
-    {
-        var newPosition = orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MoveUp(position, step),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MoveUp(position, step),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveUp(position, step),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveUp(position, step),
-
-            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
-        };
-
-        return LevelScreen.NormalisePosition(newPosition);
-    }
-
+    public static Point MoveLeft(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, EngineConstants.LeftOrientationRotNum, position, step);
     [Pure]
-    public static Point MoveRight(
-        this Orientation orientation,
-        Point position,
-        int step)
-    {
-        var newPosition = orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MoveRight(position, step),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MoveRight(position, step),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MoveRight(position, step),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MoveRight(position, step),
-
-            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
-        };
-
-        return LevelScreen.NormalisePosition(newPosition);
-    }
+    public static Point MoveUp(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, EngineConstants.UpOrientationRotNum, position, step);
+    [Pure]
+    public static Point MoveRight(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, EngineConstants.RightOrientationRotNum, position, step);
 
     /// <summary>
     /// Note: Positive dx -> right, positive dy -> up
     /// </summary>
-    /// <param name="position"></param>
-    /// <param name="dx"></param>
-    /// <param name="dy"></param>
-    /// <returns></returns>
+    /// <param name="orientation">The relative orientation to use.</param>
+    /// <param name="position">The position to translate.</param>
+    /// <param name="dx">The horizontal translation component, relative to the orientation parameter.</param>
+    /// <param name="dy">The vertical translation component, relative to the orientation parameter.</param>
+    /// <returns>The translated position, relative to the orientation.</returns>
     [Pure]
     public static Point Move(
         this Orientation orientation,
@@ -95,40 +97,33 @@ public static class OrientationMethods
         int dx,
         int dy)
     {
-        var newPosition = orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.Move(position, dx, dy),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.Move(position, dx, dy),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.Move(position, dx, dy),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.Move(position, dx, dy),
-
-            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
-        };
-
+        var newPosition = orientation.MoveWithoutNormalization(position, dx, dy);
         return LevelScreen.NormalisePosition(newPosition);
     }
 
     /// <summary>
     /// Note: Positive dx -> right, positive dy -> up
     /// </summary>
-    /// <param name="position"></param>
-    /// <param name="dx"></param>
-    /// <param name="dy"></param>
-    /// <returns></returns>
+    /// <param name="orientation">The relative orientation to use.</param>
+    /// <param name="position">The position to translate.</param>
+    /// <param name="dx">The horizontal translation component, relative to the orientation parameter.</param>
+    /// <param name="dy">The vertical translation component, relative to the orientation parameter.</param>
+    /// <returns>The translated position, relative to the orientation.</returns>
     [Pure]
     public static Point MoveWithoutNormalization(
         this Orientation orientation,
         Point position,
         int dx,
-        int dy) => orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.Move(position, dx, dy),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.Move(position, dx, dy),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.Move(position, dx, dy),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.Move(position, dx, dy),
+        int dy)
+    {
+        var s = IntSin(orientation.RotNum);
+        var c = IntCos(orientation.RotNum);
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<Point>(orientation)
-        };
+        var absoluteDx = (c * dx) + (s * dy);
+        var absoluteDy = (s * dx) - (c * dy);
+
+        return new Point(position.X + absoluteDx, position.Y + absoluteDy);
+    }
 
     [Pure]
     public static bool MatchesHorizontally(
@@ -217,6 +212,7 @@ public static class OrientationMethods
     /// <summary>
     /// If the first position were to move horizontally to be in line with the second position, what is the dx it would require?
     /// </summary>
+    /// <param name="orientation"></param>
     /// <param name="fromPosition"></param>
     /// <param name="toPosition"></param>
     [Pure]
@@ -236,6 +232,7 @@ public static class OrientationMethods
     /// <summary>
     /// If the first position were to move vertically to be in line with the second position, what is the dy it would require?
     /// </summary>
+    /// <param name="orientation"></param>
     /// <param name="fromPosition"></param>
     /// <param name="toPosition"></param>
     [Pure]
@@ -251,5 +248,4 @@ public static class OrientationMethods
 
             _ => Orientation.ThrowOrientationOutOfRangeException<int>(orientation)
         };
-
 }

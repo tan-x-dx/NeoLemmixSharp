@@ -6,21 +6,6 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 public static class LeftOrientationMethods
 {
     [Pure]
-    public static Point MoveRight(Point position, int step) => new(position.X, position.Y + step);
-
-    [Pure]
-    public static Point MoveUp(Point position, int step) => new(position.X + step, position.Y);
-
-    [Pure]
-    public static Point MoveLeft(Point position, int step) => new(position.X, position.Y - step);
-
-    [Pure]
-    public static Point MoveDown(Point position, int step) => new(position.X - step, position.Y);
-
-    [Pure]
-    public static Point Move(Point position, int dx, int dy) => new(position.X + dy, position.Y + dx);
-
-    [Pure]
     public static bool MatchesHorizontally(Point firstPosition, Point secondPosition) => firstPosition.Y == secondPosition.Y;
     [Pure]
     public static bool MatchesVertically(Point firstPosition, Point secondPosition) => firstPosition.X == secondPosition.X;
