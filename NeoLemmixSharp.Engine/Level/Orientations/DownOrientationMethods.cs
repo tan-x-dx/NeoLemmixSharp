@@ -6,19 +6,6 @@ namespace NeoLemmixSharp.Engine.Level.Orientations;
 public static class DownOrientationMethods
 {
     [Pure]
-    public static bool MatchesHorizontally(Point firstPosition, Point secondPosition) => firstPosition.X == secondPosition.X;
-    [Pure]
-    public static bool MatchesVertically(Point firstPosition, Point secondPosition) => firstPosition.Y == secondPosition.Y;
-    [Pure]
-    public static bool FirstIsAboveSecond(Point firstPosition, Point secondPosition) => firstPosition.Y < secondPosition.Y;
-    [Pure]
-    public static bool FirstIsBelowSecond(Point firstPosition, Point secondPosition) => firstPosition.Y > secondPosition.Y;
-    [Pure]
-    public static bool FirstIsToLeftOfSecond(Point firstPosition, Point secondPosition) => firstPosition.X < secondPosition.X;
-    [Pure]
-    public static bool FirstIsToRightOfSecond(Point firstPosition, Point secondPosition) => firstPosition.X > secondPosition.X;
-
-    [Pure]
     public static int GetHorizontalDelta(Point fromPosition, Point toPosition)
     {
         var a = fromPosition.X;

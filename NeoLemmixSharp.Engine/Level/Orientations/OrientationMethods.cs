@@ -125,89 +125,101 @@ public static class OrientationMethods
         return new Point(position.X + absoluteDx, position.Y + absoluteDy);
     }
 
-    [Pure]
-    public static bool MatchesHorizontally(
-        this Orientation orientation,
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void EvaluateVertical(
+        Orientation orientation,
         Point firstPosition,
-        Point secondPosition) => orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MatchesHorizontally(firstPosition, secondPosition),
+        Point secondPosition,
+        out int a0,
+        out int a1)
+    {
+        var s = IntSin(orientation.RotNum);
+        var c = IntCos(orientation.RotNum);
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<bool>(orientation)
-        };
+        a0 = (c * firstPosition.Y) - (s * firstPosition.X);
+        a1 = (c * secondPosition.Y) - (s * secondPosition.X);
+    }
 
     [Pure]
     public static bool MatchesVertically(
         this Orientation orientation,
         Point firstPosition,
-        Point secondPosition) => orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.MatchesVertically(firstPosition, secondPosition),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.MatchesVertically(firstPosition, secondPosition),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.MatchesVertically(firstPosition, secondPosition),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.MatchesVertically(firstPosition, secondPosition),
+        Point secondPosition)
+    {
+        EvaluateVertical(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<bool>(orientation)
-        };
+        return a0 == a1;
+    }
 
     [Pure]
     public static bool FirstIsAboveSecond(
         this Orientation orientation,
         Point firstPosition,
-        Point secondPosition) => orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsAboveSecond(firstPosition, secondPosition),
+        Point secondPosition)
+    {
+        EvaluateVertical(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<bool>(orientation)
-        };
+        return a0 < a1;
+    }
 
     [Pure]
     public static bool FirstIsBelowSecond(
         this Orientation orientation,
         Point firstPosition,
-        Point secondPosition) => orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsBelowSecond(firstPosition, secondPosition),
+        Point secondPosition)
+    {
+        EvaluateVertical(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<bool>(orientation)
-        };
+        return a0 > a1;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void EvaluateHorizontal(
+        Orientation orientation,
+        Point firstPosition,
+        Point secondPosition,
+        out int a0,
+        out int a1)
+    {
+        var s = IntSin(orientation.RotNum);
+        var c = IntCos(orientation.RotNum);
+
+        a0 = (c * firstPosition.X) + (s * firstPosition.Y);
+        a1 = (c * secondPosition.X) + (s * secondPosition.Y);
+    }
+
+    [Pure]
+    public static bool MatchesHorizontally(
+        this Orientation orientation,
+        Point firstPosition,
+        Point secondPosition)
+    {
+        EvaluateHorizontal(orientation, firstPosition, secondPosition, out var a0, out var a1);
+
+        return a0 == a1;
+    }
 
     [Pure]
     public static bool FirstIsToLeftOfSecond(
         this Orientation orientation,
         Point firstPosition,
-        Point secondPosition) => orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsToLeftOfSecond(firstPosition, secondPosition),
+        Point secondPosition)
+    {
+        EvaluateHorizontal(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<bool>(orientation)
-        };
+        return a0 < a1;
+    }
 
     [Pure]
     public static bool FirstIsToRightOfSecond(
         this Orientation orientation,
         Point firstPosition,
-        Point secondPosition) => orientation.RotNum switch
-        {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.FirstIsToRightOfSecond(firstPosition, secondPosition),
+        Point secondPosition)
+    {
+        EvaluateHorizontal(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<bool>(orientation)
-        };
+        return a0 > a1;
+    }
 
     /// <summary>
     /// If the first position were to move horizontally to be in line with the second position, what is the dx it would require?
