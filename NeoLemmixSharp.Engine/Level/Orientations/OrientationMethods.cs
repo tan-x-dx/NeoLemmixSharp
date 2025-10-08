@@ -126,7 +126,7 @@ public static class OrientationMethods
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void EvaluateVertical(
+    private static void EvaluateVerticalPositions(
         Orientation orientation,
         Point firstPosition,
         Point secondPosition,
@@ -146,7 +146,7 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateVertical(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
         return a0 == a1;
     }
@@ -157,7 +157,7 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateVertical(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
         return a0 < a1;
     }
@@ -168,13 +168,13 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateVertical(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
         return a0 > a1;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void EvaluateHorizontal(
+    private static void EvaluateHorizontalPositions(
         Orientation orientation,
         Point firstPosition,
         Point secondPosition,
@@ -194,7 +194,7 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateHorizontal(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
         return a0 == a1;
     }
@@ -205,7 +205,7 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateHorizontal(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
         return a0 < a1;
     }
@@ -216,7 +216,7 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateHorizontal(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
 
         return a0 > a1;
     }
