@@ -77,6 +77,7 @@ end;
 
     public void Tick()
     {
+        LevelScreen.LevelControlPanel.TextualData.ClearTextualData();
         LevelScreen.LevelInputController.Tick();
         LevelScreen.LevelCursor.Tick();
 
@@ -207,10 +208,6 @@ end;
         if (mouseIsInLevelViewPort)
         {
             LevelScreen.LevelCursor.CheckLemmingsNearCursor();
-        }
-        else
-        {
-            LevelScreen.LevelControlPanel.TextualData.ClearCursorData();
         }
     }
 

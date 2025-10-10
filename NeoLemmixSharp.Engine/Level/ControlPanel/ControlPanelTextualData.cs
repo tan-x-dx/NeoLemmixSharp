@@ -47,28 +47,21 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         _goalCountPointer = (char*)_byteBuffer.Handle + (CharLengthForCursorData + CharLengthForLemmingCount + CharLengthForLemmingCount);
     }
 
-    public void SetCursorData(Lemming? lemmingUnderCursor, uint numberOfLemmingsUnderCursor)
+    public void ClearTextualData()
     {
-        if (lemmingUnderCursor is null)
-        {
-            ClearCursorData();
-        }
-        else
-        {
-            WriteLemmingCursorData(lemmingUnderCursor, numberOfLemmingsUnderCursor);
-        }
+        new Span<byte>((void*)_byteBuffer.Handle, TotalControlPanelTextLength * sizeof(char)).Clear();
     }
 
-    private void WriteLemmingCursorData(Lemming lemming, uint numberOfLemmingsUnderCursor)
+    public void SetCursorData(Lemming lemmingUnderCursor, uint numberOfLemmingsUnderCursor)
     {
-        var textLength = WriteLemmingInfo(lemming);
+        var textLength = WriteLemmingInfo(lemmingUnderCursor);
 
         char* p = _cursorDataPointer + textLength;
         *p = ' '; // Add a space.
         p++;
-        var numericPartSpanLength = TextRenderingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
+        var numericPartLength = TextRenderingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
 
-        TextRenderingHelpers.WriteDigits(p, numericPartSpanLength, numberOfLemmingsUnderCursor);
+        TextRenderingHelpers.WriteDigits(p, numericPartLength, numberOfLemmingsUnderCursor);
     }
 
     private int WriteLemmingInfo(Lemming lemming)
@@ -148,12 +141,6 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         }
     }
 
-    public void ClearCursorData()
-    {
-        Span<char> span = new(_cursorDataPointer, CharLengthForCursorData);
-        span.Clear();
-    }
-
     public void SetHatchData(int hatchCount)
     {
         Debug.Assert(hatchCount >= 0);
@@ -171,16 +158,16 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
     public void SetGoalData(int goalNumber)
     {
         char* p = _goalCountPointer;
-        var spanLength = CharLengthForGoalCount;
+        var length = CharLengthForGoalCount;
         if (goalNumber < 0)
         {
             goalNumber = -goalNumber;
             *p = '-';
             p++;
-            spanLength--;
+            length--;
         }
 
-        TextRenderingHelpers.WriteDigits(p, spanLength, (uint)goalNumber);
+        TextRenderingHelpers.WriteDigits(p, length, (uint)goalNumber);
     }
 
     public void Dispose()

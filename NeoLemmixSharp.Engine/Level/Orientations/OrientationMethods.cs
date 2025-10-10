@@ -130,14 +130,14 @@ public static class OrientationMethods
         Orientation orientation,
         Point firstPosition,
         Point secondPosition,
-        out int a0,
-        out int a1)
+        out int a1,
+        out int a2)
     {
         var s = IntSin(orientation.RotNum);
         var c = IntCos(orientation.RotNum);
 
-        a0 = (c * firstPosition.Y) - (s * firstPosition.X);
-        a1 = (c * secondPosition.Y) - (s * secondPosition.X);
+        a1 = (c * firstPosition.Y) - (s * firstPosition.X);
+        a2 = (c * secondPosition.Y) - (s * secondPosition.X);
     }
 
     [Pure]
@@ -146,9 +146,9 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
 
-        return a0 == a1;
+        return a1 == a2;
     }
 
     [Pure]
@@ -157,9 +157,9 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
 
-        return a0 < a1;
+        return a1 < a2;
     }
 
     [Pure]
@@ -168,9 +168,9 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
 
-        return a0 > a1;
+        return a1 > a2;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -178,14 +178,14 @@ public static class OrientationMethods
         Orientation orientation,
         Point firstPosition,
         Point secondPosition,
-        out int a0,
-        out int a1)
+        out int a1,
+        out int a2)
     {
         var s = IntSin(orientation.RotNum);
         var c = IntCos(orientation.RotNum);
 
-        a0 = (c * firstPosition.X) + (s * firstPosition.Y);
-        a1 = (c * secondPosition.X) + (s * secondPosition.Y);
+        a1 = (c * firstPosition.X) + (s * firstPosition.Y);
+        a2 = (c * secondPosition.X) + (s * secondPosition.Y);
     }
 
     [Pure]
@@ -194,9 +194,9 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
 
-        return a0 == a1;
+        return a1 == a2;
     }
 
     [Pure]
@@ -205,9 +205,9 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
 
-        return a0 < a1;
+        return a1 < a2;
     }
 
     [Pure]
@@ -216,9 +216,9 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a0, out var a1);
+        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
 
-        return a0 > a1;
+        return a1 > a2;
     }
 
     /// <summary>
@@ -231,15 +231,24 @@ public static class OrientationMethods
     public static int GetHorizontalDelta(
         this Orientation orientation,
         Point fromPosition,
-        Point toPosition) => orientation.RotNum switch
+        Point toPosition)
+    {
+        int a1, a2;
+        if (orientation.IsHorizontal())
         {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.GetHorizontalDelta(fromPosition, toPosition),
+            a2 = toPosition.Y;
+            a1 = fromPosition.Y;
+        }
+        else
+        {
+            a1 = toPosition.X;
+            a2 = fromPosition.X;
+        }
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<int>(orientation)
-        };
+        return orientation.IsHorizontal()
+            ? LevelScreen.HorizontalBoundaryBehaviour.GetDelta(a1, a2)
+            : LevelScreen.VerticalBoundaryBehaviour.GetDelta(a1, a2);
+    }
 
     /// <summary>
     /// If the first position were to move vertically to be in line with the second position, what is the dy it would require?
@@ -251,13 +260,22 @@ public static class OrientationMethods
     public static int GetVerticalDelta(
         this Orientation orientation,
         Point fromPosition,
-        Point toPosition) => orientation.RotNum switch
+        Point toPosition)
+    {
+        int a1, a2;
+        if (orientation.IsHorizontal())
         {
-            EngineConstants.DownOrientationRotNum => DownOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
-            EngineConstants.LeftOrientationRotNum => LeftOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
-            EngineConstants.UpOrientationRotNum => UpOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
-            EngineConstants.RightOrientationRotNum => RightOrientationMethods.GetVerticalDelta(fromPosition, toPosition),
+            a2 = fromPosition.X;
+            a1 = toPosition.X;
+        }
+        else
+        {
+            a1 = fromPosition.Y;
+            a2 = toPosition.Y;
+        }
 
-            _ => Orientation.ThrowOrientationOutOfRangeException<int>(orientation)
-        };
+        return orientation.IsHorizontal()
+            ? LevelScreen.HorizontalBoundaryBehaviour.GetDelta(a1, a2)
+            : LevelScreen.VerticalBoundaryBehaviour.GetDelta(a1, a2);
+    }
 }

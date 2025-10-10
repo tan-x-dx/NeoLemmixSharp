@@ -60,9 +60,12 @@ public sealed class LevelCursor
             CheckLemming(lemming);
         }
 
-        LevelScreen.LevelControlPanel.TextualData.SetCursorData(
-            CurrentlyHighlightedLemming,
-            NumberOfLemmingsUnderCursor);
+        if (CurrentlyHighlightedLemming is not null)
+        {
+            LevelScreen.LevelControlPanel.TextualData.SetCursorData(
+                CurrentlyHighlightedLemming,
+                NumberOfLemmingsUnderCursor);
+        }
     }
 
     private void GetLemmingsNearCursorPosition(out LemmingEnumerable result)
