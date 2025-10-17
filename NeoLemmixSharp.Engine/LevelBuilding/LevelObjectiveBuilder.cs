@@ -80,7 +80,9 @@ public sealed class LevelObjectiveBuilder
         var skillTrackingData = BuildSkillTrackingData(tribeManager);
 
         var totalSkillLimitModifier = TryGetObjectiveModifier<LimitTotalSkillAssignmentsModifierData>();
-        var totalSkillLimit = totalSkillLimitModifier?.MaxTotalSkillAssignments ?? EngineConstants.TrivialSkillLimit;
+        var totalSkillLimit = EngineConstants.TrivialSkillLimit;
+        if (totalSkillLimitModifier is not null)
+            totalSkillLimit = totalSkillLimitModifier.MaxTotalSkillAssignments;
 
         return new SkillSetManager(skillTrackingData, totalSkillLimit);
     }
@@ -97,7 +99,9 @@ public sealed class LevelObjectiveBuilder
             var skillSetData = baseSkillData[i];
 
             var skillLimitModifier = TryGetAnySpecificSkillModifier(_levelObjectiveData.ObjectiveModifiers, talismanModifiers, skillSetData);
-            var initialSkillLimit = skillLimitModifier?.MaxSkillAssignments ?? EngineConstants.TrivialSkillLimit;
+            var initialSkillLimit = EngineConstants.TrivialSkillLimit;
+            if (skillLimitModifier is not null)
+                initialSkillLimit = skillLimitModifier.MaxSkillAssignments;
 
             var skill = LemmingSkill.AllItems[skillSetData.SkillId];
 

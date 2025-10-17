@@ -194,7 +194,13 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
 
     int IIdEquatable<LemmingSkill>.Id => Id;
     [DebuggerStepThrough]
-    public bool Equals(LemmingSkill? other) => Id == (other?.Id ?? -1);
+    public bool Equals(LemmingSkill? other)
+    {
+        var otherValue = -1;
+        if (other is not null) otherValue = other.Id;
+        return Id == otherValue;
+    }
+
     [DebuggerStepThrough]
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingSkill other && Id == other.Id;
     [DebuggerStepThrough]

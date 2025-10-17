@@ -24,13 +24,34 @@ public sealed class Tribe : IIdEquatable<Tribe>
 
     int IIdEquatable<Tribe>.Id => Id;
     [DebuggerStepThrough]
-    public bool Equals(Tribe? other) => Id == (other?.Id ?? -1);
+    public bool Equals(Tribe? other)
+    {
+        var otherValue = -1;
+        if (other is not null) otherValue = other.Id;
+        return Id == otherValue;
+    }
+
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Tribe other && Id == other.Id;
     [DebuggerStepThrough]
     public override int GetHashCode() => Id;
     [DebuggerStepThrough]
-    public static bool operator ==(Tribe? left, Tribe? right) => left?.Id == right?.Id;
+    public static bool operator ==(Tribe? left, Tribe? right)
+    {
+        var leftValue = -1;
+        if (left is not null) leftValue = left.Id;
+        var rightValue = -1;
+        if (right is not null) rightValue = right.Id;
+        return leftValue == rightValue;
+    }
+
     [DebuggerStepThrough]
-    public static bool operator !=(Tribe? left, Tribe? right) => left?.Id != right?.Id;
+    public static bool operator !=(Tribe? left, Tribe? right)
+    {
+        var leftValue = -1;
+        if (left is not null) leftValue = left.Id;
+        var rightValue = -1;
+        if (right is not null) rightValue = right.Id;
+        return leftValue != rightValue;
+    }
 }

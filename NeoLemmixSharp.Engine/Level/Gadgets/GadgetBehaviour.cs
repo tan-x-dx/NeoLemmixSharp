@@ -64,7 +64,13 @@ public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
 
     protected abstract void PerformInternalBehaviour(int triggerData);
 
-    public bool Equals(GadgetBehaviour? other) => other is not null && Id == other.Id;
+    public bool Equals(GadgetBehaviour? other)
+    {
+        var otherValue = -1;
+        if (other is not null) otherValue = other.Id;
+        return Id == otherValue;
+    }
+
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBehaviour other && Id == other.Id;
     public sealed override int GetHashCode() => Id;
     public sealed override string ToString() => GadgetBehaviourName.ToString();

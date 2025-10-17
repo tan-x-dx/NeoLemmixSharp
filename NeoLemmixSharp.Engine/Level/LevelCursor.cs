@@ -169,8 +169,8 @@ public sealed class LevelCursor
         if (skillTrackingData is null)
             return false;
 
-        var previousCandidateMatchesTribe = previousCandidate.State.TribeAffiliation == skillTrackingData.Tribe;
-        var newCandidateMatchesTribe = newCandidate.State.TribeAffiliation == skillTrackingData.Tribe;
+        var previousCandidateMatchesTribe = previousCandidate.State.TribeAffiliation.Equals(skillTrackingData.Tribe);
+        var newCandidateMatchesTribe = newCandidate.State.TribeAffiliation.Equals(skillTrackingData.Tribe);
 
         return newCandidateMatchesTribe && !previousCandidateMatchesTribe;
     }
@@ -202,5 +202,56 @@ public sealed class LevelCursor
         var dy = LevelScreen.VerticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
 
         return dx * dx + dy * dy;
+    }
+}
+
+public class SomeData
+{
+    public readonly int Id;
+
+    public SomeData(int id) => Id = id;
+
+    public bool EqualsInstance1(SomeData? other) => Id == (other?.Id ?? -1);
+
+    public bool EqualsInstance2(SomeData? other)
+    {
+        var valA = Id;
+        var valB = -1;
+        if (other is not null) valB = other.Id;
+        return valA == valB;
+    }
+
+    public bool EqualsInstance3(SomeData? other)
+    {
+        var otherValue = -1;
+        if (other is not null) otherValue = other.Id;
+        return Id == otherValue;
+    }
+
+    public static bool Equals1(SomeData? a, SomeData? b) => a?.Id == b?.Id;
+
+    public static bool Equals2(SomeData? a, SomeData? b)
+    {
+        var valA = -1;
+        if (a is not null) valA = a.Id;
+        var valB = -1;
+        if (b is not null) valB = b.Id;
+        return valA == valB;
+    }
+
+    public static bool Equals3(SomeData? a, SomeData? b)
+    {
+        var valA = a?.Id ?? -1;
+        var valB = b?.Id ?? -1;
+        return valA == valB;
+    }
+
+    public static bool EqualsNotNull1(SomeData a, SomeData b) => a.Id == b.Id;
+
+    public static bool EqualsNotNull2(SomeData a, SomeData b)
+    {
+        var valA = a.Id;
+        var valB = b.Id;
+        return valA == valB;
     }
 }

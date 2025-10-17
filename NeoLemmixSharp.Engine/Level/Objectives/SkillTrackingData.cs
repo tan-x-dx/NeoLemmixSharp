@@ -62,7 +62,7 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible
     private bool TribesMatch(Lemming lemming)
     {
         return Tribe is null ||
-               Tribe == lemming.State.TribeAffiliation;
+               Tribe.Equals(lemming.State.TribeAffiliation);
     }
 
     public void RecalculateEffectiveQuantity(int totalSkillLimit)
