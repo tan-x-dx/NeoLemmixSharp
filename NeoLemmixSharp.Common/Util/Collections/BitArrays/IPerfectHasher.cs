@@ -16,12 +16,13 @@ public interface IPerfectHasher<T> : IComparer<T>
 
     int IComparer<T>.Compare(T? x, T? y)
     {
-        if (ReferenceEquals(x, y)) return 0;
-        if (x is null) return -1;
-        if (y is null) return 1;
+        var hashX = -1;
+        if (x is not null)
+            hashX = Hash(x);
 
-        var hashX = Hash(x);
-        var hashY = Hash(y);
+        var hashY = -1;
+        if (y is not null)
+            hashY = Hash(y);
 
         var gt = (hashX > hashY) ? 1 : 0;
         var lt = (hashX < hashY) ? 1 : 0;

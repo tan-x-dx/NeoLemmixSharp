@@ -41,12 +41,12 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
         _currentTotalSkillLimit--;
     }
 
-    public SkillTrackingData? GetSkillTrackingData(int skillDataId)
+    public SkillTrackingData? GetSkillTrackingData(int skillTrackingDataId)
     {
-        if ((uint)skillDataId >= (uint)_skillTrackingDataList.Length)
+        if ((uint)skillTrackingDataId >= (uint)_skillTrackingDataList.Length)
             return null;
 
-        return _skillTrackingDataList[skillDataId];
+        return _skillTrackingDataList[skillTrackingDataId];
     }
 
     public SkillTrackingData? GetSkillTrackingData(int skillId, int? tribeId)

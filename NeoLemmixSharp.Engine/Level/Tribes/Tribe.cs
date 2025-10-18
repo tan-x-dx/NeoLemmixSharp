@@ -46,12 +46,5 @@ public sealed class Tribe : IIdEquatable<Tribe>
     }
 
     [DebuggerStepThrough]
-    public static bool operator !=(Tribe? left, Tribe? right)
-    {
-        var leftValue = -1;
-        if (left is not null) leftValue = left.Id;
-        var rightValue = -1;
-        if (right is not null) rightValue = right.Id;
-        return leftValue != rightValue;
-    }
+    public static bool operator !=(Tribe? left, Tribe? right) => !(left == right);
 }

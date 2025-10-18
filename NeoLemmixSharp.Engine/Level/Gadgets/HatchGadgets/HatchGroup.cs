@@ -56,7 +56,7 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
         _lemmingsToRelease = lemmingsToRelease;
     }
 
-    public bool AddSpawnIntervalDelta(int spawnIntervalDelta)
+    public bool TryAddSpawnIntervalDelta(int spawnIntervalDelta)
     {
         int previousSpawnInterval = (int)CurrentSpawnInterval;
         int newSpawnInterval = Math.Clamp(previousSpawnInterval + spawnIntervalDelta, (int)MinSpawnInterval, (int)MaxSpawnInterval);

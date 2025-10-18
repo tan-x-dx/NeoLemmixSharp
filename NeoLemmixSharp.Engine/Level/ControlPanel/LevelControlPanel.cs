@@ -63,7 +63,6 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
 
         ControlPanelHelperMethods.ResetButtonIds();
         _skillAssignButtons = ControlPanelHelperMethods.SetUpSkillAssignButtons(
-            this,
             controlPanelParameters,
             skillSetManager);
         _allButtons = ControlPanelHelperMethods.SetUpControlButtons(
@@ -345,10 +344,9 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
 
     private void UpdateCursorColors()
     {
-        var skillSetManager = LevelScreen.SkillSetManager;
         var skillTrackingDataId = SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
 
-        var skillTrackingData = skillSetManager.GetSkillTrackingData(skillTrackingDataId);
+        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(skillTrackingDataId);
 
         LevelScreen.LevelCursor.SetSelectedTribe(skillTrackingData?.Tribe);
     }
@@ -357,7 +355,7 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
     {
         var selectedSkillAssignButton = GetControlPanelButtonFor(skillTrackingData);
 
-        selectedSkillAssignButton?.UpdateSkillCount(skillTrackingData.EffectiveQuantity);
+        selectedSkillAssignButton?.UpdateSkillCount();
     }
 
     public void OnSpawnIntervalChanged()
@@ -373,7 +371,7 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
 
         SpawnIntervalButton? GetSpawnIntervalDisplayButton()
         {
-            foreach (var button in AllButtons)
+            foreach (var button in _allButtons)
             {
                 if (button is SpawnIntervalButton result &&
                     result.ButtonAction.ButtonType == ButtonType.SpawnIntervalIncrease)
@@ -386,7 +384,7 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
 
     public ControlPanelButton? GetControlPanelButtonOfType(ButtonType buttonType)
     {
-        foreach (var button in AllButtons)
+        foreach (var button in _allButtons)
         {
             if (button.ButtonAction.ButtonType == buttonType)
                 return button;
@@ -397,7 +395,7 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
 
     private SkillAssignButton? GetControlPanelButtonFor(SkillTrackingData skillTrackingData)
     {
-        foreach (var skillAssignButton in SkillAssignButtons)
+        foreach (var skillAssignButton in _skillAssignButtons)
         {
             if (skillAssignButton.SkillTrackingDataId == skillTrackingData.SkillTrackingDataId)
                 return skillAssignButton;
