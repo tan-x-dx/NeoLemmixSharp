@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
+namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.GadgetReaders;
 
 internal enum NeoLemmixGadgetBehaviour
 {

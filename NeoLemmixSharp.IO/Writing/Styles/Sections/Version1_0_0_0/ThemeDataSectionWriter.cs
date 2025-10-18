@@ -2,13 +2,11 @@
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
-internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEqualityComparer<LemmingActionSpriteLayerData[]>
+internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter
 {
     private readonly FileWriterStringIdLookup _stringIdLookup;
 
@@ -68,132 +66,59 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter, IEquality
             WriteLemmingActionSpriteData(writer, lemmingSpriteData);
         }
 
-        WriteTribeColorData(writer, lemmingSpriteData._tribeColorData);
+        WriteTribeColorData(writer, lemmingSpriteData.TribeColorData);
     }
 
-    private void WriteLemmingActionSpriteData(RawStyleFileDataWriter writer, LemmingSpriteData lemmingSpriteData)
+    private static void WriteLemmingActionSpriteData(RawStyleFileDataWriter writer, LemmingSpriteData lemmingSpriteData)
     {
-        var lemmingActionSpriteLayerDataLookup = GetSpriteLayerLookup();
+        var lemmingActionSpriteDataSpan = lemmingSpriteData.LemmingActionSpriteData;
 
-        writer.Write8BitUnsignedInteger((byte)lemmingActionSpriteLayerDataLookup.Count);
-
-        WriteSpriteLayerData();
-        WriteLemmingActionSpriteData();
-
-        return;
-
-        Dictionary<LemmingActionSpriteLayerData[], int> GetSpriteLayerLookup()
+        for (var i = 0; i < lemmingActionSpriteDataSpan.Length; i++)
         {
-            var result = new Dictionary<LemmingActionSpriteLayerData[], int>(8, this);
+            var spriteData = lemmingActionSpriteDataSpan[i];
+            var lemmingActionId = spriteData.LemmingActionId;
+            FileWritingException.WriterAssert(lemmingActionId == i, "Lemming action id mismatch!");
 
-            foreach (var lemmingActionSprite in lemmingSpriteData.LemmingActionSpriteData)
+            writer.Write8BitUnsignedInteger((byte)lemmingActionId);
+            writer.Write8BitUnsignedInteger((byte)spriteData.AnchorPoint.X);
+            writer.Write8BitUnsignedInteger((byte)spriteData.AnchorPoint.Y);
+
+            var spriteLayerSpan = spriteData.Layers;
+            writer.Write8BitUnsignedInteger((byte)spriteLayerSpan.Length);
+
+            foreach (var spriteLayerData in spriteLayerSpan)
             {
-                var count = result.Count;
-
-                ref var id = ref CollectionsMarshal.GetValueRefOrAddDefault(result, lemmingActionSprite.Layers, out var exists);
-                if (!exists)
-                {
-                    id = count;
-                }
-            }
-
-            return result;
-        }
-
-        void WriteSpriteLayerData()
-        {
-            foreach (var kvp in lemmingActionSpriteLayerDataLookup.OrderBy(x => x.Value))
-            {
-                var array = kvp.Key;
-                writer.Write8BitUnsignedInteger((byte)array.Length);
-
-                foreach (var spriteLayerData in array)
-                {
-                    writer.Write8BitUnsignedInteger((byte)spriteLayerData.Layer);
-                    writer.Write8BitUnsignedInteger((byte)spriteLayerData.ColorType);
-                }
-            }
-        }
-
-        void WriteLemmingActionSpriteData()
-        {
-            var lemmingActionSpriteDataSpan = lemmingSpriteData.LemmingActionSpriteData;
-
-            for (var i = 0; i < lemmingActionSpriteDataSpan.Length; i++)
-            {
-                var spriteData = lemmingActionSpriteDataSpan[i];
-                var lemmingActionId = spriteData.LemmingActionId;
-                FileWritingException.WriterAssert(lemmingActionId == i, "Lemming action id mismatch!");
-
-                writer.Write8BitUnsignedInteger((byte)lemmingActionId);
-                writer.Write8BitUnsignedInteger((byte)spriteData.AnchorPoint.X);
-                writer.Write8BitUnsignedInteger((byte)spriteData.AnchorPoint.Y);
-
-                var correspondingId = lemmingActionSpriteLayerDataLookup[spriteData.Layers];
-
-                writer.Write8BitUnsignedInteger((byte)correspondingId);
+                writer.Write8BitUnsignedInteger((byte)spriteLayerData.Layer);
+                writer.Write8BitUnsignedInteger((byte)spriteLayerData.ColorType);
             }
         }
     }
 
-    private static void WriteTribeColorData(RawStyleFileDataWriter writer, TribeColorData[] tribeColorData)
+    private static void WriteTribeColorData(RawStyleFileDataWriter writer, ReadOnlySpan<TribeColorData> tribeColorData)
     {
+        Span<byte> bytes = [0, 0, 0, 0];
         for (var i = 0; i < tribeColorData.Length; i++)
         {
-            ref var colorData = ref tribeColorData[i];
+            ref readonly var colorData = ref tribeColorData[i];
 
-            WriteTribeColorDatum(in colorData);
+            WriteArgbColor(colorData.HairColor, bytes);
+            WriteArgbColor(colorData.PermanentSkillHairColor, bytes);
+            WriteArgbColor(colorData.SkinColor, bytes);
+            WriteArgbColor(colorData.ZombieSkinColor, bytes);
+            WriteArgbColor(colorData.BodyColor, bytes);
+            WriteArgbColor(colorData.PermanentSkillBodyColor, bytes);
+            WriteArgbColor(colorData.NeutralBodyColor, bytes);
+            WriteArgbColor(colorData.AcidLemmingFootColor, bytes);
+            WriteArgbColor(colorData.WaterLemmingFootColor, bytes);
+            WriteArgbColor(colorData.PaintColor, bytes);
         }
 
         return;
-
-        void WriteTribeColorDatum(in TribeColorData tribeColorDatum)
-        {
-            Span<byte> bytes = [0, 0, 0, 0];
-
-            WriteArgbColor(tribeColorDatum.HairColor, bytes);
-            WriteArgbColor(tribeColorDatum.PermanentSkillHairColor, bytes);
-            WriteArgbColor(tribeColorDatum.SkinColor, bytes);
-            WriteArgbColor(tribeColorDatum.ZombieSkinColor, bytes);
-            WriteArgbColor(tribeColorDatum.BodyColor, bytes);
-            WriteArgbColor(tribeColorDatum.PermanentSkillBodyColor, bytes);
-            WriteArgbColor(tribeColorDatum.NeutralBodyColor, bytes);
-            WriteArgbColor(tribeColorDatum.AcidLemmingFootColor, bytes);
-            WriteArgbColor(tribeColorDatum.WaterLemmingFootColor, bytes);
-            WriteArgbColor(tribeColorDatum.PaintColor, bytes);
-        }
 
         void WriteArgbColor(Color color, Span<byte> buffer)
         {
             ReadWriteHelpers.WriteArgbBytes(color, buffer);
             writer.WriteBytes(buffer);
         }
-    }
-
-    bool IEqualityComparer<LemmingActionSpriteLayerData[]>.Equals(LemmingActionSpriteLayerData[]? x, LemmingActionSpriteLayerData[]? y)
-    {
-        if (ReferenceEquals(x, y)) return true;
-        if (x is null || y is null) return false;
-
-        if (x.Length != y.Length) return false;
-
-        for (var i = 0; i < x.Length; i++)
-        {
-            if (x[i] != y[i])
-                return false;
-        }
-
-        return true;
-    }
-
-    int IEqualityComparer<LemmingActionSpriteLayerData[]>.GetHashCode([DisallowNull] LemmingActionSpriteLayerData[] array)
-    {
-        var hashCode = new HashCode();
-        foreach (var item in array)
-        {
-            hashCode.Add(item);
-        }
-
-        return hashCode.ToHashCode();
     }
 }

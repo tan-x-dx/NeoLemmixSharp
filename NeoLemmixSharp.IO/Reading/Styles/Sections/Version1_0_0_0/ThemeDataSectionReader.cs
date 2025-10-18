@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
@@ -8,7 +9,7 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
-internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer<LemmingActionSpriteData>
+internal sealed class ThemeDataSectionReader : StyleDataSectionReader
 {
     private readonly FileReaderStringIdLookup _stringIdLookup;
 
@@ -69,72 +70,32 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
         int lemmingSpriteStyleIdentifierId = reader.Read16BitUnsignedInteger();
         var lemmingSpriteStyleIdentifier = new StyleIdentifier(_stringIdLookup[lemmingSpriteStyleIdentifierId]);
 
-        var result = new LemmingSpriteData(lemmingSpriteStyleIdentifier);
+        var lemmingActionSpriteData = ReadLemmingActionSpriteData(reader, originalStyleIdentifier, lemmingSpriteStyleIdentifier);
+        var tribeColorData = ReadTribeColorData(reader);
 
-        ReadLemmingActionSpriteData(reader, originalStyleIdentifier, lemmingSpriteStyleIdentifier, result);
-        ReadTribeColorData(reader, result._tribeColorData);
-
-        return result;
+        return new LemmingSpriteData(lemmingSpriteStyleIdentifier, tribeColorData, lemmingActionSpriteData);
     }
 
-    private void ReadLemmingActionSpriteData(
+    private static LemmingActionSpriteData[] ReadLemmingActionSpriteData(
         RawStyleFileDataReader reader,
         StyleIdentifier originalStyleIdentifier,
-        StyleIdentifier lemmingSpriteStyleIdentifier,
-        LemmingSpriteData lemmingSpriteData)
+        StyleIdentifier lemmingSpriteStyleIdentifier)
     {
         if (originalStyleIdentifier != lemmingSpriteStyleIdentifier)
         {
             var styleFormatPair = new StyleFormatPair(lemmingSpriteStyleIdentifier, FileFormatType.Default);
             var deferredStyle = StyleCache.GetOrLoadStyleData(styleFormatPair);
-            deferredStyle.ThemeData.LemmingSpriteData.LemmingActionSpriteData.CopyTo(lemmingSpriteData._lemmingActionSpriteData);
-            return;
+            return deferredStyle.ThemeData.LemmingSpriteData.CloneLemmingActionSpriteData();
         }
 
-        var spriteLayerArchetypes = ReadSpriteLayerArchetypes();
+        var result = new LemmingActionSpriteData[LemmingActionConstants.NumberOfLemmingActions];
 
-        for (var i = 0; i < LemmingActionConstants.NumberOfLemmingActions; i++)
+        for (var i = 0; i < result.Length; i++)
         {
-            lemmingSpriteData._lemmingActionSpriteData[i] = ReadLemmingActionSpriteData(i);
+            result[i] = ReadLemmingActionSpriteData(i);
         }
 
-        new Span<LemmingActionSpriteData>(lemmingSpriteData._lemmingActionSpriteData).Sort(this);
-
-        return;
-
-        LemmingActionSpriteLayerData[][] ReadSpriteLayerArchetypes()
-        {
-            int numberOfSpriteLayerArchetypes = reader.Read8BitUnsignedInteger();
-            FileReadingException.ReaderAssert(numberOfSpriteLayerArchetypes > 0, "No sprite layer data specified!");
-
-            var spriteLayerArchetypes = new LemmingActionSpriteLayerData[numberOfSpriteLayerArchetypes][];
-
-            for (var i = 0; i < spriteLayerArchetypes.Length; i++)
-            {
-                spriteLayerArchetypes[i] = ReadSpriteLayerData();
-            }
-
-            return spriteLayerArchetypes;
-        }
-
-        LemmingActionSpriteLayerData[] ReadSpriteLayerData()
-        {
-            int numberOfSpriteLayers = reader.Read8BitUnsignedInteger();
-            FileReadingException.ReaderAssert(numberOfSpriteLayers > 0, "No sprite layer data specified!");
-
-            var spriteLayers = new LemmingActionSpriteLayerData[numberOfSpriteLayers];
-
-            for (var i = 0; i < spriteLayers.Length; i++)
-            {
-                int layer = reader.Read8BitUnsignedInteger();
-                uint rawLayerColorTypeData = reader.Read8BitUnsignedInteger();
-                var colorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawLayerColorTypeData);
-
-                spriteLayers[i] = new LemmingActionSpriteLayerData(layer, colorType);
-            }
-
-            return spriteLayers;
-        }
+        return result;
 
         LemmingActionSpriteData ReadLemmingActionSpriteData(int i)
         {
@@ -144,29 +105,34 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
             int x = reader.Read8BitUnsignedInteger();
             int y = reader.Read8BitUnsignedInteger();
 
-            int spriteLayerArchetypeId = reader.Read8BitUnsignedInteger();
+            var layers = ReadSpriteLayers();
 
-            return new LemmingActionSpriteData
+            return new LemmingActionSpriteData(lemmingActionId, new Point(x, y), layers);
+        }
+
+        LemmingActionSpriteLayerData[] ReadSpriteLayers()
+        {
+            int numberOfLayers = reader.Read8BitUnsignedInteger();
+
+            var result = Helpers.GetArrayForSize<LemmingActionSpriteLayerData>(numberOfLayers);
+
+            for (var i = 0; i < result.Length; i++)
             {
-                LemmingActionId = lemmingActionId,
-                AnchorPoint = new Point(x, y),
-                Layers = spriteLayerArchetypes[spriteLayerArchetypeId]
-            };
+                int layer = reader.Read8BitUnsignedInteger();
+                uint rawLayerColorTypeData = reader.Read8BitUnsignedInteger();
+                var colorType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawLayerColorTypeData);
+
+                result[i] = new LemmingActionSpriteLayerData(layer, colorType);
+            }
+
+            return result;
         }
     }
 
-    private static void ReadTribeColorData(
-        RawStyleFileDataReader reader,
-        TribeColorData[] tribeColorData)
+    private static TribeColorData[] ReadTribeColorData(RawStyleFileDataReader reader)
     {
-        for (var i = 0; i < tribeColorData.Length; i++)
-        {
-            tribeColorData[i] = ReadTribeColorData();
-        }
-
-        return;
-
-        TribeColorData ReadTribeColorData()
+        var result = new TribeColorData[EngineConstants.MaxNumberOfTribes];
+        for (var i = 0; i < result.Length; i++)
         {
             var hairColor = ReadArgbColor(reader);
             var permanentSkillHairColor = ReadArgbColor(reader);
@@ -179,7 +145,7 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
             var waterLemmingFootColor = ReadArgbColor(reader);
             var paintColor = ReadArgbColor(reader);
 
-            return new TribeColorData(
+            result[i] = new TribeColorData(
                 hairColor,
                 permanentSkillHairColor,
                 skinColor,
@@ -191,6 +157,8 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
                 waterLemmingFootColor,
                 paintColor);
         }
+
+        return result;
     }
 
     private static Color ReadRgbColor(RawStyleFileDataReader reader)
@@ -203,16 +171,5 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader, IComparer
     {
         var bytes = reader.ReadBytes(4);
         return ReadWriteHelpers.ReadArgbBytes(bytes);
-    }
-
-    int IComparer<LemmingActionSpriteData>.Compare(LemmingActionSpriteData? x, LemmingActionSpriteData? y)
-    {
-        if (ReferenceEquals(x, y)) return 0;
-        if (x is null) return -1;
-        if (y is null) return 1;
-
-        var gt = (x.LemmingActionId > y.LemmingActionId) ? 1 : 0;
-        var lt = (x.LemmingActionId < y.LemmingActionId) ? 1 : 0;
-        return gt - lt;
     }
 }

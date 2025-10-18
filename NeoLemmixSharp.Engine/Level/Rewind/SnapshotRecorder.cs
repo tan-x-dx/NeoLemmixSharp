@@ -12,7 +12,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
     private readonly TItemManager _itemManager;
     private RawArray _buffer;
     private readonly int _requiredNumberOfBytesPerSnapshot;
-    private int _bufferSnapshotCapacity;
+    private int _snapshotBufferCapacity;
     private int _numberOfSnapshots;
 
     public SnapshotRecorder(TItemManager itemManager)
@@ -27,7 +27,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
         }
 
         _requiredNumberOfBytesPerSnapshot = requiredNumberOfBytesPerSnapshotTotal;
-        _bufferSnapshotCapacity = RewindConstants.SnapshotDataListSizeMultiplier;
+        _snapshotBufferCapacity = RewindConstants.SnapshotDataListSizeMultiplier;
         _buffer = Helpers.AllocateBuffer<byte>(requiredNumberOfBytesPerSnapshotTotal * RewindConstants.SnapshotDataListSizeMultiplier);
     }
 
@@ -48,7 +48,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
 
     private unsafe byte* GetNewSnapshotDataPointer()
     {
-        if (_numberOfSnapshots == _bufferSnapshotCapacity)
+        if (_numberOfSnapshots == _snapshotBufferCapacity)
             DoubleSnapshotBufferCapacity();
 
         byte* pointer = (byte*)_buffer.Handle + (_numberOfSnapshots * _requiredNumberOfBytesPerSnapshot);
@@ -63,7 +63,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
 
         nint newHandle = Marshal.ReAllocHGlobal(_buffer.Handle, newBufferLength);
         _buffer = new RawArray(newHandle, newBufferLength);
-        _bufferSnapshotCapacity <<= 1;
+        _snapshotBufferCapacity <<= 1;
     }
 
     public unsafe void ApplySnapshot(int snapshotNumber)

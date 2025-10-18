@@ -85,7 +85,13 @@ public sealed class InputAction : IIdEquatable<InputAction>
     public bool IsEnabled => _stateMask != DisabledMask;
 
     [DebuggerStepThrough]
-    public bool Equals(InputAction? other) => Id == (other?.Id ?? -1);
+    public bool Equals(InputAction? other)
+    {
+        var otherValue = -1;
+        if (other is not null) otherValue = other.Id;
+        return Id == otherValue;
+    }
+
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is InputAction other && Id == other.Id;
     [DebuggerStepThrough]

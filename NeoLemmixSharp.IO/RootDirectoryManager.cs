@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.IO;
+﻿using NeoLemmixSharp.IO.Data;
+
+namespace NeoLemmixSharp.IO;
 
 public static class RootDirectoryManager
 {
@@ -45,4 +47,53 @@ public static class RootDirectoryManager
         return AppDomain.CurrentDomain.BaseDirectory;
 #endif
     }
+
+    public static string GetCorrespondingImageFile(string filePath)
+    {
+        return Path.ChangeExtension(filePath, DefaultFileExtensions.PngFileExtension);
+    }
+
+    public static string GetStyleFolderPath(this StyleIdentifier styleIdentifier)
+    {
+        return Path.Combine(StyleFolderDirectory, styleIdentifier.ToString());
+    }
+
+    public static string GetStyleTerrainFolderPath(this StyleIdentifier styleIdentifier)
+    {
+        return Path.Combine(StyleFolderDirectory, styleIdentifier.ToString(), DefaultFileExtensions.TerrainFolderName);
+    }
+
+    public static string GetStyleGadgetFolderPath(this StyleIdentifier styleIdentifier)
+    {
+        return Path.Combine(StyleFolderDirectory, styleIdentifier.ToString(), DefaultFileExtensions.GadgetFolderName);
+    }
+}
+
+public static class DefaultFileExtensions
+{
+    public const string PngFileExtension = ".png";
+
+    public const string LevelFileExtension = ".ullv";
+    public const string StyleFileExtension = ".ulst";
+
+    public const string LemmingsFolderName = "lemmings";
+    public const string LevelFolderName = "levels";
+    public const string MusicFolderName = "music";
+    public const string ReplayFolderName = "Replay";
+    public const string SketchesFolderName = "sketches";
+    public const string SoundFolderName = "sound";
+    public const string StyleFolderName = "styles";
+
+    public const string GadgetFolderName = "objects";
+    public const string TerrainFolderName = "terrain";
+}
+
+public static class NeoLemmixFileExtensions
+{
+    public const string LevelFileExtension = ".nxlv";
+    public const string GadgetFileExtension = ".nxmo";
+    public const string TerrainFileExtension = ".nxmt";
+    public const string ConfigFileExtension = ".nxmi";
+    public const string ReplayFileExtension = ".nxrp";
+    public const string ThemeFileExtension = ".nxtm";
 }

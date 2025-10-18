@@ -24,7 +24,7 @@ public static class StyleCache
 #if DEBUG
             DefaultStyleGenerator.GenerateDefaultStyle();
 #else
-            FileTypeHandler.ReadStyle(DefaultStyleFormatPair);
+            FileTypeHandler.ReadStyle(IoConstants.DefaultStyleFormatPair);
 #endif
 
         CachedStyles.Add(IoConstants.DefaultStyleFormatPair, DefaultStyleData);
@@ -32,37 +32,38 @@ public static class StyleCache
 
     public static void EnsureStylesAreLoadedForLevel(LevelData levelData)
     {
-        var allMentionedStyleFormatPairs = GetAllMentionedStyles(levelData);
+        var allMentionedStyleIdentifiers = GetAllMentionedStyles(levelData);
 
-        foreach (var styleFormatPair in allMentionedStyleFormatPairs)
+        foreach (var styleIdentifier in allMentionedStyleIdentifiers)
         {
+            var styleFormatPair = new StyleFormatPair(styleIdentifier, levelData.FileFormatType);
             GetOrLoadStyleData(styleFormatPair);
         }
     }
 
-    private static HashSet<StyleFormatPair> GetAllMentionedStyles(LevelData levelData)
+    private static HashSet<StyleIdentifier> GetAllMentionedStyles(LevelData levelData)
     {
-        var result = new HashSet<StyleFormatPair>(IoConstants.AssumedInitialStyleCapacity)
+        var result = new HashSet<StyleIdentifier>(IoConstants.AssumedInitialStyleCapacity)
         {
-            new(levelData.LevelTheme, levelData.FileFormatType)
+            levelData.LevelTheme
         };
 
         foreach (var terrainData in levelData.AllTerrainData)
         {
-            result.Add(new StyleFormatPair(terrainData.StyleIdentifier, levelData.FileFormatType));
+            result.Add(terrainData.StyleIdentifier);
         }
 
         foreach (var terrainGroupData in levelData.AllTerrainGroups)
         {
             foreach (var terrainData in terrainGroupData.AllBasicTerrainData)
             {
-                result.Add(new StyleFormatPair(terrainData.StyleIdentifier, levelData.FileFormatType));
+                result.Add(terrainData.StyleIdentifier);
             }
         }
 
         foreach (var gadgetData in levelData.AllGadgetInstanceData)
         {
-            result.Add(new StyleFormatPair(gadgetData.StyleIdentifier, levelData.FileFormatType));
+            result.Add(gadgetData.StyleIdentifier);
         }
 
         return result;

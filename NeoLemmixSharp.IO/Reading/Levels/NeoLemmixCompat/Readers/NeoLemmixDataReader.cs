@@ -4,14 +4,16 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 public abstract class NeoLemmixDataReader
 {
+    public string IdentifierToken { get; }
     private readonly Dictionary<string, NxlvReadingHelpers.TokenAction> _tokenActions = new(StringComparer.OrdinalIgnoreCase);
+    private readonly UnknownTokenBehaviour _unknownTokenBehaviour;
 
     public bool FinishedReading { get; protected set; }
-    public string IdentifierToken { get; }
 
-    protected NeoLemmixDataReader(string identifierToken)
+    protected NeoLemmixDataReader(string identifierToken, UnknownTokenBehaviour unknownTokenBehaviour = UnknownTokenBehaviour.ThrowException)
     {
         IdentifierToken = identifierToken;
+        _unknownTokenBehaviour = unknownTokenBehaviour;
     }
 
     protected void SetNumberOfTokens(int numberOfTokens) => _tokenActions.EnsureCapacity(numberOfTokens);
@@ -53,11 +55,17 @@ public abstract class NeoLemmixDataReader
         {
             tokenAction(line, secondToken, secondTokenIndex);
         }
-        else
+        else if (_unknownTokenBehaviour == UnknownTokenBehaviour.ThrowException)
         {
             NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, firstToken, line);
         }
 
         return false;
+    }
+
+    protected enum UnknownTokenBehaviour
+    {
+        ThrowException,
+        IgnoreLine
     }
 }

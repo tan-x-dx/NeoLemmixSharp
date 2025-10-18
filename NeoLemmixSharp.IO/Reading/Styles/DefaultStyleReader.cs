@@ -28,9 +28,8 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
         StyleIdentifier style,
         [MaybeNullWhen(false)] out string foundFilePath)
     {
-        var styleFolderPath = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            style.ToString());
+        var styleFolderPath = style.GetFolderFilePath();
+        var defaultFileExtensionSpan = DefaultFileExtensions.StyleFileExtension.AsSpan();
 
         var files = Directory.GetFiles(styleFolderPath);
 
@@ -38,7 +37,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
         {
             var fileExtension = Path.GetExtension(filePath.AsSpan());
 
-            if (fileExtension.Equals(DefaultFileExtensions.StyleFileExtension, StringComparison.OrdinalIgnoreCase))
+            if (defaultFileExtensionSpan.Equals(fileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 foundFilePath = filePath;
                 return true;

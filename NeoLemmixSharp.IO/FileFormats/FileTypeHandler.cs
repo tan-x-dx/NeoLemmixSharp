@@ -10,11 +10,7 @@ namespace NeoLemmixSharp.IO.FileFormats;
 
 public static class FileTypeHandler
 {
-    private readonly struct FileTypeAndFormat(FileType type, FileFormatType format)
-    {
-        public readonly FileType Type = type;
-        public readonly FileFormatType Format = format;
-    }
+    private readonly record struct FileTypeAndFormat(FileType Type, FileFormatType Format);
 
     private static readonly Dictionary<string, FileTypeAndFormat> FileTypeAndFormatLookup = new(8, StringComparer.OrdinalIgnoreCase)
     {
@@ -38,8 +34,7 @@ public static class FileTypeHandler
         var fileTypeAndFormatAlternateLookup = FileTypeAndFormatLookup.GetAlternateLookup<ReadOnlySpan<char>>();
         var result = fileTypeAndFormatAlternateLookup.TryGetValue(fileExtension, out var typeAndFormat);
 
-        fileType = typeAndFormat.Type;
-        fileFormatType = typeAndFormat.Format;
+        typeAndFormat.Deconstruct(out fileType, out fileFormatType);
 
         return result;
     }

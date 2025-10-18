@@ -1,12 +1,12 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
+using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
+namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.GadgetReaders;
 
 internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
 {
-    private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
-    private readonly Dictionary<string, NeoLemmixGadgetBehaviour> _gadgetBehaviourLookup = new(34, StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, NeoLemmixGadgetBehaviour> _gadgetBehaviourLookup = new(34, StringComparer.OrdinalIgnoreCase)
     {
         { "ANTISPLATPAD", NeoLemmixGadgetBehaviour.AntiSplatPad },
         { "BACKGROUND", NeoLemmixGadgetBehaviour.Background },
@@ -44,11 +44,12 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
         { "WINDOW", NeoLemmixGadgetBehaviour.Entrance },
     };
 
-    public GadgetArchetypeDataReader(
-        NeoLemmixGadgetArchetypeData gadgetArchetypeData)
+    private readonly NeoLemmixGadgetArchetypeData _neoLemmixGadgetArchetypeData;
+
+    public GadgetArchetypeDataReader(NeoLemmixGadgetArchetypeData neoLemmixGadgetArchetypeData)
         : base("EFFECT")
     {
-        _gadgetArchetypeData = gadgetArchetypeData;
+        _neoLemmixGadgetArchetypeData = neoLemmixGadgetArchetypeData;
 
         SetNumberOfTokens(16);
 
@@ -80,7 +81,7 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
     {
         FinishedReading = false;
         NxlvReadingHelpers.GetTokenPair(line, out _, out var secondToken, out _);
-        _gadgetArchetypeData.Behaviour = GetNeoLemmixGadgetType(secondToken);
+        _neoLemmixGadgetArchetypeData.Behaviour = GetNeoLemmixGadgetType(secondToken);
         return false;
     }
 
@@ -99,23 +100,23 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
 
     private void SetTriggerX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.TriggerX = int.Parse(secondToken);
+        _neoLemmixGadgetArchetypeData.TriggerX = int.Parse(secondToken);
     }
 
     private void SetTriggerY(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.TriggerY = int.Parse(secondToken);
+        _neoLemmixGadgetArchetypeData.TriggerY = int.Parse(secondToken);
     }
 
     private void SetTriggerWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.TriggerWidth = int.Parse(secondToken);
+        _neoLemmixGadgetArchetypeData.TriggerWidth = int.Parse(secondToken);
     }
 
     private void SetTriggerHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         // Subtract 1 from height because of differences in physics between engines
-        _gadgetArchetypeData.TriggerHeight = Math.Max(int.Parse(secondToken) - 1, 1);
+        _neoLemmixGadgetArchetypeData.TriggerHeight = Math.Max(int.Parse(secondToken) - 1, 1);
     }
 
     private void SetSound(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -128,17 +129,17 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
 
     private void SetResizeHorizontal(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
+        _neoLemmixGadgetArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
     }
 
     private void SetResizeVertical(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.ResizeType |= ResizeType.ResizeVertical;
+        _neoLemmixGadgetArchetypeData.ResizeType |= ResizeType.ResizeVertical;
     }
 
     private void SetResizeBoth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.ResizeType = ResizeType.ResizeBoth;
+        _neoLemmixGadgetArchetypeData.ResizeType = ResizeType.ResizeBoth;
     }
 
     private void SetDeprecated(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -147,12 +148,12 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
 
     private void SetDefaultWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.DefaultWidth = int.Parse(secondToken);
+        _neoLemmixGadgetArchetypeData.DefaultWidth = int.Parse(secondToken);
     }
 
     private void SetDefaultHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.DefaultHeight = int.Parse(secondToken);
+        _neoLemmixGadgetArchetypeData.DefaultHeight = int.Parse(secondToken);
     }
 
     private void SetDigitX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

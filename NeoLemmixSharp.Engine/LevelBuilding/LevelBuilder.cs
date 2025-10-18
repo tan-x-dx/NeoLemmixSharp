@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
@@ -87,7 +86,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         // Need to call this here instead of initialising in LevelScreen
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 
-        var gadgetManager = new GadgetManager(levelGadgets,gadgetTriggers, gadgetBehaviours, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var gadgetManager = new GadgetManager(levelGadgets, gadgetTriggers, gadgetBehaviours, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
 
         SetUpGadgetConnections(levelData, gadgetManager);
 
@@ -175,7 +174,10 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
     {
         var backgroundData = levelData.LevelBackground;
         if (backgroundData is null)
-            return new SolidColorBackgroundRenderer(EngineConstants.ClassicLevelBackgroundColor);
+        {
+            var levelTheme = StyleCache.GetThemeData(new StyleFormatPair(levelData.LevelTheme, levelData.FileFormatType));
+            return new SolidColorBackgroundRenderer(levelTheme.Background);
+        }
 
         if (backgroundData.IsSolidColor)
             return new SolidColorBackgroundRenderer(backgroundData.Color);

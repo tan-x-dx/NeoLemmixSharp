@@ -56,7 +56,7 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
         _lemmingsToRelease = lemmingsToRelease;
     }
 
-    public bool AddSpawnIntervalDelta(int spawnIntervalDelta)
+    public bool TryAddSpawnIntervalDelta(int spawnIntervalDelta)
     {
         int previousSpawnInterval = (int)CurrentSpawnInterval;
         int newSpawnInterval = Math.Clamp(previousSpawnInterval + spawnIntervalDelta, (int)MinSpawnInterval, (int)MaxSpawnInterval);
@@ -120,7 +120,13 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
         return 1 + EngineConstants.MaxAllowedSpawnInterval - spawnInterval;
     }
 
-    public bool Equals(HatchGroup? other) => Id == (other?.Id ?? -1);
+    public bool Equals(HatchGroup? other)
+    {
+        var otherValue = -1;
+        if (other is not null) otherValue = other.Id;
+        return Id == otherValue;
+    }
+
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is HatchGroup other && Id == other.Id;
     public override int GetHashCode() => Id;
 

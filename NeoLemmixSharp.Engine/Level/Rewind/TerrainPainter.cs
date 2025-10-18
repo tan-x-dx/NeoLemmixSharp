@@ -88,8 +88,8 @@ public sealed class TerrainPainter : IDisposable
 
     private readonly struct PixelChangeData : ILevelEventData
     {
-        public readonly int Tick;
         public readonly Point Position;
+        public readonly int Tick;
         public readonly Color FromColor;
         public readonly Color ToColor;
         public readonly PixelType FromPixelType;

@@ -2,7 +2,7 @@
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.IO.Util;
 
-namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
+namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 internal sealed class GadgetReader : NeoLemmixDataReader
 {

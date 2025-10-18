@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Microsoft.Xna.Framework;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
 
@@ -7,6 +8,8 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 public static class NxlvReadingHelpers
 {
     public delegate void TokenAction(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex);
+
+    public static readonly TokenAction DoNothing = (_, _, _) => { };
 
     /// <summary>
     /// Returns the first two tokens from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.
@@ -86,6 +89,15 @@ public static class NxlvReadingHelpers
         }
 
         return true;
+    }
+
+    public static Color ParseColor(ReadOnlySpan<char> colorChars)
+    {
+        byte r = byte.Parse(colorChars.Slice(1, 2), NumberStyles.AllowHexSpecifier, null);
+        byte g = byte.Parse(colorChars.Slice(3, 2), NumberStyles.AllowHexSpecifier, null);
+        byte b = byte.Parse(colorChars.Slice(5, 2), NumberStyles.AllowHexSpecifier, null);
+
+        return new Color(r, g, b);
     }
 
     [DoesNotReturn]

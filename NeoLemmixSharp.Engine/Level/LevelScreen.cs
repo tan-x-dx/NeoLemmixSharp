@@ -68,7 +68,6 @@ public sealed class LevelScreen : IBaseScreen
     public static Viewport LevelViewport => _instance._levelViewport;
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point NormalisePosition(Point levelPosition)
     {
         return new Point(

@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Rendering.Text;
+﻿using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 using System.Diagnostics;
@@ -32,18 +31,48 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
         ButtonAction = this;
     }
 
-    public void UpdateSkillCount(int numberOfSkillsAvailable)
+    public void UpdateSkillCount()
     {
-        if (numberOfSkillsAvailable >= EngineConstants.InfiniteSkillCount)
+        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(SkillTrackingDataId);
+        if (skillTrackingData is null)
         {
-            _skillCountChars[0] = SkillCountDigitFont.InfinityGlyph;
-            _skillCountChars[1] = ' ';
+            ClearSkillCount();
             return;
         }
 
-        Debug.Assert(numberOfSkillsAvailable >= 0);
+        if (skillTrackingData.IsInfinite)
+        {
+            WriteInfiniteSkillCount();
+            return;
+        }
 
-        TextRenderingHelpers.WriteDigits(_skillCountChars, (uint)numberOfSkillsAvailable);
+        var numberOfSkillsAvailable = skillTrackingData.EffectiveQuantity;
+
+        if (numberOfSkillsAvailable == 0)
+        {
+            ClearSkillCount();
+            return;
+        }
+
+        Debug.Assert(numberOfSkillsAvailable > 0);
+        WriteSkillCount((uint)numberOfSkillsAvailable);
+    }
+
+    private void ClearSkillCount()
+    {
+        _skillCountChars[0] = ' ';
+        _skillCountChars[1] = ' ';
+    }
+
+    private void WriteInfiniteSkillCount()
+    {
+        _skillCountChars[0] = SkillCountDigitFont.InfinityGlyph;
+        _skillCountChars[1] = ' ';
+    }
+
+    private void WriteSkillCount(uint skillCount)
+    {
+        TextRenderingHelpers.WriteDigits(_skillCountChars, skillCount);
     }
 
     public override ReadOnlySpan<char> GetDigitsToRender() => _skillCountChars;

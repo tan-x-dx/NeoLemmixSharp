@@ -35,13 +35,13 @@ public sealed class SkillCountDigitFont
         }
 
         glyphWidth = SpecialGlyphWidth;
-        if (c0 is InfinityGlyph - '0')
+        if (c0 is (InfinityGlyph - '0'))
         {
             sourceX = InfinityGlyphOffset;
             return true;
         }
 
-        if (c0 is LockGlyphOffset - '0')
+        if (c0 is (LockGlyphOffset - '0'))
         {
             sourceX = LockGlyphOffset;
             return true;

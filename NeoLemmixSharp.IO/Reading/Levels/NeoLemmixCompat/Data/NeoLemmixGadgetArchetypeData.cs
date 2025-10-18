@@ -1,12 +1,19 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
+using NeoLemmixSharp.IO.Data;
+using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.GadgetReaders;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 
 internal sealed class NeoLemmixGadgetArchetypeData
 {
-    public required string Style { get; init; }
-    public required string GadgetPiece { get; init; }
+    public StyleIdentifier StyleIdentifier { get; }
+    public PieceIdentifier GadgetPieceIdentifier { get; }
+
+    public NeoLemmixGadgetArchetypeData(StyleIdentifier styleIdentifier, PieceIdentifier gadgetPieceIdentifier)
+    {
+        StyleIdentifier = styleIdentifier;
+        GadgetPieceIdentifier = gadgetPieceIdentifier;
+    }
 
     public NeoLemmixGadgetBehaviour Behaviour { get; set; }
 

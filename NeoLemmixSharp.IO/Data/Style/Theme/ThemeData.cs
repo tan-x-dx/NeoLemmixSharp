@@ -4,12 +4,12 @@ namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
 public sealed class ThemeData
 {
-    public required Color Mask { get; init; }
-    public required Color Minimap { get; init; }
-    public required Color Background { get; init; }
-    public required Color OneWayArrows { get; init; }
-    public required Color PickupBorder { get; init; }
-    public required Color PickupInside { get; init; }
+    public Color Mask { get; set; } = Color.White;
+    public Color Minimap { get; set; } = Color.White;
+    public Color Background { get; set; } = Color.White;
+    public Color OneWayArrows { get; set; } = Color.White;
+    public Color PickupBorder { get; set; } = Color.White;
+    public Color PickupInside { get; set; } = Color.White;
 
-    public required LemmingSpriteData LemmingSpriteData { get; init; }
+    public LemmingSpriteData LemmingSpriteData { get; set; } = null!;
 }

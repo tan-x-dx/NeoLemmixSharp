@@ -33,22 +33,22 @@ public static class TextureCache
         for (var i = 0; i < LemmingActionConstants.NumberOfLemmingActions; i++)
         {
             var lemmingActionData = LemmingActionConstants.GetLemmingActionDataFromId(i);
-            LoadLemmingActionTexture(lemmingActionData, contentManager);
+            var sprite = LoadDefaultLemmingActionTexture(lemmingActionData, contentManager);
+            var pieceIdentifier = new PieceIdentifier(lemmingActionData.LemmingActionFileName);
+
+            var key = new TextureTypeKey(IoConstants.DefaultStyleIdentifier, pieceIdentifier, TextureType.LemmingSprite);
+
+            LongLivedTextures.Add(key, new TextureUsageData(sprite));
         }
     }
 
-    private static void LoadLemmingActionTexture(LemmingActionConstants.LemmingActionLookupData lemmingActionData, ContentManager contentManager)
+    private static Texture2D LoadDefaultLemmingActionTexture(LemmingActionConstants.LemmingActionLookupData lemmingActionData, ContentManager contentManager)
     {
         const string SpritesFolder = "sprites/lemming/";
 
-        var pieceIdentifier = new PieceIdentifier(lemmingActionData.LemmingActionFileName);
-
         var spriteName = SpritesFolder + lemmingActionData.LemmingActionFileName;
 
-        var sprite = contentManager.Load<Texture2D>(spriteName);
-        var key = new TextureTypeKey(IoConstants.DefaultStyleIdentifier, pieceIdentifier, TextureType.LemmingSprite);
-
-        LongLivedTextures.Add(key, new TextureUsageData(sprite));
+        return contentManager.Load<Texture2D>(spriteName);
     }
 
     public static Texture2D GetOrLoadTexture(

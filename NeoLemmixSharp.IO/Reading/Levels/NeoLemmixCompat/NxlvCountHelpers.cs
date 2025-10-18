@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
-using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 

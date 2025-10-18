@@ -1,7 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
+using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.GadgetReaders;
+namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.GadgetReaders;
 
 internal sealed class PrimaryAnimationReader : NeoLemmixDataReader
 {

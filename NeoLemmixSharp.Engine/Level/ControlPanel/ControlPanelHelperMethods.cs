@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.Objectives;
@@ -17,7 +18,6 @@ public static class ControlPanelHelperMethods
     }
 
     public static SkillAssignButton[] SetUpSkillAssignButtons(
-        LevelControlPanel controlPanel,
         ControlPanelParameterSet controlPanelParameters,
         SkillSetManager skillSetManager)
     {
@@ -35,19 +35,16 @@ public static class ControlPanelHelperMethods
 
             foreach (var classicSkill in allClassicSkills)
             {
-                var skillTrackingData = skillSetManager.GetSkillTrackingData(classicSkill.Id, 0);
+                var skillTrackingData = skillSetManager.GetSkillTrackingData(classicSkill.Id, EngineConstants.ClassicTribeId);
 
                 int skillTrackingDataId;
-                int skillCount;
                 if (skillTrackingData is null)
                 {
                     skillTrackingDataId = -1;
-                    skillCount = 0;
                 }
                 else
                 {
                     skillTrackingDataId = skillTrackingData.SkillTrackingDataId;
-                    skillCount = skillTrackingData.EffectiveQuantity;
                 }
 
                 var skillAssignButton = new SkillAssignButton(
@@ -57,7 +54,7 @@ public static class ControlPanelHelperMethods
                     classicSkill.Id,
                     skillTrackingDataId);
 
-                skillAssignButton.UpdateSkillCount(skillCount);
+                skillAssignButton.UpdateSkillCount();
                 result[i++] = skillAssignButton;
             }
 
@@ -80,7 +77,7 @@ public static class ControlPanelHelperMethods
                     skillTrackingData.Skill.Id,
                     skillTrackingData.SkillTrackingDataId);
                 result[i++] = skillAssignButton;
-                skillAssignButton.UpdateSkillCount(skillTrackingData.EffectiveQuantity);
+                skillAssignButton.UpdateSkillCount();
             }
 
             return result;

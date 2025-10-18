@@ -4,8 +4,16 @@ namespace NeoLemmixSharp.IO.Data.Style.Theme;
 
 public sealed class LemmingActionSpriteData
 {
-    public required int LemmingActionId { get; init; }
-    public required Point AnchorPoint { get; init; }
+    private readonly LemmingActionSpriteLayerData[] _layers;
+    public int LemmingActionId { get; }
+    public Point AnchorPoint { get; }
 
-    public required LemmingActionSpriteLayerData[] Layers { get; init; }
+    public ReadOnlySpan<LemmingActionSpriteLayerData> Layers => new(_layers);
+
+    public LemmingActionSpriteData(int lemmingActionId, Point anchorPoint, LemmingActionSpriteLayerData[] layers)
+    {
+        _layers = layers;
+        LemmingActionId = lemmingActionId;
+        AnchorPoint = anchorPoint;
+    }
 }
