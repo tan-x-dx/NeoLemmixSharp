@@ -48,12 +48,11 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
             PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
             Name = _stringIdLookup[nameId],
 
-            IsSteel = isSteel,
+            NineSliceData = nineSliceData,
             ResizeType = resizeType,
-
             DefaultSize = defaultSize,
 
-            NineSliceData = nineSliceData
+            IsSteel = isSteel
         };
 
         return newTerrainArchetypeData;

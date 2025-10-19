@@ -12,7 +12,6 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
     private readonly StyleIdentifier _styleIdentifier;
     private readonly PieceIdentifier _terrainPieceIdentifier;
 
-    private bool _isSteel;
     private ResizeType _resizeType = ResizeType.None;
 
     private int _nineSliceRight;
@@ -22,6 +21,7 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 
     private int _defaultWidth;
     private int _defaultHeight;
+    private bool _isSteel;
 
     public TerrainArchetypeDataReader(
         string terrainPieceFilePath,
@@ -101,11 +101,13 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 
     private void SetDefaultWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        _resizeType |= ResizeType.ResizeHorizontal;
         _defaultWidth = int.Parse(secondToken);
     }
 
     private void SetDefaultHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        _resizeType |= ResizeType.ResizeVertical;
         _defaultHeight = int.Parse(secondToken);
     }
 
@@ -115,12 +117,10 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
         PieceIdentifier = _terrainPieceIdentifier,
         Name = GetPieceName(),
 
-        IsSteel = _isSteel,
-        ResizeType = _resizeType,
-
         NineSliceData = GetNineSliceData(),
-
-        DefaultSize = new Size(_defaultWidth, _defaultHeight)
+        ResizeType = _resizeType,
+        DefaultSize = new Size(_defaultWidth, _defaultHeight),
+        IsSteel = _isSteel
     };
 
     private string GetPieceName()

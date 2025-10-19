@@ -16,6 +16,7 @@ namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat;
 internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleReader>
 {
     private readonly StyleData _styleData;
+    private readonly UniqueStringSet _uniqueStringSet;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static NeoLemmixStyleReader Create(StyleIdentifier styleIdentifier) => new(styleIdentifier);
@@ -27,7 +28,6 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
 
     public StyleData ReadStyle()
     {
-        var uniqueStringSet = new UniqueStringSet();
         var styleFolderPath = _styleData.Identifier.GetFolderFilePath();
 
         // Reuse the array where possible
@@ -36,12 +36,12 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         _styleData.ThemeData = ReadThemeData(styleFolderPath, dataReaderArray);
 
         ReadTerrainArchetypeData(styleFolderPath, dataReaderArray);
-        ReadGadgetArchetypeData(styleFolderPath, uniqueStringSet);
+        ReadGadgetArchetypeData(styleFolderPath);
 
         return _styleData;
     }
 
-    private ThemeData ReadThemeData(string styleFolderPath, NeoLemmixDataReader[] dataReaderArray)
+    private static ThemeData ReadThemeData(string styleFolderPath, NeoLemmixDataReader[] dataReaderArray)
     {
         if (TryLocateThemeFile(styleFolderPath, out var themeFilePath))
             return ReadThemeDataFromFilePath(themeFilePath, dataReaderArray);
@@ -68,7 +68,7 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         return false;
     }
 
-    private ThemeData ReadThemeDataFromFilePath(string themeFilePath, NeoLemmixDataReader[] dataReaderArray)
+    private static ThemeData ReadThemeDataFromFilePath(string themeFilePath, NeoLemmixDataReader[] dataReaderArray)
     {
         var result = new ThemeData();
 
@@ -83,8 +83,8 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
     private void ReadTerrainArchetypeData(string styleFolderPath, NeoLemmixDataReader[] dataReaderArray)
     {
         var terrainFilePaths = GetFilePaths(
-            NeoLemmixFileExtensions.TerrainFileExtension.AsSpan(),
-            Path.Combine(styleFolderPath, DefaultFileExtensions.TerrainFolderName));
+            Path.Combine(styleFolderPath, DefaultFileExtensions.TerrainFolderName),
+            NeoLemmixFileExtensions.TerrainFileExtension.AsSpan());
 
         foreach (var filePath in terrainFilePaths)
         {
@@ -106,20 +106,20 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         return terrainArchetypeDataReader.CreateTerrainArchetypeData();
     }
 
-    private void ReadGadgetArchetypeData(string styleFolderPath, UniqueStringSet uniqueStringSet)
+    private void ReadGadgetArchetypeData(string styleFolderPath)
     {
         var gadgetFilePaths = GetFilePaths(
-            NeoLemmixFileExtensions.GadgetFileExtension.AsSpan(),
-            Path.Combine(styleFolderPath, DefaultFileExtensions.GadgetFolderName));
+            Path.Combine(styleFolderPath, DefaultFileExtensions.GadgetFolderName),
+            NeoLemmixFileExtensions.GadgetFileExtension.AsSpan());
 
         foreach (var filePath in gadgetFilePaths)
         {
-            var newGadgetArchetypeData = ProcessGadgetFile(filePath, uniqueStringSet);
+            var newGadgetArchetypeData = ProcessGadgetFile(filePath);
             _styleData.GadgetArchetypeDataLookup.Add(newGadgetArchetypeData.PieceIdentifier, newGadgetArchetypeData);
         }
     }
 
-    private GadgetArchetypeData ProcessGadgetFile(string filePath, UniqueStringSet uniqueStringSet)
+    private GadgetArchetypeData ProcessGadgetFile(string filePath)
     {
         var pieceIdentifier = new PieceIdentifier(Path.GetFileNameWithoutExtension(filePath));
 
@@ -129,7 +129,7 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         {
             new GadgetArchetypeDataReader(neoLemmixGadgetArchetypeData),
             new PrimaryAnimationReader(neoLemmixGadgetArchetypeData),
-            new SecondaryAnimationReader(neoLemmixGadgetArchetypeData, uniqueStringSet)
+            new SecondaryAnimationReader(neoLemmixGadgetArchetypeData, _uniqueStringSet)
         };
 
         using var dataReaderList = new DataReaderList(filePath, dataReaderArray);
@@ -143,7 +143,7 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         throw new NotImplementedException();
     }
 
-    private static List<string> GetFilePaths(ReadOnlySpan<char> requiredFileExtension, string folderPath)
+    private static List<string> GetFilePaths(string folderPath, ReadOnlySpan<char> requiredFileExtension)
     {
         var allFiles = Directory.GetFiles(folderPath);
         var relevantFilePaths = new List<string>();
