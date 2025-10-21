@@ -115,19 +115,13 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
     {
         StyleIdentifier = _styleIdentifier,
         PieceIdentifier = _terrainPieceIdentifier,
-        Name = GetPieceName(),
+        Name = _terrainPieceIdentifier.ToString(),
 
         NineSliceData = GetNineSliceData(),
         ResizeType = _resizeType,
         DefaultSize = new Size(_defaultWidth, _defaultHeight),
         IsSteel = _isSteel
     };
-
-    private string GetPieceName()
-    {
-        var pieceName = Path.GetFileNameWithoutExtension(_terrainPieceFilePath);
-        return pieceName;
-    }
 
     private RectangularRegion GetNineSliceData()
     {

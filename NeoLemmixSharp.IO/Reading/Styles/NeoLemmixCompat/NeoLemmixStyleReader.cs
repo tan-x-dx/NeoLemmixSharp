@@ -135,12 +135,7 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         using var dataReaderList = new DataReaderList(filePath, dataReaderArray);
         dataReaderList.ReadFile();
 
-        return ConvertToGadgetArchetypeData(neoLemmixGadgetArchetypeData);
-    }
-
-    private GadgetArchetypeData ConvertToGadgetArchetypeData(NeoLemmixGadgetArchetypeData neoLemmixGadgetArchetypeData)
-    {
-        throw new NotImplementedException();
+        return GadgetConverter.ConvertToGadgetArchetypeData(neoLemmixGadgetArchetypeData);
     }
 
     private static List<string> GetFilePaths(string folderPath, ReadOnlySpan<char> requiredFileExtension)

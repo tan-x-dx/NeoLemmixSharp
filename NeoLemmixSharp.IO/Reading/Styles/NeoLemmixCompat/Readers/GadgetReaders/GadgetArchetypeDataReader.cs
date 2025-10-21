@@ -172,8 +172,7 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
     {
     }
 
-    private NeoLemmixGadgetBehaviour GetNeoLemmixGadgetType(
-        ReadOnlySpan<char> token)
+    private static NeoLemmixGadgetBehaviour GetNeoLemmixGadgetType(ReadOnlySpan<char> token)
     {
         var alternateLookup = _gadgetBehaviourLookup.GetAlternateLookup<ReadOnlySpan<char>>();
 

@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
+﻿namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat;
 
 internal static class NeoLemmixStyleHelpers
 {
