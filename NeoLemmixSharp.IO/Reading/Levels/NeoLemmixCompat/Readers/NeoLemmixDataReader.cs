@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
+﻿namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 public abstract class NeoLemmixDataReader
 {
@@ -20,7 +18,6 @@ public abstract class NeoLemmixDataReader
 
     protected void RegisterTokenAction(string token, NxlvReadingHelpers.TokenAction action) => _tokenActions.Add(token, action);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected static bool TokensMatch(
         ReadOnlySpan<char> firstToken,
         ReadOnlySpan<char> secondToken)
@@ -49,6 +46,15 @@ public abstract class NeoLemmixDataReader
     {
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
+        return ProcessTokenPair(line, firstToken, secondToken, secondTokenIndex);
+    }
+
+    protected bool ProcessTokenPair(
+        ReadOnlySpan<char> line,
+        ReadOnlySpan<char> firstToken,
+        ReadOnlySpan<char> secondToken,
+        int secondTokenIndex)
+    {
         var alternateLookup = _tokenActions.GetAlternateLookup<ReadOnlySpan<char>>();
 
         if (alternateLookup.TryGetValue(firstToken, out var tokenAction))

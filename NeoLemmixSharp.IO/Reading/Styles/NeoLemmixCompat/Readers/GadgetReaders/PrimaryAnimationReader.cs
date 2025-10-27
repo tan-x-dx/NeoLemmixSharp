@@ -38,13 +38,13 @@ internal sealed class PrimaryAnimationReader : NeoLemmixDataReader
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
         // Special handling for pickups specifically
-        if (TokensMatch(firstToken, "NAME") && TokensMatch(firstToken, "*PICKUP"))
+        if (TokensMatch(firstToken, "NAME") && TokensMatch(secondToken, "*PICKUP"))
         {
             _gadgetArchetypeData.IsSkillPickup = true;
             return false;
         }
 
-        return ProcessLineTokens(line);
+        return ProcessTokenPair(line, firstToken, secondToken, secondTokenIndex);
     }
 
     private void SetFrameCount(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

@@ -95,7 +95,7 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
             return true;
         }
 
-        return ProcessLineTokens(line);
+        return ProcessTokenPair(line, firstToken, secondToken, secondTokenIndex);
     }
 
     private void SetTriggerX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -115,8 +115,10 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
 
     private void SetTriggerHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        var rawHeight = int.Parse(secondToken);
         // Subtract 1 from height because of differences in physics between engines
-        _neoLemmixGadgetArchetypeData.TriggerHeight = Math.Max(int.Parse(secondToken) - 1, 1);
+        rawHeight--;
+        _neoLemmixGadgetArchetypeData.TriggerHeight = Math.Max(rawHeight, 1);
     }
 
     private void SetSound(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

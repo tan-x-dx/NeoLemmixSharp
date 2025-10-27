@@ -67,7 +67,7 @@ internal sealed class LevelDataReader : NeoLemmixDataReader
             return true;
         }
 
-        return ProcessLineTokens(line);
+        return ProcessTokenPair(line, firstToken, secondToken, secondTokenIndex);
     }
 
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

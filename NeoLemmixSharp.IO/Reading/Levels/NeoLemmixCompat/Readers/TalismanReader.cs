@@ -45,7 +45,7 @@ internal sealed class TalismanReader : NeoLemmixDataReader
             return false;
         }
 
-        return ProcessLineTokens(line);
+        return ProcessTokenPair(line, firstToken, secondToken, secondTokenIndex);
     }
 
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
