@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Data;
-using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.GadgetReaders;
+using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.GadgetData;
+using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 
@@ -33,11 +34,5 @@ internal sealed class NeoLemmixGadgetArchetypeData
     public int PrimaryAnimationOffsetY { get; set; }
     public bool IsSkillPickup { get; set; }
 
-    // public List<AnimationData> AnimationData { get; } = new();
-
-    public Point[] ToRectangularTriggerData() =>
-    [
-        new Point(TriggerX, TriggerY),
-        new Point(TriggerX + TriggerWidth - 1, TriggerY + TriggerHeight - 1)
-    ];
+    public List<NeoLemmixGadgetAnimationData> AnimationData { get; } = new();
 }

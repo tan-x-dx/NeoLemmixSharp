@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.GadgetReaders;
+﻿namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
 
 /*public sealed class AnimationTriggerReader : NeoLemmixDataReader
 {

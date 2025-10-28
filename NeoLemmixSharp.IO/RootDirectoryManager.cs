@@ -48,6 +48,8 @@ public static class RootDirectoryManager
 #endif
     }
 
+    public static string GetFolderFilePath(this StyleIdentifier styleIdentifier) => Path.Combine(StyleFolderDirectory, styleIdentifier.ToString());
+
     public static string GetCorrespondingImageFile(string filePath)
     {
         return Path.ChangeExtension(filePath, DefaultFileExtensions.PngFileExtension);

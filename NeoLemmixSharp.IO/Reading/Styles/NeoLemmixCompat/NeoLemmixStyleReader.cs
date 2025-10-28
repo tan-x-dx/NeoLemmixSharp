@@ -6,7 +6,7 @@ using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers;
-using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.GadgetReaders;
+using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
 using NeoLemmixSharp.IO.Util;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -43,29 +43,14 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
 
     private static ThemeData ReadThemeData(string styleFolderPath, NeoLemmixDataReader[] dataReaderArray)
     {
-        if (TryLocateThemeFile(styleFolderPath, out var themeFilePath))
-            return ReadThemeDataFromFilePath(themeFilePath, dataReaderArray);
+        var themeDataFilePaths = GetFilePaths(
+            styleFolderPath,
+            NeoLemmixFileExtensions.ThemeFileExtension.AsSpan());
+
+        if (themeDataFilePaths.Count == 1)
+            return ReadThemeDataFromFilePath(themeDataFilePaths[0], dataReaderArray);
 
         return StyleCache.DefaultStyleData.ThemeData;
-    }
-
-    private static bool TryLocateThemeFile(string styleFolderPath, [MaybeNullWhen(false)] out string foundFilePath)
-    {
-        var files = Directory.GetFiles(styleFolderPath);
-
-        foreach (var filePath in files)
-        {
-            var fileExtension = Path.GetExtension(filePath.AsSpan());
-
-            if (fileExtension.Equals(NeoLemmixFileExtensions.ThemeFileExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                foundFilePath = filePath;
-                return true;
-            }
-        }
-
-        foundFilePath = null;
-        return false;
     }
 
     private static ThemeData ReadThemeDataFromFilePath(string themeFilePath, NeoLemmixDataReader[] dataReaderArray)

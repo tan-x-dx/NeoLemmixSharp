@@ -63,10 +63,10 @@ internal sealed class StringDataSectionWriter : StyleDataSectionWriter
             _stringIdLookup.RecordString(gadgetArchetypeDatum.PieceIdentifier);
             _stringIdLookup.RecordString(gadgetArchetypeDatum.GadgetName);
 
-            /*     foreach (var gadgetStateData in gadgetArchetypeDatum.AllGadgetStateData)
-                 {
-                     _stringIdLookup.RecordString(gadgetStateData.StateName);
-                 }*/
+            foreach (var gadgetStateData in gadgetArchetypeDatum.SpecificationData.AllStates)
+            {
+                _stringIdLookup.RecordString(gadgetStateData.StateName);
+            }
         }
     }
 }
