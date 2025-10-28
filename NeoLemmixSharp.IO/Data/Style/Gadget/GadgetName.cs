@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Data.Style.Gadget;
 
-public readonly struct GadgetName
+public readonly struct GadgetName : IEquatable<GadgetName>
 {
     private readonly string _gadgetName;
 
@@ -19,4 +19,6 @@ public readonly struct GadgetName
     public override int GetHashCode() => _gadgetName.GetHashCode();
     public static bool operator ==(GadgetName left, GadgetName right) => left.Equals(right);
     public static bool operator !=(GadgetName left, GadgetName right) => !left.Equals(right);
+
+    public static implicit operator GadgetName(string? gadgetStateName) => new(gadgetStateName);
 }
