@@ -24,7 +24,7 @@ public readonly struct FacingDirection : IIdEquatable<FacingDirection>
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]
-    public FacingDirection GetOpposite() => new(Id + 1);
+    public FacingDirection GetOpposite() => new(Id ^ 1);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
