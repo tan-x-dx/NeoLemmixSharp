@@ -130,6 +130,13 @@ public sealed class HatchGroup : IIdEquatable<HatchGroup>
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is HatchGroup other && Id == other.Id;
     public override int GetHashCode() => Id;
 
-    public static bool operator ==(HatchGroup left, HatchGroup right) => left.Id == right.Id;
-    public static bool operator !=(HatchGroup left, HatchGroup right) => left.Id != right.Id;
+    public static bool operator ==(HatchGroup? left, HatchGroup? right)
+    {
+        var leftValue = -1;
+        if (left is not null) leftValue = left.Id;
+        var rightValue = -1;
+        if (right is not null) rightValue = right.Id;
+        return leftValue == rightValue;
+    }
+    public static bool operator !=(HatchGroup? left, HatchGroup? right) => !(left == right);
 }
