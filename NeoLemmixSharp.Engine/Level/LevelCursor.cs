@@ -10,23 +10,27 @@ namespace NeoLemmixSharp.Engine.Level;
 public sealed class LevelCursor
 {
     public Lemming? CurrentlyHighlightedLemming { get; private set; }
-
-    private FacingDirection? _facingDirection;
-    private bool _selectOnlyWalkers;
-    private bool _selectOnlyUnassigned;
+    private Point _cursorPosition;
 
     private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
-
     public uint NumberOfLemmingsUnderCursor { get; private set; }
-    public Point CursorPosition { private get; set; }
 
     public Color Color1 { get; private set; }
     public Color Color2 { get; private set; }
     public Color Color3 { get; private set; }
 
+    private FacingDirection? _desiredFacingDirection;
+    private bool _selectOnlyWalkers;
+    private bool _selectOnlyUnassigned;
+
     public LevelCursor()
     {
         SetSelectedTribe(null);
+    }
+
+    public void SetCursorPosition(Point position)
+    {
+        _cursorPosition = position;
     }
 
     public void Tick()
@@ -40,15 +44,15 @@ public sealed class LevelCursor
 
         if (LevelScreen.LevelInputController.SelectLeftFacingLemmings.IsActionDown)
         {
-            _facingDirection = FacingDirection.Left;
+            _desiredFacingDirection = FacingDirection.Left;
         }
         else if (LevelScreen.LevelInputController.SelectRightFacingLemmings.IsActionDown)
         {
-            _facingDirection = FacingDirection.Right;
+            _desiredFacingDirection = FacingDirection.Right;
         }
         else
         {
-            _facingDirection = null;
+            _desiredFacingDirection = null;
         }
     }
 
@@ -70,7 +74,7 @@ public sealed class LevelCursor
 
     private void GetLemmingsNearCursorPosition(out LemmingEnumerable result)
     {
-        var c = CursorPosition;
+        var c = _cursorPosition;
 
         // Cursor position is the bottom right pixel of the middle square in the cursor sprite.
         // Hence, for the top left position, add one extra pixel to fix offset.
@@ -114,7 +118,7 @@ public sealed class LevelCursor
     {
         var lemmingPosition = lemming.CenterPosition;
 
-        var delta = LevelScreen.GetNormalisedDelta(CursorPosition, lemmingPosition);
+        var delta = LevelScreen.GetNormalisedDelta(_cursorPosition, lemmingPosition);
 
         return Math.Abs(delta.X) < EngineConstants.CursorRadius && Math.Abs(delta.Y) < EngineConstants.CursorRadius;
     }
@@ -123,8 +127,8 @@ public sealed class LevelCursor
     private bool LemmingIsAbleToBeSelected(Lemming lemming)
     {
         // Directional select
-        if (_facingDirection.HasValue &&
-            lemming.FacingDirection != _facingDirection &&
+        if (_desiredFacingDirection.HasValue &&
+            lemming.FacingDirection != _desiredFacingDirection &&
             !(false))//and(not(IsHighlight or IsReplay))
             return false;
 
@@ -197,7 +201,7 @@ public sealed class LevelCursor
     {
         var lemmingPosition = lemming.CenterPosition;
 
-        var delta = LevelScreen.GetNormalisedDelta(CursorPosition, lemmingPosition);
+        var delta = LevelScreen.GetNormalisedDelta(_cursorPosition, lemmingPosition);
 
         var dx = delta.X;
         var dy = delta.Y;
