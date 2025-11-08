@@ -162,4 +162,28 @@ public static class Helpers
 
         return newArray;
     }
+
+    public static ReadOnlySpan<string> GetFilePathsWithExtension(string folderPath, ReadOnlySpan<char> requiredFileExtension)
+    {
+        var allFiles = Directory.GetFiles(folderPath);
+        var subLength = 0;
+
+        for (int i = 0; i < allFiles.Length; i++)
+        {
+            var file = allFiles[i];
+            var fileExtension = Path.GetExtension(file.AsSpan());
+
+            if (requiredFileExtension.Equals(fileExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                allFiles[subLength++] = file;
+            }
+        }
+
+        // Clear the upper indices of unused strings
+        var s = new Span<string>(allFiles);
+        s = s[subLength..];
+        s.Clear();
+
+        return new ReadOnlySpan<string>(allFiles, 0, subLength);
+    }
 }

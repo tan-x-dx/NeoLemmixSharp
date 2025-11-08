@@ -7,10 +7,6 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 public static class NxlvReadingHelpers
 {
-    public delegate void TokenAction(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex);
-
-    public static readonly TokenAction DoNothing = (_, _, _) => { };
-
     /// <summary>
     /// Returns the first two tokens from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.
     /// If no such tokens exists, empty spans are returned.

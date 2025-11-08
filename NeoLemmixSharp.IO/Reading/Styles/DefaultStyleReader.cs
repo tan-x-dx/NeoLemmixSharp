@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.IO.Data;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Reading.Styles.Sections;
 using NeoLemmixSharp.IO.Versions;
@@ -31,17 +32,12 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
         var styleFolderPath = style.GetFolderFilePath();
         var defaultFileExtensionSpan = DefaultFileExtensions.StyleFileExtension.AsSpan();
 
-        var files = Directory.GetFiles(styleFolderPath);
+        var allStyleFiles = Helpers.GetFilePathsWithExtension(styleFolderPath, defaultFileExtensionSpan);
 
-        foreach (var filePath in files)
+        if (allStyleFiles.Length == 1)
         {
-            var fileExtension = Path.GetExtension(filePath.AsSpan());
-
-            if (defaultFileExtensionSpan.Equals(fileExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                foundFilePath = filePath;
-                return true;
-            }
+            foundFilePath = allStyleFiles[0];
+            return true;
         }
 
         foundFilePath = null;

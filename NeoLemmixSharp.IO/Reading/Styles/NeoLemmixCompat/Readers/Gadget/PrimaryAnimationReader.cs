@@ -1,12 +1,14 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
+using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.GadgetData;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
 
 internal sealed class PrimaryAnimationReader : NeoLemmixDataReader
 {
     private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
+    private readonly NeoLemmixGadgetAnimationData _neoLemmixGadgetAnimationData = new();
 
     public PrimaryAnimationReader(
         NeoLemmixGadgetArchetypeData gadgetArchetypeData)
@@ -14,9 +16,12 @@ internal sealed class PrimaryAnimationReader : NeoLemmixDataReader
     {
         _gadgetArchetypeData = gadgetArchetypeData;
 
-        SetNumberOfTokens(9);
+        SetNumberOfTokens(12);
 
         RegisterTokenAction("FRAMES", SetFrameCount);
+        RegisterTokenAction("NAME", SetName);
+        RegisterTokenAction("WIDTH", SetWidth);
+        RegisterTokenAction("HEIGHT", SetHeight);
         RegisterTokenAction("OFFSET_X", SetOffsetX);
         RegisterTokenAction("OFFSET_Y", SetOffsetY);
         RegisterTokenAction("NINE_SLICE_TOP", SetNineSliceTop);
@@ -49,17 +54,32 @@ internal sealed class PrimaryAnimationReader : NeoLemmixDataReader
 
     private void SetFrameCount(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.PrimaryAnimationFrameCount = int.Parse(secondToken);
+        _neoLemmixGadgetAnimationData.FrameCount = int.Parse(secondToken);
+    }
+
+    private void SetName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+
+    }
+
+    private void SetWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _gadgetArchetypeData.SpriteWidth = int.Parse(secondToken);
+    }
+
+    private void SetHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _gadgetArchetypeData.SpriteHeight = int.Parse(secondToken);
     }
 
     private void SetOffsetX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.PrimaryAnimationOffsetX = int.Parse(secondToken);
+        _neoLemmixGadgetAnimationData.OffsetX = int.Parse(secondToken);
     }
 
     private void SetOffsetY(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _gadgetArchetypeData.PrimaryAnimationOffsetY = int.Parse(secondToken);
+        _neoLemmixGadgetAnimationData.OffsetY = int.Parse(secondToken);
     }
 
     private void SetNineSliceTop(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

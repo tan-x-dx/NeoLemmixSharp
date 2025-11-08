@@ -104,7 +104,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         FontBank.Initialise(Content);
         MenuSpriteBank.Initialise(Content);
         CommonSprites.Initialise(Content, GraphicsDevice);
-        UiSprites.Initialise(Content);
+        // UiSprites.Initialise(Content);
 
         StyleCache.Initialise();
         TextureCache.Initialise(Content, GraphicsDevice);

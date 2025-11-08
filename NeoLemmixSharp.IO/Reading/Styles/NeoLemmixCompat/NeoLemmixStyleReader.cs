@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.IO.Data;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Theme;
@@ -8,7 +9,6 @@ using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
 using NeoLemmixSharp.IO.Util;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat;
@@ -43,11 +43,11 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
 
     private static ThemeData ReadThemeData(string styleFolderPath, NeoLemmixDataReader[] dataReaderArray)
     {
-        var themeDataFilePaths = GetFilePaths(
+        var themeDataFilePaths = Helpers.GetFilePathsWithExtension(
             styleFolderPath,
             NeoLemmixFileExtensions.ThemeFileExtension.AsSpan());
 
-        if (themeDataFilePaths.Count == 1)
+        if (themeDataFilePaths.Length == 1)
             return ReadThemeDataFromFilePath(themeDataFilePaths[0], dataReaderArray);
 
         return StyleCache.DefaultStyleData.ThemeData;
@@ -67,9 +67,11 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
 
     private void ReadTerrainArchetypeData(string styleFolderPath, NeoLemmixDataReader[] dataReaderArray)
     {
-        var terrainFilePaths = GetFilePaths(
+        var terrainFilePaths = Helpers.GetFilePathsWithExtension(
             Path.Combine(styleFolderPath, DefaultFileExtensions.TerrainFolderName),
             NeoLemmixFileExtensions.TerrainFileExtension.AsSpan());
+
+        _styleData.TerrainArchetypeDataLookup.EnsureCapacity(terrainFilePaths.Length);
 
         foreach (var filePath in terrainFilePaths)
         {
@@ -93,9 +95,11 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
 
     private void ReadGadgetArchetypeData(string styleFolderPath)
     {
-        var gadgetFilePaths = GetFilePaths(
+        var gadgetFilePaths = Helpers.GetFilePathsWithExtension(
             Path.Combine(styleFolderPath, DefaultFileExtensions.GadgetFolderName),
             NeoLemmixFileExtensions.GadgetFileExtension.AsSpan());
+
+        _styleData.GadgetArchetypeDataLookup.EnsureCapacity(gadgetFilePaths.Length);
 
         foreach (var filePath in gadgetFilePaths)
         {
@@ -121,25 +125,6 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         dataReaderList.ReadFile();
 
         return GadgetConverter.ConvertToGadgetArchetypeData(neoLemmixGadgetArchetypeData);
-    }
-
-    private static List<string> GetFilePaths(string folderPath, ReadOnlySpan<char> requiredFileExtension)
-    {
-        var allFiles = Directory.GetFiles(folderPath);
-        var relevantFilePaths = new List<string>();
-
-        foreach (var file in allFiles)
-        {
-            var span = file.AsSpan();
-            var fileExtension = Path.GetExtension(span);
-
-            if (requiredFileExtension.Equals(fileExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                relevantFilePaths.Add(file);
-            }
-        }
-
-        return relevantFilePaths;
     }
 
     public void Dispose()

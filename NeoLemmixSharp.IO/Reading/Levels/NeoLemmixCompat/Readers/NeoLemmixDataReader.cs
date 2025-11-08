@@ -2,8 +2,12 @@
 
 public abstract class NeoLemmixDataReader
 {
+    protected delegate void TokenAction(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex);
+
+    protected static readonly TokenAction DoNothing = (_, _, _) => { };
+
     public string IdentifierToken { get; }
-    private readonly Dictionary<string, NxlvReadingHelpers.TokenAction> _tokenActions = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, TokenAction> _tokenActions = new(StringComparer.OrdinalIgnoreCase);
     private readonly UnknownTokenBehaviour _unknownTokenBehaviour;
 
     public bool FinishedReading { get; protected set; }
@@ -16,7 +20,7 @@ public abstract class NeoLemmixDataReader
 
     protected void SetNumberOfTokens(int numberOfTokens) => _tokenActions.EnsureCapacity(numberOfTokens);
 
-    protected void RegisterTokenAction(string token, NxlvReadingHelpers.TokenAction action) => _tokenActions.Add(token, action);
+    protected void RegisterTokenAction(string token, TokenAction action) => _tokenActions.Add(token, action);
 
     protected static bool TokensMatch(
         ReadOnlySpan<char> firstToken,
