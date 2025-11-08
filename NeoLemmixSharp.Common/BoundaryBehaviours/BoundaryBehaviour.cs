@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
-[DebuggerDisplay("{DimensionType}:{BoundaryBehaviourType} [{_levelLength}]")]
+[DebuggerDisplay("{_dimensionType}:{_boundaryBehaviourType} [{_levelLength}]")]
 public sealed class BoundaryBehaviour : IDisposable
 {
     private const int MaxNumberOfViewportRenderIntervals = 2;
@@ -162,24 +162,59 @@ public sealed class BoundaryBehaviour : IDisposable
         // Therefore, we can avoid a call to the modulo operator
         // by simply adding/subtracting the level length
 
-        var delta = _levelLength;
+        var levelLength = _levelLength;
         if (a < 0)
         {
             do
             {
-                a += delta;
+                a += levelLength;
             }
             while (a < 0);
         }
         else
         {
-            while (a >= delta)
+            while (a >= levelLength)
             {
-                a -= delta;
+                a -= levelLength;
             }
         }
 
         return a;
+    }
+
+    [Pure]
+    public int GetNormalisedDelta(int a1, int a2)
+    {
+        var result = a2 - a1;
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
+            return result;
+
+        var levelLength = _levelLength;
+        var halfLevelLength = levelLength >>> 1;
+        result += halfLevelLength;
+
+        // Most likely situation for Wrap normalisation is the input
+        // being just outside the bounds [0, _levelLength - 1].
+        // Therefore, we can avoid a call to the modulo operator
+        // by simply adding/subtracting the level length
+
+        if (result < 0)
+        {
+            do
+            {
+                result += levelLength;
+            }
+            while (result < 0);
+        }
+        else
+        {
+            while (result >= levelLength)
+            {
+                result -= levelLength;
+            }
+        }
+        result -= halfLevelLength;
+        return result;
     }
 
     [Pure]
@@ -252,32 +287,6 @@ public sealed class BoundaryBehaviour : IDisposable
 
             return interval2Start + _levelLength < interval1End;
         }
-    }
-
-    [Pure]
-    public int GetDelta(int a1, int a2)
-    {
-        var delta = a2 - a1;
-
-        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
-            return delta;
-
-        var twiceDelta = delta * 2;
-
-        if (delta < 0)
-        {
-            twiceDelta = -twiceDelta;
-
-            if (twiceDelta > _levelLength)
-                return delta + _levelLength;
-        }
-        else
-        {
-            if (twiceDelta > _levelLength)
-                return delta - _levelLength;
-        }
-
-        return delta;
     }
 
     private unsafe void UpdateViewPortRenderIntervals()

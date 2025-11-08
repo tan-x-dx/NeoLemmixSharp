@@ -114,6 +114,7 @@ public sealed class LevelInputController : IInitialisable
 
         return;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static void SetEnabledWithFlag(InputAction inputAction, LevelParameters testFlag)
         {
             inputAction.SetEnabled(LevelScreen.LevelParameters.Contains(testFlag));

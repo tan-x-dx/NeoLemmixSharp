@@ -9,6 +9,8 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelCursor
 {
+    public Lemming? CurrentlyHighlightedLemming { get; private set; }
+
     private FacingDirection? _facingDirection;
     private bool _selectOnlyWalkers;
     private bool _selectOnlyUnassigned;
@@ -17,8 +19,6 @@ public sealed class LevelCursor
 
     public uint NumberOfLemmingsUnderCursor { get; private set; }
     public Point CursorPosition { private get; set; }
-
-    public Lemming? CurrentlyHighlightedLemming { get; private set; }
 
     public Color Color1 { get; private set; }
     public Color Color2 { get; private set; }
@@ -114,10 +114,9 @@ public sealed class LevelCursor
     {
         var lemmingPosition = lemming.CenterPosition;
 
-        var dx = LevelScreen.HorizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
-        var dy = LevelScreen.VerticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
+        var delta = LevelScreen.GetNormalisedDelta(CursorPosition, lemmingPosition);
 
-        return Math.Abs(dx) < EngineConstants.CursorRadius && Math.Abs(dy) < EngineConstants.CursorRadius;
+        return Math.Abs(delta.X) < EngineConstants.CursorRadius && Math.Abs(delta.Y) < EngineConstants.CursorRadius;
     }
 
     [Pure]
@@ -198,60 +197,11 @@ public sealed class LevelCursor
     {
         var lemmingPosition = lemming.CenterPosition;
 
-        var dx = LevelScreen.HorizontalBoundaryBehaviour.GetDelta(CursorPosition.X, lemmingPosition.X);
-        var dy = LevelScreen.VerticalBoundaryBehaviour.GetDelta(CursorPosition.Y, lemmingPosition.Y);
+        var delta = LevelScreen.GetNormalisedDelta(CursorPosition, lemmingPosition);
+
+        var dx = delta.X;
+        var dy = delta.Y;
 
         return dx * dx + dy * dy;
-    }
-}
-
-public class SomeData
-{
-    public readonly int Id;
-
-    public SomeData(int id) => Id = id;
-
-    public bool EqualsInstance1(SomeData? other) => Id == (other?.Id ?? -1);
-
-    public bool EqualsInstance2(SomeData? other)
-    {
-        var valA = Id;
-        var valB = -1;
-        if (other is not null) valB = other.Id;
-        return valA == valB;
-    }
-
-    public bool EqualsInstance3(SomeData? other)
-    {
-        var otherValue = -1;
-        if (other is not null) otherValue = other.Id;
-        return Id == otherValue;
-    }
-
-    public static bool Equals1(SomeData? a, SomeData? b) => a?.Id == b?.Id;
-
-    public static bool Equals2(SomeData? a, SomeData? b)
-    {
-        var valA = -1;
-        if (a is not null) valA = a.Id;
-        var valB = -1;
-        if (b is not null) valB = b.Id;
-        return valA == valB;
-    }
-
-    public static bool Equals3(SomeData? a, SomeData? b)
-    {
-        var valA = a?.Id ?? -1;
-        var valB = b?.Id ?? -1;
-        return valA == valB;
-    }
-
-    public static bool EqualsNotNull1(SomeData a, SomeData b) => a.Id == b.Id;
-
-    public static bool EqualsNotNull2(SomeData a, SomeData b)
-    {
-        var valA = a.Id;
-        var valB = b.Id;
-        return valA == valB;
     }
 }
