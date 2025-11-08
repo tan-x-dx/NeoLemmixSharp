@@ -1,9 +1,20 @@
 ﻿using NeoLemmixSharp.Common;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
+[StructLayout(LayoutKind.Sequential, Size = SizeOfLemmingDataInBytes)]
 public struct LemmingData
 {
+    /// <summary>
+    /// The size of this struct is explicitly defined to be 192 bytes.
+    /// The total size of all members is 188 bytes. We add on an extra
+    /// 4 bytes to this size to help with data snapshotting:
+    /// The Span.Copy() method works well with chunks that are multiples
+    /// of 64 bytes. 3 * 64 == 192.
+    /// </summary>
+    public const int SizeOfLemmingDataInBytes = 192;
+
     public Orientation Orientation = Orientation.Down;
     public FacingDirection FacingDirection = FacingDirection.Right;
 
