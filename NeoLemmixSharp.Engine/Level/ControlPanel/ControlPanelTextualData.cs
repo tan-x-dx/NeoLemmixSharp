@@ -22,13 +22,13 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
                                                    CharLengthForLemmingCount +
                                                    CharLengthForGoalCount;
 
-    private readonly ControlPanelParameterSet _controlPanelParameters;
-    private readonly RawArray _byteBuffer;
-
     private readonly char* _cursorDataPointer;
     private readonly char* _hatchCountPointer;
     private readonly char* _lemmingsOutPointer;
     private readonly char* _goalCountPointer;
+
+    private readonly ControlPanelParameterSet _controlPanelParameters;
+    private readonly RawArray _byteBuffer;
 
     public ReadOnlySpan<char> LemmingActionAndCountSpan => new(_cursorDataPointer, CharLengthForCursorData);
     public ReadOnlySpan<char> HatchCountSpan => new(_hatchCountPointer, CharLengthForLemmingCount);
