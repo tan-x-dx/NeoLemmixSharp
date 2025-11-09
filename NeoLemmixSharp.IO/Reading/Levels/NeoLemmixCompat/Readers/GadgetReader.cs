@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.IO.Util;
 
@@ -133,7 +134,7 @@ internal sealed class GadgetReader : NeoLemmixDataReader
 
     private void SetSkillCount(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var amount = TokensMatch(secondToken, "INFINITE")
+        var amount = Helpers.StringSpansMatch(secondToken, "INFINITE")
             ? EngineConstants.InfiniteSkillCount
             : int.Parse(secondToken);
 

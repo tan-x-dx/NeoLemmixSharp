@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.IO;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 using NeoLemmixSharp.Menu.LevelPack;
@@ -290,7 +291,7 @@ public static class NeoLemmixConfigReader
         {
             var fileExtension = Path.GetExtension(file.AsSpan());
 
-            if (neoLemmixFileFormat.Equals(fileExtension, StringComparison.OrdinalIgnoreCase))
+            if (Helpers.StringSpansMatch(neoLemmixFileFormat, fileExtension))
             {
                 levelFileNames.Add(Path.GetFileName(file));
             }
@@ -308,7 +309,7 @@ public static class NeoLemmixConfigReader
         {
             var fileNamePlusExtension = Path.GetFileName(file.AsSpan());
 
-            if (fileToLocate.Equals(fileNamePlusExtension, StringComparison.OrdinalIgnoreCase))
+            if (Helpers.StringSpansMatch(fileToLocate, fileNamePlusExtension))
             {
                 foundFilePath = file;
                 return true;

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
@@ -73,8 +74,8 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
 
     public override bool ShouldProcessSection(ReadOnlySpan<char> token)
     {
-        return TokensMatch(token, IdentifierToken) ||
-               TokensMatch(token, "NO_EFFECT");
+        return Helpers.StringSpansMatch(token, IdentifierToken) ||
+               Helpers.StringSpansMatch(token, "NO_EFFECT");
     }
 
     public override bool BeginReading(ReadOnlySpan<char> line)

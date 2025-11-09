@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Util;
 
@@ -27,7 +28,7 @@ internal sealed class SkillSetReader : NeoLemmixDataReader
     {
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out _);
 
-        if (TokensMatch(firstToken, "$END"))
+        if (Helpers.StringSpansMatch(firstToken, "$END"))
         {
             FinishedReading = true;
             return false;
@@ -41,7 +42,7 @@ internal sealed class SkillSetReader : NeoLemmixDataReader
         if (!_seenSkills.Add(skillName))
             throw new FileReadingException($"Skill recorded multiple times! {skillName}");
 
-        var amount = TokensMatch(secondToken, "INFINITE")
+        var amount = Helpers.StringSpansMatch(secondToken, "INFINITE")
             ? EngineConstants.InfiniteSkillCount
             : int.Parse(secondToken);
 

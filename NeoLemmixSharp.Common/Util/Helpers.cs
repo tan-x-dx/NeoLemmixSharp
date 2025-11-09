@@ -163,6 +163,13 @@ public static class Helpers
         return newArray;
     }
 
+    public static bool StringSpansMatch(
+        ReadOnlySpan<char> firstSpan,
+        ReadOnlySpan<char> secondSpan)
+    {
+        return firstSpan.Equals(secondSpan, StringComparison.OrdinalIgnoreCase);
+    }
+
     public static ReadOnlySpan<string> GetFilePathsWithExtension(string folderPath, ReadOnlySpan<char> requiredFileExtension)
     {
         var allFiles = Directory.GetFiles(folderPath);
@@ -173,7 +180,7 @@ public static class Helpers
             var file = allFiles[i];
             var fileExtension = Path.GetExtension(file.AsSpan());
 
-            if (requiredFileExtension.Equals(fileExtension, StringComparison.OrdinalIgnoreCase))
+            if (StringSpansMatch(requiredFileExtension, fileExtension))
             {
                 allFiles[subLength++] = file;
             }

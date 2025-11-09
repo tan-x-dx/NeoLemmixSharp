@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Util;
 
@@ -71,7 +72,7 @@ internal sealed class SecondaryAnimationReader : NeoLemmixDataReader
 
     private void SetInitialFrame(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var initialFrame = TokensMatch(secondToken, "RANDOM")
+        var initialFrame = Helpers.StringSpansMatch(secondToken, "RANDOM")
             ? 0
             : int.Parse(secondToken);
 
