@@ -1,172 +1,154 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Rewind;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
-public sealed class LevelTimer : ISnapshotDataConvertible
+public unsafe sealed class LevelTimer : ISnapshotDataConvertible, IDisposable
 {
     private const int NumberOfTimerChars = 5; // 00:00
     private const char TimerSeparatorChar = '-';
 
+    private readonly char* _timerCharPointer;
+    private readonly RawArray _byteBuffer;
+
     private int _elapsedSeconds;
     private LevelTimerData _data;
-    private TimerCharBuffer _timerCharBuffer;
 
     public int TimeLimitInSeconds { get; }
     public TimerType Type { get; }
     public Color FontColor { get; private set; }
 
-    public int EffectiveSecondsRemaining => Type == TimerType.CountDown
-        ? TimeLimitInSeconds + _data.AdditionalSeconds - _elapsedSeconds
-        : EngineConstants.TrivialTimeLimitInSeconds;
+    public int EffectiveSecondsRemaining
+    {
+        get
+        {
+            var result = EngineConstants.TrivialTimeLimitInSeconds;
+            if (Type == TimerType.CountDown)
+                result = TimeLimitInSeconds + _data.AdditionalSeconds - _elapsedSeconds;
+            return result;
+        }
+    }
 
     public int EffectiveElapsedSeconds => _elapsedSeconds - _data.AdditionalSeconds;
     public bool OutOfTime => EffectiveSecondsRemaining < 0;
 
-    public static LevelTimer CreateCountUpTimer() => new();
-    public static LevelTimer CreateCountDownTimer(int timeLimitInSeconds) => new(timeLimitInSeconds);
+    public ReadOnlySpan<char> AsReadOnlySpan() => new(_timerCharPointer, NumberOfTimerChars);
 
-    private LevelTimer()
+    public static LevelTimer CreateCountUpTimer() => new();
+    public static LevelTimer CreateCountDownTimer(uint timeLimitInSeconds) => new(timeLimitInSeconds);
+
+    private LevelTimer(TimerType timerType)
+    {
+        _byteBuffer = Helpers.AllocateBuffer<char>(NumberOfTimerChars);
+        _timerCharPointer = (char*)_byteBuffer.Handle;
+        _timerCharPointer[2] = TimerSeparatorChar;
+
+        Type = timerType;
+    }
+
+    private LevelTimer() : this(TimerType.CountUp)
     {
         TimeLimitInSeconds = -1;
 
-        _timerCharBuffer[2] = TimerSeparatorChar;
-
-        Type = TimerType.CountUp;
         FontColor = EngineConstants.PanelGreen;
-        UpdateCountUpString(0, false);
+        UpdateTimerString(0);
     }
 
-    private LevelTimer(int timeLimitInSeconds)
+    private LevelTimer(uint timeLimitInSeconds) : this(TimerType.CountDown)
     {
-        TimeLimitInSeconds = timeLimitInSeconds;
+        TimeLimitInSeconds = (int)timeLimitInSeconds;
 
-        _timerCharBuffer[2] = TimerSeparatorChar;
-
-        Type = TimerType.CountDown;
-        FontColor = GetColorForTime(timeLimitInSeconds);
-        UpdateCountDownString(timeLimitInSeconds, false);
+        FontColor = GetColorForTime((int)timeLimitInSeconds);
+        UpdateTimerString(timeLimitInSeconds);
     }
 
     public void AddAdditionalSeconds(int additionalSeconds)
     {
         _data.AdditionalSeconds += additionalSeconds;
 
-        UpdateTimerString(false);
+        UpdateTimerString();
     }
 
-    public void SetElapsedTicks(int elapsedTicks, bool partialUpdate)
+    public void SetElapsedTicks(int elapsedTicks)
     {
         var previousElapsedSeconds = _elapsedSeconds;
-        _elapsedSeconds = elapsedTicks / EngineConstants.EngineTicksPerSecond;
+        var currentElapsedSeconds = elapsedTicks / EngineConstants.EngineTicksPerSecond;
 
-        if (previousElapsedSeconds == _elapsedSeconds)
+        if (previousElapsedSeconds == currentElapsedSeconds)
             return;
 
-        UpdateTimerString(partialUpdate);
+        _elapsedSeconds = currentElapsedSeconds;
+
+        UpdateTimerString();
     }
 
-    private void UpdateTimerString(bool partialUpdate)
+    private void UpdateTimerString()
     {
         if (Type == TimerType.CountDown)
         {
-            UpdateCountDown(partialUpdate);
+            UpdateCountDown();
         }
         else
         {
-            UpdateCountUp(partialUpdate);
+            UpdateCountUp();
         }
     }
 
-    private void UpdateCountDown(bool partialUpdate)
+    private void UpdateCountDown()
     {
         var secondsLeft = TimeLimitInSeconds - EffectiveElapsedSeconds;
 
         FontColor = GetColorForTime(secondsLeft);
 
         if (secondsLeft < 0)
-        {
-            UpdateCountUpString(-secondsLeft, partialUpdate);
-        }
-        else
-        {
-            UpdateCountDownString(secondsLeft, partialUpdate);
-        }
+            secondsLeft = -secondsLeft;
+
+        UpdateTimerString((uint)secondsLeft);
     }
 
-    private void UpdateCountUp(bool partialUpdate)
+    private void UpdateCountUp()
     {
-        UpdateCountUpString(_elapsedSeconds, partialUpdate);
+        UpdateTimerString((uint)_elapsedSeconds);
     }
 
-    public ReadOnlySpan<char> AsReadOnlySpan() => _timerCharBuffer;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void UpdateCountUpString(
-        int elapsedSeconds,
-        bool partialUpdate)
+    private void UpdateTimerString(uint elapsedSeconds)
     {
-        UpdateTimerString((uint)elapsedSeconds, 0, 0, 0, partialUpdate);
+        char* pointer = _timerCharPointer;
+
+        uint seconds = elapsedSeconds % 60;
+        uint secondsUnits = seconds % 10;
+        pointer[4] = TextRenderingHelpers.DigitToChar(secondsUnits);
+
+        uint secondsTens = seconds / 10;
+        pointer[3] = TextRenderingHelpers.DigitToChar(secondsTens);
+
+        uint minutes = elapsedSeconds / 60;
+        uint minutesUnits = minutes % 10;
+        pointer[1] = TextRenderingHelpers.DigitToChar(minutesUnits);
+
+        uint minutesTens = (minutes / 10) % 10;
+        pointer[0] = TextRenderingHelpers.DigitToChar(minutesTens);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void UpdateCountDownString(
-        int elapsedSeconds,
-        bool partialUpdate)
-    {
-        UpdateTimerString((uint)elapsedSeconds, 9, 5, 9, partialUpdate);
-    }
+    public int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LevelTimerData);
 
-    private void UpdateTimerString(
-        uint elapsedSeconds,
-        uint minutesUnitsTest,
-        uint secondTensTest,
-        uint secondUnitsTest,
-        bool partialUpdate)
-    {
-        var seconds = elapsedSeconds % 60;
-        var secondsUnits = seconds % 10;
-        _timerCharBuffer[4] = TextRenderingHelpers.DigitToChar(secondsUnits);
-
-        if (partialUpdate && secondsUnits != secondUnitsTest)
-            return;
-
-        var secondsTens = seconds / 10;
-        _timerCharBuffer[3] = TextRenderingHelpers.DigitToChar(secondsTens);
-
-        if (partialUpdate && secondsTens != secondTensTest)
-            return;
-
-        var minutes = elapsedSeconds / 60;
-        var minutesUnits = minutes % 10;
-        _timerCharBuffer[1] = TextRenderingHelpers.DigitToChar(minutesUnits);
-
-        if (partialUpdate && minutesUnits != minutesUnitsTest)
-            return;
-
-        var minutesTens = (minutes / 10) % 10;
-        _timerCharBuffer[0] = TextRenderingHelpers.DigitToChar(minutesTens);
-    }
-
-    public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LevelTimerData);
-
-    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
+    public void WriteToSnapshotData(byte* snapshotDataPointer)
     {
         LevelTimerData* levelTimerSnapshotDataPointer = (LevelTimerData*)snapshotDataPointer;
 
         *levelTimerSnapshotDataPointer = _data;
     }
 
-    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
+    public void SetFromSnapshotData(byte* snapshotDataPointer)
     {
         LevelTimerData* levelTimerSnapshotDataPointer = (LevelTimerData*)snapshotDataPointer;
 
         _data = *levelTimerSnapshotDataPointer;
 
-        UpdateTimerString(false);
+        UpdateTimerString();
     }
 
     private static Color GetColorForTime(int secondsLeft) => secondsLeft switch
@@ -177,9 +159,8 @@ public sealed class LevelTimer : ISnapshotDataConvertible
         _ => EngineConstants.PanelGreen
     };
 
-    [InlineArray(NumberOfTimerChars)]
-    private struct TimerCharBuffer
+    public void Dispose()
     {
-        private char _0;
+        _byteBuffer.Dispose();
     }
 }

@@ -133,7 +133,7 @@ public sealed class RewindManager :
         var targetTick = actualElapsedTick + 1;
 
         LevelScreen.TerrainPainter.RewindBackTo(targetTick);
-        LevelScreen.LevelTimer.SetElapsedTicks(targetTick, false);
+        LevelScreen.LevelTimer.SetElapsedTicks(targetTick);
 
         if (_skillAssignmentList.TryGetDataForTick(targetTick, out SkillAssignmentEventData* previouslyRecordedSkillAssignment))
         {
