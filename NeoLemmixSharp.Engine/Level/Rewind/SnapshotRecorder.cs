@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
 public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
-    where TItemManager : IItemManager<TItemType>
+    where TItemManager : class, IItemManager<TItemType>
     where TItemType : class, ISnapshotDataConvertible
 {
     private readonly TItemManager _itemManager;

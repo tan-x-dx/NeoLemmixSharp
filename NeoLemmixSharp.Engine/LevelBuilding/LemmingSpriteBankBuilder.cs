@@ -71,7 +71,7 @@ public static class LemmingSpriteBankBuilder
         var spriteTexture = TextureCache.GetOrLoadTexture(
             pngPath,
             lemmingSpriteData.LemmingSpriteStyleIdentifier,
-            new PieceIdentifier(lemmingActionData.LemmingActionFileName),
+            lemmingActionData.LemmingActionFileName,
             TextureType.LemmingSprite);
 
         var lemmingAnimationLayers = lemmingActionSpriteData.Layers;

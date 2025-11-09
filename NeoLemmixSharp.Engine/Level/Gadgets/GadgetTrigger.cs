@@ -90,8 +90,15 @@ public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
     public sealed override int GetHashCode() => Id;
     public sealed override string ToString() => TriggerName.ToString();
 
-    public static bool operator ==(GadgetTrigger left, GadgetTrigger right) => left.Id == right.Id;
-    public static bool operator !=(GadgetTrigger left, GadgetTrigger right) => left.Id != right.Id;
+    public static bool operator ==(GadgetTrigger? left, GadgetTrigger? right)
+    {
+        var leftValue = -1;
+        if (left is not null) leftValue = left.Id;
+        var rightValue = -1;
+        if (right is not null) rightValue = right.Id;
+        return leftValue == rightValue;
+    }
+    public static bool operator !=(GadgetTrigger? left, GadgetTrigger? right) => !(left == right);
 
     private enum TriggerEvaluation
     {

@@ -20,4 +20,6 @@ public readonly struct PieceIdentifier : IEquatable<PieceIdentifier>
     public override int GetHashCode() => _pieceName.GetHashCode();
     public static bool operator ==(PieceIdentifier left, PieceIdentifier right) => left.Equals(right);
     public static bool operator !=(PieceIdentifier left, PieceIdentifier right) => !left.Equals(right);
+
+    public static implicit operator PieceIdentifier(string? gadgetStateName) => new(gadgetStateName);
 }

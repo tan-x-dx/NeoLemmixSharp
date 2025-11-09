@@ -75,8 +75,15 @@ public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
     public sealed override int GetHashCode() => Id;
     public sealed override string ToString() => GadgetBehaviourName.ToString();
 
-    public static bool operator ==(GadgetBehaviour left, GadgetBehaviour right) => left.Id == right.Id;
-    public static bool operator !=(GadgetBehaviour left, GadgetBehaviour right) => left.Id != right.Id;
+    public static bool operator ==(GadgetBehaviour? left, GadgetBehaviour? right)
+    {
+        var leftValue = -1;
+        if (left is not null) leftValue = left.Id;
+        var rightValue = -1;
+        if (right is not null) rightValue = right.Id;
+        return leftValue == rightValue;
+    }
+    public static bool operator !=(GadgetBehaviour? left, GadgetBehaviour? right) => !(left == right);
 
     protected static Lemming GetLemming(int lemmingId) => LevelScreen.LemmingManager.AllLemmings[lemmingId];
 }

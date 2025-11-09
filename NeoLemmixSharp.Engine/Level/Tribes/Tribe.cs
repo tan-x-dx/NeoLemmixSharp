@@ -8,9 +8,9 @@ namespace NeoLemmixSharp.Engine.Level.Tribes;
 
 public sealed class Tribe : IIdEquatable<Tribe>
 {
-    public readonly int Id;
-    public readonly TribeColorData ColorData;
     public readonly TribeStyleIdentifier TribeIdentifier;
+    public readonly TribeColorData ColorData;
+    public readonly int Id;
 
     public Tribe(
         int id,

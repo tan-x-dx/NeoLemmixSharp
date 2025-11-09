@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.GadgetReaders;
+namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
 
 internal enum NeoLemmixGadgetBehaviour
 {
@@ -10,10 +10,10 @@ internal enum NeoLemmixGadgetBehaviour
     Exit,
     Water,
     Fire,
-    OneWayRight,
-    OneWayUp,
-    OneWayLeft,
     OneWayDown,
+    OneWayLeft,
+    OneWayUp,
+    OneWayRight,
     PickupSkill,
     LockedExit,
     UnlockButton,
@@ -35,10 +35,10 @@ internal static class NeoLemmixGadgetBehaviourExtensions
     public static bool IsOneWayArrows(this NeoLemmixGadgetBehaviour behaviour)
     {
         return behaviour is
-            NeoLemmixGadgetBehaviour.OneWayRight or
-            NeoLemmixGadgetBehaviour.OneWayUp or
+            NeoLemmixGadgetBehaviour.OneWayDown or
             NeoLemmixGadgetBehaviour.OneWayLeft or
-            NeoLemmixGadgetBehaviour.OneWayDown;
+            NeoLemmixGadgetBehaviour.OneWayUp or
+            NeoLemmixGadgetBehaviour.OneWayRight;
     }
     /*
     public static GadgetBehaviour ToGadgetBehaviour(

@@ -74,9 +74,9 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         return new GadgetInstanceData
         {
             Identifier = new GadgetIdentifier(gadgetId),
-            OverrideName = new GadgetName(_stringIdLookup[overrideNameId]),
-            StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),
-            PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
+            OverrideName = _stringIdLookup[overrideNameId],
+            StyleIdentifier = _stringIdLookup[styleId],
+            PieceIdentifier = _stringIdLookup[pieceId],
             Position = position,
             GadgetRenderMode = renderMode,
             Orientation = dht.Orientation,

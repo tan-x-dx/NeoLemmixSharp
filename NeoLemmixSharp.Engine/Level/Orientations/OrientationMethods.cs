@@ -125,19 +125,24 @@ public static class OrientationMethods
         return new Point(position.X + absoluteDx, position.Y + absoluteDy);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void EvaluateVerticalPositions(
-        Orientation orientation,
-        Point firstPosition,
-        Point secondPosition,
-        out int a1,
-        out int a2)
+    /// <summary>
+    /// If the first position were to move vertically to be in line with the second position, what is the dy it would require?
+    /// </summary>
+    /// <param name="orientation"></param>
+    /// <param name="fromPosition"></param>
+    /// <param name="toPosition"></param>
+    [Pure]
+    public static int GetVerticalDelta(
+        this Orientation orientation,
+        Point fromPosition,
+        Point toPosition)
     {
+        var delta = LevelScreen.GetNormalisedDelta(fromPosition, toPosition);
+
         var s = IntSin(orientation.RotNum);
         var c = IntCos(orientation.RotNum);
 
-        a1 = (c * firstPosition.Y) - (s * firstPosition.X);
-        a2 = (c * secondPosition.Y) - (s * secondPosition.X);
+        return (c * delta.Y) - (s * delta.X);
     }
 
     [Pure]
@@ -146,9 +151,8 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
-
-        return a1 == a2;
+        var delta = GetVerticalDelta(orientation, firstPosition, secondPosition);
+        return delta == 0;
     }
 
     [Pure]
@@ -157,9 +161,8 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
-
-        return a1 < a2;
+        var delta = GetVerticalDelta(orientation, firstPosition, secondPosition);
+        return delta > 0;
     }
 
     [Pure]
@@ -168,57 +171,8 @@ public static class OrientationMethods
         Point firstPosition,
         Point secondPosition)
     {
-        EvaluateVerticalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
-
-        return a1 > a2;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void EvaluateHorizontalPositions(
-        Orientation orientation,
-        Point firstPosition,
-        Point secondPosition,
-        out int a1,
-        out int a2)
-    {
-        var s = IntSin(orientation.RotNum);
-        var c = IntCos(orientation.RotNum);
-
-        a1 = (c * firstPosition.X) + (s * firstPosition.Y);
-        a2 = (c * secondPosition.X) + (s * secondPosition.Y);
-    }
-
-    [Pure]
-    public static bool MatchesHorizontally(
-        this Orientation orientation,
-        Point firstPosition,
-        Point secondPosition)
-    {
-        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
-
-        return a1 == a2;
-    }
-
-    [Pure]
-    public static bool FirstIsToLeftOfSecond(
-        this Orientation orientation,
-        Point firstPosition,
-        Point secondPosition)
-    {
-        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
-
-        return a1 < a2;
-    }
-
-    [Pure]
-    public static bool FirstIsToRightOfSecond(
-        this Orientation orientation,
-        Point firstPosition,
-        Point secondPosition)
-    {
-        EvaluateHorizontalPositions(orientation, firstPosition, secondPosition, out var a1, out var a2);
-
-        return a1 > a2;
+        var delta = GetVerticalDelta(orientation, firstPosition, secondPosition);
+        return delta < 0;
     }
 
     /// <summary>
@@ -233,49 +187,41 @@ public static class OrientationMethods
         Point fromPosition,
         Point toPosition)
     {
-        int a1, a2;
-        if (orientation.IsHorizontal())
-        {
-            a2 = toPosition.Y;
-            a1 = fromPosition.Y;
-        }
-        else
-        {
-            a1 = toPosition.X;
-            a2 = fromPosition.X;
-        }
+        var delta = LevelScreen.GetNormalisedDelta(fromPosition, toPosition);
 
-        return orientation.IsHorizontal()
-            ? LevelScreen.HorizontalBoundaryBehaviour.GetDelta(a1, a2)
-            : LevelScreen.VerticalBoundaryBehaviour.GetDelta(a1, a2);
+        var s = IntSin(orientation.RotNum);
+        var c = IntCos(orientation.RotNum);
+
+        return (c * delta.X) + (s * delta.Y);
     }
 
-    /// <summary>
-    /// If the first position were to move vertically to be in line with the second position, what is the dy it would require?
-    /// </summary>
-    /// <param name="orientation"></param>
-    /// <param name="fromPosition"></param>
-    /// <param name="toPosition"></param>
     [Pure]
-    public static int GetVerticalDelta(
+    public static bool MatchesHorizontally(
         this Orientation orientation,
-        Point fromPosition,
-        Point toPosition)
+        Point firstPosition,
+        Point secondPosition)
     {
-        int a1, a2;
-        if (orientation.IsHorizontal())
-        {
-            a2 = fromPosition.X;
-            a1 = toPosition.X;
-        }
-        else
-        {
-            a1 = fromPosition.Y;
-            a2 = toPosition.Y;
-        }
+        var delta = GetHorizontalDelta(orientation, firstPosition, secondPosition);
+        return delta == 0;
+    }
 
-        return orientation.IsHorizontal()
-            ? LevelScreen.HorizontalBoundaryBehaviour.GetDelta(a1, a2)
-            : LevelScreen.VerticalBoundaryBehaviour.GetDelta(a1, a2);
+    [Pure]
+    public static bool FirstIsToLeftOfSecond(
+        this Orientation orientation,
+        Point firstPosition,
+        Point secondPosition)
+    {
+        var delta = GetHorizontalDelta(orientation, firstPosition, secondPosition);
+        return delta > 0;
+    }
+
+    [Pure]
+    public static bool FirstIsToRightOfSecond(
+        this Orientation orientation,
+        Point firstPosition,
+        Point secondPosition)
+    {
+        var delta = GetHorizontalDelta(orientation, firstPosition, secondPosition);
+        return delta < 0;
     }
 }

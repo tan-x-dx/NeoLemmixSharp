@@ -58,8 +58,8 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         return new GadgetArchetypeData
         {
             StyleIdentifier = styleIdentifier,
-            PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
-            GadgetName = new GadgetName(_stringIdLookup[nameId]),
+            PieceIdentifier = _stringIdLookup[pieceId],
+            GadgetName = _stringIdLookup[nameId],
             BaseSpriteSize = baseSpriteSize,
 
             SpecificationData = specificationData,

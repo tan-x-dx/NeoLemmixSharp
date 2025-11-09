@@ -35,10 +35,9 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
            PieceIdentifier = pieceIdentifier,
            Name = string.Empty,
 
-           IsSteel = false,
+           NineSliceData = default,
            ResizeType = ResizeType.None,
-
            DefaultSize = default,
-           NineSliceData = default
+           IsSteel = false
        };
 }

@@ -9,6 +9,8 @@ namespace NeoLemmixSharp.IO.Data.Style.Gadget.Functional;
 public sealed class LevelTimerObserverGadgetArchetypeSpecificationData : IGadgetArchetypeSpecificationData
 {
     public GadgetType GadgetType => GadgetType.LevelTimerObserver;
+
+    ReadOnlySpan<IGadgetStateArchetypeData> IGadgetArchetypeSpecificationData.AllStates => [];
 }
 
 [DebuggerDisplay("{StateName}")]

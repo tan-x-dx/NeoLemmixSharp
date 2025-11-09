@@ -31,7 +31,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         levelData.LevelAuthor = _stringIdLookup[stringId];
 
         stringId = reader.Read16BitUnsignedInteger();
-        levelData.LevelTheme = new StyleIdentifier(_stringIdLookup[stringId]);
+        levelData.LevelTheme = _stringIdLookup[stringId];
 
         levelData.LevelId = new LevelIdentifier(reader.Read64BitUnsignedInteger());
         levelData.Version = new LevelVersion(reader.Read64BitUnsignedInteger());

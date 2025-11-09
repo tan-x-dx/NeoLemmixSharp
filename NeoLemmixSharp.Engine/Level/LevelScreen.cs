@@ -18,7 +18,6 @@ using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using System.Diagnostics.Contracts;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -76,7 +75,14 @@ public sealed class LevelScreen : IBaseScreen
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Point GetNormalisedDelta(Point p0, Point p1)
+    {
+        return new Point(
+            HorizontalBoundaryBehaviour.GetNormalisedDelta(p0.X, p1.X),
+            VerticalBoundaryBehaviour.GetNormalisedDelta(p0.Y, p1.Y));
+    }
+
+    [Pure]
     public static bool RegionContainsPoint(RectangularRegion region, Point point)
     {
         return HorizontalBoundaryBehaviour.IntervalContainsPoint(region.GetHorizontalInterval(), point.X) &&
@@ -98,7 +104,6 @@ public sealed class LevelScreen : IBaseScreen
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool RegionsOverlap(RectangularRegion r1, RectangularRegion r2)
     {
         return HorizontalBoundaryBehaviour.IntervalsOverlap(r1.GetHorizontalInterval(), r2.GetHorizontalInterval()) &&

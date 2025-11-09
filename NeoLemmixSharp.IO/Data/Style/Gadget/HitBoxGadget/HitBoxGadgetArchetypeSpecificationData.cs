@@ -23,6 +23,8 @@ public sealed class HitBoxGadgetArchetypeSpecificationData : IGadgetArchetypeSpe
     public bool HasMiscData(GadgetArchetypeMiscDataType miscDataType) => _miscData.ContainsKey(miscDataType);
     public int GetMiscData(GadgetArchetypeMiscDataType miscDataType) => _miscData[miscDataType];
     public bool TryGetMiscData(GadgetArchetypeMiscDataType miscDataType, out int value) => _miscData.TryGetValue(miscDataType, out value);
+
+    ReadOnlySpan<IGadgetStateArchetypeData> IGadgetArchetypeSpecificationData.AllStates => GadgetStates;
 }
 
 [DebuggerDisplay("{StateName}")]

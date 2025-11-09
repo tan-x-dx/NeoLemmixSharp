@@ -98,13 +98,13 @@ end;
 
         if (LevelScreen.LevelViewport.MouseIsInLevelViewPort)
         {
-            LevelScreen.LevelCursor.CursorPosition = new Point(
+            LevelScreen.LevelCursor.SetCursorPosition(new Point(
                 LevelScreen.HorizontalBoundaryBehaviour.MouseViewPortCoordinate,
-                LevelScreen.VerticalBoundaryBehaviour.MouseViewPortCoordinate);
+                LevelScreen.VerticalBoundaryBehaviour.MouseViewPortCoordinate));
         }
         else
         {
-            LevelScreen.LevelCursor.CursorPosition = new Point(-4000, -4000);
+            LevelScreen.LevelCursor.SetCursorPosition(new Point(-4000, -4000));
             LevelScreen.LevelControlPanel.HandleMouseInput();
         }
     }

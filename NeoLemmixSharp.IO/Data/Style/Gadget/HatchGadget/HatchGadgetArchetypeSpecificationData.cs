@@ -13,6 +13,8 @@ public sealed class HatchGadgetArchetypeSpecificationData : IGadgetArchetypeSpec
 
     public required Point SpawnOffset { get; init; }
     public required HatchGadgetStateArchetypeData[] GadgetStates { get; init; }
+
+    ReadOnlySpan<IGadgetStateArchetypeData> IGadgetArchetypeSpecificationData.AllStates => GadgetStates;
 }
 
 [DebuggerDisplay("{StateName}")]

@@ -101,7 +101,9 @@ internal readonly struct MutableFileWriterStringIdLookup
 
         foreach (var kvp in _lookup)
         {
-            maxBufferSize = Math.Max(maxBufferSize, Encoding.UTF8.GetByteCount(kvp.Key));
+            var newByteCount = Encoding.UTF8.GetByteCount(kvp.Key);
+            if (newByteCount > maxBufferSize)
+                maxBufferSize = newByteCount;
         }
 
         return maxBufferSize;

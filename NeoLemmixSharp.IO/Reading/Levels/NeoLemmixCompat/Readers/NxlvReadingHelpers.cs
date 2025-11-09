@@ -7,10 +7,6 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 public static class NxlvReadingHelpers
 {
-    public delegate void TokenAction(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex);
-
-    public static readonly TokenAction DoNothing = (_, _, _) => { };
-
     /// <summary>
     /// Returns the first two tokens from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.
     /// If no such tokens exists, empty spans are returned.
@@ -26,23 +22,17 @@ public static class NxlvReadingHelpers
         out int secondTokenIndex)
     {
         var tokenIterator = new TokenEnumerator(line);
+        firstToken = ReadOnlySpan<char>.Empty;
+        secondToken = ReadOnlySpan<char>.Empty;
+        secondTokenIndex = -1;
 
         if (!tokenIterator.MoveNext())
-        {
-            firstToken = ReadOnlySpan<char>.Empty;
-            secondToken = ReadOnlySpan<char>.Empty;
-            secondTokenIndex = -1;
             return;
-        }
 
         firstToken = tokenIterator.Current;
 
         if (!tokenIterator.MoveNext())
-        {
-            secondToken = ReadOnlySpan<char>.Empty;
-            secondTokenIndex = -1;
             return;
-        }
 
         secondToken = tokenIterator.Current;
         secondTokenIndex = tokenIterator.CurrentSpanStart;
@@ -62,11 +52,13 @@ public static class NxlvReadingHelpers
         // the initial "0x" part must be omitted. We deal with this here
 
         var startIndex = 0;
-        if (token[0] == 'x' || token[0] == 'X')
+        var firstChar = token[0];
+        var secondChar = token[1];
+        if (firstChar is 'x' || firstChar is 'X')
         {
             startIndex = 1;
         }
-        else if (token[1] == 'x' || token[1] == 'X')
+        else if (secondChar is 'x' || secondChar is 'X')
         {
             startIndex = 2;
         }

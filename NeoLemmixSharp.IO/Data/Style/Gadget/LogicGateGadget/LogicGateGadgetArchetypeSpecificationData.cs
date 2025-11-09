@@ -10,6 +10,8 @@ public sealed class LogicGateGadgetArchetypeSpecificationData : IGadgetArchetype
 {
     public GadgetType GadgetType => GadgetType.LogicGate;
     public required LogicGateStateArchetypeData[] GadgetStates { get; init; }
+
+    ReadOnlySpan<IGadgetStateArchetypeData> IGadgetArchetypeSpecificationData.AllStates => GadgetStates;
 }
 
 [DebuggerDisplay("{StateName}")]

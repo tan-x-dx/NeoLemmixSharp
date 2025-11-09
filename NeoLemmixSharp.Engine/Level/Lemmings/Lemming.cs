@@ -135,7 +135,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
     private Lemming()
     {
-        Id = -1;
+        Id = int.MinValue;
         _data.Orientation = Orientation.Down;
         _data.FacingDirection = FacingDirection.Right;
         _currentAction = NoneAction.Instance;
@@ -331,11 +331,13 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         var footPixel = terrainManager.PixelTypeAtPosition(FootPosition);
         var headPixel = terrainManager.PixelTypeAtPosition(HeadPosition);
 
-        if (!footPixel.IsVoid() || !headPixel.IsVoid())
-            return true;
+        if (footPixel.IsVoid() && headPixel.IsVoid())
+        {
+            LevelScreen.LemmingManager.RemoveLemming(this, LemmingRemovalReason.DeathVoid);
+            return false;
+        }
 
-        LevelScreen.LemmingManager.RemoveLemming(this, LemmingRemovalReason.DeathVoid);
-        return false;
+        return true;
     }
 
     private bool CheckTriggerAreas(
@@ -544,14 +546,26 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
     int IIdEquatable<Lemming>.Id => Id;
 
     [DebuggerStepThrough]
-    public bool Equals(Lemming? other) => Id == (other?.Id ?? -1);
+    public bool Equals(Lemming? other)
+    {
+        var otherValue = -1;
+        if (other is not null) otherValue = other.Id;
+        return Id == otherValue;
+    }
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Lemming other && Id == other.Id;
     [DebuggerStepThrough]
     public override int GetHashCode() => Id;
 
     [DebuggerStepThrough]
-    public static bool operator ==(Lemming left, Lemming right) => left.Id == right.Id;
+    public static bool operator ==(Lemming? left, Lemming? right)
+    {
+        var leftValue = -1;
+        if (left is not null) leftValue = left.Id;
+        var rightValue = -1;
+        if (right is not null) rightValue = right.Id;
+        return leftValue == rightValue;
+    }
     [DebuggerStepThrough]
-    public static bool operator !=(Lemming left, Lemming right) => left.Id != right.Id;
+    public static bool operator !=(Lemming? left, Lemming? right) => !(left == right);
 }

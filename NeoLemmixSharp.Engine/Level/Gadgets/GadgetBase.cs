@@ -43,8 +43,15 @@ public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConver
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBase other && Id == other.Id;
     public sealed override int GetHashCode() => Id;
 
-    public static bool operator ==(GadgetBase left, GadgetBase right) => left.Id == right.Id;
-    public static bool operator !=(GadgetBase left, GadgetBase right) => left.Id != right.Id;
+    public static bool operator ==(GadgetBase? left, GadgetBase? right)
+    {
+        var leftValue = -1;
+        if (left is not null) leftValue = left.Id;
+        var rightValue = -1;
+        if (right is not null) rightValue = right.Id;
+        return leftValue == rightValue;
+    }
+    public static bool operator !=(GadgetBase? left, GadgetBase? right) => !(left == right);
 
     private int CalculateRequiredNumberOfBytesForSnapshotting()
     {
