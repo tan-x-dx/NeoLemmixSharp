@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Diagnostics;
@@ -11,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
+public abstract class LemmingSkill : IEquatable<LemmingSkill>
 {
     protected static readonly LemmingActionSet ActionsThatCanBeAssignedPermanentSkill = GetActionsThatCanBeAssignedPermanentSkill();
     protected static readonly LemmingActionSet ActionsThatCanBeAssignedRotationSkill = GetActionsThatCanBeAssignedRotationSkill();
@@ -192,7 +191,6 @@ public abstract class LemmingSkill : IIdEquatable<LemmingSkill>
 
     public abstract void AssignToLemming(Lemming lemming);
 
-    int IIdEquatable<LemmingSkill>.Id => Id;
     [DebuggerStepThrough]
     public bool Equals(LemmingSkill? other)
     {

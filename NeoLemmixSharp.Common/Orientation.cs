@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -7,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common;
 
-public readonly struct Orientation : IIdEquatable<Orientation>
+public readonly struct Orientation : IEquatable<Orientation>
 {
     public static readonly Orientation Down = new(EngineConstants.DownOrientationRotNum);
     public static readonly Orientation Left = new(EngineConstants.LeftOrientationRotNum);
@@ -68,9 +67,6 @@ public readonly struct Orientation : IIdEquatable<Orientation>
     {
         throw new ArgumentOutOfRangeException(nameof(RotNum), orientation.RotNum, "Invalid Orientation value!");
     }
-
-    [Pure]
-    int IIdEquatable<Orientation>.Id => RotNum;
 
     [Pure]
     [DebuggerStepThrough]

@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics;
@@ -11,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public abstract class LemmingAction : IIdEquatable<LemmingAction>
+public abstract class LemmingAction : IEquatable<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     private static readonly LemmingActionSet AirborneActions = GetAirborneActions();
@@ -213,7 +212,6 @@ public abstract class LemmingAction : IIdEquatable<LemmingAction>
     public bool IsAirborneAction() => AirborneActions.Contains(this);
     public bool IsOneTimeAction() => OneTimeActions.Contains(this);
 
-    int IIdEquatable<LemmingAction>.Id => Id;
     [DebuggerStepThrough]
     public bool Equals(LemmingAction? other)
     {

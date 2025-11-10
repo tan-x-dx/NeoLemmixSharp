@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -16,7 +15,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapshotDataConvertible
+public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshotDataConvertible
 {
     public static Lemming SimulationLemming { get; } = new();
 
@@ -542,8 +541,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         Renderer.ResetPosition();
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
-
-    int IIdEquatable<Lemming>.Id => Id;
 
     [DebuggerStepThrough]
     public bool Equals(Lemming? other)
