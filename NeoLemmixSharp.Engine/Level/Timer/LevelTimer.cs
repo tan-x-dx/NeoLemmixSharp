@@ -1,21 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Rewind;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
-public unsafe sealed class LevelTimer : ISnapshotDataConvertible, IDisposable
+public sealed class LevelTimer : ISnapshotDataConvertible
 {
-    private const int NumberOfTimerChars = 5; // 00:00
+    private const int NumberOfTimerChars = 5; // "00-00"
     private const char TimerSeparatorChar = '-';
-
-    private readonly char* _timerCharPointer;
-    private readonly RawArray _byteBuffer;
 
     private int _elapsedSeconds;
     private LevelTimerData _data;
+
+    private LevelTimerCharBuffer _charBuffer;
 
     public int TimeLimitInSeconds { get; }
     public TimerType Type { get; }
@@ -35,16 +34,15 @@ public unsafe sealed class LevelTimer : ISnapshotDataConvertible, IDisposable
     public int EffectiveElapsedSeconds => _elapsedSeconds - _data.AdditionalSeconds;
     public bool OutOfTime => EffectiveSecondsRemaining < 0;
 
-    public ReadOnlySpan<char> AsReadOnlySpan() => new(_timerCharPointer, NumberOfTimerChars);
+    public ReadOnlySpan<char> AsReadOnlySpan() => _charBuffer;
 
     public static LevelTimer CreateCountUpTimer() => new();
     public static LevelTimer CreateCountDownTimer(uint timeLimitInSeconds) => new(timeLimitInSeconds);
 
     private LevelTimer(TimerType timerType)
     {
-        _byteBuffer = Helpers.AllocateBuffer<char>(NumberOfTimerChars);
-        _timerCharPointer = (char*)_byteBuffer.Handle;
-        _timerCharPointer[2] = TimerSeparatorChar;
+        _charBuffer = new LevelTimerCharBuffer();
+        _charBuffer[2] = TimerSeparatorChar;
 
         Type = timerType;
     }
@@ -116,33 +114,31 @@ public unsafe sealed class LevelTimer : ISnapshotDataConvertible, IDisposable
 
     private void UpdateTimerString(uint elapsedSeconds)
     {
-        char* pointer = _timerCharPointer;
-
         uint seconds = elapsedSeconds % 60;
         uint secondsUnits = seconds % 10;
-        pointer[4] = TextRenderingHelpers.DigitToChar(secondsUnits);
+        _charBuffer[4] = TextRenderingHelpers.DigitToChar(secondsUnits);
 
         uint secondsTens = seconds / 10;
-        pointer[3] = TextRenderingHelpers.DigitToChar(secondsTens);
+        _charBuffer[3] = TextRenderingHelpers.DigitToChar(secondsTens);
 
         uint minutes = elapsedSeconds / 60;
         uint minutesUnits = minutes % 10;
-        pointer[1] = TextRenderingHelpers.DigitToChar(minutesUnits);
+        _charBuffer[1] = TextRenderingHelpers.DigitToChar(minutesUnits);
 
         uint minutesTens = (minutes / 10) % 10;
-        pointer[0] = TextRenderingHelpers.DigitToChar(minutesTens);
+        _charBuffer[0] = TextRenderingHelpers.DigitToChar(minutesTens);
     }
 
-    public int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LevelTimerData);
+    public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LevelTimerData);
 
-    public void WriteToSnapshotData(byte* snapshotDataPointer)
+    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
     {
         LevelTimerData* levelTimerSnapshotDataPointer = (LevelTimerData*)snapshotDataPointer;
 
         *levelTimerSnapshotDataPointer = _data;
     }
 
-    public void SetFromSnapshotData(byte* snapshotDataPointer)
+    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
     {
         LevelTimerData* levelTimerSnapshotDataPointer = (LevelTimerData*)snapshotDataPointer;
 
@@ -159,8 +155,9 @@ public unsafe sealed class LevelTimer : ISnapshotDataConvertible, IDisposable
         _ => EngineConstants.PanelGreen
     };
 
-    public void Dispose()
+    [InlineArray(NumberOfTimerChars)]
+    private struct LevelTimerCharBuffer
     {
-        _byteBuffer.Dispose();
+        private char _0;
     }
 }
