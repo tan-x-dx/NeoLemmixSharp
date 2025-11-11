@@ -102,13 +102,11 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to set</param>
     internal static unsafe void SetBit(uint* p, int index)
     {
-        var offset = index;
-        offset >>>= Shift;
-        p += offset;
-
         uint mask = 1U;
         mask <<= index;
-        *p |= mask;
+
+        index >>>= Shift;
+        p[index] |= mask;
     }
 
     /// <summary>
@@ -146,14 +144,12 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to clear</param>
     internal static unsafe void ClearBit(uint* p, int index)
     {
-        var offset = index;
-        offset >>>= Shift;
-        p += offset;
-
         uint mask = 1U;
         mask <<= index;
         mask = ~mask;
-        *p &= mask;
+
+        index >>>= Shift;
+        p[index] &= mask;
     }
 
     /// <summary>
@@ -286,39 +282,39 @@ public static class BitArrayHelpers
             default: LargeSpanUnionWith(span, other); return;
         }
 
-        Length8:
+    Length8:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 7);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 7);
         sourceRef |= otherRef;
-        Length7:
+    Length7:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 6);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 6);
         sourceRef |= otherRef;
-        Length6:
+    Length6:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 5);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 5);
         sourceRef |= otherRef;
-        Length5:
+    Length5:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 4);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 4);
         sourceRef |= otherRef;
-        Length4:
+    Length4:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 3);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 3);
         sourceRef |= otherRef;
-        Length3:
+    Length3:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 2);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 2);
         sourceRef |= otherRef;
-        Length2:
+    Length2:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 1);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 1);
         sourceRef |= otherRef;
-        Length1:
+    Length1:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 0);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 0);
         sourceRef |= otherRef;
-        Length0:
+    Length0:
         return;
     }
 
@@ -351,23 +347,23 @@ public static class BitArrayHelpers
             default: LargeSpanUnionWith(sourcePointer, otherPointer, length); return;
         }
 
-        Length8:
+    Length8:
         sourcePointer[7] |= otherPointer[7];
-        Length7:
+    Length7:
         sourcePointer[6] |= otherPointer[6];
-        Length6:
+    Length6:
         sourcePointer[5] |= otherPointer[5];
-        Length5:
+    Length5:
         sourcePointer[4] |= otherPointer[4];
-        Length4:
+    Length4:
         sourcePointer[3] |= otherPointer[3];
-        Length3:
+    Length3:
         sourcePointer[2] |= otherPointer[2];
-        Length2:
+    Length2:
         sourcePointer[1] |= otherPointer[1];
-        Length1:
+    Length1:
         sourcePointer[0] |= otherPointer[0];
-        Length0:
+    Length0:
         return;
     }
 
@@ -407,39 +403,39 @@ public static class BitArrayHelpers
             default: LargeSpanIntersectWith(span, other); return;
         }
 
-        Length8:
+    Length8:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 7);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 7);
         sourceRef &= otherRef;
-        Length7:
+    Length7:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 6);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 6);
         sourceRef &= otherRef;
-        Length6:
+    Length6:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 5);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 5);
         sourceRef &= otherRef;
-        Length5:
+    Length5:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 4);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 4);
         sourceRef &= otherRef;
-        Length4:
+    Length4:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 3);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 3);
         sourceRef &= otherRef;
-        Length3:
+    Length3:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 2);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 2);
         sourceRef &= otherRef;
-        Length2:
+    Length2:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 1);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 1);
         sourceRef &= otherRef;
-        Length1:
+    Length1:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 0);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 0);
         sourceRef &= otherRef;
-        Length0:
+    Length0:
         return;
     }
 
@@ -497,39 +493,39 @@ public static class BitArrayHelpers
             default: LargeSpanSymmetricExceptWith(span, other); return;
         }
 
-        Length8:
+    Length8:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 7);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 7);
         sourceRef ^= otherRef;
-        Length7:
+    Length7:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 6);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 6);
         sourceRef ^= otherRef;
-        Length6:
+    Length6:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 5);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 5);
         sourceRef ^= otherRef;
-        Length5:
+    Length5:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 4);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 4);
         sourceRef ^= otherRef;
-        Length4:
+    Length4:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 3);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 3);
         sourceRef ^= otherRef;
-        Length3:
+    Length3:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 2);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 2);
         sourceRef ^= otherRef;
-        Length2:
+    Length2:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 1);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 1);
         sourceRef ^= otherRef;
-        Length1:
+    Length1:
         sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 0);
         otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 0);
         sourceRef ^= otherRef;
-        Length0:
+    Length0:
         return;
     }
 
