@@ -193,17 +193,21 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshot
 
         LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetsNearLemming);
 
-        var checkZombies = HandleLemmingAction(in gadgetsNearLemming) &&
-                           CheckLevelBoundaries() &&
-                           CheckTriggerAreas(false, gadgetCheckPositions, in gadgetsNearLemming) &&
-                           CurrentAction != ExiterAction.Instance &&
-                           !State.IsZombie &&
-                           LevelScreen.LemmingManager.AnyZombies();
+        EvaluateLemmingLogic(gadgetCheckPositions, in gadgetsNearLemming);
+    }
 
-        if (checkZombies)
-        {
-            LevelScreen.LemmingManager.DoZombieCheck(this);
-        }
+    private void EvaluateLemmingLogic(
+        Span<Point> gadgetCheckPositions,
+        in GadgetEnumerable gadgetsNearLemming)
+    {
+        if (!HandleLemmingAction(in gadgetsNearLemming)) return;
+        if (!CheckLevelBoundaries()) return;
+        if (!CheckTriggerAreas(false, gadgetCheckPositions, in gadgetsNearLemming)) return;
+        if (CurrentAction == ExiterAction.Instance) return;
+        if (State.IsZombie) return;
+        if (!LevelScreen.LemmingManager.AnyZombies()) return;
+
+        LevelScreen.LemmingManager.DoZombieCheck(this);
     }
 
     [SkipLocalsInit]
