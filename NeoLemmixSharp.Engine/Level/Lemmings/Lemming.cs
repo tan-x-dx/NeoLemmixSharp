@@ -40,6 +40,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshot
             Renderer.UpdateLemmingState(true);
         }
     }
+
     public FacingDirection FacingDirection
     {
         get => _data.FacingDirection;

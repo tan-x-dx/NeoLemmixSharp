@@ -8,6 +8,7 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;
 
@@ -38,7 +39,7 @@ public ref struct LemmingCriteriaBuilder
             RegisterLemmingCriterion(hitBoxCriteriaDatum);
         }
 
-        CheckSetIsNotFull(ref _orientationSet, ref _numberOfCriteria);
+        CheckSetIsNotFull(ref _orientationSet);
         // Have to deal with facing directions differently since there's
         // only two possible values. It's not worth creating a set object
         // for just two values so we mess around with IDs directly.
@@ -48,9 +49,9 @@ public ref struct LemmingCriteriaBuilder
             _numberOfCriteria--;
         }
 
-        CheckSetIsNotFull(ref _lemmingActionSet, ref _numberOfCriteria);
-        CheckSetIsNotFull(ref _lemmingStateSet, ref _numberOfCriteria);
-        CheckSetIsNotFull(ref _tribeSet, ref _numberOfCriteria);
+        CheckSetIsNotFull(ref _lemmingActionSet);
+        CheckSetIsNotFull(ref _lemmingStateSet);
+        CheckSetIsNotFull(ref _tribeSet);
 
         return CreateLemmingCriteriaArray();
     }
@@ -64,7 +65,7 @@ public ref struct LemmingCriteriaBuilder
                 break;
 
             case LemmingCriteriaType.LemmingFacingDirection:
-                AddFacingToCriteria(hitBoxCriteriaDatum.ItemId);
+                AddFacingDirectionToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
             case LemmingCriteriaType.LemmingAction:
@@ -117,14 +118,13 @@ public ref struct LemmingCriteriaBuilder
         _orientationSet.Add(orientation);
     }
 
-    private void AddFacingToCriteria(int itemId)
+    private void AddFacingDirectionToCriteria(int itemId)
     {
         var newFacingDirectionId = (itemId ^ _instanceFacingDirection.Id) & 1;
 
         if (_facingDirectionIds == 0)
         {
             _numberOfCriteria++;
-            return;
         }
 
         _facingDirectionIds |= 1 << newFacingDirectionId;
@@ -169,7 +169,8 @@ public ref struct LemmingCriteriaBuilder
     // If the set contains all possible values, then it is functionally useless.
     // All queries will always return true, so we might as well not even bother
     // creating a criterion object.
-    private static void CheckSetIsNotFull<TPerfectHasher, TBuffer, T>(ref BitArraySet<TPerfectHasher, TBuffer, T>? set, ref int numberOfCriteria)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void CheckSetIsNotFull<TPerfectHasher, TBuffer, T>(ref BitArraySet<TPerfectHasher, TBuffer, T>? set)
         where TPerfectHasher : IBitBufferCreator<TBuffer, T>
         where TBuffer : struct, IBitBuffer
         where T : notnull
@@ -177,7 +178,7 @@ public ref struct LemmingCriteriaBuilder
         if (set is not null && set.IsFull)
         {
             set = null;
-            numberOfCriteria--;
+            _numberOfCriteria--;
         }
     }
 }
