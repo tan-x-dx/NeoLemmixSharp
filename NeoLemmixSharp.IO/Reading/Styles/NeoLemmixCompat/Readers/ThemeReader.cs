@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.IO.Data;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
@@ -37,7 +38,7 @@ public sealed class ThemeReader : NeoLemmixDataReader
 
     private void SetLemmingsTheme(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        if (secondToken.Equals(IoConstants.DefaultStyleIdentifierString, StringComparison.OrdinalIgnoreCase))
+        if (Helpers.StringSpansMatch(secondToken, IoConstants.DefaultStyleIdentifierString))
         {
             var defaultTheme = StyleCache.DefaultStyleData.ThemeData;
             _themeData.LemmingSpriteData = defaultTheme.LemmingSpriteData;
@@ -47,12 +48,10 @@ public sealed class ThemeReader : NeoLemmixDataReader
 
     private void SetNamesPlural(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        throw new NotImplementedException();
     }
 
     private void SetNameSingular(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        throw new NotImplementedException();
     }
 
     private void SetMaskColor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -93,6 +92,6 @@ public sealed class ThemeReader : NeoLemmixDataReader
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        throw new NotImplementedException();
+        FinishedReading = true;
     }
 }

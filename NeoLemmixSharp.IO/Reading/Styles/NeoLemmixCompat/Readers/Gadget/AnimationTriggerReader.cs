@@ -1,9 +1,10 @@
-﻿namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
+﻿using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-/*public sealed class AnimationTriggerReader : NeoLemmixDataReader
+namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
+
+internal sealed class AnimationTriggerReader : NeoLemmixDataReader
 {
-    private readonly List<AnimationTriggerData> _animationTriggerData;
-    private readonly Dictionary<string, NeoLemmixGadgetStateType> _gadgetStateTypeLookup = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, NeoLemmixGadgetStateType> _gadgetStateTypeLookup = new(StringComparer.OrdinalIgnoreCase)
     {
         { "READY", NeoLemmixGadgetStateType.Idle },
         { "BUSY", NeoLemmixGadgetStateType.Active },
@@ -11,19 +12,20 @@
         { "EXHAUSTED", NeoLemmixGadgetStateType.Disabled }
     };
 
-    private readonly Dictionary<string, GadgetSecondaryAnimationAction> _gadgetSecondaryAnimationActionLookup = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, GadgetAnimationBehaviour> _gadgetSecondaryAnimationActionLookup = new(StringComparer.OrdinalIgnoreCase)
     {
-        { "PLAY", GadgetSecondaryAnimationAction.Play },
-        { "PAUSE", GadgetSecondaryAnimationAction.Pause },
-        { "STOP", GadgetSecondaryAnimationAction.Stop },
-        { "LOOPTOZERO", GadgetSecondaryAnimationAction.LoopToZero },
-        { "MATCHPHYSICS", GadgetSecondaryAnimationAction.MatchPrimaryAnimationPhysics }
+        { "PLAY", GadgetAnimationBehaviour.Play },
+        { "PAUSE", GadgetAnimationBehaviour.Pause },
+        { "STOP", GadgetAnimationBehaviour.Stop },
+        { "LOOPTOZERO", GadgetAnimationBehaviour.LoopToZero },
+        { "MATCHPHYSICS", GadgetAnimationBehaviour.MatchPrimaryAnimationPhysics }
     };
 
+    private readonly List<AnimationTriggerData> _animationTriggerData;
     private AnimationTriggerData? _currentAnimationTriggerData;
 
     public AnimationTriggerReader(List<AnimationTriggerData> animationTriggerData)
-        : base("$TRIGGER")
+        : base("$ANIMATION")
     {
         _animationTriggerData = animationTriggerData;
 
@@ -62,7 +64,7 @@
         FinishedReading = true;
     }
 
-    private NeoLemmixGadgetStateType GetNeoLemmixGadgetStateType(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
+    private static NeoLemmixGadgetStateType GetNeoLemmixGadgetStateType(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
     {
         var alternateLookup = _gadgetStateTypeLookup.GetAlternateLookup<ReadOnlySpan<char>>();
 
@@ -72,14 +74,20 @@
         return NxlvReadingHelpers.ThrowUnknownTokenException<NeoLemmixGadgetStateType>("CONDITION", token, line);
     }
 
-    private GadgetSecondaryAnimationAction GetNeoLemmixGadgetAnimationAction(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
+    private static GadgetAnimationBehaviour GetNeoLemmixGadgetAnimationAction(ReadOnlySpan<char> line, ReadOnlySpan<char> token)
     {
         var alternateLookup = _gadgetSecondaryAnimationActionLookup.GetAlternateLookup<ReadOnlySpan<char>>();
 
         if (alternateLookup.TryGetValue(token, out var result))
             return result;
 
-        return NxlvReadingHelpers.ThrowUnknownTokenException<GadgetSecondaryAnimationAction>("STATE", token, line);
+        return NxlvReadingHelpers.ThrowUnknownTokenException<GadgetAnimationBehaviour>("STATE", token, line);
     }
 }
-*/
+
+internal sealed class AnimationTriggerData
+{
+    public NeoLemmixGadgetStateType StateType { get; internal set; }
+    public GadgetAnimationBehaviour AnimationAction { get; internal set; }
+    public bool Hide { get; internal set; }
+}

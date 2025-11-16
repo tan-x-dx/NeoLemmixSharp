@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.Identity;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -7,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 
-public sealed class HatchGroup : IIdEquatable<HatchGroup>
+public sealed class HatchGroup : IEquatable<HatchGroup>
 {
     private HatchGadget[] _hatches;
 

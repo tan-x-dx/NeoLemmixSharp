@@ -30,7 +30,7 @@ public sealed class SaveLemmingsCriterionData : ObjectiveCriterionData
 
 public sealed class TimeLimitCriterionData : ObjectiveCriterionData
 {
-    public required int TimeLimitInSeconds { get; init; }
+    public required uint TimeLimitInSeconds { get; init; }
 
     public TimeLimitCriterionData()
         : base(ObjectiveCriterionType.TimeLimit)

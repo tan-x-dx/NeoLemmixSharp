@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
+﻿using NeoLemmixSharp.Common.Util;
+
+namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 public abstract class NeoLemmixDataReader
 {
@@ -22,16 +24,9 @@ public abstract class NeoLemmixDataReader
 
     protected void RegisterTokenAction(string token, TokenAction action) => _tokenActions.Add(token, action);
 
-    protected static bool TokensMatch(
-        ReadOnlySpan<char> firstToken,
-        ReadOnlySpan<char> secondToken)
-    {
-        return firstToken.Equals(secondToken, StringComparison.OrdinalIgnoreCase);
-    }
-
     public virtual bool ShouldProcessSection(ReadOnlySpan<char> token)
     {
-        return TokensMatch(token, IdentifierToken);
+        return Helpers.StringSpansMatch(token, IdentifierToken);
     }
 
     /// <summary>

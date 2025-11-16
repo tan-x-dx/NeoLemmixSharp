@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.GadgetData;
@@ -19,6 +20,7 @@ internal sealed class PrimaryAnimationReader : NeoLemmixDataReader
         SetNumberOfTokens(12);
 
         RegisterTokenAction("FRAMES", SetFrameCount);
+        RegisterTokenAction("INITIAL_FRAME", SetInitialFrame);
         RegisterTokenAction("NAME", SetName);
         RegisterTokenAction("WIDTH", SetWidth);
         RegisterTokenAction("HEIGHT", SetHeight);
@@ -43,7 +45,8 @@ internal sealed class PrimaryAnimationReader : NeoLemmixDataReader
         NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
 
         // Special handling for pickups specifically
-        if (TokensMatch(firstToken, "NAME") && TokensMatch(secondToken, "*PICKUP"))
+        if (Helpers.StringSpansMatch(firstToken, "NAME") &&
+            Helpers.StringSpansMatch(secondToken, "*PICKUP"))
         {
             _gadgetArchetypeData.IsSkillPickup = true;
             return false;
@@ -55,6 +58,18 @@ internal sealed class PrimaryAnimationReader : NeoLemmixDataReader
     private void SetFrameCount(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         _neoLemmixGadgetAnimationData.FrameCount = int.Parse(secondToken);
+    }
+
+    private void SetInitialFrame(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        if (Helpers.StringSpansMatch(secondToken, "RANDOM"))
+        {
+
+        }
+        else
+        {
+
+        }
     }
 
     private void SetName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

@@ -1,13 +1,12 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public abstract class GadgetBase : IIdEquatable<GadgetBase>, ISnapshotDataConvertible
+public abstract class GadgetBase : IEquatable<GadgetBase>, ISnapshotDataConvertible
 {
     private readonly int _requiredNumberOfBytesForSnapshotting;
     public required GadgetName GadgetName { get; init; }

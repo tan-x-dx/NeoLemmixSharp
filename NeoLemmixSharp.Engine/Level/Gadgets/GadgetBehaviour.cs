@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using System.Diagnostics;
@@ -8,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public abstract class GadgetBehaviour : IIdEquatable<GadgetBehaviour>
+public abstract class GadgetBehaviour : IEquatable<GadgetBehaviour>
 {
     protected GadgetBase ParentGadget = null!;
 

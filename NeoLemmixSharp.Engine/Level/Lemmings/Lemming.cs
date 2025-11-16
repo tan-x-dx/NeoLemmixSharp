@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -16,7 +15,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapshotDataConvertible
+public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshotDataConvertible
 {
     public static Lemming SimulationLemming { get; } = new();
 
@@ -41,6 +40,7 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
             Renderer.UpdateLemmingState(true);
         }
     }
+
     public FacingDirection FacingDirection
     {
         get => _data.FacingDirection;
@@ -194,17 +194,21 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
 
         LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetsNearLemming);
 
-        var checkZombies = HandleLemmingAction(in gadgetsNearLemming) &&
-                           CheckLevelBoundaries() &&
-                           CheckTriggerAreas(false, gadgetCheckPositions, in gadgetsNearLemming) &&
-                           CurrentAction != ExiterAction.Instance &&
-                           !State.IsZombie &&
-                           LevelScreen.LemmingManager.AnyZombies();
+        EvaluateLemmingLogic(gadgetCheckPositions, in gadgetsNearLemming);
+    }
 
-        if (checkZombies)
-        {
-            LevelScreen.LemmingManager.DoZombieCheck(this);
-        }
+    private void EvaluateLemmingLogic(
+        Span<Point> gadgetCheckPositions,
+        in GadgetEnumerable gadgetsNearLemming)
+    {
+        if (!HandleLemmingAction(in gadgetsNearLemming)) return;
+        if (!CheckLevelBoundaries()) return;
+        if (!CheckTriggerAreas(false, gadgetCheckPositions, in gadgetsNearLemming)) return;
+        if (CurrentAction == ExiterAction.Instance) return;
+        if (State.IsZombie) return;
+        if (!LevelScreen.LemmingManager.AnyZombies()) return;
+
+        LevelScreen.LemmingManager.DoZombieCheck(this);
     }
 
     [SkipLocalsInit]
@@ -542,8 +546,6 @@ public sealed class Lemming : IIdEquatable<Lemming>, IRectangularBounds, ISnapsh
         Renderer.ResetPosition();
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
-
-    int IIdEquatable<Lemming>.Id => Id;
 
     [DebuggerStepThrough]
     public bool Equals(Lemming? other)

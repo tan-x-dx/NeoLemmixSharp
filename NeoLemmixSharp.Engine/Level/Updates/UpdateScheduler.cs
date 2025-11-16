@@ -190,7 +190,7 @@ end;
         LevelScreen.LemmingManager.Tick(isMajorTick);
         LevelScreen.GadgetManager.Tick(isMajorTick);
 
-        LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks, true);
+        LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks);
         LevelScreen.RewindManager.Tick(_elapsedTicks);
         LevelScreen.TerrainPainter.RepaintTerrain();
 

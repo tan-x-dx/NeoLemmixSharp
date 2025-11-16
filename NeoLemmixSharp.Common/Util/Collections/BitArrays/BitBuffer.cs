@@ -32,9 +32,9 @@ public struct BitBuffer32 : IBitBuffer
 
 public readonly struct ArrayBitBuffer : IBitBuffer
 {
+    private readonly uint[] _array;
     private readonly int _start;
     private readonly int _length;
-    private readonly uint[] _array;
 
     public int Length => _length;
 
@@ -59,9 +59,7 @@ public readonly struct ArrayBitBuffer : IBitBuffer
         _length = length;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<uint> AsSpan() => new(_array, _start, _length);
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<uint> AsReadOnlySpan() => new(_array, _start, _length);
 }
 
@@ -78,8 +76,6 @@ public unsafe readonly struct RawBitBuffer : IBitBuffer
         _length = length;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<uint> AsSpan() => new(_pointer, _length);
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<uint> AsReadOnlySpan() => new(_pointer, _length);
 }

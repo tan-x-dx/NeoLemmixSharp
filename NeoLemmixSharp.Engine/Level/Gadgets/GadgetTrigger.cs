@@ -1,12 +1,11 @@
 ﻿using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Common.Util.Identity;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public abstract class GadgetTrigger : IIdEquatable<GadgetTrigger>
+public abstract class GadgetTrigger : IEquatable<GadgetTrigger>
 {
     private const int IndeterminateTriggerValue = -1;
     private const int DefinitelyNotTriggeredValue = 0;

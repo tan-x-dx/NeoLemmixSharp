@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
@@ -91,13 +92,13 @@ internal sealed class TalismanReader : NeoLemmixDataReader
 
     private TalismanRank GetTalismanColor(ReadOnlySpan<char> secondToken)
     {
-        if (TokensMatch(secondToken, "BRONZE"))
+        if (Helpers.StringSpansMatch(secondToken, "BRONZE"))
             return TalismanRank.Bronze;
 
-        if (TokensMatch(secondToken, "SILVER"))
+        if (Helpers.StringSpansMatch(secondToken, "SILVER"))
             return TalismanRank.Silver;
 
-        if (TokensMatch(secondToken, "GOLD"))
+        if (Helpers.StringSpansMatch(secondToken, "GOLD"))
             return TalismanRank.Gold;
 
         return NxlvReadingHelpers.ThrowUnknownTokenException<TalismanRank>(IdentifierToken, "COLOR", secondToken);
@@ -107,13 +108,13 @@ internal sealed class TalismanReader : NeoLemmixDataReader
     {
         var currentTalismanData = _currentTalismanData!;
 
-        if (TokensMatch(firstToken, "TIME_LIMIT"))
+        if (Helpers.StringSpansMatch(firstToken, "TIME_LIMIT"))
         {
             currentTalismanData.TimeLimitInSeconds = int.Parse(secondToken);
             return;
         }
 
-        if (TokensMatch(firstToken, "SKILL_LIMIT"))
+        if (Helpers.StringSpansMatch(firstToken, "SKILL_LIMIT"))
         {
             currentTalismanData.AllSkillLimit = int.Parse(secondToken);
             return;

@@ -1,12 +1,11 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
-using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
+﻿using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Tribes;
 
-public sealed class Tribe : IIdEquatable<Tribe>
+public sealed class Tribe : IEquatable<Tribe>
 {
     public readonly TribeStyleIdentifier TribeIdentifier;
     public readonly TribeColorData ColorData;
@@ -22,7 +21,6 @@ public sealed class Tribe : IIdEquatable<Tribe>
         TribeIdentifier = tribeIdentifier;
     }
 
-    int IIdEquatable<Tribe>.Id => Id;
     [DebuggerStepThrough]
     public bool Equals(Tribe? other)
     {

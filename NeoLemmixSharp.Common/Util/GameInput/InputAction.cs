@@ -1,11 +1,10 @@
-﻿using NeoLemmixSharp.Common.Util.Identity;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public sealed class InputAction : IIdEquatable<InputAction>
+public sealed class InputAction : IEquatable<InputAction>
 {
     private const ulong EnabledMask = (1UL << EngineConstants.EngineTicksPerSecond) - 1UL;
     private const ulong DisabledMask = 0UL;
