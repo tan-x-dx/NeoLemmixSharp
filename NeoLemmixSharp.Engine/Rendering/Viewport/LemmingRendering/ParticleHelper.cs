@@ -13,7 +13,7 @@ public static class ParticleHelper
     private static readonly sbyte[] ParticleOffsets = new sbyte[ByteLength];
 
     [Pure]
-    public static Span<byte> GetByteBuffer() => MemoryMarshal.Cast<sbyte, byte>(ParticleOffsets);
+    public static Span<byte> GetByteBuffer() => MemoryMarshal.Cast<sbyte, byte>(new Span<sbyte>(ParticleOffsets));
 
     [Pure]
     public static Point GetParticleOffsets(
