@@ -516,10 +516,10 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshot
         SetReferenceDataFromSnapshot();
     }
 
-    private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* desinationPointer)
+    private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* destinationPointer)
     {
         var sourceSpan = new ReadOnlySpan<byte>(sourcePointer, sizeof(LemmingData));
-        var destinationSpan = new Span<byte>(desinationPointer, sizeof(LemmingData));
+        var destinationSpan = new Span<byte>(destinationPointer, sizeof(LemmingData));
 
         sourceSpan.CopyTo(destinationSpan);
     }
