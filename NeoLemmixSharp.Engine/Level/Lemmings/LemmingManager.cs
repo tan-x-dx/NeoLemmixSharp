@@ -51,6 +51,7 @@ public sealed class LemmingManager :
     public ReadOnlySpan<HatchGroup> AllHatchGroups => new(_hatchGroups);
     public ReadOnlySpan<Lemming> AllLemmings => new(_lemmings);
     public LemmingEnumerable AllBlockers => _allBlockers.AsEnumerable();
+    public Lemming GetLemming(int lemmingId) => _lemmings[lemmingId];
 
     public LemmingManager(
         Lemming[] lemmings,
@@ -161,7 +162,7 @@ public sealed class LemmingManager :
     private void UpdateHatchGroups()
     {
         var hatchLemmingSpan = new ReadOnlySpan<Lemming>(_lemmings, _numberOfPreplacedLemmings, _totalNumberOfHatchLemmings);
-        foreach (var hatchGroup in AllHatchGroups)
+        foreach (var hatchGroup in _hatchGroups)
         {
             var hatchGadget = hatchGroup.Tick();
 
@@ -370,10 +371,6 @@ public sealed class LemmingManager :
     int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];
-
-    int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
-    int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
-    HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
     unsafe void IBitBufferCreator<RawBitBuffer, Lemming>.CreateBitBuffer(out RawBitBuffer buffer)
     {
         if (_bitArrayBufferUsageCount == 0)
@@ -384,6 +381,10 @@ public sealed class LemmingManager :
         uint* pointer = (uint*)_lemmingByteBuffer.Handle + (bitBufferLength * _bitArrayBufferUsageCount);
         buffer = new RawBitBuffer(pointer, bitBufferLength);
     }
+
+    int IPerfectHasher<HatchGroup>.NumberOfItems => _hatchGroups.Length;
+    int IPerfectHasher<HatchGroup>.Hash(HatchGroup item) => item.Id;
+    HatchGroup IPerfectHasher<HatchGroup>.UnHash(int index) => _hatchGroups[index];
 
     public void Dispose()
     {

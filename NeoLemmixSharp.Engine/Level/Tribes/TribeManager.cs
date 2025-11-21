@@ -18,8 +18,10 @@ public sealed class TribeManager :
         this.AssertUniqueIds(new ReadOnlySpan<Tribe>(_tribes));
         Array.Sort(_tribes, this);
     }
+    
+    public Tribe GetTribe(int id) => _tribes[id];
 
-    public Tribe? GetTribeForId(int? id)
+    public Tribe? TryGetTribe(int? id)
     {
         if (!id.HasValue)
             return null;

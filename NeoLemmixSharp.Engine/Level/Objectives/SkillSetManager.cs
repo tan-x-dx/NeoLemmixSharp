@@ -63,7 +63,7 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
 
     public void ChangeSkillCount(LemmingSkill lemmingSkill, Tribe? tribe, int delta)
     {
-        foreach (var skillTrackingData in AllItems)
+        foreach (var skillTrackingData in _skillTrackingDataList)
         {
             if (skillTrackingData.Skill != lemmingSkill ||
                 skillTrackingData.Tribe != tribe)

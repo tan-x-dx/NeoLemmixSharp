@@ -36,7 +36,7 @@ public sealed class MoveGadgetBehaviour : GadgetBehaviour
 
         _tickCount = 0;
 
-        var gadget = (IMoveableGadget)LevelScreen.GadgetManager.AllItems[_gadgetIdentifier.GadgetId];
+        var gadget = (IMoveableGadget)LevelScreen.GadgetManager.GetGadget(_gadgetIdentifier.GadgetId);
         var constrainedDelta = GetConstrainedDelta(gadget.Position);
         gadget.Move(constrainedDelta);
     }

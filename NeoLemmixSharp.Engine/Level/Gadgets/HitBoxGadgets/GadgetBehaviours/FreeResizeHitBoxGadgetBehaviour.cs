@@ -36,7 +36,7 @@ public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
 
         _tickCount = 0;
 
-        var gadget = (HitBoxGadget)LevelScreen.GadgetManager.AllItems[_gadgetIdentifier.GadgetId];
+        var gadget = (HitBoxGadget)LevelScreen.GadgetManager.GetGadget(_gadgetIdentifier.GadgetId);
         gadget.Resize(_dw, _dh);
     }
 }

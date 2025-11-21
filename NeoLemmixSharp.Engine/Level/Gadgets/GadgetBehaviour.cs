@@ -84,5 +84,5 @@ public abstract class GadgetBehaviour : IEquatable<GadgetBehaviour>
     }
     public static bool operator !=(GadgetBehaviour? left, GadgetBehaviour? right) => !(left == right);
 
-    protected static Lemming GetLemming(int lemmingId) => LevelScreen.LemmingManager.AllLemmings[lemmingId];
+    protected static Lemming GetLemming(int lemmingId) => LevelScreen.LemmingManager.GetLemming(lemmingId);
 }

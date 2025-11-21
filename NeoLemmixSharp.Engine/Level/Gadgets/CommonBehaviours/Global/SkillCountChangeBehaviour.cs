@@ -36,6 +36,6 @@ public sealed class SkillCountChangeBehaviour : GadgetBehaviour
                 ? null
                 : GetLemming(triggerData).State.TribeAffiliation;
 
-        return LevelScreen.TribeManager.GetTribeForId(_overrideTribeId);
+        return LevelScreen.TribeManager.TryGetTribe(_overrideTribeId);
     }
 }

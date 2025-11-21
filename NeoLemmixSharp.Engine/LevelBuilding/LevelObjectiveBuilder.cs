@@ -107,7 +107,7 @@ public sealed class LevelObjectiveBuilder
 
             var tribe = skillSetData.TribeId == -1
                 ? null
-                : tribeManager.GetTribeForId(skillSetData.TribeId);
+                : tribeManager.TryGetTribe(skillSetData.TribeId);
 
             result[i] = new SkillTrackingData(skill, tribe, i, skillSetData.InitialQuantity, initialSkillLimit);
         }

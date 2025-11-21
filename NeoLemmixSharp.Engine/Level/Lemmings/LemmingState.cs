@@ -245,13 +245,13 @@ public sealed class LemmingState
 
     public Tribe TribeAffiliation
     {
-        get => LevelScreen.TribeManager.AllItems[_tribeId];
+        get => LevelScreen.TribeManager.GetTribe(_tribeId);
         set
         {
             _tribeId = value.Id;
             UpdateHairAndBodyColors();
             UpdateSkinColor();
-            PaintColor = LevelScreen.TribeManager.AllItems[_tribeId].ColorData.PaintColor;
+            PaintColor = LevelScreen.TribeManager.GetTribe(_tribeId).ColorData.PaintColor;
         }
     }
 
@@ -269,7 +269,7 @@ public sealed class LemmingState
 
     private void UpdateHairAndBodyColors()
     {
-        ref readonly var tribeColorData = ref LevelScreen.TribeManager.AllItems[_tribeId].ColorData;
+        ref readonly var tribeColorData = ref LevelScreen.TribeManager.GetTribe(_tribeId).ColorData;
 
         if (HasPermanentSkill)
         {
@@ -289,7 +289,7 @@ public sealed class LemmingState
 
     private void UpdateSkinColor()
     {
-        ref readonly var tribeColorData = ref LevelScreen.TribeManager.AllItems[_tribeId].ColorData;
+        ref readonly var tribeColorData = ref LevelScreen.TribeManager.GetTribe(_tribeId).ColorData;
 
         var skinColor = IsZombie
             ? tribeColorData.ZombieSkinColor
