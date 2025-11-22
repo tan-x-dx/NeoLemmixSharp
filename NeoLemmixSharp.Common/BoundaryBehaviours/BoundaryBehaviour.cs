@@ -178,7 +178,7 @@ public sealed class BoundaryBehaviour
         if (intervalStart <= a && a < intervalEnd)
             return true;
 
-        // If the interval does not contains the point, then the Void type will never work
+        // If the interval does not contain the point, then the Void type will never work
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 

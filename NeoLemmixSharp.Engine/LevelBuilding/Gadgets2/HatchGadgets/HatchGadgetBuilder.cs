@@ -119,7 +119,7 @@ public readonly struct HatchGadgetBuilder
     {
         return new HatchSpawnData(
             _hatchGadgetTypeInstanceData.HatchGroupId,
-            tribeManager.AllItems[_hatchGadgetTypeInstanceData.TribeId],
+            tribeManager.GetTribe(_hatchGadgetTypeInstanceData.TribeId),
             _hatchGadgetTypeInstanceData.RawStateData,
             _hatchGadgetInstanceData.Orientation,
             _hatchGadgetInstanceData.FacingDirection,

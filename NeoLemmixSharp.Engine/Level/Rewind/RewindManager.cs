@@ -67,7 +67,7 @@ public sealed class RewindManager :
 
     private static unsafe void AssignSkillFromReplay(SkillAssignmentEventData* previouslyRecordedSkillAssignment)
     {
-        var lemming = LevelScreen.LemmingManager.AllLemmings[previouslyRecordedSkillAssignment->LemmingId];
+        var lemming = LevelScreen.LemmingManager.GetLemming(previouslyRecordedSkillAssignment->LemmingId);
 
         ValidateLemmingReplayAction(
             lemming,

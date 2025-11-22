@@ -162,7 +162,7 @@ public ref struct LemmingCriteriaBuilder
             _numberOfCriteria++;
         }
 
-        var tribe = _tribeManager.AllItems[itemId];
+        var tribe = _tribeManager.GetTribe(itemId);
         _tribeSet.Add(tribe);
     }
 

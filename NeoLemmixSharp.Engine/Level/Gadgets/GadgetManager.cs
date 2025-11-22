@@ -25,6 +25,7 @@ public sealed class GadgetManager :
     private const int RequiredNumberOfGadgetBitSets =
         1 + // spacial hash grid
         2; // gadget sets
+
     private readonly RawArray _gadgetByteBuffer;
     private int _bitArrayBufferUsageCount = RequiredNumberOfGadgetBitSets;
 
@@ -34,6 +35,7 @@ public sealed class GadgetManager :
 
     public ReadOnlySpan<GadgetBase> AllItems => new(_allGadgets);
     public ReadOnlySpan<GadgetBehaviour> AllBehaviours => new(_allBehaviours);
+    public GadgetBase GetGadget(int gadgetId) => _allGadgets[gadgetId];
 
     public GadgetManager(
         GadgetBase[] allGadgets,
@@ -207,17 +209,23 @@ public sealed class GadgetManager :
     int IPerfectHasher<GadgetBase>.NumberOfItems => _allGadgets.Length;
     int IPerfectHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
     GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
-    void IBitBufferCreator<RawBitBuffer, GadgetBase>.CreateBitBuffer(out RawBitBuffer buffer) => buffer = GetNextRawBitBuffer();
+
+    void IBitBufferCreator<RawBitBuffer, GadgetBase>.CreateBitBuffer(out RawBitBuffer buffer) =>
+        buffer = GetNextRawBitBuffer();
 
     int IPerfectHasher<HitBoxGadget>.NumberOfItems => _allGadgets.Length;
     int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
     HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
-    void IBitBufferCreator<RawBitBuffer, HitBoxGadget>.CreateBitBuffer(out RawBitBuffer buffer) => buffer = GetNextRawBitBuffer();
+
+    void IBitBufferCreator<RawBitBuffer, HitBoxGadget>.CreateBitBuffer(out RawBitBuffer buffer) =>
+        buffer = GetNextRawBitBuffer();
 
     int IPerfectHasher<GadgetTrigger>.NumberOfItems => _allTriggers.Length;
     int IPerfectHasher<GadgetTrigger>.Hash(GadgetTrigger item) => item.Id;
     GadgetTrigger IPerfectHasher<GadgetTrigger>.UnHash(int index) => _allTriggers[index];
-    void IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>.CreateBitBuffer(out ArrayBitBuffer buffer) => buffer = new(_allTriggers.Length);
+
+    void IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>.CreateBitBuffer(out ArrayBitBuffer buffer) =>
+        buffer = new(_allTriggers.Length);
 
     int IPerfectHasher<GadgetBehaviour>.NumberOfItems => _allBehaviours.Length;
     int IPerfectHasher<GadgetBehaviour>.Hash(GadgetBehaviour item) => item.Id;
