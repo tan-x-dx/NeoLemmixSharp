@@ -1,8 +1,9 @@
 ﻿namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
 
-internal enum NeoLemmixGadgetStateType
+internal enum NeoLemmixGadgetCondition
 {
     Idle,
     Active,
-    Disabled
+    Disabled,
+    Exhausted
 }

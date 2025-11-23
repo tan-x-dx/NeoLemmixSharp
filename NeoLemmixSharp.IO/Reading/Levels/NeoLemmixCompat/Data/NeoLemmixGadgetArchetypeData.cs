@@ -7,11 +7,16 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 
 internal sealed class NeoLemmixGadgetArchetypeData
 {
+    public string FilePath { get; }
     public StyleIdentifier StyleIdentifier { get; }
     public PieceIdentifier GadgetPieceIdentifier { get; }
 
-    public NeoLemmixGadgetArchetypeData(StyleIdentifier styleIdentifier, PieceIdentifier gadgetPieceIdentifier)
+    public NeoLemmixGadgetArchetypeData(
+        string filePath,
+        StyleIdentifier styleIdentifier,
+        PieceIdentifier gadgetPieceIdentifier)
     {
+        FilePath = filePath;
         StyleIdentifier = styleIdentifier;
         GadgetPieceIdentifier = gadgetPieceIdentifier;
     }

@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
 
-internal enum GadgetAnimationBehaviour
+internal enum NeoLemmixStateType
 {
     Play,
     Pause,

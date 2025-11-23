@@ -6,9 +6,12 @@ internal sealed class NeoLemmixGadgetAnimationData
 {
     public string? TextureFilePath { get; set; }
 
-    public GadgetAnimationBehaviour GadgetAnimationBehaviour { get; set; } = GadgetAnimationBehaviour.LoopToZero;
+    public NeoLemmixStateType GadgetAnimationBehaviour { get; set; } = NeoLemmixStateType.Play;
 
     public int FrameCount { get; set; }
+    public int InitialFrame { get; set; }
     public int OffsetX { get; set; }
     public int OffsetY { get; set; }
+
+    public List<AnimationTriggerData> AnimationTriggers { get; } = [];
 }

@@ -12,6 +12,9 @@ public readonly struct UniqueStringSet
     public string GetUniqueStringInstance(ReadOnlySpan<char> chars)
     {
         chars = chars.Trim();
+        if (chars.Length == 0)
+            return string.Empty;
+
         var alternateLookup = _uniqueStrings.GetAlternateLookup<ReadOnlySpan<char>>();
         alternateLookup.Add(chars);
         alternateLookup.TryGetValue(chars, out var uniqueInstance);

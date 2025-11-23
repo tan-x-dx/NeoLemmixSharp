@@ -1,12 +1,14 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.GadgetData;
+using NeoLemmixSharp.IO.Util;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
 
-internal sealed class AnimationTriggerReader : NeoLemmixDataReader
+internal sealed class GadgetAnimationReader : NeoLemmixDataReader
 {
     private static readonly Dictionary<string, NeoLemmixGadgetCondition> _gadgetStateTypeLookup = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -25,21 +27,32 @@ internal sealed class AnimationTriggerReader : NeoLemmixDataReader
         { "MATCHPHYSICS", NeoLemmixStateType.MatchPrimaryAnimationPhysics }
     };
 
-    private readonly NeoLemmixGadgetArchetypeData _neoLemmixGadgetArchetypeData;
-    private readonly NeoLemmixGadgetAnimationData _neoLemmixGadgetAnimationData;
+    private readonly UniqueStringSet _uniqueStringSet;
+    private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
+    private NeoLemmixGadgetAnimationData? _currentNeoLemmixGadgetAnimationData;
     private AnimationTriggerData? _currentAnimationTriggerData;
     private bool _readingTrigger;
 
-    public AnimationTriggerReader(NeoLemmixGadgetArchetypeData neoLemmixGadgetArchetypeData)
-        : base("$ANIMATION")
+    public GadgetAnimationReader(NeoLemmixGadgetArchetypeData gadgetArchetypeData, UniqueStringSet uniqueStringSet)
+        : base(string.Empty)
     {
-        _neoLemmixGadgetArchetypeData = neoLemmixGadgetArchetypeData;
+        _gadgetArchetypeData = gadgetArchetypeData;
+        _uniqueStringSet = uniqueStringSet;
+
+        SetNumberOfTokens(17);
 
         RegisterTokenAction("FRAMES", SetFrameCount);
         RegisterTokenAction("INITIAL_FRAME", SetInitialFrame);
         RegisterTokenAction("NAME", SetName);
+        RegisterTokenAction("WIDTH", SetWidth);
+        RegisterTokenAction("HEIGHT", SetHeight);
         RegisterTokenAction("OFFSET_X", SetOffsetX);
         RegisterTokenAction("OFFSET_Y", SetOffsetY);
+        RegisterTokenAction("NINE_SLICE_TOP", SetNineSliceTop);
+        RegisterTokenAction("NINE_SLICE_RIGHT", SetNineSliceRight);
+        RegisterTokenAction("NINE_SLICE_BOTTOM", SetNineSliceBottom);
+        RegisterTokenAction("NINE_SLICE_LEFT", SetNineSliceLeft);
+        RegisterTokenAction("COLOR", SetColor);
 
         RegisterTokenAction("$TRIGGER", OnEnterTrigger);
         RegisterTokenAction("CONDITION", SetTriggerCondition);
@@ -48,43 +61,104 @@ internal sealed class AnimationTriggerReader : NeoLemmixDataReader
         RegisterTokenAction("$END", OnEnd);
     }
 
+    public override bool ShouldProcessSection(ReadOnlySpan<char> token)
+    {
+        return Helpers.StringSpansMatch(token, "$PRIMARY_ANIMATION") ||
+               Helpers.StringSpansMatch(token, "$ANIMATION");
+    }
+
     public override bool BeginReading(ReadOnlySpan<char> line)
     {
-        _readingTrigger = false;
+        _currentNeoLemmixGadgetAnimationData = new NeoLemmixGadgetAnimationData();
+
         FinishedReading = false;
         return false;
     }
 
+    public override bool ReadNextLine(ReadOnlySpan<char> line)
+    {
+        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
+
+        // Special handling for pickups specifically
+        if (Helpers.StringSpansMatch(firstToken, "NAME") &&
+            Helpers.StringSpansMatch(secondToken, "*PICKUP"))
+        {
+            _gadgetArchetypeData.IsSkillPickup = true;
+            return false;
+        }
+
+        return ProcessTokenPair(line, firstToken, secondToken, secondTokenIndex);
+    }
+
     private void SetFrameCount(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _neoLemmixGadgetAnimationData.FrameCount = int.Parse(secondToken);
+        _currentNeoLemmixGadgetAnimationData!.FrameCount = int.Parse(secondToken);
     }
 
     private void SetInitialFrame(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        if (Helpers.StringSpansMatch(secondToken, "RANDOM"))
-        {
-
-        }
-        else
-        {
-
-        }
+        _currentNeoLemmixGadgetAnimationData!.InitialFrame = Helpers.StringSpansMatch(secondToken, "RANDOM")
+            ? -1
+            : int.Parse(secondToken);
     }
 
     private void SetName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        _currentNeoLemmixGadgetAnimationData!.TextureFilePath = Helpers.StringSpansMatch(secondToken, "*BLANK")
+            ? string.Empty
+            : ConstructFilePathForTexture(secondToken);
+    }
 
+    private string ConstructFilePathForTexture(ReadOnlySpan<char> secondToken)
+    {
+        var originalFilePath = _gadgetArchetypeData.FilePath.AsSpan();
+        var originalFilePathWithoutExtension = Helpers.GetFullFilePathWithoutExtension(originalFilePath);
+
+        return $"{originalFilePathWithoutExtension}_{secondToken}.png";
+    }
+
+    private void SetWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _gadgetArchetypeData.SpriteWidth = int.Parse(secondToken);
+    }
+
+    private void SetHeight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _gadgetArchetypeData.SpriteHeight = int.Parse(secondToken);
     }
 
     private void SetOffsetX(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _neoLemmixGadgetAnimationData.OffsetX = int.Parse(secondToken);
+        _currentNeoLemmixGadgetAnimationData!.OffsetX = int.Parse(secondToken);
     }
 
     private void SetOffsetY(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _neoLemmixGadgetAnimationData.OffsetY = int.Parse(secondToken);
+        _currentNeoLemmixGadgetAnimationData!.OffsetY = int.Parse(secondToken);
+    }
+
+    private void SetNineSliceTop(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _gadgetArchetypeData.ResizeType |= ResizeType.ResizeVertical;
+    }
+
+    private void SetNineSliceRight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _gadgetArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
+    }
+
+    private void SetNineSliceBottom(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _gadgetArchetypeData.ResizeType |= ResizeType.ResizeVertical;
+    }
+
+    private void SetNineSliceLeft(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+        _gadgetArchetypeData.ResizeType |= ResizeType.ResizeHorizontal;
+    }
+
+    private void SetColor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
     }
 
     private void OnEnterTrigger(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -116,13 +190,18 @@ internal sealed class AnimationTriggerReader : NeoLemmixDataReader
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        var currentAnimationData = _currentNeoLemmixGadgetAnimationData!;
+
         if (_readingTrigger)
         {
-            _neoLemmixGadgetAnimationData.AnimationTriggers.Add(_currentAnimationTriggerData!);
+            currentAnimationData.AnimationTriggers.Add(_currentAnimationTriggerData!);
             _currentAnimationTriggerData = null;
             _readingTrigger = false;
             return;
         }
+
+        _gadgetArchetypeData.AnimationData.Add(currentAnimationData);
+        _currentNeoLemmixGadgetAnimationData = null;
 
         FinishedReading = true;
     }

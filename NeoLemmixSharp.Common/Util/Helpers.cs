@@ -193,4 +193,12 @@ public static class Helpers
 
         return new ReadOnlySpan<string>(allFiles, 0, subLength);
     }
+
+    public static ReadOnlySpan<char> GetFullFilePathWithoutExtension(ReadOnlySpan<char> fullFilePath)
+    {
+        var extension = Path.GetExtension(fullFilePath);
+
+        var indexOfExtension = fullFilePath.IndexOf(extension, StringComparison.Ordinal);
+        return fullFilePath[..indexOfExtension];
+    }
 }
