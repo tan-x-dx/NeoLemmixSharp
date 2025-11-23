@@ -15,6 +15,7 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>
     [Pure]
     public int DeltaX => 1 - (Id << 1);
 
+    [DebuggerStepThrough]
     public FacingDirection(int id)
     {
         Id = id & 1;

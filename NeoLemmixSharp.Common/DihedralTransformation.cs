@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -11,18 +12,21 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     public readonly Orientation Orientation;
     public readonly FacingDirection FacingDirection;
 
+    [DebuggerStepThrough]
     public DihedralTransformation(Orientation orientation, FacingDirection facingDirection)
     {
         Orientation = orientation;
         FacingDirection = facingDirection;
     }
 
+    [DebuggerStepThrough]
     public DihedralTransformation(int encodedBits)
     {
         Orientation = new Orientation(encodedBits);
         FacingDirection = new FacingDirection(encodedBits >>> FlipBitShift);
     }
 
+    [DebuggerStepThrough]
     public DihedralTransformation(
         bool flipHorizontally,
         bool flipVertically,
@@ -168,6 +172,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     }
 
     [Pure]
+    [DebuggerStepThrough]
     [SkipLocalsInit]
     public override string ToString()
     {
@@ -199,8 +204,10 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
     [Pure]
+    [DebuggerStepThrough]
     public static bool operator ==(DihedralTransformation left, DihedralTransformation right) => left.Equals(right);
 
     [Pure]
+    [DebuggerStepThrough]
     public static bool operator !=(DihedralTransformation left, DihedralTransformation right) => !left.Equals(right);
 }
