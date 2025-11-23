@@ -159,6 +159,18 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
         return result;
     }
 
+    /// <summary>
+    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid id. In such a case the <see cref="NoneSkill"/> is returned.
+    /// </summary>
+    /// <param name="unboundSkillId">The (possibly invalid) id of the skill to fetch.</param>
+    /// <returns>The LemmingSkill with that id, or the <see cref="NoneSkill"/> if the id is invalid.</returns>
+    public static LemmingSkill GetSkillOrDefault(int unboundSkillId)
+    {
+        return (uint)unboundSkillId < (uint)LemmingSkills.Length
+            ? LemmingSkills[unboundSkillId]
+            : NoneSkill.Instance;
+    }
+
     private readonly LemmingActionSet _assignableActions;
     public readonly string LemmingSkillName;
     public readonly int Id;

@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Level.Gadget.HatchGadget;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Theme;
@@ -105,15 +106,7 @@ public sealed class LevelData
         get => _maxNumberOfClonedLemmings;
         set
         {
-            if (value < 0)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Max number of cloned lemmings must be non-negative!");
-
-            var totalNumberOfLemmings =
-                value +
-                PrePlacedLemmingData.Count +
-                HatchLemmingData.Count;
-            if (totalNumberOfLemmings > EngineConstants.MaxNumberOfLemmings)
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Too many lemmings in level!");
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
 
             _maxNumberOfClonedLemmings = value;
         }
@@ -127,8 +120,8 @@ public sealed class LevelData
     public StyleIdentifier LevelTheme { get; set; }
     public BackgroundData? LevelBackground { get; set; }
 
-    public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; }
-    public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; }
+    public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Void;
+    public BoundaryBehaviourType VerticalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Void;
 
     public LevelObjectiveData LevelObjective => _levelObjective is null
         ? throw new InvalidOperationException("Level objective not set!")
@@ -137,7 +130,6 @@ public sealed class LevelData
     public BitArraySet<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters> ControlParameters { get; } = ControlPanelParameterHasher.CreateBitArraySet();
 
     public List<LemmingInstanceData> PrePlacedLemmingData { get; } = [];
-    public List<LemmingInstanceData> HatchLemmingData { get; } = [];
     public List<TribeStyleIdentifier> TribeIdentifiers { get; } = [];
 
     public List<TerrainData> AllTerrainData { get; } = [];
@@ -170,10 +162,31 @@ public sealed class LevelData
         if (TribeIdentifiers.Count == 0) return "Level tribes not set!";
         if (TribeIdentifiers.Count != TribeIdentifiers.Distinct().Count()) return "Non-unique tribes specified!";
 
-        if (PrePlacedLemmingData.Count == 0 && HatchLemmingData.Count == 0) return "Number of lemmings is invalid!";
         if (LevelTitle.Length == 0) return "Level title not set!";
         if (LevelAuthor.Length == 0) return "Level author not set!";
 
         return null;
+    }
+
+    public int CalculateTotalNumberOfLemmingsInLevel()
+    {
+        var result = 0;
+        result += PrePlacedLemmingData.Count;
+
+        foreach (var gadget in AllGadgetInstanceData)
+        {
+            result += GetNumberOfLemmingsSpawnedFromGadget(gadget);
+        }
+
+        result += MaxNumberOfClonedLemmings;
+
+        return result;
+    }
+
+    private static int GetNumberOfLemmingsSpawnedFromGadget(GadgetInstanceData gadget)
+    {
+        return gadget.SpecificationData is HatchGadgetInstanceSpecificationData hatchGadgetSpecificationData
+            ? hatchGadgetSpecificationData.NumberOfLemmingsToRelease
+            : 0;
     }
 }

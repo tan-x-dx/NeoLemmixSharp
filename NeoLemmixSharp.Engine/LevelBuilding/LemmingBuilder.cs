@@ -8,48 +8,49 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 public sealed class LemmingBuilder
 {
     private readonly LevelData _levelData;
-    private readonly List<Lemming> _lemmingList;
+    private readonly Lemming[] _lemmingList;
 
     public LemmingBuilder(LevelData levelData)
     {
         _levelData = levelData;
 
-        var totalCapacity = _levelData.MaxNumberOfClonedLemmings +
-                            _levelData.HatchLemmingData.Count +
-                            _levelData.PrePlacedLemmingData.Count;
+        var requiredCapacity = _levelData.CalculateTotalNumberOfLemmingsInLevel();
 
-        _lemmingList = new List<Lemming>(totalCapacity);
+        _lemmingList = new Lemming[requiredCapacity];
     }
 
     public Lemming[] BuildLevelLemmings()
     {
-        AddLemmings(CollectionsMarshal.AsSpan(_levelData.PrePlacedLemmingData));
-        AddLemmings(CollectionsMarshal.AsSpan(_levelData.HatchLemmingData));
+        var i = 0;
 
-        var i = _levelData.MaxNumberOfClonedLemmings;
-        while (i-- > 0)
+        AddLemmings(ref i, CollectionsMarshal.AsSpan(_levelData.PrePlacedLemmingData));
+
+        while (i < _lemmingList.Length)
         {
             var lemming = new Lemming(
-                _lemmingList.Count,
+                i,
                 Orientation.Down,
                 FacingDirection.Right,
                 LemmingActionConstants.NoneActionId,
-                EngineConstants.ClassicTribeId);
+                EngineConstants.ClassicTribeId)
+            {
+                AnchorPosition = new Point()
+            };
 
-            lemming.AnchorPosition = new Point();
+            _lemmingList[i] = lemming;
 
-            _lemmingList.Add(lemming);
+            i++;
         }
 
-        return _lemmingList.ToArray();
+        return _lemmingList;
     }
 
-    private void AddLemmings(ReadOnlySpan<LemmingInstanceData> lemmingDataSpan)
+    private void AddLemmings(ref int index, ReadOnlySpan<LemmingInstanceData> lemmingDataSpan)
     {
         foreach (var prototype in lemmingDataSpan)
         {
             var lemming = new Lemming(
-                _lemmingList.Count,
+                index,
                 prototype.Orientation,
                 prototype.FacingDirection,
                 prototype.InitialLemmingActionId,
@@ -59,7 +60,8 @@ public sealed class LemmingBuilder
 
             lemming.State.SetData(prototype.TribeId, prototype.State);
 
-            _lemmingList.Add(lemming);
+            _lemmingList[index] = lemming;
+            index++;
         }
     }
 }

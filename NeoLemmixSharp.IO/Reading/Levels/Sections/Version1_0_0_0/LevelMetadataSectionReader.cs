@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
@@ -38,6 +37,8 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         ReadLevelDimensionData(reader, levelData);
         ReadBackgroundData(reader, levelData);
+
+        levelData.MaxNumberOfClonedLemmings = reader.Read16BitUnsignedInteger();
     }
 
     private static void ReadLevelDimensionData(RawLevelFileDataReader reader, LevelData levelData)

@@ -244,7 +244,7 @@ public abstract class Component : IDisposable
         {
             var labelPosition = new Vector2(Left + LabelOffsetX, Top + LabelOffsetY);
             spriteBatch.DrawString(
-                UiSprites.Font,
+                null,//UiSprites.Font,
                 _textLabel,
                 labelPosition,
                 Color.White,

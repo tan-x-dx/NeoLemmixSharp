@@ -24,6 +24,7 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
     public uint MinReleaseRate => ConvertToReleaseRate(MinSpawnInterval);
     public uint MaxReleaseRate => ConvertToReleaseRate(MaxSpawnInterval);
     public uint CurrentReleaseRate => ConvertToReleaseRate(CurrentSpawnInterval);
+    public int LemmingsToRelease => _lemmingsToRelease;
 
     public HatchGroup(
         int id,

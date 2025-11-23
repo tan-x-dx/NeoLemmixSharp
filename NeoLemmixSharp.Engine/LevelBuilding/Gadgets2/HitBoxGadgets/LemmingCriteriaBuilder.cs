@@ -138,7 +138,7 @@ public ref struct LemmingCriteriaBuilder
             _numberOfCriteria++;
         }
 
-        var lemmingAction = LemmingAction.AllItems[itemId];
+        var lemmingAction = LemmingAction.GetActionOrDefault(itemId);
         _lemmingActionSet.Add(lemmingAction);
     }
 

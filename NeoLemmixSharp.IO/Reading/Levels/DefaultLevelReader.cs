@@ -21,14 +21,6 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
 
     public LevelData ReadLevel()
     {
-        var levelData = ReadFile();
-        levelData.MaxNumberOfClonedLemmings = LevelReadingHelpers.CalculateMaxNumberOfClonedLemmings(levelData);
-
-        return levelData;
-    }
-
-    private LevelData ReadFile()
-    {
         var result = new LevelData(FileFormatType.Default);
 
         var fileFormatVersion = _reader.FileFormatVersion;
