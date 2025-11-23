@@ -148,21 +148,6 @@ public static class Helpers
         return null;
     }
 
-    public static ReadOnlySpan<T> CombineSpans<T>(ReadOnlySpan<T> firstSpan, ReadOnlySpan<T> secondSpan)
-    {
-        if (firstSpan.Length == 0)
-            return secondSpan;
-        if (secondSpan.Length == 0)
-            return firstSpan;
-
-        var newArray = new T[firstSpan.Length + secondSpan.Length];
-
-        firstSpan.CopyTo(newArray);
-        secondSpan.CopyTo(new Span<T>(newArray, firstSpan.Length, secondSpan.Length));
-
-        return newArray;
-    }
-
     public static bool StringSpansMatch(
         ReadOnlySpan<char> firstSpan,
         ReadOnlySpan<char> secondSpan)
@@ -170,28 +155,12 @@ public static class Helpers
         return firstSpan.Equals(secondSpan, StringComparison.OrdinalIgnoreCase);
     }
 
-    public static ReadOnlySpan<string> GetFilePathsWithExtension(string folderPath, ReadOnlySpan<char> requiredFileExtension)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static string[] GetFilePathsWithExtension(string folderPath, string requiredFileExtension)
     {
-        var allFiles = Directory.GetFiles(folderPath);
-        var subLength = 0;
+        var extensionSearch = $"*{requiredFileExtension}";
 
-        for (int i = 0; i < allFiles.Length; i++)
-        {
-            var file = allFiles[i];
-            var fileExtension = Path.GetExtension(file.AsSpan());
-
-            if (StringSpansMatch(requiredFileExtension, fileExtension))
-            {
-                allFiles[subLength++] = file;
-            }
-        }
-
-        // Clear the upper indices of unused strings
-        var s = new Span<string>(allFiles);
-        s = s[subLength..];
-        s.Clear();
-
-        return new ReadOnlySpan<string>(allFiles, 0, subLength);
+        return Directory.GetFiles(folderPath, extensionSearch, SearchOption.TopDirectoryOnly);
     }
 
     public static ReadOnlySpan<char> GetFullFilePathWithoutExtension(ReadOnlySpan<char> fullFilePath)

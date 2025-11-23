@@ -198,9 +198,9 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public void IntersectWith(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
-            ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];
+        Span<uint> otherBitBuffer = (uint)bufferLength <= MaxStackAllocSize
+            ? stackalloc uint[bufferLength]
+            : new uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         BitArrayHelpers.IntersectWith(_bits.AsSpan(), otherBitBuffer);
@@ -234,9 +234,9 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public void SymmetricExceptWith(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
-            ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];
+        Span<uint> otherBitBuffer = (uint)bufferLength <= MaxStackAllocSize
+            ? stackalloc uint[bufferLength]
+            : new uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         BitArrayHelpers.SymmetricExceptWith(_bits.AsSpan(), otherBitBuffer);
@@ -255,9 +255,9 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public bool IsSubsetOf(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
-            ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];
+        Span<uint> otherBitBuffer = (uint)bufferLength <= MaxStackAllocSize
+            ? stackalloc uint[bufferLength]
+            : new uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         return BitArrayHelpers.IsSubsetOf(_bits.AsReadOnlySpan(), otherBitBuffer);
@@ -275,9 +275,9 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public bool IsSupersetOf(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
-            ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];
+        Span<uint> otherBitBuffer = (uint)bufferLength <= MaxStackAllocSize
+            ? stackalloc uint[bufferLength]
+            : new uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         return BitArrayHelpers.IsSubsetOf(otherBitBuffer, _bits.AsReadOnlySpan());
@@ -295,9 +295,9 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public bool IsProperSubsetOf(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
-            ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];
+        Span<uint> otherBitBuffer = (uint)bufferLength <= MaxStackAllocSize
+            ? stackalloc uint[bufferLength]
+            : new uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         return BitArrayHelpers.IsProperSubsetOf(_bits.AsReadOnlySpan(), otherBitBuffer);
@@ -315,9 +315,9 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public bool IsProperSupersetOf(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
-            ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];
+        Span<uint> otherBitBuffer = (uint)bufferLength <= MaxStackAllocSize
+            ? stackalloc uint[bufferLength]
+            : new uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         return BitArrayHelpers.IsProperSubsetOf(otherBitBuffer, _bits.AsReadOnlySpan());
@@ -335,9 +335,9 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public bool Overlaps(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
-            ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];
+        Span<uint> otherBitBuffer = (uint)bufferLength <= MaxStackAllocSize
+            ? stackalloc uint[bufferLength]
+            : new uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         return BitArrayHelpers.Overlaps(_bits.AsReadOnlySpan(), otherBitBuffer);
@@ -355,9 +355,9 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public bool SetEquals(IEnumerable<T> other)
     {
         var bufferLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
-        Span<uint> otherBitBuffer = bufferLength > MaxStackAllocSize
-            ? new uint[bufferLength]
-            : stackalloc uint[bufferLength];
+        Span<uint> otherBitBuffer = (uint)bufferLength <= MaxStackAllocSize
+            ? stackalloc uint[bufferLength]
+            : new uint[bufferLength];
 
         GetBitsFromEnumerable(otherBitBuffer, other);
         return BitArrayHelpers.SetEquals(_bits.AsReadOnlySpan(), otherBitBuffer);

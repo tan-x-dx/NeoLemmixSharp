@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Data;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.GadgetData;
-using NeoLemmixSharp.IO.Util;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
@@ -27,17 +26,15 @@ internal sealed class GadgetAnimationReader : NeoLemmixDataReader
         { "MATCHPHYSICS", NeoLemmixStateType.MatchPrimaryAnimationPhysics }
     };
 
-    private readonly UniqueStringSet _uniqueStringSet;
     private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
     private NeoLemmixGadgetAnimationData? _currentNeoLemmixGadgetAnimationData;
     private AnimationTriggerData? _currentAnimationTriggerData;
     private bool _readingTrigger;
 
-    public GadgetAnimationReader(NeoLemmixGadgetArchetypeData gadgetArchetypeData, UniqueStringSet uniqueStringSet)
+    public GadgetAnimationReader(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
         : base(string.Empty)
     {
         _gadgetArchetypeData = gadgetArchetypeData;
-        _uniqueStringSet = uniqueStringSet;
 
         SetNumberOfTokens(17);
 
@@ -106,10 +103,10 @@ internal sealed class GadgetAnimationReader : NeoLemmixDataReader
     {
         _currentNeoLemmixGadgetAnimationData!.TextureFilePath = Helpers.StringSpansMatch(secondToken, "*BLANK")
             ? string.Empty
-            : ConstructFilePathForTexture(secondToken);
+            : ConstructFilePathForAdditionalTexture(secondToken);
     }
 
-    private string ConstructFilePathForTexture(ReadOnlySpan<char> secondToken)
+    private string ConstructFilePathForAdditionalTexture(ReadOnlySpan<char> secondToken)
     {
         var originalFilePath = _gadgetArchetypeData.FilePath.AsSpan();
         var originalFilePathWithoutExtension = Helpers.GetFullFilePathWithoutExtension(originalFilePath);

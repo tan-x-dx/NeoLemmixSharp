@@ -40,9 +40,7 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
 
     private ThemeData ReadThemeData(string styleFolderPath)
     {
-        var themeDataFilePaths = Helpers.GetFilePathsWithExtension(
-            styleFolderPath,
-            NeoLemmixFileExtensions.ThemeFileExtension.AsSpan());
+        var themeDataFilePaths = Helpers.GetFilePathsWithExtension(styleFolderPath, NeoLemmixFileExtensions.ThemeFileExtension);
 
         if (themeDataFilePaths.Length == 1)
             return ReadThemeDataFromFilePath(themeDataFilePaths[0]);
@@ -67,9 +65,8 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
 
     private void ReadTerrainArchetypeData(string styleFolderPath)
     {
-        var terrainFilePaths = Helpers.GetFilePathsWithExtension(
-            Path.Combine(styleFolderPath, DefaultFileExtensions.TerrainFolderName),
-            NeoLemmixFileExtensions.TerrainFileExtension.AsSpan());
+        var terrainFolderPath = Path.Combine(styleFolderPath, DefaultFileExtensions.TerrainFolderName);
+        var terrainFilePaths = Helpers.GetFilePathsWithExtension(terrainFolderPath, NeoLemmixFileExtensions.TerrainFileExtension);
 
         _styleData.TerrainArchetypeDataLookup.EnsureCapacity(terrainFilePaths.Length);
 
@@ -106,9 +103,8 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
 
     private void ReadGadgetArchetypeData(string styleFolderPath)
     {
-        var gadgetFilePaths = Helpers.GetFilePathsWithExtension(
-            Path.Combine(styleFolderPath, DefaultFileExtensions.GadgetFolderName),
-            NeoLemmixFileExtensions.GadgetFileExtension.AsSpan());
+        var gadgetFolderPath = Path.Combine(styleFolderPath, DefaultFileExtensions.GadgetFolderName);
+        var gadgetFilePaths = Helpers.GetFilePathsWithExtension(gadgetFolderPath, NeoLemmixFileExtensions.GadgetFileExtension);
 
         _styleData.GadgetArchetypeDataLookup.EnsureCapacity(gadgetFilePaths.Length);
 
@@ -128,7 +124,7 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         var dataReaderArray = new NeoLemmixDataReader[]
         {
             new GadgetArchetypeDataReader(neoLemmixGadgetArchetypeData),
-            new GadgetAnimationReader(neoLemmixGadgetArchetypeData, _uniqueStringSet)
+            new GadgetAnimationReader(neoLemmixGadgetArchetypeData)
         };
 
         using var dataReaderList = new DataReaderList(filePath, dataReaderArray);
