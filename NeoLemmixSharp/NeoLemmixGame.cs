@@ -36,6 +36,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     public NeoLemmixGame()
     {
+        Foo();
+
         _graphics = new GraphicsDeviceManager(this)
         {
             PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8,
@@ -278,5 +280,17 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     public void Escape()
     {
         Exit();
+    }
+
+    static void Foo()
+    {
+        Span<char> span = stackalloc char[64];
+
+        for (int i = 0; i < 64; i++)
+        {
+            span[i] = TextRenderingHelpers.DigitToChar((uint)i);
+        }
+
+        ;
     }
 }
