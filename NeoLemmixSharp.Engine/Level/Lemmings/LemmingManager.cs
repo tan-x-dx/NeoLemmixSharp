@@ -186,7 +186,7 @@ public sealed class LemmingManager :
             var lemming = hatchLemmingSpan[_data.NumberOfLemmingsReleasedFromHatch++];
 
             lemming.AnchorPosition = hatchGadget.Position + hatchGadget.SpawnPointOffset;
-            hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
+            hatchGadget.HatchSpawnData.SpawnLemming(lemming);
             InitialiseLemming(lemming);
         }
     }

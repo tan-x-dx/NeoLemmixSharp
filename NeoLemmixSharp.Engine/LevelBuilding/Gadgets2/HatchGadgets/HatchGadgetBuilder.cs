@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.Tribes;
@@ -104,7 +105,8 @@ public readonly struct HatchGadgetBuilder
         return new HatchGadgetState()
         {
             StateName = stateName,
-            GadgetTriggers = triggers
+            GadgetTriggers = triggers,
+            Type = HatchGadgetStateType.Open
         };
     }
 

@@ -31,7 +31,7 @@ public sealed class HatchSpawnData
         LemmingsToRelease = lemmingsToRelease;
     }
 
-    public void InitialiseLemming(Lemming lemming)
+    public void SpawnLemming(Lemming lemming)
     {
         lemming.SetRawData(_tribe, _rawStateData, Orientation, _facingDirection);
 
