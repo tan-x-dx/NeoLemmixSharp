@@ -23,35 +23,6 @@ public sealed class SkillCountDigitFont
         _texture = content.Load<Texture2D>("Fonts/skill_count_digits");
     }
 
-    private static bool GetCharRenderDetails(uint c, out int sourceX, out int glyphWidth)
-    {
-        uint c0 = c - '0';
-        if (c0 <= '9' - '0')
-        {
-            c0 *= DigitGlyphWidth;
-            sourceX = (int)c0;
-            glyphWidth = DigitGlyphWidth;
-            return true;
-        }
-
-        glyphWidth = SpecialGlyphWidth;
-        if (c0 is (InfinityGlyph - '0'))
-        {
-            sourceX = InfinityGlyphOffset;
-            return true;
-        }
-
-        if (c0 is (LockGlyphOffset - '0'))
-        {
-            sourceX = LockGlyphOffset;
-            return true;
-        }
-
-        sourceX = -EmptyGlyphWidth;
-        glyphWidth = EmptyGlyphWidth;
-        return false;
-    }
-
     public void RenderTextSpan(
         SpriteBatch spriteBatch,
         ReadOnlySpan<char> charactersToRender,
@@ -89,5 +60,34 @@ public sealed class SkillCountDigitFont
             color);
 
         return glyphWidth;
+    }
+
+    private static bool GetCharRenderDetails(uint c, out int sourceX, out int glyphWidth)
+    {
+        uint c0 = c - '0';
+        if (c0 <= '9' - '0')
+        {
+            c0 *= DigitGlyphWidth;
+            sourceX = (int)c0;
+            glyphWidth = DigitGlyphWidth;
+            return true;
+        }
+
+        glyphWidth = SpecialGlyphWidth;
+        if (c0 is (InfinityGlyph - '0'))
+        {
+            sourceX = InfinityGlyphOffset;
+            return true;
+        }
+
+        if (c0 is (LockGlyph - '0'))
+        {
+            sourceX = LockGlyphOffset;
+            return true;
+        }
+
+        sourceX = -EmptyGlyphWidth;
+        glyphWidth = EmptyGlyphWidth;
+        return false;
     }
 }
