@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.Tribes;
@@ -96,8 +95,6 @@ public readonly struct HatchGadgetBuilder
         Orientation orientation,
         FacingDirection facingDirection)
     {
-        throw new NotImplementedException();
-
         var stateName = GadgetBuildingHelpers.GetGadgetStateName(gadgetStateArchetypeData, gadgetStateInstanceData);
 
         var triggers = BuildTriggers(gadgetStateArchetypeData, gadgetStateInstanceData);
@@ -106,7 +103,7 @@ public readonly struct HatchGadgetBuilder
         {
             StateName = stateName,
             GadgetTriggers = triggers,
-            Type = HatchGadgetStateType.Open
+            Type = gadgetStateArchetypeData.Type,
         };
     }
 

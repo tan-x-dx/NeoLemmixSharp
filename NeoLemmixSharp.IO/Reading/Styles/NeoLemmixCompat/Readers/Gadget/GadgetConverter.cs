@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HatchGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
@@ -54,6 +55,7 @@ internal static class GadgetConverter
         result[0] = new HatchGadgetStateArchetypeData
         {
             StateName = "Closed",
+            Type = HatchGadgetStateType.Closed,
 
             InnateTriggers = [],
             InnateBehaviours = [],
@@ -62,6 +64,7 @@ internal static class GadgetConverter
         result[1] = new HatchGadgetStateArchetypeData
         {
             StateName = "Opening",
+            Type = HatchGadgetStateType.Opening,
 
             InnateTriggers = [],
             InnateBehaviours = [],
@@ -70,6 +73,7 @@ internal static class GadgetConverter
         result[2] = new HatchGadgetStateArchetypeData
         {
             StateName = "Open",
+            Type = HatchGadgetStateType.Open,
 
             InnateTriggers = [],
             InnateBehaviours = [],
@@ -78,6 +82,7 @@ internal static class GadgetConverter
         result[3] = new HatchGadgetStateArchetypeData
         {
             StateName = "Closing",
+            Type = HatchGadgetStateType.Closing,
 
             InnateTriggers = [],
             InnateBehaviours = [],
