@@ -10,8 +10,7 @@ namespace NeoLemmixSharp.Common;
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(ushort))]
 public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEquatable<FileFormatVersion>
 {
-    [FieldOffset(0 * sizeof(ushort))] private readonly uint _lowerBits;
-    [FieldOffset(2 * sizeof(ushort))] private readonly uint _upperBits;
+    [FieldOffset(0 * sizeof(ushort))] private readonly ulong _allBits;
 
     [FieldOffset(0 * sizeof(ushort))] public readonly ushort Revision;
     [FieldOffset(1 * sizeof(ushort))] public readonly ushort Build;
@@ -28,8 +27,7 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(FileFormatVersion other) => _upperBits == other._upperBits &&
-                                                   _lowerBits == other._lowerBits;
+    public bool Equals(FileFormatVersion other) => _allBits == other._allBits;
     [Pure]
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is FileFormatVersion other && Equals(other);
@@ -38,24 +36,24 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
     [DebuggerStepThrough]
     public override int GetHashCode()
     {
-        var result = 3992171 * _upperBits +
-                     7851007 * _lowerBits;
-        return (int)result;
+        var u1 = (int)_allBits;
+        var u2 = (int)(_allBits >>> 32);
+        var result = 3992171 * u1 +
+                     7851007 * u2;
+        return result;
     }
 
     [Pure]
     [DebuggerStepThrough]
     public int CompareTo(FileFormatVersion value)
     {
-        return _upperBits != value._upperBits ? _upperBits > value._upperBits ? 1 : -1 :
-               _lowerBits != value._lowerBits ? _lowerBits > value._lowerBits ? 1 : -1 :
-               0;
+        return _allBits.CompareTo(value._allBits);
     }
 
     [SkipLocalsInit]
     public override string ToString()
     {
-        Span<char> charBuffer = stackalloc char[1 + Helpers.Uint16NumberBufferLength * 4 + 3 + 1];
+        Span<char> charBuffer = stackalloc char[1 + (Helpers.Uint16NumberBufferLength * 4) + 3 + 1];
         TryFormat(charBuffer, out var charsWritten);
         return charBuffer[..charsWritten].ToString();
     }
@@ -75,14 +73,14 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
     public static bool operator !=(FileFormatVersion left, FileFormatVersion right) => !left.Equals(right);
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator <(FileFormatVersion v1, FileFormatVersion v2) => v1.CompareTo(v2) < 0;
+    public static bool operator <(FileFormatVersion v1, FileFormatVersion v2) => v1._allBits < v2._allBits;
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator <=(FileFormatVersion v1, FileFormatVersion v2) => v1.CompareTo(v2) <= 0;
+    public static bool operator <=(FileFormatVersion v1, FileFormatVersion v2) => v1._allBits <= v2._allBits;
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator >(FileFormatVersion v1, FileFormatVersion v2) => v1.CompareTo(v2) > 0;
+    public static bool operator >(FileFormatVersion v1, FileFormatVersion v2) => v1._allBits > v2._allBits;
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator >=(FileFormatVersion v1, FileFormatVersion v2) => v1.CompareTo(v2) >= 0;
+    public static bool operator >=(FileFormatVersion v1, FileFormatVersion v2) => v1._allBits >= v2._allBits;
 }
