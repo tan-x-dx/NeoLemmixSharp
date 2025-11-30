@@ -59,7 +59,7 @@ public static class LemmingBehaviourBuilder
 
     private static SetActionLemmingBehaviour BuildSetActionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var lemmingAction = LemmingAction.AllItems[gadgetBehaviourDatum.DataChunk.Data2];
+        var lemmingAction = LemmingAction.GetActionOrDefault(gadgetBehaviourDatum.DataChunk.Data2);
 
         return new SetActionLemmingBehaviour(lemmingAction)
         {

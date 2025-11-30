@@ -6,16 +6,16 @@ public static class TextRenderingHelpers
 {
     private const uint ZeroCharAsUint = '0';
 
-    public static void WriteDigits(Span<char> span, uint value, char blankCharValue = ' ')
+    public static void WriteDigits(Span<char> span, uint valueToWrite, char blankCharValue = ' ')
     {
         for (var i = span.Length - 1; i >= 0; i--)
         {
-            if (value > 0)
+            if (valueToWrite > 0)
             {
-                uint digit = value % 10;
+                (uint div, uint rem) = Math.DivRem(valueToWrite, 10);
 
-                span[i] = DigitToChar(digit);
-                value /= 10;
+                span[i] = DigitToChar(rem);
+                valueToWrite = div;
             }
             else
             {
@@ -33,10 +33,10 @@ public static class TextRenderingHelpers
         {
             if (valueToWrite > 0)
             {
-                uint digit = valueToWrite % 10;
+                (uint div, uint rem) = Math.DivRem(valueToWrite, 10);
 
-                *endPointer = DigitToChar(digit);
-                valueToWrite /= 10;
+                *endPointer = DigitToChar(rem);
+                valueToWrite = div;
             }
             else
             {

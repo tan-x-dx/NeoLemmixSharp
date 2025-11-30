@@ -21,6 +21,7 @@ public sealed class HatchGadgetArchetypeSpecificationData : IGadgetArchetypeSpec
 public sealed class HatchGadgetStateArchetypeData : IGadgetStateArchetypeData
 {
     public required GadgetStateName StateName { get; init; }
+    public required HatchGadgetStateType Type { get; init; }
     public required GadgetTriggerData[] InnateTriggers { get; init; }
     public required GadgetBehaviourData[] InnateBehaviours { get; init; }
     public required GadgetTriggerBehaviourLink[] TriggerBehaviourLinks { get; init; }

@@ -166,6 +166,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
             _current = default;
         }
 
+
         public bool MoveNext()
         {
             var localLookup = _lookup;
@@ -176,13 +177,9 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
                 _index++;
                 return true;
             }
-            return MoveNextRare();
-        }
 
-        private bool MoveNextRare()
-        {
-            _index = _lookup._size + 1;
             _current = default;
+            _index = -1;
             return false;
         }
 

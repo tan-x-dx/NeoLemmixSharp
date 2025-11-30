@@ -5,32 +5,19 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
-public sealed class LemmingActionSprite : IDisposable
+public sealed class LemmingActionSprite
 {
-    public static LemmingActionSprite Empty { get; private set; } = null!;
-
-    public static void Initialise(GraphicsDevice graphicsDevice)
-    {
-        var texture = new Texture2D(graphicsDevice, 1, 1);
-        var data = new[] { 0U };
-        texture.SetData(data);
-
-        Empty = new LemmingActionSprite(texture, default, default, []);
-    }
+    public static LemmingActionSprite Empty { get; } = new LemmingActionSprite(default, default, []);
 
     private readonly LemmingActionLayerRenderer[] _renderers;
-
-    public Texture2D Texture { get; }
     public Point AnchorPoint { get; }
     public Size SpriteSize { get; }
 
     public LemmingActionSprite(
-        Texture2D texture,
         Point anchorPoint,
         Size spriteSize,
         LemmingActionLayerRenderer[] renderers)
     {
-        Texture = texture;
         AnchorPoint = anchorPoint;
         SpriteSize = spriteSize;
         _renderers = renderers;
@@ -64,10 +51,5 @@ public sealed class LemmingActionSprite : IDisposable
                 rotationAngle,
                 spriteEffects);
         }
-    }
-
-    public void Dispose()
-    {
-        Texture.Dispose();
     }
 }

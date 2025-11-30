@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 
 public sealed class HatchGroup : IEquatable<HatchGroup>
 {
-    private HatchGadget[] _hatches;
+    private HatchGadget[] _hatches = [];
 
     private int _hatchIndex;
 
@@ -24,6 +24,7 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
     public uint MinReleaseRate => ConvertToReleaseRate(MinSpawnInterval);
     public uint MaxReleaseRate => ConvertToReleaseRate(MaxSpawnInterval);
     public uint CurrentReleaseRate => ConvertToReleaseRate(CurrentSpawnInterval);
+    public int LemmingsToRelease => _lemmingsToRelease;
 
     public HatchGroup(
         int id,
@@ -87,7 +88,7 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
         {
             c--;
             hatchIndex++;
-            if (hatchIndex == _hatches.Length)
+            if ((uint)hatchIndex >= (uint)_hatches.Length)
                 hatchIndex = 0;
 
             var hatchGadget = _hatches[hatchIndex];

@@ -2,16 +2,20 @@
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
+using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers;
 
 public sealed class ThemeReader : NeoLemmixDataReader
 {
-    private ThemeData _themeData;
+    private readonly ThemeData _themeData;
+    private readonly UniqueStringSet _uniqueStringSet;
 
-    public ThemeReader(ThemeData themeData) : base("LEMMINGS", UnknownTokenBehaviour.IgnoreLine)
+    public ThemeReader(ThemeData themeData, UniqueStringSet uniqueStringSet)
+        : base("LEMMINGS", UnknownTokenBehaviour.IgnoreLine)
     {
         _themeData = themeData;
+        _uniqueStringSet = uniqueStringSet;
 
         SetNumberOfTokens(10);
 
@@ -48,10 +52,12 @@ public sealed class ThemeReader : NeoLemmixDataReader
 
     private void SetNamesPlural(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        var pluralName = _uniqueStringSet.GetUniqueStringInstance(secondToken);
     }
 
     private void SetNameSingular(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        var singularName = _uniqueStringSet.GetUniqueStringInstance(secondToken);
     }
 
     private void SetMaskColor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

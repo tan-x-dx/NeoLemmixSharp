@@ -13,12 +13,11 @@ public sealed class LevelTimer : ISnapshotDataConvertible
 
     private int _elapsedSeconds;
     private LevelTimerData _data;
-
-    private LevelTimerCharBuffer _charBuffer;
-
     public int TimeLimitInSeconds { get; }
     public TimerType Type { get; }
     public Color FontColor { get; private set; }
+
+    private LevelTimerCharBuffer _charBuffer;
 
     public int EffectiveSecondsRemaining
     {
@@ -39,24 +38,20 @@ public sealed class LevelTimer : ISnapshotDataConvertible
     public static LevelTimer CreateCountUpTimer() => new();
     public static LevelTimer CreateCountDownTimer(uint timeLimitInSeconds) => new(timeLimitInSeconds);
 
-    private LevelTimer(TimerType timerType)
+    private LevelTimer()
     {
-        _charBuffer = new LevelTimerCharBuffer();
         _charBuffer[2] = TimerSeparatorChar;
-
-        Type = timerType;
-    }
-
-    private LevelTimer() : this(TimerType.CountUp)
-    {
+        Type = TimerType.CountUp;
         TimeLimitInSeconds = -1;
 
         FontColor = EngineConstants.PanelGreen;
         UpdateTimerString(0);
     }
 
-    private LevelTimer(uint timeLimitInSeconds) : this(TimerType.CountDown)
+    private LevelTimer(uint timeLimitInSeconds)
     {
+        _charBuffer[2] = TimerSeparatorChar;
+        Type = TimerType.CountDown;
         TimeLimitInSeconds = (int)timeLimitInSeconds;
 
         FontColor = GetColorForTime((int)timeLimitInSeconds);
@@ -114,19 +109,17 @@ public sealed class LevelTimer : ISnapshotDataConvertible
 
     private void UpdateTimerString(uint elapsedSeconds)
     {
-        uint seconds = elapsedSeconds % 60;
-        uint secondsUnits = seconds % 10;
-        _charBuffer[4] = TextRenderingHelpers.DigitToChar(secondsUnits);
+        (uint minutes, uint seconds) = Math.DivRem(elapsedSeconds, 60);
 
-        uint secondsTens = seconds / 10;
-        _charBuffer[3] = TextRenderingHelpers.DigitToChar(secondsTens);
+        (uint minutesTens, uint minutesUnits) = Math.DivRem(minutes, 10);
 
-        uint minutes = elapsedSeconds / 60;
-        uint minutesUnits = minutes % 10;
+        _charBuffer[0] = TextRenderingHelpers.DigitToChar(minutesTens);
         _charBuffer[1] = TextRenderingHelpers.DigitToChar(minutesUnits);
 
-        uint minutesTens = (minutes / 10) % 10;
-        _charBuffer[0] = TextRenderingHelpers.DigitToChar(minutesTens);
+        (uint secondsTens, uint secondsUnits) = Math.DivRem(seconds, 10);
+
+        _charBuffer[3] = TextRenderingHelpers.DigitToChar(secondsTens);
+        _charBuffer[4] = TextRenderingHelpers.DigitToChar(secondsUnits);
     }
 
     public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LevelTimerData);
@@ -147,13 +140,16 @@ public sealed class LevelTimer : ISnapshotDataConvertible
         UpdateTimerString();
     }
 
-    private static Color GetColorForTime(int secondsLeft) => secondsLeft switch
+    private static Color GetColorForTime(int secondsLeft)
     {
-        <= 0 => EngineConstants.PanelMagenta,
-        <= 15 => EngineConstants.PanelRed,
-        <= 30 => EngineConstants.PanelYellow,
-        _ => EngineConstants.PanelGreen
-    };
+        uint packedValue = EngineConstants.PanelGreenValue;
+
+        if (secondsLeft <= 30) packedValue = EngineConstants.PanelYellowValue;
+        if (secondsLeft <= 15) packedValue = EngineConstants.PanelRedValue;
+        if (secondsLeft <= 0) packedValue = EngineConstants.PanelMagentaValue;
+
+        return new Color(packedValue);
+    }
 
     [InlineArray(NumberOfTimerChars)]
     private struct LevelTimerCharBuffer

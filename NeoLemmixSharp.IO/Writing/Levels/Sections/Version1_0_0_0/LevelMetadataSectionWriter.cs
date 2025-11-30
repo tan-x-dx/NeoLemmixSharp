@@ -31,6 +31,8 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
 
         WriteLevelDimensionData(writer, levelData);
         WriteLevelBackgroundData(writer, levelData);
+
+        writer.Write16BitUnsignedInteger((ushort)levelData.MaxNumberOfClonedLemmings);
     }
 
     private void WriteLevelStringData(

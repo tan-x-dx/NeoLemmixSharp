@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
@@ -19,9 +20,10 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
         int initialStateIndex,
         HatchSpawnData hatchSpawnData,
         Point spawnPointOffset)
-        : base(Common.Enums.GadgetType.HatchGadget)
+        : base(GadgetType.HatchGadget)
     {
         _states = states;
+        _currentState = states[initialStateIndex];
         SpawnPointOffset = spawnPointOffset;
         HatchSpawnData = hatchSpawnData;
     }
@@ -35,7 +37,8 @@ public sealed class HatchGadget : GadgetBase, IMoveableGadget
 
     public bool CanReleaseLemmings()
     {
-        return true;
+        return _currentState.Type == HatchGadgetStateType.Open &&
+               HatchSpawnData.LemmingsToRelease > 0;
     }
 
     public void Move(Point delta)

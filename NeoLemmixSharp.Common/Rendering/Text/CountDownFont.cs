@@ -17,22 +17,6 @@ public sealed class CountDownFont
         _texture = content.Load<Texture2D>("Fonts/countdown");
     }
 
-    private static bool GetCharRenderDetails(uint c, out int sourceX, out int glyphWidth)
-    {
-        c -= '0';
-        if (c <= '9' - '0')
-        {
-            c *= GlyphWidth;
-            sourceX = (int)c;
-            glyphWidth = GlyphWidth;
-            return true;
-        }
-
-        sourceX = -EmptyGlyphWidth;
-        glyphWidth = EmptyGlyphWidth;
-        return false;
-    }
-
     public void RenderTextSpan(
         SpriteBatch spriteBatch,
         ReadOnlySpan<char> charactersToRender,
@@ -70,5 +54,21 @@ public sealed class CountDownFont
             color);
 
         return glyphWidth;
+    }
+
+    private static bool GetCharRenderDetails(uint c, out int sourceX, out int glyphWidth)
+    {
+        c -= '0';
+        if (c <= '9' - '0')
+        {
+            c *= GlyphWidth;
+            sourceX = (int)c;
+            glyphWidth = GlyphWidth;
+            return true;
+        }
+
+        sourceX = -EmptyGlyphWidth;
+        glyphWidth = EmptyGlyphWidth;
+        return false;
     }
 }

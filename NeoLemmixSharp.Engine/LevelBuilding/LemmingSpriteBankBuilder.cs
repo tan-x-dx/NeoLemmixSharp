@@ -92,7 +92,6 @@ public static class LemmingSpriteBankBuilder
         }
 
         return new LemmingActionSprite(
-            spriteTexture,
             lemmingActionSpriteData.AnchorPoint,
             spriteSize,
             layers);

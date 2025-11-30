@@ -57,7 +57,7 @@ public sealed class LemmingManager :
         Lemming[] lemmings,
         int numberOfPreplacedLemmings,
         HatchGroup[] hatchGroups,
-        int totalNumberOfHatchLemmings,
+        int maxNumberOfClonedLemmings,
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
@@ -90,9 +90,22 @@ public sealed class LemmingManager :
         _allBlockers = new LemmingSet(this);
         _fastForwardLemmings = new LemmingSet(this);
 
-        _totalNumberOfHatchLemmings = totalNumberOfHatchLemmings;
+        _totalNumberOfHatchLemmings = CalculateTotalNumberOfLemmingsFromHatches(hatchGroups);
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
-        _maxNumberOfClonedLemmings = _lemmings.Length - totalNumberOfHatchLemmings - numberOfPreplacedLemmings;
+        _maxNumberOfClonedLemmings = maxNumberOfClonedLemmings;
+    }
+
+    [Pure]
+    private static int CalculateTotalNumberOfLemmingsFromHatches(HatchGroup[] hatchGroups)
+    {
+        var result = 0;
+
+        foreach (var group in hatchGroups)
+        {
+            result += group.LemmingsToRelease;
+        }
+
+        return result;
     }
 
     public void Initialise()
@@ -173,7 +186,7 @@ public sealed class LemmingManager :
             var lemming = hatchLemmingSpan[_data.NumberOfLemmingsReleasedFromHatch++];
 
             lemming.AnchorPosition = hatchGadget.Position + hatchGadget.SpawnPointOffset;
-            hatchGadget.HatchSpawnData.InitialiseLemming(lemming);
+            hatchGadget.HatchSpawnData.SpawnLemming(lemming);
             InitialiseLemming(lemming);
         }
     }

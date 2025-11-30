@@ -95,8 +95,6 @@ public readonly struct HatchGadgetBuilder
         Orientation orientation,
         FacingDirection facingDirection)
     {
-        throw new NotImplementedException();
-
         var stateName = GadgetBuildingHelpers.GetGadgetStateName(gadgetStateArchetypeData, gadgetStateInstanceData);
 
         var triggers = BuildTriggers(gadgetStateArchetypeData, gadgetStateInstanceData);
@@ -104,7 +102,8 @@ public readonly struct HatchGadgetBuilder
         return new HatchGadgetState()
         {
             StateName = stateName,
-            GadgetTriggers = triggers
+            GadgetTriggers = triggers,
+            Type = gadgetStateArchetypeData.Type,
         };
     }
 

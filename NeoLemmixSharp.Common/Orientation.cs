@@ -15,6 +15,7 @@ public readonly struct Orientation : IEquatable<Orientation>
 
     public readonly int RotNum;
 
+    [DebuggerStepThrough]
     public Orientation(int rotNum)
     {
         RotNum = rotNum & 3;

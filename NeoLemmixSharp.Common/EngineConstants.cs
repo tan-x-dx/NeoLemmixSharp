@@ -14,7 +14,7 @@ public static class EngineConstants
     public const int EngineTicksPerSecond = GameplayTicksPerSecond * FastForwardSpeedMultiplier;
 
     private const long FramesPerSecondInTicks = (long)(TimeSpan.TicksPerMillisecond * (1000d / (double)EngineTicksPerSecond));
-    public static readonly TimeSpan FramesPerSecondTimeSpan = TimeSpan.FromTicks(FramesPerSecondInTicks);
+    public static TimeSpan FramesPerSecondTimeSpan => TimeSpan.FromTicks(FramesPerSecondInTicks);
 
     public const int DoubleTapFrameCountMax = 17;
 
@@ -124,20 +124,28 @@ public static class EngineConstants
     public const int NumberOfExplosionParticleColors = 8;
     public const int NumberOfExplosionParticleColorsMask = NumberOfExplosionParticleColors - 1;
 
-    public static readonly Color ClassicLevelBackgroundColor = new(0xff000032);
+    public static Color ClassicLevelBackgroundColor => new(0xff000032);
 
     public const int CursorRadius = 6;
-    public static readonly Color PanelRed = new(0xff0000b0);
-    public static readonly Color PanelGreen = new(0xff00b000);
-    public static readonly Color PanelYellow = new(0xff00b0b0);
-    public static readonly Color PanelBlue = new(0xffb00000);
-    public static readonly Color PanelMagenta = new(0xffb000b0);
-    public static readonly Color PanelCyan = new(0xffb0b000);
-    public static readonly Color PanelWhite = new(0xffb0b0b0);
+    public static Color PanelRed => new(PanelRedValue);
+    public static Color PanelGreen => new(PanelGreenValue);
+    public static Color PanelYellow => new(PanelGreenValue);
+    public static Color PanelBlue => new(PanelBlueValue);
+    public static Color PanelMagenta => new(PanelMagentaValue);
+    public static Color PanelCyan => new(PanelCyanValue);
+    public static Color PanelWhite => new(PanelWhiteValue);
 
-    public static readonly Color CursorColor1 = PanelWhite;
-    public static readonly Color CursorColor2 = PanelRed;
-    public static readonly Color CursorColor3 = new(0xff606060);
+    public const uint PanelRedValue = 0xff0000b0;
+    public const uint PanelGreenValue = 0xff00b000;
+    public const uint PanelYellowValue = 0xff00b0b0;
+    public const uint PanelBlueValue = 0xffb00000;
+    public const uint PanelMagentaValue = 0xffb000b0;
+    public const uint PanelCyanValue = 0xffb0b000;
+    public const uint PanelWhiteValue = 0xffb0b0b0;
+
+    public static Color CursorColor1 => PanelWhite;
+    public static Color CursorColor2 => PanelRed;
+    public static Color CursorColor3 => new(0xff606060);
 
     #endregion
 

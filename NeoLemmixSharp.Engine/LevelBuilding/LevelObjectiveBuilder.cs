@@ -103,7 +103,7 @@ public sealed class LevelObjectiveBuilder
             if (skillLimitModifier is not null)
                 initialSkillLimit = skillLimitModifier.MaxSkillAssignments;
 
-            var skill = LemmingSkill.AllItems[skillSetData.SkillId];
+            var skill = LemmingSkill.GetSkillOrDefault(skillSetData.SkillId);
 
             var tribe = skillSetData.TribeId == -1
                 ? null

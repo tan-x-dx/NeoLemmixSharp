@@ -54,7 +54,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             levelLemmings,
             levelData.PrePlacedLemmingData.Count,
             hatchGroups,
-            levelData.HatchLemmingData.Count,
+            levelData.MaxNumberOfClonedLemmings,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 

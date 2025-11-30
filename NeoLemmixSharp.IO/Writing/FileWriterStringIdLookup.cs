@@ -76,9 +76,9 @@ internal readonly struct MutableFileWriterStringIdLookup
 
         FileWritingException.WriterAssert(bufferSize <= IoConstants.MaxStringLengthInBytes, "Cannot serialize a string larger than 2048 bytes!");
 
-        Span<byte> buffer = bufferSize > MaxStackByteBufferSize
-            ? new byte[bufferSize]
-            : stackalloc byte[bufferSize];
+        Span<byte> buffer = (uint)bufferSize <= MaxStackByteBufferSize
+            ? stackalloc byte[bufferSize]
+            : new byte[bufferSize];
 
         foreach (var kvp in _lookup.OrderBy(x => x.Value))
         {
