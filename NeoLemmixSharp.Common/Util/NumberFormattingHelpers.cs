@@ -1,8 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Common.Rendering.Text;
+namespace NeoLemmixSharp.Common.Util;
 
-public static class TextRenderingHelpers
+public static class NumberFormattingHelpers
 {
     private const uint ZeroCharAsUint = '0';
 

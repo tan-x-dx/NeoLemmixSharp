@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 using System.Diagnostics;
@@ -72,7 +73,7 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
 
     private void WriteSkillCount(uint skillCount)
     {
-        TextRenderingHelpers.WriteDigits(_skillCountChars, skillCount);
+        NumberFormattingHelpers.WriteDigits(_skillCountChars, skillCount);
     }
 
     public override ReadOnlySpan<char> GetDigitsToRender() => _skillCountChars;

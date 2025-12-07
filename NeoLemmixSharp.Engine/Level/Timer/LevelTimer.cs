@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Rewind;
 using System.Runtime.CompilerServices;
 
@@ -113,13 +113,13 @@ public sealed class LevelTimer : ISnapshotDataConvertible
 
         (uint minutesTens, uint minutesUnits) = Math.DivRem(minutes, 10);
 
-        _charBuffer[0] = TextRenderingHelpers.DigitToChar(minutesTens);
-        _charBuffer[1] = TextRenderingHelpers.DigitToChar(minutesUnits);
+        _charBuffer[0] = NumberFormattingHelpers.DigitToChar(minutesTens);
+        _charBuffer[1] = NumberFormattingHelpers.DigitToChar(minutesUnits);
 
         (uint secondsTens, uint secondsUnits) = Math.DivRem(seconds, 10);
 
-        _charBuffer[3] = TextRenderingHelpers.DigitToChar(secondsTens);
-        _charBuffer[4] = TextRenderingHelpers.DigitToChar(secondsUnits);
+        _charBuffer[3] = NumberFormattingHelpers.DigitToChar(secondsTens);
+        _charBuffer[4] = NumberFormattingHelpers.DigitToChar(secondsUnits);
     }
 
     public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LevelTimerData);

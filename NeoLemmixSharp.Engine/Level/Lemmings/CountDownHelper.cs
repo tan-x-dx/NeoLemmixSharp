@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -12,7 +12,7 @@ public static class CountDownHelper
         var textSpan = lemmingRenderer.CountDownCharsSpan;
         var countDownValue = GetCountDownValue(lemming);
 
-        TextRenderingHelpers.WriteDigits(textSpan, countDownValue);
+        NumberFormattingHelpers.WriteDigits(textSpan, countDownValue);
     }
 
     private static uint GetCountDownValue(Lemming lemming)
