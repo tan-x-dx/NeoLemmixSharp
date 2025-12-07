@@ -58,9 +58,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         char* p = _cursorDataPointer + textLength;
         *p = ' '; // Add a space.
         p++;
-        var numericPartLength = NumberFormattingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
-
-        NumberFormattingHelpers.WriteDigits(p, numericPartLength, numberOfLemmingsUnderCursor);
+        NumberFormattingHelpers.WriteDigits(p, numberOfLemmingsUnderCursor);
     }
 
     private int WriteLemmingInfo(Lemming lemming)
@@ -144,29 +142,27 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
     {
         Debug.Assert(hatchCount >= 0);
 
-        NumberFormattingHelpers.WriteDigits(_hatchCountPointer, CharLengthForLemmingCount, (uint)hatchCount);
+        NumberFormattingHelpers.WriteDigits(_hatchCountPointer, (uint)hatchCount);
     }
 
     public void SetLemmingData(int lemmingCount)
     {
         Debug.Assert(lemmingCount >= 0);
 
-        NumberFormattingHelpers.WriteDigits(_lemmingsOutPointer, CharLengthForLemmingCount, (uint)lemmingCount);
+        NumberFormattingHelpers.WriteDigits(_lemmingsOutPointer, (uint)lemmingCount);
     }
 
     public void SetGoalData(int goalNumber)
     {
         char* p = _goalCountPointer;
-        var length = CharLengthForGoalCount;
         if (goalNumber < 0)
         {
             goalNumber = -goalNumber;
             *p = '-';
             p++;
-            length--;
         }
 
-        NumberFormattingHelpers.WriteDigits(p, length, (uint)goalNumber);
+        NumberFormattingHelpers.WriteDigits(p, (uint)goalNumber);
     }
 
     public void Dispose()

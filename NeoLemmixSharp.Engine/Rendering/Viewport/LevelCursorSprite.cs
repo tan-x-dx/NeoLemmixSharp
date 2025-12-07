@@ -36,19 +36,24 @@ public sealed class LevelCursorSprite
 
     private void RenderCursor(SpriteBatch spriteBatch, int x, int y, int scaleMultiplier)
     {
-        var d = EngineConstants.HalfCursorSizeInPixels * scaleMultiplier;
-        var s = EngineConstants.CursorSizeInPixels * scaleMultiplier;
+        var cursorSize = EngineConstants.HalfCursorSizeInPixels * scaleMultiplier;
+
+        x -= cursorSize;
+        y -= cursorSize;
+        cursorSize *= 2;
 
         var destRectangle = new Rectangle(
-            x - d,
-            y - d,
-            s,
-            s);
+            x,
+            y,
+            cursorSize,
+            cursorSize);
 
         var sourceRect = new Rectangle(0, 0, EngineConstants.CursorSizeInPixels, EngineConstants.CursorSizeInPixels);
         var sourceY = _levelCursor.NumberOfLemmingsUnderCursor > 0
-            ? EngineConstants.CursorSizeInPixels
+            ? 1
             : 0;
+
+        sourceY *= EngineConstants.CursorSizeInPixels;
 
         sourceRect.Y = sourceY;
 

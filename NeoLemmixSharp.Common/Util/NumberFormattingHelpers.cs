@@ -24,37 +24,31 @@ public static class NumberFormattingHelpers
         }
     }
 
-    public static unsafe void WriteDigits(char* pointer, int length, uint valueToWrite, char blankCharValue = ' ')
+    public static unsafe void WriteDigits(char* pointer, uint valueToWrite)
     {
+        var length = GetNumberStringLength(valueToWrite);
         length--;
-        var endPointer = pointer + length;
 
-        while (pointer <= endPointer)
+        while (length >= 0)
         {
-            if (valueToWrite > 0)
-            {
-                (uint div, uint rem) = Math.DivRem(valueToWrite, 10);
+            (uint div, uint rem) = Math.DivRem(valueToWrite, 10);
 
-                *endPointer = DigitToChar(rem);
-                valueToWrite = div;
-            }
-            else
-            {
-                *endPointer = blankCharValue;
-            }
-            endPointer--;
+            pointer[length] = DigitToChar(rem);
+            valueToWrite = div;
+            length--;
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char DigitToChar(uint digit) => (char)(digit | ZeroCharAsUint);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetNumberStringLength(uint n)
     {
         var result = 1;
         if (n >= 10) result++;
         if (n >= 100) result++;
-        if (n >= 1000) result++; // We're not going to be dealing with numbers above a few thousand
+        if (n >= 1000) result++; // We're going to be dealing with numbers less than ten thousand
 
         return result;
     }

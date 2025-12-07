@@ -518,10 +518,10 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshot
 
     private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* destinationPointer)
     {
-        var sourceSpan = new ReadOnlySpan<byte>(sourcePointer, sizeof(LemmingData));
-        var destinationSpan = new Span<byte>(destinationPointer, sizeof(LemmingData));
+        LemmingData* sourceLemmingDataPointer = (LemmingData*)sourcePointer;
+        LemmingData* destinationLemmingDataPointer = (LemmingData*)destinationPointer;
 
-        sourceSpan.CopyTo(destinationSpan);
+        *destinationLemmingDataPointer = *sourceLemmingDataPointer;
     }
 
     private void TakeSnapshotFromReferenceData()
