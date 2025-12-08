@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -8,19 +9,28 @@ public static class NumberFormattingHelpers
 
     public static void WriteDigits(Span<char> span, uint valueToWrite, char blankCharValue = ' ')
     {
-        for (var i = span.Length - 1; i >= 0; i--)
-        {
-            if (valueToWrite > 0)
-            {
-                (uint div, uint rem) = Math.DivRem(valueToWrite, 10);
+        var length = span.Length;
+        length--;
 
-                span[i] = DigitToChar(rem);
-                valueToWrite = div;
-            }
-            else
-            {
-                span[i] = blankCharValue;
-            }
+        if (length < 0)
+            return;
+
+        do
+        {
+            (uint div, uint rem) = Math.DivRem(valueToWrite, 10);
+
+            ref var sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), length);
+            sourceRef = DigitToChar(rem);
+            valueToWrite = div;
+            length--;
+        }
+        while (length >= 0 && valueToWrite != 0);
+
+        while (length >= 0)
+        {
+            ref var sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), length);
+            sourceRef = blankCharValue;
+            length--;
         }
     }
 
