@@ -111,7 +111,7 @@ internal sealed class GadgetAnimationReader : NeoLemmixDataReader
         var originalFilePath = _gadgetArchetypeData.FilePath.AsSpan();
         var originalFilePathWithoutExtension = Helpers.GetFullFilePathWithoutExtension(originalFilePath);
 
-        return $"{originalFilePathWithoutExtension}_{secondToken}.png";
+        return $"{originalFilePathWithoutExtension}_{secondToken}{DefaultFileExtensions.PngFileExtension}";
     }
 
     private void SetWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
