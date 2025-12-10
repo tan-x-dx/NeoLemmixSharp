@@ -15,23 +15,26 @@ public static class NumberFormattingHelpers
         if (length < 0)
             return;
 
-        do
-        {
-            (uint div, uint rem) = Math.DivRem(valueToWrite, 10);
+        WriteDigit:
+        (valueToWrite, uint rem) = Math.DivRem(valueToWrite, 10);
 
-            ref var sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), length);
-            sourceRef = DigitToChar(rem);
-            valueToWrite = div;
-            length--;
-        }
-        while (length >= 0 && valueToWrite != 0);
+        Unsafe.Add(ref MemoryMarshal.GetReference(span), length) = DigitToChar(rem);
+        length--;
 
-        while (length >= 0)
-        {
-            ref var sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), length);
-            sourceRef = blankCharValue;
-            length--;
-        }
+        if (length < 0)
+            return;
+
+        if (valueToWrite == 0)
+            goto WriteBlank;
+
+        goto WriteDigit;
+
+    WriteBlank:
+        Unsafe.Add(ref MemoryMarshal.GetReference(span), length) = blankCharValue;
+        length--;
+
+        if (length >= 0)
+            goto WriteBlank;
     }
 
     public static unsafe void WriteDigits(char* pointer, uint valueToWrite)
@@ -39,14 +42,14 @@ public static class NumberFormattingHelpers
         var length = GetNumberStringLength(valueToWrite);
         length--;
 
-        while (length >= 0)
+        do
         {
-            (uint div, uint rem) = Math.DivRem(valueToWrite, 10);
+            (valueToWrite, uint rem) = Math.DivRem(valueToWrite, 10);
 
             pointer[length] = DigitToChar(rem);
-            valueToWrite = div;
             length--;
         }
+        while (length >= 0);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -58,7 +61,7 @@ public static class NumberFormattingHelpers
         var result = 1;
         if (n >= 10) result++;
         if (n >= 100) result++;
-        if (n >= 1000) result++; // We're going to be dealing with numbers less than ten thousand
+        if (n >= 1000) result++; // We're only going to be dealing with numbers less than ten thousand
 
         return result;
     }

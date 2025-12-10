@@ -14,13 +14,13 @@ public abstract class GadgetTrigger : IEquatable<GadgetTrigger>
     public required GadgetTriggerName TriggerName { get; init; }
     public required int Id { get; init; }
     public GadgetTriggerType TriggerType { get; }
-    private TriggerEvaluation _evaluation;
+    private int _evaluation;
 
     public required GadgetBehaviour[] Behaviours { private get; init; }
     protected GadgetBase ParentGadget = null!;
     protected GadgetState ParentState = null!;
 
-    public bool IsIndeterminate => _evaluation == TriggerEvaluation.Indeterminate;
+    public bool IsIndeterminate => _evaluation == IndeterminateTriggerValue;
 
     protected GadgetTrigger(GadgetTriggerType triggerType)
     {
@@ -48,22 +48,22 @@ public abstract class GadgetTrigger : IEquatable<GadgetTrigger>
         var currentParentGadgetState = parentGadget.CurrentState;
         if (currentParentGadgetState == parentState)
         {
-            _evaluation = TriggerEvaluation.Indeterminate;
+            _evaluation = IndeterminateTriggerValue;
         }
         else
         {
-            _evaluation = TriggerEvaluation.DefinitelyNotTriggered;
+            _evaluation = IndeterminateTriggerValue;
             MarkAsEvaluated();
         }
     }
 
     public void DetermineTrigger(bool isTriggered)
     {
-        if (_evaluation != TriggerEvaluation.Indeterminate)
+        if (_evaluation != IndeterminateTriggerValue)
             return;
 
         var triggerNum = isTriggered ? DefinitelyTriggeredValue : DefinitelyNotTriggeredValue;
-        _evaluation = (TriggerEvaluation)triggerNum;
+        _evaluation = triggerNum;
     }
 
     protected void MarkAsEvaluated() => LevelScreen.GadgetManager.MarkTriggerAsEvaluated(this);
@@ -98,11 +98,4 @@ public abstract class GadgetTrigger : IEquatable<GadgetTrigger>
         return leftValue == rightValue;
     }
     public static bool operator !=(GadgetTrigger? left, GadgetTrigger? right) => !(left == right);
-
-    private enum TriggerEvaluation
-    {
-        Indeterminate = IndeterminateTriggerValue,
-        DefinitelyNotTriggered = DefinitelyNotTriggeredValue,
-        DefinitelyTriggered = DefinitelyTriggeredValue,
-    }
 }

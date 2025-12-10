@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util.Collections;
+﻿using System.Runtime.CompilerServices;
+
+namespace NeoLemmixSharp.Common.Util.Collections;
 
 /// <summary>
 /// A simple list implementation that can grow as necessary.
@@ -73,7 +75,10 @@ public sealed class SimpleList<T>
 
     public void Clear()
     {
-        new Span<T>(_items).Clear();
+        if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+        {
+            new Span<T>(_items).Clear();
+        }
         _size = 0;
     }
 }

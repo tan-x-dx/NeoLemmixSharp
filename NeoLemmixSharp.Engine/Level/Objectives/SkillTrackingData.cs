@@ -54,8 +54,8 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible
     public bool CanAssignToLemming(Lemming lemming)
     {
         return EffectiveQuantity > 0 &&
-               lemming.State.CanHaveSkillsAssigned &&
                TribesMatch(lemming) &&
+               lemming.State.CanHaveSkillsAssigned &&
                Skill.CanAssignToLemming(lemming);
     }
 
@@ -76,9 +76,9 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible
         else
         {
             effectiveQuantity = InitialSkillQuantity + _data.AdditionalQuantity - _data.AmountUsed;
-
+            effectiveQuantity = Math.Min(effectiveQuantity, EngineConstants.MaxFiniteSkillCount);
             effectiveQuantity = Math.Min(effectiveQuantity, _data.CurrentSkillLimit);
-            effectiveQuantity = Math.Clamp(effectiveQuantity, 0, EngineConstants.MaxFiniteSkillCount);
+            effectiveQuantity = Math.Max(effectiveQuantity, 0);
         }
 
         EffectiveQuantity = Math.Min(effectiveQuantity, totalSkillLimit);
