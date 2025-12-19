@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4.1" />
-    <PackageReference Include="System.Numerics.Tensors" Version="10.0.0" />
+    <PackageReference Include="System.Numerics.Tensors" Version="10.0.1" />
   </ItemGroup>
 
 </Project>

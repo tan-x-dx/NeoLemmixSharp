@@ -8,6 +8,8 @@ internal sealed class NeoLemmixGadgetAnimationData
 
     public NeoLemmixStateType GadgetAnimationBehaviour { get; set; } = NeoLemmixStateType.Play;
 
+    public bool IsPrimaryAnimationData => TextureFilePath == string.Empty;
+
     public int FrameCount { get; set; }
     public int InitialFrame { get; set; }
     public int OffsetX { get; set; }

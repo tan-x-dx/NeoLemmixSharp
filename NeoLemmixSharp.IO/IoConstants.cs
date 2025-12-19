@@ -20,8 +20,8 @@ public static class IoConstants
     internal const string DefaultStyleAuthor = "";
     internal const string DefaultStyleDescription = "A default style containing most basic functionality.";
 
-    internal static readonly StyleIdentifier DefaultStyleIdentifier = new(DefaultStyleIdentifierString);
-    internal static readonly StyleFormatPair DefaultStyleFormatPair = new(DefaultStyleIdentifier, FileFormatType.Default);
+    internal static StyleIdentifier DefaultStyleIdentifier => new(DefaultStyleIdentifierString);
+    internal static StyleFormatPair DefaultStyleFormatPair => new(DefaultStyleIdentifier, FileFormatType.Default);
 
     /// <summary>
     /// Assumption: if there are infinite skills available of a certain type,

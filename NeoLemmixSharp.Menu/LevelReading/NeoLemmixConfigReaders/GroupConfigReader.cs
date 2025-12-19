@@ -32,11 +32,6 @@ public sealed class GroupConfigReader : NeoLemmixDataReader
 
     public override bool BeginReading(ReadOnlySpan<char> line) => true;
 
-    private void DoNothing(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
-    {
-        // Do nothing. Hee hoo
-    }
-
     private void OnEnterGroup(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         _folderName = null;

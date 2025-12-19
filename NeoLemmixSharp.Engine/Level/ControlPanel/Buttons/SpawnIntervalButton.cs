@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using System.Runtime.CompilerServices;
@@ -95,8 +94,8 @@ public sealed class SpawnIntervalButton : ControlPanelButton
     public void UpdateNumericalValue()
     {
         var numericalValue = _spawnIntervalValueGetter.GetNumericalValue();
-        _numberOfDigitsToRender = TextRenderingHelpers.GetNumberStringLength(numericalValue);
-        TextRenderingHelpers.WriteDigits(_spawnIntervalCharBuffer, numericalValue);
+        _numberOfDigitsToRender = NumberFormattingHelpers.GetNumberStringLength(numericalValue);
+        NumberFormattingHelpers.WriteDigits(_spawnIntervalCharBuffer, numericalValue);
     }
 
     public override ReadOnlySpan<char> GetDigitsToRender() => _spawnIntervalCharBuffer;

@@ -60,8 +60,11 @@ public readonly struct Size : IEquatable<Size>
         if (EncompassesPoint(p))
             return;
 
-        throw new ArgumentOutOfRangeException(nameof(p), p, "Invalid position");
+        ThrowEncompassesPointException(p);
     }
+
+    [DoesNotReturn]
+    private static void ThrowEncompassesPointException(Point p) => throw new ArgumentOutOfRangeException(nameof(p), p, "Invalid position");
 
     [Pure]
     [DebuggerStepThrough]

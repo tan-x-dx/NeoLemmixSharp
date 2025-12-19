@@ -125,7 +125,7 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 
     private RectangularRegion GetNineSliceData()
     {
-        var texture = GetTerrainTexture();
+        var texture = GetOrLoadTerrainTexture();
 
         var nineSliceWidth = texture.Width - (_nineSliceRight + _nineSliceLeft);
         var nineSliceHeight = texture.Height - (_nineSliceBottom + _nineSliceTop);
@@ -136,7 +136,7 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
         return new RectangularRegion(nineSlicePosition, nineSliceSize);
     }
 
-    private Texture2D GetTerrainTexture()
+    private Texture2D GetOrLoadTerrainTexture()
     {
         // Need to load the texture here to get its dimensions, since that data is not present in the NeoLemmix config file
         var pngFilePath = RootDirectoryManager.GetCorrespondingImageFile(_terrainPieceFilePath);

@@ -128,6 +128,7 @@ public static class TextureCache
         public TextureUsageData(Texture2D texture)
         {
             Texture = texture;
+            NumberOfLevelsSinceLastUsed = 0;
         }
 
         private TextureUsageData(Texture2D texture, int numberOfLevelsSinceLastUsed)

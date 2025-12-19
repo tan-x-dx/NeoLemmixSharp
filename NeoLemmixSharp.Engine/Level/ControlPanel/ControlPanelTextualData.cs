@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -59,9 +58,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         char* p = _cursorDataPointer + textLength;
         *p = ' '; // Add a space.
         p++;
-        var numericPartLength = TextRenderingHelpers.GetNumberStringLength(numberOfLemmingsUnderCursor);
-
-        TextRenderingHelpers.WriteDigits(p, numericPartLength, numberOfLemmingsUnderCursor);
+        NumberFormattingHelpers.WriteDigits(p, numberOfLemmingsUnderCursor);
     }
 
     private int WriteLemmingInfo(Lemming lemming)
@@ -145,29 +142,27 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
     {
         Debug.Assert(hatchCount >= 0);
 
-        TextRenderingHelpers.WriteDigits(_hatchCountPointer, CharLengthForLemmingCount, (uint)hatchCount);
+        NumberFormattingHelpers.WriteDigits(_hatchCountPointer, (uint)hatchCount);
     }
 
     public void SetLemmingData(int lemmingCount)
     {
         Debug.Assert(lemmingCount >= 0);
 
-        TextRenderingHelpers.WriteDigits(_lemmingsOutPointer, CharLengthForLemmingCount, (uint)lemmingCount);
+        NumberFormattingHelpers.WriteDigits(_lemmingsOutPointer, (uint)lemmingCount);
     }
 
     public void SetGoalData(int goalNumber)
     {
         char* p = _goalCountPointer;
-        var length = CharLengthForGoalCount;
         if (goalNumber < 0)
         {
             goalNumber = -goalNumber;
             *p = '-';
             p++;
-            length--;
         }
 
-        TextRenderingHelpers.WriteDigits(p, length, (uint)goalNumber);
+        NumberFormattingHelpers.WriteDigits(p, (uint)goalNumber);
     }
 
     public void Dispose()

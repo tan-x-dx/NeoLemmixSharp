@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common;
 using System.Diagnostics.CodeAnalysis;
 
-namespace NeoLemmixSharp.Engine.LevelBuilding;
+namespace NeoLemmixSharp.Common.Util;
 
 public static class SpriteHelpers
 {
@@ -13,11 +12,10 @@ public static class SpriteHelpers
         int numberOfAnimationFrames)
     {
         var (widthQuotient, widthRemainder) = int.DivRem(spriteTexture.Width, numberOfLayers);
-        var (heightQuotient, heightRemainder) = int.DivRem(spriteTexture.Height, numberOfAnimationFrames);
-
         if (widthRemainder != 0)
             ThrowInvalidDimensionsException(spriteFileName, "WIDTH", spriteTexture.Width, numberOfLayers);
 
+        var (heightQuotient, heightRemainder) = int.DivRem(spriteTexture.Height, numberOfAnimationFrames);
         if (heightRemainder != 0)
             ThrowInvalidDimensionsException(spriteFileName, "HEIGHT", spriteTexture.Height, numberOfAnimationFrames);
 
@@ -32,7 +30,6 @@ public static class SpriteHelpers
         int numberToDivideBy)
     {
         throw new InvalidOperationException(
-            $"Error loading sprite data! File: {spriteFileName}. " +
-            $"File {widthOrHeight} must be divisible by {numberToDivideBy}, actually is {texturelength}");
+            $"Error loading sprite data! File: {spriteFileName}. File {widthOrHeight} must be divisible by {numberToDivideBy}, actually is {texturelength}");
     }
 }

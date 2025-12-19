@@ -50,8 +50,11 @@ public static class BitArrayHelpers
     internal static void ThrowIfInvalidCapacity(int requiredNumberOfItems, int bufferLength)
     {
         if (requiredNumberOfItems > (bufferLength << Shift))
-            throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {requiredNumberOfItems} bits, buffer has {bufferLength << Shift} bits");
+            ThrowInvalidaCapacityException(requiredNumberOfItems, bufferLength);
     }
+
+    [DoesNotReturn]
+    private static void ThrowInvalidaCapacityException(int requiredNumberOfItems, int bufferLength) => throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {requiredNumberOfItems} bits, buffer has {bufferLength << Shift} bits");
 
     /// <summary>
     /// Tests if a specific bit is set
@@ -92,7 +95,10 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to set</param>
     public static void SetBit(Span<uint> bits, int index)
     {
-        bits[index >>> Shift] |= (1U << index);
+        uint mask = 1U;
+        mask <<= index;
+
+        bits[index >>> Shift] |= mask;
     }
 
     /// <summary>
@@ -134,7 +140,11 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to clear</param>
     public static void ClearBit(Span<uint> bits, int index)
     {
-        bits[index >>> Shift] &= ~(1U << index);
+        uint mask = 1U;
+        mask <<= index;
+        mask = ~mask;
+
+        bits[index >>> Shift] &= mask;
     }
 
     /// <summary>

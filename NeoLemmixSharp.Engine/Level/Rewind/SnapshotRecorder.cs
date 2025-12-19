@@ -19,6 +19,15 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
     {
         _itemManager = itemManager;
 
+        var requiredNumberOfBytesPerSnapshotTotal = CalculateRequiredNumberOfBytesForSnapshotting();
+
+        _requiredNumberOfBytesPerSnapshot = requiredNumberOfBytesPerSnapshotTotal;
+        _snapshotBufferCapacity = RewindConstants.SnapshotDataListSizeMultiplier;
+        _buffer = Helpers.AllocateBuffer<byte>(requiredNumberOfBytesPerSnapshotTotal * RewindConstants.SnapshotDataListSizeMultiplier);
+    }
+
+    private int CalculateRequiredNumberOfBytesForSnapshotting()
+    {
         var requiredNumberOfBytesPerSnapshotTotal = 0;
 
         foreach (var item in _itemManager.AllItems)
@@ -26,9 +35,7 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
             requiredNumberOfBytesPerSnapshotTotal += item.GetRequiredNumberOfBytesForSnapshotting();
         }
 
-        _requiredNumberOfBytesPerSnapshot = requiredNumberOfBytesPerSnapshotTotal;
-        _snapshotBufferCapacity = RewindConstants.SnapshotDataListSizeMultiplier;
-        _buffer = Helpers.AllocateBuffer<byte>(requiredNumberOfBytesPerSnapshotTotal * RewindConstants.SnapshotDataListSizeMultiplier);
+        return requiredNumberOfBytesPerSnapshotTotal;
     }
 
     public unsafe void TakeSnapshot()
