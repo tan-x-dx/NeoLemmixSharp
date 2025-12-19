@@ -18,6 +18,8 @@ public sealed class TerrainRenderer : IViewportObjectRenderer
     public void Dispose()
     {
         _terrainTexture.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 
     public int RendererId { get; set; }

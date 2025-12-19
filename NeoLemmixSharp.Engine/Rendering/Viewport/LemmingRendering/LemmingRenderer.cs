@@ -191,6 +191,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     {
         _lemming = null!;
         _actionSprite = null!;
+
+        GC.SuppressFinalize(this);
     }
 
     [InlineArray(NumberOfCountDownChars)]

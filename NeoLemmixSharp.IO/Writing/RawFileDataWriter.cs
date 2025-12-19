@@ -36,6 +36,8 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
     private int _currentSectionStartPosition = -1;
     private TEnum? _currentSectionIdentifier;
 
+    private bool _isDisposed;
+
     public RawFileDataWriter()
     {
         _mainDataByteBuffer = new RawArray(InitialMainDataByteBufferLength);
@@ -251,7 +253,14 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
 
     public void Dispose()
     {
-        _mainDataByteBuffer.Dispose();
-        _preambleDataByteBuffer.Dispose();
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+
+            _mainDataByteBuffer.Dispose();
+            _preambleDataByteBuffer.Dispose();
+        }
+
+        GC.SuppressFinalize(this);
     }
 }

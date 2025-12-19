@@ -27,9 +27,10 @@ public sealed class MenuScreen : IBaseScreen
 
     public List<LevelPackData> LevelPackData { get; } = new(256);
 
+    private bool _isDisposed;
+
     IScreenRenderer IBaseScreen.ScreenRenderer => MenuScreenRenderer;
     public string ScreenTitle => "NeoLemmixSharp";
-    public bool IsDisposed { get; private set; }
 
     public MenuScreen(
         ContentManager contentManager,
@@ -135,14 +136,16 @@ public sealed class MenuScreen : IBaseScreen
 
     public void Dispose()
     {
-        if (IsDisposed)
-            return;
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+            _currentPage.Dispose();
 
-        _currentPage.Dispose();
+            MenuScreenRenderer.Dispose();
 
-        MenuScreenRenderer.Dispose();
+            Current = null!;
+        }
 
-        Current = null!;
-        IsDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

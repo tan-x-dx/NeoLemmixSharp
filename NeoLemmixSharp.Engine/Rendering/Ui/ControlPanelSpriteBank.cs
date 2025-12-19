@@ -17,5 +17,7 @@ public sealed class ControlPanelSpriteBank : IDisposable
         PanelIcons.Dispose();
         PanelSkillSelected.Dispose();
         PanelSkills.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

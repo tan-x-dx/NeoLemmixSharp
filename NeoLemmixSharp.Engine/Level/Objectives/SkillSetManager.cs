@@ -167,5 +167,6 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     public void Dispose()
     {
         new Span<SkillTrackingData>(_skillTrackingDataList).Clear();
+        GC.SuppressFinalize(this);
     }
 }

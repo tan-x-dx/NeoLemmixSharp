@@ -26,7 +26,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 
     public LevelRenderer LevelRenderer => _levelRenderer;
 
-    public bool IsDisposed { get; private set; }
+    private bool _isDisposed;
 
     public LevelScreenRenderer(
         GraphicsDevice graphicsDevice,
@@ -85,15 +85,17 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 
     public void Dispose()
     {
-        if (IsDisposed)
-            return;
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
 
-        DisposableHelperMethods.DisposeOf(ref _depthStencilState);
-        _levelRenderer.Dispose();
-        _controlPanelRenderer.Dispose();
+            DisposableHelperMethods.DisposeOf(ref _depthStencilState);
+            _levelRenderer.Dispose();
+            _controlPanelRenderer.Dispose();
 
-        Instance = null!;
+            Instance = null!;
+        }
 
-        IsDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

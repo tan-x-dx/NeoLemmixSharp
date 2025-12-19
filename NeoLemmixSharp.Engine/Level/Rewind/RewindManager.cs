@@ -163,5 +163,7 @@ public sealed class RewindManager :
         _levelTimerRecorder.Dispose();
 
         _skillAssignmentList.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

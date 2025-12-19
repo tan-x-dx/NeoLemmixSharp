@@ -27,6 +27,9 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     private int _position;
 
     public FileFormatVersion FileFormatVersion { get; }
+
+    private bool _isDisposed;
+
     public int Position => _position;
     public bool MoreToRead => _position < _byteBuffer.Length;
 
@@ -172,6 +175,12 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
 
     public void Dispose()
     {
-        _byteBuffer.Dispose();
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+            _byteBuffer.Dispose();
+        }
+
+        GC.SuppressFinalize(this);
     }
 }

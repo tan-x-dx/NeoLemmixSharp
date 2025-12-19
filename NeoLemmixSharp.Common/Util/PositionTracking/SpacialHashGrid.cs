@@ -28,6 +28,8 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     private Point _cachedBottomRightChunkQuery;
     private int _cachedQueryPopCount;
 
+    private bool _isDisposed;
+
     public SpacialHashGrid(
         TPerfectHasher hasher,
         ChunkSize chunkSize,
@@ -443,16 +445,23 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
     public void Dispose()
     {
-        var cachedQueryScratchSpaceHandle = (nint)_cachedQueryScratchSpacePointer;
-        var allBitsHandle = (nint)_allBitsPointer;
-        var previousItemPositionsHandle = (nint)_previousItemPositionsPointer;
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
 
-        if (cachedQueryScratchSpaceHandle != nint.Zero)
-            Marshal.FreeHGlobal(cachedQueryScratchSpaceHandle);
-        if (allBitsHandle != nint.Zero)
-            Marshal.FreeHGlobal(allBitsHandle);
-        if (previousItemPositionsHandle != nint.Zero)
-            Marshal.FreeHGlobal(previousItemPositionsHandle);
+            var cachedQueryScratchSpaceHandle = (nint)_cachedQueryScratchSpacePointer;
+            var allBitsHandle = (nint)_allBitsPointer;
+            var previousItemPositionsHandle = (nint)_previousItemPositionsPointer;
+
+            if (cachedQueryScratchSpaceHandle != nint.Zero)
+                Marshal.FreeHGlobal(cachedQueryScratchSpaceHandle);
+            if (allBitsHandle != nint.Zero)
+                Marshal.FreeHGlobal(allBitsHandle);
+            if (previousItemPositionsHandle != nint.Zero)
+                Marshal.FreeHGlobal(previousItemPositionsHandle);
+        }
+
+        GC.SuppressFinalize(this);
     }
 
     private enum ChunkOperationType

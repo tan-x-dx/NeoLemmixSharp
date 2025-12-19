@@ -53,10 +53,10 @@ public abstract class PageBase : IInitialisable, IDisposable
     {
         if (!_isDisposed)
         {
-            UiHandler.Dispose();
-
-            OnDispose();
             _isDisposed = true;
+
+            UiHandler.Dispose();
+            OnDispose();
         }
         GC.SuppressFinalize(this);
     }

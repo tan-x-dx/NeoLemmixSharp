@@ -111,5 +111,7 @@ public sealed class TerrainPainter : IDisposable
     public void Dispose()
     {
         _pixelChangeList.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

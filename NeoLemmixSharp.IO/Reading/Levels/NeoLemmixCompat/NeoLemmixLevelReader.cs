@@ -134,5 +134,7 @@ internal sealed class NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelReader>
     public void Dispose()
     {
         _dataReaderList.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

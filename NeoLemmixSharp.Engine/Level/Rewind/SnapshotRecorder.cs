@@ -15,6 +15,8 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
     private int _snapshotBufferCapacity;
     private int _numberOfSnapshots;
 
+    private bool _isDisposed;
+
     public SnapshotRecorder(TItemManager itemManager)
     {
         _itemManager = itemManager;
@@ -100,6 +102,12 @@ public sealed class SnapshotRecorder<TItemManager, TItemType> : IDisposable
 
     public void Dispose()
     {
-        _buffer.Dispose();
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+            _buffer.Dispose();
+        }
+
+        GC.SuppressFinalize(this);
     }
 }

@@ -46,6 +46,8 @@ public sealed class LevelScreen : IBaseScreen
     private readonly LemmingSpriteBank _lemmingSpriteBank;
     private readonly LevelScreenRenderer _levelScreenRenderer;
 
+    private bool _isDisposed;
+
     public static BoundaryBehaviour HorizontalBoundaryBehaviour => _instance._horizontalBoundaryBehaviour;
     public static BoundaryBehaviour VerticalBoundaryBehaviour => _instance._verticalBoundaryBehaviour;
 
@@ -206,11 +208,17 @@ public sealed class LevelScreen : IBaseScreen
 
     public void Dispose()
     {
-        this.DisposeOfFields();
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
 
-        TextureCache.DisposeOfLevelSpecificTextures();
+            this.DisposeOfFields();
+            TextureCache.DisposeOfLevelSpecificTextures();
 
-        _instance = null!;
+            _instance = null!;
+        }
+
+        GC.SuppressFinalize(this);
     }
 
     public static ref readonly LemmingManager LemmingManagerRef => ref _instance._lemmingManager;

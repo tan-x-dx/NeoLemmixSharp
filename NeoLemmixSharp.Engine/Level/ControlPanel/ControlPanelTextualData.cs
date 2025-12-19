@@ -29,6 +29,8 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
     private readonly ControlPanelParameterSet _controlPanelParameters;
     private readonly RawArray _byteBuffer;
 
+    private bool _isDisposed;
+
     public ReadOnlySpan<char> LemmingActionAndCountSpan => new(_cursorDataPointer, CharLengthForCursorData);
     public ReadOnlySpan<char> HatchCountSpan => new(_hatchCountPointer, CharLengthForLemmingCount);
     public ReadOnlySpan<char> LemmingsOutSpan => new(_lemmingsOutPointer, CharLengthForLemmingCount);
@@ -167,6 +169,12 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
 
     public void Dispose()
     {
-        _byteBuffer.Dispose();
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+            _byteBuffer.Dispose();
+        }
+
+        GC.SuppressFinalize(this);
     }
 }

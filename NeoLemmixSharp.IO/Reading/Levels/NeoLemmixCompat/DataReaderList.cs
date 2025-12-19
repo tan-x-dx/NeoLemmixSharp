@@ -75,5 +75,7 @@ public sealed class DataReaderList : IDisposable
     {
         _streamReader.Dispose();
         _fileStream.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

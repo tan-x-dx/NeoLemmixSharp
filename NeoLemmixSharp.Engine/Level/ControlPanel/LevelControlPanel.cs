@@ -407,5 +407,7 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
     public void Dispose()
     {
         _controlPanelTextualData.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }
