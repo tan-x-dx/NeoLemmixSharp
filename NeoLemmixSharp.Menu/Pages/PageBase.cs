@@ -14,10 +14,10 @@ public abstract class PageBase : IInitialisable, IDisposable
     public UiHandler UiHandler { get; }
 
     protected PageBase(
-        MenuInputController inputController)
+        MenuInputController menuInputController)
     {
-        InputController = inputController;
-        UiHandler = new UiHandler(inputController.InputController);
+        InputController = menuInputController;
+        UiHandler = new UiHandler(menuInputController.InputController);
     }
 
     public void Initialise()
@@ -65,11 +65,11 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     protected static void NavigateToMainMenuPage()
     {
-        var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateMainPage();
+        var levelStartPage = MenuScreen.Instance.MenuPageCreator.CreateMainPage();
 
         if (levelStartPage is null)
             return;
 
-        MenuScreen.Current.SetNextPage(levelStartPage);
+        MenuScreen.Instance.SetNextPage(levelStartPage);
     }
 }

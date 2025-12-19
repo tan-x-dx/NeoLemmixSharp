@@ -19,7 +19,7 @@ public sealed class TextLabel : Component
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {
         var colors = Colors.AsSpan();
-        var color = colors[(int)State];
+        var color = colors[((int)State) & 3];
 
         FontBank.MenuFont.RenderText(spriteBatch, Label, Left, Top, 1, color);
     }

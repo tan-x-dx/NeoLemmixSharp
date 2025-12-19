@@ -19,6 +19,7 @@ public interface IGameWindow
     SpriteBatch SpriteBatch { get; }
 
     void SetScreen(IBaseScreen screen);
+    void ExitLevel();
     void CaptureCursor();
     void ToggleFullscreen();
     void ToggleBorderless();

@@ -105,8 +105,7 @@ public sealed class InputController :
         // in the same way as a BitArraySet would do.
         // Just copy it in...
         var keyBoardState = Keyboard.GetState();
-        void* p = &keyBoardState;
-        var keysSpan = new ReadOnlySpan<uint>(p, KeysBitBuffer.KeysBitBufferLength);
+        var keysSpan = new ReadOnlySpan<uint>(&keyBoardState, KeysBitBuffer.KeysBitBufferLength);
 
         _releasedKeys.SetFrom(_pressedKeys);
         _pressedKeys.ReadFrom(keysSpan);

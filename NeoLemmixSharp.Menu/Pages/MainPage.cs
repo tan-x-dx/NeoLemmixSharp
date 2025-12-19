@@ -63,22 +63,22 @@ public sealed class MainPage : PageBase
 
     private static void PlayButtonClick(Component _, Point position)
     {
-        var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage();
+        var levelStartPage = MenuScreen.Instance.MenuPageCreator.CreateLevelStartPage();
 
         if (levelStartPage is null)
             return;
 
-        MenuScreen.Current.SetNextPage(levelStartPage);
+        MenuScreen.Instance.SetNextPage(levelStartPage);
     }
 
     private static void LevelSelectButtonClick(Component _, Point position)
     {
-        var levelSelectPage = MenuScreen.Current.MenuPageCreator.CreateLevelSelectPage();
+        var levelSelectPage = MenuScreen.Instance.MenuPageCreator.CreateLevelSelectPage();
 
         if (levelSelectPage is null)
             return;
 
-        MenuScreen.Current.SetNextPage(levelSelectPage);
+        MenuScreen.Instance.SetNextPage(levelSelectPage);
     }
 
     private static void GroupUpButtonClick(Component _, Point position)

@@ -28,7 +28,7 @@ public static class UiSprites
             c.Height);
 
         var colors = c.Colors.AsSpan();
-        var color = colors[(int)c.State];
+        var color = colors[((int)c.State) & 3];
 
         DrawNineSlicedBeveledRectangle(spriteBatch, dest, color);
     }
@@ -38,45 +38,45 @@ public static class UiSprites
         Rectangle dest,
         Color color)
     {
-        const int sourceSize = 64;
-        const int chunkSize = 4;
+        const int SourceSize = 64;
+        const int ChunkSize = 4;
 
-        var source = new Rectangle(0, 0, chunkSize, chunkSize);
-        var subDest = new Rectangle(dest.X, dest.Y, chunkSize, chunkSize);
+        var source = new Rectangle(0, 0, ChunkSize, ChunkSize);
+        var subDest = new Rectangle(dest.X, dest.Y, ChunkSize, ChunkSize);
         spriteBatch.Draw(BevelTexture, subDest, source, color);
 
-        source = new Rectangle(chunkSize, 0, sourceSize - 2 * chunkSize, chunkSize);
-        subDest = new Rectangle(dest.X + chunkSize, dest.Y, dest.Width - 2 * chunkSize, chunkSize);
+        source = new Rectangle(ChunkSize, 0, SourceSize - 2 * ChunkSize, ChunkSize);
+        subDest = new Rectangle(dest.X + ChunkSize, dest.Y, dest.Width - 2 * ChunkSize, ChunkSize);
         spriteBatch.Draw(BevelTexture, subDest, source, color);
 
-        source = new Rectangle(sourceSize - chunkSize, 0, chunkSize, chunkSize);
-        subDest = new Rectangle(dest.Right - chunkSize, dest.Y, chunkSize, chunkSize);
-        spriteBatch.Draw(BevelTexture, subDest, source, color);
-
-
-        source = new Rectangle(0, chunkSize, chunkSize, sourceSize - 2 * chunkSize);
-        subDest = new Rectangle(dest.X, dest.Y + chunkSize, chunkSize, dest.Height - 2 * chunkSize);
-        spriteBatch.Draw(BevelTexture, subDest, source, color);
-
-        source = new Rectangle(chunkSize, chunkSize, sourceSize - 2 * chunkSize, sourceSize - 2 * chunkSize);
-        subDest = new Rectangle(dest.X + chunkSize, dest.Y + chunkSize, dest.Width - 2 * chunkSize, dest.Height - 2 * chunkSize);
-        spriteBatch.Draw(BevelTexture, subDest, source, color);
-
-        source = new Rectangle(sourceSize - chunkSize, chunkSize, chunkSize, sourceSize - 2 * chunkSize);
-        subDest = new Rectangle(dest.Right - chunkSize, dest.Y + chunkSize, chunkSize, dest.Height - 2 * chunkSize);
+        source = new Rectangle(SourceSize - ChunkSize, 0, ChunkSize, ChunkSize);
+        subDest = new Rectangle(dest.Right - ChunkSize, dest.Y, ChunkSize, ChunkSize);
         spriteBatch.Draw(BevelTexture, subDest, source, color);
 
 
-        source = new Rectangle(0, sourceSize - chunkSize, chunkSize, chunkSize);
-        subDest = new Rectangle(dest.X, dest.Bottom - chunkSize, chunkSize, chunkSize);
+        source = new Rectangle(0, ChunkSize, ChunkSize, SourceSize - 2 * ChunkSize);
+        subDest = new Rectangle(dest.X, dest.Y + ChunkSize, ChunkSize, dest.Height - 2 * ChunkSize);
         spriteBatch.Draw(BevelTexture, subDest, source, color);
 
-        source = new Rectangle(chunkSize, sourceSize - chunkSize, sourceSize - 2 * chunkSize, chunkSize);
-        subDest = new Rectangle(dest.X + chunkSize, dest.Bottom - chunkSize, dest.Width - 2 * chunkSize, chunkSize);
+        source = new Rectangle(ChunkSize, ChunkSize, SourceSize - 2 * ChunkSize, SourceSize - 2 * ChunkSize);
+        subDest = new Rectangle(dest.X + ChunkSize, dest.Y + ChunkSize, dest.Width - 2 * ChunkSize, dest.Height - 2 * ChunkSize);
         spriteBatch.Draw(BevelTexture, subDest, source, color);
 
-        source = new Rectangle(sourceSize - chunkSize, sourceSize - chunkSize, chunkSize, chunkSize);
-        subDest = new Rectangle(dest.Right - chunkSize, dest.Bottom - chunkSize, chunkSize, chunkSize);
+        source = new Rectangle(SourceSize - ChunkSize, ChunkSize, ChunkSize, SourceSize - 2 * ChunkSize);
+        subDest = new Rectangle(dest.Right - ChunkSize, dest.Y + ChunkSize, ChunkSize, dest.Height - 2 * ChunkSize);
+        spriteBatch.Draw(BevelTexture, subDest, source, color);
+
+
+        source = new Rectangle(0, SourceSize - ChunkSize, ChunkSize, ChunkSize);
+        subDest = new Rectangle(dest.X, dest.Bottom - ChunkSize, ChunkSize, ChunkSize);
+        spriteBatch.Draw(BevelTexture, subDest, source, color);
+
+        source = new Rectangle(ChunkSize, SourceSize - ChunkSize, SourceSize - 2 * ChunkSize, ChunkSize);
+        subDest = new Rectangle(dest.X + ChunkSize, dest.Bottom - ChunkSize, dest.Width - 2 * ChunkSize, ChunkSize);
+        spriteBatch.Draw(BevelTexture, subDest, source, color);
+
+        source = new Rectangle(SourceSize - ChunkSize, SourceSize - ChunkSize, ChunkSize, ChunkSize);
+        subDest = new Rectangle(dest.Right - ChunkSize, dest.Bottom - ChunkSize, ChunkSize, ChunkSize);
         spriteBatch.Draw(BevelTexture, subDest, source, color);
     }
 }

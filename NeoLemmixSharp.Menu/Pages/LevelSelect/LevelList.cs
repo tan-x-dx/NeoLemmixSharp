@@ -69,9 +69,9 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
         var horizontalSpace = Width - (interiorMargin * 2);
         var verticalSpace = Height - (interiorMargin * 2);
 
-        const int itemHeight = MenuFont.GlyphHeight + (LevelBrowserEntry.ButtonPadding * 2);
+        const int ItemHeight = MenuFont.GlyphHeight + (LevelBrowserEntry.ButtonPadding * 2);
 
-        var maxNumberOfItemsDisplayed = verticalSpace / itemHeight;
+        var maxNumberOfItemsDisplayed = verticalSpace / ItemHeight;
 
         var children = _children!;
         for (var i = 0; i < children.Count; i++)
@@ -83,9 +83,9 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
 
                 entry.SetDimensions(
                     Left + interiorMargin,
-                    Top + interiorMargin + ((i - ScrollIndex) * itemHeight),
+                    Top + interiorMargin + ((i - ScrollIndex) * ItemHeight),
                     horizontalSpace,
-                    itemHeight);
+                    ItemHeight);
             }
             else
             {
@@ -111,12 +111,12 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
 
         if (c is LevelEntry level && level.LevelData is not null)
         {
-            var levelStartPage = MenuScreen.Current.MenuPageCreator.CreateLevelStartPage(level.LevelData);
+            var levelStartPage = MenuScreen.Instance.MenuPageCreator.CreateLevelStartPage(level.LevelData);
 
             if (levelStartPage is null)
                 return;
 
-            MenuScreen.Current.SetNextPage(levelStartPage);
+            MenuScreen.Instance.SetNextPage(levelStartPage);
         }
     }
 
