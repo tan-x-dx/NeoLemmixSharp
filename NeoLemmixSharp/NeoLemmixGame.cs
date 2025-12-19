@@ -164,7 +164,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         _screenRenderer = _screen.ScreenRenderer;
 
         Window.Title = _screen.ScreenTitle;
-        _screen.OnSetScreen();
+        _screen.OnActivated();
 
         _screen.Initialise();
     }

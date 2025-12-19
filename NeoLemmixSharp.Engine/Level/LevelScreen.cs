@@ -199,9 +199,9 @@ public sealed class LevelScreen : IBaseScreen
         IGameWindow.Instance.CaptureCursor();
     }
 
-    public void OnSetScreen()
+    public void ExitLevel()
     {
-        IGameWindow.Instance.CaptureCursor();
+
     }
 
     public void Dispose()

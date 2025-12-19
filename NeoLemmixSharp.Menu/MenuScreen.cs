@@ -133,10 +133,6 @@ public sealed class MenuScreen : IBaseScreen
     {
     }
 
-    public void OnSetScreen()
-    {
-    }
-
     public void Dispose()
     {
         if (IsDisposed)
