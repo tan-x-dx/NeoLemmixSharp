@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HatchGadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.HitBoxGadget;
@@ -13,16 +14,36 @@ internal static class GadgetConverter
     {
         var specificationData = CreateGadgetSpecificationData(neoLemmixGadgetArchetypeData);
 
+        var baseSpriteSize = DetermineBaseSpriteSize(neoLemmixGadgetArchetypeData);
+
         var result = new GadgetArchetypeData
         {
             StyleIdentifier = neoLemmixGadgetArchetypeData.StyleIdentifier,
             PieceIdentifier = neoLemmixGadgetArchetypeData.GadgetPieceIdentifier,
             GadgetName = neoLemmixGadgetArchetypeData.GadgetPieceIdentifier.ToString(),
-            BaseSpriteSize = default,
+            BaseSpriteSize = baseSpriteSize,
             SpecificationData = specificationData,
         };
 
         return result;
+    }
+
+    private static Size DetermineBaseSpriteSize(NeoLemmixGadgetArchetypeData neoLemmixGadgetArchetypeData)
+    {
+        if (neoLemmixGadgetArchetypeData.HasSpriteSizeSpecified)
+            return new Size(neoLemmixGadgetArchetypeData.SpriteWidth, neoLemmixGadgetArchetypeData.SpriteHeight);
+
+        neoLemmixGadgetArchetypeData.GetOrLoadGadgetTexture(out var pngFilePath, out var gadgetTexture);
+
+        foreach (var animationData in neoLemmixGadgetArchetypeData.AnimationData)
+        {
+            if (animationData.IsPrimaryAnimationData)
+            {
+                return SpriteHelpers.DetermineSpriteSize(pngFilePath, gadgetTexture, 1, animationData.FrameCount);
+            }
+        }
+
+        return default;
     }
 
     private static IGadgetArchetypeSpecificationData CreateGadgetSpecificationData(NeoLemmixGadgetArchetypeData neoLemmixGadgetArchetypeData)
