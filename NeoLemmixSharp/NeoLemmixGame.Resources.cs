@@ -116,7 +116,7 @@ public sealed partial class NeoLemmixGame
             positions = new Point[numberOfPixels];
 
             var area = maskSize.Area();
-            var bitEnumerator = new BitArrayEnumerator(byteBuffer, numberOfPixels);
+            var bitEnumerator = new BitArrayEnumerator(byteBuffer);
             var r = 0;
             var p = 0;
             var startIndex = 0;

@@ -22,5 +22,5 @@ public readonly ref struct BitArrayEnumerable<TPerfectHasher, T>
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitArrayEnumerator<TPerfectHasher, T> GetEnumerator() => new(_hasher, _bits, Count);
+    public BitArrayEnumerator<TPerfectHasher, T> GetEnumerator() => new(_hasher, _bits);
 }

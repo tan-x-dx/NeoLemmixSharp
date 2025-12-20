@@ -24,6 +24,7 @@ public static class Helpers
             : new T[size];
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe RawArray AllocateBuffer<T>(int numberOfItems)
         where T : unmanaged
     {
@@ -170,4 +171,11 @@ public static class Helpers
         var indexOfExtension = fullFilePath.IndexOf(extension, StringComparison.Ordinal);
         return fullFilePath[..indexOfExtension];
     }
+
+    [DoesNotReturn]
+    public static void ThrowKeyAlreadyAddedException<TKey>(TKey key) => throw new ArgumentException("Key already added!", nameof(key));
+    [DoesNotReturn]
+    public static void ThrowDestinationSpanTooShortException() => throw new ArgumentException("Destination span too short!");
+    [DoesNotReturn]
+    public static void ThrowKeyNotFoundException() => throw new KeyNotFoundException("Key not found!");
 }
