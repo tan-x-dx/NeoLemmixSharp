@@ -149,6 +149,17 @@ public static class Helpers
         return null;
     }
 
+    public static IEnumerable<T> MaybeConcat<T>(IEnumerable<T>? first, IEnumerable<T>? second)
+    {
+        if (first is null)
+            return second ?? [];
+
+        if (second is null)
+            return first;
+
+        return first.Concat(second);
+    }
+
     public static bool StringSpansMatch(
         ReadOnlySpan<char> firstSpan,
         ReadOnlySpan<char> secondSpan)

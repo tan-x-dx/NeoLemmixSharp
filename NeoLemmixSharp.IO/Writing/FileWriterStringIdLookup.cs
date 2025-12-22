@@ -80,7 +80,9 @@ internal readonly struct MutableFileWriterStringIdLookup
             ? stackalloc byte[bufferSize]
             : new byte[bufferSize];
 
-        foreach (var kvp in _lookup.OrderBy(x => x.Value))
+        var orderedPairs = GetOrderedPairs();
+
+        foreach (var kvp in orderedPairs)
         {
             var stringToWrite = kvp.Key;
             var id = kvp.Value;
@@ -107,5 +109,21 @@ internal readonly struct MutableFileWriterStringIdLookup
         }
 
         return maxBufferSize;
+    }
+
+    [Pure]
+    private Span<KeyValuePair<string, ushort>> GetOrderedPairs()
+    {
+        var array = _lookup.ToArray();
+        var span = new Span<KeyValuePair<string, ushort>>(array);
+        span.Sort(ByValue);
+        return span;
+
+        static int ByValue(KeyValuePair<string, ushort> x, KeyValuePair<string, ushort> y)
+        {
+            int xValue = x.Value;
+            int yValue = y.Value;
+            return xValue.CompareTo(yValue);
+        }
     }
 }

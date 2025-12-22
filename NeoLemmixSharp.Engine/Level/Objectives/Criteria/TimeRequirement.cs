@@ -2,8 +2,15 @@
 
 public sealed class TimeRequirement : ObjectiveRequirement
 {
+    public uint TimeLimitInSeconds { get; }
+
+    public TimeRequirement(uint timeLimitInSeconds)
+    {
+        TimeLimitInSeconds = timeLimitInSeconds;
+    }
+
     public override bool IsSatisfied()
     {
-        return !LevelScreen.LevelTimer.OutOfTime;
+        return LevelScreen.LevelTimer.EffectiveElapsedSeconds <= TimeLimitInSeconds;
     }
 }
