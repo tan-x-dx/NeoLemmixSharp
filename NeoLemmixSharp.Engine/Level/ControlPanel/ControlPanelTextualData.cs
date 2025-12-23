@@ -118,11 +118,12 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
             if (action.CursorSelectionPriorityValue == LemmingActionConstants.NonPermanentSkillPriority)
                 return action.LemmingActionName;
 
-            if (state.IsZombie && state.IsNeutral)
-                return EngineConstants.NeutralZombieControlPanelString;
-
             if (state.IsZombie)
-                return EngineConstants.ZombieControlPanelString;
+            {
+                return state.IsNeutral
+                    ? EngineConstants.NeutralZombieControlPanelString
+                    : EngineConstants.ZombieControlPanelString;
+            }
 
             if (state.IsNeutral)
                 return EngineConstants.NeutralControlPanelString;

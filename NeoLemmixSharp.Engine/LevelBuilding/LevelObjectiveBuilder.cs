@@ -32,27 +32,15 @@ public sealed class LevelObjectiveBuilder
 
     public LevelObjectiveManager BuildLevelObjectiveManager()
     {
-        var levelObjectives = BuildLevelObjectives();
-        var indexOfPrimaryLevelObjective = _selectedTalisman?.TalismanId ?? 0;
-
-        return new LevelObjectiveManager(levelObjectives, indexOfPrimaryLevelObjective);
-    }
-
-    private LevelObjective[] BuildLevelObjectives()
-    {
-        var result = new LevelObjective[_levelObjectiveData.TalismanData.Length + 1];
-
         var baseObjectiveRequirements = BuildBaseObjectiveRequirements();
+        var mainLevelObjective = new LevelObjective(baseObjectiveRequirements, _levelObjectiveData.ObjectiveName);
 
-        result[0] = new LevelObjective(baseObjectiveRequirements, _levelObjectiveData.ObjectiveName);
+        var talismanObjectives = BuildTalismanObjectives();
+        LevelObjective? selectedTalismanObjective = null;
+        if (_selectedTalisman is not null)
+            selectedTalismanObjective = talismanObjectives[_selectedTalisman.TalismanId];
 
-        for (var i = 0; i < _levelObjectiveData.TalismanData.Length; i++)
-        {
-            var talismanData = _levelObjectiveData.TalismanData[i];
-            result[i + 1] = BuildTalismanObjective(talismanData, baseObjectiveRequirements);
-        }
-
-        return result;
+        return new LevelObjectiveManager(mainLevelObjective, talismanObjectives, selectedTalismanObjective);
     }
 
     private ObjectiveRequirement[] BuildBaseObjectiveRequirements()
@@ -66,10 +54,25 @@ public sealed class LevelObjectiveBuilder
         return objectiveCriteriaList.ToArray();
     }
 
-    private static LevelObjective BuildTalismanObjective(TalismanData talismanData, ObjectiveRequirement[] baseObjectiveRequirements)
+    private LevelObjective[] BuildTalismanObjectives()
+    {
+        if (_levelObjectiveData.TalismanData.Length == 0)
+            return [];
+
+        var result = new LevelObjective[_levelObjectiveData.TalismanData.Length];
+
+        for (var i = 0; i < _levelObjectiveData.TalismanData.Length; i++)
+        {
+            var talismanData = _levelObjectiveData.TalismanData[i];
+            result[i] = BuildTalismanObjective(talismanData);
+        }
+
+        return result;
+    }
+
+    private static LevelObjective BuildTalismanObjective(TalismanData talismanData)
     {
         var objectiveCriteriaList = new List<ObjectiveRequirement>();
-        objectiveCriteriaList.AddRange(baseObjectiveRequirements);
 
         if (TryBuildSaveRequirementCriteria(talismanData.AdditionalObjectiveCriteria, out var requirement)) objectiveCriteriaList.Add(requirement);
         if (TryBuildTimeLimitCriterion(talismanData.AdditionalObjectiveCriteria, out requirement)) objectiveCriteriaList.Add(requirement);

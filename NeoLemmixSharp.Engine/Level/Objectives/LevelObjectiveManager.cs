@@ -2,18 +2,25 @@
 
 public sealed class LevelObjectiveManager
 {
-    private readonly LevelObjective[] _levelObjectives;
+    private readonly LevelObjective[] _talismanObjectives;
     public LevelObjective MainLevelObjective { get; }
+    public LevelObjective? SelectedTalismanObjective { get; }
 
-    public LevelObjectiveManager(LevelObjective[] levelObjectives, int indexOfPrimaryLevelObjective)
+    public LevelObjectiveManager(
+        LevelObjective mainLevelObjective,
+        LevelObjective[] talismanObjectives,
+        LevelObjective? selectedTalismanObjective)
     {
-        _levelObjectives = levelObjectives;
-        MainLevelObjective = levelObjectives[indexOfPrimaryLevelObjective];
+        MainLevelObjective = mainLevelObjective;
+        _talismanObjectives = talismanObjectives;
+        SelectedTalismanObjective = selectedTalismanObjective;
     }
 
     public void RecheckLevelObjective()
     {
-        foreach (var levelObjective in _levelObjectives)
+        MainLevelObjective.RecheckLevelObjective();
+
+        foreach (var levelObjective in _talismanObjectives)
         {
             levelObjective.RecheckLevelObjective();
         }
