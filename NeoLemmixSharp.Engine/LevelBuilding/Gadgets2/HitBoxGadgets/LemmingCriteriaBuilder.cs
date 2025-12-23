@@ -21,9 +21,12 @@ public ref struct LemmingCriteriaBuilder
     private OrientationSet? _orientationSet = null;
     private int _facingDirectionIds = 0;
     private LemmingActionSet? _lemmingActionSet = null;
-    private LemmingStateSet? _lemmingStateSet = null;
+    private LemmingStateSet? _allowedLemmingStateSet = null;
+    private LemmingStateSet? _disallowedLemmingStateSet = null;
     private TribeSet? _tribeSet = null;
     private int _numberOfCriteria = 0;
+    private bool _hasRequiredStates = false;
+    private bool _hasDisallowedStates = false;
 
     public LemmingCriteriaBuilder(TribeManager tribeManager, Orientation instanceOrientation, FacingDirection facingDirection)
     {
@@ -50,7 +53,6 @@ public ref struct LemmingCriteriaBuilder
         }
 
         CheckSetIsNotFull(ref _lemmingActionSet);
-        CheckSetIsNotFull(ref _lemmingStateSet);
         CheckSetIsNotFull(ref _tribeSet);
 
         return CreateLemmingCriteriaArray();
@@ -72,8 +74,12 @@ public ref struct LemmingCriteriaBuilder
                 AddLemmingActionToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
-            case LemmingCriteriaType.LemmingState:
-                AddLemmingStateToCriteria(hitBoxCriteriaDatum.ItemId);
+            case LemmingCriteriaType.RequiredLemmingState:
+                AddRequiredLemmingStateToCriteria(hitBoxCriteriaDatum.ItemId);
+                break;
+
+            case LemmingCriteriaType.DisallowedLemmingState:
+                AddDisallowedLemmingStateToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
             case LemmingCriteriaType.LemmingTribe:
@@ -88,7 +94,10 @@ public ref struct LemmingCriteriaBuilder
 
     private readonly LemmingCriterion[] CreateLemmingCriteriaArray()
     {
-        var result = Helpers.GetArrayForSize<LemmingCriterion>(_numberOfCriteria);
+        var numberOfCriteria = _numberOfCriteria;
+        numberOfCriteria += (_hasRequiredStates | _hasDisallowedStates) ? 1 : 0;
+
+        var result = Helpers.GetArrayForSize<LemmingCriterion>(numberOfCriteria);
         var i = 0;
 
         if (_orientationSet is not null) result[i++] = new LemmingOrientationCriterion(_orientationSet);
@@ -98,7 +107,7 @@ public ref struct LemmingCriteriaBuilder
             result[i++] = LemmingFacingDirectionCriterion.ForFacingDirection(id);
         }
         if (_lemmingActionSet is not null) result[i++] = new LemmingActionCriterion(_lemmingActionSet);
-        if (_lemmingStateSet is not null) result[i++] = new LemmingStateCriterion(_lemmingStateSet);
+        if (_hasRequiredStates | _hasDisallowedStates) result[i++] = new LemmingStateCriterion(_allowedLemmingStateSet, _disallowedLemmingStateSet);
         if (_tribeSet is not null) result[i++] = new LemmingTribeCriterion(_tribeSet);
 
         Debug.Assert(i == result.Length);
@@ -142,16 +151,28 @@ public ref struct LemmingCriteriaBuilder
         _lemmingActionSet.Add(lemmingAction);
     }
 
-    private void AddLemmingStateToCriteria(int itemId)
+    private void AddRequiredLemmingStateToCriteria(int itemId)
     {
-        if (_lemmingStateSet is null)
+        if (_allowedLemmingStateSet is null)
         {
-            _lemmingStateSet = ILemmingState.CreateBitArraySet();
-            _numberOfCriteria++;
+            _allowedLemmingStateSet = ILemmingState.CreateBitArraySet();
+            _hasRequiredStates = true;
         }
 
         var lemmingState = ILemmingState.AllItems[itemId];
-        _lemmingStateSet.Add(lemmingState);
+        _allowedLemmingStateSet.Add(lemmingState);
+    }
+
+    private void AddDisallowedLemmingStateToCriteria(int itemId)
+    {
+        if (_disallowedLemmingStateSet is null)
+        {
+            _disallowedLemmingStateSet = ILemmingState.CreateBitArraySet();
+            _hasDisallowedStates = true;
+        }
+
+        var lemmingState = ILemmingState.AllItems[itemId];
+        _disallowedLemmingStateSet.Add(lemmingState);
     }
 
     private void AddLemmingTribeToCriteria(int itemId)
