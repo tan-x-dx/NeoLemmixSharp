@@ -27,9 +27,9 @@ public readonly struct RawArray : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe Span<byte> AsSpan() => new((void*)Handle, Length);
+    public unsafe Span<byte> AsSpan() => MemoryMarshal.CreateSpan(ref Unsafe.AsRef<byte>((void*)Handle), Length);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe ReadOnlySpan<byte> AsReadOnlySpan() => new((void*)Handle, Length);
+    public unsafe ReadOnlySpan<byte> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<byte>((void*)Handle), Length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
