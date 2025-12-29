@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Util;
 using System.Diagnostics;
@@ -134,7 +135,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         byte* pointer = (byte*)_mainDataByteBuffer.Handle + _mainDataPosition;
         _mainDataPosition = newPosition;
 
-        var destinationSpan = new Span<byte>(pointer, data.Length);
+        var destinationSpan = Helpers.CreateSpan<byte>(pointer, data.Length);
         data.CopyTo(destinationSpan);
     }
 
@@ -198,8 +199,13 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
             _mainDataPosition + _preambleDataPosition <= IoConstants.MaxAllowedFileSizeInBytes,
             IoConstants.FileSizeTooLargeExceptionMessage);
 
-        stream.Write(new ReadOnlySpan<byte>((void*)_preambleDataByteBuffer.Handle, _preambleDataPosition));
-        stream.Write(new ReadOnlySpan<byte>((void*)_mainDataByteBuffer.Handle, _mainDataPosition));
+        Debug.Assert(_preambleDataPosition >= 0);
+        Debug.Assert(_preambleDataPosition < _preambleDataByteBuffer.Length);
+        stream.Write(Helpers.CreateReadOnlySpan<byte>((void*)_preambleDataByteBuffer.Handle, _preambleDataPosition));
+
+        Debug.Assert(_mainDataPosition >= 0);
+        Debug.Assert(_mainDataPosition < _mainDataByteBuffer.Length);
+        stream.Write(Helpers.CreateReadOnlySpan<byte>((void*)_mainDataByteBuffer.Handle, _mainDataPosition));
     }
 
     private void AssertCanWriteToFile()

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -33,6 +34,36 @@ public static class Helpers
         result.AsSpan().Clear();
         return result;
     }
+
+    /// <summary>
+    /// Creates a span from a pointer and a length.
+    /// 
+    /// Generally speaking, when creating a read-only span, the compiler emits checks to ensure the length is valid for a read-only span.
+    /// This method bypasses these checks.
+    /// </summary>
+    /// <typeparam name="T">The type of the span.</typeparam>
+    /// <param name="p">The pointer to use.</param>
+    /// <param name="length">The (assumed valid) desired length of the span.</param>
+    /// <returns>A span over the desired data.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe Span<T> CreateSpan<T>(void* p, int length)
+        where T : unmanaged
+        => MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(p), length);
+
+    /// <summary>
+    /// Creates a read-only span from a pointer and a length.
+    /// 
+    /// Generally speaking, when creating a read-only span, the compiler emits checks to ensure the length is valid for a read-only span.
+    /// This method bypasses these checks.
+    /// </summary>
+    /// <typeparam name="T">The type of the read-only span.</typeparam>
+    /// <param name="p">The pointer to use.</param>
+    /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
+    /// <returns>A span over the desired data.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(void* p, int length)
+        where T : unmanaged
+        => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(p), length);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

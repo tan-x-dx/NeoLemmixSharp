@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
@@ -27,11 +28,10 @@ public readonly struct RawArray : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe Span<byte> AsSpan() => MemoryMarshal.CreateSpan(ref Unsafe.AsRef<byte>((void*)Handle), Length);
+    public unsafe Span<byte> AsSpan() => Helpers.CreateSpan<byte>((void*)Handle, Length);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe ReadOnlySpan<byte> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<byte>((void*)Handle), Length);
+    public unsafe ReadOnlySpan<byte> AsReadOnlySpan() => Helpers.CreateReadOnlySpan<byte>((void*)Handle, Length);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
         if (Handle != nint.Zero)

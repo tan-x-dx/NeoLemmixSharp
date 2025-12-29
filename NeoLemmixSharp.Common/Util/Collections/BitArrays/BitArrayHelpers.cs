@@ -50,11 +50,11 @@ public static class BitArrayHelpers
     internal static void ThrowIfInvalidCapacity(int requiredNumberOfItems, int bufferLength)
     {
         if (requiredNumberOfItems > (bufferLength << Shift))
-            ThrowInvalidaCapacityException(requiredNumberOfItems, bufferLength);
+            ThrowInvalidCapacityException(requiredNumberOfItems, bufferLength);
     }
 
     [DoesNotReturn]
-    private static void ThrowInvalidaCapacityException(int requiredNumberOfItems, int bufferLength) => throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {requiredNumberOfItems} bits, buffer has {bufferLength << Shift} bits");
+    private static void ThrowInvalidCapacityException(int requiredNumberOfItems, int bufferLength) => throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {requiredNumberOfItems} bits, buffer has {bufferLength << Shift} bits");
 
     /// <summary>
     /// Tests if a specific bit is set
@@ -340,7 +340,7 @@ public static class BitArrayHelpers
     /// <param name="sourcePointer">The pointer whose bits are to be modified. This pointer is written to.</param>
     /// <param name="otherPointer">The pointer whose bits are used in the masking operation. This pointer is used read only.</param>
     /// <param name="length">The number of uints that need to be modified.</param>
-    internal static unsafe void UnionWith(uint* sourcePointer, uint* otherPointer, uint length)
+    internal static unsafe void UnionWith(uint* sourcePointer, uint* otherPointer, int length)
     {
         switch (length)
         {
@@ -377,12 +377,11 @@ public static class BitArrayHelpers
         return;
     }
 
-    private static unsafe void LargeSpanUnionWith(void* sourcePointer, void* otherPointer, uint length)
+    private static unsafe void LargeSpanUnionWith(void* sourcePointer, void* otherPointer, int length)
     {
-        var spanLength = (int)length;
-        var x = new ReadOnlySpan<uint>(sourcePointer, spanLength);
-        var y = new ReadOnlySpan<uint>(otherPointer, spanLength);
-        var destination = new Span<uint>(sourcePointer, spanLength);
+        var x = Helpers.CreateReadOnlySpan<uint>(sourcePointer, (int)length);
+        var y = Helpers.CreateReadOnlySpan<uint>(otherPointer, (int)length);
+        var destination = Helpers.CreateSpan<uint>(sourcePointer, (int)length);
 
         TensorPrimitives.BitwiseOr(x, y, destination);
     }

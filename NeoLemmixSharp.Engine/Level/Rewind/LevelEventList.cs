@@ -28,7 +28,7 @@ public sealed class LevelEventList<TEventData> : IDisposable
     {
         TEventData* pointer = (TEventData*)_buffer.Handle + start;
 
-        return new ReadOnlySpan<TEventData>(pointer, length);
+        return Helpers.CreateReadOnlySpan<TEventData>(pointer, length);
     }
 
     [Pure]

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Util;
 using System.Runtime.CompilerServices;
@@ -160,7 +161,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
         byte* pointer = (byte*)_byteBuffer.Handle + _position;
         _position = newPosition;
 
-        return new ReadOnlySpan<byte>(pointer, numberOfBytes);
+        return Helpers.CreateReadOnlySpan<byte>(pointer, numberOfBytes);
     }
 
     public void SetReaderPosition(int position)
