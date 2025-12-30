@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -357,7 +358,9 @@ public sealed class BoundaryBehaviour
         var sourceLength = _levelLength - _viewPortStart;
         var scaledSourceLength = sourceLength * _scaleMultiplier;
 
-        _screenRenderIntervalBuffer[0] = new ScreenRenderInterval(
+        Span<ScreenRenderInterval> span = _screenRenderIntervalBuffer;
+
+        span.At(0) = new ScreenRenderInterval(
             _viewPortStart,
             sourceLength,
             screenCoordinate,
@@ -369,13 +372,13 @@ public sealed class BoundaryBehaviour
         while (screenCoordinate < maxScreenDimension &&
                screenSpanLength < MaxNumberOfRenderCopiesForWrappedLevels - 1)
         {
-            Unsafe.Add(ref MemoryMarshal.GetReference<ScreenRenderInterval>(_screenRenderIntervalBuffer), screenSpanLength++) = new ScreenRenderInterval(0, _levelLength, screenCoordinate, deltaLength);
+            span.At(screenSpanLength++) = new ScreenRenderInterval(0, _levelLength, screenCoordinate, deltaLength);
             screenCoordinate += deltaLength;
         }
 
         if (screenCoordinate < maxScreenDimension)
         {
-            Unsafe.Add(ref MemoryMarshal.GetReference<ScreenRenderInterval>(_screenRenderIntervalBuffer), screenSpanLength++) = new ScreenRenderInterval(0, 0, screenCoordinate, 0);
+            span.At(screenSpanLength++) = new ScreenRenderInterval(0, 0, screenCoordinate, 0);
         }
 
         _screenSpanLength = screenSpanLength;

@@ -38,7 +38,7 @@ public static class Helpers
     /// <summary>
     /// Creates a span from a pointer and a length.
     /// 
-    /// Generally speaking, when creating a read-only span, the compiler emits checks to ensure the length is valid for a read-only span.
+    /// Generally speaking, when creating a span, the compiler emits checks to ensure the length is valid.
     /// This method bypasses these checks.
     /// </summary>
     /// <typeparam name="T">The type of the span.</typeparam>
@@ -46,14 +46,12 @@ public static class Helpers
     /// <param name="length">The (assumed valid) desired length of the span.</param>
     /// <returns>A span over the desired data.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe Span<T> CreateSpan<T>(void* p, int length)
-        where T : unmanaged
-        => MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(p), length);
+    public static unsafe Span<T> CreateSpan<T>(void* p, int length) where T : unmanaged => MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(p), length);
 
     /// <summary>
     /// Creates a read-only span from a pointer and a length.
     /// 
-    /// Generally speaking, when creating a read-only span, the compiler emits checks to ensure the length is valid for a read-only span.
+    /// Generally speaking, when creating a read-only span, the compiler emits checks to ensure the length is valid.
     /// This method bypasses these checks.
     /// </summary>
     /// <typeparam name="T">The type of the read-only span.</typeparam>
@@ -61,9 +59,33 @@ public static class Helpers
     /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
     /// <returns>A span over the desired data.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(void* p, int length)
-        where T : unmanaged
-        => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(p), length);
+    public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(void* p, int length) where T : unmanaged => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(p), length);
+
+    /// <summary>
+    /// Returns a mutable reference to the specified span index.
+    /// 
+    /// Generally speaking, when indexing into a span, the compiler emits checks to ensure the index is valid.
+    /// This method bypasses these checks.
+    /// </summary>
+    /// <typeparam name="T">The type of the span.</typeparam>
+    /// <param name="span">The span to index into.</param>
+    /// <param name="index">The (assumed valid) index.</param>
+    /// <returns>A mutable reference to the data at that index</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ref T At<T>(this Span<T> span, int index) => ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+
+    /// <summary>
+    /// Returns a read-only reference to the specified read-only span index.
+    /// 
+    /// Generally speaking, when indexing into a read-only span, the compiler emits checks to ensure the index is valid.
+    /// This method bypasses these checks.
+    /// </summary>
+    /// <typeparam name="T">The type of the read-only span.</typeparam>
+    /// <param name="span">The read-only span to index into.</param>
+    /// <param name="index">The (assumed valid) index.</param>
+    /// <returns>A read-only reference to the data at that index</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ref readonly T At<T>(this ReadOnlySpan<T> span, int index) => ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

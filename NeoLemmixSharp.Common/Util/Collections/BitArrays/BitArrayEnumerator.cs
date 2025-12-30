@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
@@ -40,7 +39,7 @@ public ref struct BitArrayEnumerator<TPerfectHasher, T>
                 if ((uint)index >= (uint)_bits.Length)
                     return false;
 
-                v = Unsafe.Add(ref MemoryMarshal.GetReference(_bits), index);
+                v = _bits.At(index);
             }
             while (v == 0U);
             _index = index;
@@ -84,7 +83,7 @@ public ref struct BitArrayEnumerator
                 if ((uint)index >= (uint)_bits.Length)
                     return false;
 
-                v = Unsafe.Add(ref MemoryMarshal.GetReference(_bits), index);
+                v = _bits.At(index);
             }
             while (v == 0U);
             _index = index;
