@@ -15,7 +15,7 @@ public sealed class LevelEditorPage : PageBase
 
     private Tab _topPanel;
     private Tab _leftPanel;
-    private Tab _bottomPanel;
+    private PieceBank _bottomPanel;
 
     private StyleData _levelStyleData;
     private StyleData _pieceStyleData;
@@ -35,11 +35,12 @@ public sealed class LevelEditorPage : PageBase
     public LevelEditorPage(MenuInputController menuInputController) : base(menuInputController)
     {
         _levelCanvas = new LevelCanvas(0, 0, 64, 64);
-
-        _levelStyleData = StyleCache.DefaultStyleData;
-        _pieceStyleData = StyleCache.DefaultStyleData;
+        _bottomPanel = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 
         CurrentLevelData = new LevelData(IO.FileFormats.FileFormatType.Default);
+
+        var styleData = StyleCache.GetOrLoadStyleData(new("dex_grotto", IO.FileFormats.FileFormatType.NeoLemmix));
+        SetStyle(styleData);
     }
 
     protected override void OnInitialise()
@@ -75,6 +76,14 @@ public sealed class LevelEditorPage : PageBase
         _levelCanvas.Zoom(InputController.ScrollDelta);
     }
 
+    private void SetStyle(StyleData styleData)
+    {
+        _levelStyleData = styleData;
+        _pieceStyleData = styleData;
+
+        _bottomPanel.SetStyle(styleData);
+    }
+
     private void LoadLevel(string levelFilePath)
     {
         var levelData = IO.FileFormats.FileTypeHandler.ReadLevel(levelFilePath);
@@ -82,8 +91,8 @@ public sealed class LevelEditorPage : PageBase
         StyleCache.EnsureStylesAreLoadedForLevel(levelData);
         CurrentLevelData = levelData;
 
-        _levelStyleData = StyleCache.GetOrLoadStyleData(levelData.GetStyleFormatPair());
-        _pieceStyleData = _levelStyleData;
+        var styleData = StyleCache.GetOrLoadStyleData(levelData.GetStyleFormatPair());
+        SetStyle(styleData);
     }
 
     private void SaveLevel(string levelFilePath)
@@ -121,7 +130,21 @@ public sealed class LevelEditorPage : PageBase
         _leftPanel = LevelEditorUiHelper.BuildLeftTab();
         root.AddComponent(_leftPanel);
 
-        _bottomPanel = new Tab(0, 0, 10, 10);
         root.AddComponent(_bottomPanel);
+    }
+
+    private void OnSelectTerrainPiece(Component c, Point pos)
+    {
+
+    }
+
+    private void OnSelectGadgetPiece(Component c, Point pos)
+    {
+
+    }
+
+    private void OnSelectBackgroundPiece(Component c, Point pos)
+    {
+
     }
 }

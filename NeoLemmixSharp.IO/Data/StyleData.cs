@@ -26,4 +26,7 @@ public sealed class StyleData
     public ThemeData ThemeData { get; internal set; } = null!;
     internal Dictionary<PieceIdentifier, TerrainArchetypeData> TerrainArchetypeDataLookup { get; } = new(IoConstants.AssumedNumberOfTerrainArchetypeDataInStyle);
     internal Dictionary<PieceIdentifier, GadgetArchetypeData> GadgetArchetypeDataLookup { get; } = new(IoConstants.AssumedNumberOfGadgetArchetypeDataInStyle);
+
+    public Dictionary<PieceIdentifier, TerrainArchetypeData>.ValueCollection AllDefinedTerrainArchetypeData => TerrainArchetypeDataLookup.Values;
+    public Dictionary<PieceIdentifier, GadgetArchetypeData>.ValueCollection AllDefinedGadgetArchetypeData => GadgetArchetypeDataLookup.Values;
 }

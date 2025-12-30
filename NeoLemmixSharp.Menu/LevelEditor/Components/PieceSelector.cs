@@ -10,22 +10,21 @@ using Size = NeoLemmixSharp.Common.Size;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components;
 
-public sealed class PieceSelector<TPiece> : Component
-    where TPiece : class, IArchetypeData
+public sealed class PieceSelector : Component
 {
-    private const int BaseSpriteRenderDimension = 64;
+    public const int BaseSpriteRenderDimension = 64;
 
-    private readonly TPiece _stylePiece;
+    public IArchetypeData StylePiece { get; }
     private readonly Texture2D _sourceTexture;
 
-    public PieceSelector(TPiece piece, string rootFolderDirectory) : base(0, 0, BaseSpriteRenderDimension, BaseSpriteRenderDimension, piece.PieceIdentifier.ToString())
+    public PieceSelector(IArchetypeData piece, string rootFolderDirectory) : base(0, 0, BaseSpriteRenderDimension, BaseSpriteRenderDimension, piece.PieceIdentifier.ToString())
     {
         var textureFilePath = GetTextureFilePath(piece, rootFolderDirectory);
-        _stylePiece = piece;
+        StylePiece = piece;
         _sourceTexture = TextureCache.GetOrLoadTexture(textureFilePath, piece.StyleIdentifier, piece.PieceIdentifier, piece.TextureType);
     }
 
-    private static string GetTextureFilePath(TPiece piece, string rootFolderDirectory)
+    private static string GetTextureFilePath(IArchetypeData piece, string rootFolderDirectory)
     {
         var rootFilePath = Path.Combine(
             rootFolderDirectory,

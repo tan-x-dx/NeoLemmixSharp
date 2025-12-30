@@ -16,7 +16,7 @@ namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat;
 internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleReader>
 {
     private readonly StyleData _styleData;
-    private readonly UniqueStringSet _uniqueStringSet;
+    private readonly UniqueStringSet _uniqueStringSet = new();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static NeoLemmixStyleReader Create(StyleIdentifier styleIdentifier) => new(styleIdentifier);

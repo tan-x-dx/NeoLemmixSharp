@@ -10,8 +10,6 @@ namespace NeoLemmixSharp.Ui.Components;
 
 public abstract class Component : IDisposable
 {
-    public delegate void ComponentKeyboardAction(Component c, in KeysEnumerable keys);
-
     public Point Position { get; private set; }
     public Size Dimensions { get; private set; }
 
@@ -28,15 +26,25 @@ public abstract class Component : IDisposable
     private Component? _parent = null;
     protected List<Component>? _children = null;
 
-    public MouseEventHandler MouseEnter { get; } = new();
-    public MouseEventHandler MouseMovement { get; } = new();
-    public MouseEventHandler MouseDown { get; } = new();
-    public MouseEventHandler MouseDoubleClick { get; } = new();
-    public MouseEventHandler MouseUp { get; } = new();
-    public MouseEventHandler MouseExit { get; } = new();
+    private MouseEventHandler? _mouseEnter;
+    private MouseEventHandler? _mouseMovement;
+    private MouseEventHandler? _mouseDown;
+    private MouseEventHandler? _mouseDoubleClick;
+    private MouseEventHandler? _mouseUp;
+    private MouseEventHandler? _mouseExit;
 
-    public KeyboardEventHandler KeyDown { get; } = new();
-    public KeyboardEventHandler KeyUp { get; } = new();
+    private KeyboardEventHandler? _keyDown;
+    private KeyboardEventHandler? _keyUp;
+
+    public MouseEventHandler MouseEnter => _mouseEnter ??= new MouseEventHandler();
+    public MouseEventHandler MouseMovement => _mouseMovement ??= new MouseEventHandler();
+    public MouseEventHandler MouseDown => _mouseDown ??= new MouseEventHandler();
+    public MouseEventHandler MouseDoubleClick => _mouseDoubleClick ??= new MouseEventHandler();
+    public MouseEventHandler MouseUp => _mouseUp ??= new MouseEventHandler();
+    public MouseEventHandler MouseExit => _mouseExit ??= new MouseEventHandler();
+
+    public KeyboardEventHandler KeyDown => _keyDown ??= new KeyboardEventHandler();
+    public KeyboardEventHandler KeyUp => _keyUp ??= new KeyboardEventHandler();
 
     protected Component(int x, int y, string? label)
         : this(x, y, UiConstants.TwiceStandardInset + (int)(0.5f + (label?.Length ?? 10) * UiConstants.FontGlyphWidthMultiplier), UiConstants.StandardButtonHeight, label)
@@ -219,10 +227,7 @@ public abstract class Component : IDisposable
     public void Render(SpriteBatch spriteBatch)
     {
         if (_isVisible)
-        {
             RenderComponent(spriteBatch);
-            RenderLabel(spriteBatch);
-        }
 
         if (_children != null)
         {
@@ -236,6 +241,7 @@ public abstract class Component : IDisposable
     protected virtual void RenderComponent(SpriteBatch spriteBatch)
     {
         UiSprites.DrawBeveledRectangle(spriteBatch, this);
+        RenderLabel(spriteBatch);
     }
 
     private void RenderLabel(SpriteBatch spriteBatch)
@@ -319,15 +325,15 @@ public abstract class Component : IDisposable
         return ContainsPoint(position) ? this : null;
     }
 
-    public void InvokeMouseEnter(Point mousePosition) => MouseEnter?.Invoke(this, mousePosition);
-    public void InvokeMouseMovement(Point mousePosition) => MouseMovement?.Invoke(this, mousePosition);
-    public void InvokeMouseDown(Point mousePosition) => MouseDown?.Invoke(this, mousePosition);
-    public void InvokeMouseDoubleClick(Point mousePosition) => MouseDoubleClick?.Invoke(this, mousePosition);
-    public void InvokeMouseUp(Point mousePosition) => MouseUp?.Invoke(this, mousePosition);
-    public void InvokeMouseExit(Point mousePosition) => MouseExit?.Invoke(this, mousePosition);
+    public void InvokeMouseEnter(Point mousePosition) => _mouseEnter?.Invoke(this, mousePosition);
+    public void InvokeMouseMovement(Point mousePosition) => _mouseMovement?.Invoke(this, mousePosition);
+    public void InvokeMouseDown(Point mousePosition) => _mouseDown?.Invoke(this, mousePosition);
+    public void InvokeMouseDoubleClick(Point mousePosition) => _mouseDoubleClick?.Invoke(this, mousePosition);
+    public void InvokeMouseUp(Point mousePosition) => _mouseUp?.Invoke(this, mousePosition);
+    public void InvokeMouseExit(Point mousePosition) => _mouseExit?.Invoke(this, mousePosition);
 
-    public void InvokeKeyDown(in KeysEnumerable pressedKeys) => KeyDown?.Invoke(this, in pressedKeys);
-    public void InvokeKeyUp(in KeysEnumerable pressedKeys) => KeyUp?.Invoke(this, in pressedKeys);
+    public void InvokeKeyDown(in KeysEnumerable pressedKeys) => _keyDown?.Invoke(this, in pressedKeys);
+    public void InvokeKeyUp(in KeysEnumerable pressedKeys) => _keyUp?.Invoke(this, in pressedKeys);
 
     protected void SetMouseOver(Component c, Point p) => State = ComponentState.MouseOver;
     protected void SetMousePress(Component c, Point p) => State = ComponentState.MousePress;
@@ -352,15 +358,15 @@ public abstract class Component : IDisposable
 
             _parent = null;
 
-            MouseEnter.Clear();
-            MouseMovement.Clear();
-            MouseDown.Clear();
-            MouseDoubleClick.Clear();
-            MouseUp.Clear();
-            MouseExit.Clear();
+            _mouseEnter?.Clear();
+            _mouseMovement?.Clear();
+            _mouseDown?.Clear();
+            _mouseDoubleClick?.Clear();
+            _mouseUp?.Clear();
+            _mouseExit?.Clear();
 
-            KeyDown.Clear();
-            KeyUp.Clear();
+            _keyDown?.Clear();
+            _keyUp?.Clear();
 
             OnDispose();
         }

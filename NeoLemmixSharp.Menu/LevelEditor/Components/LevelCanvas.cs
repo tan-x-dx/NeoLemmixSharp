@@ -63,6 +63,5 @@ public sealed class LevelCanvas : Component
 
     private void RecalculateCameraValues()
     {
-        throw new NotImplementedException();
     }
 }

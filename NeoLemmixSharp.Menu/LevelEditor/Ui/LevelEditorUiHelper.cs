@@ -12,9 +12,9 @@ public static class LevelEditorUiHelper
     private const int BottomPanelHeight = 256;
 
     public static void OnResizeLevelEditor(
-        Tab topPanel,
-        Tab leftPanel,
-        Tab bottomPanel,
+        Component topPanel,
+        Component leftPanel,
+        Component bottomPanel,
         LevelCanvas levelCanvas)
     {
         var windowSize = IGameWindow.Instance.WindowSize;

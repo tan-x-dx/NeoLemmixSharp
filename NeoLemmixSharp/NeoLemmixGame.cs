@@ -27,11 +27,11 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     private int _width = 1920;
     private int _height = 1080;
-    private WindowMode _windowMode;
+    private WindowMode _windowMode = WindowMode.Windowed;
     public bool IsFullscreen => _windowMode == WindowMode.Fullscreen;
     public bool IsBorderless => _windowMode == WindowMode.Borderless;
 
-    public Size WindowSize => new(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+    public Size WindowSize => new(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
     public SpriteBatch SpriteBatch => _spriteBatch;
 
@@ -52,19 +52,11 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         TargetElapsedTime = EngineConstants.FramesPerSecondTimeSpan;
 
         IGameWindow.Instance = this;
-
-        ToggleFullscreen();
     }
 
     protected override void Initialize()
     {
-        // make the window fullscreen (but still with border and top control bar)
-        var screenWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
-        var screenHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
-        _graphics.PreferredBackBufferWidth = screenWidth;
-        _graphics.PreferredBackBufferHeight = screenHeight;
-        _graphics.IsFullScreen = false;
-        _graphics.ApplyChanges();
+        ToggleBorderless();
 
         ValidateGameConstants();
         ValidateMaxActionNameLength();
