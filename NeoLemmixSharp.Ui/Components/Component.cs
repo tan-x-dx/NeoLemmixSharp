@@ -94,11 +94,11 @@ public abstract class Component : IDisposable
 
             if (_children != null)
             {
-                oldY = _position.Y - oldY;
+                var deltaY = _position.Y - oldY;
 
                 foreach (Component c in _children)
                 {
-                    c.Translate(0, oldY);
+                    c.Translate(0, deltaY);
                 }
             }
         }
@@ -125,12 +125,12 @@ public abstract class Component : IDisposable
 
         if (_children != null)
         {
-            oldX = x - oldX;
-            oldY = y - oldY;
+            var deltaX = x - oldX;
+            var deltaY = y - oldY;
 
             foreach (Component c in _children)
             {
-                c.Translate(oldX, oldY);
+                c.Translate(deltaX, deltaY);
             }
         }
     }
@@ -290,7 +290,18 @@ public abstract class Component : IDisposable
 
     public Component? GetParent() => _parent;
 
-    public Component GetTopParent() => _parent == null ? this : _parent.GetTopParent();
+    public Component GetTopParent()
+    {
+        Component parent = this;
+
+        while (true)
+        {
+            var higherParent = parent.GetParent();
+            if (higherParent is null)
+                return parent;
+            parent = higherParent;
+        }
+    }
 
     public Component? GetChildAt(Point position)
     {
@@ -318,9 +329,9 @@ public abstract class Component : IDisposable
     public void InvokeKeyDown(in KeysEnumerable pressedKeys) => KeyDown?.Invoke(this, in pressedKeys);
     public void InvokeKeyUp(in KeysEnumerable pressedKeys) => KeyUp?.Invoke(this, in pressedKeys);
 
-    protected void SetMouseOver(Component _, Point mousePosition) => State = ComponentState.MouseOver;
-    protected void SetMousePress(Component _, Point mousePosition) => State = ComponentState.MousePress;
-    protected void SetMouseNormal(Component _, Point mousePosition) => State = ComponentState.Normal;
+    protected void SetMouseOver(Component c, Point p) => State = ComponentState.MouseOver;
+    protected void SetMousePress(Component c, Point p) => State = ComponentState.MousePress;
+    protected void SetMouseNormal(Component c, Point p) => State = ComponentState.Normal;
 
     public void Dispose()
     {
