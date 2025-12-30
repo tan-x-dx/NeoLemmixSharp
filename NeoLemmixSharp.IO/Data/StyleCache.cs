@@ -13,7 +13,7 @@ namespace NeoLemmixSharp.IO.Data;
 public static class StyleCache
 {
     private static readonly Dictionary<StyleFormatPair, StyleData> CachedStyles = new(IoConstants.AssumedInitialStyleCapacity * IoConstants.NumberOfLevelsToKeepStyle);
-    internal static StyleData DefaultStyleData { get; set; } = null!;
+    public static StyleData DefaultStyleData { get; set; } = null!;
 
     public static void Initialise()
     {
@@ -45,7 +45,7 @@ public static class StyleCache
     {
         var result = new HashSet<StyleIdentifier>(IoConstants.AssumedInitialStyleCapacity)
         {
-            levelData.LevelTheme
+            levelData.LevelStyle
         };
 
         foreach (var terrainData in levelData.AllTerrainData)
@@ -69,7 +69,7 @@ public static class StyleCache
         return result;
     }
 
-    internal static StyleData GetOrLoadStyleData(StyleFormatPair styleFormatPair)
+    public static StyleData GetOrLoadStyleData(StyleFormatPair styleFormatPair)
     {
         ref var styleData = ref CollectionsMarshal.GetValueRefOrAddDefault(CachedStyles, styleFormatPair, out var exists);
 

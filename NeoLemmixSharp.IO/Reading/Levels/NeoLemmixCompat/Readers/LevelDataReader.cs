@@ -106,7 +106,7 @@ internal sealed class LevelDataReader : NeoLemmixDataReader
 
     private void SetTheme(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _levelData.LevelTheme = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
+        _levelData.LevelStyle = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
     }
 
     private void SetBackground(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

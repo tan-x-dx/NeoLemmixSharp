@@ -43,7 +43,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
     {
         _stringIdLookup.RecordString(levelData.LevelTitle);
         _stringIdLookup.RecordString(levelData.LevelAuthor);
-        _stringIdLookup.RecordString(levelData.LevelTheme);
+        _stringIdLookup.RecordString(levelData.LevelStyle);
 
         HandleBackgroundString(levelData);
     }

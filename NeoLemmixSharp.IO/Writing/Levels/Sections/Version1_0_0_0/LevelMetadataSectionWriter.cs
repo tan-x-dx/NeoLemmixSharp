@@ -41,7 +41,7 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
     {
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(levelData.LevelTitle));
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(levelData.LevelAuthor));
-        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(levelData.LevelTheme));
+        writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(levelData.LevelStyle));
     }
 
     private static void WriteLevelDimensionData(

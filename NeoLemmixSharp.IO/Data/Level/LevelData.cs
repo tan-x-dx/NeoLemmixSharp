@@ -112,12 +112,19 @@ public sealed class LevelData
         }
     }
 
+    public void IncrementVersion()
+    {
+        Version = Version.Increment();
+    }
+
     public void SetObjectiveData(LevelObjectiveData objectiveData)
     {
         _levelObjective = objectiveData;
     }
 
-    public StyleIdentifier LevelTheme { get; set; }
+    public StyleFormatPair GetStyleFormatPair() => new(LevelStyle, FileFormatType);
+
+    public StyleIdentifier LevelStyle { get; set; }
     public BackgroundData? LevelBackground { get; set; }
 
     public BoundaryBehaviourType HorizontalBoundaryBehaviour { get; set; } = BoundaryBehaviourType.Void;

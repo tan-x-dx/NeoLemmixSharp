@@ -1,6 +1,9 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data;
+using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.Menu.LevelEditor.Components;
+using NeoLemmixSharp.Menu.LevelEditor.Ui;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
 
@@ -8,19 +11,35 @@ namespace NeoLemmixSharp.Menu.LevelEditor;
 
 public sealed class LevelEditorPage : PageBase
 {
-    private const int TopPanelHeight = 120;
-    private const int LeftPanelWidth = 640;
-    private const int BottomPanelHeight = 320;
-
     private readonly LevelCanvas _levelCanvas;
 
     private Tab _topPanel;
     private Tab _leftPanel;
     private Tab _bottomPanel;
 
+    private StyleData _levelStyleData;
+    private StyleData _pieceStyleData;
+
+    private LevelData CurrentLevelData
+    {
+        get => field;
+        set
+        {
+            field = value;
+            _levelCanvas.LevelData = value;
+        }
+    }
+
+    public bool IsNeoLemmix => CurrentLevelData.FileFormatType == IO.FileFormats.FileFormatType.NeoLemmix;
+
     public LevelEditorPage(MenuInputController menuInputController) : base(menuInputController)
     {
         _levelCanvas = new LevelCanvas(0, 0, 64, 64);
+
+        _levelStyleData = StyleCache.DefaultStyleData;
+        _pieceStyleData = StyleCache.DefaultStyleData;
+
+        CurrentLevelData = new LevelData(IO.FileFormats.FileFormatType.Default);
     }
 
     protected override void OnInitialise()
@@ -43,27 +62,7 @@ public sealed class LevelEditorPage : PageBase
 
     private void OnResize()
     {
-        var windowSize = IGameWindow.Instance.WindowSize;
-
-        _topPanel.Left = 0;
-        _topPanel.Top = 0;
-        _topPanel.Width = windowSize.W;
-        _topPanel.Height = TopPanelHeight;
-
-        _leftPanel.Left = 0;
-        _leftPanel.Top = TopPanelHeight;
-        _leftPanel.Width = LeftPanelWidth;
-        _leftPanel.Height = windowSize.H - TopPanelHeight;
-
-        _bottomPanel.Left = _leftPanel.Right;
-        _bottomPanel.Top = windowSize.H - BottomPanelHeight;
-        _bottomPanel.Width = windowSize.W - _leftPanel.Width;
-        _bottomPanel.Height = BottomPanelHeight;
-
-        _levelCanvas.Left = _leftPanel.Width;
-        _levelCanvas.Top = _topPanel.Height;
-        _levelCanvas.Width = windowSize.W - _leftPanel.Width;
-        _levelCanvas.Height = windowSize.H - _topPanel.Height - _bottomPanel.Height;
+        LevelEditorUiHelper.OnResizeLevelEditor(_topPanel, _leftPanel, _bottomPanel, _levelCanvas);
     }
 
     protected override void HandleUserInput()
@@ -72,11 +71,43 @@ public sealed class LevelEditorPage : PageBase
         {
             IGameWindow.Instance.Escape();
         }
+
+        _levelCanvas.Zoom(InputController.ScrollDelta);
+    }
+
+    private void LoadLevel(string levelFilePath)
+    {
+        var levelData = IO.FileFormats.FileTypeHandler.ReadLevel(levelFilePath);
+
+        StyleCache.EnsureStylesAreLoadedForLevel(levelData);
+        CurrentLevelData = levelData;
+
+        _levelStyleData = StyleCache.GetOrLoadStyleData(levelData.GetStyleFormatPair());
+        _pieceStyleData = _levelStyleData;
+    }
+
+    private void SaveLevel(string levelFilePath)
+    {
+        CurrentLevelData.IncrementVersion();
+
+        IO.FileFormats.FileTypeHandler.WriteLevel(CurrentLevelData, levelFilePath);
     }
 
     protected override void OnDispose()
     {
+        if (IsDisposed)
+            return;
+
         MenuScreen.Instance.MenuScreenRenderer.RenderBackground = true;
+
+        _topPanel = null!;
+        _leftPanel = null!;
+        _bottomPanel = null!;
+
+        _levelStyleData = null!;
+        _pieceStyleData = null!;
+
+        CurrentLevelData = null!;
     }
 
     private void BuildLevelEditorUI(Component root)
@@ -84,13 +115,13 @@ public sealed class LevelEditorPage : PageBase
         if (IsInitialised)
             return;
 
-        _topPanel = new Tab(0, 0, 10, TopPanelHeight);
+        _topPanel = new Tab(0, 0, 10, 10);
         root.AddComponent(_topPanel);
 
-        _leftPanel = new Tab(0, 0, LeftPanelWidth, 256);
+        _leftPanel = LevelEditorUiHelper.BuildLeftTab();
         root.AddComponent(_leftPanel);
 
-        _bottomPanel = new Tab(0, 0, 10, BottomPanelHeight);
+        _bottomPanel = new Tab(0, 0, 10, 10);
         root.AddComponent(_bottomPanel);
     }
 }

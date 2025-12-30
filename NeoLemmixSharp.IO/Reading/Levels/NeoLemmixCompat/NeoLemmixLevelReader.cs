@@ -76,7 +76,7 @@ internal sealed class NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelReader>
     private void ProcessLevelData()
     {
         _levelData.TribeIdentifiers.Capacity = 1;
-        _levelData.TribeIdentifiers.Add(new TribeStyleIdentifier(_levelData.LevelTheme, EngineConstants.ClassicTribeId));
+        _levelData.TribeIdentifiers.Add(new TribeStyleIdentifier(_levelData.LevelStyle, EngineConstants.ClassicTribeId));
 
         /*  var objectiveRequirementsList = new List<IObjectiveRequirement>
           {
