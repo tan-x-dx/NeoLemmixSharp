@@ -28,6 +28,8 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     private Point _cachedBottomRightChunkQuery;
     private int _cachedQueryPopCount;
 
+    private bool _isDisposed;
+
     public SpacialHashGrid(
         TPerfectHasher hasher,
         ChunkSize chunkSize,
@@ -70,8 +72,8 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     public void Clear()
     {
         _allTrackedItems.Clear();
-        new Span<uint>(_allBitsPointer, AllBitsSize).Clear();
-        new Span<RectangularRegion>(_previousItemPositionsPointer, _hasher.NumberOfItems).Clear();
+        Helpers.CreateSpan<uint>(_allBitsPointer, AllBitsSize).Clear();
+        Helpers.CreateSpan<uint>(_previousItemPositionsPointer, _hasher.NumberOfItems).Clear();
         ClearCachedData();
     }
 
@@ -100,7 +102,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     private void EvaluateItemsNearPosition(Point chunkPosition, out BitArrayEnumerable<TPerfectHasher, T> result)
     {
         var chunkPointer = PointerForChunk(chunkPosition);
-        var chunkSpan = new ReadOnlySpan<uint>(chunkPointer, _bitArraySize);
+        var chunkSpan = Helpers.CreateReadOnlySpan<uint>(chunkPointer, _bitArraySize);
         var popCount = BitArrayHelpers.GetPopCount(chunkPointer, (uint)_bitArraySize);
 
         result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, chunkSpan, popCount);
@@ -129,7 +131,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             _cachedBottomRightChunkQuery == bottomRightChunk)
         {
             // If we've already got the data cached, just use it
-            result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, new ReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize), _cachedQueryPopCount);
+            result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, Helpers.CreateReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize), _cachedQueryPopCount);
         }
         else
         {
@@ -149,18 +151,19 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         _cachedQueryPopCount = BitArrayHelpers.GetPopCount(_cachedQueryScratchSpacePointer, (uint)_bitArraySize);
         result = new BitArrayEnumerable<TPerfectHasher, T>(
             _hasher,
-            new ReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize),
+            Helpers.CreateReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize),
             _cachedQueryPopCount);
     }
 
     private void CacheLatestQuery()
     {
-        var cacheSpan = new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize);
+        var cacheSpan = Helpers.CreateSpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize);
         if (_cachedTopLeftChunkQuery == _cachedBottomRightChunkQuery)
         {
             // Only one chunk -> skip some extra work
 
-            var sourceSpan = new ReadOnlySpan<uint>(PointerForChunk(_cachedTopLeftChunkQuery), _bitArraySize);
+            uint* p = PointerForChunk(_cachedTopLeftChunkQuery);
+            var sourceSpan = Helpers.CreateReadOnlySpan<uint>(p, _bitArraySize);
             sourceSpan.CopyTo(cacheSpan);
         }
         else
@@ -224,7 +227,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     private void EvaluateUnionWithChunk(int xCoord, int yCoord)
     {
         var pointer = PointerForChunk(new Point(xCoord, yCoord));
-        BitArrayHelpers.UnionWith(_cachedQueryScratchSpacePointer, pointer, (uint)_bitArraySize);
+        BitArrayHelpers.UnionWith(_cachedQueryScratchSpacePointer, pointer, _bitArraySize);
     }
 
     public void AddItem(T item)
@@ -437,22 +440,29 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         _cachedTopLeftChunkQuery = new Point(-256, -256);
         _cachedBottomRightChunkQuery = _cachedTopLeftChunkQuery;
 
-        new Span<uint>(_cachedQueryScratchSpacePointer, _bitArraySize).Clear();
+        Helpers.CreateSpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize).Clear();
         _cachedQueryPopCount = 0;
     }
 
     public void Dispose()
     {
-        var cachedQueryScratchSpaceHandle = (nint)_cachedQueryScratchSpacePointer;
-        var allBitsHandle = (nint)_allBitsPointer;
-        var previousItemPositionsHandle = (nint)_previousItemPositionsPointer;
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
 
-        if (cachedQueryScratchSpaceHandle != nint.Zero)
-            Marshal.FreeHGlobal(cachedQueryScratchSpaceHandle);
-        if (allBitsHandle != nint.Zero)
-            Marshal.FreeHGlobal(allBitsHandle);
-        if (previousItemPositionsHandle != nint.Zero)
-            Marshal.FreeHGlobal(previousItemPositionsHandle);
+            var cachedQueryScratchSpaceHandle = (nint)_cachedQueryScratchSpacePointer;
+            var allBitsHandle = (nint)_allBitsPointer;
+            var previousItemPositionsHandle = (nint)_previousItemPositionsPointer;
+
+            if (cachedQueryScratchSpaceHandle != nint.Zero)
+                Marshal.FreeHGlobal(cachedQueryScratchSpaceHandle);
+            if (allBitsHandle != nint.Zero)
+                Marshal.FreeHGlobal(allBitsHandle);
+            if (previousItemPositionsHandle != nint.Zero)
+                Marshal.FreeHGlobal(previousItemPositionsHandle);
+        }
+
+        GC.SuppressFinalize(this);
     }
 
     private enum ChunkOperationType

@@ -1,23 +1,28 @@
-﻿using NeoLemmixSharp.Engine.Level.Objectives.Criteria;
-
-namespace NeoLemmixSharp.Engine.Level.Objectives;
+﻿namespace NeoLemmixSharp.Engine.Level.Objectives;
 
 public sealed class LevelObjectiveManager
 {
-    private readonly ObjectiveRequirement[] _objectiveCriteria;
+    private readonly LevelObjective[] _talismanObjectives;
+    public LevelObjective MainLevelObjective { get; }
+    public LevelObjective? SelectedTalismanObjective { get; }
 
-    public LevelObjectiveManager(ObjectiveRequirement[] objectiveCriteria)
+    public LevelObjectiveManager(
+        LevelObjective mainLevelObjective,
+        LevelObjective[] talismanObjectives,
+        LevelObjective? selectedTalismanObjective)
     {
-        _objectiveCriteria = objectiveCriteria;
+        MainLevelObjective = mainLevelObjective;
+        _talismanObjectives = talismanObjectives;
+        SelectedTalismanObjective = selectedTalismanObjective;
     }
 
     public void RecheckLevelObjective()
     {
-        var allCriteriaSatisfied = true;
+        MainLevelObjective.RecheckLevelObjective();
 
-        foreach (var objectiveCriteria in _objectiveCriteria)
+        foreach (var levelObjective in _talismanObjectives)
         {
-            allCriteriaSatisfied = objectiveCriteria.IsSatisfied() && allCriteriaSatisfied;
+            levelObjective.RecheckLevelObjective();
         }
     }
 }

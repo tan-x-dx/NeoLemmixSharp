@@ -33,6 +33,8 @@ public sealed class GadgetManager :
     private readonly GadgetSet _fastForwardGadgets;
     private readonly GadgetSet _gadgetsToReEvaluate;
 
+    private bool _isDisposed;
+
     public ReadOnlySpan<GadgetBase> AllItems => new(_allGadgets);
     public ReadOnlySpan<GadgetBehaviour> AllBehaviours => new(_allBehaviours);
     public GadgetBase GetGadget(int gadgetId) => _allGadgets[gadgetId];
@@ -244,8 +246,15 @@ public sealed class GadgetManager :
 
     public void Dispose()
     {
-        new Span<GadgetBase>(_allGadgets).Clear();
-        _gadgetByteBuffer.Dispose();
-        _hitBoxGadgetSpacialHashGrid.Dispose();
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+
+            new Span<GadgetBase>(_allGadgets).Clear();
+            _gadgetByteBuffer.Dispose();
+            _hitBoxGadgetSpacialHashGrid.Dispose();
+        }
+
+        GC.SuppressFinalize(this);
     }
 }

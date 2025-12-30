@@ -244,14 +244,16 @@ public sealed class LevelRenderer :
 
     public void Dispose()
     {
-        if (_disposed)
-            return;
+        if (!_disposed)
+        {
+            _disposed = true;
 
-        DisposableHelperMethods.DisposeOf(ref _backgroundRenderer);
-        DisposableHelperMethods.DisposeOfAll<IViewportObjectRenderer>(CollectionsMarshal.AsSpan(_orderedSprites));
-        _spriteSpacialHashGrid.Dispose();
+            DisposableHelperMethods.DisposeOf(ref _backgroundRenderer);
+            DisposableHelperMethods.DisposeOfAll(CollectionsMarshal.AsSpan(_orderedSprites));
+            _spriteSpacialHashGrid.Dispose();
+        }
 
-        _disposed = true;
+        GC.SuppressFinalize(this);
     }
 
     int IPerfectHasher<IViewportObjectRenderer>.NumberOfItems => _orderedSprites.Count;

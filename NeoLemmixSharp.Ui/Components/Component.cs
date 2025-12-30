@@ -326,6 +326,8 @@ public abstract class Component : IDisposable
     {
         if (!_isDisposed)
         {
+            _isDisposed = true;
+
             if (_children is not null)
             {
                 foreach (Component child in _children)
@@ -350,7 +352,6 @@ public abstract class Component : IDisposable
             KeyUp.Clear();
 
             OnDispose();
-            _isDisposed = true;
         }
         GC.SuppressFinalize(this);
     }

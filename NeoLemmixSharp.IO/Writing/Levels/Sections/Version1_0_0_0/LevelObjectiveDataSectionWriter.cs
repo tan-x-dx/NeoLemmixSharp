@@ -183,7 +183,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(talisman.TalismanName));
         writer.Write8BitUnsignedInteger((byte)talisman.Rank);
 
-        WriteObjectiveCriteria(writer, talisman.OverrideObjectiveCriteria);
-        WriteObjectiveModifiers(writer, talisman.OverrideObjectiveModifiers);
+        WriteObjectiveCriteria(writer, talisman.AdditionalObjectiveCriteria);
+        WriteObjectiveModifiers(writer, talisman.AdditionalObjectiveModifiers);
     }
 }

@@ -159,6 +159,18 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
         return result;
     }
 
+    public static bool TryGetSkill(int skillId, out LemmingSkill lemmingSkill)
+    {
+        if ((uint)skillId >= (uint)LemmingSkills.Length)
+        {
+            lemmingSkill = NoneSkill.Instance;
+            return false;
+        }
+
+        lemmingSkill = LemmingSkills[skillId];
+        return true;
+    }
+
     /// <summary>
     /// Safe alternative to performing the array lookup - the input may be negative, or an invalid id. In such a case the <see cref="NoneSkill"/> is returned.
     /// </summary>

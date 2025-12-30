@@ -50,11 +50,11 @@ public static class BitArrayHelpers
     internal static void ThrowIfInvalidCapacity(int requiredNumberOfItems, int bufferLength)
     {
         if (requiredNumberOfItems > (bufferLength << Shift))
-            ThrowInvalidaCapacityException(requiredNumberOfItems, bufferLength);
+            ThrowInvalidCapacityException(requiredNumberOfItems, bufferLength);
     }
 
     [DoesNotReturn]
-    private static void ThrowInvalidaCapacityException(int requiredNumberOfItems, int bufferLength) => throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {requiredNumberOfItems} bits, buffer has {bufferLength << Shift} bits");
+    private static void ThrowInvalidCapacityException(int requiredNumberOfItems, int bufferLength) => throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {requiredNumberOfItems} bits, buffer has {bufferLength << Shift} bits");
 
     /// <summary>
     /// Tests if a specific bit is set
@@ -205,9 +205,9 @@ public static class BitArrayHelpers
         // This implementation is faster than using TensorPrimitives - benchmarks
 
         ref uint startRef = ref MemoryMarshal.GetReference(bits);
-        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(bits), bits.Length);
+        ref readonly uint endRef = ref bits.At(bits.Length);
         var result = 0;
-        while (Unsafe.IsAddressLessThan(ref startRef, ref endRef))
+        while (Unsafe.IsAddressLessThan(ref startRef, in endRef))
         {
             result += BitOperations.PopCount(startRef);
             startRef = ref Unsafe.Add(ref startRef, 1);
@@ -268,14 +268,14 @@ public static class BitArrayHelpers
 
     internal static void UnionWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        var spanLength = (uint)span.Length;
-        var otherLength = (uint)other.Length;
+        var spanLength = span.Length;
+        var otherLength = other.Length;
 
         if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
 
         ref uint sourceRef = ref MemoryMarshal.GetReference(span);
-        ref uint otherRef = ref MemoryMarshal.GetReference(other);
+        ref readonly uint otherRef = ref MemoryMarshal.GetReference(other);
 
         switch (spanLength)
         {
@@ -293,36 +293,36 @@ public static class BitArrayHelpers
         }
 
     Length8:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 7);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 7);
+        sourceRef = ref span.At(7);
+        otherRef = ref other.At(7);
         sourceRef |= otherRef;
     Length7:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 6);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 6);
+        sourceRef = ref span.At(6);
+        otherRef = ref other.At(6);
         sourceRef |= otherRef;
     Length6:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 5);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 5);
+        sourceRef = ref span.At(5);
+        otherRef = ref other.At(5);
         sourceRef |= otherRef;
     Length5:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 4);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 4);
+        sourceRef = ref span.At(4);
+        otherRef = ref other.At(4);
         sourceRef |= otherRef;
     Length4:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 3);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 3);
+        sourceRef = ref span.At(3);
+        otherRef = ref other.At(3);
         sourceRef |= otherRef;
     Length3:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 2);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 2);
+        sourceRef = ref span.At(2);
+        otherRef = ref other.At(2);
         sourceRef |= otherRef;
     Length2:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 1);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 1);
+        sourceRef = ref span.At(1);
+        otherRef = ref other.At(1);
         sourceRef |= otherRef;
     Length1:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 0);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 0);
+        sourceRef = ref span.At(0);
+        otherRef = ref other.At(0);
         sourceRef |= otherRef;
     Length0:
         return;
@@ -340,7 +340,7 @@ public static class BitArrayHelpers
     /// <param name="sourcePointer">The pointer whose bits are to be modified. This pointer is written to.</param>
     /// <param name="otherPointer">The pointer whose bits are used in the masking operation. This pointer is used read only.</param>
     /// <param name="length">The number of uints that need to be modified.</param>
-    internal static unsafe void UnionWith(uint* sourcePointer, uint* otherPointer, uint length)
+    internal static unsafe void UnionWith(uint* sourcePointer, uint* otherPointer, int length)
     {
         switch (length)
         {
@@ -377,26 +377,25 @@ public static class BitArrayHelpers
         return;
     }
 
-    private static unsafe void LargeSpanUnionWith(void* sourcePointer, void* otherPointer, uint length)
+    private static unsafe void LargeSpanUnionWith(void* sourcePointer, void* otherPointer, int length)
     {
-        var spanLength = (int)length;
-        var x = new ReadOnlySpan<uint>(sourcePointer, spanLength);
-        var y = new ReadOnlySpan<uint>(otherPointer, spanLength);
-        var destination = new Span<uint>(sourcePointer, spanLength);
+        var x = Helpers.CreateReadOnlySpan<uint>(sourcePointer, (int)length);
+        var y = Helpers.CreateReadOnlySpan<uint>(otherPointer, (int)length);
+        var destination = Helpers.CreateSpan<uint>(sourcePointer, (int)length);
 
         TensorPrimitives.BitwiseOr(x, y, destination);
     }
 
     internal static void IntersectWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        var spanLength = (uint)span.Length;
-        var otherLength = (uint)other.Length;
+        var spanLength = span.Length;
+        var otherLength = other.Length;
 
         if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
 
         ref uint sourceRef = ref MemoryMarshal.GetReference(span);
-        ref uint otherRef = ref MemoryMarshal.GetReference(other);
+        ref readonly uint otherRef = ref MemoryMarshal.GetReference(other);
 
         switch (spanLength)
         {
@@ -414,36 +413,36 @@ public static class BitArrayHelpers
         }
 
     Length8:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 7);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 7);
+        sourceRef = ref span.At(7);
+        otherRef = ref other.At(7);
         sourceRef &= otherRef;
     Length7:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 6);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 6);
+        sourceRef = ref span.At(6);
+        otherRef = ref other.At(6);
         sourceRef &= otherRef;
     Length6:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 5);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 5);
+        sourceRef = ref span.At(5);
+        otherRef = ref other.At(5);
         sourceRef &= otherRef;
     Length5:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 4);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 4);
+        sourceRef = ref span.At(4);
+        otherRef = ref other.At(4);
         sourceRef &= otherRef;
     Length4:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 3);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 3);
+        sourceRef = ref span.At(3);
+        otherRef = ref other.At(3);
         sourceRef &= otherRef;
     Length3:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 2);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 2);
+        sourceRef = ref span.At(2);
+        otherRef = ref other.At(2);
         sourceRef &= otherRef;
     Length2:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 1);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 1);
+        sourceRef = ref span.At(1);
+        otherRef = ref other.At(1);
         sourceRef &= otherRef;
     Length1:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 0);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 0);
+        sourceRef = ref span.At(0);
+        otherRef = ref other.At(0);
         sourceRef &= otherRef;
     Length0:
         return;
@@ -456,8 +455,8 @@ public static class BitArrayHelpers
 
     internal static void ExceptWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        var spanLength = (uint)span.Length;
-        var otherLength = (uint)other.Length;
+        var spanLength = span.Length;
+        var otherLength = other.Length;
 
         if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
@@ -467,9 +466,9 @@ public static class BitArrayHelpers
 
         ref uint sourceRef = ref MemoryMarshal.GetReference(span);
         ref uint otherRef = ref MemoryMarshal.GetReference(other);
-        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), spanLength);
+        ref readonly uint endRef = ref span.At(spanLength);
 
-        while (Unsafe.IsAddressLessThan(ref sourceRef, ref endRef))
+        while (Unsafe.IsAddressLessThan(ref sourceRef, in endRef))
         {
             sourceRef &= ~otherRef;
             sourceRef = ref Unsafe.Add(ref sourceRef, 1);
@@ -479,14 +478,14 @@ public static class BitArrayHelpers
 
     internal static void SymmetricExceptWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
-        var spanLength = (uint)span.Length;
-        var otherLength = (uint)other.Length;
+        var spanLength = span.Length;
+        var otherLength = other.Length;
 
         if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
 
         ref uint sourceRef = ref MemoryMarshal.GetReference(span);
-        ref uint otherRef = ref MemoryMarshal.GetReference(other);
+        ref readonly uint otherRef = ref MemoryMarshal.GetReference(other);
 
         switch (spanLength)
         {
@@ -504,36 +503,36 @@ public static class BitArrayHelpers
         }
 
     Length8:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 7);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 7);
+        sourceRef = ref span.At(7);
+        otherRef = ref other.At(7);
         sourceRef ^= otherRef;
     Length7:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 6);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 6);
+        sourceRef = ref span.At(6);
+        otherRef = ref other.At(6);
         sourceRef ^= otherRef;
     Length6:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 5);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 5);
+        sourceRef = ref span.At(5);
+        otherRef = ref other.At(5);
         sourceRef ^= otherRef;
     Length5:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 4);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 4);
+        sourceRef = ref span.At(4);
+        otherRef = ref other.At(4);
         sourceRef ^= otherRef;
     Length4:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 3);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 3);
+        sourceRef = ref span.At(3);
+        otherRef = ref other.At(3);
         sourceRef ^= otherRef;
     Length3:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 2);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 2);
+        sourceRef = ref span.At(2);
+        otherRef = ref other.At(2);
         sourceRef ^= otherRef;
     Length2:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 1);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 1);
+        sourceRef = ref span.At(1);
+        otherRef = ref other.At(1);
         sourceRef ^= otherRef;
     Length1:
-        sourceRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), 0);
-        otherRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(other), 0);
+        sourceRef = ref span.At(0);
+        otherRef = ref other.At(0);
         sourceRef ^= otherRef;
     Length0:
         return;
@@ -547,17 +546,17 @@ public static class BitArrayHelpers
     [Pure]
     internal static bool IsSubsetOf(ReadOnlySpan<uint> firstSpan, ReadOnlySpan<uint> secondSpan)
     {
-        var firstSpanLength = (uint)firstSpan.Length;
-        var secondSpanLength = (uint)secondSpan.Length;
+        var firstSpanLength = firstSpan.Length;
+        var secondSpanLength = secondSpan.Length;
 
         if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(firstSpan), firstSpanLength);
+        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
 
-        while (Unsafe.IsAddressLessThan(ref firstSpanRef, ref endRef))
+        while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
             uint firstValue = firstSpanRef;
             uint secondValue = secondSpanRef;
@@ -576,8 +575,8 @@ public static class BitArrayHelpers
     [Pure]
     internal static bool IsProperSubsetOf(ReadOnlySpan<uint> firstSpan, ReadOnlySpan<uint> secondSpan)
     {
-        var firstSpanLength = (uint)firstSpan.Length;
-        var secondSpanLength = (uint)secondSpan.Length;
+        var firstSpanLength = firstSpan.Length;
+        var secondSpanLength = secondSpan.Length;
 
         if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
@@ -608,17 +607,17 @@ public static class BitArrayHelpers
     [Pure]
     internal static bool Overlaps(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
     {
-        var firstSpanLength = (uint)span.Length;
-        var secondSpanLength = (uint)other.Length;
+        var firstSpanLength = span.Length;
+        var secondSpanLength = other.Length;
 
         if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(span);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(other);
-        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), firstSpanLength);
+        ref readonly uint endRef = ref span.At(firstSpanLength);
 
-        while (Unsafe.IsAddressLessThan(ref firstSpanRef, ref endRef))
+        while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
             if ((firstSpanRef & secondSpanRef) != 0U)
                 return true;
@@ -632,17 +631,17 @@ public static class BitArrayHelpers
     [Pure]
     internal static bool SetEquals(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
     {
-        var firstSpanLength = (uint)span.Length;
-        var secondSpanLength = (uint)other.Length;
+        var firstSpanLength = span.Length;
+        var secondSpanLength = other.Length;
 
         if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(span);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(other);
-        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(span), firstSpanLength);
+        ref readonly uint endRef = ref span.At(firstSpanLength);
 
-        while (Unsafe.IsAddressLessThan(ref firstSpanRef, ref endRef))
+        while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
             if (firstSpanRef != secondSpanRef)
                 return false;

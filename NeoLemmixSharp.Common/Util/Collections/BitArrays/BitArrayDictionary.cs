@@ -37,7 +37,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     {
         var index = _hasher.Hash(key);
         if (!BitArrayHelpers.SetBit(_bits.AsSpan(), index, ref _popCount))
-            throw new ArgumentException("Key already added!", nameof(key));
+            Helpers.ThrowKeyAlreadyAddedException(key);
 
         _values[index] = value;
     }
@@ -60,10 +60,10 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     public void CopyTo(Span<KeyValuePair<TKey, TValue>> span)
     {
         if (span.Length < _popCount)
-            throw new ArgumentException("Destination span too short!");
+            Helpers.ThrowDestinationSpanTooShortException();
 
         var i = 0;
-        var enumerator = new BitArrayEnumerator(_bits.AsReadOnlySpan(), _popCount);
+        var enumerator = new BitArrayEnumerator(_bits.AsReadOnlySpan());
         var hasher = _hasher;
         while (enumerator.MoveNext())
         {
@@ -77,10 +77,10 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     public void CopyKeysTo(Span<TKey> keySpan)
     {
         if (keySpan.Length < _popCount)
-            throw new ArgumentException("Destination span too short!");
+            Helpers.ThrowDestinationSpanTooShortException();
 
         var i = 0;
-        var enumerator = new BitArrayEnumerator(_bits.AsReadOnlySpan(), _popCount);
+        var enumerator = new BitArrayEnumerator(_bits.AsReadOnlySpan());
         var hasher = _hasher;
         while (enumerator.MoveNext())
         {
@@ -93,10 +93,10 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     public void CopyValuesTo(Span<TValue> valueSpan)
     {
         if (valueSpan.Length < _popCount)
-            throw new ArgumentException("Destination span too short!");
+            Helpers.ThrowDestinationSpanTooShortException();
 
         var i = 0;
-        var enumerator = new BitArrayEnumerator(_bits.AsReadOnlySpan(), _popCount);
+        var enumerator = new BitArrayEnumerator(_bits.AsReadOnlySpan());
         while (enumerator.MoveNext())
         {
             var current = enumerator.Current;
@@ -132,7 +132,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         {
             var index = _hasher.Hash(key);
             if (!BitArrayHelpers.GetBit(_bits.AsReadOnlySpan(), index))
-                throw new KeyNotFoundException();
+                Helpers.ThrowKeyNotFoundException();
 
             return _values[index];
         }
@@ -157,7 +157,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         public Enumerator(BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> dictionary)
         {
             _values = new ReadOnlySpan<TValue>(dictionary._values);
-            _bitEnumerator = new BitArrayEnumerator(dictionary._bits.AsReadOnlySpan(), dictionary._popCount);
+            _bitEnumerator = new BitArrayEnumerator(dictionary._bits.AsReadOnlySpan());
             _hasher = dictionary._hasher;
         }
 

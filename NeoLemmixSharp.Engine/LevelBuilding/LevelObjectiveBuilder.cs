@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -13,9 +14,6 @@ public sealed class LevelObjectiveBuilder
 {
     private readonly LevelObjectiveData _levelObjectiveData;
     private readonly TalismanData? _selectedTalisman;
-
-    private ObjectiveCriterionData[] TalismanCriteriaData => _selectedTalisman?.OverrideObjectiveCriteria ?? [];
-    private ObjectiveModifierData[] TalismanModifierData => _selectedTalisman?.OverrideObjectiveModifiers ?? [];
 
     public LevelObjectiveBuilder(LevelObjectiveData levelObjective, int selectedTalismanId)
     {
@@ -34,52 +32,101 @@ public sealed class LevelObjectiveBuilder
 
     public LevelObjectiveManager BuildLevelObjectiveManager()
     {
-        var levelObjectives = BuildObjectiveCriteria();
+        var baseObjectiveRequirements = BuildBaseObjectiveRequirements();
+        var mainLevelObjective = new LevelObjective(baseObjectiveRequirements, _levelObjectiveData.ObjectiveName);
 
-        return new LevelObjectiveManager(levelObjectives);
+        var talismanObjectives = BuildTalismanObjectives();
+        LevelObjective? selectedTalismanObjective = null;
+        if (_selectedTalisman is not null)
+            selectedTalismanObjective = talismanObjectives[_selectedTalisman.TalismanId];
+
+        return new LevelObjectiveManager(mainLevelObjective, talismanObjectives, selectedTalismanObjective);
     }
 
-    private ObjectiveRequirement[] BuildObjectiveCriteria()
+    private ObjectiveRequirement[] BuildBaseObjectiveRequirements()
     {
-        var objectiveCriteriaList = new List<ObjectiveRequirement>();
+        var objectiveCriteriaList = new List<ObjectiveRequirement>(3);
 
-        TryBuildSaveRequirementCriteria(objectiveCriteriaList);
-        TryBuildTimeLimitCriterion(objectiveCriteriaList);
-        TryBuildKillAllZombiesCriterion(objectiveCriteriaList);
+        if (TryBuildSaveRequirementCriteria(_levelObjectiveData.ObjectiveCriteria, out var requirement)) objectiveCriteriaList.Add(requirement);
+        if (TryBuildTimeLimitCriterion(_levelObjectiveData.ObjectiveCriteria, out requirement)) objectiveCriteriaList.Add(requirement);
+        if (TryBuildKillAllZombiesCriterion(_levelObjectiveData.ObjectiveCriteria, out requirement)) objectiveCriteriaList.Add(requirement);
 
         return objectiveCriteriaList.ToArray();
     }
 
-    private void TryBuildSaveRequirementCriteria(List<ObjectiveRequirement> objectiveCriteriaList)
+    private LevelObjective[] BuildTalismanObjectives()
     {
-        throw new NotImplementedException();
+        if (_levelObjectiveData.TalismanData.Length == 0)
+            return [];
+
+        var result = new LevelObjective[_levelObjectiveData.TalismanData.Length];
+
+        for (var i = 0; i < _levelObjectiveData.TalismanData.Length; i++)
+        {
+            var talismanData = _levelObjectiveData.TalismanData[i];
+            result[i] = BuildTalismanObjective(talismanData);
+        }
+
+        return result;
     }
 
-    private void TryBuildTimeLimitCriterion(List<ObjectiveRequirement> objectiveCriteriaList)
+    private static LevelObjective BuildTalismanObjective(TalismanData talismanData)
     {
-        var timeLimitCriterion = TryGetObjectiveCriterion<TimeLimitCriterionData>();
+        var objectiveCriteriaList = new List<ObjectiveRequirement>();
+
+        if (TryBuildSaveRequirementCriteria(talismanData.AdditionalObjectiveCriteria, out var requirement)) objectiveCriteriaList.Add(requirement);
+        if (TryBuildTimeLimitCriterion(talismanData.AdditionalObjectiveCriteria, out requirement)) objectiveCriteriaList.Add(requirement);
+        if (TryBuildKillAllZombiesCriterion(talismanData.AdditionalObjectiveCriteria, out requirement)) objectiveCriteriaList.Add(requirement);
+
+        return new LevelObjective(objectiveCriteriaList.ToArray(), talismanData.TalismanName);
+    }
+
+    private static bool TryBuildSaveRequirementCriteria(ObjectiveCriterionData[] criteria, [MaybeNullWhen(false)] out ObjectiveRequirement saveRequirement)
+    {
+        var saveRequirementCriterion = criteria.TryFindItemOfType<ObjectiveCriterionData, SaveLemmingsCriterionData>();
+        if (saveRequirementCriterion is null)
+        {
+            saveRequirement = null;
+            return false;
+        }
+
+        saveRequirement = new SaveRequirement(saveRequirementCriterion.SaveRequirement, saveRequirementCriterion.TribeId);
+        return true;
+    }
+
+    private static bool TryBuildTimeLimitCriterion(ObjectiveCriterionData[] criteria, [MaybeNullWhen(false)] out ObjectiveRequirement timeRequirement)
+    {
+        var timeLimitCriterion = criteria.TryFindItemOfType<ObjectiveCriterionData, TimeLimitCriterionData>();
 
         if (timeLimitCriterion is null)
-            return;
+        {
+            timeRequirement = null;
+            return false;
+        }
 
-        objectiveCriteriaList.Add(new TimeRequirement());
+        timeRequirement = new TimeRequirement(timeLimitCriterion.TimeLimitInSeconds);
+        return true;
     }
 
-    private void TryBuildKillAllZombiesCriterion(List<ObjectiveRequirement> objectiveCriteriaList)
+    private static bool TryBuildKillAllZombiesCriterion(ObjectiveCriterionData[] criteria, [MaybeNullWhen(false)] out ObjectiveRequirement killAllZombiesRequirement)
     {
-        var killAllZombiesCriterion = TryGetObjectiveCriterion<KillAllZombiesCriterionData>();
+        var killAllZombiesCriterion = criteria.TryFindItemOfType<ObjectiveCriterionData, KillAllZombiesCriterionData>();
 
         if (killAllZombiesCriterion is null)
-            return;
+        {
+            killAllZombiesRequirement = null;
+            return false;
+        }
 
-        objectiveCriteriaList.Add(new AllZombiesDeadRequirement());
+        killAllZombiesRequirement = new AllZombiesDeadRequirement();
+        return true;
     }
 
     public SkillSetManager BuildSkillSetManager(TribeManager tribeManager)
     {
         var skillTrackingData = BuildSkillTrackingData(tribeManager);
 
-        var totalSkillLimitModifier = TryGetObjectiveModifier<LimitTotalSkillAssignmentsModifierData>();
+        var totalSkillLimitModifier = TryFindSmallestLimitTotalSkillAssignmentsModifier();
         var totalSkillLimit = EngineConstants.TrivialSkillLimit;
         if (totalSkillLimitModifier is not null)
             totalSkillLimit = totalSkillLimitModifier.MaxTotalSkillAssignments;
@@ -90,7 +137,6 @@ public sealed class LevelObjectiveBuilder
     private SkillTrackingData[] BuildSkillTrackingData(TribeManager tribeManager)
     {
         var baseSkillData = _levelObjectiveData.SkillSetData;
-        var talismanModifiers = TalismanModifierData;
 
         var result = new SkillTrackingData[baseSkillData.Length];
 
@@ -98,7 +144,7 @@ public sealed class LevelObjectiveBuilder
         {
             var skillSetData = baseSkillData[i];
 
-            var skillLimitModifier = TryGetAnySpecificSkillModifier(_levelObjectiveData.ObjectiveModifiers, talismanModifiers, skillSetData);
+            var skillLimitModifier = TryGetAnySpecificSkillModifier(_levelObjectiveData.ObjectiveModifiers, _selectedTalisman?.AdditionalObjectiveModifiers, skillSetData);
             var initialSkillLimit = EngineConstants.TrivialSkillLimit;
             if (skillLimitModifier is not null)
                 initialSkillLimit = skillLimitModifier.MaxSkillAssignments;
@@ -113,61 +159,39 @@ public sealed class LevelObjectiveBuilder
         }
 
         return result;
-
-        static LimitSpecificSkillAssignmentsModifierData? TryGetAnySpecificSkillModifier(
-            ObjectiveModifierData[] baseModifiers,
-            ObjectiveModifierData[] talismanModifiers,
-            IO.Data.Level.Objectives.SkillSetData skillSetData)
-        {
-            return TryGetSpecificSkillModifier(talismanModifiers, skillSetData) ??
-                   TryGetSpecificSkillModifier(baseModifiers, skillSetData);
-
-        }
-
-        static LimitSpecificSkillAssignmentsModifierData? TryGetSpecificSkillModifier(
-            ObjectiveModifierData[] modifiers,
-            IO.Data.Level.Objectives.SkillSetData skillSetData)
-        {
-            foreach (var modifierData in modifiers)
-            {
-                if (modifierData is LimitSpecificSkillAssignmentsModifierData skillLimit)
-                {
-                    if (skillLimit.SkillId == skillSetData.SkillId &&
-                        skillLimit.TribeId == skillSetData.TribeId)
-                        return skillLimit;
-                }
-            }
-
-            return null;
-        }
     }
 
     public LevelTimer BuildLevelTimer()
     {
-        TimeLimitCriterionData? timeLimitCriterionData = TryGetObjectiveCriterion<TimeLimitCriterionData>();
+        var timeLimitCriterionData = TryFindSmallestTimeLimitCriterion();
 
         return timeLimitCriterionData is null
             ? LevelTimer.CreateCountUpTimer()
             : LevelTimer.CreateCountDownTimer(timeLimitCriterionData.TimeLimitInSeconds);
     }
 
-    private TCriterionData? TryGetObjectiveCriterion<TCriterionData>()
-        where TCriterionData : ObjectiveCriterionData
+    private TimeLimitCriterionData? TryFindSmallestTimeLimitCriterion()
     {
-        return TalismanCriteriaData.TryFindItemOfType<ObjectiveCriterionData, TCriterionData>() ??
-               _levelObjectiveData.ObjectiveCriteria.TryFindItemOfType<ObjectiveCriterionData, TCriterionData>();
+        return Helpers.MaybeConcat(_selectedTalisman?.AdditionalObjectiveCriteria, _levelObjectiveData.ObjectiveCriteria)
+            .OfType<TimeLimitCriterionData>()
+            .MinBy(t => t.TimeLimitInSeconds);
     }
 
-    private TModifierData? TryGetObjectiveModifier<TModifierData>()
-        where TModifierData : ObjectiveModifierData
+    private LimitTotalSkillAssignmentsModifierData? TryFindSmallestLimitTotalSkillAssignmentsModifier()
     {
-        return TalismanModifierData.TryFindItemOfType<ObjectiveModifierData, TModifierData>() ??
-               _levelObjectiveData.ObjectiveModifiers.TryFindItemOfType<ObjectiveModifierData, TModifierData>();
+        return Helpers.MaybeConcat(_selectedTalisman?.AdditionalObjectiveModifiers, _levelObjectiveData.ObjectiveModifiers)
+            .OfType<LimitTotalSkillAssignmentsModifierData>()
+            .MinBy(l => l.MaxTotalSkillAssignments);
     }
 
-    private LimitTotalSkillAssignmentsModifierData? TryGetLimitTotalSkillAssignmentsModifier()
+    private static LimitSpecificSkillAssignmentsModifierData? TryGetAnySpecificSkillModifier(
+        ObjectiveModifierData[] baseModifiers,
+        ObjectiveModifierData[]? talismanModifiers,
+        IO.Data.Level.Objectives.SkillSetData skillSetData)
     {
-        return TalismanModifierData.TryFindItemOfType<ObjectiveModifierData, LimitTotalSkillAssignmentsModifierData>() ??
-               _levelObjectiveData.ObjectiveModifiers.TryFindItemOfType<ObjectiveModifierData, LimitTotalSkillAssignmentsModifierData>();
+        return Helpers
+            .MaybeConcat(talismanModifiers, baseModifiers)
+            .OfType<LimitSpecificSkillAssignmentsModifierData>()
+            .FirstOrDefault(skillLimit => skillLimit.SkillId == skillSetData.SkillId && skillLimit.TribeId == skillSetData.TribeId);
     }
 }

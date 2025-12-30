@@ -43,6 +43,8 @@ public sealed class LemmingManager :
 
     private LemmingManagerData _data = new();
 
+    private bool _isDisposed;
+
     public int LemmingsToRelease => _data.LemmingsToRelease;
     public int LemmingsOut => _data.LemmingsOut;
     public int LemmingsRemoved => _data.LemmingsRemoved;
@@ -401,13 +403,20 @@ public sealed class LemmingManager :
 
     public void Dispose()
     {
-        new Span<Lemming>(_lemmings).Clear();
-        new Span<HatchGroup>(_hatchGroups).Clear();
-        _lemmingByteBuffer.Dispose();
-        _lemmingPositionHelper.Dispose();
-        _zombieSpacialHashGrid.Dispose();
-        _lemmingsToZombify.Clear();
-        _allBlockers.Clear();
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+
+            new Span<Lemming>(_lemmings).Clear();
+            new Span<HatchGroup>(_hatchGroups).Clear();
+            _lemmingByteBuffer.Dispose();
+            _lemmingPositionHelper.Dispose();
+            _zombieSpacialHashGrid.Dispose();
+            _lemmingsToZombify.Clear();
+            _allBlockers.Clear();
+        }
+
+        GC.SuppressFinalize(this);
     }
 
     public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LemmingManagerData);

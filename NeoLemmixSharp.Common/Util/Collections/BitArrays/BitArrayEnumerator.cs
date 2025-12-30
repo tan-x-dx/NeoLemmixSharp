@@ -7,23 +7,21 @@ public ref struct BitArrayEnumerator<TPerfectHasher, T>
     where TPerfectHasher : IPerfectHasher<T>
     where T : notnull
 {
-    private readonly TPerfectHasher _hasher;
     private readonly ReadOnlySpan<uint> _bits;
 
-    private int _remaining;
     private int _index;
     private int _current;
     private uint _v;
 
+    private readonly TPerfectHasher _hasher;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal BitArrayEnumerator(
         TPerfectHasher hasher,
-        ReadOnlySpan<uint> bits,
-        int count)
+        ReadOnlySpan<uint> bits)
     {
         _hasher = hasher;
         _bits = bits;
-        _remaining = count;
         _index = 0;
         _current = 0;
         _v = _bits.Length == 0 ? 0U : _bits[0];
@@ -31,21 +29,25 @@ public ref struct BitArrayEnumerator<TPerfectHasher, T>
 
     public bool MoveNext()
     {
-        if (_v == 0U)
+        var v = _v;
+        var index = _index;
+        if (v == 0U)
         {
-            if (_remaining == 0)
-                return false;
-
             do
             {
-                _v = _bits[++_index];
+                ++index;
+                if ((uint)index >= (uint)_bits.Length)
+                    return false;
+
+                v = _bits.At(index);
             }
-            while (_v == 0U);
+            while (v == 0U);
+            _index = index;
         }
 
-        _current = (_index << BitArrayHelpers.Shift) | BitOperations.TrailingZeroCount(_v);
-        _v &= _v - 1;
-        _remaining--;
+        _current = (index << BitArrayHelpers.Shift) | BitOperations.TrailingZeroCount(v);
+        v &= v - 1;
+        _v = v;
         return true;
     }
 
@@ -56,18 +58,14 @@ public ref struct BitArrayEnumerator
 {
     private readonly ReadOnlySpan<uint> _bits;
 
-    private int _remaining;
     private int _index;
     private int _current;
     private uint _v;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitArrayEnumerator(
-        ReadOnlySpan<uint> bits,
-        int count)
+    public BitArrayEnumerator(ReadOnlySpan<uint> bits)
     {
         _bits = bits;
-        _remaining = count;
         _index = 0;
         _current = 0;
         _v = _bits.Length == 0 ? 0U : _bits[0];
@@ -75,21 +73,25 @@ public ref struct BitArrayEnumerator
 
     public bool MoveNext()
     {
-        if (_v == 0U)
+        var v = _v;
+        var index = _index;
+        if (v == 0U)
         {
-            if (_remaining == 0)
-                return false;
-
             do
             {
-                _v = _bits[++_index];
+                ++index;
+                if ((uint)index >= (uint)_bits.Length)
+                    return false;
+
+                v = _bits.At(index);
             }
-            while (_v == 0U);
+            while (v == 0U);
+            _index = index;
         }
 
-        _current = (_index << BitArrayHelpers.Shift) | BitOperations.TrailingZeroCount(_v);
-        _v &= _v - 1;
-        _remaining--;
+        _current = (index << BitArrayHelpers.Shift) | BitOperations.TrailingZeroCount(v);
+        v &= v - 1;
+        _v = v;
         return true;
     }
 

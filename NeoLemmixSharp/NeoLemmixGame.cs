@@ -5,6 +5,7 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO;
@@ -111,6 +112,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         var menuScreen = new MenuScreen(Content, GraphicsDevice);
         SetScreen(menuScreen);
+        menuScreen.Initialise();
     }
 
     /// <summary>
@@ -156,17 +158,22 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     public void SetScreen(IBaseScreen screen)
     {
-        _screen?.Dispose();
-        _screenRenderer?.Dispose();
-
         _screen = screen;
         _screen.OnWindowSizeChanged();
         _screenRenderer = _screen.ScreenRenderer;
 
         Window.Title = _screen.ScreenTitle;
-        _screen.OnSetScreen();
+        _screen.OnActivated();
+    }
 
-        _screen.Initialise();
+    public void ExitLevel()
+    {
+        var levelScreen = LevelScreen.Instance ?? throw new InvalidOperationException("No level to exit!");
+
+        var levelEndPage = MenuScreen.Instance.MenuPageCreator.CreateLevelEndPage(levelScreen.LevelData, levelScreen.GenerateSuccessOutcome());
+        MenuScreen.Instance.SetNextPage(levelEndPage);
+
+        SetScreen(MenuScreen.Instance);
     }
 
     protected override void Update(GameTime gameTime)
@@ -278,5 +285,12 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     public void Escape()
     {
         Exit();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        MenuScreen.Instance.Dispose();
+
+        base.Dispose(disposing);
     }
 }

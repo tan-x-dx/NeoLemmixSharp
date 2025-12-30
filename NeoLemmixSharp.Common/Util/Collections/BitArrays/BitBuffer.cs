@@ -76,6 +76,8 @@ public unsafe readonly struct RawBitBuffer : IBitBuffer
         _length = length;
     }
 
-    public Span<uint> AsSpan() => new(_pointer, _length);
-    public ReadOnlySpan<uint> AsReadOnlySpan() => new(_pointer, _length);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public unsafe Span<uint> AsSpan() => Helpers.CreateSpan<uint>(_pointer, Length);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public unsafe ReadOnlySpan<uint> AsReadOnlySpan() => Helpers.CreateReadOnlySpan<uint>(_pointer, Length);
 }

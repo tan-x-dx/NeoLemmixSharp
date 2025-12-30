@@ -17,7 +17,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     private bool _initialized;
 
-    public bool IsDisposed { get; private set; }
+    private bool _isDisposed;
 
     public MenuScreenRenderer(
         MenuCursorRenderer menuCursorRenderer,
@@ -68,16 +68,16 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void Dispose()
     {
-        if (IsDisposed)
-            return;
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
 
-        //UserInterface.Active.Dispose();
+            //UserInterface.Active.Dispose();
+            _pageTransitionRenderer.Dispose();
+            _uiHandler = null!;
+        }
 
-        _pageTransitionRenderer.Dispose();
-
-        _uiHandler = null!;
-
-        IsDisposed = true;
+        GC.SuppressFinalize(this);
     }
 
     public void SetNextPage(PageBase currentPage)

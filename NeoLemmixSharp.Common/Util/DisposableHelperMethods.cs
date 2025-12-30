@@ -3,6 +3,25 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
+public static class InitialisableHelperMethods
+{
+    public static void InitialiseFields<T>(this T item)
+    {
+        var fields = typeof(T)
+            .GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+        foreach (var field in fields)
+        {
+            var actualObject = field.GetValue(item);
+
+            if (actualObject is IInitialisable objectToInitialise)
+            {
+                objectToInitialise.Initialise();
+            }
+        }
+    }
+}
+
 public static class DisposableHelperMethods
 {
     /// <summary>

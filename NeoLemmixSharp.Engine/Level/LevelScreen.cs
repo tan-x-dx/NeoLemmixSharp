@@ -17,13 +17,14 @@ using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using System.Diagnostics.Contracts;
-using System.Reflection;
 
 namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelScreen : IBaseScreen
 {
-    private static LevelScreen _instance = null!;
+    public static LevelScreen Instance { get; private set; } = null!;
+
+    public LevelData LevelData { get; }
 
     private readonly BoundaryBehaviour _horizontalBoundaryBehaviour;
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
@@ -46,25 +47,27 @@ public sealed class LevelScreen : IBaseScreen
     private readonly LemmingSpriteBank _lemmingSpriteBank;
     private readonly LevelScreenRenderer _levelScreenRenderer;
 
-    public static BoundaryBehaviour HorizontalBoundaryBehaviour => _instance._horizontalBoundaryBehaviour;
-    public static BoundaryBehaviour VerticalBoundaryBehaviour => _instance._verticalBoundaryBehaviour;
+    private bool _isDisposed;
 
-    public static LevelParameterSet LevelParameters => _instance._levelParameters;
-    public static TerrainManager TerrainManager => _instance._terrainManager;
-    public static TerrainPainter TerrainPainter => _instance._terrainPainter;
-    public static LemmingManager LemmingManager => _instance._lemmingManager;
-    public static GadgetManager GadgetManager => _instance._gadgetManager;
-    public static TribeManager TribeManager => _instance._tribeManager;
-    public static SkillSetManager SkillSetManager => _instance._skillSetManager;
-    public static LevelObjectiveManager LevelObjectiveManager => _instance._levelObjectiveManager;
-    public static LevelControlPanel LevelControlPanel => _instance._levelControlPanel;
-    public static UpdateScheduler UpdateScheduler => _instance._updateScheduler;
-    public static LevelCursor LevelCursor => _instance._levelCursor;
-    public static LevelTimer LevelTimer => _instance._levelTimer;
-    public static LevelInputController LevelInputController => _instance._levelInputController;
-    public static RewindManager RewindManager => _instance._rewindManager;
-    public static LemmingSpriteBank LemmingSpriteBank => _instance._lemmingSpriteBank;
-    public static Viewport LevelViewport => _instance._levelViewport;
+    public static BoundaryBehaviour HorizontalBoundaryBehaviour => Instance._horizontalBoundaryBehaviour;
+    public static BoundaryBehaviour VerticalBoundaryBehaviour => Instance._verticalBoundaryBehaviour;
+
+    public static LevelParameterSet LevelParameters => Instance._levelParameters;
+    public static TerrainManager TerrainManager => Instance._terrainManager;
+    public static TerrainPainter TerrainPainter => Instance._terrainPainter;
+    public static ref readonly LemmingManager LemmingManager => ref Instance._lemmingManager;
+    public static ref readonly GadgetManager GadgetManager => ref Instance._gadgetManager;
+    public static TribeManager TribeManager => Instance._tribeManager;
+    public static SkillSetManager SkillSetManager => Instance._skillSetManager;
+    public static LevelObjectiveManager LevelObjectiveManager => Instance._levelObjectiveManager;
+    public static LevelControlPanel LevelControlPanel => Instance._levelControlPanel;
+    public static UpdateScheduler UpdateScheduler => Instance._updateScheduler;
+    public static LevelCursor LevelCursor => Instance._levelCursor;
+    public static ref readonly LevelTimer LevelTimer => ref Instance._levelTimer;
+    public static LevelInputController LevelInputController => Instance._levelInputController;
+    public static RewindManager RewindManager => Instance._rewindManager;
+    public static LemmingSpriteBank LemmingSpriteBank => Instance._lemmingSpriteBank;
+    public static Viewport LevelViewport => Instance._levelViewport;
 
     [Pure]
     public static Point NormalisePosition(Point levelPosition)
@@ -111,7 +114,7 @@ public sealed class LevelScreen : IBaseScreen
     }
 
     public IScreenRenderer ScreenRenderer => _levelScreenRenderer;
-    public string ScreenTitle { get; }
+    public string ScreenTitle => LevelData.LevelTitle;
 
     public LevelScreen(
         LevelData levelData,
@@ -135,6 +138,8 @@ public sealed class LevelScreen : IBaseScreen
         LemmingSpriteBank lemmingSpriteBank,
         LevelScreenRenderer levelScreenRenderer)
     {
+        LevelData = levelData;
+
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
         _levelParameters = levelParameters;
@@ -154,25 +159,13 @@ public sealed class LevelScreen : IBaseScreen
         _rewindManager = rewindManager;
         _lemmingSpriteBank = lemmingSpriteBank;
         _levelScreenRenderer = levelScreenRenderer;
-        ScreenTitle = levelData.LevelTitle;
 
-        _instance = this;
+        Instance = this;
     }
 
     public void Initialise()
     {
-        var fields = typeof(LevelScreen)
-            .GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-
-        foreach (var field in fields)
-        {
-            var actualObject = field.GetValue(this);
-
-            if (actualObject is IInitialisable objectToInitialise)
-            {
-                objectToInitialise.Initialise();
-            }
-        }
+        this.InitialiseFields();
     }
 
     public void Tick(Microsoft.Xna.Framework.GameTime gameTime)
@@ -199,21 +192,31 @@ public sealed class LevelScreen : IBaseScreen
         IGameWindow.Instance.CaptureCursor();
     }
 
-    public void OnSetScreen()
+    public void ExitLevel()
     {
-        IGameWindow.Instance.CaptureCursor();
+        IGameWindow.Instance.ExitLevel();
+
+        Dispose();
+        _levelScreenRenderer.Dispose();
+    }
+
+    public object GenerateSuccessOutcome()
+    {
+        return null!;
     }
 
     public void Dispose()
     {
-        this.DisposeOfFields();
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
 
-        TextureCache.DisposeOfLevelSpecificTextures();
+            this.DisposeOfFields();
+            TextureCache.DisposeOfLevelSpecificTextures();
 
-        _instance = null!;
+            Instance = null!;
+        }
+
+        GC.SuppressFinalize(this);
     }
-
-    public static ref readonly LemmingManager LemmingManagerRef => ref _instance._lemmingManager;
-    public static ref readonly GadgetManager GadgetManagerRef => ref _instance._gadgetManager;
-    public static ref readonly LevelTimer LevelTimerRef => ref _instance._levelTimer;
 }

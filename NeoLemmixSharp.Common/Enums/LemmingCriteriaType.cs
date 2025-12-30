@@ -8,13 +8,14 @@ public enum LemmingCriteriaType
     LemmingOrientation,
     LemmingFacingDirection,
     LemmingAction,
-    LemmingState,
+    RequiredLemmingState,
+    DisallowedLemmingState,
     LemmingTribe
 }
 
 public readonly struct LemmingCriteriaTypeHasher : IEnumIdentifierHelper<BitBuffer32, LemmingCriteriaType>
 {
-    private const int NumberOfEnumValues = 5;
+    private const int NumberOfEnumValues = 6;
 
     public int NumberOfItems => NumberOfEnumValues;
     public int Hash(LemmingCriteriaType item) => (int)item;

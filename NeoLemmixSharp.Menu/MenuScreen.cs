@@ -14,7 +14,7 @@ namespace NeoLemmixSharp.Menu;
 
 public sealed class MenuScreen : IBaseScreen
 {
-    public static MenuScreen Current { get; private set; } = null!;
+    public static MenuScreen Instance { get; private set; } = null!;
 
     private readonly PageTransition _pageTransition = new();
 
@@ -27,14 +27,18 @@ public sealed class MenuScreen : IBaseScreen
 
     public List<LevelPackData> LevelPackData { get; } = new(256);
 
+    private bool _isDisposed;
+
     IScreenRenderer IBaseScreen.ScreenRenderer => MenuScreenRenderer;
     public string ScreenTitle => "NeoLemmixSharp";
-    public bool IsDisposed { get; private set; }
 
     public MenuScreen(
         ContentManager contentManager,
         GraphicsDevice graphicsDevice)
     {
+        if (Instance is not null)
+            throw new InvalidOperationException("Cannot create more than one concurrent MenuScreen instance!");
+
         var menuCursorRenderer = new MenuCursorRenderer(InputController);
         MenuScreenRenderer = new MenuScreenRenderer(
             menuCursorRenderer,
@@ -46,7 +50,8 @@ public sealed class MenuScreen : IBaseScreen
             InputController);
         _currentPage = MenuPageCreator.CreateMainPage();
         MenuScreenRenderer.SetNextPage(_currentPage);
-        Current = this;
+
+        Instance = this;
     }
 
     public void Initialise()
@@ -133,20 +138,18 @@ public sealed class MenuScreen : IBaseScreen
     {
     }
 
-    public void OnSetScreen()
-    {
-    }
-
     public void Dispose()
     {
-        if (IsDisposed)
-            return;
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+            _currentPage.Dispose();
 
-        _currentPage.Dispose();
+            MenuScreenRenderer.Dispose();
 
-        MenuScreenRenderer.Dispose();
+            Instance = null!;
+        }
 
-        Current = null!;
-        IsDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

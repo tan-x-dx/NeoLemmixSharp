@@ -13,7 +13,7 @@ using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
-public sealed class ControlPanelRenderer
+public sealed class ControlPanelRenderer : IDisposable
 {
     public const int TotalNumberOfIcons = 7;
     public const int PanelIconWidth = 8;
@@ -39,7 +39,7 @@ public sealed class ControlPanelRenderer
 
     private Size _windowSize;
 
-    private bool _disposed;
+    private bool _isDisposed;
 
     public ControlPanelRenderer(
         GraphicsDevice graphicsDevice,
@@ -211,11 +211,12 @@ public sealed class ControlPanelRenderer
 
     public void Dispose()
     {
-        if (_disposed)
-            return;
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+            DisposableHelperMethods.DisposeOf(ref _controlPanelRenderTarget);
+        }
 
-        DisposableHelperMethods.DisposeOf(ref _controlPanelRenderTarget);
-
-        _disposed = true;
+        GC.SuppressFinalize(this);
     }
 }

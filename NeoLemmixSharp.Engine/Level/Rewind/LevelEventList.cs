@@ -12,6 +12,7 @@ public sealed class LevelEventList<TEventData> : IDisposable
     private RawArray _buffer;
     private int _bufferLength;
     private int _count;
+    private bool _isDisposed;
 
     public LevelEventList(int initialCapacity)
     {
@@ -27,7 +28,7 @@ public sealed class LevelEventList<TEventData> : IDisposable
     {
         TEventData* pointer = (TEventData*)_buffer.Handle + start;
 
-        return new ReadOnlySpan<TEventData>(pointer, length);
+        return Helpers.CreateReadOnlySpan<TEventData>(pointer, length);
     }
 
     [Pure]
@@ -184,6 +185,12 @@ public sealed class LevelEventList<TEventData> : IDisposable
 
     public void Dispose()
     {
-        _buffer.Dispose();
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+            _buffer.Dispose();
+        }
+
+        GC.SuppressFinalize(this);
     }
 }

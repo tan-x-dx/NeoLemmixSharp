@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.BoundaryBehaviours;
 
@@ -10,8 +12,8 @@ public sealed class BoundaryBehaviour
     private const int MaxNumberOfViewportRenderIntervals = 2;
     private const int MaxNumberOfRenderCopiesForWrappedLevels = 6;
 
-    private ScreenRenderIntervalBuffer _screenRenderIntervalBuffer;
     private ViewPortRenderIntervalBuffer _viewPortRenderIntervalBuffer;
+    private ScreenRenderIntervalBuffer _screenRenderIntervalBuffer;
 
     private readonly DimensionType _dimensionType;
     private readonly BoundaryBehaviourType _boundaryBehaviourType;
@@ -69,9 +71,9 @@ public sealed class BoundaryBehaviour
     public int MouseScreenCoordinate => _mouseScreenCoordinate;
 
     [Pure]
-    public ReadOnlySpan<ViewPortRenderInterval> GetRenderViewPortIntervals() => ((ReadOnlySpan<ViewPortRenderInterval>)_viewPortRenderIntervalBuffer).Slice(0, _viewPortSpanLength);
+    public ReadOnlySpan<ViewPortRenderInterval> GetRenderViewPortIntervals() => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<ViewPortRenderIntervalBuffer, ViewPortRenderInterval>(ref Unsafe.AsRef(in _viewPortRenderIntervalBuffer)), _viewPortSpanLength);
     [Pure]
-    public ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals() => ((ReadOnlySpan<ScreenRenderInterval>)_screenRenderIntervalBuffer).Slice(0, _screenSpanLength);
+    public ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals() => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<ScreenRenderIntervalBuffer, ScreenRenderInterval>(ref Unsafe.AsRef(in _screenRenderIntervalBuffer)), _screenSpanLength);
 
     public BoundaryBehaviour(
         DimensionType dimensionType,
@@ -170,9 +172,9 @@ public sealed class BoundaryBehaviour
     [Pure]
     public bool IntervalContainsPoint(Interval interval, int n)
     {
+        var a = Normalise(n);
         var intervalStart = Normalise(interval.Start);
         var intervalEnd = intervalStart + interval.Length;
-        var a = Normalise(n);
 
         // If the interval actually contains the point, that's easy
         if (intervalStart <= a && a < intervalEnd)
@@ -262,29 +264,34 @@ public sealed class BoundaryBehaviour
         }
         else
         {
-            UpdateViewPortCoordinate(_viewPortStart);
+            _viewPortStart = GetUpdatedViewPortCoordinate(_viewPortStart);
         }
 
         UpdateViewPortRenderIntervals();
         UpdateScreenRenderIntervals();
     }
 
-    private void UpdateViewPortCoordinate(int viewPortCoordinate)
+    [Pure]
+    private int GetUpdatedViewPortCoordinate(int viewPortCoordinate)
     {
-        if (_levelLength < _viewPortLength)
-        {
-            _viewPortStart = 0;
-            return;
-        }
+        var v = _levelLength - _viewPortLength;
+        if (v < 0)
+            return 0;
 
-        _viewPortStart = _boundaryBehaviourType == BoundaryBehaviourType.Void
-            ? Math.Clamp(viewPortCoordinate, 0, _levelLength - _viewPortLength)
-            : Normalise(viewPortCoordinate);
+        if (_boundaryBehaviourType != BoundaryBehaviourType.Void)
+            return Normalise(viewPortCoordinate);
+
+        if (viewPortCoordinate < 0)
+            return 0;
+
+        if (viewPortCoordinate <= v)
+            return viewPortCoordinate;
+        return v;
     }
 
     public void Scroll(int delta)
     {
-        UpdateViewPortCoordinate(_viewPortStart + delta);
+        _viewPortStart = GetUpdatedViewPortCoordinate(_viewPortStart + delta);
 
         UpdateViewPortRenderIntervals();
         UpdateScreenRenderIntervals();
@@ -344,30 +351,37 @@ public sealed class BoundaryBehaviour
 
     private void UpdateScreenRenderIntervalsForMultipleWrappedCopies()
     {
-        var deltaL = _levelLength * _scaleMultiplier;
-        var maxScreenDimension = Math.Min(deltaL * MaxNumberOfRenderCopiesForWrappedLevels, _screenLength);
+        var deltaLength = _levelLength * _scaleMultiplier;
+        var maxScreenDimension = Math.Min(deltaLength * MaxNumberOfRenderCopiesForWrappedLevels, _screenLength);
         var screenCoordinate = Math.Max(0, _screenLength - maxScreenDimension);
         screenCoordinate >>>= 1;
+        var sourceLength = _levelLength - _viewPortStart;
+        var scaledSourceLength = sourceLength * _scaleMultiplier;
 
-        _screenRenderIntervalBuffer[0] = new ScreenRenderInterval(
+        Span<ScreenRenderInterval> span = _screenRenderIntervalBuffer;
+
+        span.At(0) = new ScreenRenderInterval(
             _viewPortStart,
-            _levelLength - _viewPortStart,
+            sourceLength,
             screenCoordinate,
-            (_levelLength - _viewPortStart) * _scaleMultiplier);
+            scaledSourceLength);
 
-        screenCoordinate += (_levelLength - _viewPortStart) * _scaleMultiplier;
+        screenCoordinate += scaledSourceLength;
+        var screenSpanLength = 1;
 
         while (screenCoordinate < maxScreenDimension &&
-               _screenSpanLength < MaxNumberOfRenderCopiesForWrappedLevels - 1)
+               screenSpanLength < MaxNumberOfRenderCopiesForWrappedLevels - 1)
         {
-            _screenRenderIntervalBuffer[_screenSpanLength++] = new ScreenRenderInterval(0, _levelLength, screenCoordinate, deltaL);
-            screenCoordinate += deltaL;
+            span.At(screenSpanLength++) = new ScreenRenderInterval(0, _levelLength, screenCoordinate, deltaLength);
+            screenCoordinate += deltaLength;
         }
 
         if (screenCoordinate < maxScreenDimension)
         {
-            _screenRenderIntervalBuffer[_screenSpanLength++] = new ScreenRenderInterval(0, 0, screenCoordinate, 0);
+            span.At(screenSpanLength++) = new ScreenRenderInterval(0, 0, screenCoordinate, 0);
         }
+
+        _screenSpanLength = screenSpanLength;
     }
 
     [Pure]

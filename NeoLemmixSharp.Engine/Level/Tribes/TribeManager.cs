@@ -45,5 +45,7 @@ public sealed class TribeManager :
     public void Dispose()
     {
         new Span<Tribe>(_tribes).Clear();
+
+        GC.SuppressFinalize(this);
     }
 }

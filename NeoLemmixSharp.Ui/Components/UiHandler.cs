@@ -135,5 +135,6 @@ public sealed class UiHandler : IDisposable
     public void Dispose()
     {
         RootComponent.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

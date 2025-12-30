@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -18,7 +17,7 @@ public static class NumberFormattingHelpers
         WriteDigit:
         (valueToWrite, uint rem) = Math.DivRem(valueToWrite, 10);
 
-        Unsafe.Add(ref MemoryMarshal.GetReference(span), length) = DigitToChar(rem);
+        span.At(length) = DigitToChar(rem);
         length--;
 
         if (length < 0)
@@ -30,7 +29,7 @@ public static class NumberFormattingHelpers
         goto WriteDigit;
 
     WriteBlank:
-        Unsafe.Add(ref MemoryMarshal.GetReference(span), length) = blankCharValue;
+        span.At(length) = blankCharValue;
         length--;
 
         if (length >= 0)

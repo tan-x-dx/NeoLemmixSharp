@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Util;
 using System.Runtime.CompilerServices;
@@ -27,6 +28,9 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     private int _position;
 
     public FileFormatVersion FileFormatVersion { get; }
+
+    private bool _isDisposed;
+
     public int Position => _position;
     public bool MoreToRead => _position < _byteBuffer.Length;
 
@@ -157,7 +161,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
         byte* pointer = (byte*)_byteBuffer.Handle + _position;
         _position = newPosition;
 
-        return new ReadOnlySpan<byte>(pointer, numberOfBytes);
+        return Helpers.CreateReadOnlySpan<byte>(pointer, numberOfBytes);
     }
 
     public void SetReaderPosition(int position)
@@ -172,6 +176,12 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
 
     public void Dispose()
     {
-        _byteBuffer.Dispose();
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+            _byteBuffer.Dispose();
+        }
+
+        GC.SuppressFinalize(this);
     }
 }

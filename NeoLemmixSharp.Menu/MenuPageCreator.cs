@@ -69,33 +69,9 @@ public sealed class MenuPageCreator
 
     public LevelStartPage? CreateLevelStartPage()
     {
-        LevelStartPage? result = null;
-        try
-        {
-            var levelData = FileTypeHandler.ReadLevel(LevelToLoadFilepath);
+        var levelData = FileTypeHandler.ReadLevel(LevelToLoadFilepath);
 
-            levelData.AssertLevelDataIsValid();
-
-            var levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
-            var levelScreen = levelBuilder.BuildLevel(levelData);
-            result = new LevelStartPage(_inputController, levelScreen);
-
-            GC.Collect(2, GCCollectionMode.Forced);
-        }
-        catch (Exception ex)
-        {
-            TextureCache.DisposeOfLevelSpecificTextures();
-
-            var exceptionWindow = new ExceptionViewer(_inputController, ex);
-
-            exceptionWindow.Initialise();
-        }
-        finally
-        {
-            //levelReader?.Dispose();
-        }
-
-        return result;
+        return CreateLevelStartPage(levelData);
     }
 
     public LevelStartPage? CreateLevelStartPage(LevelData levelData)
@@ -103,13 +79,7 @@ public sealed class MenuPageCreator
         LevelStartPage? result = null;
         try
         {
-            levelData.AssertLevelDataIsValid();
-
-            var levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
-            var levelScreen = levelBuilder.BuildLevel(levelData);
-            result = new LevelStartPage(_inputController, levelScreen);
-
-            GC.Collect(2, GCCollectionMode.Forced);
+            result = BuildLevel(levelData);
         }
         catch (Exception ex)
         {
@@ -124,5 +94,25 @@ public sealed class MenuPageCreator
         }
 
         return result;
+    }
+
+    private LevelStartPage BuildLevel(LevelData levelData)
+    {
+        levelData.AssertLevelDataIsValid();
+
+        var levelBuilder = new LevelBuilder(_contentManager, _graphicsDevice);
+        var levelScreen = levelBuilder.BuildLevel(levelData);
+
+        StyleCache.CleanUpOldStyles();
+        TextureCache.CleanUpOldTextures();
+
+        GC.Collect(2, GCCollectionMode.Forced);
+        return new LevelStartPage(_inputController, levelScreen);
+    }
+
+    public LevelEndPage CreateLevelEndPage(LevelData levelData, object successOutcome)
+    {
+
+        return new LevelEndPage(_inputController);
     }
 }

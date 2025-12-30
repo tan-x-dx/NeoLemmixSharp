@@ -41,6 +41,7 @@ public sealed class LevelStartPage : PageBase
     private void StartLevel()
     {
         IGameWindow.Instance.SetScreen(_levelScreen);
+        _levelScreen.Initialise();
     }
 
     protected override void OnDispose()

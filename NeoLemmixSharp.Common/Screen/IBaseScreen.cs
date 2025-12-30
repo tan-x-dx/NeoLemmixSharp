@@ -13,5 +13,4 @@ public interface IBaseScreen : IInitialisable, IDisposable
     void Tick(GameTime gameTime);
     void OnWindowSizeChanged();
     void OnActivated();
-    void OnSetScreen();
 }

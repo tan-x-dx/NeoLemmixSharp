@@ -245,12 +245,13 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
     int IComparer<IViewportObjectRenderer>.Compare(IViewportObjectRenderer? x, IViewportObjectRenderer? y)
     {
-        if (ReferenceEquals(x, y)) return 0;
-        if (y is null) return 1;
-        if (x is null) return -1;
+        var idX = -1;
+        if (x is not null)
+            idX = x.ItemId;
 
-        var idX = x.ItemId;
-        var idY = y.ItemId;
+        var idY = -1;
+        if (y is not null)
+            idY = y.ItemId;
 
         var gt = (idX > idY) ? 1 : 0;
         var lt = (idX < idY) ? 1 : 0;

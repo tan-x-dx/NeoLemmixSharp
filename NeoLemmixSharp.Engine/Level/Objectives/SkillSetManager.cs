@@ -65,11 +65,9 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     {
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
-            if (skillTrackingData.Skill != lemmingSkill ||
-                skillTrackingData.Tribe != tribe)
-                continue;
-
-            skillTrackingData.ChangeSkillCount(delta);
+            if (skillTrackingData.Skill == lemmingSkill &&
+                skillTrackingData.Tribe == tribe)
+                skillTrackingData.ChangeSkillCount(delta);
         }
     }
 
@@ -167,5 +165,6 @@ public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer
     public void Dispose()
     {
         new Span<SkillTrackingData>(_skillTrackingDataList).Clear();
+        GC.SuppressFinalize(this);
     }
 }

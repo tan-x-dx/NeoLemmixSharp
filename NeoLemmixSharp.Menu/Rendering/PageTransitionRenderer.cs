@@ -38,5 +38,6 @@ public sealed class PageTransitionRenderer : IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
     }
 }

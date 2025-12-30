@@ -81,7 +81,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     {
         var sourceSpan = _bits.AsReadOnlySpan();
         if (destination.Length < sourceSpan.Length)
-            throw new ArgumentException("Destination buffer too small!");
+            Helpers.ThrowDestinationSpanTooShortException();
         sourceSpan.CopyTo(destination);
     }
 
@@ -120,10 +120,10 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
     public void CopyTo(Span<T> span)
     {
         if (span.Length < _popCount)
-            throw new ArgumentException("Destination span too short!");
+            Helpers.ThrowDestinationSpanTooShortException();
 
         var i = 0;
-        var iterator = new BitArrayEnumerator(_bits.AsReadOnlySpan(), _popCount);
+        var iterator = new BitArrayEnumerator(_bits.AsReadOnlySpan());
         var hasher = _hasher;
         while (iterator.MoveNext())
         {
@@ -137,7 +137,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitArrayEnumerator<TPerfectHasher, T> GetEnumerator() => new(_hasher, _bits.AsReadOnlySpan(), _popCount);
+    public BitArrayEnumerator<TPerfectHasher, T> GetEnumerator() => new(_hasher, _bits.AsReadOnlySpan());
     [Pure]
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ReferenceTypeEnumerator(this);
     [Pure]

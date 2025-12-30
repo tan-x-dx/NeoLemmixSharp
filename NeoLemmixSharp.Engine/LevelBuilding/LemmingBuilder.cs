@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Level;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -23,7 +22,24 @@ public sealed class LemmingBuilder
     {
         var i = 0;
 
-        AddLemmings(ref i, CollectionsMarshal.AsSpan(_levelData.PrePlacedLemmingData));
+        for (; i < _levelData.PrePlacedLemmingData.Count; i++)
+        {
+            var prototype = _levelData.PrePlacedLemmingData[i];
+
+            var lemming = new Lemming(
+                i,
+                prototype.Orientation,
+                prototype.FacingDirection,
+                prototype.InitialLemmingActionId,
+                prototype.TribeId)
+            {
+                AnchorPosition = prototype.Position
+            };
+
+            lemming.State.SetData(prototype.TribeId, prototype.State);
+
+            _lemmingList[i] = lemming;
+        }
 
         while (i < _lemmingList.Length)
         {
@@ -43,25 +59,5 @@ public sealed class LemmingBuilder
         }
 
         return _lemmingList;
-    }
-
-    private void AddLemmings(ref int index, ReadOnlySpan<LemmingInstanceData> lemmingDataSpan)
-    {
-        foreach (var prototype in lemmingDataSpan)
-        {
-            var lemming = new Lemming(
-                index,
-                prototype.Orientation,
-                prototype.FacingDirection,
-                prototype.InitialLemmingActionId,
-                prototype.TribeId);
-
-            lemming.AnchorPosition = prototype.Position;
-
-            lemming.State.SetData(prototype.TribeId, prototype.State);
-
-            _lemmingList[index] = lemming;
-            index++;
-        }
     }
 }

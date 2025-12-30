@@ -225,8 +225,8 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         uint rawRankId = reader.Read8BitUnsignedInteger();
         var rank = TalismanRankHelpers.GetEnumValue(rawRankId);
 
-        var overrideObjectiveCriteria = ReadObjectiveCriteria(reader);
-        var overrideObjectiveModifiers = ReadObjectiveModifiers(reader);
+        var additionalObjectiveCriteria = ReadObjectiveCriteria(reader);
+        var additionalObjectiveModifiers = ReadObjectiveModifiers(reader);
 
         return new TalismanData
         {
@@ -234,8 +234,8 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
             TalismanName = _stringIdLookup[talismanNameId],
             Rank = rank,
 
-            OverrideObjectiveCriteria = overrideObjectiveCriteria,
-            OverrideObjectiveModifiers = overrideObjectiveModifiers
+            AdditionalObjectiveCriteria = additionalObjectiveCriteria,
+            AdditionalObjectiveModifiers = additionalObjectiveModifiers
         };
     }
 }
