@@ -31,7 +31,6 @@ public sealed class ControlPanelRenderer : IDisposable
     private readonly LevelControlPanel _levelControlPanel;
 
     private readonly ControlPanelButtonRenderer[] _controlPanelButtonRenderers;
-    private readonly Texture2D _whitePixel;
     private readonly Texture2D _panelIconsTexture;
     private readonly Texture2D _minimapRegionTexture;
 
@@ -51,7 +50,6 @@ public sealed class ControlPanelRenderer : IDisposable
 
         var allButtons = _levelControlPanel.AllButtons;
         _controlPanelButtonRenderers = SetUpButtonRenderers(controlPanelSpriteBank, allButtons);
-        _whitePixel = CommonSprites.WhitePixelGradientSprite;
         _panelIconsTexture = controlPanelSpriteBank.PanelIcons;
         _minimapRegionTexture = controlPanelSpriteBank.PanelMinimapRegion;
 
@@ -175,10 +173,8 @@ public sealed class ControlPanelRenderer : IDisposable
     public void DrawToScreen(SpriteBatch spriteBatch)
     {
         var controlPanelScreenSize = _levelControlPanel.ControlPanelScreenSize;
-        spriteBatch.Draw(
-            _whitePixel,
+        spriteBatch.FillRect(
             new Rectangle(0, _windowSize.H - controlPanelScreenSize.H, _windowSize.W, controlPanelScreenSize.H),
-            CommonSprites.RectangleForWhitePixelAlpha(0xff),
             Color.DarkGray);
 
         var controlPanelPosition = _levelControlPanel.ControlPanelPosition;

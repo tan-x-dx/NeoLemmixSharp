@@ -8,11 +8,14 @@ namespace NeoLemmixSharp.Ui.Data;
 public static class UiSprites
 {
     internal static Texture2D BevelTexture { get; private set; } = null!;
+    internal static SpriteFont UiFont { get; private set; } = null!;
 
     public static void Initialise(ContentManager contentManager)
     {
         if (BevelTexture is not null)
             throw new InvalidOperationException($"Cannot initialise {nameof(UiSprites)} more than once!");
+
+        UiFont = contentManager.Load<SpriteFont>("Fonts/UiFont");
 
         BevelTexture = contentManager.Load<Texture2D>("menu/bevel");
     }

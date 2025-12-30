@@ -5,6 +5,7 @@ using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.Menu.LevelEditor;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Menu.Pages.LevelSelect;
 
@@ -114,5 +115,10 @@ public sealed class MenuPageCreator
     {
 
         return new LevelEndPage(_inputController);
+    }
+
+    public LevelEditorPage CreateLevelEditorPage()
+    {
+        return new LevelEditorPage(_inputController);
     }
 }

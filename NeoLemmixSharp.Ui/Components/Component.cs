@@ -12,8 +12,8 @@ public abstract class Component : IDisposable
 {
     public delegate void ComponentKeyboardAction(Component c, in KeysEnumerable keys);
 
-    private Point _position;
-    private Size _dimensions;
+    public Point Position { get; private set; }
+    public Size Dimensions { get; private set; }
 
     private ComponentState _state = ComponentState.Normal;
 
@@ -64,16 +64,16 @@ public abstract class Component : IDisposable
 
     public int Left
     {
-        get => _position.X;
+        get => Position.X;
         set
         {
-            var oldX = _position.X;
+            var oldX = Position.X;
 
-            _position = new Point(value, _position.Y);
+            Position = new Point(value, Position.Y);
 
             if (_children != null)
             {
-                oldX = _position.X - oldX;
+                oldX = Position.X - oldX;
 
                 foreach (Component c in _children)
                 {
@@ -85,16 +85,16 @@ public abstract class Component : IDisposable
 
     public int Top
     {
-        get => _position.Y;
+        get => Position.Y;
         set
         {
-            var oldY = _position.Y;
+            var oldY = Position.Y;
 
-            _position = new Point(_position.X, value);
+            Position = new Point(Position.X, value);
 
             if (_children != null)
             {
-                var deltaY = _position.Y - oldY;
+                var deltaY = Position.Y - oldY;
 
                 foreach (Component c in _children)
                 {
@@ -118,10 +118,10 @@ public abstract class Component : IDisposable
 
     public void SetLocation(int x, int y)
     {
-        var oldX = _position.X;
-        var oldY = _position.Y;
+        var oldX = Position.X;
+        var oldY = Position.Y;
 
-        _position = new Point(x, y);
+        Position = new Point(x, y);
 
         if (_children != null)
         {
@@ -138,7 +138,7 @@ public abstract class Component : IDisposable
     public void Translate(int dx, int dy)
     {
         var delta = new Point(dx, dy);
-        _position += delta;
+        Position += delta;
 
         if (_children != null)
         {
@@ -151,14 +151,14 @@ public abstract class Component : IDisposable
 
     public virtual int Width
     {
-        get => _dimensions.W;
-        set => _dimensions = new Size(value, _dimensions.H);
+        get => Dimensions.W;
+        set => Dimensions = new Size(value, Dimensions.H);
     }
 
     public virtual int Height
     {
-        get => _dimensions.H;
-        set => _dimensions = new Size(_dimensions.W, value);
+        get => Dimensions.H;
+        set => Dimensions = new Size(Dimensions.W, value);
     }
 
     public ColorPacket Colors
@@ -175,7 +175,7 @@ public abstract class Component : IDisposable
 
     public void SetSize(int w, int h)
     {
-        _dimensions = new Size(w, h);
+        Dimensions = new Size(w, h);
     }
 
     public void SetDimensions(int x, int y, int width, int height)
@@ -244,7 +244,7 @@ public abstract class Component : IDisposable
         {
             var labelPosition = new Vector2(Left + LabelOffsetX, Top + LabelOffsetY);
             spriteBatch.DrawString(
-                null,//UiSprites.Font,
+                UiSprites.UiFont,
                 _textLabel,
                 labelPosition,
                 Color.White,

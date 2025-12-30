@@ -19,6 +19,8 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     private bool _isDisposed;
 
+    public bool RenderBackground { get; set; } = true;
+
     public MenuScreenRenderer(
         MenuCursorRenderer menuCursorRenderer,
         PageTransition pageTransition)
@@ -43,7 +45,9 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     {
         // background
         spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
-        _backgroundRenderer.Render(spriteBatch);
+
+        if (RenderBackground)
+            _backgroundRenderer.Render(spriteBatch);
 
         // draw ui
         _uiHandler.Render(spriteBatch);

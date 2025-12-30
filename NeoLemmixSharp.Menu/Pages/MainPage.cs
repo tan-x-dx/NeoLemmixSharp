@@ -81,6 +81,16 @@ public sealed class MainPage : PageBase
         MenuScreen.Instance.SetNextPage(levelSelectPage);
     }
 
+    private static void LevelEditorButtonClick(Component _, Point position)
+    {
+        var levelEditorPage = MenuScreen.Instance.MenuPageCreator.CreateLevelEditorPage();
+
+        if (levelEditorPage is null)
+            return;
+
+        MenuScreen.Instance.SetNextPage(levelEditorPage);
+    }
+
     private static void GroupUpButtonClick(Component _, Point position)
     {
     }
@@ -134,6 +144,11 @@ public sealed class MainPage : PageBase
         if (InputController.Quit.IsPressed)
         {
             IGameWindow.Instance.Escape();
+        }
+
+        if (InputController.Space.IsPressed)
+        {
+            LevelEditorButtonClick(null!, new Point());
         }
     }
 

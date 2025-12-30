@@ -53,7 +53,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         IGameWindow.Instance = this;
 
-        ToggleBorderless();
+        ToggleFullscreen();
     }
 
     protected override void Initialize()

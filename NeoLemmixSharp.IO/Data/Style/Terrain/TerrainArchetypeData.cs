@@ -4,8 +4,10 @@ using System.Diagnostics;
 namespace NeoLemmixSharp.IO.Data.Style.Terrain;
 
 [DebuggerDisplay("{StyleIdentifier}:{PieceIdentifier}")]
-public sealed class TerrainArchetypeData : ITerrainArchetypeData
+public sealed class TerrainArchetypeData : ITerrainArchetypeData, IArchetypeData
 {
+    TextureType IArchetypeData.TextureType => TextureType.TerrainSprite;
+
     public required StyleIdentifier StyleIdentifier { get; init; }
     public required PieceIdentifier PieceIdentifier { get; init; }
     public required string Name { get; init; }
@@ -14,6 +16,7 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData
     public required ResizeType ResizeType { get; init; }
     public required Size DefaultSize { get; init; }
     public required bool IsSteel { get; init; }
+
 
     internal TerrainArchetypeData()
     {
