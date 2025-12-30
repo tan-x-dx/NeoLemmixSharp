@@ -29,7 +29,6 @@ internal sealed class GadgetAnimationReader : NeoLemmixDataReader
     private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
     private NeoLemmixGadgetAnimationData? _currentNeoLemmixGadgetAnimationData;
     private AnimationTriggerData? _currentAnimationTriggerData;
-    private bool _readingTrigger;
 
     public GadgetAnimationReader(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
         : base(string.Empty)
@@ -160,40 +159,40 @@ internal sealed class GadgetAnimationReader : NeoLemmixDataReader
 
     private void OnEnterTrigger(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _readingTrigger = true;
+        Debug.Assert(_currentAnimationTriggerData is null);
+
         _currentAnimationTriggerData = new AnimationTriggerData();
     }
 
     private void SetTriggerCondition(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        Debug.Assert(_readingTrigger);
+        Debug.Assert(_currentAnimationTriggerData is not null);
 
         _currentAnimationTriggerData!.Condition = GetNeoLemmixGadgetStateType(line, secondToken);
     }
 
     private void SetTriggerState(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        Debug.Assert(_readingTrigger);
+        Debug.Assert(_currentAnimationTriggerData is not null);
 
         _currentAnimationTriggerData!.StateType = GetNeoLemmixGadgetAnimationAction(line, secondToken);
     }
 
     private void SetTriggerHide(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        Debug.Assert(_readingTrigger);
+      //  Debug.Assert(_currentAnimationTriggerData is not null);
 
-        _currentAnimationTriggerData!.Hide = true;
+        _currentAnimationTriggerData?.Hide = true;
     }
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         var currentAnimationData = _currentNeoLemmixGadgetAnimationData!;
 
-        if (_readingTrigger)
+        if (_currentAnimationTriggerData is not null)
         {
-            currentAnimationData.AnimationTriggers.Add(_currentAnimationTriggerData!);
+            currentAnimationData.AnimationTriggers.Add(_currentAnimationTriggerData);
             _currentAnimationTriggerData = null;
-            _readingTrigger = false;
             return;
         }
 
