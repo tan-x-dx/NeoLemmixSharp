@@ -20,7 +20,7 @@ public sealed class KeyboardEventHandler
     {
         foreach (ComponentKeyboardAction action in _actions)
         {
-            action.Invoke(c, in keys);
+            action(c, in keys);
         }
     }
 

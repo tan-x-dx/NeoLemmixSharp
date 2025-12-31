@@ -9,6 +9,7 @@ public sealed class BackgroundArchetypeData : IArchetypeData
     public required StyleIdentifier StyleIdentifier { get; init; }
     public required PieceIdentifier PieceIdentifier { get; init; }
     public required string Name { get; init; }
+    public required string TextureFilePath { get; init; }
 
     RectangularRegion IArchetypeData.NineSliceData { get; }
     ResizeType IArchetypeData.ResizeType { get; }

@@ -7,6 +7,7 @@ public interface IArchetypeData
     StyleIdentifier StyleIdentifier { get; }
     PieceIdentifier PieceIdentifier { get; }
     string Name { get; }
+    string TextureFilePath { get; }
 
     RectangularRegion NineSliceData { get; }
     ResizeType ResizeType { get; }

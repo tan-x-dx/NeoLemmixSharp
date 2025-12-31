@@ -11,6 +11,7 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData, IArchetypeData
     public required StyleIdentifier StyleIdentifier { get; init; }
     public required PieceIdentifier PieceIdentifier { get; init; }
     public required string Name { get; init; }
+    public required string TextureFilePath { get; init; }
 
     public required RectangularRegion NineSliceData { get; init; }
     public required ResizeType ResizeType { get; init; }
@@ -32,11 +33,13 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData, IArchetypeData
 
     internal static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
        StyleIdentifier styleIdentifier,
-       PieceIdentifier pieceIdentifier) => new()
+       PieceIdentifier pieceIdentifier,
+       string textureFilePath) => new()
        {
            StyleIdentifier = styleIdentifier,
            PieceIdentifier = pieceIdentifier,
            Name = string.Empty,
+           TextureFilePath = textureFilePath,
 
            NineSliceData = default,
            ResizeType = ResizeType.None,

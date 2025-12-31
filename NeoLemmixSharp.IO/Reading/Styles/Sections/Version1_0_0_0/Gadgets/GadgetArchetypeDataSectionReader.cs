@@ -55,12 +55,16 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
             _ => Helpers.ThrowUnknownEnumValueException<GadgetType, IGadgetArchetypeSpecificationData>(gadgetType),
         };
 
+        var pieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]);
+        var textureFilePath = ConstructGadgetPngFilePath(styleIdentifier, pieceIdentifier);
+
         return new GadgetArchetypeData
         {
             StyleIdentifier = styleIdentifier,
-            PieceIdentifier = _stringIdLookup[pieceId],
+            PieceIdentifier = pieceIdentifier,
             GadgetName = _stringIdLookup[nameId],
             BaseSpriteSize = baseSpriteSize,
+            TextureFilePath = textureFilePath,
 
             SpecificationData = specificationData,
         };
@@ -96,6 +100,17 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
          ReadMiscData(reader, result);
 
          return result;*/
+    }
+
+    private static string ConstructGadgetPngFilePath(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier)
+    {
+        var rootFilePath = Path.Combine(
+            RootDirectoryManager.StyleFolderDirectory,
+            styleIdentifier.ToString(),
+            DefaultFileExtensions.GadgetFolderName,
+            pieceIdentifier.ToString());
+
+        return RootDirectoryManager.GetCorrespondingImageFile(rootFilePath);
     }
 
     private HitBoxGadgetArchetypeSpecificationData ReadHitBoxGadgetArchetypeData(RawStyleFileDataReader reader, Size baseSpriteSize)

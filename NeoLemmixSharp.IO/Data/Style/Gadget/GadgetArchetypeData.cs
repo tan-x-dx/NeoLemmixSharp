@@ -14,6 +14,7 @@ public sealed class GadgetArchetypeData : IArchetypeData
 
     public required IGadgetArchetypeSpecificationData SpecificationData { get; init; }
     string IArchetypeData.Name => GadgetName.ToString();
+    public required string TextureFilePath { get; init; }
     RectangularRegion IArchetypeData.NineSliceData => throw new NotImplementedException();
     ResizeType IArchetypeData.ResizeType => throw new NotImplementedException();
     Size IArchetypeData.DefaultSize => BaseSpriteSize;

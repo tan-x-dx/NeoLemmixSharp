@@ -52,7 +52,7 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
     {
         _neoLemmixGadgetArchetypeData = neoLemmixGadgetArchetypeData;
 
-        SetNumberOfTokens(16);
+        SetNumberOfTokens(18);
 
         RegisterTokenAction("TRIGGER_X", SetTriggerX);
         RegisterTokenAction("TRIGGER_Y", SetTriggerY);
@@ -70,6 +70,8 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
         RegisterTokenAction("DIGIT_Y", SetDigitY);
         RegisterTokenAction("DIGIT_ALIGNMENT", SetDigitAlignment);
         RegisterTokenAction("DIGIT_LENGTH", SetDigitLength);
+        RegisterTokenAction("SOUND_EXHAUST", SetSoundExhaust);
+        RegisterTokenAction("KEY_FRAME", SetKeyFrame);
     }
 
     public override bool ShouldProcessSection(ReadOnlySpan<char> token)
@@ -172,6 +174,14 @@ internal sealed class GadgetArchetypeDataReader : NeoLemmixDataReader
     }
 
     private void SetDigitLength(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+    }
+
+    private void SetSoundExhaust(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+    }
+
+    private void SetKeyFrame(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
     }
 

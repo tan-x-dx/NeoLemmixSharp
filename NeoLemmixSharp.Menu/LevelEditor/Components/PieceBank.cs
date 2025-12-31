@@ -36,8 +36,6 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
 
     private void UpdateTerrainPieces(StyleData styleData)
     {
-        var terrainDirectory = RootDirectoryManager.GetStyleTerrainFolderPath(styleData.Identifier);
-
         _terrainPieces.Clear();
         _terrainPieces.EnsureCapacity(styleData.AllDefinedTerrainArchetypeData.Count);
 
@@ -45,7 +43,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
 
         foreach (var terrainArchetypeData in styleData.AllDefinedTerrainArchetypeData)
         {
-            var terrainPieceSelector = new PieceSelector(terrainArchetypeData, terrainDirectory);
+            var terrainPieceSelector = new PieceSelector(terrainArchetypeData);
             terrainPieceSelector.MouseDown.RegisterMouseEvent(_onSelectTerrainPiece);
             terrainPieceSelector.Left = x;
             terrainPieceSelector.Top = UiConstants.TwiceStandardInset;
@@ -58,8 +56,6 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
 
     private void UpdateGadgetPieces(StyleData styleData)
     {
-        var gadgetDirectory = RootDirectoryManager.GetStyleGadgetFolderPath(styleData.Identifier);
-
         _gadgetPieces.Clear();
         _gadgetPieces.EnsureCapacity(styleData.AllDefinedGadgetArchetypeData.Count);
 
@@ -67,7 +63,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
 
         foreach (var gadgetArchetypeData in styleData.AllDefinedGadgetArchetypeData)
         {
-            var gadgetPieceSelector = new PieceSelector(gadgetArchetypeData, gadgetDirectory);
+            var gadgetPieceSelector = new PieceSelector(gadgetArchetypeData);
             gadgetPieceSelector.MouseDown.RegisterMouseEvent(_onSelectGadgetPiece);
             gadgetPieceSelector.Left = x;
             gadgetPieceSelector.Top = UiConstants.TwiceStandardInset;

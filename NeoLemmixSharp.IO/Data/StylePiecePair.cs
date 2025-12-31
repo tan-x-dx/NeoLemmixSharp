@@ -2,5 +2,5 @@
 
 namespace NeoLemmixSharp.IO.Data;
 
-[DebuggerDisplay("{StyleName}:{PieceName}")]
+[DebuggerDisplay("{StyleIdentifier}:{PieceIdentifier}")]
 public readonly record struct StylePiecePair(StyleIdentifier StyleIdentifier, PieceIdentifier PieceIdentifier);

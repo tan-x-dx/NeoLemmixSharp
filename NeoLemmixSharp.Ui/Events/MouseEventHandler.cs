@@ -21,7 +21,7 @@ public sealed class MouseEventHandler
     {
         foreach (ComponentMouseAction action in _actions)
         {
-            action.Invoke(c, position);
+            action(c, position);
         }
     }
 

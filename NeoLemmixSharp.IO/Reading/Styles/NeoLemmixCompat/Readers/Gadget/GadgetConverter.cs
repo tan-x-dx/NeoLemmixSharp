@@ -21,6 +21,7 @@ internal static class GadgetConverter
             StyleIdentifier = neoLemmixGadgetArchetypeData.StyleIdentifier,
             PieceIdentifier = neoLemmixGadgetArchetypeData.GadgetPieceIdentifier,
             GadgetName = neoLemmixGadgetArchetypeData.GadgetPieceIdentifier.ToString(),
+            TextureFilePath = neoLemmixGadgetArchetypeData.AnimationData.First(x => !string.IsNullOrWhiteSpace(x.TextureFilePath)).TextureFilePath!,
             BaseSpriteSize = baseSpriteSize,
             SpecificationData = specificationData,
         };
@@ -33,13 +34,13 @@ internal static class GadgetConverter
         if (neoLemmixGadgetArchetypeData.HasSpriteSizeSpecified)
             return new Size(neoLemmixGadgetArchetypeData.SpriteWidth, neoLemmixGadgetArchetypeData.SpriteHeight);
 
-        neoLemmixGadgetArchetypeData.GetOrLoadGadgetTexture(out var pngFilePath, out var gadgetTexture);
-
         foreach (var animationData in neoLemmixGadgetArchetypeData.AnimationData)
         {
-            if (animationData.IsPrimaryAnimationData)
+            var gadgetTexture = animationData.TryGetOrLoadGadgetTexture(neoLemmixGadgetArchetypeData.StyleIdentifier, neoLemmixGadgetArchetypeData.GadgetPieceIdentifier);
+
+            if (gadgetTexture is not null)
             {
-                return SpriteHelpers.DetermineSpriteSize(pngFilePath, gadgetTexture, 1, animationData.FrameCount);
+                return SpriteHelpers.DetermineSpriteSize(animationData.TextureFilePath!, gadgetTexture, 1, animationData.FrameCount);
             }
         }
 

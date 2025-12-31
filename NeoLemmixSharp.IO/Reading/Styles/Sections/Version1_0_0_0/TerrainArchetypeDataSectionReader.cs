@@ -28,7 +28,7 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
     }
 
     private TerrainArchetypeData ReadNextTerrainArchetypeData(
-        StyleIdentifier styleName,
+        StyleIdentifier styleIdentifier,
         RawStyleFileDataReader reader)
     {
         int pieceId = reader.Read16BitUnsignedInteger();
@@ -42,11 +42,15 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
 
         var nineSliceData = ReadNineSliceData(reader, resizeType, out var defaultSize);
 
+        var pieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]);
+        var textureFilePath = ConstructTerrainPngFilePath(styleIdentifier, pieceIdentifier);
+
         var newTerrainArchetypeData = new TerrainArchetypeData
         {
-            StyleIdentifier = styleName,
-            PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
+            StyleIdentifier = styleIdentifier,
+            PieceIdentifier = pieceIdentifier,
             Name = _stringIdLookup[nameId],
+            TextureFilePath = textureFilePath,
 
             NineSliceData = nineSliceData,
             ResizeType = resizeType,
@@ -56,6 +60,17 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         };
 
         return newTerrainArchetypeData;
+    }
+
+    private static string ConstructTerrainPngFilePath(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier)
+    {
+        var rootFilePath = Path.Combine(
+            RootDirectoryManager.StyleFolderDirectory,
+            styleIdentifier.ToString(),
+            DefaultFileExtensions.TerrainFolderName,
+            pieceIdentifier.ToString());
+
+        return RootDirectoryManager.GetCorrespondingImageFile(rootFilePath);
     }
 
     private static RectangularRegion ReadNineSliceData(

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.Ui.Components;
 using Color = Microsoft.Xna.Framework.Color;
@@ -17,21 +16,10 @@ public sealed class PieceSelector : Component
     public IArchetypeData StylePiece { get; }
     private readonly Texture2D _sourceTexture;
 
-    public PieceSelector(IArchetypeData piece, string rootFolderDirectory) : base(0, 0, BaseSpriteRenderDimension, BaseSpriteRenderDimension, piece.PieceIdentifier.ToString())
+    public PieceSelector(IArchetypeData piece) : base(0, 0, BaseSpriteRenderDimension, BaseSpriteRenderDimension, piece.PieceIdentifier.ToString())
     {
-        var textureFilePath = GetTextureFilePath(piece, rootFolderDirectory);
         StylePiece = piece;
-        _sourceTexture = TextureCache.GetOrLoadTexture(textureFilePath, piece.StyleIdentifier, piece.PieceIdentifier, piece.TextureType);
-    }
-
-    private static string GetTextureFilePath(IArchetypeData piece, string rootFolderDirectory)
-    {
-        var rootFilePath = Path.Combine(
-            rootFolderDirectory,
-            piece.PieceIdentifier.ToString());
-
-        var pngPath = RootDirectoryManager.GetCorrespondingImageFile(rootFilePath);
-        return pngPath;
+        _sourceTexture = TextureCache.GetOrLoadTexture(piece.TextureFilePath, piece.StyleIdentifier, piece.PieceIdentifier, piece.TextureType);
     }
 
     protected override void RenderComponent(SpriteBatch spriteBatch)

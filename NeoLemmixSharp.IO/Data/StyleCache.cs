@@ -118,9 +118,8 @@ public static class StyleCache
 
             ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeDataLookup, terrainData.PieceIdentifier, out exists);
             if (!exists)
-            {
-                terrainArchetypeDataForStyle = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(terrainData.StyleIdentifier, terrainData.PieceIdentifier);
-            }
+                throw new InvalidOperationException("Terrain data does not exist in style!");
+
             terrainArchetypeDataForLevel = terrainArchetypeDataForStyle;
         }
     }

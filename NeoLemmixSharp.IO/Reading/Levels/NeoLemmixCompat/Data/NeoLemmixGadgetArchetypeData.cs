@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.GadgetData;
 using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers.Gadget;
@@ -46,11 +45,4 @@ internal sealed class NeoLemmixGadgetArchetypeData
     public bool IsSkillPickup { get; set; }
 
     public List<NeoLemmixGadgetAnimationData> AnimationData { get; } = new();
-
-    public void GetOrLoadGadgetTexture(out string pngFilePath, out Texture2D texture)
-    {
-        // Need to load the texture here to get its dimensions, since that data is not present in the NeoLemmix config file
-        pngFilePath = RootDirectoryManager.GetCorrespondingImageFile(FilePath);
-        texture = TextureCache.GetOrLoadTexture(pngFilePath, StyleIdentifier, GadgetPieceIdentifier, TextureType.GadgetSprite);
-    }
 }

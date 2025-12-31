@@ -116,6 +116,7 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
         StyleIdentifier = _styleIdentifier,
         PieceIdentifier = _terrainPieceIdentifier,
         Name = _terrainPieceIdentifier.ToString(),
+        TextureFilePath = RootDirectoryManager.GetCorrespondingImageFile(_terrainPieceFilePath),
 
         NineSliceData = GetNineSliceData(),
         ResizeType = _resizeType,
