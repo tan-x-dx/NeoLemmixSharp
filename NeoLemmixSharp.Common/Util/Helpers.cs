@@ -109,6 +109,7 @@ public static class Helpers
     /// Calculates a % b, but does not return negative numbers for negative inputs.
     /// </summary>
     [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int LogicalMod(int a, int b)
     {
         var result = a % b;

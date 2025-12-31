@@ -181,7 +181,6 @@ public abstract class Component : IDisposable
         set => _state = value;
     }
 
-
     public void SetSize(int w, int h)
     {
         Dimensions = new Size(w, h);
@@ -234,12 +233,12 @@ public abstract class Component : IDisposable
 
     protected void RenderChildren(SpriteBatch spriteBatch)
     {
-        if (_children != null)
+        if (_children == null)
+            return;
+
+        for (int i = 0; i < _children.Count; i++)
         {
-            for (int i = 0; i < _children.Count; i++)
-            {
-                _children[i].Render(spriteBatch);
-            }
+            _children[i].Render(spriteBatch);
         }
     }
 
@@ -251,20 +250,20 @@ public abstract class Component : IDisposable
 
     private void RenderLabel(SpriteBatch spriteBatch)
     {
-        if (!string.IsNullOrWhiteSpace(Label))
-        {
-            var labelPosition = new Vector2(Left + LabelOffsetX, Top + LabelOffsetY);
-            spriteBatch.DrawString(
-                UiSprites.UiFont,
-                _textLabel,
-                labelPosition,
-                Color.White,
-                0f,
-                Vector2.Zero,
-                UiConstants.FontScaleFactor,
-                SpriteEffects.None,
-                1.0f);
-        }
+        if (string.IsNullOrWhiteSpace(Label))
+            return;
+
+        var labelPosition = new Vector2(Left + LabelOffsetX, Top + LabelOffsetY);
+        spriteBatch.DrawString(
+            UiSprites.UiFont,
+            _textLabel,
+            labelPosition,
+            Color.White,
+            0f,
+            Vector2.Zero,
+            UiConstants.FontScaleFactor,
+            SpriteEffects.None,
+            1.0f);
     }
 
     public void AddComponent(Component? c) => AddComponent(c, -1);
