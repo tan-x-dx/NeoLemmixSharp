@@ -38,9 +38,6 @@ public sealed class LevelEditorPage : PageBase
         _bottomPanel = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 
         CurrentLevelData = new LevelData(IO.FileFormats.FileFormatType.Default);
-
-        var styleData = StyleCache.GetOrLoadStyleData(new("dex_grotto", IO.FileFormats.FileFormatType.NeoLemmix));
-        SetStyle(styleData);
     }
 
     protected override void OnInitialise()
@@ -52,6 +49,9 @@ public sealed class LevelEditorPage : PageBase
         root.AddComponent(_levelCanvas);
 
         BuildLevelEditorUI(root);
+
+        var styleData = StyleCache.GetOrLoadStyleData(new("dex_grotto", IO.FileFormats.FileFormatType.NeoLemmix));
+        SetStyle(styleData);
 
         OnResize();
     }

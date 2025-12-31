@@ -224,11 +224,15 @@ public abstract class Component : IDisposable
         set => _labelOffsetY = value;
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    public virtual void Render(SpriteBatch spriteBatch)
     {
         if (_isVisible)
             RenderComponent(spriteBatch);
+        RenderChildren(spriteBatch);
+    }
 
+    protected void RenderChildren(SpriteBatch spriteBatch)
+    {
         if (_children != null)
         {
             for (int i = 0; i < _children.Count; i++)

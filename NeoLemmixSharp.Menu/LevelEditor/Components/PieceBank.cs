@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Data;
@@ -9,8 +8,8 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components;
 
 public sealed class PieceBank : Component, IComparer<PieceSelector>
 {
-    private readonly List<PieceSelector> _terrainPieces = new(IoConstants.AssumedNumberOfTerrainArchetypeDataInStyle);
-    private readonly List<PieceSelector> _gadgetPieces = new(IoConstants.AssumedNumberOfGadgetArchetypeDataInStyle);
+    private readonly List<PieceSelector> _terrainPieces = [];
+    private readonly List<PieceSelector> _gadgetPieces = [];
     private readonly List<PieceSelector> _backgroundPieces = [];
 
     private readonly MouseEventHandler.ComponentMouseAction _onSelectTerrainPiece;
@@ -48,6 +47,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             terrainPieceSelector.Left = x;
             terrainPieceSelector.Top = UiConstants.TwiceStandardInset;
             x += UiConstants.StandardInset + PieceSelector.BaseSpriteRenderDimension;
+            AddComponent(terrainPieceSelector);
             _terrainPieces.Add(terrainPieceSelector);
         }
 
@@ -68,6 +68,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             gadgetPieceSelector.Left = x;
             gadgetPieceSelector.Top = UiConstants.TwiceStandardInset;
             x += UiConstants.StandardInset + PieceSelector.BaseSpriteRenderDimension;
+            AddComponent(gadgetPieceSelector);
             _gadgetPieces.Add(gadgetPieceSelector);
         }
 
@@ -78,10 +79,19 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
     {
     }
 
+    public override void Render(SpriteBatch spriteBatch)
+    {
+        RenderComponent(spriteBatch);
+        RenderPieceSelectors(spriteBatch);
+    }
+
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {
         UiSprites.DrawBeveledRectangle(spriteBatch, this);
+    }
 
+    private void RenderPieceSelectors(SpriteBatch spriteBatch)
+    {
         var pieceSelectorsToRender = GetPieceSelectorsToRender();
 
         foreach (var pieceSelector in pieceSelectorsToRender)

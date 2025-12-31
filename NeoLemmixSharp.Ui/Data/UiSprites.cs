@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Ui.Data;
@@ -31,7 +32,7 @@ public static class UiSprites
             c.Height);
 
         var colors = c.Colors.AsSpan();
-        var color = colors[((int)c.State) & 3];
+        var color = colors.At((int)c.State);
 
         DrawNineSlicedBeveledRectangle(spriteBatch, dest, color);
     }
