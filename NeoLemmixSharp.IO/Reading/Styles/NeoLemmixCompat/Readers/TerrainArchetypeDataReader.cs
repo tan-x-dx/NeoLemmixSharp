@@ -33,7 +33,7 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
         _styleIdentifier = styleIdentifier;
         _terrainPieceIdentifier = terrainPieceIdentifier;
 
-        SetNumberOfTokens(10);
+        SetNumberOfTokens(11);
 
         RegisterTokenAction("STEEL", SetSteel);
         RegisterTokenAction("RESIZE_HORIZONTAL", SetResizeHorizontal);
@@ -45,6 +45,7 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
         RegisterTokenAction("NINE_SLICE_BOTTOM", SetNineSliceBottom);
         RegisterTokenAction("DEFAULT_WIDTH", SetDefaultWidth);
         RegisterTokenAction("DEFAULT_HEIGHT", SetDefaultHeight);
+        RegisterTokenAction("DEPRECATED", SetDeprecated);
     }
 
     public override bool ShouldProcessSection(ReadOnlySpan<char> token)
@@ -109,6 +110,11 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
     {
         _resizeType |= ResizeType.ResizeVertical;
         _defaultHeight = int.Parse(secondToken);
+    }
+
+    private void SetDeprecated(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
+    {
+
     }
 
     public TerrainArchetypeData CreateTerrainArchetypeData() => new()

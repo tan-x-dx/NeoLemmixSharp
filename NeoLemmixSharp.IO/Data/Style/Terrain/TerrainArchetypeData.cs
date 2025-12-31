@@ -38,7 +38,7 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData, IArchetypeData
        {
            StyleIdentifier = styleIdentifier,
            PieceIdentifier = pieceIdentifier,
-           Name = string.Empty,
+           Name = pieceIdentifier.ToString(),
            TextureFilePath = textureFilePath,
 
            NineSliceData = default,

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Data;
@@ -8,6 +9,9 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components;
 
 public sealed class PieceBank : Component, IComparer<PieceSelector>
 {
+    private const int InitialPieceOffset = UiConstants.TwiceStandardInset + PieceSelector.BaseSpriteRenderDimension;
+    private const int PieceOffsetDelta = UiConstants.StandardInset + PieceSelector.BaseSpriteRenderDimension;
+
     private readonly List<PieceSelector> _terrainPieces = [];
     private readonly List<PieceSelector> _gadgetPieces = [];
     private readonly List<PieceSelector> _backgroundPieces = [];
@@ -15,6 +19,10 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
     private readonly MouseEventHandler.ComponentMouseAction _onSelectTerrainPiece;
     private readonly MouseEventHandler.ComponentMouseAction _onSelectGadgetPiece;
     private readonly MouseEventHandler.ComponentMouseAction _onSelectBackgroundPiece;
+
+    private PieceBankSelectionMode _selectionMode = PieceBankSelectionMode.Terrain;
+    private int _scrollIndex;
+    private int _numberOfPiecesToDisplay;
 
     public PieceBank(
         MouseEventHandler.ComponentMouseAction onSelectTerrainPiece,
@@ -24,13 +32,18 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
         _onSelectTerrainPiece = onSelectTerrainPiece;
         _onSelectGadgetPiece = onSelectGadgetPiece;
         _onSelectBackgroundPiece = onSelectBackgroundPiece;
+
+        Height = PieceSelector.BaseSpriteRenderDimension + 32;
     }
 
     public void SetStyle(StyleData styleData)
     {
+        _scrollIndex = 0;
         UpdateTerrainPieces(styleData);
         UpdateGadgetPieces(styleData);
         UpdateBackgroundPieces(styleData);
+
+        AdjustPieceOffsets();
     }
 
     private void UpdateTerrainPieces(StyleData styleData)
@@ -38,15 +51,18 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
         _terrainPieces.Clear();
         _terrainPieces.EnsureCapacity(styleData.AllDefinedTerrainArchetypeData.Count);
 
-        var x = UiConstants.TwiceStandardInset + PieceSelector.BaseSpriteRenderDimension;
+        var offset = InitialPieceOffset;
 
         foreach (var terrainArchetypeData in styleData.AllDefinedTerrainArchetypeData)
         {
-            var terrainPieceSelector = new PieceSelector(terrainArchetypeData);
+            var terrainPieceSelector = new PieceSelector(terrainArchetypeData)
+            {
+                IsVisible = _selectionMode == PieceBankSelectionMode.Terrain
+            };
             terrainPieceSelector.MouseDown.RegisterMouseEvent(_onSelectTerrainPiece);
-            terrainPieceSelector.Left = x;
+            terrainPieceSelector.Left = offset;
             terrainPieceSelector.Top = UiConstants.TwiceStandardInset;
-            x += UiConstants.StandardInset + PieceSelector.BaseSpriteRenderDimension;
+            offset += PieceOffsetDelta;
             AddComponent(terrainPieceSelector);
             _terrainPieces.Add(terrainPieceSelector);
         }
@@ -59,15 +75,18 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
         _gadgetPieces.Clear();
         _gadgetPieces.EnsureCapacity(styleData.AllDefinedGadgetArchetypeData.Count);
 
-        var x = UiConstants.TwiceStandardInset + PieceSelector.BaseSpriteRenderDimension;
+        var offset = InitialPieceOffset;
 
         foreach (var gadgetArchetypeData in styleData.AllDefinedGadgetArchetypeData)
         {
-            var gadgetPieceSelector = new PieceSelector(gadgetArchetypeData);
+            var gadgetPieceSelector = new PieceSelector(gadgetArchetypeData)
+            {
+                IsVisible = _selectionMode == PieceBankSelectionMode.Gadgets
+            };
             gadgetPieceSelector.MouseDown.RegisterMouseEvent(_onSelectGadgetPiece);
-            gadgetPieceSelector.Left = x;
+            gadgetPieceSelector.Left = offset;
             gadgetPieceSelector.Top = UiConstants.TwiceStandardInset;
-            x += UiConstants.StandardInset + PieceSelector.BaseSpriteRenderDimension;
+            offset += PieceOffsetDelta;
             AddComponent(gadgetPieceSelector);
             _gadgetPieces.Add(gadgetPieceSelector);
         }
@@ -77,6 +96,13 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
 
     private void UpdateBackgroundPieces(StyleData styleData)
     {
+    }
+
+    public void OnResize()
+    {
+        _numberOfPiecesToDisplay = (Width - InitialPieceOffset) / PieceOffsetDelta;
+
+        AdjustPieceOffsets();
     }
 
     public override void Render(SpriteBatch spriteBatch)
@@ -92,7 +118,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
 
     private void RenderPieceSelectors(SpriteBatch spriteBatch)
     {
-        var pieceSelectorsToRender = GetPieceSelectorsToRender();
+        var pieceSelectorsToRender = GetCurrentPieceSelectors();
 
         foreach (var pieceSelector in pieceSelectorsToRender)
         {
@@ -100,9 +126,75 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
         }
     }
 
-    private List<PieceSelector> GetPieceSelectorsToRender()
+    private List<PieceSelector> GetCurrentPieceSelectors()
     {
-        return _terrainPieces;
+        return _selectionMode switch
+        {
+            PieceBankSelectionMode.Terrain => _terrainPieces,
+            PieceBankSelectionMode.Gadgets => _gadgetPieces,
+            PieceBankSelectionMode.Background => _backgroundPieces,
+            PieceBankSelectionMode.Sketches => [],
+
+            _ => [],
+        };
+    }
+
+    private void SetSelectionMode(PieceBankSelectionMode selectionMode)
+    {
+        if (_selectionMode == selectionMode)
+            return;
+
+        var currentlyDisplayedItems = GetCurrentPieceSelectors();
+        foreach (var pieceSelector in currentlyDisplayedItems)
+        {
+            pieceSelector.IsVisible = false;
+        }
+
+        _selectionMode = selectionMode;
+        _scrollIndex = 0;
+
+        currentlyDisplayedItems = GetCurrentPieceSelectors();
+        foreach (var pieceSelector in currentlyDisplayedItems)
+        {
+            pieceSelector.IsVisible = true;
+        }
+    }
+
+    public void HandleUserInput(MenuInputController inputController)
+    {
+        if (!ContainsPoint(inputController.MousePosition))
+            return;
+
+        Scroll(inputController.ScrollDelta);
+    }
+
+    private void Scroll(int scrollDelta)
+    {
+        if (scrollDelta == 0)
+            return;
+
+        var currentlyDisplayedItems = GetCurrentPieceSelectors();
+        if (currentlyDisplayedItems.Count == 0)
+            return;
+
+        _scrollIndex = Helpers.LogicalMod(_scrollIndex + scrollDelta, currentlyDisplayedItems.Count);
+
+        AdjustPieceOffsets();
+    }
+
+    private void AdjustPieceOffsets()
+    {
+        var currentlyDisplayedItems = GetCurrentPieceSelectors();
+
+        for (var i = 0; i < currentlyDisplayedItems.Count; i++)
+        {
+            var effectiveIndex = Helpers.LogicalMod(i + _scrollIndex, currentlyDisplayedItems.Count);
+            var piece = currentlyDisplayedItems[effectiveIndex];
+            piece.IsVisible = i < _numberOfPiecesToDisplay;
+            piece.Top = Bottom - (PieceSelector.BaseSpriteRenderDimension + UiConstants.StandardInset);
+            piece.Left = Left + InitialPieceOffset + (i * PieceOffsetDelta);
+
+        }
     }
 
     int IComparer<PieceSelector>.Compare(PieceSelector? x, PieceSelector? y)
@@ -117,4 +209,12 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
 
         return string.Compare(nameX, nameY, StringComparison.Ordinal);
     }
+}
+
+public enum PieceBankSelectionMode
+{
+    Terrain,
+    Gadgets,
+    Background,
+    Sketches
 }

@@ -181,6 +181,7 @@ public abstract class Component : IDisposable
         set => _state = value;
     }
 
+
     public void SetSize(int w, int h)
     {
         Dimensions = new Size(w, h);

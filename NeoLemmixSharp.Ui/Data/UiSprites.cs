@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Ui.Data;
 public static class UiSprites
 {
     internal static Texture2D BevelTexture { get; private set; } = null!;
-    internal static SpriteFont UiFont { get; private set; } = null!;
+    public static SpriteFont UiFont { get; private set; } = null!;
 
     public static void Initialise(ContentManager contentManager)
     {

@@ -9,12 +9,11 @@ public static class LevelEditorUiHelper
 {
     private const int TopPanelHeight = 128;
     private const int LeftPanelWidth = 280;
-    private const int BottomPanelHeight = 256;
 
     public static void OnResizeLevelEditor(
         Component topPanel,
         Component leftPanel,
-        Component bottomPanel,
+        Component pieceBank,
         LevelCanvas levelCanvas)
     {
         var windowSize = IGameWindow.Instance.WindowSize;
@@ -25,19 +24,16 @@ public static class LevelEditorUiHelper
         topPanel.Height = TopPanelHeight;
 
         leftPanel.Left = 0;
-        leftPanel.Top = TopPanelHeight;
-        leftPanel.Width = LeftPanelWidth;
-        leftPanel.Height = windowSize.H - TopPanelHeight - BottomPanelHeight;
+        leftPanel.Top = topPanel.Height;
 
-        bottomPanel.Left = 0;
-        bottomPanel.Top = windowSize.H - BottomPanelHeight;
-        bottomPanel.Width = windowSize.W;
-        bottomPanel.Height = BottomPanelHeight;
+        pieceBank.Left = 0;
+        pieceBank.Top = windowSize.H - pieceBank.Height;
+        pieceBank.Width = windowSize.W;
 
-        levelCanvas.Left = LeftPanelWidth;
+        levelCanvas.Left = leftPanel.Width;
         levelCanvas.Top = TopPanelHeight;
-        levelCanvas.Width = windowSize.W - LeftPanelWidth;
-        levelCanvas.Height = windowSize.H - topPanel.Height - BottomPanelHeight;
+        levelCanvas.Width = windowSize.W - leftPanel.Width;
+        levelCanvas.Height = windowSize.H - topPanel.Height - pieceBank.Height;
     }
 
     public static Tab BuildLeftTab()

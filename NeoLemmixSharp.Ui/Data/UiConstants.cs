@@ -14,8 +14,8 @@ public static class UiConstants
     public const int RaisedRectangleBorder = 2;
 
     private const float FontGlyphWidth = 26f;
-    internal const float FontScaleFactor = 1.0f;
-    internal const float FontGlyphWidthMultiplier = FontGlyphWidth * FontScaleFactor;
+    public const float FontScaleFactor = 1.0f;
+    public const float FontGlyphWidthMultiplier = FontGlyphWidth * FontScaleFactor;
 
     private static ReadOnlySpan<uint> RawDefaultColors =>
     [

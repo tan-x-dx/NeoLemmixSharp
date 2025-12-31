@@ -15,7 +15,7 @@ public sealed class LevelEditorPage : PageBase
 
     private Tab _topPanel;
     private Tab _leftPanel;
-    private PieceBank _bottomPanel;
+    private PieceBank _pieceBank;
 
     private StyleData _levelStyleData;
     private StyleData _pieceStyleData;
@@ -35,7 +35,7 @@ public sealed class LevelEditorPage : PageBase
     public LevelEditorPage(MenuInputController menuInputController) : base(menuInputController)
     {
         _levelCanvas = new LevelCanvas(0, 0, 64, 64);
-        _bottomPanel = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
+        _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 
         CurrentLevelData = new LevelData(IO.FileFormats.FileFormatType.Default);
     }
@@ -50,7 +50,7 @@ public sealed class LevelEditorPage : PageBase
 
         BuildLevelEditorUI(root);
 
-        var styleData = StyleCache.GetOrLoadStyleData(new("dex_grotto", IO.FileFormats.FileFormatType.NeoLemmix));
+        var styleData = StyleCache.GetOrLoadStyleData(new("dex_brass", IO.FileFormats.FileFormatType.NeoLemmix));
         SetStyle(styleData);
 
         OnResize();
@@ -63,7 +63,10 @@ public sealed class LevelEditorPage : PageBase
 
     private void OnResize()
     {
-        LevelEditorUiHelper.OnResizeLevelEditor(_topPanel, _leftPanel, _bottomPanel, _levelCanvas);
+        LevelEditorUiHelper.OnResizeLevelEditor(_topPanel, _leftPanel, _pieceBank, _levelCanvas);
+
+        _levelCanvas.OnResize();
+        _pieceBank.OnResize();
     }
 
     protected override void HandleUserInput()
@@ -73,7 +76,8 @@ public sealed class LevelEditorPage : PageBase
             IGameWindow.Instance.Escape();
         }
 
-        _levelCanvas.Zoom(InputController.ScrollDelta);
+        _levelCanvas.HandleUserInput(InputController);
+        _pieceBank.HandleUserInput(InputController);
     }
 
     private void SetStyle(StyleData styleData)
@@ -81,7 +85,7 @@ public sealed class LevelEditorPage : PageBase
         _levelStyleData = styleData;
         _pieceStyleData = styleData;
 
-        _bottomPanel.SetStyle(styleData);
+        _pieceBank.SetStyle(styleData);
     }
 
     private void LoadLevel(string levelFilePath)
@@ -111,7 +115,7 @@ public sealed class LevelEditorPage : PageBase
 
         _topPanel = null!;
         _leftPanel = null!;
-        _bottomPanel = null!;
+        _pieceBank = null!;
 
         _levelStyleData = null!;
         _pieceStyleData = null!;
@@ -130,7 +134,7 @@ public sealed class LevelEditorPage : PageBase
         _leftPanel = LevelEditorUiHelper.BuildLeftTab();
         root.AddComponent(_leftPanel);
 
-        root.AddComponent(_bottomPanel);
+        root.AddComponent(_pieceBank);
     }
 
     private void OnSelectTerrainPiece(Component c, Point pos)

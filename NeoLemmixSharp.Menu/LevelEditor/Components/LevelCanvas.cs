@@ -44,7 +44,20 @@ public sealed class LevelCanvas : Component
         spriteBatch.FillRect(Helpers.CreateRectangle(p, s), Color.Black);
     }
 
-    public void Zoom(int scrollDelta)
+    public void OnResize()
+    {
+
+    }
+
+    public void HandleUserInput(MenuInputController inputController)
+    {
+        if (!ContainsPoint(inputController.MousePosition))
+            return;
+
+        Zoom(inputController.ScrollDelta);
+    }
+
+    private void Zoom(int scrollDelta)
     {
         if (scrollDelta == 0)
             return;

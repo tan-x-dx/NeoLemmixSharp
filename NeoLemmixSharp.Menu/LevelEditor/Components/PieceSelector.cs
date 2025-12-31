@@ -5,7 +5,7 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.Ui.Components;
-using System.Diagnostics;
+using NeoLemmixSharp.Ui.Data;
 using Color = Microsoft.Xna.Framework.Color;
 using Point = NeoLemmixSharp.Common.Point;
 using Size = NeoLemmixSharp.Common.Size;
@@ -28,6 +28,9 @@ public sealed class PieceSelector : Component
 
     public override void Render(SpriteBatch spriteBatch)
     {
+        if (!IsVisible)
+            return;
+
         RenderTile(spriteBatch);
 
         DetermineRenderRectangles(out var sourceRectangle, out var destinationRectangle);
@@ -40,6 +43,17 @@ public sealed class PieceSelector : Component
             destinationRectangle,
             sourceRectangle,
             Color.White);
+
+        spriteBatch.DrawString(
+            UiSprites.UiFont,
+            StylePiece.Name,
+            new Vector2(Left + 2f, Bottom - 18f),
+            Color.White,
+            0f,
+            Vector2.Zero,
+            UiConstants.FontScaleFactor,
+            SpriteEffects.None,
+            1.0f);
     }
 
     private void RenderTile(SpriteBatch spriteBatch)

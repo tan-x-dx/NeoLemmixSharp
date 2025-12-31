@@ -105,6 +105,18 @@ public static class Helpers
         return item.HasValue ? 1 : 0;
     }
 
+    /// <summary>
+    /// Calculates a % b, but does not return negative numbers for negative inputs.
+    /// </summary>
+    [Pure]
+    public static int LogicalMod(int a, int b)
+    {
+        var result = a % b;
+        if (result < 0)
+            result += b;
+        return result;
+    }
+
     public readonly ref struct FormatParameters(char openBracket, char separator, char closeBracket)
     {
         public readonly char OpenBracket = openBracket;
