@@ -18,17 +18,17 @@ public readonly struct ArrayWrapper2D<T> : IEquatable<ArrayWrapper2D<T>>
 
     public ArrayWrapper2D(
         T[] data,
-        Size dimensions)
+        Size arrayDimensions)
     {
-        Debug.Assert(dimensions.W >= 0);
-        Debug.Assert(dimensions.H >= 0);
+        Debug.Assert(arrayDimensions.W >= 0);
+        Debug.Assert(arrayDimensions.H >= 0);
 
-        if (data.Length != dimensions.Area())
+        if (data.Length != arrayDimensions.Area())
             throw new ArgumentException("Invalid dimensions");
 
         _data = data;
-        _arrayDimensions = dimensions;
-        _subRegion = new RectangularRegion(dimensions);
+        _arrayDimensions = arrayDimensions;
+        _subRegion = new RectangularRegion(arrayDimensions);
     }
 
     public ArrayWrapper2D(
@@ -61,6 +61,13 @@ public readonly struct ArrayWrapper2D<T> : IEquatable<ArrayWrapper2D<T>>
         }
 
         throw new ArgumentException("Invalid dimensions");
+    }
+
+    public ArrayWrapper2D(Size arrayDimensions)
+    {
+        _data = new T[arrayDimensions.Area()];
+        _arrayDimensions = arrayDimensions;
+        _subRegion = new RectangularRegion(arrayDimensions);
     }
 
     public ref T this[Point pos]

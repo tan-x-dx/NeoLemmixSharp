@@ -59,18 +59,16 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Initialize()
     {
-        /*
-        _graphics.PreferredBackBufferWidth = _windowWidth;
-        _graphics.PreferredBackBufferHeight = _windowHeight;
+        _graphics.PreferredBackBufferWidth = _baseWindowWidth;
+        _graphics.PreferredBackBufferHeight = _baseWindowHeight;
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
-        */
 
         ValidateGameConstants();
         ValidateMaxActionNameLength();
         LoadContent();
 
-        ToggleBorderless();
+        // ToggleBorderless();
     }
 
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)

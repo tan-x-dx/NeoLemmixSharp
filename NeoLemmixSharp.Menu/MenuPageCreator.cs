@@ -119,6 +119,6 @@ public sealed class MenuPageCreator
 
     public LevelEditorPage CreateLevelEditorPage()
     {
-        return new LevelEditorPage(_inputController);
+        return new LevelEditorPage(_inputController, _graphicsDevice);
     }
 }

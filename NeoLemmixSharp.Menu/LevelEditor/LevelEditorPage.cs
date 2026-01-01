@@ -1,9 +1,11 @@
-﻿using NeoLemmixSharp.Common;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Level.Terrain;
+using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.Menu.LevelEditor.Components;
-using NeoLemmixSharp.Menu.LevelEditor.Ui;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
 
@@ -11,10 +13,9 @@ namespace NeoLemmixSharp.Menu.LevelEditor;
 
 public sealed class LevelEditorPage : PageBase
 {
+    private LevelEditorMenuBar _topPanel;
+    private LevelEditorControlPanel _leftPanel;
     private readonly LevelCanvas _levelCanvas;
-
-    private Tab _topPanel;
-    private Tab _leftPanel;
     private PieceBank _pieceBank;
 
     private StyleData _levelStyleData;
@@ -32,12 +33,14 @@ public sealed class LevelEditorPage : PageBase
 
     public bool IsNeoLemmix => CurrentLevelData.FileFormatType == IO.FileFormats.FileFormatType.NeoLemmix;
 
-    public LevelEditorPage(MenuInputController menuInputController) : base(menuInputController)
+    public LevelEditorPage(MenuInputController menuInputController, GraphicsDevice graphicsDevice) : base(menuInputController)
     {
-        _levelCanvas = new LevelCanvas(0, 0, 64, 64);
+        _topPanel = new LevelEditorMenuBar();
+        _leftPanel = new LevelEditorControlPanel();
+        _levelCanvas = new LevelCanvas(graphicsDevice);
         _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 
-        CurrentLevelData = new LevelData(IO.FileFormats.FileFormatType.Default);
+        CurrentLevelData = CreateBlankLevelData();
     }
 
     protected override void OnInitialise()
@@ -46,9 +49,10 @@ public sealed class LevelEditorPage : PageBase
 
         var root = UiHandler.RootComponent;
         root.IsVisible = false;
+        root.AddComponent(_topPanel);
+        root.AddComponent(_leftPanel);
         root.AddComponent(_levelCanvas);
-
-        BuildLevelEditorUI(root);
+        root.AddComponent(_pieceBank);
 
         var styleData = StyleCache.GetOrLoadStyleData(new("dex_brass", IO.FileFormats.FileFormatType.NeoLemmix));
         SetStyle(styleData);
@@ -63,9 +67,25 @@ public sealed class LevelEditorPage : PageBase
 
     private void OnResize()
     {
-        LevelEditorUiHelper.OnResizeLevelEditor(_topPanel, _leftPanel, _pieceBank, _levelCanvas);
+        var windowSize = IGameWindow.Instance.WindowSize;
 
-        _levelCanvas.OnResize();
+        _topPanel.Left = 0;
+        _topPanel.Top = 0;
+        _topPanel.Width = windowSize.W;
+
+        _leftPanel.Left = 0;
+        _leftPanel.Top = _topPanel.Height;
+
+        _pieceBank.Left = 0;
+        _pieceBank.Top = windowSize.H - _pieceBank.Height;
+        _pieceBank.Width = windowSize.W;
+
+        _levelCanvas.Left = _leftPanel.Width;
+        _levelCanvas.Top = _topPanel.Height;
+        _levelCanvas.Width = windowSize.W - _leftPanel.Width;
+        _levelCanvas.Height = windowSize.H - _topPanel.Height - _pieceBank.Height;
+
+        _levelCanvas.OnCanvasResize();
         _pieceBank.OnResize();
     }
 
@@ -123,23 +143,46 @@ public sealed class LevelEditorPage : PageBase
         CurrentLevelData = null!;
     }
 
-    private void BuildLevelEditorUI(Component root)
-    {
-        if (IsInitialised)
-            return;
-
-        _topPanel = new Tab(0, 0, 10, 10);
-        root.AddComponent(_topPanel);
-
-        _leftPanel = LevelEditorUiHelper.BuildLeftTab();
-        root.AddComponent(_leftPanel);
-
-        root.AddComponent(_pieceBank);
-    }
-
     private void OnSelectTerrainPiece(Component c, Point pos)
     {
+        if (c is not PieceSelector terrainPieceSelector || terrainPieceSelector.StylePiece is not TerrainArchetypeData terrainArchetypeData)
+            return;
 
+        AddTerrainPiece(terrainArchetypeData);
+    }
+
+    private void AddTerrainPiece(TerrainArchetypeData terrainArchetypeData)
+    {
+        var defaultArchetypeSize = terrainArchetypeData.DefaultSize;
+
+        int? initialWidth = null;
+        int? initialHeight = null;
+
+        if (defaultArchetypeSize.W > 0)
+            initialWidth = defaultArchetypeSize.W;
+
+        if (defaultArchetypeSize.H > 0)
+            initialHeight = defaultArchetypeSize.H;
+
+        var position = _levelCanvas.GetCenterPositionOfCamera();
+
+        var newTerrainData = new TerrainData()
+        {
+            GroupName = null,
+            StyleIdentifier = terrainArchetypeData.StyleIdentifier,
+            PieceIdentifier = terrainArchetypeData.PieceIdentifier,
+            Position = position,
+            Orientation = Orientation.Down,
+            FacingDirection = FacingDirection.Right,
+            NoOverwrite = false,
+            Erase = false,
+            Tint = null,
+            Width = initialWidth,
+            Height = initialHeight,
+        };
+        CurrentLevelData.AllTerrainData.Add(newTerrainData);
+
+        _levelCanvas.RepaintLevel();
     }
 
     private void OnSelectGadgetPiece(Component c, Point pos)
@@ -150,5 +193,15 @@ public sealed class LevelEditorPage : PageBase
     private void OnSelectBackgroundPiece(Component c, Point pos)
     {
 
+    }
+
+    private static LevelData CreateBlankLevelData()
+    {
+        var result = new LevelData(IO.FileFormats.FileFormatType.Default);
+        result.SetLevelWidth(320);
+        result.SetLevelHeight(160);
+        result.LevelId = new LevelIdentifier((ulong)Random.Shared.NextInt64());
+
+        return result;
     }
 }

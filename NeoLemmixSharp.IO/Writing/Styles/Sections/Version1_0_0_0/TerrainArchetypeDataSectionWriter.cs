@@ -18,17 +18,7 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
 
     public override ushort CalculateNumberOfItemsInSection(StyleData styleData)
     {
-        var numberOfNonTrivialArchetypeData = 0;
-
-        foreach (var kvp in styleData.TerrainArchetypeDataLookup)
-        {
-            var terrainArchetypeData = kvp.Value;
-
-            if (terrainArchetypeData.IsNonTrivial())
-                numberOfNonTrivialArchetypeData++;
-        }
-
-        return (ushort)numberOfNonTrivialArchetypeData;
+        return (ushort)styleData.TerrainArchetypeDataLookup.Count;
     }
 
     public override void WriteSection(RawStyleFileDataWriter writer, StyleData styleData)
@@ -37,8 +27,7 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
         {
             var terrainArchetypeData = kvp.Value;
 
-            if (terrainArchetypeData.IsNonTrivial())
-                WriteTerrainArchetypeData(writer, terrainArchetypeData);
+            WriteTerrainArchetypeData(writer, terrainArchetypeData);
         }
     }
 

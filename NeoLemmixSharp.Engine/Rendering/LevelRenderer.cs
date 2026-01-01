@@ -60,7 +60,7 @@ public sealed class LevelRenderer :
         }
 
         _backgroundRenderer = backgroundRenderer;
-        _levelRenderTarget = GetLevelRenderTarget2D();
+        _levelRenderTarget = CreateLevelRenderTarget2D();
     }
 
     public bool IsRenderingSprite(IViewportObjectRenderer renderer) => _spriteSpacialHashGrid.IsTrackingItem(renderer);
@@ -219,7 +219,7 @@ public sealed class LevelRenderer :
         */
     }
 
-    private RenderTarget2D GetLevelRenderTarget2D()
+    private RenderTarget2D CreateLevelRenderTarget2D()
     {
         return new RenderTarget2D(
             _graphicsDevice,
@@ -233,7 +233,7 @@ public sealed class LevelRenderer :
     public void OnWindowSizeChanged()
     {
         DisposableHelperMethods.DisposeOf(ref _levelRenderTarget);
-        _levelRenderTarget = GetLevelRenderTarget2D();
+        _levelRenderTarget = CreateLevelRenderTarget2D();
     }
 
     public void AddLemmingRenderer(LemmingRenderer lemmingRenderer)

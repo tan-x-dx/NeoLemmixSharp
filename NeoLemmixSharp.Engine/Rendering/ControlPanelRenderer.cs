@@ -53,7 +53,7 @@ public sealed class ControlPanelRenderer : IDisposable
         _panelIconsTexture = controlPanelSpriteBank.PanelIcons;
         _minimapRegionTexture = controlPanelSpriteBank.PanelMinimapRegion;
 
-        _controlPanelRenderTarget = GetControlPanelRenderTarget2D();
+        _controlPanelRenderTarget = CreateControlPanelRenderTarget2D();
     }
 
     private static ControlPanelButtonRenderer[] SetUpButtonRenderers(
@@ -185,7 +185,7 @@ public sealed class ControlPanelRenderer : IDisposable
         spriteBatch.Draw(_controlPanelRenderTarget, destinationRectangle, Color.White);
     }
 
-    private RenderTarget2D GetControlPanelRenderTarget2D()
+    private RenderTarget2D CreateControlPanelRenderTarget2D()
     {
         var controlPanelSize = _levelControlPanel.ControlPanelSize;
         return new RenderTarget2D(
@@ -202,7 +202,7 @@ public sealed class ControlPanelRenderer : IDisposable
         _windowSize = IGameWindow.Instance.WindowSize;
 
         DisposableHelperMethods.DisposeOf(ref _controlPanelRenderTarget);
-        _controlPanelRenderTarget = GetControlPanelRenderTarget2D();
+        _controlPanelRenderTarget = CreateControlPanelRenderTarget2D();
     }
 
     public void Dispose()

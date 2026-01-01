@@ -46,6 +46,20 @@ public abstract class Component : IDisposable
     public KeyboardEventHandler KeyDown => _keyDown ??= new KeyboardEventHandler();
     public KeyboardEventHandler KeyUp => _keyUp ??= new KeyboardEventHandler();
 
+    protected Component()
+    {
+        Left = 0;
+        Top = 0;
+
+        Width = 10;
+        Height = 10;
+        _colourPacket = UiConstants.RectangularButtonDefaultColours;
+
+        Label = string.Empty;
+        LabelOffsetX = UiConstants.StandardInset;
+        LabelOffsetY = UiConstants.StandardInset;
+    }
+
     protected Component(int x, int y, string? label)
         : this(x, y, UiConstants.TwiceStandardInset + (int)(0.5f + (label?.Length ?? 10) * UiConstants.FontGlyphWidthMultiplier), UiConstants.StandardButtonHeight, label)
     {
