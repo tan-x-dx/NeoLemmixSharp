@@ -46,7 +46,14 @@ public static class Helpers
     /// <param name="length">The (assumed valid) desired length of the span.</param>
     /// <returns>A span over the desired data.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe Span<T> CreateSpan<T>(void* p, int length) where T : unmanaged => MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(p), length);
+    public static unsafe Span<T> CreateSpan<T>(void* p, int length) where T : unmanaged
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+
+        return MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(p), length);
+    }
 
     /// <summary>
     /// Creates a read-only span from a pointer and a length.
@@ -59,7 +66,14 @@ public static class Helpers
     /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
     /// <returns>A span over the desired data.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(void* p, int length) where T : unmanaged => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(p), length);
+    public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(void* p, int length) where T : unmanaged
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+
+        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(p), length);
+    }
 
     /// <summary>
     /// Returns a mutable reference to the specified span index.
@@ -72,7 +86,15 @@ public static class Helpers
     /// <param name="index">The (assumed valid) index.</param>
     /// <returns>A mutable reference to the data at that index</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ref T At<T>(this Span<T> span, int index) => ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+    public static ref T At<T>(this Span<T> span, int index)
+    {
+#if DEBUG
+        if ((uint)index >= (uint)span.Length)
+            throw new ArgumentOutOfRangeException(nameof(index));
+#endif
+
+        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+    }
 
     /// <summary>
     /// Returns a read-only reference to the specified read-only span index.
@@ -85,7 +107,15 @@ public static class Helpers
     /// <param name="index">The (assumed valid) index.</param>
     /// <returns>A read-only reference to the data at that index</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ref readonly T At<T>(this ReadOnlySpan<T> span, int index) => ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+    public static ref readonly T At<T>(this ReadOnlySpan<T> span, int index)
+    {
+#if DEBUG
+        if ((uint)index >= (uint)span.Length)
+            throw new ArgumentOutOfRangeException(nameof(index));
+#endif
+
+        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+    }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

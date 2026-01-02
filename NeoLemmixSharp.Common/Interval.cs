@@ -16,6 +16,8 @@ public readonly struct Interval : IEquatable<Interval>
         Length = Math.Max(length, 0);
     }
 
+    public int End => Start + Length;
+
     public bool Equals(Interval other) => Start == other.Start &&
                                           Length == other.Length;
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Interval other && Equals(other);
