@@ -5,15 +5,15 @@ using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Data;
 
-internal sealed class StyleData
+public sealed class StyleData
 {
     internal int NumberOfLevelsSinceLastUsed;
 
-    internal StyleIdentifier Identifier { get; }
-    internal string Name { get; set; } = string.Empty;
-    internal string Author { get; set; } = string.Empty;
-    internal string Description { get; set; } = string.Empty;
-    internal FileFormatType FileFormatType { get; }
+    public StyleIdentifier Identifier { get; }
+    public string Name { get; internal set; } = string.Empty;
+    public string Author { get; internal set; } = string.Empty;
+    public string Description { get; internal set; } = string.Empty;
+    public FileFormatType FileFormatType { get; }
 
     internal StyleData(
         StyleIdentifier identifier,
@@ -23,7 +23,10 @@ internal sealed class StyleData
         FileFormatType = fileFormatType;
     }
 
-    internal ThemeData ThemeData { get; set; } = null!;
+    public ThemeData ThemeData { get; internal set; } = null!;
     internal Dictionary<PieceIdentifier, TerrainArchetypeData> TerrainArchetypeDataLookup { get; } = new(IoConstants.AssumedNumberOfTerrainArchetypeDataInStyle);
     internal Dictionary<PieceIdentifier, GadgetArchetypeData> GadgetArchetypeDataLookup { get; } = new(IoConstants.AssumedNumberOfGadgetArchetypeDataInStyle);
+
+    public Dictionary<PieceIdentifier, TerrainArchetypeData>.ValueCollection AllDefinedTerrainArchetypeData => TerrainArchetypeDataLookup.Values;
+    public Dictionary<PieceIdentifier, GadgetArchetypeData>.ValueCollection AllDefinedGadgetArchetypeData => GadgetArchetypeDataLookup.Values;
 }

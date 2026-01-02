@@ -175,7 +175,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var backgroundData = levelData.LevelBackground;
         if (backgroundData is null)
         {
-            var levelTheme = StyleCache.GetThemeData(new StyleFormatPair(levelData.LevelTheme, levelData.FileFormatType));
+            var levelTheme = StyleCache.GetThemeData(new StyleFormatPair(levelData.LevelStyle, levelData.FileFormatType));
             return new SolidColorBackgroundRenderer(levelTheme.Background);
         }
 

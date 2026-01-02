@@ -8,7 +8,7 @@ public sealed class UiHandler : IDisposable
 {
     private readonly InputController _inputController;
 
-    private Component? _currentSelection = null;
+    public Component? CurrentSelection { get; private set; } = null;
 
     public Component RootComponent { get; set; }
 
@@ -54,13 +54,13 @@ public sealed class UiHandler : IDisposable
     {
         LocateComponent(mousePosition);
 
-        if (_currentSelection is null || !_currentSelection.IsVisible)
+        if (CurrentSelection is null || !CurrentSelection.IsVisible)
         {
-            _currentSelection = RootComponent;
+            CurrentSelection = RootComponent;
         }
         else
         {
-            _currentSelection.InvokeMouseDoubleClick(mousePosition);
+            CurrentSelection.InvokeMouseDoubleClick(mousePosition);
         }
     }
 
@@ -68,13 +68,13 @@ public sealed class UiHandler : IDisposable
     {
         LocateComponent(mousePosition);
 
-        if (_currentSelection is null || !_currentSelection.IsVisible)
+        if (CurrentSelection is null || !CurrentSelection.IsVisible)
         {
-            _currentSelection = RootComponent;
+            CurrentSelection = RootComponent;
         }
         else
         {
-            _currentSelection.InvokeMouseDown(mousePosition);
+            CurrentSelection.InvokeMouseDown(mousePosition);
         }
     }
 
@@ -82,24 +82,24 @@ public sealed class UiHandler : IDisposable
     {
         LocateComponent(mousePosition);
 
-        if (_currentSelection is null || !_currentSelection.IsVisible)
+        if (CurrentSelection is null || !CurrentSelection.IsVisible)
         {
-            _currentSelection = RootComponent;
+            CurrentSelection = RootComponent;
         }
         else
         {
-            _currentSelection.InvokeMouseUp(mousePosition);
+            CurrentSelection.InvokeMouseUp(mousePosition);
         }
     }
 
     private void HandleKeyDown(in KeysEnumerable pressedKeys)
     {
-        _currentSelection?.InvokeKeyDown(in pressedKeys);
+        CurrentSelection?.InvokeKeyDown(in pressedKeys);
     }
 
     private void HandleKeyUp(in KeysEnumerable releasedKeys)
     {
-        _currentSelection?.InvokeKeyUp(in releasedKeys);
+        CurrentSelection?.InvokeKeyUp(in releasedKeys);
     }
 
     private void LocateComponent(Point mousePosition)
@@ -108,27 +108,27 @@ public sealed class UiHandler : IDisposable
 
         if (c == null)
         {
-            _currentSelection = RootComponent;
+            CurrentSelection = RootComponent;
             return;
         }
 
-        if (c == _currentSelection)
+        if (c == CurrentSelection)
         {
-            _currentSelection.InvokeMouseMovement(mousePosition);
+            CurrentSelection.InvokeMouseMovement(mousePosition);
             return;
         }
 
-        if (_currentSelection == null)
+        if (CurrentSelection == null)
             return;
 
-        _currentSelection.InvokeMouseExit(mousePosition);
+        CurrentSelection.InvokeMouseExit(mousePosition);
 
-        _currentSelection = c;
-        _currentSelection.InvokeMouseEnter(mousePosition);
+        CurrentSelection = c;
+        CurrentSelection.InvokeMouseEnter(mousePosition);
 
-        if (!_currentSelection.IsVisible)
+        if (!CurrentSelection.IsVisible)
         {
-            _currentSelection = RootComponent;
+            CurrentSelection = RootComponent;
         }
     }
 

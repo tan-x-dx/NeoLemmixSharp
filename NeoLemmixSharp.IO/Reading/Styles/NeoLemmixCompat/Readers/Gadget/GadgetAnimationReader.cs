@@ -29,7 +29,6 @@ internal sealed class GadgetAnimationReader : NeoLemmixDataReader
     private readonly NeoLemmixGadgetArchetypeData _gadgetArchetypeData;
     private NeoLemmixGadgetAnimationData? _currentNeoLemmixGadgetAnimationData;
     private AnimationTriggerData? _currentAnimationTriggerData;
-    private bool _readingTrigger;
 
     public GadgetAnimationReader(NeoLemmixGadgetArchetypeData gadgetArchetypeData)
         : base(string.Empty)
@@ -66,25 +65,13 @@ internal sealed class GadgetAnimationReader : NeoLemmixDataReader
 
     public override bool BeginReading(ReadOnlySpan<char> line)
     {
-        _currentNeoLemmixGadgetAnimationData = new NeoLemmixGadgetAnimationData();
+        _currentNeoLemmixGadgetAnimationData = new NeoLemmixGadgetAnimationData
+        {
+            IsPrimaryAnimationData = Helpers.StringSpansMatch(line.Trim(), "$PRIMARY_ANIMATION")
+        };
 
         FinishedReading = false;
         return false;
-    }
-
-    public override bool ReadNextLine(ReadOnlySpan<char> line)
-    {
-        NxlvReadingHelpers.GetTokenPair(line, out var firstToken, out var secondToken, out var secondTokenIndex);
-
-        // Special handling for pickups specifically
-        if (Helpers.StringSpansMatch(firstToken, "NAME") &&
-            Helpers.StringSpansMatch(secondToken, "*PICKUP"))
-        {
-            _gadgetArchetypeData.IsSkillPickup = true;
-            return false;
-        }
-
-        return ProcessTokenPair(line, firstToken, secondToken, secondTokenIndex);
     }
 
     private void SetFrameCount(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -101,6 +88,14 @@ internal sealed class GadgetAnimationReader : NeoLemmixDataReader
 
     private void SetName(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
+        // Special handling for pickups specifically
+        if (Helpers.StringSpansMatch(secondToken, "*PICKUP"))
+        {
+            _gadgetArchetypeData.IsSkillPickup = true;
+            _currentNeoLemmixGadgetAnimationData!.TextureFilePath = null;
+            return;
+        }
+
         _currentNeoLemmixGadgetAnimationData!.TextureFilePath = Helpers.StringSpansMatch(secondToken, "*BLANK")
             ? string.Empty
             : ConstructFilePathForAdditionalTexture(secondToken);
@@ -160,44 +155,57 @@ internal sealed class GadgetAnimationReader : NeoLemmixDataReader
 
     private void OnEnterTrigger(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _readingTrigger = true;
+        Debug.Assert(_currentAnimationTriggerData is null);
+
         _currentAnimationTriggerData = new AnimationTriggerData();
     }
 
     private void SetTriggerCondition(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        Debug.Assert(_readingTrigger);
+        // Debug.Assert(_currentAnimationTriggerData is not null);
 
-        _currentAnimationTriggerData!.Condition = GetNeoLemmixGadgetStateType(line, secondToken);
+        _currentAnimationTriggerData?.Condition = GetNeoLemmixGadgetStateType(line, secondToken);
     }
 
     private void SetTriggerState(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        Debug.Assert(_readingTrigger);
+        // Debug.Assert(_currentAnimationTriggerData is not null);
 
-        _currentAnimationTriggerData!.StateType = GetNeoLemmixGadgetAnimationAction(line, secondToken);
+        _currentAnimationTriggerData?.StateType = GetNeoLemmixGadgetAnimationAction(line, secondToken);
     }
 
     private void SetTriggerHide(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        Debug.Assert(_readingTrigger);
+        // Debug.Assert(_currentAnimationTriggerData is not null);
 
-        _currentAnimationTriggerData!.Hide = true;
+        _currentAnimationTriggerData?.Hide = true;
     }
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         var currentAnimationData = _currentNeoLemmixGadgetAnimationData!;
 
-        if (_readingTrigger)
+        if (_currentAnimationTriggerData is not null)
         {
-            currentAnimationData.AnimationTriggers.Add(_currentAnimationTriggerData!);
+            currentAnimationData.AnimationTriggers.Add(_currentAnimationTriggerData);
             _currentAnimationTriggerData = null;
-            _readingTrigger = false;
             return;
         }
 
-        _gadgetArchetypeData.AnimationData.Add(currentAnimationData);
+        if (currentAnimationData.IsPrimaryAnimationData)
+        {
+            if (!_gadgetArchetypeData.IsSkillPickup)
+            {
+                currentAnimationData.TextureFilePath ??= RootDirectoryManager.GetCorrespondingImageFile(_gadgetArchetypeData.FilePath.ToString());
+            }
+
+            _gadgetArchetypeData.AnimationData.Insert(0, currentAnimationData);
+        }
+        else
+        {
+            _gadgetArchetypeData.AnimationData.Add(currentAnimationData);
+        }
+
         _currentNeoLemmixGadgetAnimationData = null;
 
         FinishedReading = true;

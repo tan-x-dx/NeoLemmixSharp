@@ -16,7 +16,7 @@ namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat;
 internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleReader>
 {
     private readonly StyleData _styleData;
-    private readonly UniqueStringSet _uniqueStringSet;
+    private readonly UniqueStringSet _uniqueStringSet = new();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static NeoLemmixStyleReader Create(StyleIdentifier styleIdentifier) => new(styleIdentifier);
@@ -66,18 +66,44 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
     private void ReadTerrainArchetypeData(string styleFolderPath)
     {
         var terrainFolderPath = Path.Combine(styleFolderPath, DefaultFileExtensions.TerrainFolderName);
-        var terrainFilePaths = Helpers.GetFilePathsWithExtension(terrainFolderPath, NeoLemmixFileExtensions.TerrainFileExtension);
+        var terrainMetadataFilePaths = Helpers.GetFilePathsWithExtension(terrainFolderPath, NeoLemmixFileExtensions.TerrainFileExtension);
+        var terrainPngFilePaths = Helpers.GetFilePathsWithExtension(terrainFolderPath, DefaultFileExtensions.PngFileExtension);
 
-        _styleData.TerrainArchetypeDataLookup.EnsureCapacity(terrainFilePaths.Length);
+        _styleData.TerrainArchetypeDataLookup.EnsureCapacity(terrainPngFilePaths.Length);
 
-        foreach (var filePath in terrainFilePaths)
+        foreach (var pngFilePath in terrainPngFilePaths)
         {
-            var newTerrainArchetypeData = ProcessTerrainFile(filePath);
-            _styleData.TerrainArchetypeDataLookup.Add(newTerrainArchetypeData.PieceIdentifier, newTerrainArchetypeData);
+            var correspondingTerrainMetadataFile = TryFindCorrespondingTerrainMetadataFile(pngFilePath, terrainMetadataFilePaths);
+            if (correspondingTerrainMetadataFile is not null)
+            {
+                var newTerrainArchetypeData = ProcessTerrainMetadataFile(correspondingTerrainMetadataFile);
+                _styleData.TerrainArchetypeDataLookup.Add(newTerrainArchetypeData.PieceIdentifier, newTerrainArchetypeData);
+            }
+            else
+            {
+                var pieceIdentifier = GetPieceIdentifier(pngFilePath);
+
+                var trivialTerrainArchetypeData = TerrainArchetypeData.CreateTrivialTerrainArchetypeData(_styleData.Identifier, pieceIdentifier, pngFilePath);
+
+                _styleData.TerrainArchetypeDataLookup.Add(pieceIdentifier, trivialTerrainArchetypeData);
+            }
         }
     }
 
-    private TerrainArchetypeData ProcessTerrainFile(string filePath)
+    private static string? TryFindCorrespondingTerrainMetadataFile(string terrainPngFilePath, string[] terrainMetadataFilePaths)
+    {
+        var pngFileNameSpan = Path.GetFileNameWithoutExtension(terrainPngFilePath.AsSpan());
+        foreach (var terrainMetadataFilePath in terrainMetadataFilePaths)
+        {
+            var terrainMetadataFileNameSpan = Path.GetFileNameWithoutExtension(terrainMetadataFilePath.AsSpan());
+            if (pngFileNameSpan.Equals(terrainMetadataFileNameSpan, StringComparison.Ordinal))
+                return terrainMetadataFilePath;
+        }
+
+        return null;
+    }
+
+    private TerrainArchetypeData ProcessTerrainMetadataFile(string filePath)
     {
         var pieceIdentifier = GetPieceIdentifier(filePath);
 

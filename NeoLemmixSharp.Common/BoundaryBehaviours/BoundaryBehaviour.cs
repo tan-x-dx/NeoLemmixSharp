@@ -105,33 +105,38 @@ public sealed class BoundaryBehaviour
     [Pure]
     public int Normalise(int n)
     {
-        var a = n;
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
-            return a;
+            return n;
 
+        return NormaliseWrap(n);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private int NormaliseWrap(int n)
+    {
         // Most likely situation for Wrap normalisation is the input
         // being just outside the bounds [0, _levelLength - 1].
         // Therefore, we can avoid a call to the modulo operator
         // by simply adding/subtracting the level length
 
         var levelLength = _levelLength;
-        if (a < 0)
+        if (n < 0)
         {
             do
             {
-                a += levelLength;
+                n += levelLength;
             }
-            while (a < 0);
+            while (n < 0);
         }
         else
         {
-            while (a >= levelLength)
+            while (n >= levelLength)
             {
-                a -= levelLength;
+                n -= levelLength;
             }
         }
 
-        return a;
+        return n;
     }
 
     [Pure]
@@ -144,27 +149,7 @@ public sealed class BoundaryBehaviour
         var levelLength = _levelLength;
         var halfLevelLength = levelLength >>> 1;
         result += halfLevelLength;
-
-        // Most likely situation for Wrap normalisation is the input
-        // being just outside the bounds [0, _levelLength - 1].
-        // Therefore, we can avoid a call to the modulo operator
-        // by simply adding/subtracting the level length
-
-        if (result < 0)
-        {
-            do
-            {
-                result += levelLength;
-            }
-            while (result < 0);
-        }
-        else
-        {
-            while (result >= levelLength)
-            {
-                result -= levelLength;
-            }
-        }
+        result = NormaliseWrap(result);
         result -= halfLevelLength;
         return result;
     }
@@ -172,17 +157,17 @@ public sealed class BoundaryBehaviour
     [Pure]
     public bool IntervalContainsPoint(Interval interval, int n)
     {
-        var a = Normalise(n);
-        var intervalStart = Normalise(interval.Start);
-        var intervalEnd = intervalStart + interval.Length;
-
-        // If the interval actually contains the point, that's easy
-        if (intervalStart <= a && a < intervalEnd)
-            return true;
-
-        // If the interval does not contain the point, then the Void type will never work
+        // If it's the Void type, that's easy
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
-            return false;
+            return interval.Start <= n && n < interval.End;
+
+        var a = NormaliseWrap(interval.Start);
+        interval = new Interval(a, interval.End);
+        a = NormaliseWrap(n);
+
+        // If the interval actually contains the point after normalisation, that's easy
+        if (interval.Start <= a && a < interval.End)
+            return true;
 
         // Edge case for Wrap behaviour (literally)
         // Suppose the test point is just above zero
@@ -194,26 +179,27 @@ public sealed class BoundaryBehaviour
         // 0 <= a < intervalStart < _levelLength <= a + _levelLength
         // Therefore can safely eliminate one interval check
 
-        return a + _levelLength < intervalEnd;
+        return a + _levelLength < interval.End;
     }
 
     [Pure]
     public bool IntervalsOverlap(Interval i1, Interval i2)
     {
-        var interval1Start = Normalise(i1.Start);
+        // If it's the Void type, that's easy
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
+            return i1.Start < i2.End &&
+                   i2.Start < i1.End;
+
+        var interval1Start = NormaliseWrap(i1.Start);
         var interval1End = interval1Start + i1.Length;
 
-        var interval2Start = Normalise(i2.Start);
+        var interval2Start = NormaliseWrap(i2.Start);
         var interval2End = interval2Start + i2.Length;
 
-        // If the intervals actually overlap, that's easy
+        // If the intervals actually overlap after normalisation, that's easy
         if (interval1Start < interval2End &&
             interval2Start < interval1End)
             return true;
-
-        // If the intervals do not overlap, then the Void type will never work
-        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
-            return false;
 
         // Edge case for Wrap behaviour (literally)
         // Suppose one interval is just above zero
@@ -279,7 +265,7 @@ public sealed class BoundaryBehaviour
             return 0;
 
         if (_boundaryBehaviourType != BoundaryBehaviourType.Void)
-            return Normalise(viewPortCoordinate);
+            return NormaliseWrap(viewPortCoordinate);
 
         if (viewPortCoordinate < 0)
             return 0;

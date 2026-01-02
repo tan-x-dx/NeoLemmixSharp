@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Ui.Data;
@@ -8,11 +9,14 @@ namespace NeoLemmixSharp.Ui.Data;
 public static class UiSprites
 {
     internal static Texture2D BevelTexture { get; private set; } = null!;
+    public static SpriteFont UiFont { get; private set; } = null!;
 
     public static void Initialise(ContentManager contentManager)
     {
         if (BevelTexture is not null)
             throw new InvalidOperationException($"Cannot initialise {nameof(UiSprites)} more than once!");
+
+        UiFont = contentManager.Load<SpriteFont>("Fonts/UiFont");
 
         BevelTexture = contentManager.Load<Texture2D>("menu/bevel");
     }
@@ -28,7 +32,7 @@ public static class UiSprites
             c.Height);
 
         var colors = c.Colors.AsSpan();
-        var color = colors[((int)c.State) & 3];
+        var color = colors.At((int)c.State);
 
         DrawNineSlicedBeveledRectangle(spriteBatch, dest, color);
     }

@@ -14,6 +14,8 @@ internal static class VersionHelper
     private static readonly Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper> StyleWriterVersionHelpers = GetStyleWriterLookup();
     private static readonly Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper> StyleReaderVersionHelpers = GetStyleReaderLookup();
 
+    public static FileFormatVersion LatestLevelFileFormatVersion => new(1, 0, 0, 0);
+
     private static Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> GetLevelWriterLookup()
     {
         var result = new Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper>(1)

@@ -31,7 +31,6 @@ public sealed class ControlPanelRenderer : IDisposable
     private readonly LevelControlPanel _levelControlPanel;
 
     private readonly ControlPanelButtonRenderer[] _controlPanelButtonRenderers;
-    private readonly Texture2D _whitePixel;
     private readonly Texture2D _panelIconsTexture;
     private readonly Texture2D _minimapRegionTexture;
 
@@ -51,11 +50,10 @@ public sealed class ControlPanelRenderer : IDisposable
 
         var allButtons = _levelControlPanel.AllButtons;
         _controlPanelButtonRenderers = SetUpButtonRenderers(controlPanelSpriteBank, allButtons);
-        _whitePixel = CommonSprites.WhitePixelGradientSprite;
         _panelIconsTexture = controlPanelSpriteBank.PanelIcons;
         _minimapRegionTexture = controlPanelSpriteBank.PanelMinimapRegion;
 
-        _controlPanelRenderTarget = GetControlPanelRenderTarget2D();
+        _controlPanelRenderTarget = CreateControlPanelRenderTarget2D();
     }
 
     private static ControlPanelButtonRenderer[] SetUpButtonRenderers(
@@ -175,10 +173,8 @@ public sealed class ControlPanelRenderer : IDisposable
     public void DrawToScreen(SpriteBatch spriteBatch)
     {
         var controlPanelScreenSize = _levelControlPanel.ControlPanelScreenSize;
-        spriteBatch.Draw(
-            _whitePixel,
+        spriteBatch.FillRect(
             new Rectangle(0, _windowSize.H - controlPanelScreenSize.H, _windowSize.W, controlPanelScreenSize.H),
-            CommonSprites.RectangleForWhitePixelAlpha(0xff),
             Color.DarkGray);
 
         var controlPanelPosition = _levelControlPanel.ControlPanelPosition;
@@ -189,7 +185,7 @@ public sealed class ControlPanelRenderer : IDisposable
         spriteBatch.Draw(_controlPanelRenderTarget, destinationRectangle, Color.White);
     }
 
-    private RenderTarget2D GetControlPanelRenderTarget2D()
+    private RenderTarget2D CreateControlPanelRenderTarget2D()
     {
         var controlPanelSize = _levelControlPanel.ControlPanelSize;
         return new RenderTarget2D(
@@ -206,7 +202,7 @@ public sealed class ControlPanelRenderer : IDisposable
         _windowSize = IGameWindow.Instance.WindowSize;
 
         DisposableHelperMethods.DisposeOf(ref _controlPanelRenderTarget);
-        _controlPanelRenderTarget = GetControlPanelRenderTarget2D();
+        _controlPanelRenderTarget = CreateControlPanelRenderTarget2D();
     }
 
     public void Dispose()

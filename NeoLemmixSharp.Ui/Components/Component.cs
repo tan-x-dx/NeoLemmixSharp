@@ -10,10 +10,8 @@ namespace NeoLemmixSharp.Ui.Components;
 
 public abstract class Component : IDisposable
 {
-    public delegate void ComponentKeyboardAction(Component c, in KeysEnumerable keys);
-
-    private Point _position;
-    private Size _dimensions;
+    public Point Position { get; private set; }
+    public Size Dimensions { get; private set; }
 
     private ComponentState _state = ComponentState.Normal;
 
@@ -28,15 +26,39 @@ public abstract class Component : IDisposable
     private Component? _parent = null;
     protected List<Component>? _children = null;
 
-    public MouseEventHandler MouseEnter { get; } = new();
-    public MouseEventHandler MouseMovement { get; } = new();
-    public MouseEventHandler MouseDown { get; } = new();
-    public MouseEventHandler MouseDoubleClick { get; } = new();
-    public MouseEventHandler MouseUp { get; } = new();
-    public MouseEventHandler MouseExit { get; } = new();
+    private MouseEventHandler? _mouseEnter;
+    private MouseEventHandler? _mouseMovement;
+    private MouseEventHandler? _mouseDown;
+    private MouseEventHandler? _mouseDoubleClick;
+    private MouseEventHandler? _mouseUp;
+    private MouseEventHandler? _mouseExit;
 
-    public KeyboardEventHandler KeyDown { get; } = new();
-    public KeyboardEventHandler KeyUp { get; } = new();
+    private KeyboardEventHandler? _keyDown;
+    private KeyboardEventHandler? _keyUp;
+
+    public MouseEventHandler MouseEnter => _mouseEnter ??= new MouseEventHandler();
+    public MouseEventHandler MouseMovement => _mouseMovement ??= new MouseEventHandler();
+    public MouseEventHandler MouseDown => _mouseDown ??= new MouseEventHandler();
+    public MouseEventHandler MouseDoubleClick => _mouseDoubleClick ??= new MouseEventHandler();
+    public MouseEventHandler MouseUp => _mouseUp ??= new MouseEventHandler();
+    public MouseEventHandler MouseExit => _mouseExit ??= new MouseEventHandler();
+
+    public KeyboardEventHandler KeyDown => _keyDown ??= new KeyboardEventHandler();
+    public KeyboardEventHandler KeyUp => _keyUp ??= new KeyboardEventHandler();
+
+    protected Component()
+    {
+        Left = 0;
+        Top = 0;
+
+        Width = 10;
+        Height = 10;
+        _colourPacket = UiConstants.RectangularButtonDefaultColours;
+
+        Label = string.Empty;
+        LabelOffsetX = UiConstants.StandardInset;
+        LabelOffsetY = UiConstants.StandardInset;
+    }
 
     protected Component(int x, int y, string? label)
         : this(x, y, UiConstants.TwiceStandardInset + (int)(0.5f + (label?.Length ?? 10) * UiConstants.FontGlyphWidthMultiplier), UiConstants.StandardButtonHeight, label)
@@ -64,16 +86,16 @@ public abstract class Component : IDisposable
 
     public int Left
     {
-        get => _position.X;
+        get => Position.X;
         set
         {
-            var oldX = _position.X;
+            var oldX = Position.X;
 
-            _position = new Point(value, _position.Y);
+            Position = new Point(value, Position.Y);
 
             if (_children != null)
             {
-                oldX = _position.X - oldX;
+                oldX = Position.X - oldX;
 
                 foreach (Component c in _children)
                 {
@@ -85,20 +107,20 @@ public abstract class Component : IDisposable
 
     public int Top
     {
-        get => _position.Y;
+        get => Position.Y;
         set
         {
-            var oldY = _position.Y;
+            var oldY = Position.Y;
 
-            _position = new Point(_position.X, value);
+            Position = new Point(Position.X, value);
 
             if (_children != null)
             {
-                oldY = _position.Y - oldY;
+                var deltaY = Position.Y - oldY;
 
                 foreach (Component c in _children)
                 {
-                    c.Translate(0, oldY);
+                    c.Translate(0, deltaY);
                 }
             }
         }
@@ -118,19 +140,19 @@ public abstract class Component : IDisposable
 
     public void SetLocation(int x, int y)
     {
-        var oldX = _position.X;
-        var oldY = _position.Y;
+        var oldX = Position.X;
+        var oldY = Position.Y;
 
-        _position = new Point(x, y);
+        Position = new Point(x, y);
 
         if (_children != null)
         {
-            oldX = x - oldX;
-            oldY = y - oldY;
+            var deltaX = x - oldX;
+            var deltaY = y - oldY;
 
             foreach (Component c in _children)
             {
-                c.Translate(oldX, oldY);
+                c.Translate(deltaX, deltaY);
             }
         }
     }
@@ -138,7 +160,7 @@ public abstract class Component : IDisposable
     public void Translate(int dx, int dy)
     {
         var delta = new Point(dx, dy);
-        _position += delta;
+        Position += delta;
 
         if (_children != null)
         {
@@ -151,14 +173,14 @@ public abstract class Component : IDisposable
 
     public virtual int Width
     {
-        get => _dimensions.W;
-        set => _dimensions = new Size(value, _dimensions.H);
+        get => Dimensions.W;
+        set => Dimensions = new Size(value, Dimensions.H);
     }
 
     public virtual int Height
     {
-        get => _dimensions.H;
-        set => _dimensions = new Size(_dimensions.W, value);
+        get => Dimensions.H;
+        set => Dimensions = new Size(Dimensions.W, value);
     }
 
     public ColorPacket Colors
@@ -175,7 +197,7 @@ public abstract class Component : IDisposable
 
     public void SetSize(int w, int h)
     {
-        _dimensions = new Size(w, h);
+        Dimensions = new Size(w, h);
     }
 
     public void SetDimensions(int x, int y, int width, int height)
@@ -216,44 +238,46 @@ public abstract class Component : IDisposable
         set => _labelOffsetY = value;
     }
 
-    public void Render(SpriteBatch spriteBatch)
+    public virtual void Render(SpriteBatch spriteBatch)
     {
         if (_isVisible)
-        {
             RenderComponent(spriteBatch);
-            RenderLabel(spriteBatch);
-        }
+        RenderChildren(spriteBatch);
+    }
 
-        if (_children != null)
+    protected void RenderChildren(SpriteBatch spriteBatch)
+    {
+        if (_children == null)
+            return;
+
+        for (int i = 0; i < _children.Count; i++)
         {
-            for (int i = 0; i < _children.Count; i++)
-            {
-                _children[i].Render(spriteBatch);
-            }
+            _children[i].Render(spriteBatch);
         }
     }
 
     protected virtual void RenderComponent(SpriteBatch spriteBatch)
     {
         UiSprites.DrawBeveledRectangle(spriteBatch, this);
+        RenderLabel(spriteBatch);
     }
 
     private void RenderLabel(SpriteBatch spriteBatch)
     {
-        if (!string.IsNullOrWhiteSpace(Label))
-        {
-            var labelPosition = new Vector2(Left + LabelOffsetX, Top + LabelOffsetY);
-            spriteBatch.DrawString(
-                null,//UiSprites.Font,
-                _textLabel,
-                labelPosition,
-                Color.White,
-                0f,
-                Vector2.Zero,
-                UiConstants.FontScaleFactor,
-                SpriteEffects.None,
-                1.0f);
-        }
+        if (string.IsNullOrWhiteSpace(Label))
+            return;
+
+        var labelPosition = new Vector2(Left + LabelOffsetX, Top + LabelOffsetY);
+        spriteBatch.DrawString(
+            UiSprites.UiFont,
+            _textLabel,
+            labelPosition,
+            Color.White,
+            0f,
+            Vector2.Zero,
+            UiConstants.FontScaleFactor,
+            SpriteEffects.None,
+            1.0f);
     }
 
     public void AddComponent(Component? c) => AddComponent(c, -1);
@@ -290,7 +314,18 @@ public abstract class Component : IDisposable
 
     public Component? GetParent() => _parent;
 
-    public Component GetTopParent() => _parent == null ? this : _parent.GetTopParent();
+    public Component GetTopParent()
+    {
+        Component parent = this;
+
+        while (true)
+        {
+            var higherParent = parent.GetParent();
+            if (higherParent is null)
+                return parent;
+            parent = higherParent;
+        }
+    }
 
     public Component? GetChildAt(Point position)
     {
@@ -308,19 +343,19 @@ public abstract class Component : IDisposable
         return ContainsPoint(position) ? this : null;
     }
 
-    public void InvokeMouseEnter(Point mousePosition) => MouseEnter?.Invoke(this, mousePosition);
-    public void InvokeMouseMovement(Point mousePosition) => MouseMovement?.Invoke(this, mousePosition);
-    public void InvokeMouseDown(Point mousePosition) => MouseDown?.Invoke(this, mousePosition);
-    public void InvokeMouseDoubleClick(Point mousePosition) => MouseDoubleClick?.Invoke(this, mousePosition);
-    public void InvokeMouseUp(Point mousePosition) => MouseUp?.Invoke(this, mousePosition);
-    public void InvokeMouseExit(Point mousePosition) => MouseExit?.Invoke(this, mousePosition);
+    public void InvokeMouseEnter(Point mousePosition) => _mouseEnter?.Invoke(this, mousePosition);
+    public void InvokeMouseMovement(Point mousePosition) => _mouseMovement?.Invoke(this, mousePosition);
+    public void InvokeMouseDown(Point mousePosition) => _mouseDown?.Invoke(this, mousePosition);
+    public void InvokeMouseDoubleClick(Point mousePosition) => _mouseDoubleClick?.Invoke(this, mousePosition);
+    public void InvokeMouseUp(Point mousePosition) => _mouseUp?.Invoke(this, mousePosition);
+    public void InvokeMouseExit(Point mousePosition) => _mouseExit?.Invoke(this, mousePosition);
 
-    public void InvokeKeyDown(in KeysEnumerable pressedKeys) => KeyDown?.Invoke(this, in pressedKeys);
-    public void InvokeKeyUp(in KeysEnumerable pressedKeys) => KeyUp?.Invoke(this, in pressedKeys);
+    public void InvokeKeyDown(in KeysEnumerable pressedKeys) => _keyDown?.Invoke(this, in pressedKeys);
+    public void InvokeKeyUp(in KeysEnumerable pressedKeys) => _keyUp?.Invoke(this, in pressedKeys);
 
-    protected void SetMouseOver(Component _, Point mousePosition) => State = ComponentState.MouseOver;
-    protected void SetMousePress(Component _, Point mousePosition) => State = ComponentState.MousePress;
-    protected void SetMouseNormal(Component _, Point mousePosition) => State = ComponentState.Normal;
+    protected void SetMouseOver(Component c, Point p) => State = ComponentState.MouseOver;
+    protected void SetMousePress(Component c, Point p) => State = ComponentState.MousePress;
+    protected void SetMouseNormal(Component c, Point p) => State = ComponentState.Normal;
 
     public void Dispose()
     {
@@ -341,15 +376,15 @@ public abstract class Component : IDisposable
 
             _parent = null;
 
-            MouseEnter.Clear();
-            MouseMovement.Clear();
-            MouseDown.Clear();
-            MouseDoubleClick.Clear();
-            MouseUp.Clear();
-            MouseExit.Clear();
+            _mouseEnter?.Clear();
+            _mouseMovement?.Clear();
+            _mouseDown?.Clear();
+            _mouseDoubleClick?.Clear();
+            _mouseUp?.Clear();
+            _mouseExit?.Clear();
 
-            KeyDown.Clear();
-            KeyUp.Clear();
+            _keyDown?.Clear();
+            _keyUp?.Clear();
 
             OnDispose();
         }

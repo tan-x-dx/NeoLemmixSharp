@@ -8,8 +8,8 @@ public abstract class PageBase : IInitialisable, IDisposable
 {
     protected readonly MenuInputController InputController;
 
-    private bool _isInitialised;
-    private bool _isDisposed;
+    protected bool IsInitialised { get; private set; }
+    protected bool IsDisposed { get; private set; }
 
     public UiHandler UiHandler { get; }
 
@@ -22,11 +22,11 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     public void Initialise()
     {
-        if (_isInitialised)
+        if (IsInitialised)
             return;
 
         OnInitialise();
-        _isInitialised = true;
+        IsInitialised = true;
     }
 
     protected abstract void OnInitialise();
@@ -51,9 +51,9 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     public void Dispose()
     {
-        if (!_isDisposed)
+        if (!IsDisposed)
         {
-            _isDisposed = true;
+            IsDisposed = true;
 
             UiHandler.Dispose();
             OnDispose();

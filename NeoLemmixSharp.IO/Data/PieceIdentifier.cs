@@ -13,6 +13,8 @@ public readonly struct PieceIdentifier : IEquatable<PieceIdentifier>
         _pieceName = pieceName;
     }
 
+    public ReadOnlySpan<char> AsSpan() => _pieceName.AsSpan();
+
     public override string ToString() => _pieceName;
 
     public bool Equals(PieceIdentifier other) => string.Equals(_pieceName, other._pieceName, StringComparison.Ordinal);

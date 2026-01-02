@@ -8,6 +8,7 @@ public interface IGameWindow
 {
     static IGameWindow Instance { get; set; } = null!;
 
+    Point WindowPosition { get; }
     Size WindowSize { get; }
 
     bool IsActive { get; }

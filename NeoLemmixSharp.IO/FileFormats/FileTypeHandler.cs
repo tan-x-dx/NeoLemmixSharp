@@ -5,6 +5,8 @@ using NeoLemmixSharp.IO.Reading.Levels;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 using NeoLemmixSharp.IO.Reading.Styles;
 using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat;
+using NeoLemmixSharp.IO.Versions;
+using NeoLemmixSharp.IO.Writing.Levels;
 
 namespace NeoLemmixSharp.IO.FileFormats;
 
@@ -66,6 +68,14 @@ public static class FileTypeHandler
     {
         using var reader = TReaderType.Create(filePath);
         return reader.ReadLevel();
+    }
+
+    public static void WriteLevel(LevelData levelData, string filePath)
+    {
+        var levelWriter = new DefaultLevelWriter(levelData, VersionHelper.LatestLevelFileFormatVersion);
+
+        using var fileStream = new FileStream(filePath, FileMode.OpenOrCreate);
+        levelWriter.WriteToFile(fileStream);
     }
 
     internal static StyleData ReadStyle(StyleFormatPair styleFormatPair)

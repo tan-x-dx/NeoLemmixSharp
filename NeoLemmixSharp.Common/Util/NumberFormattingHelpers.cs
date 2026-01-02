@@ -36,10 +36,10 @@ public static class NumberFormattingHelpers
             goto WriteBlank;
     }
 
-    public static unsafe void WriteDigits(char* pointer, uint valueToWrite)
+    public static unsafe int WriteDigits(char* pointer, uint valueToWrite)
     {
         var length = GetNumberStringLength(valueToWrite);
-        length--;
+        var digitsWritten = 0;
 
         do
         {
@@ -47,8 +47,11 @@ public static class NumberFormattingHelpers
 
             pointer[length] = DigitToChar(rem);
             length--;
+            digitsWritten++;
         }
         while (length >= 0);
+
+        return digitsWritten;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

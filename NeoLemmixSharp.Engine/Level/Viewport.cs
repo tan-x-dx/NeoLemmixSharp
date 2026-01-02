@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.GameInput;
 
 namespace NeoLemmixSharp.Engine.Level;
 
@@ -28,7 +29,7 @@ public sealed class Viewport
         LevelScreen.VerticalBoundaryBehaviour.UpdateScreenDimension(_viewportDimensions.H, _scaleMultiplier);
     }
 
-    public void HandleMouseInput(LevelInputController inputController)
+    public void HandleMouseInput(InputController inputController)
     {
         if (MouseIsInLevelViewport(inputController))
         {
@@ -66,12 +67,12 @@ public sealed class Viewport
         verticalBoundaryBehaviour.UpdateMouseCoordinate(mousePosition.Y);
     }
 
-    private bool MouseIsInLevelViewport(LevelInputController inputController)
+    private bool MouseIsInLevelViewport(InputController inputController)
     {
         return _viewportDimensions.EncompassesPoint(inputController.MousePosition);
     }
 
-    private void TrackScrollWheel(LevelInputController inputController)
+    private void TrackScrollWheel(InputController inputController)
     {
         var currentValue = _scaleMultiplier;
         var newValue = Math.Clamp(_scaleMultiplier + inputController.ScrollDelta, MinScaleMultiplier, MaxScaleMultiplier);

@@ -94,7 +94,7 @@ end;
 
     private static void HandleMouseInput()
     {
-        LevelScreen.LevelViewport.HandleMouseInput(LevelScreen.LevelInputController);
+        LevelScreen.LevelViewport.HandleMouseInput(LevelScreen.LevelInputController.InputController);
 
         if (LevelScreen.LevelViewport.MouseIsInLevelViewPort)
         {

@@ -303,13 +303,7 @@ public sealed class TerrainBuilder
         if (exists)
             return;
 
-        var rootFilePath = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            stylePiecePair.StyleIdentifier.ToString(),
-            DefaultFileExtensions.TerrainFolderName,
-            stylePiecePair.PieceIdentifier.ToString());
-
-        var pngPath = RootDirectoryManager.GetCorrespondingImageFile(rootFilePath);
+        var pngPath = GetPngFilePath(terrainData);
 
         var mainTexture = TextureCache.GetOrLoadTexture(
             pngPath,
@@ -317,5 +311,10 @@ public sealed class TerrainBuilder
             terrainData.PieceIdentifier,
             TextureType.TerrainSprite);
         colorData = ArrayWrapperHelpers.GetPixelColorDataFromTexture(mainTexture);
+    }
+
+    private string GetPngFilePath(TerrainData terrainData)
+    {
+        return _terrainArchetypeDataLookup[terrainData.GetStylePiecePair()].TextureFilePath;
     }
 }

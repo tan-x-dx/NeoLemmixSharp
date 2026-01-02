@@ -25,13 +25,15 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     private IBaseScreen? _screen;
     private IScreenRenderer? _screenRenderer;
 
-    private int _width = 1920;
-    private int _height = 1080;
-    private WindowMode _windowMode;
+    private int _baseWindowWidth = 2560;
+    private int _baseWindowHeight = 1440;
+
+    private WindowMode _windowMode = WindowMode.Windowed;
     public bool IsFullscreen => _windowMode == WindowMode.Fullscreen;
     public bool IsBorderless => _windowMode == WindowMode.Borderless;
 
-    public Size WindowSize => new(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+    public Common.Point WindowPosition => new(Window.ClientBounds.Left, Window.ClientBounds.Top);
+    public Size WindowSize => new(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
     public SpriteBatch SpriteBatch => _spriteBatch;
 
@@ -40,7 +42,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         _graphics = new GraphicsDeviceManager(this)
         {
             PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8,
-            SynchronizeWithVerticalRetrace = false
+            SynchronizeWithVerticalRetrace = false,
+            GraphicsProfile = GraphicsProfile.HiDef
         };
 
         Content.RootDirectory = "Content";
@@ -52,23 +55,20 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         TargetElapsedTime = EngineConstants.FramesPerSecondTimeSpan;
 
         IGameWindow.Instance = this;
-
-        ToggleBorderless();
     }
 
     protected override void Initialize()
     {
-        // make the window fullscreen (but still with border and top control bar)
-        var screenWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
-        var screenHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
-        _graphics.PreferredBackBufferWidth = screenWidth;
-        _graphics.PreferredBackBufferHeight = screenHeight;
+        _graphics.PreferredBackBufferWidth = _baseWindowWidth;
+        _graphics.PreferredBackBufferHeight = _baseWindowHeight;
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
         ValidateGameConstants();
         ValidateMaxActionNameLength();
         LoadContent();
+
+        // ToggleBorderless();
     }
 
     private void WindowOnClientSizeChanged(object? sender, EventArgs e)
@@ -191,89 +191,67 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     public void ToggleFullscreen()
     {
-        var oldIsFullscreen = _windowMode == WindowMode.Fullscreen;
-
         if (_windowMode == WindowMode.Windowed)
         {
             _windowMode = WindowMode.Fullscreen;
+            SetFullscreen();
         }
         else
         {
             _windowMode = WindowMode.Windowed;
+            UnsetFullscreen();
         }
-
-        ApplyFullscreenChange(oldIsFullscreen);
     }
 
     public void ToggleBorderless()
     {
-        var oldIsFullscreen = _windowMode == WindowMode.Fullscreen;
-
         if (_windowMode == WindowMode.Windowed)
         {
             _windowMode = WindowMode.Borderless;
+            ApplyHardwareMode();
         }
         else
         {
             _windowMode = WindowMode.Windowed;
-        }
-
-        ApplyFullscreenChange(oldIsFullscreen);
-    }
-
-    private void ApplyFullscreenChange(bool oldIsFullscreen)
-    {
-        if (_windowMode != WindowMode.Windowed)
-        {
-            if (oldIsFullscreen)
-            {
-                ApplyHardwareMode();
-            }
-            else
-            {
-                SetFullscreen();
-            }
-        }
-        else
-        {
             UnsetFullscreen();
         }
     }
 
     private void ApplyHardwareMode()
     {
-        _graphics.HardwareModeSwitch = _windowMode == WindowMode.Fullscreen;
+        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+        _graphics.HardwareModeSwitch = false;
         _graphics.ApplyChanges();
 
         Window.AllowUserResizing = false;
         Window.IsBorderless = true;
+        Window.Position = new(0, 0);
 
         _screen?.OnWindowSizeChanged();
     }
 
     private void SetFullscreen()
     {
-        _width = Window.ClientBounds.Width;
-        _height = Window.ClientBounds.Height;
-
         _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
         _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-        _graphics.HardwareModeSwitch = _windowMode == WindowMode.Fullscreen;
+        _graphics.HardwareModeSwitch = true;
 
         _graphics.IsFullScreen = true;
         _graphics.ApplyChanges();
 
         Window.AllowUserResizing = false;
         Window.IsBorderless = true;
+        Window.Position = new(0, 0);
 
         _screen?.OnWindowSizeChanged();
     }
 
     private void UnsetFullscreen()
     {
-        _graphics.PreferredBackBufferWidth = _width;
-        _graphics.PreferredBackBufferHeight = _height;
-        _graphics.IsFullScreen = _windowMode == WindowMode.Fullscreen;
+        _graphics.PreferredBackBufferWidth = _baseWindowWidth;
+        _graphics.PreferredBackBufferHeight = _baseWindowHeight;
+        _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
         Window.AllowUserResizing = true;

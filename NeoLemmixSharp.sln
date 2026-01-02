@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.5.33424.131
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoLemmixSharp", "NeoLemmixSharp\NeoLemmixSharp.csproj", "{B4EB701D-12AE-490A-B01C-58EE79EED155}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -19,6 +19,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoLemmixSharp.Menu", "NeoLemmixSharp.Menu\NeoLemmixSharp.Menu.csproj", "{71450571-E95A-4A5F-A7B8-E8505B419838}"
 	ProjectSection(ProjectDependencies) = postProject
 		{30D02BAE-A3FD-4CC2-A16F-54DAE5BE0AF3} = {30D02BAE-A3FD-4CC2-A16F-54DAE5BE0AF3}
+		{FC332218-B523-4819-9CAF-316D1DD09D4A} = {FC332218-B523-4819-9CAF-316D1DD09D4A}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoLemmixSharp.Ui", "NeoLemmixSharp.Ui\NeoLemmixSharp.Ui.csproj", "{30D02BAE-A3FD-4CC2-A16F-54DAE5BE0AF3}"

@@ -23,4 +23,16 @@ public static class RenderingHelpers
             SpriteEffects.None,
             1.0f);
     }
+
+    public static void FillRect(
+        this SpriteBatch spriteBatch,
+        Rectangle destinationRectangle,
+        Color color)
+    {
+        spriteBatch.Draw(
+            CommonSprites.WhitePixelGradientSprite,
+            destinationRectangle,
+            CommonSprites.RectangleForWhitePixelAlpha(0xff),
+            color);
+    }
 }

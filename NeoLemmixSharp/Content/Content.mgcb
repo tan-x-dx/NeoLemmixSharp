@@ -181,6 +181,13 @@
 /processorParam:TextureFormat=Color
 /build:Fonts/skill_count_digits.png
 
+#begin Fonts/UiFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/UiFont.spritefont
+
 #begin helpers/font compiled.png
 /importer:TextureImporter
 /processor:TextureProcessor

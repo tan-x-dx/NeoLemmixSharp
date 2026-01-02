@@ -157,9 +157,6 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
     {
         var destRectangle = new Rectangle(0, 0, 1, 1);
         var explosionParticleColors = EngineConstants.GetExplosionParticleColors();
-        var whitePixelTexture = CommonSprites.WhitePixelGradientSprite;
-
-        var sourceRectangle = CommonSprites.RectangleForWhitePixelAlpha(0xff);
 
         var dht = new DihedralTransformation(_lemming.Orientation, _lemming.FacingDirection);
         var anchorPoint = dht.Transform(_actionSprite.AnchorPoint, _actionSprite.SpriteSize);
@@ -179,10 +176,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             destRectangle.X = screenX + offset.X;
             destRectangle.Y = screenY + offset.Y;
 
-            spriteBatch.Draw(
-                whitePixelTexture,
+            spriteBatch.FillRect(
                 destRectangle,
-                sourceRectangle,
                 color);
         }
     }

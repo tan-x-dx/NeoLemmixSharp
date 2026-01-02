@@ -9,14 +9,12 @@ namespace NeoLemmixSharp.Menu.Rendering;
 public sealed class PageTransitionRenderer : IDisposable
 {
     private readonly PageTransition _pageTransition;
-    private readonly Texture2D _fadeTexture;
 
     private Size _windowSize;
 
     public PageTransitionRenderer(PageTransition pageTransition)
     {
         _pageTransition = pageTransition;
-        _fadeTexture = CommonSprites.WhitePixelGradientSprite;
     }
 
     public void SetWindowDimensions(Size windowSize)
@@ -30,7 +28,7 @@ public sealed class PageTransitionRenderer : IDisposable
             return;
 
         spriteBatch.Draw(
-            _fadeTexture,
+            CommonSprites.WhitePixelGradientSprite,
             Helpers.CreateRectangle(new Point(), _windowSize),
             CommonSprites.RectangleForWhitePixelAlpha(_pageTransition.TransitionAlpha),
             Color.Black);
