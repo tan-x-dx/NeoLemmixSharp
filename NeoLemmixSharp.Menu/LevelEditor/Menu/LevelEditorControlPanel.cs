@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Data;
 
-namespace NeoLemmixSharp.Menu.LevelEditor.Components;
+namespace NeoLemmixSharp.Menu.LevelEditor.Menu;
 
 public sealed class LevelEditorControlPanel : Component
 {

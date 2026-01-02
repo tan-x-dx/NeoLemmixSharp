@@ -10,7 +10,7 @@ using Color = Microsoft.Xna.Framework.Color;
 using Point = NeoLemmixSharp.Common.Point;
 using Size = NeoLemmixSharp.Common.Size;
 
-namespace NeoLemmixSharp.Menu.LevelEditor.Components;
+namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
 public sealed class LevelCanvas : Component
 {

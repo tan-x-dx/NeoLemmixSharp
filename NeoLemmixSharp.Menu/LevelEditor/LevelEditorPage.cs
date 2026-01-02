@@ -5,7 +5,9 @@ using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
-using NeoLemmixSharp.Menu.LevelEditor.Components;
+using NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
+using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
+using NeoLemmixSharp.Menu.LevelEditor.Menu;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
 

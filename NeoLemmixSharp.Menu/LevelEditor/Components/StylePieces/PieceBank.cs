@@ -5,7 +5,7 @@ using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Data;
 using NeoLemmixSharp.Ui.Events;
 
-namespace NeoLemmixSharp.Menu.LevelEditor.Components;
+namespace NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 
 public sealed class PieceBank : Component, IComparer<PieceSelector>
 {
