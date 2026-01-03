@@ -605,17 +605,17 @@ public static class BitArrayHelpers
     }
 
     [Pure]
-    internal static bool Overlaps(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
+    internal static bool Overlaps(ReadOnlySpan<uint> firstSpan, ReadOnlySpan<uint> secondSpan)
     {
-        var firstSpanLength = span.Length;
-        var secondSpanLength = other.Length;
+        var firstSpanLength = firstSpan.Length;
+        var secondSpanLength = secondSpan.Length;
 
         if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
-        ref uint firstSpanRef = ref MemoryMarshal.GetReference(span);
-        ref uint secondSpanRef = ref MemoryMarshal.GetReference(other);
-        ref readonly uint endRef = ref span.At(firstSpanLength);
+        ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
+        ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
+        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
@@ -629,17 +629,17 @@ public static class BitArrayHelpers
     }
 
     [Pure]
-    internal static bool SetEquals(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
+    internal static bool SetEquals(ReadOnlySpan<uint> firstSpan, ReadOnlySpan<uint> secondSpan)
     {
-        var firstSpanLength = span.Length;
-        var secondSpanLength = other.Length;
+        var firstSpanLength = firstSpan.Length;
+        var secondSpanLength = secondSpan.Length;
 
         if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
-        ref uint firstSpanRef = ref MemoryMarshal.GetReference(span);
-        ref uint secondSpanRef = ref MemoryMarshal.GetReference(other);
-        ref readonly uint endRef = ref span.At(firstSpanLength);
+        ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
+        ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
+        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
