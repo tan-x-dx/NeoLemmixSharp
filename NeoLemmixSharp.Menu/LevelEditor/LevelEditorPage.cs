@@ -77,6 +77,7 @@ public sealed class LevelEditorPage : PageBase
 
         _leftPanel.Left = 0;
         _leftPanel.Top = _topPanel.Height;
+        _leftPanel.Height = windowSize.H - _topPanel.Height - _pieceBank.Height;
 
         _pieceBank.Left = 0;
         _pieceBank.Top = windowSize.H - _pieceBank.Height;

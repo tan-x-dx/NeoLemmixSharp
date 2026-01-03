@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
@@ -14,25 +12,15 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
 public sealed class LevelCanvas : Component
 {
-    private const int ScrollDelta = 16;
-
-    private const int MinZoom = 1;
-    private const int MaxZoom = 12;
-
-    private const int NegativeSpaceBoundary = 128;
-
-    private const int MinCanvasBorderThickness = 16;
+    public const int LevelOuterBoundarySize = 128;
     private const uint CanvasBorderColourValue = 0xff696969;
 
     private readonly GraphicsDevice _graphicsDevice;
     private RenderTarget2D _levelTexture;
     private ArrayWrapper2D<Color> _levelColors;
 
-    private BoundaryBehaviour _horizontalBoundaryBehaviour;
-    private BoundaryBehaviour _verticalBoundaryBehaviour;
-
-    private int _zoom = MinZoom;
-    private RectangularRegion _cameraBounds;
+    private CanvasBorderBehaviour _horizontalBorderBehaviour;
+    private CanvasBorderBehaviour _verticalBorderBehaviour;
 
     public LevelData LevelData
     {
@@ -64,36 +52,39 @@ public sealed class LevelCanvas : Component
 
     private void RenderLevel(SpriteBatch spriteBatch)
     {
-        var horizontalRenderIntervals = _horizontalBoundaryBehaviour.GetScreenRenderIntervals();
-        var verticalRenderIntervals = _verticalBoundaryBehaviour.GetScreenRenderIntervals();
+        var sourceRectangle = GetSourceRectangle();
+        var destinationRectangle = GetDestinationRectangle();
 
-        foreach (var horizontalRenderInterval in horizontalRenderIntervals)
+        spriteBatch.Draw(
+            _levelTexture,
+            destinationRectangle,
+            sourceRectangle,
+            Color.White);
+
+        return;
+
+        Rectangle GetSourceRectangle()
         {
-            foreach (var verticalRenderInterval in verticalRenderIntervals)
-            {
-                var destinationRectangle = new Rectangle(
-                    horizontalRenderInterval.ScreenStart,
-                    verticalRenderInterval.ScreenStart,
-                    horizontalRenderInterval.ScreenLength,
-                    verticalRenderInterval.ScreenLength);
+            var horizontalCameraInterval = _horizontalBorderBehaviour.GetViewPortSourceInterval();
+            var verticalCameraInterval = _verticalBorderBehaviour.GetViewPortSourceInterval();
 
-                var sourceRectangle = new Rectangle(
-                    horizontalRenderInterval.SourceStart,
-                    verticalRenderInterval.SourceStart,
-                    horizontalRenderInterval.SourceLength,
-                    verticalRenderInterval.SourceLength);
+            return new Rectangle(
+                horizontalCameraInterval.Start,
+                verticalCameraInterval.Start,
+                horizontalCameraInterval.Length,
+                verticalCameraInterval.Length);
+        }
 
-                destinationRectangle.X += Left;
-                destinationRectangle.Y += Top;
-                destinationRectangle.Width *= _zoom;
-                destinationRectangle.Height *= _zoom;
+        Rectangle GetDestinationRectangle()
+        {
+            var horizontalScreenInterval = _horizontalBorderBehaviour.GetScreenDestinationInterval();
+            var verticalScreenCameraInterval = _verticalBorderBehaviour.GetScreenDestinationInterval();
 
-                spriteBatch.Draw(
-                    _levelTexture,
-                    destinationRectangle,
-                    sourceRectangle,
-                    Color.White);
-            }
+            return new Rectangle(
+                Left + horizontalScreenInterval.Start,
+                Top + verticalScreenCameraInterval.Start,
+                horizontalScreenInterval.Length,
+                verticalScreenCameraInterval.Length);
         }
     }
 
@@ -102,17 +93,16 @@ public sealed class LevelCanvas : Component
         RecreateRenderers();
         RepaintLevel();
 
-        var levelDimensions = LevelData.LevelDimensions;
-        _horizontalBoundaryBehaviour = new BoundaryBehaviour(DimensionType.Horizontal, BoundaryBehaviourType.Void, levelDimensions.W);
-        _verticalBoundaryBehaviour = new BoundaryBehaviour(DimensionType.Vertical, BoundaryBehaviourType.Void, levelDimensions.H);
+        _horizontalBorderBehaviour = new CanvasBorderBehaviour(_levelTexture.Width);
+        _verticalBorderBehaviour = new CanvasBorderBehaviour(_levelTexture.Height);
 
-        RecalculateCameraDimensions();
         RecentreCamera();
     }
 
     public void OnCanvasResize()
     {
-        RecalculateCameraDimensions();
+        _horizontalBorderBehaviour.SetScreenLength(Width);
+        _verticalBorderBehaviour.SetScreenLength(Height);
         Scroll(0, 0);
     }
 
@@ -121,8 +111,9 @@ public sealed class LevelCanvas : Component
         _levelTexture?.Dispose();
         _levelTexture = CreateControlPanelRenderTarget2D();
 
-        var levelDimensions = LevelData.LevelDimensions;
-        _levelColors = new ArrayWrapper2D<Color>(levelDimensions);
+        var textureDimensions = new Size(_levelTexture.Width, _levelTexture.Height);
+
+        _levelColors = new ArrayWrapper2D<Color>(textureDimensions);
     }
 
     private RenderTarget2D CreateControlPanelRenderTarget2D()
@@ -130,8 +121,8 @@ public sealed class LevelCanvas : Component
         var levelDimensions = LevelData.LevelDimensions;
         return new RenderTarget2D(
             _graphicsDevice,
-            levelDimensions.W,
-            levelDimensions.H,
+            levelDimensions.W + (2 * LevelOuterBoundarySize),
+            levelDimensions.H + (2 * LevelOuterBoundarySize),
             false,
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);
@@ -140,7 +131,8 @@ public sealed class LevelCanvas : Component
     public void RepaintLevel()
     {
         new Span<Color>(_levelColors.Array).Fill(Color.Black);
-        var levelDimensions = LevelData.LevelDimensions;
+        var textureWidth = _levelTexture.Width;
+        var textureHeight = _levelTexture.Height;
 
         for (var y = 0; y < 16; y++)
         {
@@ -149,33 +141,41 @@ public sealed class LevelCanvas : Component
                 var p = new Point(x, y);
                 _levelColors[p] = Color.Red;
 
-                p = new Point(levelDimensions.W - x - 1, y);
+                p = new Point(textureWidth - x - 1, y);
                 _levelColors[p] = Color.Red;
 
-                p = new Point(x, levelDimensions.H - y - 1);
+                p = new Point(x, textureHeight - y - 1);
                 _levelColors[p] = Color.Red;
 
-                p = new Point(levelDimensions.W - x - 1, levelDimensions.H - y - 1);
+                p = new Point(textureWidth - x - 1, textureHeight - y - 1);
                 _levelColors[p] = Color.Red;
             }
         }
 
-        for (var y = 0; y < levelDimensions.H; y++)
+        for (var y = 0; y < textureHeight; y++)
         {
-            var p = new Point(0, y);
-            _levelColors[p] = Color.AliceBlue;
+            var color = ((y >>> 4) & 1) != 0
+                ? Color.AliceBlue
+                : Color.Crimson;
 
-            p = new Point(levelDimensions.W - 1, y);
-            _levelColors[p] = Color.AliceBlue;
+            var p = new Point(0, y);
+            _levelColors[p] = color;
+
+            p = new Point(textureWidth - 1, y);
+            _levelColors[p] = color;
         }
 
-        for (var x = 0; x < levelDimensions.W; x++)
+        for (var x = 0; x < textureWidth; x++)
         {
-            var p = new Point(x, 0);
-            _levelColors[p] = Color.AliceBlue;
+            var color = ((x >>> 4) & 1) != 0
+                ? Color.AliceBlue
+                : Color.Crimson;
 
-            p = new Point(x, levelDimensions.H - 1);
-            _levelColors[p] = Color.AliceBlue;
+            var p = new Point(x, 0);
+            _levelColors[p] = color;
+
+            p = new Point(x, textureHeight - 1);
+            _levelColors[p] = color;
         }
 
         _levelTexture.SetData(_levelColors.Array);
@@ -183,11 +183,13 @@ public sealed class LevelCanvas : Component
 
     public Point GetCenterPositionOfCamera()
     {
-        var cameraPosition = _cameraBounds.Position;
+        var cameraX = _horizontalBorderBehaviour.ViewportStart;
+        var cameraY = _verticalBorderBehaviour.ViewportStart;
 
-        var offset = new Point(_cameraBounds.W >>> 1, _cameraBounds.H >>> 1);
+        var offsetX = _horizontalBorderBehaviour.ViewportLength / 2;
+        var offsetY = _verticalBorderBehaviour.ViewportLength / 2;
 
-        return cameraPosition + offset;
+        return new Point(cameraX + offsetX, cameraY + offsetY);
     }
 
     public void HandleUserInput(MenuInputController inputController)
@@ -205,14 +207,8 @@ public sealed class LevelCanvas : Component
 
     private void Zoom(int scrollDelta)
     {
-        if (scrollDelta == 0)
-            return;
-
-        var currentZoom = Math.Clamp(_zoom + scrollDelta, MinZoom, MaxZoom);
-
-        _zoom = currentZoom;
-
-        RecalculateCameraDimensions();
+        _horizontalBorderBehaviour.Zoom(scrollDelta);
+        _verticalBorderBehaviour.Zoom(scrollDelta);
     }
 
     private static Point CalculateScrollDelta(MenuInputController inputController)
@@ -230,71 +226,14 @@ public sealed class LevelCanvas : Component
 
     public void Scroll(int dx, int dy)
     {
-        dx = Math.Sign(dx);
-        dy = Math.Sign(dy);
-
-        dx *= ScrollDelta;
-        dy *= ScrollDelta;
-
-        var newX = _cameraBounds.X + dx;
-        var newY = _cameraBounds.Y + dy;
-
-        var levelSize = LevelData.LevelDimensions;
-
-        newX = ClampCameraPosition(newX, levelSize.W);
-        newY = ClampCameraPosition(newY, levelSize.H);
-
-        var actualScrollDeltaX = newX - _cameraBounds.X;
-        var actualScrollDeltaY = newY - _cameraBounds.Y;
-
-        _cameraBounds = new RectangularRegion(new Point(newX, newY), _cameraBounds.Size);
-        _horizontalBoundaryBehaviour.Scroll(actualScrollDeltaX);
-        _verticalBoundaryBehaviour.Scroll(actualScrollDeltaY);
-
-        return;
-
-        static int ClampCameraPosition(int cameraPosition, int levelDimension)
-        {
-            var result = cameraPosition;
-
-            if (cameraPosition < -NegativeSpaceBoundary)
-                result = -NegativeSpaceBoundary;
-
-            var max = levelDimension + NegativeSpaceBoundary;
-            if (cameraPosition > max)
-                result = max;
-
-            return result;
-        }
+        _horizontalBorderBehaviour.Scroll(dx);
+        _verticalBorderBehaviour.Scroll(dy);
     }
 
     private void RecentreCamera()
     {
-        var levelSize = LevelData.LevelDimensions;
-
-        var halfLevelWidth = levelSize.W / 2;
-        var halfLevelHeight = levelSize.H / 2;
-
-        var halfCameraWidth = _cameraBounds.W / 2;
-        var halfCameraHeight = _cameraBounds.H / 2;
-
-        var newCameraX = halfLevelWidth - halfCameraWidth;
-        var newCameraY = halfLevelHeight - halfCameraHeight;
-
-        _cameraBounds = new RectangularRegion(new Point(newCameraX, newCameraY), _cameraBounds.Size);
-    }
-
-    private void RecalculateCameraDimensions()
-    {
-        var canvasWidth = Width;
-        var canvasHeight = Height;
-
-        var newCameraWidth = canvasWidth / _zoom;
-        var newCameraHeight = canvasHeight / _zoom;
-        _cameraBounds = new RectangularRegion(_cameraBounds.Position, new Size(newCameraWidth, newCameraHeight));
-
-        _horizontalBoundaryBehaviour.UpdateScreenDimension(newCameraWidth, _zoom);
-        _verticalBoundaryBehaviour.UpdateScreenDimension(newCameraHeight, _zoom);
+        _horizontalBorderBehaviour.RecentreCamera();
+        _verticalBorderBehaviour.RecentreCamera();
     }
 
     protected override void OnDispose()
