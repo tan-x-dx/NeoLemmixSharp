@@ -86,15 +86,7 @@ public static class Helpers
     /// <param name="index">The (assumed valid) index.</param>
     /// <returns>A mutable reference to the data at that index</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ref T At<T>(this Span<T> span, int index)
-    {
-#if DEBUG
-        if ((uint)index >= (uint)span.Length)
-            throw new ArgumentOutOfRangeException(nameof(index));
-#endif
-
-        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
-    }
+    public static ref T At<T>(this Span<T> span, int index) => ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
 
     /// <summary>
     /// Returns a read-only reference to the specified read-only span index.
@@ -107,15 +99,7 @@ public static class Helpers
     /// <param name="index">The (assumed valid) index.</param>
     /// <returns>A read-only reference to the data at that index</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ref readonly T At<T>(this ReadOnlySpan<T> span, int index)
-    {
-#if DEBUG
-        if ((uint)index >= (uint)span.Length)
-            throw new ArgumentOutOfRangeException(nameof(index));
-#endif
-
-        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
-    }
+    public static ref readonly T At<T>(this ReadOnlySpan<T> span, int index) => ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
