@@ -137,7 +137,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             verticalBoundaryBehaviour,
             levelData.LevelParameters,
             terrainManager,
-            new TerrainPainter(terrainTexture, in pixelData, in terrainColorData),
+            new TerrainUpdater(terrainTexture, in pixelData, in terrainColorData),
             lemmingManager,
             gadgetManager,
             tribeManager,

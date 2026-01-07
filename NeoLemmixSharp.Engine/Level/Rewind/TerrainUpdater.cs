@@ -6,7 +6,7 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class TerrainPainter : IDisposable
+public sealed class TerrainUpdater : IDisposable
 {
     private const int InitialPixelChangeListSize = 1 << 14;
 
@@ -17,7 +17,7 @@ public sealed class TerrainPainter : IDisposable
 
     private int _latestIndexOfTickUpdates;
 
-    public TerrainPainter(
+    public TerrainUpdater(
         Texture2D terrainTexture,
         in ArrayWrapper2D<PixelType> terrainPixelTypes,
         in ArrayWrapper2D<Color> terrainColors)

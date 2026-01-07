@@ -144,7 +144,7 @@ public sealed class TerrainBuilder
                 }
                 else
                 {
-                    DrawResizeableTerrainPiece(
+                    PaintResizeableTerrainPiece(
                         terrainData,
                         terrainArchetypeData,
                         in targetData);
@@ -247,7 +247,7 @@ public sealed class TerrainBuilder
         }
     }
 
-    private void DrawResizeableTerrainPiece(
+    private void PaintResizeableTerrainPiece(
         TerrainData terrainData,
         TerrainArchetypeData terrainArchetypeData,
         in ArrayWrapper2D<Color> targetPixelColorData)
