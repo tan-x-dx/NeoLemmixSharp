@@ -12,6 +12,8 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
 public sealed class LevelCanvas : Component
 {
+    private const int ArrowKeyScrollDelta = 16;
+
     public const int LevelOuterBoundarySize = 128;
     private const uint CanvasBorderColourValue = 0xff696969;
 
@@ -65,26 +67,26 @@ public sealed class LevelCanvas : Component
 
         Rectangle GetSourceRectangle()
         {
-            var horizontalCameraInterval = _horizontalBorderBehaviour.GetViewPortSourceInterval();
-            var verticalCameraInterval = _verticalBorderBehaviour.GetViewPortSourceInterval();
+            var horizontalViewportInterval = _horizontalBorderBehaviour.GetViewportSourceInterval();
+            var verticalViewportInterval = _verticalBorderBehaviour.GetViewportSourceInterval();
 
             return new Rectangle(
-                horizontalCameraInterval.Start,
-                verticalCameraInterval.Start,
-                horizontalCameraInterval.Length,
-                verticalCameraInterval.Length);
+                horizontalViewportInterval.Start,
+                verticalViewportInterval.Start,
+                horizontalViewportInterval.Length,
+                verticalViewportInterval.Length);
         }
 
         Rectangle GetDestinationRectangle()
         {
             var horizontalScreenInterval = _horizontalBorderBehaviour.GetScreenDestinationInterval();
-            var verticalScreenCameraInterval = _verticalBorderBehaviour.GetScreenDestinationInterval();
+            var verticalScreenInterval = _verticalBorderBehaviour.GetScreenDestinationInterval();
 
             return new Rectangle(
                 Left + horizontalScreenInterval.Start,
-                Top + verticalScreenCameraInterval.Start,
+                Top + verticalScreenInterval.Start,
                 horizontalScreenInterval.Length,
-                verticalScreenCameraInterval.Length);
+                verticalScreenInterval.Length);
         }
     }
 
@@ -96,13 +98,13 @@ public sealed class LevelCanvas : Component
         _horizontalBorderBehaviour = new CanvasBorderBehaviour(_levelTexture.Width);
         _verticalBorderBehaviour = new CanvasBorderBehaviour(_levelTexture.Height);
 
-        RecentreCamera();
+        RecentreViewport();
     }
 
     public void OnCanvasResize()
     {
-        _horizontalBorderBehaviour.SetScreenLength(Width);
-        _verticalBorderBehaviour.SetScreenLength(Height);
+        _horizontalBorderBehaviour.SetCanvasLength(Width);
+        _verticalBorderBehaviour.SetCanvasLength(Height);
         Scroll(0, 0);
     }
 
@@ -181,15 +183,15 @@ public sealed class LevelCanvas : Component
         _levelTexture.SetData(_levelColors.Array);
     }
 
-    public Point GetCenterPositionOfCamera()
+    public Point GetCenterPositionOfViewport()
     {
-        var cameraX = _horizontalBorderBehaviour.ViewportStart;
-        var cameraY = _verticalBorderBehaviour.ViewportStart;
+        var viewportX = _horizontalBorderBehaviour.ViewportStart;
+        var viewportY = _verticalBorderBehaviour.ViewportStart;
 
         var offsetX = _horizontalBorderBehaviour.ViewportLength / 2;
         var offsetY = _verticalBorderBehaviour.ViewportLength / 2;
 
-        return new Point(cameraX + offsetX, cameraY + offsetY);
+        return new Point(viewportX + offsetX, viewportY + offsetY);
     }
 
     public void HandleUserInput(MenuInputController inputController)
@@ -221,6 +223,9 @@ public sealed class LevelCanvas : Component
         var scrollDx = right - left;
         var scrollDy = down - up;
 
+        scrollDx *= ArrowKeyScrollDelta;
+        scrollDy *= ArrowKeyScrollDelta;
+
         return new Point(scrollDx, scrollDy);
     }
 
@@ -230,10 +235,10 @@ public sealed class LevelCanvas : Component
         _verticalBorderBehaviour.Scroll(dy);
     }
 
-    private void RecentreCamera()
+    private void RecentreViewport()
     {
-        _horizontalBorderBehaviour.RecentreCamera();
-        _verticalBorderBehaviour.RecentreCamera();
+        _horizontalBorderBehaviour.RecentreViewport();
+        _verticalBorderBehaviour.RecentreViewport();
     }
 
     protected override void OnDispose()

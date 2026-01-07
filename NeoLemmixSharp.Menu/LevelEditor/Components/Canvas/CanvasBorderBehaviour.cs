@@ -7,23 +7,22 @@ public sealed class CanvasBorderBehaviour
 {
     private const int ExtraSpaceBoundary = 16;
 
-    private const int ScrollDelta = 16;
-
     private const int MinZoom = 1;
     private const int MaxZoom = 12;
 
+    private int _canvasLength;
     private readonly int _levelLength;
 
     private int _viewportStart;
-    private int _viewPortLength;
+    private int _rawViewportLength;
+    private int _actualViewportLength;
 
-    private int _screenStart;
     private int _screenLength;
 
     private int _zoom = MinZoom;
 
     public int ViewportStart => _viewportStart;
-    public int ViewportLength => _viewPortLength;
+    public int ViewportLength => _actualViewportLength;
 
     public CanvasBorderBehaviour(int levelLength)
     {
@@ -31,30 +30,74 @@ public sealed class CanvasBorderBehaviour
     }
 
     [Pure]
-    public Interval GetViewPortSourceInterval()
+    public Interval GetViewportSourceInterval()
     {
-        var levelInterval = new Interval(0, _levelLength);
-        return new Interval(_viewportStart, _viewPortLength).Intersect(levelInterval);
+        if (_rawViewportLength > _levelLength)
+            return new Interval(0, _levelLength);
+
+        var start = _viewportStart;
+        var length = _actualViewportLength;
+        if (start < 0)
+        {
+            length += start;
+            start = 0;
+        }
+        else
+        {
+            var viewportEnd = _viewportStart + _actualViewportLength;
+
+            if (viewportEnd > _levelLength)
+            {
+                length = _levelLength - _viewportStart;
+            }
+        }
+
+        return new Interval(start, length);
     }
 
     [Pure]
     public Interval GetScreenDestinationInterval()
     {
-        return new Interval(_screenStart, _screenLength);
+        int screenStart;
+        if (_rawViewportLength > _levelLength)
+        {
+            screenStart = (_canvasLength - _screenLength) / 2;
+            return new Interval(screenStart, _screenLength);
+        }
+         
+        screenStart = 0;
+        var screenLengthModifier = 0;
+
+        if (_viewportStart < 0)
+        {
+            screenLengthModifier = _viewportStart;
+            screenLengthModifier *= _zoom;
+            screenStart = -screenLengthModifier;
+        }
+        else
+        {
+            var viewportEnd = _viewportStart + _actualViewportLength;
+
+            if (viewportEnd > _levelLength)
+            {
+                screenLengthModifier = _levelLength - _viewportStart;
+                screenLengthModifier *= _zoom;
+                screenLengthModifier -= _screenLength;
+            }
+        }
+
+        return new Interval(screenStart, _screenLength + screenLengthModifier);
     }
 
     public void Scroll(int delta)
     {
-        delta = Math.Sign(delta);
-        delta *= ScrollDelta;
-
         _viewportStart += delta;
         ClampViewportPosition();
     }
 
     private void ClampViewportPosition()
     {
-        if (_viewPortLength >= _levelLength)
+        if (_rawViewportLength > _levelLength)
         {
             _viewportStart = 0;
         }
@@ -64,29 +107,20 @@ public sealed class CanvasBorderBehaviour
         }
         else
         {
-            var max = _levelLength - _viewPortLength + ExtraSpaceBoundary + ExtraSpaceBoundary;
+            var max = _levelLength - _actualViewportLength + ExtraSpaceBoundary;
             if (_viewportStart > max)
             {
                 _viewportStart = max;
             }
         }
-
-        UpdateScreenPosition();
     }
 
-    private void UpdateScreenPosition()
-    {
-        _screenStart = _viewportStart < 0
-            ? -1 * _viewportStart * _zoom
-            : 0;
-    }
-
-    public void RecentreCamera()
+    public void RecentreViewport()
     {
         var halfLevelLength = _levelLength / 2;
-        var halfCameraLength = _viewPortLength / 2;
+        var halfViewportLength = _actualViewportLength / 2;
 
-        _viewportStart = halfLevelLength - halfCameraLength;
+        _viewportStart = halfLevelLength - halfViewportLength;
         ClampViewportPosition();
     }
 
@@ -97,20 +131,24 @@ public sealed class CanvasBorderBehaviour
 
         _zoom = Math.Clamp(_zoom + scrollDelta, MinZoom, MaxZoom);
 
-        RecalculateCameraDimensions();
+        RecalculateViewportDimensions();
         Scroll(0);
     }
 
-    public void SetScreenLength(int screenLength)
+    public void SetCanvasLength(int canvasLength)
     {
-        _screenLength = screenLength;
-        RecalculateCameraDimensions();
+        _canvasLength = canvasLength;
+        RecalculateViewportDimensions();
         Scroll(0);
     }
 
-    private void RecalculateCameraDimensions()
+    private void RecalculateViewportDimensions()
     {
-        _viewPortLength = (_screenLength + _zoom - 1) / _zoom;
-        _screenLength = _viewPortLength * _zoom;
+        var newRawViewportLength = (_canvasLength + _zoom - 1) / _zoom;
+        _rawViewportLength = newRawViewportLength;
+        if (newRawViewportLength > _levelLength)
+            newRawViewportLength = _levelLength;
+        _actualViewportLength = newRawViewportLength;
+        _screenLength = newRawViewportLength * _zoom;
     }
 }

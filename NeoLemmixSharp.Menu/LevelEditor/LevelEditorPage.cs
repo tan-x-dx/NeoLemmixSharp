@@ -167,7 +167,7 @@ public sealed class LevelEditorPage : PageBase
         if (defaultArchetypeSize.H > 0)
             initialHeight = defaultArchetypeSize.H;
 
-        var position = _levelCanvas.GetCenterPositionOfCamera();
+        var position = _levelCanvas.GetCenterPositionOfViewport();
 
         var newTerrainData = new TerrainData()
         {
