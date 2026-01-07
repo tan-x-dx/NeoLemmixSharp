@@ -115,7 +115,7 @@ end;
 
         if (inputController.ToggleFullScreen.IsPressed)
         {
-            IGameWindow.Instance.ToggleFullscreen();
+            IGameWindow.Instance.ToggleFullscreenSetting();
         }
 
         if (inputController.Pause.IsPressed)
@@ -134,7 +134,7 @@ end;
 
         if (inputController.ToggleFullScreen.IsPressed)
         {
-            IGameWindow.Instance.ToggleBorderless();
+            IGameWindow.Instance.ToggleFullscreenSetting();
         }
 
         if (inputController.Rewind50Frames.IsPressed)

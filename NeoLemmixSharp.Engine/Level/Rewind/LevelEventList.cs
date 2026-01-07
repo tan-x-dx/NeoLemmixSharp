@@ -51,12 +51,12 @@ public sealed class LevelEventList<TEventData> : IDisposable
         return GetReadOnlySpan(start, Math.Max(0, _count - start));
     }
 
-    public ReadOnlySpan<TEventData> RewindBackTo(int tick)
+    public unsafe ReadOnlySpan<TEventData> RewindBackTo(int tick)
     {
         var index = 0;
 
         if (_count > 0)
-            TryGetSmallestIndexOfTick(tick, out index);
+            TryGetSmallestIndexOfTick(tick, &index);
 
         var result = GetSliceToEnd(index);
 
@@ -68,7 +68,9 @@ public sealed class LevelEventList<TEventData> : IDisposable
     [Pure]
     public unsafe bool TryGetDataForTick(int tick, out TEventData* dataPointer)
     {
-        if (_count > 0 && TryGetSmallestIndexOfTick(tick, out var index))
+        var index = 0;
+
+        if (_count > 0 && TryGetSmallestIndexOfTick(tick, &index))
         {
             dataPointer = (TEventData*)_buffer.Handle + index;
             return true;
@@ -91,13 +93,13 @@ public sealed class LevelEventList<TEventData> : IDisposable
     /// <remarks>If ALL items have a TickNumber less than the input parameter, then the out index variable will be set to the array's current length.
     /// If the array is empty, then the out index variable will be set to -1.
     /// These values are out of bounds! Don't forget about this!</remarks>
-    private unsafe bool TryGetSmallestIndexOfTick(int tick, out int index)
+    private unsafe bool TryGetSmallestIndexOfTick(int tick, int* index)
     {
         if (_count == 0)
         {
             // This is deliberately outside the bounds of the array
             // Subsequent usages of this data must deal with it
-            index = -1;
+            *index = -1;
             return false;
         }
 
@@ -105,7 +107,7 @@ public sealed class LevelEventList<TEventData> : IDisposable
         // Edge case: All items are >= tick
         if (p->TickNumber >= tick)
         {
-            index = 0;
+            *index = 0;
             return p->TickNumber == tick;
         }
 
@@ -118,13 +120,13 @@ public sealed class LevelEventList<TEventData> : IDisposable
         {
             // This is deliberately outside the bounds of the array
             // Subsequent usages of this data must deal with it
-            index = _count;
+            *index = _count;
             return false;
         }
 
-        return SearchForSmallestIndexOfTick(tick, out index);
+        return SearchForSmallestIndexOfTick(tick, index);
 
-        bool SearchForSmallestIndexOfTick(int tickValue, out int requiredIndex)
+        bool SearchForSmallestIndexOfTick(int tickValue, int* requiredIndex)
         {
             TEventData* basePointer = (TEventData*)_buffer.Handle;
             uint lowerTestIndex = 0;
@@ -145,7 +147,7 @@ public sealed class LevelEventList<TEventData> : IDisposable
                 }
             }
 
-            requiredIndex = (int)upperTestIndex;
+            *requiredIndex = (int)upperTestIndex;
             return (basePointer + upperTestIndex)->TickNumber == tickValue;
         }
     }

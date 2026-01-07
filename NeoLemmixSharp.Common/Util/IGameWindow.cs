@@ -22,7 +22,6 @@ public interface IGameWindow
     void SetScreen(IBaseScreen screen);
     void ExitLevel();
     void CaptureCursor();
-    void ToggleFullscreen();
-    void ToggleBorderless();
+    void ToggleFullscreenSetting();
     void Escape();
 }
