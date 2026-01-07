@@ -379,9 +379,9 @@ public static class BitArrayHelpers
 
     private static unsafe void LargeSpanUnionWith(void* sourcePointer, void* otherPointer, int length)
     {
-        var x = Helpers.CreateReadOnlySpan<uint>(sourcePointer, (int)length);
-        var y = Helpers.CreateReadOnlySpan<uint>(otherPointer, (int)length);
-        var destination = Helpers.CreateSpan<uint>(sourcePointer, (int)length);
+        var x = Helpers.CreateReadOnlySpan<uint>(sourcePointer, length);
+        var y = Helpers.CreateReadOnlySpan<uint>(otherPointer, length);
+        var destination = Helpers.CreateSpan<uint>(sourcePointer, length);
 
         TensorPrimitives.BitwiseOr(x, y, destination);
     }
