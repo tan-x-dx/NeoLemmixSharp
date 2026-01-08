@@ -39,7 +39,7 @@ public static class Helpers
     /// Creates a span from a pointer and a length.
     /// 
     /// Generally speaking, when creating a span, the compiler emits checks to ensure the length is valid.
-    /// This method bypasses these checks.
+    /// This method bypasses these checks. Only use this method if you can guarantee the length is valid!
     /// </summary>
     /// <typeparam name="T">The type of the span.</typeparam>
     /// <param name="p">The pointer to use.</param>
@@ -59,7 +59,7 @@ public static class Helpers
     /// Creates a read-only span from a pointer and a length.
     /// 
     /// Generally speaking, when creating a read-only span, the compiler emits checks to ensure the length is valid.
-    /// This method bypasses these checks.
+    /// This method bypasses these checks. Only use this method if you can guarantee the length is valid!
     /// </summary>
     /// <typeparam name="T">The type of the read-only span.</typeparam>
     /// <param name="p">The pointer to use.</param>
@@ -79,27 +79,41 @@ public static class Helpers
     /// Returns a mutable reference to the specified span index.
     /// 
     /// Generally speaking, when indexing into a span, the compiler emits checks to ensure the index is valid.
-    /// This method bypasses these checks.
+    /// This method bypasses these checks. Only use this method if you can guarantee the index is valid!
     /// </summary>
     /// <typeparam name="T">The type of the span.</typeparam>
     /// <param name="span">The span to index into.</param>
     /// <param name="index">The (assumed valid) index.</param>
     /// <returns>A mutable reference to the data at that index</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ref T At<T>(this Span<T> span, int index) => ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+    public static ref T At<T>(this Span<T> span, int index)
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+#endif
+
+        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+    }
 
     /// <summary>
     /// Returns a read-only reference to the specified read-only span index.
     /// 
     /// Generally speaking, when indexing into a read-only span, the compiler emits checks to ensure the index is valid.
-    /// This method bypasses these checks.
+    /// This method bypasses these checks. Only use this method if you can guarantee the index is valid!
     /// </summary>
     /// <typeparam name="T">The type of the read-only span.</typeparam>
     /// <param name="span">The read-only span to index into.</param>
     /// <param name="index">The (assumed valid) index.</param>
     /// <returns>A read-only reference to the data at that index</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ref readonly T At<T>(this ReadOnlySpan<T> span, int index) => ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+    public static ref readonly T At<T>(this ReadOnlySpan<T> span, int index)
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+#endif
+
+        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+    }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -130,71 +144,6 @@ public static class Helpers
         if (result < 0)
             result += b;
         return result;
-    }
-
-    public readonly ref struct FormatParameters(char openBracket, char separator, char closeBracket)
-    {
-        public readonly char OpenBracket = openBracket;
-        public readonly char Separator = separator;
-        public readonly char CloseBracket = closeBracket;
-    }
-
-    public static bool TryFormatSpan(
-        ReadOnlySpan<int> source,
-        Span<char> destination,
-        out int charsWritten)
-    {
-        var formatParameters = new FormatParameters('(', ',', ')');
-        return TryFormatSpan(source, destination, formatParameters, out charsWritten);
-    }
-
-    public static bool TryFormatSpan(
-        ReadOnlySpan<int> source,
-        Span<char> destination,
-        FormatParameters formatParameters,
-        out int charsWritten)
-    {
-        charsWritten = 0;
-
-        if (source.Length == 0)
-        {
-            if (destination.Length < 2)
-                return false;
-            destination[charsWritten++] = formatParameters.OpenBracket;
-            destination[charsWritten++] = formatParameters.CloseBracket;
-
-            return true;
-        }
-
-        if (destination.Length < 3 + source.Length)
-            return false;
-        destination[charsWritten++] = formatParameters.OpenBracket;
-
-        var l = source.Length - 1;
-        bool couldWriteInt;
-        int di;
-        for (var j = 0; j < l; j++)
-        {
-            couldWriteInt = source[j].TryFormat(destination[charsWritten..], out di);
-            charsWritten += di;
-            if (!couldWriteInt)
-                return false;
-
-            if (charsWritten == destination.Length)
-                return false;
-            destination[charsWritten++] = formatParameters.Separator;
-        }
-
-        couldWriteInt = source[l].TryFormat(destination[charsWritten..], out di);
-        charsWritten += di;
-        if (!couldWriteInt)
-            return false;
-
-        if (charsWritten == destination.Length)
-            return false;
-        destination[charsWritten++] = formatParameters.CloseBracket;
-
-        return true;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

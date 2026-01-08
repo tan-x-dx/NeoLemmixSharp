@@ -61,8 +61,8 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {
         ReadOnlySpan<int> components = [Major, Minor, Build, Revision];
-        var formatParameters = new Helpers.FormatParameters('[', '.', ']');
-        return Helpers.TryFormatSpan(components, destination, formatParameters, out charsWritten);
+        var formatParameters = new NumberFormattingHelpers.FormatParameters('[', '.', ']');
+        return NumberFormattingHelpers.TryFormatIntegerSpan(components, destination, formatParameters, out charsWritten);
     }
 
     [Pure]

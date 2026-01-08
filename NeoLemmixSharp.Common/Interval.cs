@@ -58,6 +58,6 @@ public readonly struct Interval : IEquatable<Interval>
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {
         var source = MemoryMarshal.CreateReadOnlySpan(in Start, 2);
-        return Helpers.TryFormatSpan(source, destination, out charsWritten);
+        return NumberFormattingHelpers.TryFormatIntegerSpan(source, destination, NumberFormattingHelpers.FormatParameters.Default, out charsWritten);
     }
 }
