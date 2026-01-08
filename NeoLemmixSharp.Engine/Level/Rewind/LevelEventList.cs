@@ -154,11 +154,13 @@ public sealed class LevelEventList<TEventData> : IDisposable
 
     public unsafe TEventData* GetNewDataPointer()
     {
-        if (_count == _bufferLength)
+        var c = _count;
+        if (c == _bufferLength)
             DoubleByteBufferLength();
 
-        TEventData* pointer = (TEventData*)_buffer.Handle + _count;
-        _count++;
+        TEventData* pointer = (TEventData*)_buffer.Handle + c;
+        c++;
+        _count = c;
 
         return pointer;
     }
