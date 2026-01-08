@@ -12,7 +12,7 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class TerrainBuilder
+public sealed class TerrainPainter
 {
     private readonly LevelData _levelData;
 
@@ -23,7 +23,7 @@ public sealed class TerrainBuilder
     private readonly Dictionary<StylePiecePair, TerrainArchetypeData> _terrainArchetypeDataLookup;
     private readonly Dictionary<StylePiecePair, ArrayWrapper2D<Color>> _colorDataLookup = new(IoConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
 
-    public TerrainBuilder(GraphicsDevice graphicsDevice, LevelData levelData)
+    public TerrainPainter(GraphicsDevice graphicsDevice, LevelData levelData)
     {
         _levelData = levelData;
 

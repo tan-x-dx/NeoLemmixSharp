@@ -40,7 +40,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
     {
         StyleCache.EnsureStylesAreLoadedForLevel(levelData);
 
-        var terrainBuilder = new TerrainBuilder(_graphicsDevice, levelData);
+        var terrainBuilder = new TerrainPainter(_graphicsDevice, levelData);
         terrainBuilder.BuildTerrain();
 
         var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelDimensions.W);
