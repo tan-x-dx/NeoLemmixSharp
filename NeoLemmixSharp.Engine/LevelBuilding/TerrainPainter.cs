@@ -53,7 +53,7 @@ public sealed class TerrainPainter
         _terrainArchetypeDataLookup = StyleCache.GetAllTerrainArchetypeData(levelData);
     }
 
-    public void BuildTerrain()
+    public void PaintTerrain()
     {
         LoadAllColorData();
 
