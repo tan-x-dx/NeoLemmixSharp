@@ -199,7 +199,7 @@ public static class Helpers
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string[] GetFilePathsWithExtension(string folderPath, string requiredFileExtension)
     {
-        var extensionSearch = $"*{requiredFileExtension}";
+        var extensionSearch = "*" + requiredFileExtension;
 
         return Directory.GetFiles(folderPath, extensionSearch, SearchOption.TopDirectoryOnly);
     }

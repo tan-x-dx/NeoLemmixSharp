@@ -5,11 +5,6 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
 public sealed class CanvasBorderBehaviour
 {
-    private const int ExtraSpaceBoundary = 16;
-
-    private const int MinZoom = 1;
-    private const int MaxZoom = 12;
-
     private int _canvasLength;
     private readonly int _levelLength;
 
@@ -19,7 +14,7 @@ public sealed class CanvasBorderBehaviour
 
     private int _screenLength;
 
-    private int _zoom = MinZoom;
+    private int _zoom = LevelEditorConstants.CanvasMinZoom;
 
     public int ViewportStart => _viewportStart;
     public int ViewportLength => _actualViewportLength;
@@ -64,7 +59,7 @@ public sealed class CanvasBorderBehaviour
             screenStart = (_canvasLength - _screenLength) / 2;
             return new Interval(screenStart, _screenLength);
         }
-         
+
         screenStart = 0;
         var screenLengthModifier = 0;
 
@@ -101,13 +96,13 @@ public sealed class CanvasBorderBehaviour
         {
             _viewportStart = 0;
         }
-        else if (_viewportStart < -ExtraSpaceBoundary)
+        else if (_viewportStart < -LevelEditorConstants.CanvasExtraSpaceBoundary)
         {
-            _viewportStart = -ExtraSpaceBoundary;
+            _viewportStart = -LevelEditorConstants.CanvasExtraSpaceBoundary;
         }
         else
         {
-            var max = _levelLength - _actualViewportLength + ExtraSpaceBoundary;
+            var max = _levelLength - _actualViewportLength + LevelEditorConstants.CanvasExtraSpaceBoundary;
             if (_viewportStart > max)
             {
                 _viewportStart = max;
@@ -129,7 +124,7 @@ public sealed class CanvasBorderBehaviour
         if (scrollDelta == 0)
             return;
 
-        _zoom = Math.Clamp(_zoom + scrollDelta, MinZoom, MaxZoom);
+        _zoom = Math.Clamp(_zoom + scrollDelta, LevelEditorConstants.CanvasMinZoom, LevelEditorConstants.CanvasMaxZoom);
 
         RecalculateViewportDimensions();
         Scroll(0);

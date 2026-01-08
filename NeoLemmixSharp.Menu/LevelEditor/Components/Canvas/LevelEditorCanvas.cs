@@ -10,13 +10,8 @@ using Size = NeoLemmixSharp.Common.Size;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
-public sealed class LevelCanvas : Component
+public sealed class LevelEditorCanvas : Component
 {
-    private const int ArrowKeyScrollDelta = 16;
-
-    public const int LevelOuterBoundarySize = 128;
-    private const uint CanvasBorderColourValue = 0xff696969;
-
     private readonly GraphicsDevice _graphicsDevice;
     private RenderTarget2D _levelTexture;
     private ArrayWrapper2D<Color> _levelColors;
@@ -24,19 +19,19 @@ public sealed class LevelCanvas : Component
     private CanvasBorderBehaviour _horizontalBorderBehaviour;
     private CanvasBorderBehaviour _verticalBorderBehaviour;
 
-    public LevelData LevelData
-    {
-        get => field;
-        set
-        {
-            field = value;
-            OnLevelDataChanged();
-        }
-    }
+    private CanvasPainter _canvasPainter;
 
-    public LevelCanvas(GraphicsDevice graphicsDevice)
+    private LevelData _levelData;
+
+    public LevelEditorCanvas(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
+    }
+
+    public void SetLevelData(LevelData levelData)
+    {
+        _levelData = levelData;
+        OnLevelDataChanged();
     }
 
     public override void Render(SpriteBatch spriteBatch)
@@ -49,7 +44,7 @@ public sealed class LevelCanvas : Component
     {
         var rectangle = Helpers.CreateRectangle(Position, Dimensions);
 
-        spriteBatch.FillRect(rectangle, new Color(CanvasBorderColourValue));
+        spriteBatch.FillRect(rectangle, LevelEditorConstants.CanvasBorderColour);
     }
 
     private void RenderLevel(SpriteBatch spriteBatch)
@@ -120,11 +115,11 @@ public sealed class LevelCanvas : Component
 
     private RenderTarget2D CreateControlPanelRenderTarget2D()
     {
-        var levelDimensions = LevelData.LevelDimensions;
+        var levelDimensions = _levelData.LevelDimensions;
         return new RenderTarget2D(
             _graphicsDevice,
-            levelDimensions.W + (2 * LevelOuterBoundarySize),
-            levelDimensions.H + (2 * LevelOuterBoundarySize),
+            levelDimensions.W + (2 * LevelEditorConstants.LevelOuterBoundarySize),
+            levelDimensions.H + (2 * LevelEditorConstants.LevelOuterBoundarySize),
             false,
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);
@@ -133,52 +128,6 @@ public sealed class LevelCanvas : Component
     public void RepaintLevel()
     {
         new Span<Color>(_levelColors.Array).Fill(Color.Black);
-        var textureWidth = _levelTexture.Width;
-        var textureHeight = _levelTexture.Height;
-
-        for (var y = 0; y < 16; y++)
-        {
-            for (var x = 0; x < 16; x++)
-            {
-                var p = new Point(x, y);
-                _levelColors[p] = Color.Red;
-
-                p = new Point(textureWidth - x - 1, y);
-                _levelColors[p] = Color.Red;
-
-                p = new Point(x, textureHeight - y - 1);
-                _levelColors[p] = Color.Red;
-
-                p = new Point(textureWidth - x - 1, textureHeight - y - 1);
-                _levelColors[p] = Color.Red;
-            }
-        }
-
-        for (var y = 0; y < textureHeight; y++)
-        {
-            var color = ((y >>> 4) & 1) != 0
-                ? Color.AliceBlue
-                : Color.Crimson;
-
-            var p = new Point(0, y);
-            _levelColors[p] = color;
-
-            p = new Point(textureWidth - 1, y);
-            _levelColors[p] = color;
-        }
-
-        for (var x = 0; x < textureWidth; x++)
-        {
-            var color = ((x >>> 4) & 1) != 0
-                ? Color.AliceBlue
-                : Color.Crimson;
-
-            var p = new Point(x, 0);
-            _levelColors[p] = color;
-
-            p = new Point(x, textureHeight - 1);
-            _levelColors[p] = color;
-        }
 
         _levelTexture.SetData(_levelColors.Array);
     }
@@ -223,8 +172,8 @@ public sealed class LevelCanvas : Component
         var scrollDx = right - left;
         var scrollDy = down - up;
 
-        scrollDx *= ArrowKeyScrollDelta;
-        scrollDy *= ArrowKeyScrollDelta;
+        scrollDx *= LevelEditorConstants.ArrowKeyScrollDelta;
+        scrollDy *= LevelEditorConstants.ArrowKeyScrollDelta;
 
         return new Point(scrollDx, scrollDy);
     }
