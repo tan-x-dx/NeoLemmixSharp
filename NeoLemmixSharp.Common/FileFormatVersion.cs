@@ -53,7 +53,7 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
     [SkipLocalsInit]
     public override string ToString()
     {
-        Span<char> charBuffer = stackalloc char[1 + (Helpers.Uint16NumberBufferLength * 4) + 3 + 1];
+        Span<char> charBuffer = stackalloc char[1 + (NumberFormattingHelpers.Uint16NumberBufferLength * 4) + 3 + 1];
         TryFormat(charBuffer, out var charsWritten);
         return charBuffer[..charsWritten].ToString();
     }

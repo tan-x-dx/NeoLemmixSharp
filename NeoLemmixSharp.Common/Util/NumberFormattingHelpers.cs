@@ -7,6 +7,10 @@ public static class NumberFormattingHelpers
 {
     private const uint ZeroCharAsUint = '0';
 
+    public const int Uint16NumberBufferLength = 5;
+    public const int Uint32NumberBufferLength = 10;
+    public const int Int32NumberBufferLength = Uint32NumberBufferLength + 1;
+
     public readonly ref struct FormatParameters(char openBracket, char separator, char closeBracket)
     {
         public static FormatParameters Default => new('(', ',', ')');

@@ -95,7 +95,7 @@ public readonly struct Size : IEquatable<Size>
     [SkipLocalsInit]
     public override string ToString()
     {
-        Span<char> buffer = stackalloc char[1 + Helpers.Uint32NumberBufferLength + 1 + Helpers.Uint32NumberBufferLength + 1];
+        Span<char> buffer = stackalloc char[1 + NumberFormattingHelpers.Uint32NumberBufferLength + 1 + NumberFormattingHelpers.Uint32NumberBufferLength + 1];
         TryFormat(buffer, out var charsWritten);
         return buffer[..charsWritten].ToString();
     }
