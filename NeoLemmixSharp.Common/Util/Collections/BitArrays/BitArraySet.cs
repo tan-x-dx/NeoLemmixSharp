@@ -127,7 +127,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         var hasher = _hasher;
         while (iterator.MoveNext())
         {
-            span[i++] = hasher.UnHash(iterator.Current);
+            span.At(i++) = hasher.UnHash(iterator.Current);
         }
     }
 
@@ -178,7 +178,6 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         }
     }
 
-    [SkipLocalsInit]
     public void UnionWith(IEnumerable<T> other)
     {
         foreach (var item in other)
@@ -214,7 +213,6 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         _popCount = BitArrayHelpers.GetPopCount(_bits.AsReadOnlySpan());
     }
 
-    [SkipLocalsInit]
     public void ExceptWith(IEnumerable<T> other)
     {
         foreach (var item in other)

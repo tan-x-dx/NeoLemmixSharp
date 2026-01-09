@@ -583,11 +583,11 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(firstSpan), firstSpanLength);
+        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
 
         var allEqual = true;
 
-        while (Unsafe.IsAddressLessThan(ref firstSpanRef, ref endRef))
+        while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
             uint firstValue = firstSpanRef;
             uint secondValue = secondSpanRef;
