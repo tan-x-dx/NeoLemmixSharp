@@ -55,6 +55,7 @@ public readonly struct Size : IEquatable<Size>
     }
 
     [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void AssertEncompassesPoint(Point p)
     {
         if (EncompassesPoint(p))

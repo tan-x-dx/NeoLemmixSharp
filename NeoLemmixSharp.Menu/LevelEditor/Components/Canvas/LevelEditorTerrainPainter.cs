@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.IO.Data.Level;
 using System.Runtime.CompilerServices;
+using Point = NeoLemmixSharp.Common.Point;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
@@ -26,18 +27,28 @@ public sealed class LevelEditorTerrainPainter
         new Span<Color>(rawColors.Array).Fill(Color.Black);
         _terrainPainter.PaintTerrain();
 
-        var levelDimensions = _levelData.LevelDimensions;
+        DrawLevelSpaceBoundary();
 
+        _terrainPainter.Apply();
+    }
+
+    private void DrawLevelSpaceBoundary()
+    {
+        var rawColors = _terrainPainter.TerrainColors;
+        var levelDimensions = _levelData.LevelDimensions;
         int x;
         int y = levelDimensions.H + LevelEditorConstants.LevelOuterBoundarySize + 1;
         ref Color color = ref Unsafe.NullRef<Color>();
+        Point p;
 
         for (x = levelDimensions.W + 1; x >= -1; x--)
         {
-            color = ref rawColors[new Common.Point(x + LevelEditorConstants.LevelOuterBoundarySize, LevelEditorConstants.LevelOuterBoundarySize - 1)];
+            p = new Point(x + LevelEditorConstants.LevelOuterBoundarySize, LevelEditorConstants.LevelOuterBoundarySize - 1);
+            color = ref rawColors[p];
             RenderingHelpers.Negate(ref color);
 
-            color = ref rawColors[new Common.Point(x + LevelEditorConstants.LevelOuterBoundarySize, y)];
+            p = new Point(x + LevelEditorConstants.LevelOuterBoundarySize, y);
+            color = ref rawColors[p];
             RenderingHelpers.Negate(ref color);
         }
 
@@ -45,13 +56,13 @@ public sealed class LevelEditorTerrainPainter
 
         for (y = levelDimensions.H; y >= 0; y--)
         {
-            color = ref rawColors[new Common.Point(LevelEditorConstants.LevelOuterBoundarySize - 1, y + LevelEditorConstants.LevelOuterBoundarySize)];
+            p = new Point(LevelEditorConstants.LevelOuterBoundarySize - 1, y + LevelEditorConstants.LevelOuterBoundarySize);
+            color = ref rawColors[p];
             RenderingHelpers.Negate(ref color);
 
-            color = ref rawColors[new Common.Point(x, y + LevelEditorConstants.LevelOuterBoundarySize)];
+            p = new Point(x, y + LevelEditorConstants.LevelOuterBoundarySize);
+            color = ref rawColors[p];
             RenderingHelpers.Negate(ref color);
         }
-
-        _terrainPainter.Apply();
     }
 }

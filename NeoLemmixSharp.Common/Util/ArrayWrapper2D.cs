@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -77,8 +79,7 @@ public readonly struct ArrayWrapper2D<T> : IEquatable<ArrayWrapper2D<T>>
             _subRegion.Size.AssertEncompassesPoint(pos);
             var index = _arrayDimensions.GetIndexOfPoint(pos + _subRegion.Position);
 
-            var span = new Span<T>(_data);
-            return ref span.At(index);
+            return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_data), index);
         }
     }
 
