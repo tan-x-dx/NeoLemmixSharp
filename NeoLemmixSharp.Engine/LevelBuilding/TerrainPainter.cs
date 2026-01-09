@@ -12,43 +12,36 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
-public sealed class TerrainPainter
+public readonly struct TerrainPainter
 {
     private readonly LevelData _levelData;
 
-    private readonly RenderTarget2D _terrainTexture;
-    private readonly ArrayWrapper2D<Color> _terrainColors;
-    private readonly ArrayWrapper2D<PixelType> _terrainPixels;
+    public readonly RenderTarget2D TerrainTexture;
+    public readonly ArrayWrapper2D<Color> TerrainColors;
+    public readonly ArrayWrapper2D<PixelType> TerrainPixels;
 
     private readonly Dictionary<StylePiecePair, TerrainArchetypeData> _terrainArchetypeDataLookup;
     private readonly Dictionary<StylePiecePair, ArrayWrapper2D<Color>> _colorDataLookup = new(IoConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
 
-    public TerrainPainter(GraphicsDevice graphicsDevice, LevelData levelData)
+    private readonly Point _terrainOffset;
+
+    public TerrainPainter(
+        LevelData levelData,
+        RenderTarget2D terrainTexture,
+        Point terrainOffset)
     {
         _levelData = levelData;
+        TerrainTexture = terrainTexture;
 
-        var terrainDimensions = levelData.LevelDimensions;
+        _terrainOffset = terrainOffset;
 
-        _terrainTexture = new RenderTarget2D(
-            graphicsDevice,
-            terrainDimensions.W,
-            terrainDimensions.H,
-            false,
-            graphicsDevice.PresentationParameters.BackBufferFormat,
-            DepthFormat.Depth24,
-            8,
-            RenderTargetUsage.DiscardContents)
-        {
-            Name = levelData.LevelTitle + "_Terrain"
-        };
-
-        TextureCache.CacheLevelSpecificTexture(_terrainTexture);
+        var terrainDimensions = new Size(terrainTexture.Width, terrainTexture.Height);
 
         var area = terrainDimensions.Area();
         var rawPixels = new PixelType[area];
-        _terrainPixels = new ArrayWrapper2D<PixelType>(rawPixels, terrainDimensions);
+        TerrainPixels = new ArrayWrapper2D<PixelType>(rawPixels, terrainDimensions);
         var rawColors = new Color[area];
-        _terrainColors = new ArrayWrapper2D<Color>(rawColors, terrainDimensions);
+        TerrainColors = new ArrayWrapper2D<Color>(rawColors, terrainDimensions);
 
         _terrainArchetypeDataLookup = StyleCache.GetAllTerrainArchetypeData(levelData);
     }
@@ -62,25 +55,14 @@ public sealed class TerrainPainter
             ProcessTerrainGroup(terrainGroup);
         }
 
-        var textureData = new ArrayWrapper2D<Color>(_terrainColors.Array, _levelData.LevelDimensions);
+        var textureData = new ArrayWrapper2D<Color>(TerrainColors.Array, new Size(TerrainTexture.Width, TerrainTexture.Height));
 
         DrawTerrainPieces(_levelData.AllTerrainData, in textureData);
-        _terrainTexture.SetData(_terrainColors.Array);
     }
 
-    public void GetTerrainColors(out ArrayWrapper2D<Color> terrainColorData)
+    public void Apply()
     {
-        terrainColorData = _terrainColors;
-    }
-
-    public void GetPixelData(out ArrayWrapper2D<PixelType> terrainPixelData)
-    {
-        terrainPixelData = _terrainPixels;
-    }
-
-    public RenderTarget2D GetTerrainTexture()
-    {
-        return _terrainTexture;
+        TerrainTexture.SetData(TerrainColors.Array);
     }
 
     private void ProcessTerrainGroup(TerrainGroupData terrainGroupData)
@@ -133,7 +115,7 @@ public sealed class TerrainPainter
         {
             if (terrainData.GroupName is null)
             {
-                var terrainArchetypeData = _terrainArchetypeDataLookup[terrainData.GetStylePiecePair()];
+                var terrainArchetypeData = GetTerrainArchetypeData(terrainData);
 
                 if (terrainArchetypeData.ResizeType == ResizeType.None)
                 {
@@ -187,7 +169,7 @@ public sealed class TerrainPainter
 
                 var p0 = transformationData.Transform(p);
 
-                p0 += terrainData.Position;
+                p0 += terrainData.Position + _terrainOffset;
 
                 if (targetSize.EncompassesPoint(p0))
                 {
@@ -210,7 +192,7 @@ public sealed class TerrainPainter
         }
 
         ref var targetPixelColor = ref targetPixelColorData[p0];
-        ref var targetPixelData = ref _terrainPixels[p0];
+        ref var targetPixelData = ref TerrainPixels[p0];
 
         if (terrainData.Erase)
         {
@@ -303,7 +285,7 @@ public sealed class TerrainPainter
         if (exists)
             return;
 
-        var pngPath = GetPngFilePath(terrainData);
+        var pngPath = GetTerrainArchetypeData(terrainData).TextureFilePath;
 
         var mainTexture = TextureCache.GetOrLoadTexture(
             pngPath,
@@ -313,8 +295,8 @@ public sealed class TerrainPainter
         colorData = ArrayWrapperHelpers.GetPixelColorDataFromTexture(mainTexture);
     }
 
-    private string GetPngFilePath(TerrainData terrainData)
+    private TerrainArchetypeData GetTerrainArchetypeData(TerrainData terrainData)
     {
-        return _terrainArchetypeDataLookup[terrainData.GetStylePiecePair()].TextureFilePath;
+        return StyleCache.GetTerrainArchetypeData(terrainData.StyleIdentifier, terrainData.PieceIdentifier, _levelData.FileFormatType);
     }
 }

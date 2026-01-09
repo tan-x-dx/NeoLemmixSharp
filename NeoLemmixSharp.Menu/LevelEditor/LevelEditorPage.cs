@@ -193,7 +193,7 @@ public sealed class LevelEditorPage : PageBase
 
     private static LevelData CreateBlankLevelData()
     {
-        var result = new LevelData(IO.FileFormats.FileFormatType.Default);
+        var result = new LevelData(IO.FileFormats.FileFormatType.NeoLemmix);
         result.SetLevelWidth(320);
         result.SetLevelHeight(160);
         result.LevelId = new LevelIdentifier((ulong)Random.Shared.NextInt64());

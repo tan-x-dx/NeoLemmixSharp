@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 public sealed class CanvasBorderBehaviour
 {
     private int _canvasLength;
-    private readonly int _levelLength;
+    private int _levelLength = 100;
 
     private int _viewportStart;
     private int _rawViewportLength;
@@ -19,15 +19,12 @@ public sealed class CanvasBorderBehaviour
     public int ViewportStart => _viewportStart;
     public int ViewportLength => _actualViewportLength;
 
-    public CanvasBorderBehaviour(int levelLength)
-    {
-        _levelLength = levelLength;
-    }
+    private bool ViewportIsLargerThanLevel => _rawViewportLength > _levelLength;
 
     [Pure]
     public Interval GetViewportSourceInterval()
     {
-        if (_rawViewportLength > _levelLength)
+        if (ViewportIsLargerThanLevel)
             return new Interval(0, _levelLength);
 
         var start = _viewportStart;
@@ -54,7 +51,7 @@ public sealed class CanvasBorderBehaviour
     public Interval GetScreenDestinationInterval()
     {
         int screenStart;
-        if (_rawViewportLength > _levelLength)
+        if (ViewportIsLargerThanLevel)
         {
             screenStart = (_canvasLength - _screenLength) / 2;
             return new Interval(screenStart, _screenLength);
@@ -92,7 +89,7 @@ public sealed class CanvasBorderBehaviour
 
     private void ClampViewportPosition()
     {
-        if (_rawViewportLength > _levelLength)
+        if (ViewportIsLargerThanLevel)
         {
             _viewportStart = 0;
         }
@@ -121,20 +118,24 @@ public sealed class CanvasBorderBehaviour
 
     public void Zoom(int scrollDelta)
     {
-        if (scrollDelta == 0)
-            return;
-
         _zoom = Math.Clamp(_zoom + scrollDelta, LevelEditorConstants.CanvasMinZoom, LevelEditorConstants.CanvasMaxZoom);
-
         RecalculateViewportDimensions();
-        Scroll(0);
+    }
+
+    public void SetLevelLength(int levelLength)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(levelLength);
+
+        _levelLength = levelLength;
+        RecalculateViewportDimensions();
     }
 
     public void SetCanvasLength(int canvasLength)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(canvasLength);
+
         _canvasLength = canvasLength;
         RecalculateViewportDimensions();
-        Scroll(0);
     }
 
     private void RecalculateViewportDimensions()
@@ -145,5 +146,7 @@ public sealed class CanvasBorderBehaviour
             newRawViewportLength = _levelLength;
         _actualViewportLength = newRawViewportLength;
         _screenLength = newRawViewportLength * _zoom;
+
+        ClampViewportPosition();
     }
 }

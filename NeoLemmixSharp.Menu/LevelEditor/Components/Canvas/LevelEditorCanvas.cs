@@ -6,7 +6,6 @@ using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.Ui.Components;
 using Color = Microsoft.Xna.Framework.Color;
 using Point = NeoLemmixSharp.Common.Point;
-using Size = NeoLemmixSharp.Common.Size;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
@@ -14,12 +13,11 @@ public sealed class LevelEditorCanvas : Component
 {
     private readonly GraphicsDevice _graphicsDevice;
     private RenderTarget2D _levelTexture;
-    private ArrayWrapper2D<Color> _levelColors;
 
-    private CanvasBorderBehaviour _horizontalBorderBehaviour;
-    private CanvasBorderBehaviour _verticalBorderBehaviour;
+    private readonly CanvasBorderBehaviour _horizontalBorderBehaviour = new();
+    private readonly CanvasBorderBehaviour _verticalBorderBehaviour = new();
 
-    private CanvasPainter _canvasPainter;
+    private LevelEditorTerrainPainter _terrainPainter;
 
     private LevelData _levelData;
 
@@ -90,8 +88,8 @@ public sealed class LevelEditorCanvas : Component
         RecreateRenderers();
         RepaintLevel();
 
-        _horizontalBorderBehaviour = new CanvasBorderBehaviour(_levelTexture.Width);
-        _verticalBorderBehaviour = new CanvasBorderBehaviour(_levelTexture.Height);
+        _horizontalBorderBehaviour.SetLevelLength(_levelTexture.Width);
+        _verticalBorderBehaviour.SetLevelLength(_levelTexture.Height);
 
         RecentreViewport();
     }
@@ -108,9 +106,7 @@ public sealed class LevelEditorCanvas : Component
         _levelTexture?.Dispose();
         _levelTexture = CreateControlPanelRenderTarget2D();
 
-        var textureDimensions = new Size(_levelTexture.Width, _levelTexture.Height);
-
-        _levelColors = new ArrayWrapper2D<Color>(textureDimensions);
+        _terrainPainter = new LevelEditorTerrainPainter(_levelData, _levelTexture);
     }
 
     private RenderTarget2D CreateControlPanelRenderTarget2D()
@@ -125,12 +121,7 @@ public sealed class LevelEditorCanvas : Component
             DepthFormat.Depth24);
     }
 
-    public void RepaintLevel()
-    {
-        new Span<Color>(_levelColors.Array).Fill(Color.Black);
-
-        _levelTexture.SetData(_levelColors.Array);
-    }
+    public void RepaintLevel() => _terrainPainter.RepaintTerrain();
 
     public Point GetCenterPositionOfViewport()
     {
@@ -140,7 +131,7 @@ public sealed class LevelEditorCanvas : Component
         var offsetX = _horizontalBorderBehaviour.ViewportLength / 2;
         var offsetY = _verticalBorderBehaviour.ViewportLength / 2;
 
-        return new Point(viewportX + offsetX, viewportY + offsetY);
+        return new Point(viewportX + offsetX - Left, viewportY + offsetY - Top);
     }
 
     public void HandleUserInput(MenuInputController inputController)
@@ -148,9 +139,10 @@ public sealed class LevelEditorCanvas : Component
         if (!ContainsPoint(inputController.MousePosition))
             return;
 
-        Zoom(inputController.ScrollDelta);
+        if (inputController.ScrollDelta != 0)
+            Zoom(inputController.ScrollDelta);
 
-        var scrollDelta = CalculateScrollDelta(inputController);
+        var scrollDelta = CalculateArrowKeyScrollDelta(inputController);
 
         if (scrollDelta.X != 0 || scrollDelta.Y != 0)
             Scroll(scrollDelta.X, scrollDelta.Y);
@@ -162,7 +154,7 @@ public sealed class LevelEditorCanvas : Component
         _verticalBorderBehaviour.Zoom(scrollDelta);
     }
 
-    private static Point CalculateScrollDelta(MenuInputController inputController)
+    private static Point CalculateArrowKeyScrollDelta(MenuInputController inputController)
     {
         var down = inputController.DownArrow.IsActionDown ? 1 : 0;
         var left = inputController.LeftArrow.IsActionDown ? 1 : 0;
