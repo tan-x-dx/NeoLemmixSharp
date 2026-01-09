@@ -35,4 +35,10 @@ public static class RenderingHelpers
             CommonSprites.RectangleForWhitePixelAlpha(0xff),
             color);
     }
+
+    public static unsafe void Negate(ref Color color)
+    {
+        uint* x = (uint*)Unsafe.AsPointer(ref color);
+        *x ^= 0x00FFFFFF;
+    }
 }

@@ -31,7 +31,7 @@ public sealed class LevelScreen : IBaseScreen
 
     private readonly LevelParameterSet _levelParameters;
     private readonly TerrainManager _terrainManager;
-    private readonly TerrainPainter _terrainPainter;
+    private readonly TerrainUpdater _terrainPainter;
     private readonly LemmingManager _lemmingManager;
     private readonly GadgetManager _gadgetManager;
     private readonly TribeManager _tribeManager;
@@ -54,7 +54,7 @@ public sealed class LevelScreen : IBaseScreen
 
     public static LevelParameterSet LevelParameters => Instance._levelParameters;
     public static TerrainManager TerrainManager => Instance._terrainManager;
-    public static TerrainPainter TerrainPainter => Instance._terrainPainter;
+    public static TerrainUpdater TerrainPainter => Instance._terrainPainter;
     public static ref readonly LemmingManager LemmingManager => ref Instance._lemmingManager;
     public static ref readonly GadgetManager GadgetManager => ref Instance._gadgetManager;
     public static TribeManager TribeManager => Instance._tribeManager;
@@ -122,7 +122,7 @@ public sealed class LevelScreen : IBaseScreen
         BoundaryBehaviour verticalBoundaryBehaviour,
         LevelParameterSet levelParameters,
         TerrainManager terrainManager,
-        TerrainPainter terrainPainter,
+        TerrainUpdater terrainPainter,
         LemmingManager lemmingManager,
         GadgetManager gadgetManager,
         TribeManager tribeManager,

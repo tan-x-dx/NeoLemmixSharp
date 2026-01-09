@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
@@ -47,6 +48,8 @@ public sealed class InputAction : IEquatable<InputAction>
     {
         _stateMask = enable ? EnabledMask : DisabledMask;
     }
+
+    public int NumberOfFramesHeldDownFor => BitOperations.TrailingZeroCount(~_actionState);
 
     /// <summary>
     /// Is the Action currently pressed down?

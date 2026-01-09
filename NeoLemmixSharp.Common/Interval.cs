@@ -16,7 +16,26 @@ public readonly struct Interval : IEquatable<Interval>
         Length = Math.Max(length, 0);
     }
 
+    private Interval(int start, int length, byte _)
+    {
+        Start = start;
+        Length = length;
+    }
+
     public int End => Start + Length;
+
+    public bool Intersects(Interval other)
+    {
+        return Start < other.End &&
+               other.Start < End;
+    }
+
+    public Interval Intersect(Interval other)
+    {
+        var num = Math.Min(End, other.End);
+        var num2 = Math.Max(Start, other.Start);
+        return new Interval(num2, num - num2);
+    }
 
     public bool Equals(Interval other) => Start == other.Start &&
                                           Length == other.Length;
@@ -39,6 +58,6 @@ public readonly struct Interval : IEquatable<Interval>
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {
         var source = MemoryMarshal.CreateReadOnlySpan(in Start, 2);
-        return Helpers.TryFormatSpan(source, destination, out charsWritten);
+        return NumberFormattingHelpers.TryFormatIntegerSpan(source, destination, NumberFormattingHelpers.FormatParameters.Default, out charsWritten);
     }
 }

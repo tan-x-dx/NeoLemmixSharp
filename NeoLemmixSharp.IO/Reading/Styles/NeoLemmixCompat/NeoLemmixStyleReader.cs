@@ -90,7 +90,7 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         }
     }
 
-    private static string? TryFindCorrespondingTerrainMetadataFile(string terrainPngFilePath, string[] terrainMetadataFilePaths)
+    private static string? TryFindCorrespondingTerrainMetadataFile(string terrainPngFilePath, ReadOnlySpan<string> terrainMetadataFilePaths)
     {
         var pngFileNameSpan = Path.GetFileNameWithoutExtension(terrainPngFilePath.AsSpan());
         foreach (var terrainMetadataFilePath in terrainMetadataFilePaths)

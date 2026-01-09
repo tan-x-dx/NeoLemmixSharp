@@ -17,32 +17,24 @@ public sealed class LevelEditorPage : PageBase
 {
     private LevelEditorMenuBar _topPanel;
     private LevelEditorControlPanel _leftPanel;
-    private readonly LevelCanvas _levelCanvas;
+    private readonly LevelEditorCanvas _levelCanvas;
     private PieceBank _pieceBank;
 
     private StyleData _levelStyleData;
     private StyleData _pieceStyleData;
 
-    private LevelData CurrentLevelData
-    {
-        get => field;
-        set
-        {
-            field = value;
-            _levelCanvas.LevelData = value;
-        }
-    }
+    private LevelData _currentLevelData;
 
-    public bool IsNeoLemmix => CurrentLevelData.FileFormatType == IO.FileFormats.FileFormatType.NeoLemmix;
+    public bool IsNeoLemmix => _currentLevelData.FileFormatType == IO.FileFormats.FileFormatType.NeoLemmix;
 
     public LevelEditorPage(MenuInputController menuInputController, GraphicsDevice graphicsDevice) : base(menuInputController)
     {
         _topPanel = new LevelEditorMenuBar();
         _leftPanel = new LevelEditorControlPanel();
-        _levelCanvas = new LevelCanvas(graphicsDevice);
+        _levelCanvas = new LevelEditorCanvas(graphicsDevice);
         _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 
-        CurrentLevelData = CreateBlankLevelData();
+        SetLevelData(CreateBlankLevelData());
     }
 
     protected override void OnInitialise()
@@ -62,6 +54,12 @@ public sealed class LevelEditorPage : PageBase
         OnResize();
     }
 
+    private void SetLevelData(LevelData levelData)
+    {
+        _currentLevelData = levelData;
+        _levelCanvas.SetLevelData(levelData);
+    }
+
     protected override void OnWindowDimensionsChanged(Size windowSize)
     {
         OnResize();
@@ -77,6 +75,7 @@ public sealed class LevelEditorPage : PageBase
 
         _leftPanel.Left = 0;
         _leftPanel.Top = _topPanel.Height;
+        _leftPanel.Height = windowSize.H - _topPanel.Height - _pieceBank.Height;
 
         _pieceBank.Left = 0;
         _pieceBank.Top = windowSize.H - _pieceBank.Height;
@@ -115,7 +114,7 @@ public sealed class LevelEditorPage : PageBase
         var levelData = IO.FileFormats.FileTypeHandler.ReadLevel(levelFilePath);
 
         StyleCache.EnsureStylesAreLoadedForLevel(levelData);
-        CurrentLevelData = levelData;
+        SetLevelData(levelData);
 
         var styleData = StyleCache.GetOrLoadStyleData(levelData.GetStyleFormatPair());
         SetStyle(styleData);
@@ -123,9 +122,9 @@ public sealed class LevelEditorPage : PageBase
 
     private void SaveLevel(string levelFilePath)
     {
-        CurrentLevelData.IncrementVersion();
+        _currentLevelData.IncrementVersion();
 
-        IO.FileFormats.FileTypeHandler.WriteLevel(CurrentLevelData, levelFilePath);
+        IO.FileFormats.FileTypeHandler.WriteLevel(_currentLevelData, levelFilePath);
     }
 
     protected override void OnDispose()
@@ -138,11 +137,6 @@ public sealed class LevelEditorPage : PageBase
         _topPanel = null!;
         _leftPanel = null!;
         _pieceBank = null!;
-
-        _levelStyleData = null!;
-        _pieceStyleData = null!;
-
-        CurrentLevelData = null!;
     }
 
     private void OnSelectTerrainPiece(Component c, Point pos)
@@ -166,7 +160,7 @@ public sealed class LevelEditorPage : PageBase
         if (defaultArchetypeSize.H > 0)
             initialHeight = defaultArchetypeSize.H;
 
-        var position = _levelCanvas.GetCenterPositionOfCamera();
+        var position = _levelCanvas.GetCenterPositionOfViewport();
 
         var newTerrainData = new TerrainData()
         {
@@ -182,7 +176,7 @@ public sealed class LevelEditorPage : PageBase
             Width = initialWidth,
             Height = initialHeight,
         };
-        CurrentLevelData.AllTerrainData.Add(newTerrainData);
+        _currentLevelData.AllTerrainData.Add(newTerrainData);
 
         _levelCanvas.RepaintLevel();
     }
@@ -199,7 +193,7 @@ public sealed class LevelEditorPage : PageBase
 
     private static LevelData CreateBlankLevelData()
     {
-        var result = new LevelData(IO.FileFormats.FileFormatType.Default);
+        var result = new LevelData(IO.FileFormats.FileFormatType.NeoLemmix);
         result.SetLevelWidth(320);
         result.SetLevelHeight(160);
         result.LevelId = new LevelIdentifier((ulong)Random.Shared.NextInt64());

@@ -379,9 +379,9 @@ public static class BitArrayHelpers
 
     private static unsafe void LargeSpanUnionWith(void* sourcePointer, void* otherPointer, int length)
     {
-        var x = Helpers.CreateReadOnlySpan<uint>(sourcePointer, (int)length);
-        var y = Helpers.CreateReadOnlySpan<uint>(otherPointer, (int)length);
-        var destination = Helpers.CreateSpan<uint>(sourcePointer, (int)length);
+        var x = Helpers.CreateReadOnlySpan<uint>(sourcePointer, length);
+        var y = Helpers.CreateReadOnlySpan<uint>(otherPointer, length);
+        var destination = Helpers.CreateSpan<uint>(sourcePointer, length);
 
         TensorPrimitives.BitwiseOr(x, y, destination);
     }
@@ -583,11 +583,11 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref uint endRef = ref Unsafe.Add(ref MemoryMarshal.GetReference(firstSpan), firstSpanLength);
+        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
 
         var allEqual = true;
 
-        while (Unsafe.IsAddressLessThan(ref firstSpanRef, ref endRef))
+        while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
             uint firstValue = firstSpanRef;
             uint secondValue = secondSpanRef;
@@ -605,17 +605,17 @@ public static class BitArrayHelpers
     }
 
     [Pure]
-    internal static bool Overlaps(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
+    internal static bool Overlaps(ReadOnlySpan<uint> firstSpan, ReadOnlySpan<uint> secondSpan)
     {
-        var firstSpanLength = span.Length;
-        var secondSpanLength = other.Length;
+        var firstSpanLength = firstSpan.Length;
+        var secondSpanLength = secondSpan.Length;
 
         if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
-        ref uint firstSpanRef = ref MemoryMarshal.GetReference(span);
-        ref uint secondSpanRef = ref MemoryMarshal.GetReference(other);
-        ref readonly uint endRef = ref span.At(firstSpanLength);
+        ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
+        ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
+        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
@@ -629,17 +629,17 @@ public static class BitArrayHelpers
     }
 
     [Pure]
-    internal static bool SetEquals(ReadOnlySpan<uint> span, ReadOnlySpan<uint> other)
+    internal static bool SetEquals(ReadOnlySpan<uint> firstSpan, ReadOnlySpan<uint> secondSpan)
     {
-        var firstSpanLength = span.Length;
-        var secondSpanLength = other.Length;
+        var firstSpanLength = firstSpan.Length;
+        var secondSpanLength = secondSpan.Length;
 
         if (firstSpanLength != secondSpanLength)
             ThrowInvalidSpanLengthsException();
 
-        ref uint firstSpanRef = ref MemoryMarshal.GetReference(span);
-        ref uint secondSpanRef = ref MemoryMarshal.GetReference(other);
-        ref readonly uint endRef = ref span.At(firstSpanLength);
+        ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
+        ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
+        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {

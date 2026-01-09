@@ -85,6 +85,13 @@ public static class StyleCache
         return styleData;
     }
 
+    public static TerrainArchetypeData GetTerrainArchetypeData(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier, FileFormatType fileFormatType)
+    {
+        var styleFormatPair = new StyleFormatPair(styleIdentifier, fileFormatType);
+        var style = GetOrLoadStyleData(styleFormatPair);
+        return style.TerrainArchetypeDataLookup[pieceIdentifier];
+    }
+
     public static Dictionary<StylePiecePair, TerrainArchetypeData> GetAllTerrainArchetypeData(LevelData levelData)
     {
         var result = new Dictionary<StylePiecePair, TerrainArchetypeData>(IoConstants.AssumedNumberOfTerrainArchetypeDataInLevel);

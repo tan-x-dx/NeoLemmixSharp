@@ -97,7 +97,7 @@ public sealed class MenuScreen : IBaseScreen
 
         if (InputController.ToggleFullScreen.IsPressed)
         {
-            IGameWindow.Instance.ToggleFullscreen();
+            IGameWindow.Instance.ToggleFullscreenSetting();
         }
     }
 
