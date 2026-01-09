@@ -189,6 +189,7 @@ public static class Helpers
         return first.Concat(second);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool StringSpansMatch(
         ReadOnlySpan<char> firstSpan,
         ReadOnlySpan<char> secondSpan)
@@ -196,12 +197,27 @@ public static class Helpers
         return firstSpan.Equals(secondSpan, StringComparison.OrdinalIgnoreCase);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string[] GetFilePathsWithExtension(string folderPath, string requiredFileExtension)
+    public static ReadOnlySpan<string> GetFilePathsWithExtension(string folderPath, ReadOnlySpan<char> requiredFileExtension)
     {
-        var extensionSearch = "*" + requiredFileExtension;
+        var allFiles = Directory.GetFiles(folderPath);
+        var numberOfRelevantFiles = 0;
 
-        return Directory.GetFiles(folderPath, extensionSearch, SearchOption.TopDirectoryOnly);
+        for (var i = 0; i < allFiles.Length; i++)
+        {
+            var file = allFiles[i];
+            var fileExtensionSpan = Path.GetExtension(file.AsSpan());
+
+            if (StringSpansMatch(fileExtensionSpan, requiredFileExtension))
+            {
+                allFiles[numberOfRelevantFiles++] = file;
+            }
+        }
+
+        // Clear the unused strings to encourage garbage collection
+        var upperSpan = new Span<string>(allFiles, numberOfRelevantFiles, allFiles.Length - numberOfRelevantFiles);
+        upperSpan.Clear();
+
+        return new ReadOnlySpan<string>(allFiles, 0, numberOfRelevantFiles);
     }
 
     public static ReadOnlySpan<char> GetFullFilePathWithoutExtension(ReadOnlySpan<char> fullFilePath)
