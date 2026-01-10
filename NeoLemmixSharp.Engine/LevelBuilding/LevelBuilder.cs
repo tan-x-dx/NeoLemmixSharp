@@ -83,7 +83,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var lemmingSpriteBank = LemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
         var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
 
-        var gadgetBuilder = new GadgetBuilder(levelData);
+        var gadgetBuilder = new GadgetBuilder(levelData, _safeBufferAllocator, levelLemmings.Length);
         gadgetBuilder.BuildLevelGadgets(lemmingManager, tribeManager);
 
         var levelGadgets = gadgetBuilder.GetGadgets();
@@ -122,9 +122,9 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var rewindManager = new RewindManager(
             lemmingBuilder.LemmingDataBuffer,
             lemmingManagerDataBuffer,
-            gadgetManager, 
+            gadgetBuilder.GadgetDataBuffer,
             levelObjectiveBuilder.LevelTimerDataBuffer,
-            levelObjectiveBuilder.SkillSetDataBuffer, 
+            levelObjectiveBuilder.SkillSetDataBuffer,
             baseNumberOfSkillAssignments);
 
         var updateScheduler = new UpdateScheduler();

@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
@@ -14,16 +13,16 @@ namespace NeoLemmixSharp.Common;
 /// <para>The constructors will ensure a well-formed <see cref="RectangularRegion"/> is created.</para>
 /// <para>Note that a <see cref="RectangularRegion"/> can never be empty - the smallest region size is 1x1.</para>
 /// </summary>
-[StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
 public readonly struct RectangularRegion : IEquatable<RectangularRegion>
 {
-    [FieldOffset(0 * sizeof(int))] public readonly Point Position;
-    [FieldOffset(0 * sizeof(int))] public readonly int X;
-    [FieldOffset(1 * sizeof(int))] public readonly int Y;
+    public readonly int X;
+    public readonly int Y;
 
-    [FieldOffset(2 * sizeof(int))] public readonly Size Size;
-    [FieldOffset(2 * sizeof(int))] public readonly int W;
-    [FieldOffset(3 * sizeof(int))] public readonly int H;
+    public readonly int W;
+    public readonly int H;
+
+    public Point Position => new(X, Y);
+    public Size Size => new(W, H);
 
     [DebuggerStepThrough]
     public RectangularRegion()
@@ -37,7 +36,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     [DebuggerStepThrough]
     public RectangularRegion(Point position)
     {
-        Position = position;
+        X = position.X;
+        Y = position.Y;
         W = 1;
         H = 1;
     }
@@ -54,7 +54,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     [DebuggerStepThrough]
     public RectangularRegion(Point position, Size size)
     {
-        Position = position;
+        X = position.X;
+        Y = position.Y;
         W = Math.Max(size.W, 1);
         H = Math.Max(size.H, 1);
     }
@@ -128,9 +129,20 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     [DebuggerStepThrough]
     private RectangularRegion(Point position, int w, int h)
     {
-        Position = position;
+        X = position.X;
+        Y = position.Y;
         W = w;
         H = h;
+    }
+
+    public unsafe RectangularRegion(void* pointer)
+    {
+        int* intPointer = (int*)pointer;
+
+        X = intPointer[0];
+        Y = intPointer[1];
+        W = Math.Max(intPointer[2], 1);
+        H = Math.Max(intPointer[3], 1);
     }
 
     [Pure]

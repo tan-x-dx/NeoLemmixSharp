@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -14,7 +13,6 @@ using System.Runtime.CompilerServices;
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class LemmingManager :
-    IItemManager<Lemming>,
     IBitBufferCreator<RawBitBuffer, Lemming>,
     IPerfectHasher<HatchGroup>,
     IInitialisable,
@@ -388,7 +386,6 @@ public sealed class LemmingManager :
     }
 
     public int NumberOfLemmings => _lemmings.Length;
-    ReadOnlySpan<Lemming> IItemManager<Lemming>.AllItems => new(_lemmings);
     int IPerfectHasher<Lemming>.NumberOfItems => _lemmings.Length;
     int IPerfectHasher<Lemming>.Hash(Lemming item) => item.Id;
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => _lemmings[index];

@@ -1,14 +1,18 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Engine.Level.Rewind;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public abstract class GadgetBase : IEquatable<GadgetBase>, ISnapshotDataConvertible
+public abstract class GadgetBase : IEquatable<GadgetBase>
 {
-    private readonly int _requiredNumberOfBytesForSnapshotting;
+    private readonly PointerWrapper<int> _stateIndex;
+    public required nint DataHandle
+    {
+        init => _stateIndex = new PointerWrapper<int>(value);
+    }
     public required GadgetName GadgetName { get; init; }
     public GadgetType GadgetType { get; }
     public required GadgetBounds CurrentGadgetBounds { get; init; }
@@ -23,10 +27,12 @@ public abstract class GadgetBase : IEquatable<GadgetBase>, ISnapshotDataConverti
 
     public abstract GadgetState CurrentState { get; }
 
-    protected GadgetBase(GadgetType gadgetType)
+    protected ref int StateIndex => ref _stateIndex.Value;
+
+    protected GadgetBase(
+        GadgetType gadgetType)
     {
         GadgetType = gadgetType;
-        _requiredNumberOfBytesForSnapshotting = CalculateRequiredNumberOfBytesForSnapshotting();
     }
 
     public abstract void Tick();
@@ -51,22 +57,6 @@ public abstract class GadgetBase : IEquatable<GadgetBase>, ISnapshotDataConverti
         return leftValue == rightValue;
     }
     public static bool operator !=(GadgetBase? left, GadgetBase? right) => !(left == right);
-
-    private int CalculateRequiredNumberOfBytesForSnapshotting()
-    {
-        return 1;
-    }
-
-    public int GetRequiredNumberOfBytesForSnapshotting() => _requiredNumberOfBytesForSnapshotting;
-
-    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
-    {
-        *snapshotDataPointer = 0;
-    }
-
-    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
-    {
-    }
 
     public sealed override string ToString() => GadgetName.ToString();
 }

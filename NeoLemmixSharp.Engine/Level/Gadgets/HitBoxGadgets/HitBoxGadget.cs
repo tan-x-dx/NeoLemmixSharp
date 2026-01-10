@@ -1,7 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -15,8 +15,6 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 {
     private readonly LemmingTracker _lemmingTracker;
     private readonly HitBoxGadgetState[] _states;
-
-    private HitBoxGadgetState _currentState;
 
     // The below properties refer to the positions of the hitboxes, not the gadget itself
     public RectangularRegion CurrentBounds => CurrentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
@@ -33,7 +31,7 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         _lemmingTracker = lemmingTracker;
         _states = states;
 
-        _currentState = states[initialStateIndex];
+        StateIndex = initialStateIndex;
 
         ResizeType = resizeType;
 
@@ -43,7 +41,7 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         }
     }
 
-    public override HitBoxGadgetState CurrentState => _currentState;
+    public override HitBoxGadgetState CurrentState => _states[StateIndex];
 
     public override void Tick()
     {
@@ -54,7 +52,7 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 
     public override void SetState(int stateIndex)
     {
-        _currentState = _states[stateIndex];
+        StateIndex = stateIndex;
 
         // Changing states may change hitbox positions 
         // Force a position update to accommodate this

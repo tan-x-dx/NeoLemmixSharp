@@ -12,7 +12,6 @@ public sealed class GadgetManager :
     IBitBufferCreator<RawBitBuffer, GadgetBase>,
     IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>,
     IPerfectHasher<GadgetBehaviour>,
-    IItemManager<GadgetBase>,
     IInitialisable,
     IDisposable
 {

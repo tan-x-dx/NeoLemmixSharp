@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
@@ -7,7 +6,7 @@ using NeoLemmixSharp.IO;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
-public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer<SkillTrackingData>, IDisposable
+public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 {
     private readonly SkillTrackingData[] _skillTrackingDataList;
 

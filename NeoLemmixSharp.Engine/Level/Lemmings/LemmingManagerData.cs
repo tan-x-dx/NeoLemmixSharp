@@ -19,8 +19,6 @@ public unsafe readonly struct LemmingManagerDataPointer
 {
     private readonly LemmingManagerData* _pointer;
 
-    public void* GetPointer() => _pointer;
-
     public LemmingManagerDataPointer(void* pointer) => _pointer = (LemmingManagerData*)pointer;
     public LemmingManagerDataPointer(nint pointerHandle) => _pointer = (LemmingManagerData*)pointerHandle;
 

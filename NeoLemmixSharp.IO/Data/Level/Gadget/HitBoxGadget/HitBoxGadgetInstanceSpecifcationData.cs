@@ -17,6 +17,27 @@ public sealed class HitBoxGadgetInstanceSpecifcationData : IGadgetInstanceSpecif
     public required HitBoxGadgetStateInstanceData[] GadgetStates { get; init; }
 
     public int GetProperty(GadgetPropertyType gadgetProperty) => _propertyLookup[gadgetProperty];
+
+    public int CalculateExtraNumberOfBytesNeededForSnapshotting()
+    {
+        var result = 0;
+
+        foreach (var state in GadgetStates)
+        {
+            for (var i = 0; i < state.CustomBehaviours.Length; i++)
+            {
+                var behaviourType = state.CustomBehaviours[i].GadgetBehaviourType;
+                result += GadgetBehaviourTypeHasher.NumberOfSnapshotBytesRequiredForBehaviour(behaviourType);
+            }
+
+            foreach (var hitBoxFilter in state.CustomHitBoxFilters)
+            {
+                result += hitBoxFilter.CalculateExtraNumberOfBytesNeededForSnapshotting();
+            }
+        }
+
+        return result;
+    }
 }
 
 [DebuggerDisplay("{OverrideStateName}")]

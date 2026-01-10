@@ -27,6 +27,14 @@ public readonly struct Size : IEquatable<Size>
         H = h;
     }
 
+    public unsafe Size(void* pointer)
+    {
+        int* intPointer = (int*)pointer;
+
+        W = Math.Max(intPointer[0], 0);
+        H = Math.Max(intPointer[1], 0);
+    }
+
     [Pure]
     [DebuggerStepThrough]
     public Size Transpose() => new(H, W, 0);

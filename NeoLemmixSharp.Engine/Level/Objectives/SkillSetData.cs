@@ -15,8 +15,6 @@ public unsafe readonly struct SkillSetDataPointer
 {
     private readonly SkillSetData* _pointer;
 
-    public void* GetPointer() => _pointer;
-
     public SkillSetDataPointer(void* pointer) => _pointer = (SkillSetData*)pointer;
     public SkillSetDataPointer(nint pointerHandle) => _pointer = (SkillSetData*)pointerHandle;
 

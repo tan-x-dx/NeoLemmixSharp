@@ -33,10 +33,10 @@ public readonly ref struct LogicGateBuilder
         _gadgetBehaviours = gadgetBehaviours;
     }
 
-    public GadgetBase BuildLogicGateGadget()
+    public GadgetBase BuildLogicGateGadget(ref nint dataHandleRef)
     {
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(_logicGateArchetypeData, _logicGateGadgetInstanceData);
-        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(_logicGateArchetypeData, _logicGateGadgetInstanceData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(ref dataHandleRef, _logicGateArchetypeData, _logicGateGadgetInstanceData);
         var gadgetStates = BuildLogicGateStates(gadgetBounds);
 
         /* return new HatchGadget(

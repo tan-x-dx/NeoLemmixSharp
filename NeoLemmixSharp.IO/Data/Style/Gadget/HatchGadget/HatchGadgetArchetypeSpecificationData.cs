@@ -15,6 +15,22 @@ public sealed class HatchGadgetArchetypeSpecificationData : IGadgetArchetypeSpec
     public required HatchGadgetStateArchetypeData[] GadgetStates { get; init; }
 
     ReadOnlySpan<IGadgetStateArchetypeData> IGadgetArchetypeSpecificationData.AllStates => GadgetStates;
+
+    public int CalculateExtraNumberOfBytesNeededForSnapshotting()
+    {
+        var result = 0;
+
+        foreach (var state in GadgetStates)
+        {
+            for (var i = 0; i < state.InnateBehaviours.Length; i++)
+            {
+                var behaviourType = state.InnateBehaviours[i].GadgetBehaviourType;
+                result += GadgetBehaviourTypeHasher.NumberOfSnapshotBytesRequiredForBehaviour(behaviourType);
+            }
+        }
+
+        return result;
+    }
 }
 
 [DebuggerDisplay("{StateName}")]

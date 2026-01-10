@@ -13,6 +13,8 @@ public sealed class LevelTimerObserverGadgetInstanceSpecificationData : IGadgetI
     public required LevelTimerObservationType ObservationType { get; init; }
     public required ComparisonType ComparisonType { get; init; }
     public required int RequiredValue { get; init; }
+
+    public int CalculateExtraNumberOfBytesNeededForSnapshotting() => 0;
 }
 
 [DebuggerDisplay("{OverrideStateName}")]

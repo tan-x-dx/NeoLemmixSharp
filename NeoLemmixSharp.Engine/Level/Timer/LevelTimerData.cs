@@ -13,8 +13,6 @@ public unsafe readonly struct LevelTimerDataPointer
 {
     public readonly LevelTimerData* _pointer;
 
-    public void* GetPointer() => _pointer;
-
     public LevelTimerDataPointer(void* pointer) => _pointer = (LevelTimerData*)pointer;
     public LevelTimerDataPointer(nint pointerHandle) => _pointer = (LevelTimerData*)pointerHandle;
 

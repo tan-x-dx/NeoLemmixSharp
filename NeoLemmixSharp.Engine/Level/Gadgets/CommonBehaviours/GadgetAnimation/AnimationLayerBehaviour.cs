@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 
@@ -6,19 +7,24 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.GadgetAnimation;
 
 public sealed class AnimationLayerBehaviour : GadgetBehaviour
 {
+    private readonly PointerWrapper<int> _frame;
+    private readonly PointerWrapper<bool> _animationFinished;
+
     private readonly int _layer;
     private readonly int _minFrame;
     private readonly int _maxFrame;
 
     private readonly FrameDeltaType _frameDelta;
     private readonly GadgetLayerColorData _gadgetLayerColorData;
-    private int _frame;
-    private bool _animationFinished;
 
-    public int Frame => _frame;
-    public bool AnimationFinished => _animationFinished;
+    private ref int FrameRef => ref _frame.Value;
+    private ref bool AnimationFinishedRef => ref _animationFinished.Value;
+
+    public int Frame => _frame.Value;
+    public bool AnimationFinished => _animationFinished.Value;
 
     public static AnimationLayerBehaviour CreateIncrementAnimationLayerBehaviour(
+        nint dataHandle,
         int id,
         GadgetBehaviourName gadgetBehaviourName,
         int layer,
@@ -28,6 +34,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
         GadgetLayerColorData gadgetLayerColorData)
     {
         return new AnimationLayerBehaviour(
+            dataHandle,
             layer,
             minFrame,
             maxFrame,
@@ -42,6 +49,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     }
 
     public static AnimationLayerBehaviour CreateDecrementAnimationLayerBehaviour(
+        nint dataHandle,
         int id,
         GadgetBehaviourName gadgetBehaviourName,
         int layer,
@@ -51,6 +59,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
         GadgetLayerColorData gadgetLayerColorData)
     {
         return new AnimationLayerBehaviour(
+            dataHandle,
             layer,
             minFrame,
             maxFrame,
@@ -65,6 +74,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     }
 
     private AnimationLayerBehaviour(
+        nint dataHandle,
         int layer,
         int minFrame,
         int maxFrame,
@@ -77,7 +87,8 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
         _minFrame = minFrame;
         _maxFrame = maxFrame;
         _frameDelta = frameDelta;
-        _frame = initialFrame;
+        _frame = new PointerWrapper<int>(dataHandle);
+        _animationFinished = new PointerWrapper<bool>(dataHandle + sizeof(int));
         _gadgetLayerColorData = gadgetLayerColorData;
     }
 
@@ -85,29 +96,29 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     {
         if (_frameDelta == FrameDeltaType.Increment)
         {
-            if (_frame == _maxFrame)
+            if (FrameRef == _maxFrame)
             {
-                _animationFinished = true;
-                _frame = _minFrame;
+                AnimationFinishedRef = true;
+                FrameRef = _minFrame;
                 return;
             }
         }
         else
         {
-            if (_frame == _minFrame)
+            if (FrameRef == _minFrame)
             {
-                _animationFinished = true;
-                _frame = _maxFrame;
+                AnimationFinishedRef = true;
+                FrameRef = _maxFrame;
                 return;
             }
         }
 
-        _frame += (int)_frameDelta;
+        FrameRef += (int)_frameDelta;
     }
-    
+
     protected override void OnReset()
     {
-        _animationFinished = false;
+        AnimationFinishedRef = false;
     }
 
     private enum FrameDeltaType

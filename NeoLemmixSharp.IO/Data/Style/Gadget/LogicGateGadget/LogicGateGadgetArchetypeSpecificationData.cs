@@ -12,6 +12,8 @@ public sealed class LogicGateGadgetArchetypeSpecificationData : IGadgetArchetype
     public required LogicGateStateArchetypeData[] GadgetStates { get; init; }
 
     ReadOnlySpan<IGadgetStateArchetypeData> IGadgetArchetypeSpecificationData.AllStates => GadgetStates;
+
+    public int CalculateExtraNumberOfBytesNeededForSnapshotting() => 0;
 }
 
 [DebuggerDisplay("{StateName}")]
