@@ -151,7 +151,7 @@ public static class GadgetBuildingHelpers
             Position = gadgetData.Position
         };
 
-        dataHandleRef += GadgetBoundsData.GadgetBoundsDataSize;
+        dataHandleRef += GadgetBounds.GadgetBoundsDataSize;
 
         baseSize = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(baseSize);
 
@@ -176,7 +176,7 @@ public static class GadgetBuildingHelpers
             Position = hitBoxGadgetData.Position
         };
 
-        dataHandleRef += GadgetBoundsData.GadgetBoundsDataSize;
+        dataHandleRef += GadgetBounds.GadgetBoundsDataSize;
 
         var size = new Size(
             resizeType.CanResizeHorizontally() ? hitBoxGadgetInstanceData.GetProperty(GadgetPropertyType.Width) : baseSize.W,

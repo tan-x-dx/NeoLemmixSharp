@@ -5,112 +5,112 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-[StructLayout(LayoutKind.Sequential, Size = SizeOfLemmingDataInBytes)]
-public struct LemmingData
+public unsafe readonly struct LemmingData
 {
-    public const int SizeOfLemmingDataInBytes = 192;
+    public const int LemmingDataSize = 192;
 
-    public Orientation Orientation;
-    public FacingDirection FacingDirection;
+    [StructLayout(LayoutKind.Sequential, Size = LemmingDataSize)]
+    private struct LemmingDataRaw
+    {
+        public Orientation Orientation;
+        public FacingDirection FacingDirection;
 
-    public int TribeId;
-    public uint State;
+        public int TribeId;
+        public uint State;
 
-    public RectangularRegion CurrentBounds;
+        public RectangularRegion CurrentBounds;
 
-    public int PreviousActionId;
-    public int CurrentActionId;
-    public int NextActionId;
-    public int CountDownActionId;
+        public int PreviousActionId;
+        public int CurrentActionId;
+        public int NextActionId;
+        public int CountDownActionId;
 
-    public JumperPositionBuffer JumperPositionBuffer;
+        public JumperPositionBuffer JumperPositionBuffer;
 
-    public Point DehoistPin;
-    public Point LaserHitLevelPosition;
-    public Point AnchorPosition;
-    public Point PreviousAnchorPosition;
+        public Point DehoistPin;
+        public Point LaserHitLevelPosition;
+        public Point AnchorPosition;
+        public Point PreviousAnchorPosition;
 
-    public bool ConstructivePositionFreeze;
-    public bool IsStartingAction;
-    public bool PlacedBrick;
-    public bool StackLow;
+        public bool ConstructivePositionFreeze;
+        public bool IsStartingAction;
+        public bool PlacedBrick;
+        public bool StackLow;
 
-    public bool InitialFall;
-    public bool EndOfAnimation;
-    public bool LaserHit;
-    public bool JumpToHoistAdvance;
+        public bool InitialFall;
+        public bool EndOfAnimation;
+        public bool LaserHit;
+        public bool JumpToHoistAdvance;
 
-    public int AnimationFrame;
-    public int PhysicsFrame;
-    public int AscenderProgress;
-    public int NumberOfBricksLeft;
-    public int DisarmingFrames;
-    public int DistanceFallen;
-    public int JumpProgress;
-    public int TrueDistanceFallen;
-    public int LaserRemainTime;
+        public int AnimationFrame;
+        public int PhysicsFrame;
+        public int AscenderProgress;
+        public int NumberOfBricksLeft;
+        public int DisarmingFrames;
+        public int DistanceFallen;
+        public int JumpProgress;
+        public int TrueDistanceFallen;
+        public int LaserRemainTime;
 
-    public int FastForwardTime;
-    public uint CountDownTimer;
-    public int ParticleTimer;
-}
+        public int FastForwardTime;
+        public uint CountDownTimer;
+        public int ParticleTimer;
+    }
 
-public unsafe readonly struct LemmingDataPointer
-{
-    private readonly LemmingData* _pointer;
+    private readonly LemmingDataRaw* _data;
 
-    public void* GetPointer() => _pointer;
+    public void* GetPointer() => _data;
 
-    public LemmingDataPointer(void* pointer) => _pointer = (LemmingData*)pointer;
-    public LemmingDataPointer(nint pointerHandle) => _pointer = (LemmingData*)pointerHandle;
+    public LemmingData(void* pointer) => _data = (LemmingDataRaw*)pointer;
+    public LemmingData(nint pointerHandle) => _data = (LemmingDataRaw*)pointerHandle;
 
-    public ref Orientation Orientation => ref Unsafe.AsRef<Orientation>(&_pointer->Orientation);
-    public ref FacingDirection FacingDirection => ref Unsafe.AsRef<FacingDirection>(&_pointer->FacingDirection);
+    public ref Orientation Orientation => ref Unsafe.AsRef<Orientation>(&_data->Orientation);
+    public ref FacingDirection FacingDirection => ref Unsafe.AsRef<FacingDirection>(&_data->FacingDirection);
 
-    public ref int TribeId => ref Unsafe.AsRef<int>(&_pointer->TribeId);
-    public ref uint State => ref Unsafe.AsRef<uint>(&_pointer->State);
+    public ref int TribeId => ref Unsafe.AsRef<int>(&_data->TribeId);
+    public ref uint State => ref Unsafe.AsRef<uint>(&_data->State);
 
-    public ref RectangularRegion CurrentBounds => ref Unsafe.AsRef<RectangularRegion>(&_pointer->CurrentBounds);
+    public ref RectangularRegion CurrentBounds => ref Unsafe.AsRef<RectangularRegion>(&_data->CurrentBounds);
 
-    public ref int PreviousActionId => ref Unsafe.AsRef<int>(&_pointer->PreviousActionId);
-    public ref int CurrentActionId => ref Unsafe.AsRef<int>(&_pointer->CurrentActionId);
-    public ref int NextActionId => ref Unsafe.AsRef<int>(&_pointer->NextActionId);
-    public ref int CountDownActionId => ref Unsafe.AsRef<int>(&_pointer->CountDownActionId);
+    public ref int PreviousActionId => ref Unsafe.AsRef<int>(&_data->PreviousActionId);
+    public ref int CurrentActionId => ref Unsafe.AsRef<int>(&_data->CurrentActionId);
+    public ref int NextActionId => ref Unsafe.AsRef<int>(&_data->NextActionId);
+    public ref int CountDownActionId => ref Unsafe.AsRef<int>(&_data->CountDownActionId);
 
-    public ref JumperPositionBuffer JumperPositionBuffer => ref Unsafe.AsRef<JumperPositionBuffer>(&_pointer->JumperPositionBuffer);
+    public ref JumperPositionBuffer JumperPositionBuffer => ref Unsafe.AsRef<JumperPositionBuffer>(&_data->JumperPositionBuffer);
 
-    public ref Point DehoistPin => ref Unsafe.AsRef<Point>(&_pointer->DehoistPin);
-    public ref Point LaserHitLevelPosition => ref Unsafe.AsRef<Point>(&_pointer->LaserHitLevelPosition);
-    public ref Point AnchorPosition => ref Unsafe.AsRef<Point>(&_pointer->AnchorPosition);
-    public ref Point PreviousAnchorPosition => ref Unsafe.AsRef<Point>(&_pointer->PreviousAnchorPosition);
+    public ref Point DehoistPin => ref Unsafe.AsRef<Point>(&_data->DehoistPin);
+    public ref Point LaserHitLevelPosition => ref Unsafe.AsRef<Point>(&_data->LaserHitLevelPosition);
+    public ref Point AnchorPosition => ref Unsafe.AsRef<Point>(&_data->AnchorPosition);
+    public ref Point PreviousAnchorPosition => ref Unsafe.AsRef<Point>(&_data->PreviousAnchorPosition);
 
-    public ref bool ConstructivePositionFreeze => ref Unsafe.AsRef<bool>(&_pointer->ConstructivePositionFreeze);
-    public ref bool IsStartingAction => ref Unsafe.AsRef<bool>(&_pointer->IsStartingAction);
-    public ref bool PlacedBrick => ref Unsafe.AsRef<bool>(&_pointer->PlacedBrick);
-    public ref bool StackLow => ref Unsafe.AsRef<bool>(&_pointer->StackLow);
+    public ref bool ConstructivePositionFreeze => ref Unsafe.AsRef<bool>(&_data->ConstructivePositionFreeze);
+    public ref bool IsStartingAction => ref Unsafe.AsRef<bool>(&_data->IsStartingAction);
+    public ref bool PlacedBrick => ref Unsafe.AsRef<bool>(&_data->PlacedBrick);
+    public ref bool StackLow => ref Unsafe.AsRef<bool>(&_data->StackLow);
 
-    public ref bool InitialFall => ref Unsafe.AsRef<bool>(&_pointer->InitialFall);
-    public ref bool EndOfAnimation => ref Unsafe.AsRef<bool>(&_pointer->EndOfAnimation);
-    public ref bool LaserHit => ref Unsafe.AsRef<bool>(&_pointer->LaserHit);
-    public ref bool JumpToHoistAdvance => ref Unsafe.AsRef<bool>(&_pointer->JumpToHoistAdvance);
+    public ref bool InitialFall => ref Unsafe.AsRef<bool>(&_data->InitialFall);
+    public ref bool EndOfAnimation => ref Unsafe.AsRef<bool>(&_data->EndOfAnimation);
+    public ref bool LaserHit => ref Unsafe.AsRef<bool>(&_data->LaserHit);
+    public ref bool JumpToHoistAdvance => ref Unsafe.AsRef<bool>(&_data->JumpToHoistAdvance);
 
-    public ref int AnimationFrame => ref Unsafe.AsRef<int>(&_pointer->AnimationFrame);
-    public ref int PhysicsFrame => ref Unsafe.AsRef<int>(&_pointer->PhysicsFrame);
-    public ref int AscenderProgress => ref Unsafe.AsRef<int>(&_pointer->AscenderProgress);
-    public ref int NumberOfBricksLeft => ref Unsafe.AsRef<int>(&_pointer->NumberOfBricksLeft);
-    public ref int DisarmingFrames => ref Unsafe.AsRef<int>(&_pointer->DisarmingFrames);
-    public ref int DistanceFallen => ref Unsafe.AsRef<int>(&_pointer->DistanceFallen);
-    public ref int JumpProgress => ref Unsafe.AsRef<int>(&_pointer->JumpProgress);
-    public ref int TrueDistanceFallen => ref Unsafe.AsRef<int>(&_pointer->TrueDistanceFallen);
-    public ref int LaserRemainTime => ref Unsafe.AsRef<int>(&_pointer->LaserRemainTime);
+    public ref int AnimationFrame => ref Unsafe.AsRef<int>(&_data->AnimationFrame);
+    public ref int PhysicsFrame => ref Unsafe.AsRef<int>(&_data->PhysicsFrame);
+    public ref int AscenderProgress => ref Unsafe.AsRef<int>(&_data->AscenderProgress);
+    public ref int NumberOfBricksLeft => ref Unsafe.AsRef<int>(&_data->NumberOfBricksLeft);
+    public ref int DisarmingFrames => ref Unsafe.AsRef<int>(&_data->DisarmingFrames);
+    public ref int DistanceFallen => ref Unsafe.AsRef<int>(&_data->DistanceFallen);
+    public ref int JumpProgress => ref Unsafe.AsRef<int>(&_data->JumpProgress);
+    public ref int TrueDistanceFallen => ref Unsafe.AsRef<int>(&_data->TrueDistanceFallen);
+    public ref int LaserRemainTime => ref Unsafe.AsRef<int>(&_data->LaserRemainTime);
 
-    public ref int FastForwardTime => ref Unsafe.AsRef<int>(&_pointer->FastForwardTime);
-    public ref uint CountDownTimer => ref Unsafe.AsRef<uint>(&_pointer->CountDownTimer);
-    public ref int ParticleTimer => ref Unsafe.AsRef<int>(&_pointer->ParticleTimer);
+    public ref int FastForwardTime => ref Unsafe.AsRef<int>(&_data->FastForwardTime);
+    public ref uint CountDownTimer => ref Unsafe.AsRef<uint>(&_data->CountDownTimer);
+    public ref int ParticleTimer => ref Unsafe.AsRef<int>(&_data->ParticleTimer);
 
     public Span<Point> GetJumperPositions()
     {
-        void* p = &_pointer->JumperPositionBuffer;
+        void* p = &_data->JumperPositionBuffer;
         return new Span<Point>(p, JumperAction.JumperPositionCount * sizeof(Point));
     }
 }

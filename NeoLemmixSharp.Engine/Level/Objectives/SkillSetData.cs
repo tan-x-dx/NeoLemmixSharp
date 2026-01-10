@@ -2,23 +2,23 @@
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
-public struct SkillSetData
+public unsafe readonly struct SkillSetData
 {
     public const int SkillSetDataSize = 3 * sizeof(int);
 
-    public int AdditionalQuantity;
-    public int AmountUsed;
-    public int CurrentSkillLimit;
-}
+    private struct SkillSetDataRaw
+    {
+        public int AdditionalQuantity;
+        public int AmountUsed;
+        public int CurrentSkillLimit;
+    }
 
-public unsafe readonly struct SkillSetDataPointer
-{
-    private readonly SkillSetData* _pointer;
+    private readonly SkillSetDataRaw* _data;
 
-    public SkillSetDataPointer(void* pointer) => _pointer = (SkillSetData*)pointer;
-    public SkillSetDataPointer(nint pointerHandle) => _pointer = (SkillSetData*)pointerHandle;
+    public SkillSetData(void* pointer) => _data = (SkillSetDataRaw*)pointer;
+    public SkillSetData(nint pointerHandle) => _data = (SkillSetDataRaw*)pointerHandle;
 
-    public ref int AdditionalQuantity => ref Unsafe.AsRef<int>(&_pointer->AdditionalQuantity);
-    public ref int AmountUsed => ref Unsafe.AsRef<int>(&_pointer->AmountUsed);
-    public ref int CurrentSkillLimit => ref Unsafe.AsRef<int>(&_pointer->CurrentSkillLimit);
+    public ref int AdditionalQuantity => ref Unsafe.AsRef<int>(&_data->AdditionalQuantity);
+    public ref int AmountUsed => ref Unsafe.AsRef<int>(&_data->AmountUsed);
+    public ref int CurrentSkillLimit => ref Unsafe.AsRef<int>(&_data->CurrentSkillLimit);
 }

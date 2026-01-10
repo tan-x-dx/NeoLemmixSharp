@@ -17,7 +17,7 @@ public sealed class LemmingBuilder
         var numberOfLemmings = _levelData.CalculateTotalNumberOfLemmingsInLevel();
 
         _lemmingList = new Lemming[numberOfLemmings];
-        _lemmingDataBuffer = safeBufferAllocator.AllocateRawArray(numberOfLemmings * LemmingData.SizeOfLemmingDataInBytes);
+        _lemmingDataBuffer = safeBufferAllocator.AllocateRawArray(numberOfLemmings * LemmingData.LemmingDataSize);
     }
 
     public RawArray LemmingDataBuffer => _lemmingDataBuffer;
@@ -45,7 +45,7 @@ public sealed class LemmingBuilder
             lemming.State.SetData(prototype.TribeId, prototype.State);
 
             _lemmingList[i] = lemming;
-            handle += LemmingData.SizeOfLemmingDataInBytes;
+            handle += LemmingData.LemmingDataSize;
         }
 
         while (i < _lemmingList.Length)
@@ -64,7 +64,7 @@ public sealed class LemmingBuilder
             _lemmingList[i] = lemming;
 
             i++;
-            handle += LemmingData.SizeOfLemmingDataInBytes;
+            handle += LemmingData.LemmingDataSize;
         }
 
         return _lemmingList;

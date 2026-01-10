@@ -10,7 +10,7 @@ public sealed class SkillTrackingData
     public LemmingSkill Skill { get; }
     public Tribe? Tribe { get; }
 
-    private readonly SkillSetDataPointer _data;
+    private readonly SkillSetData _data;
 
     public int SkillTrackingDataId { get; }
     public int InitialSkillQuantity { get; }
@@ -28,7 +28,7 @@ public sealed class SkillTrackingData
         int initialSkillQuantity,
         int initialSkillLimit)
     {
-        _data = new SkillSetDataPointer(dataHandle);
+        _data = new SkillSetData(dataHandle);
 
         Skill = skill;
         Tribe = tribe;

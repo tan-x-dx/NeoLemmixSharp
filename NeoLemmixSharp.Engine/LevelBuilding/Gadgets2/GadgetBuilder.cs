@@ -95,8 +95,8 @@ public sealed class GadgetBuilder
         int lemmingTrackerByteRequirement)
     {
         var result =
-            GadgetBoundsData.GadgetBoundsDataSize // A gadget will always have bounds
-            + sizeof(int); // A gadget will always have a state index
+            GadgetBounds.GadgetBoundsDataSize + // A gadget will always have bounds
+            sizeof(int); // A gadget will always have a state index
 
         result += gadgetArchetypeData.SpecificationData.CalculateExtraNumberOfBytesNeededForSnapshotting();
         result += gadgetInstanceData.SpecificationData.CalculateExtraNumberOfBytesNeededForSnapshotting();

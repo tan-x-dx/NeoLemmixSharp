@@ -25,7 +25,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public LemmingRenderer Renderer { get; }
 
-    private readonly LemmingDataPointer _data;
+    private readonly LemmingData _data;
     public readonly int Id;
 
     public Orientation Orientation
@@ -121,7 +121,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         int tribeId)
     {
         Id = id;
-        _data = new LemmingDataPointer(dataHandle);
+        _data = new LemmingData(dataHandle);
 
         _data.Orientation = orientation;
         _data.FacingDirection = facingDirection;
@@ -475,8 +475,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* destinationPointer)
     {
-        var sourceSpan = Helpers.CreateReadOnlySpan<byte>(sourcePointer, LemmingData.SizeOfLemmingDataInBytes);
-        var destinationSpan = Helpers.CreateSpan<byte>(destinationPointer, LemmingData.SizeOfLemmingDataInBytes);
+        var sourceSpan = Helpers.CreateReadOnlySpan<byte>(sourcePointer, LemmingData.LemmingDataSize);
+        var destinationSpan = Helpers.CreateSpan<byte>(destinationPointer, LemmingData.LemmingDataSize);
         sourceSpan.CopyTo(destinationSpan);
     }
 

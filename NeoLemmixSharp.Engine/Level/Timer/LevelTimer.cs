@@ -10,7 +10,7 @@ public sealed class LevelTimer
     private const int NumberOfTimerChars = 5; // "00-00"
     private const char TimerSeparatorChar = '-';
 
-    private readonly LevelTimerDataPointer _data;
+    private readonly LevelTimerData _data;
 
     private int _elapsedSeconds;
     public int TimeLimitInSeconds { get; }
@@ -40,7 +40,7 @@ public sealed class LevelTimer
 
     private LevelTimer(nint dataHandle)
     {
-        _data = new LevelTimerDataPointer(dataHandle);
+        _data = new LevelTimerData(dataHandle);
         _charBuffer[2] = TimerSeparatorChar;
         Type = TimerType.CountUp;
         TimeLimitInSeconds = -1;
@@ -51,7 +51,7 @@ public sealed class LevelTimer
 
     private LevelTimer(nint dataHandle, uint timeLimitInSeconds)
     {
-        _data = new LevelTimerDataPointer(dataHandle);
+        _data = new LevelTimerData(dataHandle);
         _charBuffer[2] = TimerSeparatorChar;
         Type = TimerType.CountDown;
         TimeLimitInSeconds = (int)timeLimitInSeconds;

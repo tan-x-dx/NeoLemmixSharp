@@ -18,7 +18,7 @@ public sealed class LemmingManager :
     IInitialisable,
     IDisposable
 {
-    private readonly LemmingManagerDataPointer _data;
+    private readonly LemmingManagerData _data;
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
 
@@ -62,7 +62,7 @@ public sealed class LemmingManager :
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
-        _data = new LemmingManagerDataPointer(dataHandle);
+        _data = new LemmingManagerData(dataHandle);
 
         if (hatchGroups.Length > 0)
         {
@@ -97,7 +97,7 @@ public sealed class LemmingManager :
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
         _maxNumberOfClonedLemmings = maxNumberOfClonedLemmings;
 
-        _simulationLemmingDataBuffer = new RawArray(LemmingData.SizeOfLemmingDataInBytes);
+        _simulationLemmingDataBuffer = new RawArray(LemmingData.LemmingDataSize);
         SimulationLemming = new Lemming(_simulationLemmingDataBuffer.Handle, int.MinValue, Orientation.Down, FacingDirection.Right, LemmingActionConstants.NoneActionId, EngineConstants.ClassicTribeId);
     }
 

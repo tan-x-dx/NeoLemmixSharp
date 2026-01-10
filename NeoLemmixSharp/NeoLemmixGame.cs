@@ -196,7 +196,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     public void ToggleFullscreenSetting()
     {
-        if(_windowMode != WindowMode.Windowed)
+        if (_windowMode != WindowMode.Windowed)
         {
             UnsetFullscreen();
             return;
