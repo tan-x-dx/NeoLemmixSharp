@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Objectives;
@@ -12,30 +13,31 @@ public sealed class RewindManager :
     IItemManager<LevelTimer>,
     IDisposable
 {
-    private readonly SnapshotRecorder<LemmingManager, Lemming> _lemmingSnapshotRecorder;
+    private readonly SnapshotRecorder2 _lemmingSnapshotRecorder;
     private readonly SnapshotRecorder<GadgetManager, GadgetBase> _gadgetSnapshotRecorder;
-    private readonly SnapshotRecorder<SkillSetManager, SkillTrackingData> _skillSetSnapshotRecorder;
+    private readonly SnapshotRecorder2 _skillSetSnapshotRecorder;
 
-    private readonly SnapshotRecorder<RewindManager, LemmingManager> _lemmingManagerSnapshotRecorder;
-    private readonly SnapshotRecorder<RewindManager, LevelTimer> _levelTimerRecorder;
+    private readonly SnapshotRecorder2 _lemmingManagerSnapshotRecorder;
+    private readonly SnapshotRecorder2 _levelTimerRecorder;
 
     private readonly LevelEventList<SkillAssignmentEventData> _skillAssignmentList;
 
     private int _maxElapsedTicks;
 
     public RewindManager(
-        LemmingManager lemmingManager,
+        RawArray lemmingDataBuffer,
+        RawArray lemmingManagerDataBuffer,
         GadgetManager gadgetManager,
-        SkillSetManager skillSetManager)
+        RawArray levelTimerDataBuffer,
+        RawArray skillSetDataBuffer,
+        int baseNumberOfSkillAssignments)
     {
-        _lemmingSnapshotRecorder = new SnapshotRecorder<LemmingManager, Lemming>(lemmingManager);
+        _lemmingSnapshotRecorder = new SnapshotRecorder2(lemmingDataBuffer);
         _gadgetSnapshotRecorder = new SnapshotRecorder<GadgetManager, GadgetBase>(gadgetManager);
-        _skillSetSnapshotRecorder = new SnapshotRecorder<SkillSetManager, SkillTrackingData>(skillSetManager);
+        _skillSetSnapshotRecorder = new SnapshotRecorder2(skillSetDataBuffer);
 
-        _lemmingManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, LemmingManager>(this);
-        _levelTimerRecorder = new SnapshotRecorder<RewindManager, LevelTimer>(this);
-
-        var baseNumberOfSkillAssignments = skillSetManager.EstimateBaseNumberOfSkillAssignments(gadgetManager);
+        _lemmingManagerSnapshotRecorder = new SnapshotRecorder2(lemmingManagerDataBuffer);
+        _levelTimerRecorder = new SnapshotRecorder2(levelTimerDataBuffer);
 
         _skillAssignmentList = new LevelEventList<SkillAssignmentEventData>(baseNumberOfSkillAssignments);
     }

@@ -70,7 +70,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
             var current = enumerator.Current;
             var key = hasher.UnHash(current);
             var value = _values[current];
-            span[i++] = new KeyValuePair<TKey, TValue>(key, value);
+            span.At(i++) = new KeyValuePair<TKey, TValue>(key, value);
         }
     }
 
@@ -86,7 +86,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         {
             var current = enumerator.Current;
             var key = hasher.UnHash(current);
-            keySpan[i++] = key;
+            keySpan.At(i++) = key;
         }
     }
 
@@ -101,7 +101,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         {
             var current = enumerator.Current;
             var value = _values[current];
-            valueSpan[i++] = value;
+            valueSpan.At(i++) = value;
         }
     }
 

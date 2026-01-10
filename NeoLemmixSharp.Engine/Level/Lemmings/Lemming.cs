@@ -5,7 +5,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
@@ -15,10 +14,8 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshotDataConvertible
+public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 {
-    public static Lemming SimulationLemming { get; } = new();
-
     public LemmingState State { get; }
 
     private LemmingAction _previousAction = NoneAction.Instance;
@@ -28,7 +25,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshot
 
     public LemmingRenderer Renderer { get; }
 
-    private LemmingData _data;
+    private readonly LemmingDataPointer _data;
     public readonly int Id;
 
     public Orientation Orientation
@@ -116,6 +113,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshot
     public Point CenterPosition => _data.Orientation.MoveUp(_data.AnchorPosition, 4);
 
     public Lemming(
+        nint dataHandle,
         int id,
         Orientation orientation,
         FacingDirection facingDirection,
@@ -123,23 +121,13 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshot
         int tribeId)
     {
         Id = id;
+        _data = new LemmingDataPointer(dataHandle);
+
         _data.Orientation = orientation;
         _data.FacingDirection = facingDirection;
         _currentAction = LemmingAction.GetActionOrDefault(initialActionId);
         _data.CurrentActionId = _currentAction.Id;
         State = new LemmingState(this, tribeId);
-        Renderer = new LemmingRenderer(this);
-
-        TakeSnapshotFromReferenceData();
-    }
-
-    private Lemming()
-    {
-        Id = int.MinValue;
-        _data.Orientation = Orientation.Down;
-        _data.FacingDirection = FacingDirection.Right;
-        _currentAction = NoneAction.Instance;
-        State = new LemmingState(this, EngineConstants.ClassicTribeId);
         Renderer = new LemmingRenderer(this);
 
         TakeSnapshotFromReferenceData();
@@ -472,19 +460,24 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshot
         Renderer.UpdateLemmingState(removalReason == LemmingRemovalReason.DeathExplode);
     }
 
-    public Span<Point> GetJumperPositions() => _data.JumperPositionBuffer;
+    public Span<Point> GetJumperPositions() => _data.GetJumperPositions();
 
     public unsafe void SetRawDataFromOther(Lemming otherLemming)
     {
         otherLemming.TakeSnapshotFromReferenceData();
 
-        fixed (void* otherPointer = &otherLemming._data)
-        fixed (void* thisPointer = &_data)
-        {
-            CopyLemmingSnapshotBytes(otherPointer, thisPointer);
-        }
+        void* otherPointer = otherLemming._data.GetPointer();
+        void* thisPointer = _data.GetPointer();
+        CopyLemmingSnapshotBytes(otherPointer, thisPointer);
 
         SetReferenceDataFromSnapshot();
+    }
+
+    private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* destinationPointer)
+    {
+        var sourceSpan = Helpers.CreateReadOnlySpan<byte>(sourcePointer, LemmingData.SizeOfLemmingDataInBytes);
+        var destinationSpan = Helpers.CreateSpan<byte>(destinationPointer, LemmingData.SizeOfLemmingDataInBytes);
+        sourceSpan.CopyTo(destinationSpan);
     }
 
     public void SetRawData(Tribe tribe, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
@@ -492,36 +485,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds, ISnapshot
         State.SetData(tribe.Id, rawStateData);
         _data.Orientation = orientation;
         _data.FacingDirection = facingDirection;
-    }
-
-    public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LemmingData);
-
-    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
-    {
-        TakeSnapshotFromReferenceData();
-
-        fixed (void* thisPointer = &_data)
-        {
-            CopyLemmingSnapshotBytes(thisPointer, snapshotDataPointer);
-        }
-    }
-
-    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
-    {
-        fixed (void* thisPointer = &_data)
-        {
-            CopyLemmingSnapshotBytes(snapshotDataPointer, thisPointer);
-        }
-
-        SetReferenceDataFromSnapshot();
-    }
-
-    private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* destinationPointer)
-    {
-        LemmingData* sourceLemmingDataPointer = (LemmingData*)sourcePointer;
-        LemmingData* destinationLemmingDataPointer = (LemmingData*)destinationPointer;
-
-        *destinationLemmingDataPointer = *sourceLemmingDataPointer;
     }
 
     private void TakeSnapshotFromReferenceData()

@@ -6,7 +6,6 @@ using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Rewind;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -18,10 +17,10 @@ public sealed class LemmingManager :
     IItemManager<Lemming>,
     IBitBufferCreator<RawBitBuffer, Lemming>,
     IPerfectHasher<HatchGroup>,
-    ISnapshotDataConvertible,
     IInitialisable,
     IDisposable
 {
+    private readonly LemmingManagerDataPointer _data;
     private readonly HatchGroup[] _hatchGroups;
     private readonly Lemming[] _lemmings;
 
@@ -41,7 +40,8 @@ public sealed class LemmingManager :
     private readonly int _numberOfPreplacedLemmings;
     private readonly int _maxNumberOfClonedLemmings;
 
-    private LemmingManagerData _data = new();
+    public Lemming SimulationLemming { get; }
+    private readonly RawArray _simulationLemmingDataBuffer;
 
     private bool _isDisposed;
 
@@ -56,6 +56,7 @@ public sealed class LemmingManager :
     public Lemming GetLemming(int lemmingId) => _lemmings[lemmingId];
 
     public LemmingManager(
+        nint dataHandle,
         Lemming[] lemmings,
         int numberOfPreplacedLemmings,
         HatchGroup[] hatchGroups,
@@ -63,6 +64,8 @@ public sealed class LemmingManager :
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
+        _data = new LemmingManagerDataPointer(dataHandle);
+
         if (hatchGroups.Length > 0)
         {
             this.AssertUniqueIds(new ReadOnlySpan<HatchGroup>(hatchGroups));
@@ -95,6 +98,9 @@ public sealed class LemmingManager :
         _totalNumberOfHatchLemmings = CalculateTotalNumberOfLemmingsFromHatches(hatchGroups);
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
         _maxNumberOfClonedLemmings = maxNumberOfClonedLemmings;
+
+        _simulationLemmingDataBuffer = new RawArray(LemmingData.SizeOfLemmingDataInBytes);
+        SimulationLemming = new Lemming(_simulationLemmingDataBuffer.Handle, int.MinValue, Orientation.Down, FacingDirection.Right, LemmingActionConstants.NoneActionId, EngineConstants.ClassicTribeId);
     }
 
     [Pure]
@@ -260,9 +266,9 @@ public sealed class LemmingManager :
         LevelScreen.LevelControlPanel.TextualData.SetLemmingData(LemmingsOut - LemmingsRemoved);
     }
 
-    public static Lemming SimulateLemming(Lemming lemming, bool checkGadgets)
+    public Lemming SimulateLemming(Lemming lemming, bool checkGadgets)
     {
-        var simulationLemming = Lemming.SimulationLemming;
+        var simulationLemming = SimulationLemming;
         simulationLemming.SetRawDataFromOther(lemming);
 
         simulationLemming.Simulate(checkGadgets);
@@ -414,25 +420,10 @@ public sealed class LemmingManager :
             _zombieSpacialHashGrid.Dispose();
             _lemmingsToZombify.Clear();
             _allBlockers.Clear();
+            _simulationLemmingDataBuffer.Dispose();
         }
 
         GC.SuppressFinalize(this);
-    }
-
-    public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(LemmingManagerData);
-
-    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
-    {
-        LemmingManagerData* lemmingManagerSnapshotDataPointer = (LemmingManagerData*)snapshotDataPointer;
-
-        *lemmingManagerSnapshotDataPointer = _data;
-    }
-
-    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
-    {
-        LemmingManagerData* lemmingManagerSnapshotDataPointer = (LemmingManagerData*)snapshotDataPointer;
-
-        _data = *lemmingManagerSnapshotDataPointer;
     }
 
     public void ResetLemmingPositions()

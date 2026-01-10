@@ -27,6 +27,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 {
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
+    private readonly SafeBufferAllocator _safeBufferAllocator;
 
     public LevelBuilder(
         ContentManager contentManager,
@@ -34,9 +35,26 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
+        _safeBufferAllocator = new SafeBufferAllocator();
     }
 
     public LevelScreen BuildLevel(LevelData levelData)
+    {
+        LevelScreen result;
+        try
+        {
+            result = BuildLevelA(levelData);
+        }
+        catch
+        {
+            _safeBufferAllocator.DeallocateAllBuffers();
+            throw;
+        }
+
+        return result;
+    }
+
+    private LevelScreen BuildLevelA(LevelData levelData)
     {
         StyleCache.EnsureStylesAreLoadedForLevel(levelData);
 
@@ -46,11 +64,15 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var horizontalBoundaryBehaviour = levelData.HorizontalBoundaryBehaviour.GetHorizontalBoundaryBehaviour(levelData.LevelDimensions.W);
         var verticalBoundaryBehaviour = levelData.VerticalBoundaryBehaviour.GetVerticalBoundaryBehaviour(levelData.LevelDimensions.H);
 
-        var levelLemmings = new LemmingBuilder(levelData).BuildLevelLemmings();
+        var lemmingBuilder = new LemmingBuilder(levelData, _safeBufferAllocator);
+        var levelLemmings = lemmingBuilder.BuildLevelLemmings();
 
         var hatchGroups = HatchGroupBuilder.BuildHatchGroups(levelData);
 
+        var lemmingManagerDataBuffer = _safeBufferAllocator.AllocateRawArray(LemmingManagerData.LemmingManagerDataSize);
+
         var lemmingManager = new LemmingManager(
+            lemmingManagerDataBuffer.Handle,
             levelLemmings,
             levelData.PrePlacedLemmingData.Count,
             hatchGroups,
@@ -79,8 +101,8 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
         var levelObjectiveBuilder = new LevelObjectiveBuilder(levelData.LevelObjective, selectedTalismanId);
         var levelObjectiveManager = levelObjectiveBuilder.BuildLevelObjectiveManager();
-        var skillSetManager = levelObjectiveBuilder.BuildSkillSetManager(tribeManager);
-        var levelTimer = levelObjectiveBuilder.BuildLevelTimer();
+        var skillSetManager = levelObjectiveBuilder.BuildSkillSetManager(tribeManager, _safeBufferAllocator);
+        var levelTimer = levelObjectiveBuilder.BuildLevelTimer(_safeBufferAllocator);
 
         var controlPanel = new LevelControlPanel(levelData.ControlParameters, inputController, lemmingManager, skillSetManager);
         // Need to call this here instead of initialising in LevelScreen
@@ -95,7 +117,16 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         terrainBuilder.GetTerrainColors(out var terrainColorData);
         var terrainRenderer = new TerrainRenderer(terrainTexture);
 
-        var rewindManager = new RewindManager(lemmingManager, gadgetManager, skillSetManager);
+        var baseNumberOfSkillAssignments = skillSetManager.EstimateBaseNumberOfSkillAssignments(gadgetManager);
+
+        var rewindManager = new RewindManager(
+            lemmingBuilder.LemmingDataBuffer,
+            lemmingManagerDataBuffer,
+            gadgetManager, 
+            levelObjectiveBuilder.LevelTimerDataBuffer,
+            levelObjectiveBuilder.SkillSetDataBuffer, 
+            baseNumberOfSkillAssignments);
+
         var updateScheduler = new UpdateScheduler();
         var terrainManager = new TerrainManager(pixelData);
 

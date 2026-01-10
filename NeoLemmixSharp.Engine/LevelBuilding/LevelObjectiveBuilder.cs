@@ -15,6 +15,9 @@ public sealed class LevelObjectiveBuilder
     private readonly LevelObjectiveData _levelObjectiveData;
     private readonly TalismanData? _selectedTalisman;
 
+    public RawArray SkillSetDataBuffer { get; private set; }
+    public RawArray LevelTimerDataBuffer { get; private set; }
+
     public LevelObjectiveBuilder(LevelObjectiveData levelObjective, int selectedTalismanId)
     {
         _levelObjectiveData = levelObjective;
@@ -122,9 +125,9 @@ public sealed class LevelObjectiveBuilder
         return true;
     }
 
-    public SkillSetManager BuildSkillSetManager(TribeManager tribeManager)
+    public SkillSetManager BuildSkillSetManager(TribeManager tribeManager, SafeBufferAllocator safeBufferAllocator)
     {
-        var skillTrackingData = BuildSkillTrackingData(tribeManager);
+        var skillTrackingData = BuildSkillTrackingData(tribeManager, safeBufferAllocator);
 
         var totalSkillLimitModifier = TryFindSmallestLimitTotalSkillAssignmentsModifier();
         var totalSkillLimit = EngineConstants.TrivialSkillLimit;
@@ -134,11 +137,15 @@ public sealed class LevelObjectiveBuilder
         return new SkillSetManager(skillTrackingData, totalSkillLimit);
     }
 
-    private SkillTrackingData[] BuildSkillTrackingData(TribeManager tribeManager)
+    private SkillTrackingData[] BuildSkillTrackingData(TribeManager tribeManager, SafeBufferAllocator safeBufferAllocator)
     {
         var baseSkillData = _levelObjectiveData.SkillSetData;
 
         var result = new SkillTrackingData[baseSkillData.Length];
+
+        SkillSetDataBuffer = safeBufferAllocator.AllocateRawArray(baseSkillData.Length * Level.Objectives.SkillSetData.SkillSetDataSize);
+
+        nint handle = SkillSetDataBuffer.Handle;
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -155,19 +162,22 @@ public sealed class LevelObjectiveBuilder
                 ? null
                 : tribeManager.TryGetTribe(skillSetData.TribeId);
 
-            result[i] = new SkillTrackingData(skill, tribe, i, skillSetData.InitialQuantity, initialSkillLimit);
+            result[i] = new SkillTrackingData(handle, skill, tribe, i, skillSetData.InitialQuantity, initialSkillLimit);
+            handle += Level.Objectives.SkillSetData.SkillSetDataSize;
         }
 
         return result;
     }
 
-    public LevelTimer BuildLevelTimer()
+    public LevelTimer BuildLevelTimer(SafeBufferAllocator safeBufferAllocator)
     {
         var timeLimitCriterionData = TryFindSmallestTimeLimitCriterion();
 
+        LevelTimerDataBuffer = safeBufferAllocator.AllocateRawArray(LevelTimerData.LevelTimerDataSize);
+
         return timeLimitCriterionData is null
-            ? LevelTimer.CreateCountUpTimer()
-            : LevelTimer.CreateCountDownTimer(timeLimitCriterionData.TimeLimitInSeconds);
+            ? LevelTimer.CreateCountUpTimer(LevelTimerDataBuffer.Handle)
+            : LevelTimer.CreateCountDownTimer(LevelTimerDataBuffer.Handle, timeLimitCriterionData.TimeLimitInSeconds);
     }
 
     private TimeLimitCriterionData? TryFindSmallestTimeLimitCriterion()
