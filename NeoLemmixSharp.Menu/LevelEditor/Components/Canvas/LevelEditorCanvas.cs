@@ -24,6 +24,8 @@ public sealed class LevelEditorCanvas : Component
     public LevelEditorCanvas(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
+
+        MouseDown.RegisterMouseEvent(OnMouseDown);
     }
 
     public void SetLevelData(LevelData levelData)
@@ -180,6 +182,11 @@ public sealed class LevelEditorCanvas : Component
     {
         _horizontalBorderBehaviour.RecentreViewport();
         _verticalBorderBehaviour.RecentreViewport();
+    }
+
+    private void OnMouseDown(Component c, Point position)
+    {
+
     }
 
     protected override void OnDispose()
