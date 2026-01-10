@@ -67,7 +67,8 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var lemmingBuilder = new LemmingBuilder(levelData, _safeBufferAllocator);
         var levelLemmings = lemmingBuilder.BuildLevelLemmings();
 
-        var hatchGroups = HatchGroupBuilder.BuildHatchGroups(levelData);
+        var hatchGroupBuilder = new HatchGroupBuilder(levelData, _safeBufferAllocator);
+        var hatchGroups = hatchGroupBuilder.BuildHatchGroups();
 
         var lemmingManagerDataBuffer = _safeBufferAllocator.AllocateRawArray(LemmingManagerData.LemmingManagerDataSize);
 
@@ -123,6 +124,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             lemmingBuilder.LemmingDataBuffer,
             lemmingManagerDataBuffer,
             gadgetBuilder.GadgetDataBuffer,
+            hatchGroupBuilder.HatchGroupDataBuffer,
             levelObjectiveBuilder.LevelTimerDataBuffer,
             levelObjectiveBuilder.SkillSetDataBuffer,
             baseNumberOfSkillAssignments);

@@ -39,7 +39,7 @@ public readonly ref struct HatchGadgetBuilder
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(_hatchGadgetArchetypeData, _hatchGadgetInstanceData);
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(ref dataHandleRef, _hatchGadgetArchetypeData, _hatchGadgetInstanceData);
         var gadgetStates = BuildHatchGadgetStates(ref dataHandleRef, gadgetBounds, tribeManager);
-        var hatchSpawnData = BuildHatchSpawnData(tribeManager);
+        var hatchSpawnData = BuildHatchSpawnData(ref dataHandleRef, tribeManager);
         var spawnPointOffset = BuildSpawnPointOffset();
 
         var result = new HatchGadget(
@@ -125,15 +125,21 @@ public readonly ref struct HatchGadgetBuilder
     }
 
     private HatchSpawnData BuildHatchSpawnData(
+        ref nint dataHandleRef,
         TribeManager tribeManager)
     {
-        return new HatchSpawnData(
+        var result = new HatchSpawnData(
+            dataHandleRef,
             _hatchGadgetTypeInstanceData.HatchGroupId,
             tribeManager.GetTribe(_hatchGadgetTypeInstanceData.TribeId),
             _hatchGadgetTypeInstanceData.RawStateData,
             _hatchGadgetInstanceData.Orientation,
             _hatchGadgetInstanceData.FacingDirection,
             _hatchGadgetTypeInstanceData.NumberOfLemmingsToRelease);
+
+        dataHandleRef += sizeof(int);
+
+        return result;
     }
 
     private Point BuildSpawnPointOffset()

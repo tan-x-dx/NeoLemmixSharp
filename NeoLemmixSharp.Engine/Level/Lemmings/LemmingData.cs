@@ -77,8 +77,6 @@ public unsafe readonly struct LemmingData
     public ref int NextActionId => ref Unsafe.AsRef<int>(&_data->NextActionId);
     public ref int CountDownActionId => ref Unsafe.AsRef<int>(&_data->CountDownActionId);
 
-    public ref JumperPositionBuffer JumperPositionBuffer => ref Unsafe.AsRef<JumperPositionBuffer>(&_data->JumperPositionBuffer);
-
     public ref Point DehoistPin => ref Unsafe.AsRef<Point>(&_data->DehoistPin);
     public ref Point LaserHitLevelPosition => ref Unsafe.AsRef<Point>(&_data->LaserHitLevelPosition);
     public ref Point AnchorPosition => ref Unsafe.AsRef<Point>(&_data->AnchorPosition);

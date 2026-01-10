@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
@@ -44,11 +43,10 @@ public readonly ref struct HitBoxGadgetBuilder
         LemmingManager lemmingManager,
         TribeManager tribeManager,
         ref nint dataHandleRef,
-        int numberOfLemmingsInLevel)
+        int lemmingTrackerByteRequirement)
     {
         var lemmingTracker = new LemmingTracker(lemmingManager, dataHandleRef);
-        var dataHandleRefOffset = BitArrayHelpers.CalculateBitArrayBufferLength(numberOfLemmingsInLevel) * sizeof(ulong);
-        dataHandleRef += dataHandleRefOffset;
+        dataHandleRef += lemmingTrackerByteRequirement;
 
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(_hitBoxGadgetArchetypeData, _hitBoxGadgetInstanceData);
         var gadgetBounds = GadgetBuildingHelpers.CreateHitBoxGadgetBounds(ref dataHandleRef, _hitBoxGadgetArchetypeData, _hitBoxGadgetSpecificationData, _hitBoxGadgetInstanceData, _hitBoxGadgetInstanceSpecificationData);

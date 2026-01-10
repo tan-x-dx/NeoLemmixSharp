@@ -3,35 +3,39 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 
 public sealed class HatchGroup : IEquatable<HatchGroup>
 {
+    private readonly HatchGroupData _data;
+
     private HatchGadget[] _hatches = [];
-
-    private int _hatchIndex;
-
-    private uint _nextLemmingCountDown = EngineConstants.InitialLemmingHatchReleaseCountDown;
-    private int _lemmingsToRelease;
-
     public int Id { get; }
 
     public uint MinSpawnInterval { get; }
     public uint MaxSpawnInterval { get; }
-    public uint CurrentSpawnInterval { get; private set; }
 
     public uint MinReleaseRate => ConvertToReleaseRate(MinSpawnInterval);
     public uint MaxReleaseRate => ConvertToReleaseRate(MaxSpawnInterval);
     public uint CurrentReleaseRate => ConvertToReleaseRate(CurrentSpawnInterval);
-    public int LemmingsToRelease => _lemmingsToRelease;
+
+    private ref int HatchIndex => ref _data.HatchIndex;
+    private ref uint NextLemmingCountDown => ref _data.NextLemmingCountDown;
+    private ref int LemmingsToReleaseRef => ref _data.LemmingsToRelease;
+    public int LemmingsToRelease => _data.LemmingsToRelease;
+    private ref uint CurrentSpawnIntervalRef => ref _data.CurrentSpawnInterval;
+    public uint CurrentSpawnInterval => _data.CurrentSpawnInterval;
 
     public HatchGroup(
+        nint dataHandle,
         int id,
         uint minSpawnInterval,
         uint maxSpawnInterval,
         uint initialSpawnInterval)
     {
+        _data = new HatchGroupData(dataHandle);
         Id = id;
 
         Debug.Assert(minSpawnInterval <= initialSpawnInterval);
@@ -39,13 +43,14 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
 
         MinSpawnInterval = Math.Clamp(minSpawnInterval, EngineConstants.MinAllowedSpawnInterval, EngineConstants.MaxAllowedSpawnInterval);
         MaxSpawnInterval = Math.Clamp(maxSpawnInterval, minSpawnInterval, EngineConstants.MaxAllowedSpawnInterval);
-        CurrentSpawnInterval = Math.Clamp(initialSpawnInterval, MinSpawnInterval, MaxSpawnInterval);
+        CurrentSpawnIntervalRef = Math.Clamp(initialSpawnInterval, MinSpawnInterval, MaxSpawnInterval);
+        NextLemmingCountDown = EngineConstants.InitialLemmingHatchReleaseCountDown;
     }
 
     public void SetHatches(HatchGadget[] hatches)
     {
         _hatches = hatches;
-        _hatchIndex = _hatches.Length - 1;
+        HatchIndex = _hatches.Length - 1;
 
         var lemmingsToRelease = 0;
         foreach (var hatchGadget in hatches)
@@ -53,36 +58,41 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
             lemmingsToRelease += hatchGadget.HatchSpawnData.LemmingsToRelease;
         }
 
-        _lemmingsToRelease = lemmingsToRelease;
+        LemmingsToReleaseRef = lemmingsToRelease;
     }
 
     public bool TryAddSpawnIntervalDelta(int spawnIntervalDelta)
     {
-        int previousSpawnInterval = (int)CurrentSpawnInterval;
-        int newSpawnInterval = Math.Clamp(previousSpawnInterval + spawnIntervalDelta, (int)MinSpawnInterval, (int)MaxSpawnInterval);
-        CurrentSpawnInterval = (uint)newSpawnInterval;
+        int previousSpawnInterval = (int)CurrentSpawnIntervalRef;
+        int newSpawnInterval = previousSpawnInterval + spawnIntervalDelta;
+        if (newSpawnInterval > (int)MaxSpawnInterval)
+            newSpawnInterval = (int)MaxSpawnInterval;
+        else if (newSpawnInterval < (int)MinSpawnInterval)
+            newSpawnInterval = (int)MinSpawnInterval;
+
+        CurrentSpawnIntervalRef = (uint)newSpawnInterval;
 
         return previousSpawnInterval != newSpawnInterval;
     }
 
     public HatchGadget? Tick()
     {
-        if (_lemmingsToRelease == 0)
+        if (LemmingsToReleaseRef == 0)
             return null;
 
-        _nextLemmingCountDown--;
+        NextLemmingCountDown--;
 
-        if (_nextLemmingCountDown != 0)
+        if (NextLemmingCountDown != 0)
             return null;
 
-        _nextLemmingCountDown = CurrentSpawnInterval;
+        NextLemmingCountDown = CurrentSpawnIntervalRef;
         return GetNextLogicalHatchGadget();
     }
 
     private HatchGadget? GetNextLogicalHatchGadget()
     {
         var c = _hatches.Length;
-        var hatchIndex = _hatchIndex;
+        var hatchIndex = HatchIndex;
 
         do
         {
@@ -91,22 +101,22 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
             if ((uint)hatchIndex >= (uint)_hatches.Length)
                 hatchIndex = 0;
 
-            var hatchGadget = _hatches[hatchIndex];
+            var hatchGadget = Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_hatches), hatchIndex);
 
             if (hatchGadget.CanReleaseLemmings())
             {
-                _hatchIndex = hatchIndex;
+                HatchIndex = hatchIndex;
                 return hatchGadget;
             }
         } while (c > 0);
 
-        _hatchIndex = hatchIndex;
+        HatchIndex = hatchIndex;
         return null;
     }
 
     public void OnSpawnLemming()
     {
-        _lemmingsToRelease--;
+        LemmingsToReleaseRef--;
     }
 
     [Pure]
