@@ -82,6 +82,21 @@ public readonly struct ArrayWrapper2D<T>
         }
     }
 
+    public ref T TryGetRef(Point pos, out bool isValid)
+    {
+        if (_subRegion.Size.EncompassesPoint(pos))
+        {
+            isValid = true;
+
+            var index = _arrayDimensions.GetIndexOfPoint(pos + _subRegion.Position);
+
+            return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_data), index);
+        }
+
+        isValid = false;
+        return ref Unsafe.NullRef<T>();
+    }
+
     public static void CopyTo(
         in ArrayWrapper2D<T> source,
         in ArrayWrapper2D<T> destination,

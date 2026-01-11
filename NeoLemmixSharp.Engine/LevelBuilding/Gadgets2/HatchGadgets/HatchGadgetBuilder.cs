@@ -39,7 +39,7 @@ public readonly ref struct HatchGadgetBuilder
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(_hatchGadgetArchetypeData, _hatchGadgetInstanceData);
         var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(ref dataHandleRef, _hatchGadgetArchetypeData, _hatchGadgetInstanceData);
         var gadgetStates = BuildHatchGadgetStates(ref dataHandleRef, gadgetBounds, tribeManager);
-        var hatchSpawnData = BuildHatchSpawnData(ref dataHandleRef, tribeManager);
+        var hatchSpawnData = BuildHatchSpawnData(ref dataHandleRef);
         var spawnPointOffset = BuildSpawnPointOffset();
 
         var result = new HatchGadget(
@@ -124,14 +124,12 @@ public readonly ref struct HatchGadgetBuilder
         return gadgetTriggerBuilder.BuildGadgetTriggers(ref dataHandleRef, gadgetStateArchetypeData, gadgetStateInstanceData);
     }
 
-    private HatchSpawnData BuildHatchSpawnData(
-        ref nint dataHandleRef,
-        TribeManager tribeManager)
+    private HatchSpawnData BuildHatchSpawnData(ref nint dataHandleRef)
     {
         var result = new HatchSpawnData(
             dataHandleRef,
             _hatchGadgetTypeInstanceData.HatchGroupId,
-            tribeManager.GetTribe(_hatchGadgetTypeInstanceData.TribeId),
+            _hatchGadgetTypeInstanceData.TribeId,
             _hatchGadgetTypeInstanceData.RawStateData,
             _hatchGadgetInstanceData.Orientation,
             _hatchGadgetInstanceData.FacingDirection,
