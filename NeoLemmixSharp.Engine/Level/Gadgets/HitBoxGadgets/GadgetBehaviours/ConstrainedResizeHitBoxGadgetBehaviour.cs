@@ -1,26 +1,30 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.GadgetBehaviours;
 
 public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
 {
+    private readonly PointerWrapper<int> _tickCount;
     private readonly GadgetIdentifier _gadgetIdentifier;
 
     private readonly int _tickDelay;
     private readonly int _delta;
     private readonly int _max;
 
-    private int _tickCount;
+    private ref int TickCountRef => ref _tickCount.Value;
 
     public ConstrainedResizeHitBoxGadgetBehaviour(
+        nint dataHandle,
         GadgetIdentifier gadgetIdentifier,
         int tickDelay,
         int delta,
         int max)
         : base(GadgetBehaviourType.GadgetConstrainedResize)
     {
+        _tickCount = new PointerWrapper<int>(dataHandle);
         _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;
         _delta = delta;
@@ -29,13 +33,13 @@ public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
 
     protected override void PerformInternalBehaviour(int _)
     {
-        if (_tickCount < _tickDelay)
+        if (TickCountRef < _tickDelay)
         {
-            _tickCount++;
+            TickCountRef++;
             return;
         }
 
-        _tickCount = 0;
+        TickCountRef = 0;
 
         var gadget = (HitBoxGadget)LevelScreen.GadgetManager.GetGadget(_gadgetIdentifier.GadgetId);
 
@@ -44,6 +48,6 @@ public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
         var p = new Point(0, _delta);
 
 
-      //  gadget.Resize(_dw, _dh);
+        //  gadget.Resize(_dw, _dh);
     }
 }

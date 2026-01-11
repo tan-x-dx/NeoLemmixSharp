@@ -11,6 +11,8 @@ public sealed class LevelTimerObserverGadgetArchetypeSpecificationData : IGadget
     public GadgetType GadgetType => GadgetType.LevelTimerObserver;
 
     ReadOnlySpan<IGadgetStateArchetypeData> IGadgetArchetypeSpecificationData.AllStates => [];
+
+    public int CalculateExtraNumberOfBytesNeededForSnapshotting() => sizeof(int);
 }
 
 [DebuggerDisplay("{StateName}")]

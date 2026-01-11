@@ -9,7 +9,7 @@ using NeoLemmixSharp.IO.Data.Style.Gadget.HatchGadget;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HatchGadgets;
 
-public readonly struct HatchGadgetBuilder
+public readonly ref struct HatchGadgetBuilder
 {
     private readonly GadgetArchetypeData _hatchGadgetArchetypeData;
     private readonly HatchGadgetArchetypeSpecificationData _hatchGadgetSpecificationData;
@@ -34,20 +34,21 @@ public readonly struct HatchGadgetBuilder
         _gadgetBehaviours = gadgetBehaviours;
     }
 
-    public HatchGadget BuildHatchGadget(TribeManager tribeManager)
+    public HatchGadget BuildHatchGadget(TribeManager tribeManager, ref nint dataHandleRef)
     {
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(_hatchGadgetArchetypeData, _hatchGadgetInstanceData);
-        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(_hatchGadgetArchetypeData, _hatchGadgetInstanceData);
-        var gadgetStates = BuildHatchGadgetStates(gadgetBounds, tribeManager);
-        var hatchSpawnData = BuildHatchSpawnData(tribeManager);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(ref dataHandleRef, _hatchGadgetArchetypeData, _hatchGadgetInstanceData);
+        var gadgetStates = BuildHatchGadgetStates(ref dataHandleRef, gadgetBounds, tribeManager);
+        var hatchSpawnData = BuildHatchSpawnData(ref dataHandleRef);
         var spawnPointOffset = BuildSpawnPointOffset();
 
-        return new HatchGadget(
+        var result = new HatchGadget(
             gadgetStates,
             _hatchGadgetTypeInstanceData.InitialStateId,
             hatchSpawnData,
             spawnPointOffset)
         {
+            DataHandle = dataHandleRef,
             Id = _hatchGadgetInstanceData.Identifier.GadgetId,
             GadgetName = gadgetName,
             CurrentGadgetBounds = gadgetBounds,
@@ -56,9 +57,14 @@ public readonly struct HatchGadgetBuilder
             FacingDirection = _hatchGadgetInstanceData.FacingDirection,
             IsFastForward = false,
         };
+
+        dataHandleRef += sizeof(int);
+
+        return result;
     }
 
     private HatchGadgetState[] BuildHatchGadgetStates(
+        ref nint dataHandleRef,
         GadgetBounds gadgetBounds,
         TribeManager tribeManager)
     {
@@ -76,6 +82,7 @@ public readonly struct HatchGadgetBuilder
             var gadgetStateInstanceData = _hatchGadgetTypeInstanceData.GadgetStates[i];
 
             result[i] = BuildHatchGadgetState(
+                ref dataHandleRef,
                 gadgetStateArchetypeData,
                 gadgetStateInstanceData,
                 gadgetBounds,
@@ -88,6 +95,7 @@ public readonly struct HatchGadgetBuilder
     }
 
     private HatchGadgetState BuildHatchGadgetState(
+        ref nint dataHandleRef,
         HatchGadgetStateArchetypeData gadgetStateArchetypeData,
         HatchGadgetStateInstanceData gadgetStateInstanceData,
         GadgetBounds gadgetBounds,
@@ -97,7 +105,7 @@ public readonly struct HatchGadgetBuilder
     {
         var stateName = GadgetBuildingHelpers.GetGadgetStateName(gadgetStateArchetypeData, gadgetStateInstanceData);
 
-        var triggers = BuildTriggers(gadgetStateArchetypeData, gadgetStateInstanceData);
+        var triggers = BuildTriggers(ref dataHandleRef, gadgetStateArchetypeData, gadgetStateInstanceData);
 
         return new HatchGadgetState()
         {
@@ -107,22 +115,29 @@ public readonly struct HatchGadgetBuilder
         };
     }
 
-    private GadgetTrigger[] BuildTriggers(HatchGadgetStateArchetypeData gadgetStateArchetypeData, HatchGadgetStateInstanceData gadgetStateInstanceData)
+    private GadgetTrigger[] BuildTriggers(
+        ref nint dataHandleRef,
+        HatchGadgetStateArchetypeData gadgetStateArchetypeData,
+        HatchGadgetStateInstanceData gadgetStateInstanceData)
     {
         var gadgetTriggerBuilder = new GadgetTriggerBuilder(_hatchGadgetInstanceData.Identifier, _gadgetTriggers, _gadgetBehaviours);
-        return gadgetTriggerBuilder.BuildGadgetTriggers(gadgetStateArchetypeData, gadgetStateInstanceData);
+        return gadgetTriggerBuilder.BuildGadgetTriggers(ref dataHandleRef, gadgetStateArchetypeData, gadgetStateInstanceData);
     }
 
-    private HatchSpawnData BuildHatchSpawnData(
-        TribeManager tribeManager)
+    private HatchSpawnData BuildHatchSpawnData(ref nint dataHandleRef)
     {
-        return new HatchSpawnData(
+        var result = new HatchSpawnData(
+            dataHandleRef,
             _hatchGadgetTypeInstanceData.HatchGroupId,
-            tribeManager.GetTribe(_hatchGadgetTypeInstanceData.TribeId),
+            _hatchGadgetTypeInstanceData.TribeId,
             _hatchGadgetTypeInstanceData.RawStateData,
             _hatchGadgetInstanceData.Orientation,
             _hatchGadgetInstanceData.FacingDirection,
             _hatchGadgetTypeInstanceData.NumberOfLemmingsToRelease);
+
+        dataHandleRef += sizeof(int);
+
+        return result;
     }
 
     private Point BuildSpawnPointOffset()

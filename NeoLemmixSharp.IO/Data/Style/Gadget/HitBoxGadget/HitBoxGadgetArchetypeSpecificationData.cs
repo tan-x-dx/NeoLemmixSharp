@@ -25,6 +25,27 @@ public sealed class HitBoxGadgetArchetypeSpecificationData : IGadgetArchetypeSpe
     public bool TryGetMiscData(GadgetArchetypeMiscDataType miscDataType, out int value) => _miscData.TryGetValue(miscDataType, out value);
 
     ReadOnlySpan<IGadgetStateArchetypeData> IGadgetArchetypeSpecificationData.AllStates => GadgetStates;
+
+    public int CalculateExtraNumberOfBytesNeededForSnapshotting()
+    {
+        var result = 0;
+
+        foreach (var state in GadgetStates)
+        {
+            for (var i = 0; i < state.InnateBehaviours.Length; i++)
+            {
+                var behaviourType = state.InnateBehaviours[i].GadgetBehaviourType;
+                result += GadgetBehaviourTypeHasher.NumberOfSnapshotBytesRequiredForBehaviour(behaviourType);
+            }
+
+            foreach (var hitBoxFilter in state.HitBoxFilters)
+            {
+                result += hitBoxFilter.CalculateExtraNumberOfBytesNeededForSnapshotting();
+            }
+        }
+
+        return result;
+    }
 }
 
 [DebuggerDisplay("{StateName}")]

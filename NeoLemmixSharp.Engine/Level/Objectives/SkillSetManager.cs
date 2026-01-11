@@ -1,4 +1,4 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
+﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -7,38 +7,46 @@ using NeoLemmixSharp.IO;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
-public sealed class SkillSetManager : IItemManager<SkillTrackingData>, IComparer<SkillTrackingData>, IDisposable
+public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 {
     private readonly SkillTrackingData[] _skillTrackingDataList;
-
-    private int _currentTotalSkillLimit;
+    private readonly PointerWrapper<int> _currentTotalSkillLimit;
 
     public ReadOnlySpan<SkillTrackingData> AllItems => new(_skillTrackingDataList);
 
     public SkillSetManager(
+        nint dataHandle,
         SkillTrackingData[] skillTrackingDataList,
         int totalSkillLimit)
     {
         _skillTrackingDataList = skillTrackingDataList;
-        _currentTotalSkillLimit = totalSkillLimit;
+        _currentTotalSkillLimit = new PointerWrapper<int>(dataHandle);
+        _currentTotalSkillLimit.Value = totalSkillLimit;
 
         Array.Sort(_skillTrackingDataList, this);
 
         UpdateSkillSetData();
     }
 
+    public void OnSnapshotApplied()
+    {
+        UpdateSkillSetData();
+    }
+
     public void UpdateSkillSetData()
     {
+        var currentTotalSkillLimit = _currentTotalSkillLimit.Value;
+
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
-            skillTrackingData.RecalculateEffectiveQuantity(_currentTotalSkillLimit);
+            skillTrackingData.RecalculateEffectiveQuantity(currentTotalSkillLimit);
             LevelScreen.LevelControlPanel.UpdateSkillCount(skillTrackingData);
         }
     }
 
     public void RecordUsageOfSkill()
     {
-        _currentTotalSkillLimit--;
+        _currentTotalSkillLimit.Value--;
     }
 
     public SkillTrackingData? GetSkillTrackingData(int skillTrackingDataId)

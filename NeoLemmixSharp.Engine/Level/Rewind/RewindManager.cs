@@ -1,41 +1,37 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Engine.Level.Gadgets;
+﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Objectives;
-using NeoLemmixSharp.Engine.Level.Timer;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class RewindManager :
-    IItemManager<LemmingManager>,
-    IItemManager<GadgetManager>,
-    IItemManager<LevelTimer>,
-    IDisposable
+public sealed class RewindManager : IDisposable
 {
-    private readonly SnapshotRecorder<LemmingManager, Lemming> _lemmingSnapshotRecorder;
-    private readonly SnapshotRecorder<GadgetManager, GadgetBase> _gadgetSnapshotRecorder;
-    private readonly SnapshotRecorder<SkillSetManager, SkillTrackingData> _skillSetSnapshotRecorder;
-
-    private readonly SnapshotRecorder<RewindManager, LemmingManager> _lemmingManagerSnapshotRecorder;
-    private readonly SnapshotRecorder<RewindManager, LevelTimer> _levelTimerRecorder;
+    private readonly SnapshotRecorder _lemmingSnapshotRecorder;
+    private readonly SnapshotRecorder _lemmingManagerSnapshotRecorder;
+    private readonly SnapshotRecorder _gadgetSnapshotRecorder;
+    private readonly SnapshotRecorder _hatchGroupSnapshotRecorder;
+    private readonly SnapshotRecorder _skillSetSnapshotRecorder;
+    private readonly SnapshotRecorder _levelTimerRecorder;
 
     private readonly LevelEventList<SkillAssignmentEventData> _skillAssignmentList;
 
     private int _maxElapsedTicks;
 
     public RewindManager(
-        LemmingManager lemmingManager,
-        GadgetManager gadgetManager,
-        SkillSetManager skillSetManager)
+        RawArray lemmingDataBuffer,
+        RawArray lemmingManagerDataBuffer,
+        RawArray gadgetDataBuffer,
+        RawArray hatchGroupDataBuffer,
+        RawArray levelTimerDataBuffer,
+        RawArray skillSetDataBuffer,
+        int baseNumberOfSkillAssignments)
     {
-        _lemmingSnapshotRecorder = new SnapshotRecorder<LemmingManager, Lemming>(lemmingManager);
-        _gadgetSnapshotRecorder = new SnapshotRecorder<GadgetManager, GadgetBase>(gadgetManager);
-        _skillSetSnapshotRecorder = new SnapshotRecorder<SkillSetManager, SkillTrackingData>(skillSetManager);
-
-        _lemmingManagerSnapshotRecorder = new SnapshotRecorder<RewindManager, LemmingManager>(this);
-        _levelTimerRecorder = new SnapshotRecorder<RewindManager, LevelTimer>(this);
-
-        var baseNumberOfSkillAssignments = skillSetManager.EstimateBaseNumberOfSkillAssignments(gadgetManager);
+        _lemmingSnapshotRecorder = new SnapshotRecorder(lemmingDataBuffer);
+        _lemmingManagerSnapshotRecorder = new SnapshotRecorder(lemmingManagerDataBuffer);
+        _gadgetSnapshotRecorder = new SnapshotRecorder(gadgetDataBuffer);
+        _hatchGroupSnapshotRecorder = new SnapshotRecorder(hatchGroupDataBuffer);
+        _skillSetSnapshotRecorder = new SnapshotRecorder(skillSetDataBuffer);
+        _levelTimerRecorder = new SnapshotRecorder(levelTimerDataBuffer);
 
         _skillAssignmentList = new LevelEventList<SkillAssignmentEventData>(baseNumberOfSkillAssignments);
     }
@@ -46,14 +42,14 @@ public sealed class RewindManager :
     {
         _maxElapsedTicks = Math.Max(_maxElapsedTicks, elapsedTicks);
 
-        if (elapsedTicks % RewindConstants.RewindSnapshotInterval != 0)
+        if ((elapsedTicks % RewindConstants.RewindSnapshotInterval) != 0)
             return;
 
         _lemmingSnapshotRecorder.TakeSnapshot();
-        _gadgetSnapshotRecorder.TakeSnapshot();
-        _skillSetSnapshotRecorder.TakeSnapshot();
-
         _lemmingManagerSnapshotRecorder.TakeSnapshot();
+        _gadgetSnapshotRecorder.TakeSnapshot();
+        _hatchGroupSnapshotRecorder.TakeSnapshot();
+        _skillSetSnapshotRecorder.TakeSnapshot();
         _levelTimerRecorder.TakeSnapshot();
     }
 
@@ -119,14 +115,15 @@ public sealed class RewindManager :
         var correspondingSnapshotNumber = specifiedTick / RewindConstants.RewindSnapshotInterval;
 
         _lemmingSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
-        _gadgetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
-        _skillSetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
-
         _lemmingManagerSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
+        _gadgetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
+        _hatchGroupSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
+        _skillSetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
         _levelTimerRecorder.ApplySnapshot(correspondingSnapshotNumber);
 
-        LevelScreen.LemmingManager.ResetLemmingPositions();
-        LevelScreen.GadgetManager.ResetGadgetPositions();
+        LevelScreen.LemmingManager.OnSnapshotApplied();
+        LevelScreen.GadgetManager.OnSnapshotApplied();
+        LevelScreen.SkillSetManager.OnSnapshotApplied();
 
         var actualElapsedTick = correspondingSnapshotNumber * RewindConstants.RewindSnapshotInterval;
 
@@ -149,17 +146,13 @@ public sealed class RewindManager :
         RewindBackTo(tick);
     }
 
-    ReadOnlySpan<LemmingManager> IItemManager<LemmingManager>.AllItems => new(in LevelScreen.LemmingManager);
-    ReadOnlySpan<GadgetManager> IItemManager<GadgetManager>.AllItems => new(in LevelScreen.GadgetManager);
-    ReadOnlySpan<LevelTimer> IItemManager<LevelTimer>.AllItems => new(in LevelScreen.LevelTimer);
-
     public void Dispose()
     {
         _lemmingSnapshotRecorder.Dispose();
-        _gadgetSnapshotRecorder.Dispose();
-        _skillSetSnapshotRecorder.Dispose();
-
         _lemmingManagerSnapshotRecorder.Dispose();
+        _gadgetSnapshotRecorder.Dispose();
+        _hatchGroupSnapshotRecorder.Dispose();
+        _skillSetSnapshotRecorder.Dispose();
         _levelTimerRecorder.Dispose();
 
         _skillAssignmentList.Dispose();

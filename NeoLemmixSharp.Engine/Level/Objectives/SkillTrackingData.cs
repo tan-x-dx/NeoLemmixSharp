@@ -1,32 +1,35 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Rewind;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
-public sealed class SkillTrackingData : ISnapshotDataConvertible
+public sealed class SkillTrackingData
 {
     public LemmingSkill Skill { get; }
     public Tribe? Tribe { get; }
 
+    private readonly SkillSetData _data;
+
     public int SkillTrackingDataId { get; }
     public int InitialSkillQuantity { get; }
 
-    private SkillSetData _data = new();
 
     public int EffectiveQuantity { get; private set; }
 
     public bool IsInfinite => InitialSkillQuantity == EngineConstants.InfiniteSkillCount;
 
     public SkillTrackingData(
+        nint dataHandle,
         LemmingSkill skill,
         Tribe? tribe,
         int skillTrackingDataId,
         int initialSkillQuantity,
         int initialSkillLimit)
     {
+        _data = new SkillSetData(dataHandle);
+
         Skill = skill;
         Tribe = tribe;
         SkillTrackingDataId = skillTrackingDataId;
@@ -82,21 +85,5 @@ public sealed class SkillTrackingData : ISnapshotDataConvertible
         }
 
         EffectiveQuantity = Math.Min(effectiveQuantity, totalSkillLimit);
-    }
-
-    public unsafe int GetRequiredNumberOfBytesForSnapshotting() => sizeof(SkillSetData);
-
-    public unsafe void WriteToSnapshotData(byte* snapshotDataPointer)
-    {
-        SkillSetData* skillSetSnapshotDataPointer = (SkillSetData*)snapshotDataPointer;
-
-        *skillSetSnapshotDataPointer = _data;
-    }
-
-    public unsafe void SetFromSnapshotData(byte* snapshotDataPointer)
-    {
-        SkillSetData* skillSetSnapshotDataPointer = (SkillSetData*)snapshotDataPointer;
-
-        _data = *skillSetSnapshotDataPointer;
     }
 }

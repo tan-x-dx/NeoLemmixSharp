@@ -1,25 +1,29 @@
 ﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.GadgetBehaviours;
 
 public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
 {
+    private readonly PointerWrapper<int> _tickCount;
     private readonly GadgetIdentifier _gadgetIdentifier;
 
     private readonly int _tickDelay;
     private readonly int _dw;
     private readonly int _dh;
 
-    private int _tickCount;
+    private ref int TickCountRef => ref _tickCount.Value;
 
     public FreeResizeHitBoxGadgetBehaviour(
+        nint dataHandle,
         GadgetIdentifier gadgetIdentifier,
         int tickDelay,
         int dw,
         int dh)
         : base(GadgetBehaviourType.GadgetFreeResize)
     {
+        _tickCount = new PointerWrapper<int>(dataHandle);
         _tickDelay = tickDelay;
         _gadgetIdentifier = gadgetIdentifier;
         _dw = dw;
@@ -28,13 +32,13 @@ public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
 
     protected override void PerformInternalBehaviour(int _)
     {
-        if (_tickCount < _tickDelay)
+        if (TickCountRef < _tickDelay)
         {
-            _tickCount++;
+            TickCountRef++;
             return;
         }
 
-        _tickCount = 0;
+        TickCountRef = 0;
 
         var gadget = (HitBoxGadget)LevelScreen.GadgetManager.GetGadget(_gadgetIdentifier.GadgetId);
         gadget.Resize(_dw, _dh);

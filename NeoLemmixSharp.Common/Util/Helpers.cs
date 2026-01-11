@@ -8,10 +8,6 @@ namespace NeoLemmixSharp.Common.Util;
 
 public static class Helpers
 {
-    public const int Uint16NumberBufferLength = 5;
-    public const int Uint32NumberBufferLength = 10;
-    public const int Int32NumberBufferLength = Uint32NumberBufferLength + 1;
-
     /// <summary>
     /// Allocates an array of the given type and the given size, unless the <paramref name="size"/> parameter is zero. In that case a reference to Array.Empty&lt;<typeparamref name="T"/>&gt; is returned without allocating anything.
     /// </summary>

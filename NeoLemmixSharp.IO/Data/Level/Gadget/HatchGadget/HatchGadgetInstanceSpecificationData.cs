@@ -16,6 +16,22 @@ public sealed class HatchGadgetInstanceSpecificationData : IGadgetInstanceSpecif
     public required int TribeId { get; init; }
     public required uint RawStateData { get; init; }
     public required int NumberOfLemmingsToRelease { get; init; }
+
+    public int CalculateExtraNumberOfBytesNeededForSnapshotting()
+    {
+        var result = 0;
+
+        foreach (var state in GadgetStates)
+        {
+            for (var i = 0; i < state.CustomBehaviours.Length; i++)
+            {
+                var behaviourType = state.CustomBehaviours[i].GadgetBehaviourType;
+                result += GadgetBehaviourTypeHasher.NumberOfSnapshotBytesRequiredForBehaviour(behaviourType);
+            }
+        }
+
+        return result;
+    }
 }
 
 [DebuggerDisplay("{OverrideStateName}")]

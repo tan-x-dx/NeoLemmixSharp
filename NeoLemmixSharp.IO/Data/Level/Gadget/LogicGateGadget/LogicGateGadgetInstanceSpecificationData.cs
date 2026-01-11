@@ -10,6 +10,8 @@ public sealed class LogicGateGadgetInstanceSpecificationData : IGadgetInstanceSp
     public GadgetType GadgetType => GadgetType.LogicGate;
     public required LogicGateGadgetType LogicGateGadgetType { get; init; }
     public required int NumberOfInputs { get; init; }
+
+    public int CalculateExtraNumberOfBytesNeededForSnapshotting() => 0;
 }
 
 public sealed class LogicGateGadgetStateInstanceData : IGadgetStateInstanceData

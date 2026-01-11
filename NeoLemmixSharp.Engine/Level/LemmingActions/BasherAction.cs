@@ -319,7 +319,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         // Make deep copy of the lemming
 
         var lemmingManager = LevelScreen.LemmingManager;
-        var simulationLemming = Lemming.SimulationLemming;
+        var simulationLemming = lemmingManager.SimulationLemming;
         simulationLemming.SetRawDataFromOther(lemming);
 
         // Make a deep copy of the PhysicsMap

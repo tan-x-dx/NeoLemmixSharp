@@ -14,6 +14,7 @@ namespace NeoLemmixSharp.Common;
 /// <para>The constructors will ensure a well-formed <see cref="RectangularRegion"/> is created.</para>
 /// <para>Note that a <see cref="RectangularRegion"/> can never be empty - the smallest region size is 1x1.</para>
 /// </summary>
+[SkipLocalsInit]
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
 public readonly struct RectangularRegion : IEquatable<RectangularRegion>
 {
@@ -37,7 +38,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     [DebuggerStepThrough]
     public RectangularRegion(Point position)
     {
-        Position = position;
+        X = position.X;
+        Y = position.Y;
         W = 1;
         H = 1;
     }
@@ -54,7 +56,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     [DebuggerStepThrough]
     public RectangularRegion(Point position, Size size)
     {
-        Position = position;
+        X = position.X;
+        Y = position.Y;
         W = Math.Max(size.W, 1);
         H = Math.Max(size.H, 1);
     }
@@ -93,8 +96,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
         Y = Math.Min(p1.Y, p2.Y);
         var w0 = p1.X - p2.X;
         var h0 = p1.Y - p2.Y;
-        W = Math.Abs(w0);
-        H = Math.Abs(h0);
+        W = w0 < 0 ? -w0 : w0;
+        H = h0 < 0 ? -h0 : h0;
         W++;
         H++;
     }
@@ -109,10 +112,14 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
 
         foreach (var p in positions)
         {
-            minX = Math.Min(minX, p.X);
-            maxX = Math.Max(maxX, p.X);
-            minY = Math.Min(minY, p.Y);
-            maxY = Math.Max(maxY, p.Y);
+            if (p.X < minX)
+                minX = p.X;
+            if (p.X > maxX)
+                maxX = p.X;
+            if (p.Y < minY)
+                minY = p.Y;
+            if (p.Y > maxY)
+                maxY = p.Y;
         }
 
         X = minX;
@@ -124,9 +131,20 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     [DebuggerStepThrough]
     private RectangularRegion(Point position, int w, int h)
     {
-        Position = position;
+        X = position.X;
+        Y = position.Y;
         W = w;
         H = h;
+    }
+
+    public unsafe RectangularRegion(void* pointer)
+    {
+        int* intPointer = (int*)pointer;
+
+        X = intPointer[0];
+        Y = intPointer[1];
+        W = Math.Max(intPointer[2], 1);
+        H = Math.Max(intPointer[3], 1);
     }
 
     [Pure]
@@ -150,6 +168,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     [Pure]
     [DebuggerStepThrough]
     public RectangularRegion Translate(Point offset) => new(Position + offset, W, H);
+
+    public bool Contains(Point point) => Size.EncompassesPoint(point - Position);
 
     [Pure]
     [DebuggerStepThrough]
@@ -194,7 +214,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
     [SkipLocalsInit]
     public override string ToString()
     {
-        Span<char> buffer = stackalloc char[(1 + Helpers.Int32NumberBufferLength + 1 + Helpers.Uint32NumberBufferLength + 1) * 2];
+        Span<char> buffer = stackalloc char[(1 + NumberFormattingHelpers.Int32NumberBufferLength + 1 + NumberFormattingHelpers.Uint32NumberBufferLength + 1) * 2];
         TryFormat(buffer, out var charsWritten);
         return buffer[..charsWritten].ToString();
     }

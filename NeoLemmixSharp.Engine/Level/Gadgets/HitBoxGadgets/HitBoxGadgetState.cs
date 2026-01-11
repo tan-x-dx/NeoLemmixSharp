@@ -41,29 +41,32 @@ public sealed class HitBoxGadgetState : GadgetState
         if (_hitBoxLookup.Count == 0)
             return new RectangularRegion(offset);
 
-        var x = int.MaxValue;
-        var y = int.MaxValue;
-        var w = int.MinValue;
-        var h = int.MinValue;
+        var minX = int.MaxValue;
+        var minY = int.MaxValue;
+        var maxX = int.MinValue;
+        var maxY = int.MinValue;
 
         foreach (var kvp in _hitBoxLookup)
         {
             var hitBoxBounds = kvp.Value.CurrentBounds;
             var bottomRight = hitBoxBounds.GetBottomRight();
 
-            x = Math.Min(x, hitBoxBounds.X);
-            y = Math.Min(y, hitBoxBounds.Y);
-            w = Math.Max(w, bottomRight.X);
-            h = Math.Max(h, bottomRight.Y);
+            if (hitBoxBounds.X < minX)
+                minX = hitBoxBounds.X;
+            if (hitBoxBounds.Y < minY)
+                minY = hitBoxBounds.Y;
+            if (bottomRight.X > maxX)
+                maxX = bottomRight.X;
+            if (bottomRight.Y > maxY)
+                maxY = bottomRight.Y;
         }
 
-        w += 1 - x;
-        h += 1 - y;
+        minX += offset.X;
+        minY += offset.Y;
+        maxX += offset.X;
+        maxY += offset.Y;
 
-        x += offset.X;
-        y += offset.Y;
-
-        return new RectangularRegion(new Point(x, y), new Size(w, h));
+        return new RectangularRegion(new Point(minX, minY), new Point(maxX, maxY));
     }
 
     public override GadgetRenderer Renderer => throw new NotImplementedException();

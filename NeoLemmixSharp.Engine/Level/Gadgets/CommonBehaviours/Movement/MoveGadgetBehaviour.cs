@@ -1,25 +1,29 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
 
 public sealed class MoveGadgetBehaviour : GadgetBehaviour
 {
+    private readonly PointerWrapper<int> _tickCount;
     private readonly GadgetIdentifier _gadgetIdentifier;
     private readonly int _tickDelay;
     private readonly Point _delta;
     private readonly Point _limitPoint;
 
-    private int _tickCount;
+    private ref int TickCountRef => ref _tickCount.Value;
 
     public MoveGadgetBehaviour(
+        nint dataHandle,
         GadgetIdentifier gadgetIdentifier,
         int tickDelay,
         Point delta,
         Point limitPoint)
         : base(GadgetBehaviourType.GadgetMove)
     {
+        _tickCount = new PointerWrapper<int>(dataHandle);
         _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;
         _delta = delta;
@@ -28,13 +32,13 @@ public sealed class MoveGadgetBehaviour : GadgetBehaviour
 
     protected override void PerformInternalBehaviour(int _)
     {
-        if (_tickCount < _tickDelay)
+        if (TickCountRef < _tickDelay)
         {
-            _tickCount++;
+            TickCountRef++;
             return;
         }
 
-        _tickCount = 0;
+        TickCountRef = 0;
 
         var gadget = (IMoveableGadget)LevelScreen.GadgetManager.GetGadget(_gadgetIdentifier.GadgetId);
         var constrainedDelta = GetConstrainedDelta(gadget.Position);

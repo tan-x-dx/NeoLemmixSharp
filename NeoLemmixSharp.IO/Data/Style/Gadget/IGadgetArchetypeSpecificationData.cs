@@ -7,4 +7,6 @@ public interface IGadgetArchetypeSpecificationData
     GadgetType GadgetType { get; }
 
     ReadOnlySpan<IGadgetStateArchetypeData> AllStates { get; }
+
+    int CalculateExtraNumberOfBytesNeededForSnapshotting();
 }

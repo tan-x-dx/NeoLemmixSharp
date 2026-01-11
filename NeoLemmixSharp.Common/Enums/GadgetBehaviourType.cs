@@ -49,4 +49,20 @@ public readonly struct GadgetBehaviourTypeHasher : IEnumIdentifierHelper<GadgetB
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, GadgetBehaviourTypeBitBufferLength);
     }
+
+    public static int NumberOfSnapshotBytesRequiredForBehaviour(GadgetBehaviourType gadgetBehaviourType) => gadgetBehaviourType switch
+    {
+        GadgetBehaviourType.None => 0,
+        GadgetBehaviourType.GadgetOutputSignal => 0,
+        GadgetBehaviourType.GadgetChangeInternalState => 0,
+        GadgetBehaviourType.GadgetMove => sizeof(int),
+        GadgetBehaviourType.GadgetFreeResize => sizeof(int),
+        GadgetBehaviourType.GadgetConstrainedResize => sizeof(int),
+        GadgetBehaviourType.GadgetAnimationRenderLayer => 2 * sizeof(int),
+        GadgetBehaviourType.LemmingBehaviour => 0,
+        GadgetBehaviourType.GlobalAdditionalTime => 0,
+        GadgetBehaviourType.GlobalSkillCountChange => 0,
+
+        _ => Helpers.ThrowUnknownEnumValueException<GadgetBehaviourType, int>(gadgetBehaviourType)
+    };
 }

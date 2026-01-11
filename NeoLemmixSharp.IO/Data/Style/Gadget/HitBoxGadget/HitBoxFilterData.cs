@@ -14,4 +14,30 @@ public sealed class HitBoxFilterData
     public required GadgetBehaviourData[] OnLemmingEnterBehaviours { get; init; }
     public required GadgetBehaviourData[] OnLemmingPresentBehaviours { get; init; }
     public required GadgetBehaviourData[] OnLemmingExitBehaviours { get; init; }
+
+    public int CalculateExtraNumberOfBytesNeededForSnapshotting()
+    {
+        var result = 0;
+
+        result += CalculateExtraNumberOfBytesNeededForSnapshotting(OnLemmingHitBehaviours);
+        result += CalculateExtraNumberOfBytesNeededForSnapshotting(OnLemmingEnterBehaviours);
+        result += CalculateExtraNumberOfBytesNeededForSnapshotting(OnLemmingPresentBehaviours);
+        result += CalculateExtraNumberOfBytesNeededForSnapshotting(OnLemmingExitBehaviours);
+
+        return result;
+    }
+
+    private static int CalculateExtraNumberOfBytesNeededForSnapshotting(ReadOnlySpan<GadgetBehaviourData> gadgetBehaviours)
+    {
+        var result = 0;
+
+        for (var i = 0; i < gadgetBehaviours.Length; i++)
+        {
+            var gadgetBehaviourType = gadgetBehaviours[i].GadgetBehaviourType;
+
+            result += GadgetBehaviourTypeHasher.NumberOfSnapshotBytesRequiredForBehaviour(gadgetBehaviourType);
+        }
+
+        return result;
+    }
 }

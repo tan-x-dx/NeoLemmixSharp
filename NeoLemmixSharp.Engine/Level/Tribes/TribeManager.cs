@@ -1,12 +1,10 @@
-﻿using NeoLemmixSharp.Common.Util.Collections;
-using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Tribes;
 
 public sealed class TribeManager :
     IBitBufferCreator<BitBuffer32, Tribe>,
-    IItemManager<Tribe>,
     IDisposable
 {
     private readonly Tribe[] _tribes;
@@ -18,7 +16,7 @@ public sealed class TribeManager :
         this.AssertUniqueIds(new ReadOnlySpan<Tribe>(_tribes));
         Array.Sort(_tribes, this);
     }
-    
+
     public Tribe GetTribe(int id) => _tribes[id];
 
     public Tribe? TryGetTribe(int? id)

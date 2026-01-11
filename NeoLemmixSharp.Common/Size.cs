@@ -27,6 +27,14 @@ public readonly struct Size : IEquatable<Size>
         H = h;
     }
 
+    public unsafe Size(void* pointer)
+    {
+        int* intPointer = (int*)pointer;
+
+        W = Math.Max(intPointer[0], 0);
+        H = Math.Max(intPointer[1], 0);
+    }
+
     [Pure]
     [DebuggerStepThrough]
     public Size Transpose() => new(H, W, 0);
@@ -55,6 +63,7 @@ public readonly struct Size : IEquatable<Size>
     }
 
     [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void AssertEncompassesPoint(Point p)
     {
         if (EncompassesPoint(p))
@@ -94,7 +103,7 @@ public readonly struct Size : IEquatable<Size>
     [SkipLocalsInit]
     public override string ToString()
     {
-        Span<char> buffer = stackalloc char[1 + Helpers.Uint32NumberBufferLength + 1 + Helpers.Uint32NumberBufferLength + 1];
+        Span<char> buffer = stackalloc char[1 + NumberFormattingHelpers.Uint32NumberBufferLength + 1 + NumberFormattingHelpers.Uint32NumberBufferLength + 1];
         TryFormat(buffer, out var charsWritten);
         return buffer[..charsWritten].ToString();
     }

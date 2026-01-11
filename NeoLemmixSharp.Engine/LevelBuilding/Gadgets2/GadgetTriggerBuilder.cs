@@ -28,11 +28,12 @@ public readonly ref struct GadgetTriggerBuilder
     }
 
     public GadgetTrigger[] BuildGadgetTriggers(
+        ref nint dataHandleRef,
         IGadgetStateArchetypeData gadgetStateArchetypeData,
         IGadgetStateInstanceData gadgetStateInstanceData)
     {
         var gadgetBehaviourBuilder = new GadgetBehaviourBuilder(_gadgetIdentifier, _gadgetBehaviours);
-        var behaviourLookup = gadgetBehaviourBuilder.BuildBehaviourLookup(gadgetStateArchetypeData.InnateBehaviours, gadgetStateInstanceData.CustomBehaviours);
+        var behaviourLookup = gadgetBehaviourBuilder.BuildBehaviourLookup(ref dataHandleRef, gadgetStateArchetypeData.InnateBehaviours, gadgetStateInstanceData.CustomBehaviours);
 
         var allTriggerBehaviourLinks = GetGadgetTriggerBehaviourLinks(gadgetStateArchetypeData.TriggerBehaviourLinks, gadgetStateInstanceData.CustomTriggerBehaviourLinks);
 

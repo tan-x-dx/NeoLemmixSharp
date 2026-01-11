@@ -19,10 +19,12 @@ public sealed class ShimmierSkill : LemmingSkill
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
+        var lemmingManager = LevelScreen.LemmingManager;
+
         var gadgetManager = LevelScreen.GadgetManager;
         if (lemming.CurrentAction == ClimberAction.Instance)
         {
-            var simulationLemming = LemmingManager.SimulateLemming(lemming, true);
+            var simulationLemming = lemmingManager.SimulateLemming(lemming, true);
 
             if (simulationLemming.CurrentAction != SliderAction.Instance &&
                 (simulationLemming.CurrentAction != FallerAction.Instance ||
@@ -46,7 +48,7 @@ public sealed class ShimmierSkill : LemmingSkill
         {
             var oldAction = lemming.CurrentAction;
 
-            var simulationLemming = LemmingManager.SimulateLemming(lemming, true);
+            var simulationLemming = lemmingManager.SimulateLemming(lemming, true);
 
             return simulationLemming.CurrentAction != oldAction &&
                    simulationLemming.FacingDirection == lemming.FacingDirection &&

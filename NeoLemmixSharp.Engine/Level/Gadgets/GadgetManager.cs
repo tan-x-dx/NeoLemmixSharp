@@ -12,7 +12,6 @@ public sealed class GadgetManager :
     IBitBufferCreator<RawBitBuffer, GadgetBase>,
     IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>,
     IPerfectHasher<GadgetBehaviour>,
-    IItemManager<GadgetBase>,
     IInitialisable,
     IDisposable
 {
@@ -195,11 +194,16 @@ public sealed class GadgetManager :
         _hitBoxGadgetSpacialHashGrid.UpdateItemPosition(gadget);
     }
 
-    public void ResetGadgetPositions()
+    public void OnSnapshotApplied()
+    {
+        ResetGadgetPositions();
+    }
+
+    private void ResetGadgetPositions()
     {
         _hitBoxGadgetSpacialHashGrid.Clear();
 
-        foreach (GadgetBase gadget in _allGadgets)
+        foreach (var gadget in _allGadgets)
         {
             if (gadget is HitBoxGadget hitBoxGadget)
             {
