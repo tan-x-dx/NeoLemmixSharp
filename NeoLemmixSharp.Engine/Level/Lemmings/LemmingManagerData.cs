@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -6,6 +7,7 @@ public unsafe readonly struct LemmingManagerData
 {
     public const int LemmingManagerDataSize = 6 * sizeof(int);
 
+    [StructLayout(LayoutKind.Sequential, Size = LemmingManagerDataSize)]
     private struct LemmingManagerDataRaw
     {
         public int NumberOfLemmingsReleasedFromHatch;

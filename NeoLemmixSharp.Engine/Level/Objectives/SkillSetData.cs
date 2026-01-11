@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
@@ -6,6 +7,7 @@ public unsafe readonly struct SkillSetData
 {
     public const int SkillSetDataSize = 3 * sizeof(int);
 
+    [StructLayout(LayoutKind.Sequential, Size = SkillSetDataSize)]
     private struct SkillSetDataRaw
     {
         public int AdditionalQuantity;

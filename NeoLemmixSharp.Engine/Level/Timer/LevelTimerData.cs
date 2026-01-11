@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
@@ -6,6 +7,7 @@ public unsafe readonly struct LevelTimerData
 {
     public const int LevelTimerDataSize = 1 * sizeof(int);
 
+    [StructLayout(LayoutKind.Sequential, Size = LevelTimerDataSize)]
     private struct LevelTimerDataRaw
     {
         public int AdditionalSeconds;

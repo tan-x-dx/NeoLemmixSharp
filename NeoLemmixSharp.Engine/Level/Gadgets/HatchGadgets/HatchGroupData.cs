@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 
@@ -6,6 +7,7 @@ public unsafe readonly struct HatchGroupData
 {
     public const int HatchGroupDataSize = 4 * sizeof(int);
 
+    [StructLayout(LayoutKind.Sequential, Size = HatchGroupDataSize)]
     private struct HatchGroupDataRaw
     {
         public int HatchIndex;
