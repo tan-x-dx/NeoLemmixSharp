@@ -109,6 +109,6 @@ public unsafe readonly struct LemmingData
     public Span<Point> GetJumperPositions()
     {
         void* p = &_data->JumperPositionBuffer;
-        return new Span<Point>(p, JumperAction.JumperPositionCount * sizeof(Point));
+        return new Span<Point>(p, JumperAction.JumperPositionCount);
     }
 }
