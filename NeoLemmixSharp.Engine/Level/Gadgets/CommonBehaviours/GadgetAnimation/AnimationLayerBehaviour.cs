@@ -88,6 +88,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
         _maxFrame = maxFrame;
         _frameDelta = frameDelta;
         _frame = new PointerWrapper<int>(dataHandle);
+        _frame.Value = initialFrame;
         _animationFinished = new PointerWrapper<bool>(dataHandle + sizeof(int));
         _gadgetLayerColorData = gadgetLayerColorData;
     }
