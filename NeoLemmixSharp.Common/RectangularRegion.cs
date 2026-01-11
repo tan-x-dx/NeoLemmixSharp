@@ -14,6 +14,7 @@ namespace NeoLemmixSharp.Common;
 /// <para>The constructors will ensure a well-formed <see cref="RectangularRegion"/> is created.</para>
 /// <para>Note that a <see cref="RectangularRegion"/> can never be empty - the smallest region size is 1x1.</para>
 /// </summary>
+[SkipLocalsInit]
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
 public readonly struct RectangularRegion : IEquatable<RectangularRegion>
 {

@@ -17,9 +17,6 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     private readonly FrameDeltaType _frameDelta;
     private readonly GadgetLayerColorData _gadgetLayerColorData;
 
-    private ref int FrameRef => ref _frame.Value;
-    private ref bool AnimationFinishedRef => ref _animationFinished.Value;
-
     public int Frame => _frame.Value;
     public bool AnimationFinished => _animationFinished.Value;
 
@@ -97,29 +94,29 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     {
         if (_frameDelta == FrameDeltaType.Increment)
         {
-            if (FrameRef == _maxFrame)
+            if (_frame.Value == _maxFrame)
             {
-                AnimationFinishedRef = true;
-                FrameRef = _minFrame;
+                _animationFinished.Value = true;
+                _frame.Value = _minFrame;
                 return;
             }
         }
         else
         {
-            if (FrameRef == _minFrame)
+            if (_frame.Value == _minFrame)
             {
-                AnimationFinishedRef = true;
-                FrameRef = _maxFrame;
+                _animationFinished.Value = true;
+                _frame.Value = _maxFrame;
                 return;
             }
         }
 
-        FrameRef += (int)_frameDelta;
+        _frame.Value += (int)_frameDelta;
     }
 
     protected override void OnReset()
     {
-        AnimationFinishedRef = false;
+        _animationFinished.Value = false;
     }
 
     private enum FrameDeltaType
