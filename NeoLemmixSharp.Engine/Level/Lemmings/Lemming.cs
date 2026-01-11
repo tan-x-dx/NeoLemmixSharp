@@ -6,7 +6,6 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
-using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -16,6 +15,11 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 {
+    private LemmingAction _previousAction = NoneAction.Instance;
+    private LemmingAction _currentAction;
+    private LemmingAction _nextAction = NoneAction.Instance;
+    private LemmingAction _countDownAction = NoneAction.Instance;
+
     public LemmingState State { get; }
     public LemmingRenderer Renderer { get; }
 
@@ -23,38 +27,38 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public LemmingAction PreviousAction
     {
-        get => field;
+        get => _previousAction;
         private set
         {
-            field = value;
+            _previousAction = value;
             _data.PreviousActionId = value.Id;
         }
     }
     public LemmingAction CurrentAction
     {
-        get => field;
+        get => _currentAction;
         set
         {
-            field = value;
+            _currentAction = value;
             _data.CurrentActionId = value.Id;
             Renderer.UpdateLemmingState(true);
         }
     }
     public LemmingAction NextAction
     {
-        get => field;
+        get => _nextAction;
         set
         {
-            field = value;
+            _nextAction = value;
             _data.NextActionId = value.Id;
         }
     }
     public LemmingAction CountDownAction
     {
-        get => field;
+        get => _countDownAction;
         set
         {
-            field = value;
+            _countDownAction = value;
             _data.CountDownActionId = value.Id;
         }
     }
@@ -340,7 +344,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         var footPixel = terrainManager.PixelTypeAtPosition(FootPosition);
         var headPixel = terrainManager.PixelTypeAtPosition(HeadPosition);
 
-        if (footPixel.IsVoid() && headPixel.IsVoid())
+        if ((footPixel & headPixel).IsVoid())
         {
             LevelScreen.LemmingManager.RemoveLemming(this, LemmingRemovalReason.DeathVoid);
             return false;
@@ -501,9 +505,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         sourceSpan.CopyTo(destinationSpan);
     }
 
-    public void SetRawData(Tribe tribe, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
+    public void SetRawData(int tribeId, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
     {
-        State.SetData(tribe.Id, rawStateData);
+        State.SetData(tribeId, rawStateData);
         _data.Orientation = orientation;
         _data.FacingDirection = facingDirection;
     }
