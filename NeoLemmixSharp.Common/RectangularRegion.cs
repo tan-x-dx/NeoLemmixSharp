@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
@@ -13,16 +14,16 @@ namespace NeoLemmixSharp.Common;
 /// <para>The constructors will ensure a well-formed <see cref="RectangularRegion"/> is created.</para>
 /// <para>Note that a <see cref="RectangularRegion"/> can never be empty - the smallest region size is 1x1.</para>
 /// </summary>
+[StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
 public readonly struct RectangularRegion : IEquatable<RectangularRegion>
 {
-    public readonly int X;
-    public readonly int Y;
+    [FieldOffset(0 * sizeof(int))] public readonly Point Position;
+    [FieldOffset(0 * sizeof(int))] public readonly int X;
+    [FieldOffset(1 * sizeof(int))] public readonly int Y;
 
-    public readonly int W;
-    public readonly int H;
-
-    public Point Position => new(X, Y);
-    public Size Size => new(W, H);
+    [FieldOffset(2 * sizeof(int))] public readonly Size Size;
+    [FieldOffset(2 * sizeof(int))] public readonly int W;
+    [FieldOffset(3 * sizeof(int))] public readonly int H;
 
     [DebuggerStepThrough]
     public RectangularRegion()
