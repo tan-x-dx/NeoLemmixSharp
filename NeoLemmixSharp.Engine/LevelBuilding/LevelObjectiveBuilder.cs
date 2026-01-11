@@ -127,25 +127,25 @@ public sealed class LevelObjectiveBuilder
 
     public SkillSetManager BuildSkillSetManager(TribeManager tribeManager, SafeBufferAllocator safeBufferAllocator)
     {
-        var skillTrackingData = BuildSkillTrackingData(tribeManager, safeBufferAllocator);
+        SkillSetDataBuffer = safeBufferAllocator.AllocateRawArray(sizeof(int) + (_levelObjectiveData.SkillSetData.Length * Level.Objectives.SkillSetData.SkillSetDataSize));
+
+        var skillTrackingData = BuildSkillTrackingData(tribeManager);
 
         var totalSkillLimitModifier = TryFindSmallestLimitTotalSkillAssignmentsModifier();
         var totalSkillLimit = EngineConstants.TrivialSkillLimit;
         if (totalSkillLimitModifier is not null)
             totalSkillLimit = totalSkillLimitModifier.MaxTotalSkillAssignments;
 
-        return new SkillSetManager(skillTrackingData, totalSkillLimit);
+        return new SkillSetManager(SkillSetDataBuffer.Handle, skillTrackingData, totalSkillLimit);
     }
 
-    private SkillTrackingData[] BuildSkillTrackingData(TribeManager tribeManager, SafeBufferAllocator safeBufferAllocator)
+    private SkillTrackingData[] BuildSkillTrackingData(TribeManager tribeManager)
     {
         var baseSkillData = _levelObjectiveData.SkillSetData;
 
         var result = new SkillTrackingData[baseSkillData.Length];
 
-        SkillSetDataBuffer = safeBufferAllocator.AllocateRawArray(baseSkillData.Length * Level.Objectives.SkillSetData.SkillSetDataSize);
-
-        nint handle = SkillSetDataBuffer.Handle;
+        nint handle = SkillSetDataBuffer.Handle + sizeof(int);
 
         for (var i = 0; i < result.Length; i++)
         {

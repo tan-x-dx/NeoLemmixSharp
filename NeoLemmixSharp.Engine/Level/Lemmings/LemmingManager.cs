@@ -8,7 +8,6 @@ using NeoLemmixSharp.Engine.Level.LemmingActions;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -153,8 +152,7 @@ public sealed class LemmingManager :
         {
             UpdateHatchGroups();
 
-            var lemmingSpan = new ReadOnlySpan<Lemming>(_lemmings);
-            foreach (var lemming in lemmingSpan)
+            foreach (var lemming in _lemmings)
             {
                 if (lemming.State.IsActive)
                 {
@@ -313,17 +311,12 @@ public sealed class LemmingManager :
 
     #region Zombie Handling
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void RegisterZombie(Lemming lemming) => _zombieSpacialHashGrid.AddItem(lemming);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void DeregisterZombie(Lemming lemming) => _zombieSpacialHashGrid.RemoveItem(lemming);
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool AnyZombies() => !_zombieSpacialHashGrid.IsEmpty;
 
-    [SkipLocalsInit]
     public void DoZombieCheck(Lemming lemming)
     {
         Debug.Assert(!lemming.State.IsZombie);
@@ -423,13 +416,20 @@ public sealed class LemmingManager :
         GC.SuppressFinalize(this);
     }
 
-    public void ResetLemmingPositions()
+    public void OnSnapshotApplied()
+    {
+        ResetLemmings();
+    }
+
+    private void ResetLemmings()
     {
         _lemmingPositionHelper.Clear();
         _zombieSpacialHashGrid.Clear();
 
         foreach (var lemming in _lemmings)
         {
+            lemming.OnSnapshotApplied();
+
             if (!lemming.State.IsActive)
                 continue;
 

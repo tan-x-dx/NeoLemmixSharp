@@ -42,7 +42,7 @@ public sealed class RewindManager : IDisposable
     {
         _maxElapsedTicks = Math.Max(_maxElapsedTicks, elapsedTicks);
 
-        if (elapsedTicks % RewindConstants.RewindSnapshotInterval != 0)
+        if ((elapsedTicks % RewindConstants.RewindSnapshotInterval) != 0)
             return;
 
         _lemmingSnapshotRecorder.TakeSnapshot();
@@ -121,8 +121,9 @@ public sealed class RewindManager : IDisposable
         _skillSetSnapshotRecorder.ApplySnapshot(correspondingSnapshotNumber);
         _levelTimerRecorder.ApplySnapshot(correspondingSnapshotNumber);
 
-        LevelScreen.LemmingManager.ResetLemmingPositions();
-        LevelScreen.GadgetManager.ResetGadgetPositions();
+        LevelScreen.LemmingManager.OnSnapshotApplied();
+        LevelScreen.GadgetManager.OnSnapshotApplied();
+        LevelScreen.SkillSetManager.OnSnapshotApplied();
 
         var actualElapsedTick = correspondingSnapshotNumber * RewindConstants.RewindSnapshotInterval;
 

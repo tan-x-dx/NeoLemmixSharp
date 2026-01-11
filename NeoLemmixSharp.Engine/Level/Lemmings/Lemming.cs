@@ -17,15 +17,48 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 {
     public LemmingState State { get; }
-
-    private LemmingAction _previousAction = NoneAction.Instance;
-    private LemmingAction _currentAction;
-    private LemmingAction _nextAction = NoneAction.Instance;
-    private LemmingAction _countDownAction = NoneAction.Instance;
-
     public LemmingRenderer Renderer { get; }
 
     private readonly LemmingData _data;
+
+    public LemmingAction PreviousAction
+    {
+        get => field;
+        private set
+        {
+            field = value;
+            _data.PreviousActionId = value.Id;
+        }
+    }
+    public LemmingAction CurrentAction
+    {
+        get => field;
+        set
+        {
+            field = value;
+            _data.CurrentActionId = value.Id;
+            Renderer.UpdateLemmingState(true);
+        }
+    }
+    public LemmingAction NextAction
+    {
+        get => field;
+        set
+        {
+            field = value;
+            _data.NextActionId = value.Id;
+        }
+    }
+    public LemmingAction CountDownAction
+    {
+        get => field;
+        set
+        {
+            field = value;
+            _data.CountDownActionId = value.Id;
+        }
+    }
+
     public readonly int Id;
 
     public Orientation Orientation
@@ -80,37 +113,14 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref int ParticleTimer => ref _data.ParticleTimer;
 
-    public LemmingAction PreviousAction
-    {
-        get => _previousAction;
-        private set => _previousAction = value;
-    }
-    public LemmingAction CurrentAction
-    {
-        get => _currentAction;
-        set
-        {
-            _currentAction = value;
-            Renderer.UpdateLemmingState(true);
-        }
-    }
-    public LemmingAction NextAction
-    {
-        get => _nextAction;
-        set => _nextAction = value;
-    }
-    public LemmingAction CountDownAction
-    {
-        get => _countDownAction;
-        set => _countDownAction = value;
-    }
-
     public bool IsSimulation => Id < 0;
     public bool IsFastForward => _data.FastForwardTime > 0 || State.IsPermanentFastForwards;
 
     public Point HeadPosition => _data.Orientation.MoveUp(_data.AnchorPosition, 6);
     public Point FootPosition => CurrentAction.GetFootPosition(this, _data.AnchorPosition);
     public Point CenterPosition => _data.Orientation.MoveUp(_data.AnchorPosition, 4);
+
+    public Span<Point> GetJumperPositions() => _data.GetJumperPositions();
 
     public Lemming(
         nint dataHandle,
@@ -121,16 +131,24 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         int tribeId)
     {
         Id = id;
-        _data = new LemmingData(dataHandle);
+        _data = new LemmingData(dataHandle)
+        {
+            Orientation = orientation,
+            FacingDirection = facingDirection,
+            TribeId = tribeId,
 
-        _data.Orientation = orientation;
-        _data.FacingDirection = facingDirection;
-        _currentAction = LemmingAction.GetActionOrDefault(initialActionId);
-        _data.CurrentActionId = _currentAction.Id;
-        State = new LemmingState(this, tribeId);
+            PreviousActionId = LemmingActionConstants.NoneActionId,
+            NextActionId = LemmingActionConstants.NoneActionId,
+            CountDownActionId = LemmingActionConstants.NoneActionId,
+
+            DehoistPin = new(-1, -1),
+            LaserHitLevelPosition = new(-1, -1),
+            AnchorPosition = new(-1, -1),
+            PreviousAnchorPosition = new(-1, -1)
+        };
+        CurrentAction = LemmingAction.GetActionOrDefault(initialActionId);
+        State = _data.CreateLemmingState(this);
         Renderer = new LemmingRenderer(this);
-
-        TakeSnapshotFromReferenceData();
     }
 
     public void Initialise()
@@ -147,7 +165,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
         initialAction.TransitionLemmingToAction(this, false);
 
-        TakeSnapshotFromReferenceData();
         Renderer.UpdateLemmingState(true);
     }
 
@@ -460,17 +477,21 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         Renderer.UpdateLemmingState(removalReason == LemmingRemovalReason.DeathExplode);
     }
 
-    public Span<Point> GetJumperPositions() => _data.GetJumperPositions();
-
     public unsafe void SetRawDataFromOther(Lemming otherLemming)
     {
-        otherLemming.TakeSnapshotFromReferenceData();
-
         void* otherPointer = otherLemming._data.GetPointer();
         void* thisPointer = _data.GetPointer();
         CopyLemmingSnapshotBytes(otherPointer, thisPointer);
 
         SetReferenceDataFromSnapshot();
+    }
+
+    private void SetReferenceDataFromSnapshot()
+    {
+        OnSnapshotApplied();
+
+        Renderer.ResetPosition();
+        LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
 
     private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* destinationPointer)
@@ -487,27 +508,15 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         _data.FacingDirection = facingDirection;
     }
 
-    private void TakeSnapshotFromReferenceData()
+    public void OnSnapshotApplied()
     {
-        State.WriteToSnapshotData(out _data.TribeId, out _data.State);
-
-        _data.PreviousActionId = PreviousAction.Id;
-        _data.CurrentActionId = CurrentAction.Id;
-        _data.NextActionId = NextAction.Id;
-        _data.CountDownActionId = CountDownAction.Id;
-    }
-
-    private void SetReferenceDataFromSnapshot()
-    {
-        State.SetFromSnapshotData(_data.TribeId, _data.State);
+        State.UpdateHairAndBodyColors();
+        State.UpdateSkinColor();
 
         PreviousAction = LemmingAction.GetActionOrDefault(_data.PreviousActionId);
         CurrentAction = LemmingAction.GetActionOrDefault(_data.CurrentActionId);
         NextAction = LemmingAction.GetActionOrDefault(_data.NextActionId);
         CountDownAction = LemmingAction.GetActionOrDefault(_data.CountDownActionId);
-
-        Renderer.ResetPosition();
-        LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
 
     [DebuggerStepThrough]

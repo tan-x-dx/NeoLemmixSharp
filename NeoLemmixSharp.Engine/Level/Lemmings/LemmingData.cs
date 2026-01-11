@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -63,6 +64,14 @@ public unsafe readonly struct LemmingData
 
     public LemmingData(void* pointer) => _data = (LemmingDataRaw*)pointer;
     public LemmingData(nint pointerHandle) => _data = (LemmingDataRaw*)pointerHandle;
+
+    public LemmingState CreateLemmingState(Lemming lemming)
+    {
+        var tribeIdRef = new PointerWrapper<int>(&_data->TribeId);
+        var stateRef = new PointerWrapper<uint>(&_data->State);
+
+        return new LemmingState(lemming, tribeIdRef, stateRef);
+    }
 
     public ref Orientation Orientation => ref Unsafe.AsRef<Orientation>(&_data->Orientation);
     public ref FacingDirection FacingDirection => ref Unsafe.AsRef<FacingDirection>(&_data->FacingDirection);
