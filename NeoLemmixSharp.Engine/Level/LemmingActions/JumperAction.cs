@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Runtime.InteropServices;
@@ -93,7 +94,7 @@ public sealed class JumperAction : LemmingAction
 
         for (var i = 0; i < JumperPositionCount; i++)
         {
-            lemmingJumpPatterns[i] = lemmingPosition;
+            lemmingJumpPatterns.At(i) = lemmingPosition;
 
             var position = patternSpan[i];
 
