@@ -131,15 +131,13 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         int id,
         Orientation orientation,
         FacingDirection facingDirection,
-        int initialActionId,
-        int tribeId)
+        int initialActionId)
     {
         Id = id;
         _data = new LemmingData(dataHandle)
         {
             Orientation = orientation,
             FacingDirection = facingDirection,
-            TribeId = tribeId,
 
             PreviousActionId = LemmingActionConstants.NoneActionId,
             NextActionId = LemmingActionConstants.NoneActionId,

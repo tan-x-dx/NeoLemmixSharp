@@ -36,8 +36,7 @@ public sealed class LemmingBuilder
                 i,
                 prototype.Orientation,
                 prototype.FacingDirection,
-                prototype.InitialLemmingActionId,
-                prototype.TribeId)
+                prototype.InitialLemmingActionId)
             {
                 AnchorPosition = prototype.Position
             };
@@ -55,8 +54,7 @@ public sealed class LemmingBuilder
                 i,
                 Orientation.Down,
                 FacingDirection.Right,
-                LemmingActionConstants.NoneActionId,
-                EngineConstants.ClassicTribeId)
+                LemmingActionConstants.NoneActionId)
             {
                 AnchorPosition = new Point()
             };
