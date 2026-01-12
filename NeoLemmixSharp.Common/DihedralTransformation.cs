@@ -128,28 +128,28 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
             var hTemp = h;
             switch (orientation.RotNum)
             {
-                case EngineConstants.DownOrientationRotNum:
+                case OrientationConstants.DownOrientationRotNum:
                     a = 1;
                     b = 0;
                     w = 0;
                     h = 0;
                     return wTemp;
 
-                case EngineConstants.LeftOrientationRotNum:
+                case OrientationConstants.LeftOrientationRotNum:
                     a = 0;
                     b = 1;
                     w = hTemp;
                     h = 0;
                     return hTemp;
 
-                case EngineConstants.UpOrientationRotNum:
+                case OrientationConstants.UpOrientationRotNum:
                     a = -1;
                     b = 0;
                     // w unchanged
                     // h unchanged
                     return wTemp;
 
-                case EngineConstants.RightOrientationRotNum:
+                case OrientationConstants.RightOrientationRotNum:
                     a = 0;
                     b = -1;
                     w = 0;

@@ -74,13 +74,13 @@ public static class OrientationMethods
     }
 
     [Pure]
-    public static Point MoveDown(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, EngineConstants.DownOrientationRotNum, position, step);
+    public static Point MoveDown(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, OrientationConstants.DownOrientationRotNum, position, step);
     [Pure]
-    public static Point MoveLeft(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, EngineConstants.LeftOrientationRotNum, position, step);
+    public static Point MoveLeft(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, OrientationConstants.LeftOrientationRotNum, position, step);
     [Pure]
-    public static Point MoveUp(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, EngineConstants.UpOrientationRotNum, position, step);
+    public static Point MoveUp(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, OrientationConstants.UpOrientationRotNum, position, step);
     [Pure]
-    public static Point MoveRight(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, EngineConstants.RightOrientationRotNum, position, step);
+    public static Point MoveRight(this Orientation orientation, Point position, int step) => MoveRelativeToOrientation(orientation, OrientationConstants.RightOrientationRotNum, position, step);
 
     /// <summary>
     /// Note: Positive dx -> right, positive dy -> up

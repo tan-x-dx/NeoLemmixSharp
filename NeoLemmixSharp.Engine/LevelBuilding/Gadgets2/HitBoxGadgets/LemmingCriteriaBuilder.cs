@@ -103,7 +103,7 @@ public ref struct LemmingCriteriaBuilder
         if (_orientationSet is not null) result[i++] = new LemmingOrientationCriterion(_orientationSet);
         if (_facingDirectionIds != 0)
         {
-            var id = _facingDirectionIds == 1 ? EngineConstants.RightFacingDirectionId : EngineConstants.LeftFacingDirectionId;
+            var id = _facingDirectionIds == 1 ? FacingDirectionConstants.RightFacingDirectionId : FacingDirectionConstants.LeftFacingDirectionId;
             result[i++] = LemmingFacingDirectionCriterion.ForFacingDirection(id);
         }
         if (_lemmingActionSet is not null) result[i++] = new LemmingActionCriterion(_lemmingActionSet);
