@@ -183,7 +183,7 @@ public static class BitArrayHelpers
     public static void AssertSourceDataIsValidForDestination(ReadOnlySpan<uint> source, int destinationLength, int numberOfItems)
     {
         if (source.Length > destinationLength)
-            throw new ArgumentException("Source buffer too big!");
+            Helpers.ThrowDestinationSpanTooShortException();
 
         if (source.Length < destinationLength)
             return;
@@ -224,7 +224,7 @@ public static class BitArrayHelpers
     /// <param name="length">The number of uints to evaluate.</param>
     /// <returns>The PopCount over all uints specified by the pointer/length.</returns>
     [Pure]
-    internal static unsafe int GetPopCount(uint* sourcePointer, uint length)
+    internal static unsafe int GetPopCount(uint* sourcePointer, int length)
     {
         // This implementation is faster than using TensorPrimitives - benchmarks
 
