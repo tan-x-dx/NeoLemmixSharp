@@ -20,6 +20,4 @@ public readonly struct StyleIdentifier : IEquatable<StyleIdentifier>
     public override int GetHashCode() => _styleIdentifier.GetHashCode();
     public static bool operator ==(StyleIdentifier left, StyleIdentifier right) => left.Equals(right);
     public static bool operator !=(StyleIdentifier left, StyleIdentifier right) => !left.Equals(right);
-
-    public static implicit operator StyleIdentifier(string? gadgetStateName) => new(gadgetStateName);
 }

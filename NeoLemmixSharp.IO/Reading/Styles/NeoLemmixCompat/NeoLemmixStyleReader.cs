@@ -32,8 +32,8 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
 
         _styleData.ThemeData = ReadThemeData(styleFolderPath);
 
-        ReadTerrainArchetypeData(styleFolderPath);
-        ReadGadgetArchetypeData(styleFolderPath);
+        ReadTerrainArchetypeData(_styleData.Identifier);
+        ReadGadgetArchetypeData(_styleData.Identifier);
 
         return _styleData;
     }
@@ -63,9 +63,9 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         return result;
     }
 
-    private void ReadTerrainArchetypeData(string styleFolderPath)
+    private void ReadTerrainArchetypeData(StyleIdentifier styleIdentifier)
     {
-        var terrainFolderPath = Path.Combine(styleFolderPath, DefaultFileExtensions.TerrainFolderName);
+        var terrainFolderPath = styleIdentifier.GetStyleTerrainFolderPath();
         var terrainMetadataFilePaths = Helpers.GetFilePathsWithExtension(terrainFolderPath, NeoLemmixFileExtensions.TerrainFileExtension);
         var terrainPngFilePaths = Helpers.GetFilePathsWithExtension(terrainFolderPath, DefaultFileExtensions.PngFileExtension);
 
@@ -127,9 +127,9 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         return new PieceIdentifier(fileNameString);
     }
 
-    private void ReadGadgetArchetypeData(string styleFolderPath)
+    private void ReadGadgetArchetypeData(StyleIdentifier styleIdentifier)
     {
-        var gadgetFolderPath = Path.Combine(styleFolderPath, DefaultFileExtensions.GadgetFolderName);
+        var gadgetFolderPath = styleIdentifier.GetStyleGadgetFolderPath();
         var gadgetFilePaths = Helpers.GetFilePathsWithExtension(gadgetFolderPath, NeoLemmixFileExtensions.GadgetFileExtension);
 
         _styleData.GadgetArchetypeDataLookup.EnsureCapacity(gadgetFilePaths.Length);

@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
@@ -30,7 +31,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         levelData.LevelAuthor = _stringIdLookup[stringId];
 
         stringId = reader.Read16BitUnsignedInteger();
-        levelData.LevelStyle = _stringIdLookup[stringId];
+        levelData.LevelStyle = new StyleIdentifier(_stringIdLookup[stringId]);
 
         levelData.LevelId = new LevelIdentifier(reader.Read64BitUnsignedInteger());
         levelData.Version = new LevelVersion(reader.Read64BitUnsignedInteger());

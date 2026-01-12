@@ -56,13 +56,13 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
         };
 
         var pieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]);
-        var textureFilePath = ConstructGadgetPngFilePath(styleIdentifier, pieceIdentifier);
+        var textureFilePath = RootDirectoryManager.GetCorrespondingGadgetPngFilePath(styleIdentifier, pieceIdentifier);
 
         return new GadgetArchetypeData
         {
             StyleIdentifier = styleIdentifier,
             PieceIdentifier = pieceIdentifier,
-            GadgetName = _stringIdLookup[nameId],
+            GadgetName = new GadgetName(_stringIdLookup[nameId]),
             BaseSpriteSize = baseSpriteSize,
             TextureFilePath = textureFilePath,
 
@@ -100,17 +100,6 @@ internal sealed class GadgetArchetypeDataSectionReader : StyleDataSectionReader
          ReadMiscData(reader, result);
 
          return result;*/
-    }
-
-    private static string ConstructGadgetPngFilePath(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier)
-    {
-        var rootFilePath = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            styleIdentifier.ToString(),
-            DefaultFileExtensions.GadgetFolderName,
-            pieceIdentifier.ToString());
-
-        return RootDirectoryManager.GetCorrespondingImageFile(rootFilePath);
     }
 
     private HitBoxGadgetArchetypeSpecificationData ReadHitBoxGadgetArchetypeData(RawStyleFileDataReader reader, Size baseSpriteSize)
