@@ -84,7 +84,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         var rawBytes = reader.ReadBytes(NumberOfBytesWrittenForBackgroundData);
 
-        int rawBackgroundType = rawBytes[0];
+        int rawBackgroundType = rawBytes.At(0);
         var backgroundType = (BackgroundType)rawBackgroundType;
 
         levelData.LevelBackground = backgroundType switch
@@ -110,7 +110,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         BackgroundData ReadTextureBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            ushort backgroundStringId = Unsafe.ReadUnaligned<ushort>(in rawBytes[1]);
+            ushort backgroundStringId = Unsafe.ReadUnaligned<ushort>(in rawBytes.At(1));
 
             return new BackgroundData(_stringIdLookup[backgroundStringId]);
         }

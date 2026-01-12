@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Reading;
 using NeoLemmixSharp.IO.Writing;
@@ -131,32 +132,32 @@ public static class ReadWriteHelpers
     internal static void WriteArgbBytes(Color color, Span<byte> bytes)
     {
         FileWritingException.WriterAssert(bytes.Length == 4, "Expected span length of exactly 4");
-        bytes[0] = color.A;
-        bytes[1] = color.R;
-        bytes[2] = color.G;
-        bytes[3] = color.B;
+        bytes.At(0) = color.A;
+        bytes.At(1) = color.R;
+        bytes.At(2) = color.G;
+        bytes.At(3) = color.B;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void WriteRgbBytes(Color color, Span<byte> bytes)
     {
         FileWritingException.WriterAssert(bytes.Length == 3, "Expected span length of exactly 3");
-        bytes[0] = color.R;
-        bytes[1] = color.G;
-        bytes[2] = color.B;
+        bytes.At(0) = color.R;
+        bytes.At(1) = color.G;
+        bytes.At(2) = color.B;
     }
 
     internal static Color ReadArgbBytes(ReadOnlySpan<byte> bytes)
     {
         FileReadingException.ReaderAssert(bytes.Length == 4, "Expected span length of exactly 4");
-        return new Color(alpha: bytes[0], r: bytes[1], g: bytes[2], b: bytes[3]);
+        return new Color(alpha: bytes.At(0), r: bytes.At(1), g: bytes.At(2), b: bytes.At(3));
     }
 
     internal static Color ReadRgbBytes(ReadOnlySpan<byte> bytes)
     {
         const byte alphaByte = 0xff;
         FileReadingException.ReaderAssert(bytes.Length == 3, "Expected span length of exactly 3");
-        return new Color(alpha: alphaByte, r: bytes[0], g: bytes[1], b: bytes[2]);
+        return new Color(alpha: alphaByte, r: bytes.At(0), g: bytes.At(1), b: bytes.At(2));
     }
 
     internal static int EncodePoint(Point point)
