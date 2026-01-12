@@ -8,10 +8,10 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IEquatable<GadgetBase>
 {
-    private readonly PointerWrapper<int> _stateIndex;
+    private readonly PointerWrapper _stateIndex;
     public required nint DataHandle
     {
-        init => _stateIndex = new PointerWrapper<int>(value);
+        init => _stateIndex = new PointerWrapper(value);
     }
     public required GadgetName GadgetName { get; init; }
     public GadgetType GadgetType { get; }
@@ -27,7 +27,7 @@ public abstract class GadgetBase : IEquatable<GadgetBase>
 
     public abstract GadgetState CurrentState { get; }
 
-    protected ref int StateIndex => ref _stateIndex.Value;
+    protected ref int StateIndex => ref _stateIndex.IntValue;
 
     protected GadgetBase(
         GadgetType gadgetType)

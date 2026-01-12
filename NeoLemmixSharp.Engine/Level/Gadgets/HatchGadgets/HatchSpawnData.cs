@@ -7,14 +7,14 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 
 public sealed class HatchSpawnData
 {
-    private readonly PointerWrapper<int> _lemmingsToRelease;
+    private readonly PointerWrapper _lemmingsToRelease;
     private readonly int _tribeId;
     private readonly uint _rawStateData;
     private readonly FacingDirection _facingDirection;
 
     public int HatchGroupId { get; }
     public Orientation Orientation { get; }
-    public int LemmingsToRelease => _lemmingsToRelease.Value;
+    public int LemmingsToRelease => _lemmingsToRelease.IntValue;
 
     public HatchSpawnData(
         nint dataHandle,
@@ -25,13 +25,13 @@ public sealed class HatchSpawnData
         FacingDirection facingDirection,
         int lemmingsToRelease)
     {
-        _lemmingsToRelease = new PointerWrapper<int>(dataHandle);
+        _lemmingsToRelease = new PointerWrapper(dataHandle);
         HatchGroupId = hatchGroupId;
         _tribeId = tribeId;
         _rawStateData = rawStateData;
         Orientation = orientation;
         _facingDirection = facingDirection;
-        _lemmingsToRelease.Value = lemmingsToRelease;
+        _lemmingsToRelease.IntValue = lemmingsToRelease;
     }
 
     public void SpawnLemming(Lemming lemming)
@@ -40,6 +40,6 @@ public sealed class HatchSpawnData
 
         FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         lemming.InitialFall = lemming.CurrentAction == FallerAction.Instance; // could be a walker if eg. spawned inside terrain
-        _lemmingsToRelease.Value--;
+        _lemmingsToRelease.IntValue--;
     }
 }
