@@ -89,7 +89,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
         sectionReader.ReadSection(_reader, result, numberOfItemsInSection);
 
         FileReadingException.ReaderAssert(
-            interval.Start + interval.Length == _reader.Position,
+            interval.End == _reader.Position,
             "Byte reading mismatch!");
     }
 

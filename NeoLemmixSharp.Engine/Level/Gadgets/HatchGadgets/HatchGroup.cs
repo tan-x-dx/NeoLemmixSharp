@@ -21,11 +21,7 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
     public uint MaxReleaseRate => ConvertToReleaseRate(MaxSpawnInterval);
     public uint CurrentReleaseRate => ConvertToReleaseRate(CurrentSpawnInterval);
 
-    private ref int HatchIndex => ref _data.HatchIndex;
-    private ref uint NextLemmingCountDown => ref _data.NextLemmingCountDown;
-    private ref int LemmingsToReleaseRef => ref _data.LemmingsToRelease;
     public int LemmingsToRelease => _data.LemmingsToRelease;
-    private ref uint CurrentSpawnIntervalRef => ref _data.CurrentSpawnInterval;
     public uint CurrentSpawnInterval => _data.CurrentSpawnInterval;
 
     public HatchGroup(
@@ -43,14 +39,14 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
 
         MinSpawnInterval = Math.Clamp(minSpawnInterval, EngineConstants.MinAllowedSpawnInterval, EngineConstants.MaxAllowedSpawnInterval);
         MaxSpawnInterval = Math.Clamp(maxSpawnInterval, minSpawnInterval, EngineConstants.MaxAllowedSpawnInterval);
-        CurrentSpawnIntervalRef = Math.Clamp(initialSpawnInterval, MinSpawnInterval, MaxSpawnInterval);
-        NextLemmingCountDown = EngineConstants.InitialLemmingHatchReleaseCountDown;
+        _data.CurrentSpawnInterval = Math.Clamp(initialSpawnInterval, MinSpawnInterval, MaxSpawnInterval);
+        _data.NextLemmingCountDown = EngineConstants.InitialLemmingHatchReleaseCountDown;
     }
 
     public void SetHatches(HatchGadget[] hatches)
     {
         _hatches = hatches;
-        HatchIndex = _hatches.Length - 1;
+        _data.HatchIndex = _hatches.Length - 1;
 
         var lemmingsToRelease = 0;
         foreach (var hatchGadget in hatches)
@@ -58,45 +54,47 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
             lemmingsToRelease += hatchGadget.HatchSpawnData.LemmingsToRelease;
         }
 
-        LemmingsToReleaseRef = lemmingsToRelease;
+        _data.LemmingsToRelease = lemmingsToRelease;
     }
 
     public bool TryAddSpawnIntervalDelta(int spawnIntervalDelta)
     {
-        int previousSpawnInterval = (int)CurrentSpawnIntervalRef;
+        int previousSpawnInterval = (int)_data.CurrentSpawnInterval;
         int newSpawnInterval = previousSpawnInterval + spawnIntervalDelta;
         if (newSpawnInterval > (int)MaxSpawnInterval)
             newSpawnInterval = (int)MaxSpawnInterval;
         else if (newSpawnInterval < (int)MinSpawnInterval)
             newSpawnInterval = (int)MinSpawnInterval;
 
-        CurrentSpawnIntervalRef = (uint)newSpawnInterval;
+        _data.CurrentSpawnInterval = (uint)newSpawnInterval;
 
         return previousSpawnInterval != newSpawnInterval;
     }
 
     public HatchGadget? Tick()
     {
-        if (LemmingsToReleaseRef == 0)
+        if (_data.LemmingsToRelease == 0)
             return null;
 
-        NextLemmingCountDown--;
+        _data.NextLemmingCountDown--;
 
-        if (NextLemmingCountDown != 0)
+        if (_data.NextLemmingCountDown != 0)
             return null;
 
-        NextLemmingCountDown = CurrentSpawnIntervalRef;
+        _data.NextLemmingCountDown = _data.CurrentSpawnInterval;
         return GetNextLogicalHatchGadget();
     }
 
     private HatchGadget? GetNextLogicalHatchGadget()
     {
-        var c = _hatches.Length;
-        var hatchIndex = HatchIndex;
+        var c = _hatches.Length - 1;
+        if (c < 0)
+            return null;
+
+        var hatchIndex = _data.HatchIndex;
 
         do
         {
-            c--;
             hatchIndex++;
             if ((uint)hatchIndex >= (uint)_hatches.Length)
                 hatchIndex = 0;
@@ -105,18 +103,19 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
 
             if (hatchGadget.CanReleaseLemmings())
             {
-                HatchIndex = hatchIndex;
+                _data.HatchIndex = hatchIndex;
                 return hatchGadget;
             }
-        } while (c > 0);
+            c--;
+        } while (c >= 0);
 
-        HatchIndex = hatchIndex;
+        _data.HatchIndex = hatchIndex;
         return null;
     }
 
     public void OnSpawnLemming()
     {
-        LemmingsToReleaseRef--;
+        _data.LemmingsToRelease--;
     }
 
     [Pure]

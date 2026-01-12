@@ -484,12 +484,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         void* otherPointer = otherLemming._data.GetPointer();
         void* thisPointer = _data.GetPointer();
         CopyLemmingSnapshotBytes(otherPointer, thisPointer);
-
-        SetReferenceDataFromSnapshot();
-    }
-
-    private void SetReferenceDataFromSnapshot()
-    {
         OnSnapshotApplied();
 
         Renderer.ResetPosition();
@@ -503,13 +497,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         sourceSpan.CopyTo(destinationSpan);
     }
 
-    public void SetRawData(int tribeId, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
-    {
-        State.SetData(tribeId, rawStateData);
-        _data.Orientation = orientation;
-        _data.FacingDirection = facingDirection;
-    }
-
     public void OnSnapshotApplied()
     {
         State.UpdateHairAndBodyColors();
@@ -519,6 +506,13 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         CurrentAction = LemmingAction.GetActionOrDefault(_data.CurrentActionId);
         NextAction = LemmingAction.GetActionOrDefault(_data.NextActionId);
         CountDownAction = LemmingAction.GetActionOrDefault(_data.CountDownActionId);
+    }
+
+    public void SetRawData(int tribeId, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
+    {
+        State.SetData(tribeId, rawStateData);
+        _data.Orientation = orientation;
+        _data.FacingDirection = facingDirection;
     }
 
     [DebuggerStepThrough]

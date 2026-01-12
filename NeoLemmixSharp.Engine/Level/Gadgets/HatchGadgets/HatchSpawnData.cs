@@ -10,33 +10,34 @@ public sealed class HatchSpawnData
     private readonly PointerWrapper _lemmingsToRelease;
     private readonly int _tribeId;
     private readonly uint _rawStateData;
+    private readonly Orientation _orientation;
     private readonly FacingDirection _facingDirection;
 
     public int HatchGroupId { get; }
-    public Orientation Orientation { get; }
     public int LemmingsToRelease => _lemmingsToRelease.IntValue;
 
     public HatchSpawnData(
         nint dataHandle,
-        int hatchGroupId,
+        int lemmingsToRelease,
         int tribeId,
         uint rawStateData,
         Orientation orientation,
         FacingDirection facingDirection,
-        int lemmingsToRelease)
+        int hatchGroupId)
     {
         _lemmingsToRelease = new PointerWrapper(dataHandle);
-        HatchGroupId = hatchGroupId;
+        _lemmingsToRelease.IntValue = lemmingsToRelease;
         _tribeId = tribeId;
         _rawStateData = rawStateData;
-        Orientation = orientation;
+        _orientation = orientation;
         _facingDirection = facingDirection;
-        _lemmingsToRelease.IntValue = lemmingsToRelease;
+
+        HatchGroupId = hatchGroupId;
     }
 
     public void SpawnLemming(Lemming lemming)
     {
-        lemming.SetRawData(_tribeId, _rawStateData, Orientation, _facingDirection);
+        lemming.SetRawData(_tribeId, _rawStateData, _orientation, _facingDirection);
 
         FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         lemming.InitialFall = lemming.CurrentAction == FallerAction.Instance; // could be a walker if eg. spawned inside terrain

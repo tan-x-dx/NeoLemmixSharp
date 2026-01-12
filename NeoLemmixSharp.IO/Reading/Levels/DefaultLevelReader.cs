@@ -60,7 +60,7 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
         sectionReader.ReadSection(_reader, result, numberOfItemsInSection);
 
         FileReadingException.ReaderAssert(
-            interval.Start + interval.Length == _reader.Position,
+            interval.End == _reader.Position,
             "Byte reading mismatch!");
     }
 

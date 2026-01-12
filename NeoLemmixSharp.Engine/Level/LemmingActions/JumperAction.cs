@@ -96,7 +96,7 @@ public sealed class JumperAction : LemmingAction
         {
             lemmingJumpPatterns.At(i) = lemmingPosition;
 
-            var position = patternSpan[i];
+            var position = patternSpan.At(i);
 
             if (position.X == 0 && position.Y == 0)
                 break;
