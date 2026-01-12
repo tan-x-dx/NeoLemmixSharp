@@ -7,14 +7,14 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.GadgetBehaviours;
 
 public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
 {
-    private readonly PointerWrapper<int> _tickCount;
+    private readonly PointerWrapper _tickCount;
     private readonly GadgetIdentifier _gadgetIdentifier;
 
     private readonly int _tickDelay;
     private readonly int _delta;
     private readonly int _max;
 
-    private ref int TickCountRef => ref _tickCount.Value;
+    private ref int TickCountRef => ref _tickCount.IntValue;
 
     public ConstrainedResizeHitBoxGadgetBehaviour(
         nint dataHandle,
@@ -24,7 +24,7 @@ public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
         int max)
         : base(GadgetBehaviourType.GadgetConstrainedResize)
     {
-        _tickCount = new PointerWrapper<int>(dataHandle);
+        _tickCount = new PointerWrapper(dataHandle);
         _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;
         _delta = delta;

@@ -6,14 +6,14 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.GadgetBehaviours;
 
 public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
 {
-    private readonly PointerWrapper<int> _tickCount;
+    private readonly PointerWrapper _tickCount;
     private readonly GadgetIdentifier _gadgetIdentifier;
 
     private readonly int _tickDelay;
     private readonly int _dw;
     private readonly int _dh;
 
-    private ref int TickCountRef => ref _tickCount.Value;
+    private ref int TickCountRef => ref _tickCount.IntValue;
 
     public FreeResizeHitBoxGadgetBehaviour(
         nint dataHandle,
@@ -23,7 +23,7 @@ public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
         int dh)
         : base(GadgetBehaviourType.GadgetFreeResize)
     {
-        _tickCount = new PointerWrapper<int>(dataHandle);
+        _tickCount = new PointerWrapper(dataHandle);
         _tickDelay = tickDelay;
         _gadgetIdentifier = gadgetIdentifier;
         _dw = dw;

@@ -10,7 +10,7 @@ namespace NeoLemmixSharp.Engine.Level.Objectives;
 public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 {
     private readonly SkillTrackingData[] _skillTrackingDataList;
-    private readonly PointerWrapper<int> _currentTotalSkillLimit;
+    private readonly PointerWrapper _currentTotalSkillLimit;
 
     public ReadOnlySpan<SkillTrackingData> AllItems => new(_skillTrackingDataList);
 
@@ -20,8 +20,8 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         int totalSkillLimit)
     {
         _skillTrackingDataList = skillTrackingDataList;
-        _currentTotalSkillLimit = new PointerWrapper<int>(dataHandle);
-        _currentTotalSkillLimit.Value = totalSkillLimit;
+        _currentTotalSkillLimit = new PointerWrapper(dataHandle);
+        _currentTotalSkillLimit.IntValue = totalSkillLimit;
 
         Array.Sort(_skillTrackingDataList, this);
 
@@ -35,7 +35,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
     public void UpdateSkillSetData()
     {
-        var currentTotalSkillLimit = _currentTotalSkillLimit.Value;
+        var currentTotalSkillLimit = _currentTotalSkillLimit.IntValue;
 
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
@@ -46,7 +46,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
     public void RecordUsageOfSkill()
     {
-        _currentTotalSkillLimit.Value--;
+        _currentTotalSkillLimit.IntValue--;
     }
 
     public SkillTrackingData? GetSkillTrackingData(int skillTrackingDataId)

@@ -7,8 +7,8 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.GadgetAnimation;
 
 public sealed class AnimationLayerBehaviour : GadgetBehaviour
 {
-    private readonly PointerWrapper<int> _frame;
-    private readonly PointerWrapper<bool> _animationFinished;
+    private readonly PointerWrapper _frame;
+    private readonly PointerWrapper _animationFinished;
 
     private readonly int _layer;
     private readonly int _minFrame;
@@ -17,8 +17,8 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     private readonly FrameDeltaType _frameDelta;
     private readonly GadgetLayerColorData _gadgetLayerColorData;
 
-    public int Frame => _frame.Value;
-    public bool AnimationFinished => _animationFinished.Value;
+    public int Frame => _frame.IntValue;
+    public bool AnimationFinished => _animationFinished.BoolValue;
 
     public static AnimationLayerBehaviour CreateIncrementAnimationLayerBehaviour(
         nint dataHandle,
@@ -84,9 +84,9 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
         _minFrame = minFrame;
         _maxFrame = maxFrame;
         _frameDelta = frameDelta;
-        _frame = new PointerWrapper<int>(dataHandle);
-        _frame.Value = initialFrame;
-        _animationFinished = new PointerWrapper<bool>(dataHandle + sizeof(int));
+        _frame = new PointerWrapper(dataHandle);
+        _frame.IntValue = initialFrame;
+        _animationFinished = new PointerWrapper(dataHandle + sizeof(int));
         _gadgetLayerColorData = gadgetLayerColorData;
     }
 
@@ -94,29 +94,29 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     {
         if (_frameDelta == FrameDeltaType.Increment)
         {
-            if (_frame.Value == _maxFrame)
+            if (_frame.IntValue == _maxFrame)
             {
-                _animationFinished.Value = true;
-                _frame.Value = _minFrame;
+                _animationFinished.BoolValue = true;
+                _frame.IntValue = _minFrame;
                 return;
             }
         }
         else
         {
-            if (_frame.Value == _minFrame)
+            if (_frame.IntValue == _minFrame)
             {
-                _animationFinished.Value = true;
-                _frame.Value = _maxFrame;
+                _animationFinished.BoolValue = true;
+                _frame.IntValue = _maxFrame;
                 return;
             }
         }
 
-        _frame.Value += (int)_frameDelta;
+        _frame.IntValue += (int)_frameDelta;
     }
 
     protected override void OnReset()
     {
-        _animationFinished.Value = false;
+        _animationFinished.BoolValue = false;
     }
 
     private enum FrameDeltaType

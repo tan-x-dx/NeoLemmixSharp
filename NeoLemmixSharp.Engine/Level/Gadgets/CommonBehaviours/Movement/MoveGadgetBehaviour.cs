@@ -7,13 +7,13 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
 
 public sealed class MoveGadgetBehaviour : GadgetBehaviour
 {
-    private readonly PointerWrapper<int> _tickCount;
+    private readonly PointerWrapper _tickCount;
     private readonly GadgetIdentifier _gadgetIdentifier;
     private readonly int _tickDelay;
     private readonly Point _delta;
     private readonly Point _limitPoint;
 
-    private ref int TickCountRef => ref _tickCount.Value;
+    private ref int TickCountRef => ref _tickCount.IntValue;
 
     public MoveGadgetBehaviour(
         nint dataHandle,
@@ -23,7 +23,7 @@ public sealed class MoveGadgetBehaviour : GadgetBehaviour
         Point limitPoint)
         : base(GadgetBehaviourType.GadgetMove)
     {
-        _tickCount = new PointerWrapper<int>(dataHandle);
+        _tickCount = new PointerWrapper(dataHandle);
         _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;
         _delta = delta;

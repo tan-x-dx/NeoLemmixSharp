@@ -67,8 +67,8 @@ public unsafe readonly struct LemmingData
 
     public LemmingState CreateLemmingState(Lemming lemming)
     {
-        var tribeIdRef = new PointerWrapper<int>(&_data->TribeId);
-        var stateRef = new PointerWrapper<uint>(&_data->State);
+        var tribeIdRef = new PointerWrapper(&_data->TribeId);
+        var stateRef = new PointerWrapper(&_data->State);
 
         return new LemmingState(lemming, tribeIdRef, stateRef);
     }
