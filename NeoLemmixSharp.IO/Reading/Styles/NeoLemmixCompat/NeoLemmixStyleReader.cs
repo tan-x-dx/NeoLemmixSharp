@@ -40,7 +40,7 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
 
     private ThemeData ReadThemeData(string styleFolderPath)
     {
-        var themeDataFilePaths = Helpers.GetFilePathsWithExtension(styleFolderPath, NeoLemmixFileExtensions.ThemeFileExtension);
+        var themeDataFilePaths = RootDirectoryManager.GetFilePathsWithExtension(styleFolderPath, NeoLemmixFileExtensions.ThemeFileExtension);
 
         if (themeDataFilePaths.Length == 1)
             return ReadThemeDataFromFilePath(themeDataFilePaths[0]);
@@ -66,8 +66,8 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
     private void ReadTerrainArchetypeData(StyleIdentifier styleIdentifier)
     {
         var terrainFolderPath = styleIdentifier.GetStyleTerrainFolderPath();
-        var terrainMetadataFilePaths = Helpers.GetFilePathsWithExtension(terrainFolderPath, NeoLemmixFileExtensions.TerrainFileExtension);
-        var terrainPngFilePaths = Helpers.GetFilePathsWithExtension(terrainFolderPath, DefaultFileExtensions.PngFileExtension);
+        var terrainMetadataFilePaths = RootDirectoryManager.GetFilePathsWithExtension(terrainFolderPath, NeoLemmixFileExtensions.TerrainFileExtension);
+        var terrainPngFilePaths = RootDirectoryManager.GetFilePathsWithExtension(terrainFolderPath, DefaultFileExtensions.PngFileExtension);
 
         _styleData.TerrainArchetypeDataLookup.EnsureCapacity(terrainPngFilePaths.Length);
 
@@ -130,7 +130,7 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
     private void ReadGadgetArchetypeData(StyleIdentifier styleIdentifier)
     {
         var gadgetFolderPath = styleIdentifier.GetStyleGadgetFolderPath();
-        var gadgetFilePaths = Helpers.GetFilePathsWithExtension(gadgetFolderPath, NeoLemmixFileExtensions.GadgetFileExtension);
+        var gadgetFilePaths = RootDirectoryManager.GetFilePathsWithExtension(gadgetFolderPath, NeoLemmixFileExtensions.GadgetFileExtension);
 
         _styleData.GadgetArchetypeDataLookup.EnsureCapacity(gadgetFilePaths.Length);
 

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.IO.Data;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data;
 
 namespace NeoLemmixSharp.IO;
 
@@ -109,5 +110,36 @@ public static class RootDirectoryManager
             StyleFolderDirectory,
             styleIdentifier.ToString(),
             LemmingsFolderName);
+    }
+
+    public static ReadOnlySpan<string> GetFilePathsWithExtension(string folderPath, ReadOnlySpan<char> requiredFileExtension)
+    {
+        var allFiles = Directory.GetFiles(folderPath);
+        var numberOfRelevantFiles = 0;
+
+        for (var i = 0; i < allFiles.Length; i++)
+        {
+            var file = allFiles[i];
+            var fileExtensionSpan = Path.GetExtension(file.AsSpan());
+
+            if (Helpers.StringSpansMatch(fileExtensionSpan, requiredFileExtension))
+            {
+                allFiles[numberOfRelevantFiles++] = file;
+            }
+        }
+
+        // Clear the unused strings to encourage garbage collection
+        var upperSpan = new Span<string>(allFiles, numberOfRelevantFiles, allFiles.Length - numberOfRelevantFiles);
+        upperSpan.Clear();
+
+        return new ReadOnlySpan<string>(allFiles, 0, numberOfRelevantFiles);
+    }
+
+    public static ReadOnlySpan<char> GetFullFilePathWithoutExtension(ReadOnlySpan<char> fullFilePath)
+    {
+        var extension = Path.GetExtension(fullFilePath);
+
+        var indexOfExtension = fullFilePath.IndexOf(extension, StringComparison.Ordinal);
+        return fullFilePath[..indexOfExtension];
     }
 }

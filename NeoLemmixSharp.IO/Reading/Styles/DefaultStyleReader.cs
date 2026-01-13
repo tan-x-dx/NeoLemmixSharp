@@ -31,7 +31,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
     {
         var styleFolderPath = style.GetFolderFilePath();
 
-        var allStyleFiles = Helpers.GetFilePathsWithExtension(styleFolderPath, DefaultFileExtensions.StyleFileExtension);
+        var allStyleFiles = RootDirectoryManager.GetFilePathsWithExtension(styleFolderPath, DefaultFileExtensions.StyleFileExtension);
 
         if (allStyleFiles.Length == 1)
         {

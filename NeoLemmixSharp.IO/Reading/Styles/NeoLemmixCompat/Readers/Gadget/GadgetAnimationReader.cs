@@ -104,7 +104,7 @@ internal sealed class GadgetAnimationReader : NeoLemmixDataReader
     private string ConstructFilePathForAdditionalTexture(ReadOnlySpan<char> secondToken)
     {
         var originalFilePath = _gadgetArchetypeData.FilePath.AsSpan();
-        var originalFilePathWithoutExtension = Helpers.GetFullFilePathWithoutExtension(originalFilePath);
+        var originalFilePathWithoutExtension = RootDirectoryManager.GetFullFilePathWithoutExtension(originalFilePath);
 
         return $"{originalFilePathWithoutExtension}_{secondToken}{DefaultFileExtensions.PngFileExtension}";
     }
