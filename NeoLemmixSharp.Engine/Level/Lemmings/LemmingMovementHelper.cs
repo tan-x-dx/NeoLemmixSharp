@@ -32,7 +32,7 @@ public readonly ref struct LemmingMovementHelper
         var workPosition = previousLemmingPosition;
 
         var length = 0;
-        if (previousAction == JumperAction.Instance)
+        if (previousAction == LemmingActionConstants.JumperActionId)
         {
             HandleJumping(ref workPosition, ref length); // But continue with the rest as normal
         }
@@ -40,7 +40,7 @@ public readonly ref struct LemmingMovementHelper
         // No movement
         if (previousLemmingPosition == currentLemmingPosition)
         {
-            if (previousAction == JumperAction.Instance && length != 0)
+            if (previousAction == LemmingActionConstants.JumperActionId && length != 0)
                 return length;
 
             AddPosition(workPosition, ref length);
@@ -49,7 +49,7 @@ public readonly ref struct LemmingMovementHelper
         }
 
         // Special treatment of miners!
-        if (previousAction == MinerAction.Instance)
+        if (previousAction == LemmingActionConstants.MinerActionId)
         {
             // First move one pixel down, if Y-coordinate changed
             if (orientation.FirstIsBelowSecond(currentLemmingPosition, workPosition))
@@ -65,9 +65,9 @@ public readonly ref struct LemmingMovementHelper
         }
 
         // Lemming moves up or is faller; exception is made for builders!
-        if (previousAction != BuilderAction.Instance &&
+        if (previousAction != LemmingActionConstants.BuilderActionId &&
             (orientation.FirstIsAboveSecond(currentLemmingPosition, previousLemmingPosition) ||
-             _lemming.CurrentAction == FallerAction.Instance))
+             _lemming.CurrentAction == LemmingActionConstants.FallerActionId))
         {
             MoveHorizontally(orientation, ref workPosition, currentLemmingPosition, ref length);
             MoveVertically(orientation, ref workPosition, currentLemmingPosition, ref length);

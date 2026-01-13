@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public abstract class LemmingAction : IEquatable<LemmingAction>
+public abstract class LemmingAction : IEquatable<LemmingAction>, IEquatable<int>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     private static readonly LemmingActionSet AirborneActions = GetAirborneActions();
@@ -223,6 +223,10 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     }
 
     [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool Equals(int id) => Id == id;
+
+    [DebuggerStepThrough]
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingAction other && Id == other.Id;
     [DebuggerStepThrough]
     public sealed override int GetHashCode() => Id;
@@ -233,6 +237,13 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public static bool operator ==(LemmingAction left, LemmingAction right) => left.Id == right.Id;
     [DebuggerStepThrough]
     public static bool operator !=(LemmingAction left, LemmingAction right) => left.Id != right.Id;
+
+    [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator ==(LemmingAction left, int id) => left.Id == id;
+    [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator !=(LemmingAction left, int id) => left.Id != id;
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

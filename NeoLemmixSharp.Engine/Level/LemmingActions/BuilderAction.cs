@@ -110,7 +110,7 @@ public sealed class BuilderAction : LemmingAction
         var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
-        var dy = lemming.CurrentAction == Instance
+        var dy = lemming.CurrentAction == LemmingActionConstants.BuilderActionId
             ? 1
             : 0;
 

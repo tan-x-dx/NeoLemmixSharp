@@ -160,7 +160,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         _data.CurrentBounds = CurrentAction.GetLemmingBounds(this);
 
         var initialAction = CurrentAction;
-        if (initialAction == NoneAction.Instance)
+        if (initialAction == LemmingActionConstants.NoneActionId)
         {
             initialAction = WalkerAction.Instance;
         }
@@ -211,7 +211,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (!HandleLemmingAction(in gadgetsNearLemming)) return;
         if (!CheckLevelBoundaries()) return;
         if (!CheckTriggerAreas(false, gadgetCheckPositions, in gadgetsNearLemming)) return;
-        if (CurrentAction == ExiterAction.Instance) return;
+        if (CurrentAction == LemmingActionConstants.ExiterActionId) return;
         if (State.IsZombie) return;
         if (!LevelScreen.LemmingManager.AnyZombies()) return;
 
@@ -298,8 +298,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (frame == CurrentAction.NumberOfAnimationFrames)
         {
             // Floater and Glider start cycle at frame 9!
-            if (CurrentAction == FloaterAction.Instance ||
-                CurrentAction == GliderAction.Instance)
+            if (CurrentAction == LemmingActionConstants.FloaterActionId ||
+                CurrentAction == LemmingActionConstants.GliderActionId)
             {
                 frame = EngineConstants.FloaterGliderStartCycleFrame;
             }
@@ -314,8 +314,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (frame == CurrentAction.MaxPhysicsFrames)
         {
             // Floater and Glider start cycle at frame 9!
-            if (CurrentAction == FloaterAction.Instance ||
-                CurrentAction == GliderAction.Instance)
+            if (CurrentAction == LemmingActionConstants.FloaterActionId ||
+                CurrentAction == LemmingActionConstants.GliderActionId)
             {
                 frame = EngineConstants.FloaterGliderStartCycleFrame;
             }
@@ -435,9 +435,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         // If we're at the end of the check positions and Next action is not None
         // then transition. However, if NextAction is SplatterAction and there's water
         // at the position, the water takes precedence over splatting
-        if (NextAction != NoneAction.Instance &&
+        if (NextAction != LemmingActionConstants.NoneActionId &&
             checkPosition == _data.AnchorPosition &&
-            (NextAction != SplatterAction.Instance ||
+            (NextAction != LemmingActionConstants.SplatterActionId ||
             filter.HitBoxBehaviour != HitBoxInteractionType.Liquid))
         {
             NextAction.TransitionLemmingToAction(this, false);

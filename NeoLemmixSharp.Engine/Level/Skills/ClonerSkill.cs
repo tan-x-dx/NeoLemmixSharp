@@ -34,7 +34,7 @@ public sealed class ClonerSkill : LemmingSkill
         var newLemmingCurrentAction = clonedLemming.CurrentAction;
 
         // Avoid moving into terrain, see http://www.lemmingsforums.net/index.php?topic=2575.0
-        if (newLemmingCurrentAction == MinerAction.Instance)
+        if (newLemmingCurrentAction == LemmingActionConstants.MinerActionId)
         {
             if (clonedLemming.PhysicsFrame == 2)
             {
@@ -52,8 +52,8 @@ public sealed class ClonerSkill : LemmingSkill
         // Required for turned builders not to walk into air
         // For platformers, see http://www.lemmingsforums.net/index.php?topic=2530.0
         if (clonedLemming.PhysicsFrame >= 9 &&
-            (newLemmingCurrentAction == BuilderAction.Instance ||
-             newLemmingCurrentAction == PlatformerAction.Instance))
+            (newLemmingCurrentAction == LemmingActionConstants.BuilderActionId ||
+             newLemmingCurrentAction == LemmingActionConstants.PlatformerActionId))
         {
             BuilderAction.LayBrick(clonedLemming);
         }

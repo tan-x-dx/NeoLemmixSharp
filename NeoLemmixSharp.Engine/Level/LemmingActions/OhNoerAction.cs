@@ -49,7 +49,7 @@ public sealed class OhNoerAction : LemmingAction
     {
         var currentAction = lemming.CurrentAction;
 
-        if (currentAction == NoneAction.Instance)
+        if (currentAction == LemmingActionConstants.NoneActionId)
             return;
 
         if (currentAction.IsAirborneAction())

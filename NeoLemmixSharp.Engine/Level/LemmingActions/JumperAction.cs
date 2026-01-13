@@ -271,8 +271,8 @@ public sealed class JumperAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        if (lemming.CurrentAction == ClimberAction.Instance ||
-            lemming.CurrentAction == SliderAction.Instance)
+        if (lemming.CurrentAction == LemmingActionConstants.ClimberActionId ||
+            lemming.CurrentAction == LemmingActionConstants.SliderActionId)
         {
             lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
             lemming.AnchorPosition = lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX);

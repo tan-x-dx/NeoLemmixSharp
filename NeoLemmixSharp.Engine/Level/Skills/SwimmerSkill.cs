@@ -26,7 +26,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingState
     public override void AssignToLemming(Lemming lemming)
     {
         lemming.State.IsSwimmer = true;
-        if (lemming.CurrentAction == DrownerAction.Instance)
+        if (lemming.CurrentAction == LemmingActionConstants.DrownerActionId)
         {
             SwimmerAction.Instance.TransitionLemmingToAction(lemming, false);
         }
