@@ -224,7 +224,7 @@ end;
             return;
 
         var selectedSkillId = LevelScreen.LevelControlPanel.SelectedSkillButtonId;
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(selectedSkillId);
+        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(selectedSkillId);
         if (skillTrackingData is null || skillTrackingData.EffectiveQuantity == 0)
             return;
 
@@ -292,7 +292,7 @@ end;
             return;
         }
 
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(
+        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(
             _queuedSkill.Id,
             _queuedSkillTribeId);
 

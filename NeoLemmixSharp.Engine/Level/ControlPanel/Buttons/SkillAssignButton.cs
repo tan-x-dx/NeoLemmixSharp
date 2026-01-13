@@ -34,7 +34,7 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
 
     public void UpdateSkillCount()
     {
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(SkillTrackingDataId);
+        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(SkillTrackingDataId);
         if (skillTrackingData is null)
         {
             ClearSkillCount();

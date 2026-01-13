@@ -346,7 +346,7 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
     {
         var skillTrackingDataId = SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
 
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(skillTrackingDataId);
+        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(skillTrackingDataId);
 
         LevelScreen.LevelCursor.SetSelectedTribe(skillTrackingData?.Tribe);
     }

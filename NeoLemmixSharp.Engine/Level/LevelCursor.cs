@@ -168,7 +168,7 @@ public sealed class LevelCursor
     {
         var skillTrackingDataId = LevelScreen.LevelControlPanel.SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
 
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(skillTrackingDataId);
+        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(skillTrackingDataId);
         if (skillTrackingData is null)
             return false;
 

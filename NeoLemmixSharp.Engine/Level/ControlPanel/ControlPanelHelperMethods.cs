@@ -35,7 +35,7 @@ public static class ControlPanelHelperMethods
 
             foreach (var classicSkill in allClassicSkills)
             {
-                var skillTrackingData = skillSetManager.GetSkillTrackingData(classicSkill.Id, EngineConstants.ClassicTribeId);
+                var skillTrackingData = skillSetManager.TryGetSkillTrackingData(classicSkill.Id, EngineConstants.ClassicTribeId);
 
                 int skillTrackingDataId;
                 if (skillTrackingData is null)

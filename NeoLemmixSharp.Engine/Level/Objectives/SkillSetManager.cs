@@ -51,7 +51,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
     }
 
     [Pure]
-    public SkillTrackingData? GetSkillTrackingData(int skillTrackingDataId)
+    public SkillTrackingData? TryGetSkillTrackingData(int skillTrackingDataId)
     {
         if ((uint)skillTrackingDataId >= (uint)_skillTrackingDataList.Length)
             return null;
@@ -60,7 +60,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
     }
 
     [Pure]
-    public SkillTrackingData? GetSkillTrackingData(int skillId, int? tribeId)
+    public SkillTrackingData? TryGetSkillTrackingData(int skillId, int? tribeId)
     {
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
@@ -74,12 +74,9 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
     public void ChangeSkillCount(LemmingSkill lemmingSkill, Tribe? tribe, int delta)
     {
-        foreach (var skillTrackingData in _skillTrackingDataList)
-        {
-            if (skillTrackingData.Skill == lemmingSkill &&
-                skillTrackingData.Tribe == tribe)
-                skillTrackingData.ChangeSkillCount(delta);
-        }
+        var relevantSkillTrackingData = TryGetSkillTrackingData(lemmingSkill.Id, tribe?.Id);
+
+        relevantSkillTrackingData?.ChangeSkillCount(delta);
     }
 
     [Pure]
