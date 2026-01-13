@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
@@ -259,7 +260,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IEquatable<int>
         [Pure]
         public int Hash(LemmingAction item) => item.Id;
         [Pure]
-        public LemmingAction UnHash(int index) => LemmingActions[index];
+        public LemmingAction UnHash(int index) => LemmingActions.At(index);
 
         public void CreateBitBuffer(out LemmingActionBitBuffer buffer) => buffer = new();
     }

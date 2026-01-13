@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Tribes;
@@ -34,7 +35,7 @@ public sealed class TribeManager :
     public int NumberOfItems => _tribes.Length;
 
     int IPerfectHasher<Tribe>.Hash(Tribe item) => item.Id;
-    Tribe IPerfectHasher<Tribe>.UnHash(int index) => _tribes[index];
+    Tribe IPerfectHasher<Tribe>.UnHash(int index) => _tribes.At(index);
     void IBitBufferCreator<BitBuffer32, Tribe>.CreateBitBuffer(out BitBuffer32 buffer) => buffer = new();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
