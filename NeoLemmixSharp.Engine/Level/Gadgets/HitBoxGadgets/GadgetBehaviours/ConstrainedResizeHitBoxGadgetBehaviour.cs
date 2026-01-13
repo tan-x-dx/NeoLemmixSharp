@@ -14,8 +14,6 @@ public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
     private readonly int _delta;
     private readonly int _max;
 
-    private ref int TickCountRef => ref _tickCount.IntValue;
-
     public ConstrainedResizeHitBoxGadgetBehaviour(
         nint dataHandle,
         GadgetIdentifier gadgetIdentifier,
@@ -33,13 +31,13 @@ public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
 
     protected override void PerformInternalBehaviour(int _)
     {
-        if (TickCountRef < _tickDelay)
+        if (_tickCount.IntValue < _tickDelay)
         {
-            TickCountRef++;
+            _tickCount.IntValue++;
             return;
         }
 
-        TickCountRef = 0;
+        _tickCount.IntValue = 0;
 
         var gadget = (HitBoxGadget)LevelScreen.GadgetManager.GetGadget(_gadgetIdentifier.GadgetId);
 

@@ -13,8 +13,6 @@ public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
     private readonly int _dw;
     private readonly int _dh;
 
-    private ref int TickCountRef => ref _tickCount.IntValue;
-
     public FreeResizeHitBoxGadgetBehaviour(
         nint dataHandle,
         GadgetIdentifier gadgetIdentifier,
@@ -32,13 +30,13 @@ public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
 
     protected override void PerformInternalBehaviour(int _)
     {
-        if (TickCountRef < _tickDelay)
+        if (_tickCount.IntValue < _tickDelay)
         {
-            TickCountRef++;
+            _tickCount.IntValue++;
             return;
         }
 
-        TickCountRef = 0;
+        _tickCount.IntValue = 0;
 
         var gadget = (HitBoxGadget)LevelScreen.GadgetManager.GetGadget(_gadgetIdentifier.GadgetId);
         gadget.Resize(_dw, _dh);

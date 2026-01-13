@@ -66,10 +66,10 @@ public sealed class ShimmierSkill : LemmingSkill
             orientation.MoveUp(lemmingPosition, 12));
         gadgetManager.GetAllItemsNearRegion(gadgetTestRegion1, out var gadgetsNearRegion1);
 
-        for (var i = -1; i < 4; i++)
+        for (var i = 0; i < 5; i++)
         {
-            if (PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveUp(lemmingPosition, 9 + i)) &&
-                !PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveUp(lemmingPosition, 8 + i)))
+            if (PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveUp(lemmingPosition, 8 + i)) &&
+                !PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveUp(lemmingPosition, 7 + i)))
                 return true;
         }
 

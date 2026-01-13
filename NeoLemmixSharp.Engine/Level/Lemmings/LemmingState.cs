@@ -18,19 +18,19 @@ public sealed class LemmingState
     public Color BodyColor { get; private set; }
     public Color PaintColor { get; private set; }
 
-    public bool HasPermanentSkill => (_states.IntValue & LemmingStateConstants.PermanentSkillBitMask) != 0U;
-    public bool HasLiquidAffinity => (_states.IntValue & LemmingStateConstants.LiquidAffinityBitMask) != 0U;
-    public bool HasSpecialFallingBehaviour => (_states.IntValue & LemmingStateConstants.SpecialFallingBehaviourBitMask) != 0U;
+    public bool HasPermanentSkill => (_states.UintValue & LemmingStateConstants.PermanentSkillBitMask) != 0U;
+    public bool HasLiquidAffinity => (_states.UintValue & LemmingStateConstants.LiquidAffinityBitMask) != 0U;
+    public bool HasSpecialFallingBehaviour => (_states.UintValue & LemmingStateConstants.SpecialFallingBehaviourBitMask) != 0U;
     public int NumberOfPermanentSkills => BitOperations.PopCount(_states.UintValue & LemmingStateConstants.PermanentSkillBitMask);
 
     /// <summary>
     /// Must be active and NOT zombie and NOT neutral
     /// </summary>
-    public bool CanHaveSkillsAssigned => (_states.IntValue & LemmingStateConstants.AssignableSkillBitMask) == (1U << LemmingStateConstants.ActiveBitIndex);
+    public bool CanHaveSkillsAssigned => (_states.UintValue & LemmingStateConstants.AssignableSkillBitMask) == (1U << LemmingStateConstants.ActiveBitIndex);
 
     public bool IsClimber
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.ClimberBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.ClimberBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -48,7 +48,7 @@ public sealed class LemmingState
 
     public bool IsFloater
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.FloaterBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.FloaterBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -67,7 +67,7 @@ public sealed class LemmingState
 
     public bool IsGlider
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.GliderBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.GliderBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -86,7 +86,7 @@ public sealed class LemmingState
 
     public bool IsSlider
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.SliderBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.SliderBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -104,7 +104,7 @@ public sealed class LemmingState
 
     public bool IsSwimmer
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.SwimmerBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.SwimmerBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -123,7 +123,7 @@ public sealed class LemmingState
 
     public bool IsDisarmer
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.DisarmerBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.DisarmerBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -141,7 +141,7 @@ public sealed class LemmingState
 
     public bool IsPermanentFastForwards
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.PermanentFastForwardBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.PermanentFastForwardBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -160,7 +160,7 @@ public sealed class LemmingState
 
     public bool IsAcidLemming
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.AcidLemmingBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.AcidLemmingBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -179,7 +179,7 @@ public sealed class LemmingState
 
     public bool IsWaterLemming
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.WaterLemmingBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.WaterLemmingBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -198,7 +198,7 @@ public sealed class LemmingState
 
     public bool IsActive
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.ActiveBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.ActiveBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -215,7 +215,7 @@ public sealed class LemmingState
 
     public bool IsNeutral
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.NeutralBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.NeutralBitIndex) & 1U) != 0U;
         set
         {
             ref var states = ref _states.UintValue;
@@ -233,7 +233,7 @@ public sealed class LemmingState
 
     public bool IsZombie
     {
-        get => ((_states.IntValue >>> LemmingStateConstants.ZombieBitIndex) & 1U) != 0U;
+        get => ((_states.UintValue >>> LemmingStateConstants.ZombieBitIndex) & 1U) != 0U;
         set
         {
             if (IsZombie == value)
