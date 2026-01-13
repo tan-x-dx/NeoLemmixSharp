@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -48,7 +47,7 @@ public static class NumberFormattingHelpers
 
             var requiredLength = GetNumberStringLengthBig((uint)n);
 
-            var destSpan = MemoryMarshal.CreateSpan(ref Unsafe.Add(ref MemoryMarshal.GetReference(destination), c), requiredLength);
+            var destSpan = Helpers.Slice(destination, c, requiredLength);
             c += WriteDigits(destSpan, (uint)n);
             destination.At(c++) = formatParameters.Separator;
         }

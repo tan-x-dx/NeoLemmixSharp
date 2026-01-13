@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
@@ -49,6 +50,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         _currentTotalSkillLimit.IntValue--;
     }
 
+    [Pure]
     public SkillTrackingData? GetSkillTrackingData(int skillTrackingDataId)
     {
         if ((uint)skillTrackingDataId >= (uint)_skillTrackingDataList.Length)
@@ -57,6 +59,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         return _skillTrackingDataList[skillTrackingDataId];
     }
 
+    [Pure]
     public SkillTrackingData? GetSkillTrackingData(int skillId, int? tribeId)
     {
         foreach (var skillTrackingData in _skillTrackingDataList)
@@ -79,6 +82,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         }
     }
 
+    [Pure]
     public bool HasClassicSkillsOnly()
     {
         var result = true;
@@ -117,6 +121,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
     /// </para>
     /// </summary>
     /// <returns></returns>
+    [Pure]
     public int EstimateBaseNumberOfSkillAssignments(GadgetManager gadgetManager)
     {
         var basicSkillAssignmentQuantity = 0;
