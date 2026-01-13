@@ -27,9 +27,10 @@ public sealed class JumperAction : LemmingAction
         1, 0,   0, -1,   0, -1,   1,  0,   0, -1,   0, -1
     ];
 
-    private static ReadOnlySpan<Point> JumpPositionsFor(int patternIndex) => MemoryMarshal
-        .Cast<int, Point>(RawLevelPositions)
-        .Slice(patternIndex * JumperPositionCount, JumperPositionCount);
+    private static ReadOnlySpan<Point> JumpPositionsFor(int patternIndex) => Helpers.Slice(
+        MemoryMarshal.Cast<int, Point>(RawLevelPositions),
+        patternIndex * JumperPositionCount,
+        JumperPositionCount);
 
     private JumperAction()
         : base(

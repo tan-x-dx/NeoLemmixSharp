@@ -72,6 +72,50 @@ public static class Helpers
     }
 
     /// <summary>
+    /// Creates a span slice.
+    /// 
+    /// Generally speaking, when slicing a span, the compiler emits checks to ensure the start and length are valid.
+    /// This method bypasses these checks. Only use this method if you can guarantee the inputs are valid!
+    /// </summary>
+    /// <typeparam name="T">The type of the span.</typeparam>
+    /// <param name="span">The span to slice from.</param>
+    /// <param name="start">The (assumed valid) start of the slice.</param>
+    /// <param name="length">The (assumed valid) desired length of the span.</param>
+    /// <returns>A span over the desired data.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Span<T> Slice<T>(Span<T> span, int start, int length)
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+
+        return MemoryMarshal.CreateSpan(ref Unsafe.Add(ref MemoryMarshal.GetReference(span), start), length);
+    }
+
+    /// <summary>
+    /// Creates a read-only span slice.
+    /// 
+    /// Generally speaking, when slicing a read-only span, the compiler emits checks to ensure the start and length are valid.
+    /// This method bypasses these checks. Only use this method if you can guarantee the inputs are valid!
+    /// </summary>
+    /// <typeparam name="T">The type of the read-only span.</typeparam>
+    /// <param name="span">The span to slice from.</param>
+    /// <param name="start">The (assumed valid) start of the slice.</param>
+    /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
+    /// <returns>A span over the desired data.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ReadOnlySpan<T> Slice<T>(ReadOnlySpan<T> span, int start, int length)
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+
+        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.Add(ref MemoryMarshal.GetReference(span), start), length);
+    }
+
+    /// <summary>
     /// Returns a mutable reference to the specified array index.
     /// 
     /// Generally speaking, when indexing into an array, the compiler emits checks to ensure the index is valid.
