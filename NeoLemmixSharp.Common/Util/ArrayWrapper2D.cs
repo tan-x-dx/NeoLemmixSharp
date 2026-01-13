@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -78,7 +77,7 @@ public readonly struct ArrayWrapper2D<T>
             _subRegion.Size.AssertEncompassesPoint(pos);
             var index = _arrayDimensions.GetIndexOfPoint(pos + _subRegion.Position);
 
-            return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_data), index);
+            return ref _data.At(index);
         }
     }
 
@@ -90,7 +89,7 @@ public readonly struct ArrayWrapper2D<T>
 
             var index = _arrayDimensions.GetIndexOfPoint(pos + _subRegion.Position);
 
-            return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_data), index);
+            return ref _data.At(index);
         }
 
         isValid = false;

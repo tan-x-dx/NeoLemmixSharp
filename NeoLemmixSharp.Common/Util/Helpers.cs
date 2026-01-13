@@ -72,6 +72,26 @@ public static class Helpers
     }
 
     /// <summary>
+    /// Returns a mutable reference to the specified array index.
+    /// 
+    /// Generally speaking, when indexing into an array, the compiler emits checks to ensure the index is valid.
+    /// This method bypasses these checks. Only use this method if you can guarantee the index is valid!
+    /// </summary>
+    /// <typeparam name="T">The type of the array.</typeparam>
+    /// <param name="array">The array to index into.</param>
+    /// <param name="index">The (assumed valid) index.</param>
+    /// <returns>A mutable reference to the data at that index</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ref T At<T>(this T[] array, int index)
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+#endif
+
+        return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), index);
+    }
+
+    /// <summary>
     /// Returns a mutable reference to the specified span index.
     /// 
     /// Generally speaking, when indexing into a span, the compiler emits checks to ensure the index is valid.

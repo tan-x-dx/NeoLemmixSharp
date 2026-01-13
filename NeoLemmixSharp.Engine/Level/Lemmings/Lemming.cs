@@ -128,17 +128,11 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public Lemming(
         nint dataHandle,
-        int id,
-        Orientation orientation,
-        FacingDirection facingDirection,
-        int initialActionId)
+        int id)
     {
         Id = id;
         _data = new LemmingData(dataHandle)
         {
-            Orientation = orientation,
-            FacingDirection = facingDirection,
-
             PreviousActionId = LemmingActionConstants.NoneActionId,
             NextActionId = LemmingActionConstants.NoneActionId,
             CountDownActionId = LemmingActionConstants.NoneActionId,
@@ -148,7 +142,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
             AnchorPosition = new(-1, -1),
             PreviousAnchorPosition = new(-1, -1)
         };
-        CurrentAction = LemmingAction.GetActionOrDefault(initialActionId);
+
         State = _data.CreateLemmingState(this);
         Renderer = new LemmingRenderer(this);
     }

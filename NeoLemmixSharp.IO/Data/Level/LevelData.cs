@@ -9,6 +9,7 @@ using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.IO.Data.Level;
 
@@ -175,6 +176,7 @@ public sealed class LevelData
         return null;
     }
 
+    [Pure]
     public int CalculateTotalNumberOfLemmingsInLevel()
     {
         var result = 0;
@@ -190,6 +192,7 @@ public sealed class LevelData
         return result;
     }
 
+    [Pure]
     private static int GetNumberOfLemmingsSpawnedFromGadget(GadgetInstanceData gadget)
     {
         return gadget.SpecificationData is HatchGadgetInstanceSpecificationData hatchGadgetSpecificationData

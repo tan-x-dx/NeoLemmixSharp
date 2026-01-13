@@ -1,9 +1,9 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 
@@ -99,7 +99,7 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
             if ((uint)hatchIndex >= (uint)_hatches.Length)
                 hatchIndex = 0;
 
-            var hatchGadget = Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_hatches), hatchIndex);
+            var hatchGadget = _hatches.At(hatchIndex);
 
             if (hatchGadget.CanReleaseLemmings())
             {
