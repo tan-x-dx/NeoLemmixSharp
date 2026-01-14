@@ -221,21 +221,21 @@ public sealed class GadgetManager :
 
     int IPerfectHasher<HitBoxGadget>.NumberOfItems => _allGadgets.Length;
     int IPerfectHasher<HitBoxGadget>.Hash(HitBoxGadget item) => item.Id;
-    HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets[index];
+    HitBoxGadget IPerfectHasher<HitBoxGadget>.UnHash(int index) => (HitBoxGadget)_allGadgets.At(index);
 
     void IBitBufferCreator<RawBitBuffer, HitBoxGadget>.CreateBitBuffer(out RawBitBuffer buffer) =>
         buffer = GetNextRawBitBuffer();
 
     int IPerfectHasher<GadgetTrigger>.NumberOfItems => _allTriggers.Length;
     int IPerfectHasher<GadgetTrigger>.Hash(GadgetTrigger item) => item.Id;
-    GadgetTrigger IPerfectHasher<GadgetTrigger>.UnHash(int index) => _allTriggers[index];
+    GadgetTrigger IPerfectHasher<GadgetTrigger>.UnHash(int index) => _allTriggers.At(index);
 
     void IBitBufferCreator<ArrayBitBuffer, GadgetTrigger>.CreateBitBuffer(out ArrayBitBuffer buffer) =>
         buffer = new(_allTriggers.Length);
 
     int IPerfectHasher<GadgetBehaviour>.NumberOfItems => _allBehaviours.Length;
     int IPerfectHasher<GadgetBehaviour>.Hash(GadgetBehaviour item) => item.Id;
-    GadgetBehaviour IPerfectHasher<GadgetBehaviour>.UnHash(int index) => _allBehaviours[index];
+    GadgetBehaviour IPerfectHasher<GadgetBehaviour>.UnHash(int index) => _allBehaviours.At(index);
 
     private unsafe RawBitBuffer GetNextRawBitBuffer()
     {

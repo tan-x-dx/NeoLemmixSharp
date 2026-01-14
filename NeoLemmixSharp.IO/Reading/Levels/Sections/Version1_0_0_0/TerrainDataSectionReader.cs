@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.FileFormats;
@@ -65,8 +66,8 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         return new TerrainData
         {
             GroupName = null,
-            StyleIdentifier = _stringIdLookup[styleId],
-            PieceIdentifier = _stringIdLookup[pieceId],
+            StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),
+            PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
 
             Position = position,
 

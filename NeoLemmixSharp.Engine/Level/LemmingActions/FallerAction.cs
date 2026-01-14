@@ -156,9 +156,13 @@ public sealed class FallerAction : LemmingAction
 
         return currentActionId switch
         {
-            LemmingActionConstants.WalkerActionId or LemmingActionConstants.BasherActionId => 3,
-            LemmingActionConstants.MinerActionId or LemmingActionConstants.DiggerActionId => 0,
-            LemmingActionConstants.BlockerActionId or LemmingActionConstants.JumperActionId or LemmingActionConstants.LasererActionId => -1,
+            LemmingActionConstants.WalkerActionId => 3,
+            LemmingActionConstants.BlockerActionId => -1,
+            LemmingActionConstants.BasherActionId => 3,
+            LemmingActionConstants.MinerActionId => 0,
+            LemmingActionConstants.DiggerActionId => 0,
+            LemmingActionConstants.JumperActionId => -1,
+            LemmingActionConstants.LasererActionId => -1,
             _ => 1
         };
     }

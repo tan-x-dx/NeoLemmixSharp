@@ -103,7 +103,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     {
         var chunkPointer = PointerForChunk(chunkPosition);
         var chunkSpan = Helpers.CreateReadOnlySpan<uint>(chunkPointer, _bitArraySize);
-        var popCount = BitArrayHelpers.GetPopCount(chunkPointer, (uint)_bitArraySize);
+        var popCount = BitArrayHelpers.GetPopCount(chunkPointer, _bitArraySize);
 
         result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, chunkSpan, popCount);
     }
@@ -148,7 +148,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         _cachedBottomRightChunkQuery = bottomRightChunk;
         CacheLatestQuery();
 
-        _cachedQueryPopCount = BitArrayHelpers.GetPopCount(_cachedQueryScratchSpacePointer, (uint)_bitArraySize);
+        _cachedQueryPopCount = BitArrayHelpers.GetPopCount(_cachedQueryScratchSpacePointer, _bitArraySize);
         result = new BitArrayEnumerable<TPerfectHasher, T>(
             _hasher,
             Helpers.CreateReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize),

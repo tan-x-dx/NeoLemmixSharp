@@ -126,7 +126,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
             FontBank.CountDownFont.RenderTextSpan(
                 spriteBatch,
-                CountDownCharsSpan,
+                _countDownCharBuffer,
                 projectionX + countDownPositionOffset.X,
                 projectionY + countDownPositionOffset.Y,
                 1,

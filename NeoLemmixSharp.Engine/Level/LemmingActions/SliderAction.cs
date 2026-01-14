@@ -30,12 +30,12 @@ public sealed class SliderAction : LemmingAction
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         if (!SliderTerrainChecks(lemming, orientation, MaxYCheckOffset, in gadgetsNearLemming) &&
-            lemming.CurrentAction == DrownerAction.Instance)
+            lemming.CurrentAction == LemmingActionConstants.DrownerActionId)
             return false;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         return SliderTerrainChecks(lemming, orientation, MaxYCheckOffset, in gadgetsNearLemming) ||
-               lemming.CurrentAction != DrownerAction.Instance;
+               lemming.CurrentAction != LemmingActionConstants.DrownerActionId;
     }
 
     public static bool SliderTerrainChecks(

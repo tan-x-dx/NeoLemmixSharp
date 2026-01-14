@@ -16,12 +16,6 @@ public readonly struct Interval : IEquatable<Interval>
         Length = Math.Max(length, 0);
     }
 
-    private Interval(int start, int length, byte _)
-    {
-        Start = start;
-        Length = length;
-    }
-
     public int End => Start + Length;
 
     public bool Intersects(Interval other)

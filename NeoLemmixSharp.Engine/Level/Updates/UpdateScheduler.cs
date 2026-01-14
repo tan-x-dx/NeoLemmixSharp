@@ -77,36 +77,15 @@ end;
 
     public void Tick()
     {
-        LevelScreen.LevelControlPanel.TextualData.ClearTextualData();
-        LevelScreen.LevelInputController.Tick();
-        LevelScreen.LevelCursor.Tick();
-
-        HandleMouseInput();
         var shouldContinue = HandleKeyboardInput();
         if (!shouldContinue)
             return;
+
         HandleCursor();
         CheckForQueuedAction();
         LevelScreen.RewindManager.CheckForReplayAction(_elapsedTicks);
         HandleSkillAssignment();
         TickLevel();
-    }
-
-    private static void HandleMouseInput()
-    {
-        LevelScreen.LevelViewport.HandleMouseInput(LevelScreen.LevelInputController.InputController);
-
-        if (LevelScreen.LevelViewport.MouseIsInLevelViewPort)
-        {
-            LevelScreen.LevelCursor.SetCursorPosition(new Point(
-                LevelScreen.HorizontalBoundaryBehaviour.MouseViewPortCoordinate,
-                LevelScreen.VerticalBoundaryBehaviour.MouseViewPortCoordinate));
-        }
-        else
-        {
-            LevelScreen.LevelCursor.SetCursorPosition(new Point(-4000, -4000));
-            LevelScreen.LevelControlPanel.HandleMouseInput();
-        }
     }
 
     private bool HandleKeyboardInput()
@@ -162,9 +141,7 @@ end;
     private static void UpdateControlPanelButtonStatus(ButtonType buttonType, bool isSelected)
     {
         var button = LevelScreen.LevelControlPanel.GetControlPanelButtonOfType(buttonType);
-        if (button is null)
-            return;
-        button.IsSelected = isSelected;
+        button?.IsSelected = isSelected;
     }
 
     private void TickLevel()
@@ -190,14 +167,16 @@ end;
         LevelScreen.LemmingManager.Tick(isMajorTick);
         LevelScreen.GadgetManager.Tick(isMajorTick);
 
-        LevelScreen.LevelTimer.SetElapsedTicks(_elapsedTicks);
-        LevelScreen.RewindManager.Tick(_elapsedTicks);
+        var elapsedTicks = _elapsedTicks;
+
+        LevelScreen.LevelTimer.SetElapsedTicks(elapsedTicks);
+        LevelScreen.RewindManager.Tick(elapsedTicks);
         LevelScreen.TerrainPainter.RepaintTerrain();
 
-        var newElapsedTicks = _elapsedTicks + 1;
-        _elapsedTicks = newElapsedTicks;
-        newElapsedTicks %= EngineConstants.FastForwardSpeedMultiplier;
-        _elapsedTicksModuloFastForwardSpeed = newElapsedTicks;
+        elapsedTicks++;
+        _elapsedTicks = elapsedTicks;
+        elapsedTicks %= EngineConstants.FastForwardSpeedMultiplier;
+        _elapsedTicksModuloFastForwardSpeed = elapsedTicks;
 
         LevelScreen.LevelObjectiveManager.RecheckLevelObjective();
     }
@@ -224,7 +203,7 @@ end;
             return;
 
         var selectedSkillId = LevelScreen.LevelControlPanel.SelectedSkillButtonId;
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(selectedSkillId);
+        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(selectedSkillId);
         if (skillTrackingData is null || skillTrackingData.EffectiveQuantity == 0)
             return;
 
@@ -292,7 +271,7 @@ end;
             return;
         }
 
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(
+        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(
             _queuedSkill.Id,
             _queuedSkillTribeId);
 

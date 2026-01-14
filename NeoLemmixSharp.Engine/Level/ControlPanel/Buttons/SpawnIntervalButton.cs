@@ -94,7 +94,7 @@ public sealed class SpawnIntervalButton : ControlPanelButton
     public void UpdateNumericalValue()
     {
         var numericalValue = _spawnIntervalValueGetter.GetNumericalValue();
-        _numberOfDigitsToRender = NumberFormattingHelpers.GetNumberStringLengthSmall(numericalValue);
+        _numberOfDigitsToRender = NumberFormattingHelpers.GetNumberStringLength(numericalValue);
         NumberFormattingHelpers.WriteDigits(_spawnIntervalCharBuffer, numericalValue);
     }
 

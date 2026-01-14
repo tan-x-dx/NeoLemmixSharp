@@ -27,9 +27,10 @@ public sealed class JumperAction : LemmingAction
         1, 0,   0, -1,   0, -1,   1,  0,   0, -1,   0, -1
     ];
 
-    private static ReadOnlySpan<Point> JumpPositionsFor(int patternIndex) => MemoryMarshal
-        .Cast<int, Point>(RawLevelPositions)
-        .Slice(patternIndex * JumperPositionCount, JumperPositionCount);
+    private static ReadOnlySpan<Point> JumpPositionsFor(int patternIndex) => Helpers.Slice(
+        MemoryMarshal.Cast<int, Point>(RawLevelPositions),
+        patternIndex * JumperPositionCount,
+        JumperPositionCount);
 
     private JumperAction()
         : base(
@@ -96,7 +97,7 @@ public sealed class JumperAction : LemmingAction
         {
             lemmingJumpPatterns.At(i) = lemmingPosition;
 
-            var position = patternSpan[i];
+            var position = patternSpan.At(i);
 
             if (position.X == 0 && position.Y == 0)
                 break;
@@ -271,8 +272,8 @@ public sealed class JumperAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        if (lemming.CurrentAction == ClimberAction.Instance ||
-            lemming.CurrentAction == SliderAction.Instance)
+        if (lemming.CurrentAction == LemmingActionConstants.ClimberActionId ||
+            lemming.CurrentAction == LemmingActionConstants.SliderActionId)
         {
             lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
             lemming.AnchorPosition = lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX);

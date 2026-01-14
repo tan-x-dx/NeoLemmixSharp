@@ -128,19 +128,11 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public Lemming(
         nint dataHandle,
-        int id,
-        Orientation orientation,
-        FacingDirection facingDirection,
-        int initialActionId,
-        int tribeId)
+        int id)
     {
         Id = id;
         _data = new LemmingData(dataHandle)
         {
-            Orientation = orientation,
-            FacingDirection = facingDirection,
-            TribeId = tribeId,
-
             PreviousActionId = LemmingActionConstants.NoneActionId,
             NextActionId = LemmingActionConstants.NoneActionId,
             CountDownActionId = LemmingActionConstants.NoneActionId,
@@ -150,7 +142,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
             AnchorPosition = new(-1, -1),
             PreviousAnchorPosition = new(-1, -1)
         };
-        CurrentAction = LemmingAction.GetActionOrDefault(initialActionId);
+
         State = _data.CreateLemmingState(this);
         Renderer = new LemmingRenderer(this);
     }
@@ -162,7 +154,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         _data.CurrentBounds = CurrentAction.GetLemmingBounds(this);
 
         var initialAction = CurrentAction;
-        if (initialAction == NoneAction.Instance)
+        if (initialAction == LemmingActionConstants.NoneActionId)
         {
             initialAction = WalkerAction.Instance;
         }
@@ -213,7 +205,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (!HandleLemmingAction(in gadgetsNearLemming)) return;
         if (!CheckLevelBoundaries()) return;
         if (!CheckTriggerAreas(false, gadgetCheckPositions, in gadgetsNearLemming)) return;
-        if (CurrentAction == ExiterAction.Instance) return;
+        if (CurrentAction == LemmingActionConstants.ExiterActionId) return;
         if (State.IsZombie) return;
         if (!LevelScreen.LemmingManager.AnyZombies()) return;
 
@@ -300,8 +292,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (frame == CurrentAction.NumberOfAnimationFrames)
         {
             // Floater and Glider start cycle at frame 9!
-            if (CurrentAction == FloaterAction.Instance ||
-                CurrentAction == GliderAction.Instance)
+            if (CurrentAction == LemmingActionConstants.FloaterActionId ||
+                CurrentAction == LemmingActionConstants.GliderActionId)
             {
                 frame = EngineConstants.FloaterGliderStartCycleFrame;
             }
@@ -316,8 +308,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (frame == CurrentAction.MaxPhysicsFrames)
         {
             // Floater and Glider start cycle at frame 9!
-            if (CurrentAction == FloaterAction.Instance ||
-                CurrentAction == GliderAction.Instance)
+            if (CurrentAction == LemmingActionConstants.FloaterActionId ||
+                CurrentAction == LemmingActionConstants.GliderActionId)
             {
                 frame = EngineConstants.FloaterGliderStartCycleFrame;
             }
@@ -437,9 +429,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         // If we're at the end of the check positions and Next action is not None
         // then transition. However, if NextAction is SplatterAction and there's water
         // at the position, the water takes precedence over splatting
-        if (NextAction != NoneAction.Instance &&
+        if (NextAction != LemmingActionConstants.NoneActionId &&
             checkPosition == _data.AnchorPosition &&
-            (NextAction != SplatterAction.Instance ||
+            (NextAction != LemmingActionConstants.SplatterActionId ||
             filter.HitBoxBehaviour != HitBoxInteractionType.Liquid))
         {
             NextAction.TransitionLemmingToAction(this, false);
@@ -486,12 +478,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         void* otherPointer = otherLemming._data.GetPointer();
         void* thisPointer = _data.GetPointer();
         CopyLemmingSnapshotBytes(otherPointer, thisPointer);
-
-        SetReferenceDataFromSnapshot();
-    }
-
-    private void SetReferenceDataFromSnapshot()
-    {
         OnSnapshotApplied();
 
         Renderer.ResetPosition();
@@ -505,13 +491,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         sourceSpan.CopyTo(destinationSpan);
     }
 
-    public void SetRawData(int tribeId, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
-    {
-        State.SetData(tribeId, rawStateData);
-        _data.Orientation = orientation;
-        _data.FacingDirection = facingDirection;
-    }
-
     public void OnSnapshotApplied()
     {
         State.UpdateHairAndBodyColors();
@@ -521,6 +500,13 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         CurrentAction = LemmingAction.GetActionOrDefault(_data.CurrentActionId);
         NextAction = LemmingAction.GetActionOrDefault(_data.NextActionId);
         CountDownAction = LemmingAction.GetActionOrDefault(_data.CountDownActionId);
+    }
+
+    public void SetRawData(int tribeId, uint rawStateData, Orientation orientation, FacingDirection facingDirection)
+    {
+        State.SetData(tribeId, rawStateData);
+        _data.Orientation = orientation;
+        _data.FacingDirection = facingDirection;
     }
 
     [DebuggerStepThrough]

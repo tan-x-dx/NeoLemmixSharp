@@ -20,7 +20,7 @@ internal static class GadgetConverter
         {
             StyleIdentifier = neoLemmixGadgetArchetypeData.StyleIdentifier,
             PieceIdentifier = neoLemmixGadgetArchetypeData.GadgetPieceIdentifier,
-            GadgetName = neoLemmixGadgetArchetypeData.GadgetPieceIdentifier.ToString(),
+            GadgetName = new GadgetName(neoLemmixGadgetArchetypeData.GadgetPieceIdentifier.ToString()),
             TextureFilePath = neoLemmixGadgetArchetypeData.AnimationData.First(x => !string.IsNullOrWhiteSpace(x.TextureFilePath)).TextureFilePath!,
             BaseSpriteSize = baseSpriteSize,
             SpecificationData = specificationData,
@@ -76,7 +76,7 @@ internal static class GadgetConverter
         var result = new HatchGadgetStateArchetypeData[EngineConstants.ExpectedNumberOfHatchGadgetStates];
         result[0] = new HatchGadgetStateArchetypeData
         {
-            StateName = "Closed",
+            StateName = new GadgetStateName("Closed"),
             Type = HatchGadgetStateType.Closed,
 
             InnateTriggers = [],
@@ -85,7 +85,7 @@ internal static class GadgetConverter
         };
         result[1] = new HatchGadgetStateArchetypeData
         {
-            StateName = "Opening",
+            StateName = new GadgetStateName("Opening"),
             Type = HatchGadgetStateType.Opening,
 
             InnateTriggers = [],
@@ -94,7 +94,7 @@ internal static class GadgetConverter
         };
         result[2] = new HatchGadgetStateArchetypeData
         {
-            StateName = "Open",
+            StateName = new GadgetStateName("Open"),
             Type = HatchGadgetStateType.Open,
 
             InnateTriggers = [],
@@ -103,7 +103,7 @@ internal static class GadgetConverter
         };
         result[3] = new HatchGadgetStateArchetypeData
         {
-            StateName = "Closing",
+            StateName = new GadgetStateName("Closing"),
             Type = HatchGadgetStateType.Closing,
 
             InnateTriggers = [],

@@ -69,7 +69,7 @@ public sealed class RewindManager : IDisposable
             lemming,
             previouslyRecordedSkillAssignment);
 
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(
+        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(
             previouslyRecordedSkillAssignment->SkillId,
             previouslyRecordedSkillAssignment->TribeId);
 

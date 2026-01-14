@@ -6,10 +6,21 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common;
 
+public static class FacingDirectionConstants
+{
+    public const int NumberOfFacingDirections = 2;
+
+    public const int RightFacingDirectionId = 0;
+    public const string RightFacingDirectionName = "Right";
+
+    public const int LeftFacingDirectionId = 1;
+    public const string LeftFacingDirectionName = "Left";
+}
+
 public readonly struct FacingDirection : IEquatable<FacingDirection>
 {
-    public static readonly FacingDirection Right = new(EngineConstants.RightFacingDirectionId);
-    public static readonly FacingDirection Left = new(EngineConstants.LeftFacingDirectionId);
+    public static readonly FacingDirection Right = new(FacingDirectionConstants.RightFacingDirectionId);
+    public static readonly FacingDirection Left = new(FacingDirectionConstants.LeftFacingDirectionId);
 
     public readonly int Id;
     [Pure]
@@ -51,8 +62,8 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>
     {
         ReadOnlySpan<string> FacingDirectionNames =
         [
-            EngineConstants.RightFacingDirectionName,
-            EngineConstants.LeftFacingDirectionName
+            FacingDirectionConstants.RightFacingDirectionName,
+            FacingDirectionConstants.LeftFacingDirectionName
         ];
 
         return FacingDirectionNames[Id & 1];

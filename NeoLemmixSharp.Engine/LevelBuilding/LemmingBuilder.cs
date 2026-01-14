@@ -1,4 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Level;
 
@@ -27,43 +29,33 @@ public sealed class LemmingBuilder
         var i = 0;
         nint handle = _lemmingDataBuffer.Handle;
 
-        for (; i < _levelData.PrePlacedLemmingData.Count; i++)
+        while (i < _levelData.PrePlacedLemmingData.Count)
         {
             var prototype = _levelData.PrePlacedLemmingData[i];
 
-            var lemming = new Lemming(
-                handle,
-                i,
-                prototype.Orientation,
-                prototype.FacingDirection,
-                prototype.InitialLemmingActionId,
-                prototype.TribeId)
-            {
-                AnchorPosition = prototype.Position
-            };
+            var lemming = new Lemming(handle, i);
+
+            lemming.AnchorPosition = prototype.Position;
+            lemming.Orientation = prototype.Orientation;
+            lemming.FacingDirection = prototype.FacingDirection;
+            lemming.CurrentAction = LemmingAction.GetActionOrDefault(prototype.InitialLemmingActionId);
 
             lemming.State.SetData(prototype.TribeId, prototype.State);
 
-            _lemmingList[i] = lemming;
+            _lemmingList.At(i++) = lemming;
             handle += LemmingData.LemmingDataSize;
         }
 
         while (i < _lemmingList.Length)
         {
-            var lemming = new Lemming(
-                handle,
-                i,
-                Orientation.Down,
-                FacingDirection.Right,
-                LemmingActionConstants.NoneActionId,
-                EngineConstants.ClassicTribeId)
-            {
-                AnchorPosition = new Point()
-            };
+            var lemming = new Lemming(handle, i);
 
-            _lemmingList[i] = lemming;
+            lemming.AnchorPosition = default;
+            lemming.Orientation = Orientation.Down;
+            lemming.FacingDirection = FacingDirection.Right;
+            lemming.CurrentAction = NoneAction.Instance;
 
-            i++;
+            _lemmingList.At(i++) = lemming;
             handle += LemmingData.LemmingDataSize;
         }
 

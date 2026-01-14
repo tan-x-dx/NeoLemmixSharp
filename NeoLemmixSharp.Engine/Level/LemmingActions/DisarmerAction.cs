@@ -24,7 +24,7 @@ public sealed class DisarmerAction : LemmingAction
         lemming.DisarmingFrames--;
         if (lemming.DisarmingFrames <= 0)
         {
-            if (lemming.NextAction == NoneAction.Instance)
+            if (lemming.NextAction == LemmingActionConstants.NoneActionId)
             {
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             }

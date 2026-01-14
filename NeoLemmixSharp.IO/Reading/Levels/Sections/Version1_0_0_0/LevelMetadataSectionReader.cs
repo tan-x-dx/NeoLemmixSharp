@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
@@ -30,7 +31,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
         levelData.LevelAuthor = _stringIdLookup[stringId];
 
         stringId = reader.Read16BitUnsignedInteger();
-        levelData.LevelStyle = _stringIdLookup[stringId];
+        levelData.LevelStyle = new StyleIdentifier(_stringIdLookup[stringId]);
 
         levelData.LevelId = new LevelIdentifier(reader.Read64BitUnsignedInteger());
         levelData.Version = new LevelVersion(reader.Read64BitUnsignedInteger());
@@ -83,7 +84,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         var rawBytes = reader.ReadBytes(NumberOfBytesWrittenForBackgroundData);
 
-        int rawBackgroundType = rawBytes[0];
+        int rawBackgroundType = rawBytes.At(0);
         var backgroundType = (BackgroundType)rawBackgroundType;
 
         levelData.LevelBackground = backgroundType switch
@@ -109,7 +110,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         BackgroundData ReadTextureBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            ushort backgroundStringId = Unsafe.ReadUnaligned<ushort>(in rawBytes[1]);
+            ushort backgroundStringId = Unsafe.ReadUnaligned<ushort>(in rawBytes.At(1));
 
             return new BackgroundData(_stringIdLookup[backgroundStringId]);
         }

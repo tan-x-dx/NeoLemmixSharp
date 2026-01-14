@@ -133,7 +133,7 @@ public sealed class LevelCursor
             return false;
 
         // Select only walkers
-        if (_selectOnlyWalkers && lemming.CurrentAction != WalkerAction.Instance &&
+        if (_selectOnlyWalkers && lemming.CurrentAction != LemmingActionConstants.WalkerActionId &&
             !(false)) //and(not(IsHighlight or IsReplay))
             return false;
 
@@ -168,7 +168,7 @@ public sealed class LevelCursor
     {
         var skillTrackingDataId = LevelScreen.LevelControlPanel.SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
 
-        var skillTrackingData = LevelScreen.SkillSetManager.GetSkillTrackingData(skillTrackingDataId);
+        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(skillTrackingDataId);
         if (skillTrackingData is null)
             return false;
 

@@ -116,10 +116,12 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     // Special implementation for individual bytes, since it's simpler to execute and also a lot more common.
     public unsafe byte Read8BitUnsignedInteger()
     {
-        FileReadingException.ReaderAssert(_position < _byteBuffer.Length, "Reached end of file!");
+        var position = _position;
+        FileReadingException.ReaderAssert(position < _byteBuffer.Length, "Reached end of file!");
 
-        byte* pointer = (byte*)_byteBuffer.Handle + _position;
-        _position++;
+        byte* pointer = (byte*)_byteBuffer.Handle + position;
+        position++;
+        _position = position;
 
         return *pointer;
     }
@@ -133,7 +135,8 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     private unsafe T ReadUnmanaged<T>()
         where T : unmanaged
     {
-        var newPosition = _position + sizeof(T);
+        var newPosition = sizeof(T);
+        newPosition += _position;
         FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
 
         byte* pointer = (byte*)_byteBuffer.Handle + _position;

@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
@@ -78,18 +79,18 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
 
         if (backgroundData is null)
         {
-            rawBytes[0] = (byte)BackgroundType.NoBackgroundSpecified;
+            rawBytes.At(0) = (byte)BackgroundType.NoBackgroundSpecified;
         }
         else if (backgroundData.IsSolidColor)
         {
-            rawBytes[0] = (byte)BackgroundType.SolidColorBackground;
+            rawBytes.At(0) = (byte)BackgroundType.SolidColorBackground;
             ReadWriteHelpers.WriteArgbBytes(backgroundData.Color, rawBytes[1..]);
         }
         else
         {
-            rawBytes[0] = (byte)BackgroundType.TextureBackground;
+            rawBytes.At(0) = (byte)BackgroundType.TextureBackground;
             ushort backgroundStringId = _stringIdLookup.GetStringId(backgroundData.BackgroundImageName);
-            Unsafe.WriteUnaligned(ref rawBytes[1], backgroundStringId);
+            Unsafe.WriteUnaligned(ref rawBytes.At(1), backgroundStringId);
         }
 
         writer.WriteBytes(rawBytes);

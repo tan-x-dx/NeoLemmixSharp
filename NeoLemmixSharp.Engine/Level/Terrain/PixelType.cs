@@ -9,17 +9,17 @@ public enum PixelType : ushort
 {
     Empty = 0,
 
-    DownSolid = 1 << (EngineConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
-    LeftSolid = 1 << (EngineConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
-    UpSolid = 1 << (EngineConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
-    RightSolid = 1 << (EngineConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
+    DownSolid = 1 << (OrientationConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
+    LeftSolid = 1 << (OrientationConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
+    UpSolid = 1 << (OrientationConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
+    RightSolid = 1 << (OrientationConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeSolidShiftOffset),
 
     SolidToAllOrientations = DownSolid | LeftSolid | UpSolid | RightSolid,
 
-    DownArrow = 1 << (EngineConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
-    LeftArrow = 1 << (EngineConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
-    UpArrow = 1 << (EngineConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
-    RightArrow = 1 << (EngineConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
+    DownArrow = 1 << (OrientationConstants.DownOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
+    LeftArrow = 1 << (OrientationConstants.LeftOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
+    UpArrow = 1 << (OrientationConstants.UpOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
+    RightArrow = 1 << (OrientationConstants.RightOrientationRotNum + PixelTypeHelpers.PixelTypeArrowShiftOffset),
 
     ArrowMask = DownArrow | LeftArrow | UpArrow | RightArrow,
     ArrowInverseMask = ushort.MaxValue ^ ArrowMask,

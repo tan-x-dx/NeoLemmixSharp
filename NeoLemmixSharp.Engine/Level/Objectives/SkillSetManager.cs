@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
@@ -49,7 +50,8 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         _currentTotalSkillLimit.IntValue--;
     }
 
-    public SkillTrackingData? GetSkillTrackingData(int skillTrackingDataId)
+    [Pure]
+    public SkillTrackingData? TryGetSkillTrackingData(int skillTrackingDataId)
     {
         if ((uint)skillTrackingDataId >= (uint)_skillTrackingDataList.Length)
             return null;
@@ -57,7 +59,8 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         return _skillTrackingDataList[skillTrackingDataId];
     }
 
-    public SkillTrackingData? GetSkillTrackingData(int skillId, int? tribeId)
+    [Pure]
+    public SkillTrackingData? TryGetSkillTrackingData(int skillId, int? tribeId)
     {
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
@@ -71,14 +74,12 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
     public void ChangeSkillCount(LemmingSkill lemmingSkill, Tribe? tribe, int delta)
     {
-        foreach (var skillTrackingData in _skillTrackingDataList)
-        {
-            if (skillTrackingData.Skill == lemmingSkill &&
-                skillTrackingData.Tribe == tribe)
-                skillTrackingData.ChangeSkillCount(delta);
-        }
+        var relevantSkillTrackingData = TryGetSkillTrackingData(lemmingSkill.Id, tribe?.Id);
+
+        relevantSkillTrackingData?.ChangeSkillCount(delta);
     }
 
+    [Pure]
     public bool HasClassicSkillsOnly()
     {
         var result = true;
@@ -117,6 +118,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
     /// </para>
     /// </summary>
     /// <returns></returns>
+    [Pure]
     public int EstimateBaseNumberOfSkillAssignments(GadgetManager gadgetManager)
     {
         var basicSkillAssignmentQuantity = 0;

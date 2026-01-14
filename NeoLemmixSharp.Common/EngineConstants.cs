@@ -26,32 +26,6 @@ public static class EngineConstants
 
     #region Engine Constants
 
-    public const int NumberOfFacingDirections = 2;
-
-    public const int RightFacingDirectionId = 0;
-    public const string RightFacingDirectionName = "Right";
-
-    public const int LeftFacingDirectionId = 1;
-    public const string LeftFacingDirectionName = "Left";
-
-    public const int NumberOfOrientations = 4;
-
-    public const int DownOrientationRotNum = 0;
-    public const string DownOrientationName = "Down";
-    public const float DownOrientationRotationAngle = 0.0f;
-
-    public const int LeftOrientationRotNum = 1;
-    public const string LeftOrientationName = "Left";
-    public const float LeftOrientationRotationAngle = MathF.PI * 1.5f;
-
-    public const int UpOrientationRotNum = 2;
-    public const string UpOrientationName = "Up";
-    public const float UpOrientationRotationAngle = MathF.PI;
-
-    public const int RightOrientationRotNum = 3;
-    public const string RightOrientationName = "Right";
-    public const float RightOrientationRotationAngle = MathF.PI * 0.5f;
-
     public const int MaxNumberOfTribes = 6;
     public const int ClassicTribeId = 0;
 

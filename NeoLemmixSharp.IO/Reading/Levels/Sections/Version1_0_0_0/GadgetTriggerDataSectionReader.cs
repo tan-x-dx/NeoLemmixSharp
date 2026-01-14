@@ -1,5 +1,7 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
+using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
@@ -36,9 +38,9 @@ internal sealed class GadgetTriggerDataSectionReader : LevelDataSectionReader
         {
             SourceGadgetIdentifier = new GadgetIdentifier(sourceGadgetIdentifier),
             SourceGadgetStateId = sourceGadgetStateId,
-            SourceLinkBehaviourName = _stringIdLookup[sourceGadgetBehaviourNameId],
+            SourceLinkBehaviourName = new GadgetBehaviourName(_stringIdLookup[sourceGadgetBehaviourNameId]),
             TargetGadgetIdentifier = new GadgetIdentifier(targetGadgetIdentifier),
-            TargetGadgetInputName = _stringIdLookup[targetGadgetInputNameId]
+            TargetGadgetInputName = new GadgetTriggerName(_stringIdLookup[targetGadgetInputNameId])
         };
     }
 }

@@ -13,8 +13,6 @@ public sealed class MoveGadgetBehaviour : GadgetBehaviour
     private readonly Point _delta;
     private readonly Point _limitPoint;
 
-    private ref int TickCountRef => ref _tickCount.IntValue;
-
     public MoveGadgetBehaviour(
         nint dataHandle,
         GadgetIdentifier gadgetIdentifier,
@@ -32,13 +30,13 @@ public sealed class MoveGadgetBehaviour : GadgetBehaviour
 
     protected override void PerformInternalBehaviour(int _)
     {
-        if (TickCountRef < _tickDelay)
+        if (_tickCount.IntValue < _tickDelay)
         {
-            TickCountRef++;
+            _tickCount.IntValue++;
             return;
         }
 
-        TickCountRef = 0;
+        _tickCount.IntValue = 0;
 
         var gadget = (IMoveableGadget)LevelScreen.GadgetManager.GetGadget(_gadgetIdentifier.GadgetId);
         var constrainedDelta = GetConstrainedDelta(gadget.Position);

@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
+﻿using NeoLemmixSharp.Common.Util;
+
+namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat;
 
 public ref struct TokenEnumerator
 {
@@ -21,7 +23,7 @@ public ref struct TokenEnumerator
 
         while (_index < _input.Length)
         {
-            var c = _input[_index++];
+            var c = _input.At(_index++);
 
             if (char.IsWhiteSpace(c))
             {
@@ -49,6 +51,6 @@ public ref struct TokenEnumerator
         return true;
     }
 
-    public readonly ReadOnlySpan<char> Current => _input.Slice(_spanStart, _spanLength);
+    public readonly ReadOnlySpan<char> Current => Helpers.Slice(_input, _spanStart, _spanLength);
     public readonly int CurrentSpanStart => _spanStart;
 }

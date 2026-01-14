@@ -38,7 +38,7 @@ public sealed class GadgetRendererBuilder
             if (exists)
                 return cachedTexture!;
 
-            cachedTexture = LoadSprite(key);
+            cachedTexture = LoadSprite(gadgetInstanceData.StyleIdentifier, gadgetInstanceData.PieceIdentifier);
 
             //AssertSpriteDimensionsMakeSense(gadgetArchetypeBuilder, new Size(cachedTexture.Width, cachedTexture.Height));
 
@@ -46,20 +46,14 @@ public sealed class GadgetRendererBuilder
         }
     }
 
-    private static Texture2D LoadSprite(StylePiecePair stylePiecePair)
+    private static Texture2D LoadSprite(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier)
     {
-        var rootFilePath = Path.Combine(
-            RootDirectoryManager.StyleFolderDirectory,
-            stylePiecePair.StyleIdentifier.ToString(),
-            DefaultFileExtensions.GadgetFolderName,
-            stylePiecePair.PieceIdentifier.ToString());
-
-        var pngPath = RootDirectoryManager.GetCorrespondingImageFile(rootFilePath);
+        var pngPath = RootDirectoryManager.GetCorrespondingGadgetPngFilePath(styleIdentifier, pieceIdentifier);
 
         return TextureCache.GetOrLoadTexture(
             pngPath,
-            stylePiecePair.StyleIdentifier,
-            stylePiecePair.PieceIdentifier,
+            styleIdentifier,
+            pieceIdentifier,
             TextureType.GadgetSprite);
     }
 

@@ -20,6 +20,4 @@ public readonly struct GadgetTriggerName : IEquatable<GadgetTriggerName>
     public override int GetHashCode() => _inputName.GetHashCode();
     public static bool operator ==(GadgetTriggerName left, GadgetTriggerName right) => left.Equals(right);
     public static bool operator !=(GadgetTriggerName left, GadgetTriggerName right) => !left.Equals(right);
-
-    public static implicit operator GadgetTriggerName(string? gadgetStateName) => new(gadgetStateName);
 }

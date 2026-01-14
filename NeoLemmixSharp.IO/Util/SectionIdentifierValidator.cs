@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -19,11 +20,11 @@ internal sealed class SectionIdentifierValidator<TPerfectHasher, TEnum> : ICompa
 
         Debug.Assert(intervals.Length >= 1);
 
-        var firstInterval = intervals[0];
+        var firstInterval = intervals.At(0);
 
         for (var i = 1; i < intervals.Length; i++)
         {
-            var secondInterval = intervals[i];
+            var secondInterval = intervals.At(i);
 
             AssertSectionsAreContiguous(firstInterval, secondInterval);
 
@@ -33,7 +34,7 @@ internal sealed class SectionIdentifierValidator<TPerfectHasher, TEnum> : ICompa
 
     private static void AssertSectionsAreContiguous(Interval firstInterval, Interval secondInterval)
     {
-        if (firstInterval.Start + firstInterval.Length != secondInterval.Start)
+        if (firstInterval.End != secondInterval.Start)
             throw new InvalidOperationException("Sections are not contiguous!");
     }
 

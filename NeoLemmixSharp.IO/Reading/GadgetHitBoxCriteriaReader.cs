@@ -72,7 +72,7 @@ internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRaw
     {
         uint rawValue = _reader.Read8BitUnsignedInteger();
 
-        const uint OrientationMask = (1 << EngineConstants.NumberOfOrientations) - 1;
+        const uint OrientationMask = (1 << OrientationConstants.NumberOfOrientations) - 1;
         rawValue &= OrientationMask;
 
         if (rawValue == 0 || rawValue == OrientationMask)

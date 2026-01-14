@@ -115,11 +115,11 @@ public static class LemmingActionHelpers
         var lemmingOrientation = lemming.Orientation;
         var lemmingOrientationRotNum = lemmingOrientation.RotNum;
 
-        int* deltas = stackalloc int[EngineConstants.NumberOfOrientations];
-        deltas[EngineConstants.DownOrientationRotNum] = 0;
-        deltas[EngineConstants.LeftOrientationRotNum] = 0;
-        deltas[EngineConstants.UpOrientationRotNum] = 0;
-        deltas[EngineConstants.RightOrientationRotNum] = 0;
+        int* deltas = stackalloc int[OrientationConstants.NumberOfOrientations];
+        deltas[OrientationConstants.DownOrientationRotNum] = 0;
+        deltas[OrientationConstants.LeftOrientationRotNum] = 0;
+        deltas[OrientationConstants.UpOrientationRotNum] = 0;
+        deltas[OrientationConstants.RightOrientationRotNum] = 0;
 
         var anchorPosition = lemming.AnchorPosition;
         var footPosition = lemming.FootPosition;
@@ -151,11 +151,11 @@ public static class LemmingActionHelpers
             deltas[deltaRotNum & 3] = 1;
         }
 
-        var dx = deltas[EngineConstants.RightOrientationRotNum] -
-                 deltas[EngineConstants.LeftOrientationRotNum];
+        var dx = deltas[OrientationConstants.RightOrientationRotNum] -
+                 deltas[OrientationConstants.LeftOrientationRotNum];
 
-        var dy = deltas[EngineConstants.UpOrientationRotNum] -
-                 deltas[EngineConstants.DownOrientationRotNum];
+        var dy = deltas[OrientationConstants.UpOrientationRotNum] -
+                 deltas[OrientationConstants.DownOrientationRotNum];
 
         return new Point(dx, dy);
     }

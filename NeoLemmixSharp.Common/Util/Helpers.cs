@@ -72,6 +72,70 @@ public static class Helpers
     }
 
     /// <summary>
+    /// Creates a span slice.
+    /// 
+    /// Generally speaking, when slicing a span, the compiler emits checks to ensure the start and length are valid.
+    /// This method bypasses these checks. Only use this method if you can guarantee the inputs are valid!
+    /// </summary>
+    /// <typeparam name="T">The type of the span.</typeparam>
+    /// <param name="span">The span to slice from.</param>
+    /// <param name="start">The (assumed valid) start of the slice.</param>
+    /// <param name="length">The (assumed valid) desired length of the span.</param>
+    /// <returns>A span over the desired data.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Span<T> Slice<T>(Span<T> span, int start, int length)
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+
+        return MemoryMarshal.CreateSpan(ref Unsafe.Add(ref MemoryMarshal.GetReference(span), start), length);
+    }
+
+    /// <summary>
+    /// Creates a read-only span slice.
+    /// 
+    /// Generally speaking, when slicing a read-only span, the compiler emits checks to ensure the start and length are valid.
+    /// This method bypasses these checks. Only use this method if you can guarantee the inputs are valid!
+    /// </summary>
+    /// <typeparam name="T">The type of the read-only span.</typeparam>
+    /// <param name="span">The span to slice from.</param>
+    /// <param name="start">The (assumed valid) start of the slice.</param>
+    /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
+    /// <returns>A span over the desired data.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ReadOnlySpan<T> Slice<T>(ReadOnlySpan<T> span, int start, int length)
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+
+        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.Add(ref MemoryMarshal.GetReference(span), start), length);
+    }
+
+    /// <summary>
+    /// Returns a mutable reference to the specified array index.
+    /// 
+    /// Generally speaking, when indexing into an array, the compiler emits checks to ensure the index is valid.
+    /// This method bypasses these checks. Only use this method if you can guarantee the index is valid!
+    /// </summary>
+    /// <typeparam name="T">The type of the array.</typeparam>
+    /// <param name="array">The array to index into.</param>
+    /// <param name="index">The (assumed valid) index.</param>
+    /// <returns>A mutable reference to the data at that index</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ref T At<T>(this T[] array, int index)
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+#endif
+
+        return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), index);
+    }
+
+    /// <summary>
     /// Returns a mutable reference to the specified span index.
     /// 
     /// Generally speaking, when indexing into a span, the compiler emits checks to ensure the index is valid.
@@ -191,37 +255,6 @@ public static class Helpers
         ReadOnlySpan<char> secondSpan)
     {
         return firstSpan.Equals(secondSpan, StringComparison.OrdinalIgnoreCase);
-    }
-
-    public static ReadOnlySpan<string> GetFilePathsWithExtension(string folderPath, ReadOnlySpan<char> requiredFileExtension)
-    {
-        var allFiles = Directory.GetFiles(folderPath);
-        var numberOfRelevantFiles = 0;
-
-        for (var i = 0; i < allFiles.Length; i++)
-        {
-            var file = allFiles[i];
-            var fileExtensionSpan = Path.GetExtension(file.AsSpan());
-
-            if (StringSpansMatch(fileExtensionSpan, requiredFileExtension))
-            {
-                allFiles[numberOfRelevantFiles++] = file;
-            }
-        }
-
-        // Clear the unused strings to encourage garbage collection
-        var upperSpan = new Span<string>(allFiles, numberOfRelevantFiles, allFiles.Length - numberOfRelevantFiles);
-        upperSpan.Clear();
-
-        return new ReadOnlySpan<string>(allFiles, 0, numberOfRelevantFiles);
-    }
-
-    public static ReadOnlySpan<char> GetFullFilePathWithoutExtension(ReadOnlySpan<char> fullFilePath)
-    {
-        var extension = Path.GetExtension(fullFilePath);
-
-        var indexOfExtension = fullFilePath.IndexOf(extension, StringComparison.Ordinal);
-        return fullFilePath[..indexOfExtension];
     }
 
     [DoesNotReturn]

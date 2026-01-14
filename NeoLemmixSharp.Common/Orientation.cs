@@ -6,12 +6,33 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common;
 
+public static class OrientationConstants
+{
+    public const int NumberOfOrientations = 4;
+
+    public const int DownOrientationRotNum = 0;
+    public const string DownOrientationName = "Down";
+    public const float DownOrientationRotationAngle = 0.0f;
+
+    public const int LeftOrientationRotNum = 1;
+    public const string LeftOrientationName = "Left";
+    public const float LeftOrientationRotationAngle = MathF.PI * 1.5f;
+
+    public const int UpOrientationRotNum = 2;
+    public const string UpOrientationName = "Up";
+    public const float UpOrientationRotationAngle = MathF.PI;
+
+    public const int RightOrientationRotNum = 3;
+    public const string RightOrientationName = "Right";
+    public const float RightOrientationRotationAngle = MathF.PI * 0.5f;
+}
+
 public readonly struct Orientation : IEquatable<Orientation>
 {
-    public static readonly Orientation Down = new(EngineConstants.DownOrientationRotNum);
-    public static readonly Orientation Left = new(EngineConstants.LeftOrientationRotNum);
-    public static readonly Orientation Up = new(EngineConstants.UpOrientationRotNum);
-    public static readonly Orientation Right = new(EngineConstants.RightOrientationRotNum);
+    public static readonly Orientation Down = new(OrientationConstants.DownOrientationRotNum);
+    public static readonly Orientation Left = new(OrientationConstants.LeftOrientationRotNum);
+    public static readonly Orientation Up = new(OrientationConstants.UpOrientationRotNum);
+    public static readonly Orientation Right = new(OrientationConstants.RightOrientationRotNum);
 
     public readonly int RotNum;
 
@@ -54,10 +75,10 @@ public readonly struct Orientation : IEquatable<Orientation>
     {
         ReadOnlySpan<float> RotationAngles =
         [
-            EngineConstants.DownOrientationRotationAngle,
-            EngineConstants.LeftOrientationRotationAngle,
-            EngineConstants.UpOrientationRotationAngle,
-            EngineConstants.RightOrientationRotationAngle,
+            OrientationConstants.DownOrientationRotationAngle,
+            OrientationConstants.LeftOrientationRotationAngle,
+            OrientationConstants.UpOrientationRotationAngle,
+            OrientationConstants.RightOrientationRotationAngle,
         ];
 
         return RotationAngles[RotNum & 3];
@@ -84,10 +105,10 @@ public readonly struct Orientation : IEquatable<Orientation>
     {
         ReadOnlySpan<string> OrientationNames =
         [
-            EngineConstants.DownOrientationName,
-            EngineConstants.LeftOrientationName,
-            EngineConstants.UpOrientationName,
-            EngineConstants.RightOrientationName,
+            OrientationConstants.DownOrientationName,
+            OrientationConstants.LeftOrientationName,
+            OrientationConstants.UpOrientationName,
+            OrientationConstants.RightOrientationName,
         ];
 
         return OrientationNames[RotNum & 3];
@@ -125,7 +146,7 @@ public readonly struct Orientation : IEquatable<Orientation>
 
     public readonly struct OrientationHasher : IBitBufferCreator<BitBuffer32, Orientation>
     {
-        public int NumberOfItems => EngineConstants.NumberOfOrientations;
+        public int NumberOfItems => OrientationConstants.NumberOfOrientations;
 
         [Pure]
         public int Hash(Orientation item) => item.RotNum;
