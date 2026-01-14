@@ -8,6 +8,12 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public unsafe readonly struct LemmingData
 {
+    /// <summary>
+    /// The raw size of a LemmingData struct is 184 bytes.
+    /// We pad this with an extra 8 bytes to make 192.
+    /// This is because the Span.Copy methods work best on blocks
+    /// that are multiples of 64 bytes in size. 192 = 64 * 3.
+    /// </summary>
     public const int LemmingDataSize = 192;
 
     [StructLayout(LayoutKind.Sequential, Size = LemmingDataSize)]

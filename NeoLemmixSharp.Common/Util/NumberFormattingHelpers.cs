@@ -45,7 +45,7 @@ public static class NumberFormattingHelpers
                 n = -n;
             }
 
-            var requiredLength = GetNumberStringLengthBig((uint)n);
+            var requiredLength = GetNumberStringLength((uint)n);
 
             var destSpan = Helpers.Slice(destination, c, requiredLength);
             c += WriteDigits(destSpan, (uint)n);
@@ -74,7 +74,7 @@ public static class NumberFormattingHelpers
                 result++;
                 n = -n;
             }
-            result += GetNumberStringLengthBig((uint)n);
+            result += GetNumberStringLength((uint)n);
         }
 
         return result;
@@ -115,7 +115,7 @@ public static class NumberFormattingHelpers
 
     public static unsafe int WriteDigits(char* pointer, uint valueToWrite)
     {
-        var length = GetNumberStringLengthSmall(valueToWrite);
+        var length = GetNumberStringLength(valueToWrite);
         var digitsWritten = 0;
 
         do
@@ -134,29 +134,35 @@ public static class NumberFormattingHelpers
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char DigitToChar(uint digit) => (char)(digit | ZeroCharAsUint);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetNumberStringLengthSmall(uint n)
+    public static int GetNumberStringLength(uint n)
     {
-        var result = 1;
-        if (n >= 10) result++;
-        if (n >= 100) result++;
-        if (n >= 1000) result++;
+        if (n < 100000)
+        { // 1 to 5
+            if (n < 100)
+            { // 1 or 2
+                return n < 10 ? 1 : 2;
+            }
+            else
+            { // 3, 4 or 5
+                if (n < 1000)
+                    return 3;
 
-        return result;
-    }
+                return n < 10000 ? 4 : 5;
+            }
+        }
+        else
+        { // 6 to 7
+            if (n < 10000000)
+            { // 6 or 7
+                return n < 1000000 ? 6 : 7;
+            }
+            else
+            { // 8, 9 or 10
+                if (n < 100000000)
+                    return 8;
 
-    private static int GetNumberStringLengthBig(uint n)
-    {
-        if (n < 10) return 1;
-        if (n < 100) return 2;
-        if (n < 1000) return 3;
-        if (n < 10000) return 4;
-        if (n < 100000) return 5;
-        if (n < 1000000) return 6;
-        if (n < 10000000) return 7;
-        if (n < 100000000) return 8;
-        if (n < 1000000000) return 9;
-
-        return 10;
+                return n < 1000000000 ? 9 : 10;
+            }
+        }
     }
 }
