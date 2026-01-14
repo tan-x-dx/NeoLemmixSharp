@@ -144,19 +144,16 @@ public static class GadgetBuildingHelpers
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetData)
     {
-        var baseSize = gadgetArchetypeData.BaseSpriteSize;
+        var baseSize = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(gadgetArchetypeData.BaseSpriteSize);
 
         var result = new GadgetBounds(dataHandleRef)
         {
-            Position = gadgetData.Position
+            Position = gadgetData.Position,
+            Width = baseSize.W,
+            Height = baseSize.H
         };
 
         dataHandleRef += GadgetBounds.GadgetBoundsDataSize;
-
-        baseSize = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(baseSize);
-
-        result.Width = baseSize.W;
-        result.Height = baseSize.H;
 
         return result;
     }
@@ -171,21 +168,20 @@ public static class GadgetBuildingHelpers
         var resizeType = hitBoxGadgetArchetypeData.ResizeType;
         var baseSize = gadgetArchetypeData.BaseSpriteSize;
 
-        var result = new GadgetBounds(dataHandleRef)
-        {
-            Position = hitBoxGadgetData.Position
-        };
-
-        dataHandleRef += GadgetBounds.GadgetBoundsDataSize;
-
         var size = new Size(
             resizeType.CanResizeHorizontally() ? hitBoxGadgetInstanceData.GetProperty(GadgetPropertyType.Width) : baseSize.W,
             resizeType.CanResizeVertically() ? hitBoxGadgetInstanceData.GetProperty(GadgetPropertyType.Height) : baseSize.H);
 
         size = new DihedralTransformation(hitBoxGadgetData.Orientation, hitBoxGadgetData.FacingDirection).Transform(size);
 
-        result.Width = size.W;
-        result.Height = size.H;
+        var result = new GadgetBounds(dataHandleRef)
+        {
+            Position = hitBoxGadgetData.Position,
+            Width = size.W,
+            Height = size.H
+        };
+
+        dataHandleRef += GadgetBounds.GadgetBoundsDataSize;
 
         return result;
     }
