@@ -173,7 +173,30 @@ public sealed class LevelScreen : IBaseScreen
         if (!IGameWindow.Instance.IsActive)
             return;
 
+        _levelControlPanel.TextualData.ClearTextualData();
+        _levelInputController.Tick();
+        _levelCursor.Tick();
+
+        HandleMouseInput();
+
         _updateScheduler.Tick();
+    }
+
+    private void HandleMouseInput()
+    {
+        _levelViewport.HandleMouseInput(_levelInputController.InputController);
+
+        if (_levelViewport.MouseIsInLevelViewPort)
+        {
+            _levelCursor.SetCursorPosition(new Point(
+                _horizontalBoundaryBehaviour.MouseViewPortCoordinate,
+                _verticalBoundaryBehaviour.MouseViewPortCoordinate));
+        }
+        else
+        {
+            _levelCursor.SetCursorPosition(new Point(-4000, -4000));
+            _levelControlPanel.HandleMouseInput();
+        }
     }
 
     public void OnWindowSizeChanged()
