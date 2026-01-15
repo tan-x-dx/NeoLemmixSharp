@@ -71,15 +71,15 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>
 
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {
-        var constString = ToString();
-        if (destination.Length < constString.Length)
+        var constSpan = ToString().AsSpan();
+        if (destination.Length < constSpan.Length)
         {
             charsWritten = 0;
             return false;
         }
 
-        constString.AsSpan().CopyTo(destination);
-        charsWritten = constString.Length;
+        constSpan.CopyTo(destination);
+        charsWritten = constSpan.Length;
         return true;
     }
 
