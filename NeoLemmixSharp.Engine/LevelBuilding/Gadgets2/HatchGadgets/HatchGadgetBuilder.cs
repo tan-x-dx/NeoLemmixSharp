@@ -129,10 +129,10 @@ public readonly ref struct HatchGadgetBuilder
         var result = new HatchSpawnData(
             dataHandleRef,
             _hatchGadgetTypeInstanceData.NumberOfLemmingsToRelease,
-            _hatchGadgetTypeInstanceData.TribeId,
-            _hatchGadgetTypeInstanceData.RawStateData,
             _hatchGadgetInstanceData.Orientation,
             _hatchGadgetInstanceData.FacingDirection,
+            _hatchGadgetTypeInstanceData.TribeId,
+            _hatchGadgetTypeInstanceData.RawStateData,
             _hatchGadgetTypeInstanceData.HatchGroupId);
 
         dataHandleRef += sizeof(int);

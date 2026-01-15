@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Tribes;
+using NeoLemmixSharp.IO.Data.Style.Theme;
 using System.Numerics;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -153,7 +154,6 @@ public sealed class LemmingState
             {
                 states &= ~(1U << LemmingStateConstants.PermanentFastForwardBitIndex);
             }
-
             LevelScreen.LemmingManager.UpdateLemmingFastForwardState(_lemming);
         }
     }
@@ -243,13 +243,12 @@ public sealed class LemmingState
             if (value)
             {
                 states |= 1U << LemmingStateConstants.ZombieBitIndex;
-                LevelScreen.LemmingManager.RegisterZombie(_lemming);
             }
             else
             {
                 states &= ~(1U << LemmingStateConstants.ZombieBitIndex);
-                LevelScreen.LemmingManager.DeregisterZombie(_lemming);
             }
+            LevelScreen.LemmingManager.UpdateZombieState(_lemming);
             UpdateSkinColor();
         }
     }
@@ -279,55 +278,49 @@ public sealed class LemmingState
         UpdateHairAndBodyColors();
     }
 
-    public void UpdateHairAndBodyColors()
+    public unsafe void UpdateHairAndBodyColors()
     {
-        ref readonly var tribeColorData = ref LevelScreen.TribeManager.GetTribe(_tribeId.IntValue).ColorData;
-
-        if (HasPermanentSkill)
+        var tribe = LevelScreen.TribeManager.GetTribe(_tribeId.IntValue);
+        fixed (TribeColorData* tribeColorData = &tribe.ColorData)
         {
-            HairColor = tribeColorData.PermanentSkillHairColor;
-            BodyColor = IsNeutral
-                ? tribeColorData.NeutralBodyColor
-                : tribeColorData.PermanentSkillBodyColor;
-        }
-        else
-        {
-            HairColor = tribeColorData.HairColor;
-            BodyColor = IsNeutral
-                ? tribeColorData.NeutralBodyColor
-                : tribeColorData.BodyColor;
+            if (HasPermanentSkill)
+            {
+                HairColor = tribeColorData->PermanentSkillHairColor;
+                BodyColor = IsNeutral
+                    ? tribeColorData->NeutralBodyColor
+                    : tribeColorData->PermanentSkillBodyColor;
+            }
+            else
+            {
+                HairColor = tribeColorData->HairColor;
+                BodyColor = IsNeutral
+                    ? tribeColorData->NeutralBodyColor
+                    : tribeColorData->BodyColor;
+            }
         }
     }
 
-    public void UpdateSkinColor()
+    public unsafe void UpdateSkinColor()
     {
-        ref readonly var tribeColorData = ref LevelScreen.TribeManager.GetTribe(_tribeId.IntValue).ColorData;
-
-        var skinColor = IsZombie
-            ? tribeColorData.ZombieSkinColor
-            : tribeColorData.SkinColor;
-
-        SkinColor = skinColor;
-
-        if (IsAcidLemming)
+        var tribe = LevelScreen.TribeManager.GetTribe(_tribeId.IntValue);
+        fixed (TribeColorData* tribeColorData = &tribe.ColorData)
         {
-            FootColor = tribeColorData.AcidLemmingFootColor;
-        }
-        else if (IsWaterLemming)
-        {
-            FootColor = tribeColorData.WaterLemmingFootColor;
-        }
-        else
-        {
-            FootColor = skinColor;
-        }
-    }
+            SkinColor = IsZombie
+                ? tribeColorData->ZombieSkinColor
+                : tribeColorData->SkinColor;
 
-    public void SetData(int tribeId, uint rawData)
-    {
-        _tribeId.IntValue = tribeId;
-        _states.UintValue = rawData;
-        UpdateHairAndBodyColors();
-        UpdateSkinColor();
+            if (IsAcidLemming)
+            {
+                FootColor = tribeColorData->AcidLemmingFootColor;
+            }
+            else if (IsWaterLemming)
+            {
+                FootColor = tribeColorData->WaterLemmingFootColor;
+            }
+            else
+            {
+                FootColor = SkinColor;
+            }
+        }
     }
 }

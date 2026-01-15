@@ -361,7 +361,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             }
 
             // Check if we are still a basher
-            if (!simulationLemming.State.IsActive || simulationLemming.CurrentAction != LemmingActionConstants.BasherActionId)
+            if (!simulationLemming.State.IsActive || simulationLemming.CurrentActionId != LemmingActionConstants.BasherActionId)
             {
                 break; // and return false
             }

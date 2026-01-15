@@ -133,7 +133,7 @@ public sealed class LevelCursor
             return false;
 
         // Select only walkers
-        if (_selectOnlyWalkers && lemming.CurrentAction != LemmingActionConstants.WalkerActionId &&
+        if (_selectOnlyWalkers && lemming.CurrentActionId != LemmingActionConstants.WalkerActionId &&
             !(false)) //and(not(IsHighlight or IsReplay))
             return false;
 

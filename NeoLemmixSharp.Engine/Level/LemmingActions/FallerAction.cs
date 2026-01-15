@@ -152,7 +152,7 @@ public sealed class FallerAction : LemmingAction
     private static int GetStartingDistanceFallenFromAction(Lemming lemming)
     {
         // For Swimmers it's handled by the SwimmerAction as there is no single universal value
-        var currentActionId = lemming.CurrentAction.Id;
+        var currentActionId = lemming.CurrentActionId;
 
         return currentActionId switch
         {
