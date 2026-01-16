@@ -72,7 +72,7 @@ public abstract class GadgetTrigger : IEquatable<GadgetTrigger>
     {
         foreach (var behaviour in Behaviours)
         {
-            LevelScreen.GadgetManager.RegisterCauseAndEffectData(behaviour);
+            behaviour.PerformBehaviour();
         }
     }
 

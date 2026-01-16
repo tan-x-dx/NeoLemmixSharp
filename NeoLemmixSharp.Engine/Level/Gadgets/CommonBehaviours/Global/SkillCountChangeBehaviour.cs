@@ -22,7 +22,7 @@ public sealed class SkillCountChangeBehaviour : GadgetBehaviour
         SkillCountDelta = skillCountDelta;
     }
 
-    protected override void PerformInternalBehaviour(int triggerData)
+    protected override void PerformInternalBehaviour()
     {
         var tribe = GetTribe(triggerData);
 

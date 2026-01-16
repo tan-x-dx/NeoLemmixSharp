@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
@@ -12,9 +13,8 @@ public sealed class SetTribeLemmingBehaviour : LemmingBehaviour
         _tribeId = tribeId;
     }
 
-    protected override void PerformInternalBehaviour(int triggerData)
+    protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        var lemming = GetLemming(triggerData);
         lemming.State.SetTribeAffiliation(_tribeId);
     }
 }

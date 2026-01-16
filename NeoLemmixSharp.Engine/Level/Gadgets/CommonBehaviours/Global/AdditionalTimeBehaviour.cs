@@ -11,7 +11,7 @@ public sealed class AdditionalTimeBehaviour : GadgetBehaviour
         _additionalTimeInSeconds = additionalTimeInSeconds;
     }
 
-    protected override void PerformInternalBehaviour(int _)
+    protected override void PerformInternalBehaviour()
     {
         LevelScreen.LevelTimer.AddAdditionalSeconds(_additionalTimeInSeconds);
     }

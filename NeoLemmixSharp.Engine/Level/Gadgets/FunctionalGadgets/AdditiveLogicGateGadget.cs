@@ -59,7 +59,7 @@ public abstract class AdditiveLogicGateGadget : GadgetBase,
         var isActive = EvaluateInputCount(_set.Count, _numberOfInputs);
         if (isActive)
         {
-            LevelScreen.GadgetManager.RegisterCauseAndEffectData(_outputSignal);
+            _outputSignal.PerformBehaviour();
             _currentState = _onState;
         }
         else

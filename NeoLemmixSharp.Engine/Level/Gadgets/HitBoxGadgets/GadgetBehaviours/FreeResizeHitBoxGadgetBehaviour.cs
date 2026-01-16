@@ -28,7 +28,7 @@ public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
         _dh = dh;
     }
 
-    protected override void PerformInternalBehaviour(int _)
+    protected override void PerformInternalBehaviour()
     {
         if (_tickCount.IntValue < _tickDelay)
         {

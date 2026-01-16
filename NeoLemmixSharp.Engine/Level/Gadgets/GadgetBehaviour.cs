@@ -4,6 +4,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -50,18 +51,21 @@ public abstract class GadgetBehaviour : IEquatable<GadgetBehaviour>
 
     protected virtual void OnReset() { }
 
-    private bool HasReachedMaxTriggerCount() => _currentTickTriggerCount >= _maxTriggerCountPerTick;
+    [Pure]
+    protected bool HasReachedMaxTriggerCount() => _currentTickTriggerCount >= _maxTriggerCountPerTick;
 
-    public void PerformBehaviour(int triggerData)
+    public void PerformBehaviour()
     {
         if (HasReachedMaxTriggerCount())
             return;
 
-        PerformInternalBehaviour(triggerData);
-        _currentTickTriggerCount++;
+        PerformInternalBehaviour();
+        OnTrigger();
     }
 
-    protected abstract void PerformInternalBehaviour(int triggerData);
+    protected void OnTrigger() => _currentTickTriggerCount++;
+
+    protected abstract void PerformInternalBehaviour();
 
     public bool Equals(GadgetBehaviour? other)
     {
@@ -83,6 +87,4 @@ public abstract class GadgetBehaviour : IEquatable<GadgetBehaviour>
         return leftValue == rightValue;
     }
     public static bool operator !=(GadgetBehaviour? left, GadgetBehaviour? right) => !(left == right);
-
-    protected static Lemming GetLemming(int lemmingId) => LevelScreen.LemmingManager.GetLemming(lemmingId);
 }

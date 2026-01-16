@@ -43,7 +43,7 @@ public sealed class LevelTimerObserverGadget : GadgetBase
     {
         if (LevelTimerMatchesParameters())
         {
-            LevelScreen.GadgetManager.RegisterCauseAndEffectData(_outputSignalBehaviour);
+            _outputSignalBehaviour.PerformBehaviour();
             _currentState = _onState;
         }
         else
