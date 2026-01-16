@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -12,10 +11,10 @@ public sealed class InputController :
 {
     private const int NumberOfKeys = 256;
 
-    private readonly SimpleList<KeyToInputMapping> _keyMapping = new(16);
+    private readonly List<KeyToInputMapping> _keyMapping = new(16);
     private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _pressedKeys;
     private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _releasedKeys;
-    private readonly SimpleList<InputAction> _inputActions = new(16);
+    private readonly List<InputAction> _inputActions = new(16);
 
     private int _previousScrollValue;
 
@@ -57,23 +56,19 @@ public sealed class InputController :
 
     public void ValidateInputActions()
     {
-        var inputActionsSpan = _inputActions.AsSpan();
+        var inputActionsSpan = CollectionsMarshal.AsSpan(_inputActions);
         this.AssertUniqueIds(inputActionsSpan);
         inputActionsSpan.Sort(this);
     }
 
     public void Tick()
     {
-        var inputActionsSpan = _inputActions.AsSpan();
-
-        foreach (var keyAction in inputActionsSpan)
+        foreach (var keyAction in _inputActions)
         {
             keyAction.UpdateState();
         }
 
-        var keyMappingSpan = _keyMapping.AsSpan();
-
-        foreach (var keyToInputMapping in keyMappingSpan)
+        foreach (var keyToInputMapping in _keyMapping)
         {
             if (_pressedKeys.Contains(keyToInputMapping.Key))
             {
@@ -90,9 +85,7 @@ public sealed class InputController :
         _pressedKeys.Clear();
         _releasedKeys.Clear();
 
-        var inputActionsSpan = _inputActions.AsSpan();
-
-        foreach (var inputAction in inputActionsSpan)
+        foreach (var inputAction in _inputActions)
         {
             inputAction.Clear();
         }

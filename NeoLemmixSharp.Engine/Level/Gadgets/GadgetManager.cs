@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
@@ -20,7 +19,7 @@ public sealed class GadgetManager :
     private readonly GadgetTrigger[] _allTriggers;
     private readonly GadgetBehaviour[] _allBehaviours;
     private readonly BitArraySet<GadgetManager, ArrayBitBuffer, GadgetTrigger> _indeterminateTriggers;
-    private readonly SimpleList<GadgetLemmingInteraction> _gadgetLemmingInteractions = new(256);
+    private readonly List<GadgetLemmingInteraction> _gadgetLemmingInteractions = new(256);
 
     private readonly HitBoxGadgetSpacialHashGrid _hitBoxGadgetSpacialHashGrid;
     private readonly GadgetSet _fastForwardGadgets;
@@ -117,9 +116,8 @@ public sealed class GadgetManager :
             TickFastForwardGadgets();
         }
 
-        for (var i = 0; i < _gadgetLemmingInteractions.Count; i++)
+        foreach (var gadgetLemmingInteraction in _gadgetLemmingInteractions)
         {
-            var gadgetLemmingInteraction = _gadgetLemmingInteractions[i];
             var gadgetBehaviour = _allBehaviours[gadgetLemmingInteraction.LemmingBehaviourId];
 
             if (gadgetBehaviour is LemmingBehaviour lemmingBehaviour)
