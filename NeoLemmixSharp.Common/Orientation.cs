@@ -29,10 +29,10 @@ public static class OrientationConstants
 
 public readonly struct Orientation : IEquatable<Orientation>
 {
-    public static readonly Orientation Down = new(OrientationConstants.DownOrientationRotNum);
-    public static readonly Orientation Left = new(OrientationConstants.LeftOrientationRotNum);
-    public static readonly Orientation Up = new(OrientationConstants.UpOrientationRotNum);
-    public static readonly Orientation Right = new(OrientationConstants.RightOrientationRotNum);
+    public static Orientation Down => new(OrientationConstants.DownOrientationRotNum);
+    public static Orientation Left => new(OrientationConstants.LeftOrientationRotNum);
+    public static Orientation Up => new(OrientationConstants.UpOrientationRotNum);
+    public static Orientation Right => new(OrientationConstants.RightOrientationRotNum);
 
     public readonly int RotNum;
 

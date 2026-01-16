@@ -19,8 +19,8 @@ public static class FacingDirectionConstants
 
 public readonly struct FacingDirection : IEquatable<FacingDirection>
 {
-    public static readonly FacingDirection Right = new(FacingDirectionConstants.RightFacingDirectionId);
-    public static readonly FacingDirection Left = new(FacingDirectionConstants.LeftFacingDirectionId);
+    public static FacingDirection Right => new(FacingDirectionConstants.RightFacingDirectionId);
+    public static FacingDirection Left => new(FacingDirectionConstants.LeftFacingDirectionId);
 
     public readonly int Id;
     [Pure]
