@@ -25,10 +25,9 @@ public sealed partial class NeoLemmixGame
         void LoadParticleResources()
         {
             var byteBuffer = ParticleHelper.GetByteBuffer();
-
             var bytesRead = LoadByteData("particles.dat", byteBuffer);
-
             Debug.Assert(bytesRead == byteBuffer.Length);
+            ParticleHelper.SetByteData(byteBuffer);
         }
 
         [SkipLocalsInit]

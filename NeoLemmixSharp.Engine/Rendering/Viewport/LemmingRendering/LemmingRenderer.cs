@@ -2,9 +2,12 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -171,7 +174,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             if (offset.X == -128 || offset.Y == -128)
                 continue;
 
-            var color = explosionParticleColors[i & EngineConstants.NumberOfExplosionParticleColorsMask];
+            var color = explosionParticleColors.At(i & EngineConstants.NumberOfExplosionParticleColorsMask);
 
             destRectangle.X = screenX + offset.X;
             destRectangle.Y = screenY + offset.Y;
