@@ -1,8 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 
@@ -21,7 +19,8 @@ public abstract class GadgetBehaviour : IEquatable<GadgetBehaviour>
 
     public void SetParentGadget(GadgetBase gadget)
     {
-        Debug.Assert(ParentGadget is null);
+        if (ParentGadget is not null)
+            throw new InvalidOperationException($"Cannot set {nameof(ParentGadget)} more than once!");
 
         ParentGadget = gadget;
     }

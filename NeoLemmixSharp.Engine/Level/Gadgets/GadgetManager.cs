@@ -216,7 +216,7 @@ public sealed class GadgetManager :
 
     int IPerfectHasher<GadgetBase>.NumberOfItems => _allGadgets.Length;
     int IPerfectHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
-    GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
+    GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets.At(index);
 
     void IBitBufferCreator<RawBitBuffer, GadgetBase>.CreateBitBuffer(out RawBitBuffer buffer) =>
         buffer = GetNextRawBitBuffer();
