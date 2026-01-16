@@ -43,11 +43,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         set => _data.NextActionId = value.Id;
     }
 
-    public LemmingAction CountDownAction
-    {
-        get => LemmingAction.GetActionOrDefault(_data.CountDownActionId);
-        set => _data.CountDownActionId = value.Id;
-    }
+    public LemmingAction CountDownAction => LemmingAction.GetActionOrDefault(_data.CountDownActionId);
 
     public Orientation Orientation
     {
@@ -439,7 +435,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public void SetCountDownAction(uint countDownTimer, LemmingAction countDownAction, bool displayTimer)
     {
         _data.CountDownTimer = countDownTimer;
-        CountDownAction = countDownAction;
+        _data.CountDownActionId = countDownAction.Id;
 
         Renderer.SetDisplayTimer(displayTimer);
     }
@@ -447,7 +443,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public void ClearCountDownAction()
     {
         _data.CountDownTimer = 0;
-        CountDownAction = NoneAction.Instance;
+        _data.CountDownActionId = LemmingActionConstants.NoneActionId;
     }
 
     public void OnUpdatePosition()
@@ -490,6 +486,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         State.UpdateHairAndBodyColors();
         State.UpdateSkinColor();
+        State.UpdatePaintColor();
         Renderer.UpdateLemmingState(State.IsActive);
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
         LevelScreen.LemmingManager.UpdateZombieState(this);

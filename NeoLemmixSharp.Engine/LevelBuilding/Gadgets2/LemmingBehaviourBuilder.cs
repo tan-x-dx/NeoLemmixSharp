@@ -23,6 +23,7 @@ public static class LemmingBehaviourBuilder
             LemmingBehaviourType.SetLemmingState => BuildSetStateLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.ClearLemmingStates => BuildClearAllStatesLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.SetLemmingAction => BuildSetActionLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.SetLemmingTribe => BuildSetTribeLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.KillLemming => BuildKillLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.ForceLemmingFacingDirection => BuildForceFacingDirectionLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.NullifyLemmingFallDistance => BuildNullifyFallDistanceLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
@@ -65,6 +66,18 @@ public static class LemmingBehaviourBuilder
         var lemmingAction = LemmingAction.GetActionOrDefault(gadgetBehaviourDatum.DataChunk.Data2);
 
         return new SetActionLemmingBehaviour(lemmingAction)
+        {
+            GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
+            Id = newBehaviourId,
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+        };
+    }
+
+    private static SetTribeLemmingBehaviour BuildSetTribeLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    {
+        var lemmingTribeId = gadgetBehaviourDatum.DataChunk.Data1;
+
+        return new SetTribeLemmingBehaviour(lemmingTribeId)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,

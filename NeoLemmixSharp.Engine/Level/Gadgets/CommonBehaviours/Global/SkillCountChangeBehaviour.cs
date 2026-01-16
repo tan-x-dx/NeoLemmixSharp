@@ -31,11 +31,15 @@ public sealed class SkillCountChangeBehaviour : GadgetBehaviour
 
     private Tribe? GetTribe(int triggerData)
     {
-        if (_overrideTribeId == EngineConstants.SkillCountChangeBehaviourNoOverrideValue)
-            return triggerData == -1
-                ? null
-                : GetLemming(triggerData).State.TribeAffiliation;
+        int? tribeId = _overrideTribeId;
 
-        return LevelScreen.TribeManager.TryGetTribe(_overrideTribeId);
+        if (_overrideTribeId == EngineConstants.SkillCountChangeBehaviourNoOverrideValue)
+        {
+            tribeId = triggerData == -1
+                ? null
+                : GetLemming(triggerData).State.TribeId;
+        }
+
+        return LevelScreen.TribeManager.TryGetTribe(tribeId);
     }
 }

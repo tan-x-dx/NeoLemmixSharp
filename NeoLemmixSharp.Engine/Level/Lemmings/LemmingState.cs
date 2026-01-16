@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using System.Numerics;
 
@@ -15,8 +14,8 @@ public sealed class LemmingState
 
     public Color HairColor { get; private set; }
     public Color SkinColor { get; private set; }
-    public Color FootColor { get; private set; }
     public Color BodyColor { get; private set; }
+    public Color FootColor { get; private set; }
     public Color PaintColor { get; private set; }
 
     public bool HasPermanentSkill => (_states.UintValue & LemmingStateConstants.PermanentSkillBitMask) != 0U;
@@ -253,23 +252,21 @@ public sealed class LemmingState
         }
     }
 
-    public Tribe TribeAffiliation
-    {
-        get => LevelScreen.TribeManager.GetTribe(_tribeId.IntValue);
-        set
-        {
-            _tribeId.IntValue = value.Id;
-            UpdateHairAndBodyColors();
-            UpdateSkinColor();
-            PaintColor = LevelScreen.TribeManager.GetTribe(_tribeId.IntValue).ColorData.PaintColor;
-        }
-    }
+    public int TribeId => _tribeId.IntValue;
 
     public LemmingState(Lemming lemming, PointerWrapper tribeIdRef, PointerWrapper statesRef)
     {
+        _lemming = lemming;
         _tribeId = tribeIdRef;
         _states = statesRef;
-        _lemming = lemming;
+    }
+
+    public void SetTribeAffiliation(int tribeId)
+    {
+        _tribeId.IntValue = tribeId;
+        UpdateHairAndBodyColors();
+        UpdateSkinColor();
+        UpdatePaintColor();
     }
 
     public void ClearAllPermanentSkills()
@@ -322,5 +319,11 @@ public sealed class LemmingState
                 FootColor = SkinColor;
             }
         }
+    }
+
+    public void UpdatePaintColor()
+    {
+        var tribe = LevelScreen.TribeManager.GetTribe(_tribeId.IntValue);
+        PaintColor = tribe.ColorData.PaintColor;
     }
 }

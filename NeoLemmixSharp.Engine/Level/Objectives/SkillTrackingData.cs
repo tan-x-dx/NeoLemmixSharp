@@ -64,8 +64,13 @@ public sealed class SkillTrackingData
 
     private bool TribesMatch(Lemming lemming)
     {
-        return Tribe is null ||
-               Tribe.Equals(lemming.State.TribeAffiliation);
+        if (Tribe is null)
+            return true;
+
+        var lemmingTribeId = lemming.State.TribeId;
+        var lemmingTribe = LevelScreen.TribeManager.GetTribe(lemmingTribeId);
+
+        return Tribe.Equals(lemmingTribe);
     }
 
     public void RecalculateEffectiveQuantity(int totalSkillLimit)

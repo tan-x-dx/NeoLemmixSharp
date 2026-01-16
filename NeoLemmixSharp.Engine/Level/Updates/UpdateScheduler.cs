@@ -246,7 +246,7 @@ end;
     {
         _queuedSkill = lemmingSkill;
         _queuedSkillLemming = lemming;
-        _queuedSkillTribeId = lemming.State.TribeAffiliation.Id;
+        _queuedSkillTribeId = lemming.State.TribeId;
         _queuedSkillFrame = EngineConstants.EngineTicksPerSecond - 1;
     }
 
