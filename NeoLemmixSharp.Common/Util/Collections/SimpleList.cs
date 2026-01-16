@@ -46,7 +46,7 @@ public sealed class SimpleList<T>
         if (_size == _items.Length)
         {
             var newSize = _items.Length == 0
-                ? 8
+                ? 4
                 : _items.Length << 1;
             ResizeBackingArray(newSize);
         }
