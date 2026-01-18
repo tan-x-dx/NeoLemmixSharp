@@ -8,6 +8,7 @@ public enum LemmingBehaviourType
     ClearLemmingStates,
     SetLemmingAction,
     SetLemmingTribe,
+    SkillCountChange,
     KillLemming,
     ForceLemmingFacingDirection,
     NullifyLemmingFallDistance,
@@ -18,7 +19,7 @@ public enum LemmingBehaviourType
 
 public static class LemmingBehaviourTypeHelpers
 {
-    private const int NumberOfEnumValues = 10;
+    private const int NumberOfEnumValues = 11;
 
     public static LemmingBehaviourType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingBehaviourType>(rawValue, NumberOfEnumValues);
 }

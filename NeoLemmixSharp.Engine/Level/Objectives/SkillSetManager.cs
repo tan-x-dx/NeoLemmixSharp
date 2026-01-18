@@ -72,9 +72,9 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         return null;
     }
 
-    public void ChangeSkillCount(LemmingSkill lemmingSkill, Tribe? tribe, int delta)
+    public void ChangeSkillCount(LemmingSkill lemmingSkill, int tribeId, int delta)
     {
-        var relevantSkillTrackingData = TryGetSkillTrackingData(lemmingSkill.Id, tribe?.Id);
+        var relevantSkillTrackingData = TryGetSkillTrackingData(lemmingSkill.Id, tribeId);
 
         relevantSkillTrackingData?.ChangeSkillCount(delta);
     }

@@ -271,10 +271,10 @@ public readonly ref struct GadgetBehaviourBuilder
     {
         var lemmingSkillId = gadgetBehaviourDatum.DataChunk.Data1;
         var skillCountDelta = gadgetBehaviourDatum.DataChunk.Data2 & 0xffff;
-        var overrideTribeId = gadgetBehaviourDatum.DataChunk.Data2 >>> 16;
+        var tribeId = gadgetBehaviourDatum.DataChunk.Data2 >>> 16;
         var lemmingSkill = LemmingSkill.GetSkillOrDefault(lemmingSkillId);
 
-        return new SkillCountChangeBehaviour(lemmingSkill, overrideTribeId, skillCountDelta)
+        return new SkillCountChangeBehaviour(lemmingSkill, tribeId, skillCountDelta)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
