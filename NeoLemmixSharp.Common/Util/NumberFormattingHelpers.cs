@@ -116,7 +116,7 @@ public static class NumberFormattingHelpers
     public static unsafe int WriteDigits(char* pointer, uint valueToWrite)
     {
         var length = GetNumberStringLength(valueToWrite);
-        var digitsWritten = 0;
+        var digitsWritten = length;
 
         do
         {
@@ -124,7 +124,6 @@ public static class NumberFormattingHelpers
 
             pointer[length] = DigitToChar(rem);
             length--;
-            digitsWritten++;
         }
         while (length >= 0);
 
