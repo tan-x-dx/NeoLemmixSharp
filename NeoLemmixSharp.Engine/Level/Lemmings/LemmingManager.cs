@@ -54,9 +54,9 @@ public sealed class LemmingManager :
 
     public LemmingManager(
         nint dataHandle,
+        HatchGroup[] hatchGroups,
         Lemming[] lemmings,
         int numberOfPreplacedLemmings,
-        HatchGroup[] hatchGroups,
         int maxNumberOfClonedLemmings,
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)

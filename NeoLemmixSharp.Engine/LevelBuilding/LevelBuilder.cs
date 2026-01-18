@@ -74,9 +74,9 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
         var lemmingManager = new LemmingManager(
             lemmingManagerDataBuffer.Handle,
+            hatchGroups,
             levelLemmings,
             levelData.PrePlacedLemmingData.Count,
-            hatchGroups,
             levelData.MaxNumberOfClonedLemmings,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
