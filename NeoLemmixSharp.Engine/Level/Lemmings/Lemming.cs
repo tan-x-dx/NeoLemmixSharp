@@ -97,7 +97,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref int ParticleTimer => ref _data.ParticleTimer;
 
-    public bool IsSimulation => Id < 0;
+    public bool IsSimulation => Id == EngineConstants.SimulationLemmingId;
     public bool IsFastForward => _data.FastForwardTime > 0 || State.IsPermanentFastForwards;
 
     public Point HeadPosition => _data.Orientation.MoveUp(_data.AnchorPosition, 6);

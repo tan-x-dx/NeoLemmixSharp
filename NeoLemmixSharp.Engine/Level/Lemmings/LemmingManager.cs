@@ -97,7 +97,7 @@ public sealed class LemmingManager :
         _maxNumberOfClonedLemmings = maxNumberOfClonedLemmings;
 
         _simulationLemmingDataBuffer = new RawArray(LemmingData.LemmingDataSize);
-        SimulationLemming = new Lemming(_simulationLemmingDataBuffer.Handle, int.MinValue);
+        SimulationLemming = new Lemming(_simulationLemmingDataBuffer.Handle, EngineConstants.SimulationLemmingId);
     }
 
     [Pure]
