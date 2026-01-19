@@ -115,8 +115,9 @@ public static class NumberFormattingHelpers
 
     public static unsafe int WriteDigits(char* pointer, uint valueToWrite)
     {
-        var length = GetNumberStringLength(valueToWrite);
-        var digitsWritten = length;
+        var digitsWritten = GetNumberStringLength(valueToWrite);
+        var length = digitsWritten;
+        length--;
 
         do
         {

@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.IO.Data.Level;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -22,14 +21,12 @@ public sealed class HatchGroupBuilder
 
     public HatchGroup[] BuildHatchGroups()
     {
-        var allHatchGroupData = CollectionsMarshal.AsSpan(_levelData.AllHatchGroupData);
-
-        var result = new HatchGroup[allHatchGroupData.Length];
+        var result = new HatchGroup[_levelData.AllHatchGroupData.Count];
         var handle = HatchGroupDataBuffer.Handle;
 
-        for (var i = 0; i < allHatchGroupData.Length; i++)
+        for (var i = 0; i < _levelData.AllHatchGroupData.Count; i++)
         {
-            var prototype = allHatchGroupData[i];
+            var prototype = _levelData.AllHatchGroupData[i];
             var hatchGroup = new HatchGroup(
                 handle,
                 i,
