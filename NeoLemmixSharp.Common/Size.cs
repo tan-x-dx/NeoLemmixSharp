@@ -27,6 +27,7 @@ public readonly struct Size : IEquatable<Size>
         H = h;
     }
 
+    [DebuggerStepThrough]
     public unsafe Size(void* pointer)
     {
         int* intPointer = (int*)pointer;

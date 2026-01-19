@@ -39,6 +39,6 @@ public static class RenderingHelpers
     public static unsafe void Negate(ref Color color)
     {
         uint* x = (uint*)Unsafe.AsPointer(ref color);
-        *x ^= 0x00FFFFFF;
+        *x ^= 0x00ffffff;
     }
 }

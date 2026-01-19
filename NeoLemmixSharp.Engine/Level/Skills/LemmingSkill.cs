@@ -208,7 +208,6 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     protected abstract LemmingActionSet ActionsThatCanBeAssigned();
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected bool SkillIsAssignableToCurrentAction(Lemming lemming)
     {
         return _assignableActions.Contains(lemming.CurrentAction);

@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.Common.Util.GameInput;
 
 public sealed class InputAction : IEquatable<InputAction>
 {
-    private const ulong EnabledMask = (1UL << EngineConstants.EngineTicksPerSecond) - 1UL;
+    private const ulong EnabledMask = ulong.MaxValue;
     private const ulong DisabledMask = 0UL;
 
     private const ulong ActionUnpressed = 0UL;
