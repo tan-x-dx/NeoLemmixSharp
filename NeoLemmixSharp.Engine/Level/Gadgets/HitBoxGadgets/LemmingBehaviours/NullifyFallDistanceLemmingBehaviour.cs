@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
@@ -9,9 +10,8 @@ public sealed class NullifyFallDistanceLemmingBehaviour : LemmingBehaviour
     {
     }
 
-    protected override void PerformInternalBehaviour(int triggerData)
+    protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        var lemming = GetLemming(triggerData);
         lemming.DistanceFallen = 0;
     }
 }

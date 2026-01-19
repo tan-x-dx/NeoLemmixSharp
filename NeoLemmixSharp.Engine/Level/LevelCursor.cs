@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using System.Diagnostics.Contracts;
@@ -133,7 +132,7 @@ public sealed class LevelCursor
             return false;
 
         // Select only walkers
-        if (_selectOnlyWalkers && lemming.CurrentAction != LemmingActionConstants.WalkerActionId &&
+        if (_selectOnlyWalkers && lemming.CurrentActionId != LemmingActionConstants.WalkerActionId &&
             !(false)) //and(not(IsHighlight or IsReplay))
             return false;
 
@@ -172,8 +171,11 @@ public sealed class LevelCursor
         if (skillTrackingData is null)
             return false;
 
-        var previousCandidateMatchesTribe = previousCandidate.State.TribeAffiliation.Equals(skillTrackingData.Tribe);
-        var newCandidateMatchesTribe = newCandidate.State.TribeAffiliation.Equals(skillTrackingData.Tribe);
+        var previousCandidateTribe = LevelScreen.TribeManager.GetTribe(previousCandidate.State.TribeId);
+        var newCandidateTribe = LevelScreen.TribeManager.GetTribe(newCandidate.State.TribeId);
+
+        var previousCandidateMatchesTribe = previousCandidateTribe.Equals(skillTrackingData.Tribe);
+        var newCandidateMatchesTribe = newCandidateTribe.Equals(skillTrackingData.Tribe);
 
         return newCandidateMatchesTribe && !previousCandidateMatchesTribe;
     }

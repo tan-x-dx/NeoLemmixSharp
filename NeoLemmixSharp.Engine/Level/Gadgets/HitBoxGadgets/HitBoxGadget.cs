@@ -79,20 +79,20 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
     {
         var gadgetManager = LevelScreen.GadgetManager;
 
-        var lemmingBehaviours = activeFilter.OnLemmingHitBehaviours;
-        foreach (var lemmingBehaviour in lemmingBehaviours)
+        var onHitBehaviours = activeFilter.OnLemmingHitBehaviours;
+        foreach (var gadgetBehaviour in onHitBehaviours)
         {
-            gadgetManager.RegisterCauseAndEffectData(lemmingBehaviour, lemming.Id);
+            gadgetManager.RegisterCauseAndEffectData(gadgetBehaviour, lemming.Id);
         }
 
-        var hitBoxLemmingBehaviours = GetHitBoxLemmingBehaviours(activeFilter, lemming);
-        foreach (var lemmingBehaviour in hitBoxLemmingBehaviours)
+        var lemmingTrackingHitBoxBehaviours = GetLemmingTrackingHitBoxBehaviours(activeFilter, lemming);
+        foreach (var gadgetBehaviour in lemmingTrackingHitBoxBehaviours)
         {
-            gadgetManager.RegisterCauseAndEffectData(lemmingBehaviour, lemming.Id);
+            gadgetManager.RegisterCauseAndEffectData(gadgetBehaviour, lemming.Id);
         }
     }
 
-    private ReadOnlySpan<GadgetBehaviour> GetHitBoxLemmingBehaviours(
+    private ReadOnlySpan<GadgetBehaviour> GetLemmingTrackingHitBoxBehaviours(
         LemmingHitBoxFilter activeFilter,
         Lemming lemming)
     {

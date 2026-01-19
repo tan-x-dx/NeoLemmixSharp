@@ -19,8 +19,8 @@ public static class FacingDirectionConstants
 
 public readonly struct FacingDirection : IEquatable<FacingDirection>
 {
-    public static readonly FacingDirection Right = new(FacingDirectionConstants.RightFacingDirectionId);
-    public static readonly FacingDirection Left = new(FacingDirectionConstants.LeftFacingDirectionId);
+    public static FacingDirection Right => new(FacingDirectionConstants.RightFacingDirectionId);
+    public static FacingDirection Left => new(FacingDirectionConstants.LeftFacingDirectionId);
 
     public readonly int Id;
     [Pure]
@@ -71,15 +71,15 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>
 
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {
-        var constString = ToString();
-        if (destination.Length < constString.Length)
+        var constSpan = ToString().AsSpan();
+        if (destination.Length < constSpan.Length)
         {
             charsWritten = 0;
             return false;
         }
 
-        constString.AsSpan().CopyTo(destination);
-        charsWritten = constString.Length;
+        constSpan.CopyTo(destination);
+        charsWritten = constSpan.Length;
         return true;
     }
 

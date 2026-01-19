@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
@@ -11,9 +12,8 @@ public sealed class FastForwardLemmingBehaviour : LemmingBehaviour
         _fastForwardTime = fastForwardTime;
     }
 
-    protected override void PerformInternalBehaviour(int triggerData)
+    protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        var lemming = GetLemming(triggerData);
         lemming.FastForwardTime = _fastForwardTime;
     }
 }

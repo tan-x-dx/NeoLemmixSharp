@@ -141,12 +141,13 @@ public sealed class ShimmierAction : LemmingAction
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
+        var currentActionId = lemming.CurrentActionId;
 
         var gadgetTestRegion = new RectangularRegion(lemmingPosition, orientation.Move(lemmingPosition, dx, 12));
 
         LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearLemming);
 
-        if (lemming.CurrentAction == LemmingActionConstants.ClimberActionId)
+        if (currentActionId == LemmingActionConstants.ClimberActionId)
         {
             lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
@@ -156,8 +157,8 @@ public sealed class ShimmierAction : LemmingAction
                 lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
             }
         }
-        else if (lemming.CurrentAction == LemmingActionConstants.SliderActionId ||
-                 lemming.CurrentAction == LemmingActionConstants.DehoisterActionId)
+        else if (currentActionId == LemmingActionConstants.SliderActionId ||
+                 currentActionId == LemmingActionConstants.DehoisterActionId)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 2);
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 8)))
@@ -165,7 +166,7 @@ public sealed class ShimmierAction : LemmingAction
                 lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
             }
         }
-        else if (lemming.CurrentAction == LemmingActionConstants.JumperActionId)
+        else if (currentActionId == LemmingActionConstants.JumperActionId)
         {
             for (var i = -1; i < 4; i++)
             {

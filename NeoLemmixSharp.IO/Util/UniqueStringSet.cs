@@ -6,7 +6,7 @@ public readonly struct UniqueStringSet
 
     public UniqueStringSet()
     {
-        _uniqueStrings = new HashSet<string>(IoConstants.InitialStringListCapacity);
+        _uniqueStrings = new HashSet<string>(IoConstants.InitialStringListCapacity, StringComparer.Ordinal);
     }
 
     public string GetUniqueStringInstance(ReadOnlySpan<char> chars)

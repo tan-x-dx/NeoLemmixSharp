@@ -42,7 +42,7 @@ public abstract class SubtractiveLogicGateGadget : GadgetBase, IGadgetLinkTrigge
         else
         {
             _currentState = _onState;
-            LevelScreen.GadgetManager.RegisterCauseAndEffectData(_outputSignal);
+            _outputSignal.PerformBehaviour();
         }
 
         _currentState.Tick();

@@ -12,7 +12,7 @@ public sealed class StateChangeBehaviour : GadgetBehaviour
         _intendedGadgetStateIndex = intendedGadgetStateIndex;
     }
 
-    protected override void PerformInternalBehaviour(int triggerData)
+    protected override void PerformInternalBehaviour()
     {
         ParentGadget.SetState(_intendedGadgetStateIndex);
     }

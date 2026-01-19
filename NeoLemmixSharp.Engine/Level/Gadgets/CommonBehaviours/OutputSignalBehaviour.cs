@@ -14,7 +14,7 @@ public sealed class OutputSignalBehaviour : GadgetBehaviour
 
     public void SetGadgetLinkTriggers(LinkData[] gadgetLinkData) => _gadgetLinkData = gadgetLinkData;
 
-    protected override void PerformInternalBehaviour(int _)
+    protected override void PerformInternalBehaviour()
     {
         foreach (var gadgetLinkDatum in _gadgetLinkData)
         {

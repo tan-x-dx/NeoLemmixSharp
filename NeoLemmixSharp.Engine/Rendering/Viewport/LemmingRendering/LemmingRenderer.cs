@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using System.Runtime.CompilerServices;
@@ -48,6 +49,9 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public void UpdateLemmingState(bool shouldRender)
     {
+        if (_lemming.IsSimulation)
+            return;
+
         var levelScreenRenderer = LevelScreenRenderer.Instance.LevelRenderer;
         if (!shouldRender)
         {
@@ -87,15 +91,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public void RenderAtPosition(SpriteBatch spriteBatch, Rectangle sourceRectangle, int projectionX, int projectionY)
     {
-        var renderDestination = new Rectangle(
-            projectionX,
-            projectionY,
-            sourceRectangle.Width,
-            sourceRectangle.Height);
-
-        sourceRectangle.Y += _lemming.AnimationFrame * _actionSprite.SpriteSize.H;
-
-        _actionSprite.RenderLemming(spriteBatch, _lemming, sourceRectangle, renderDestination);
+        RenderLemmingSprite(spriteBatch, sourceRectangle, projectionX, projectionY);
 
         /* spriteBatch.Draw(
               actionSprite.Texture,
@@ -122,15 +118,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
         if (_shouldRenderCountDown)
         {
-            var countDownPositionOffset = new Point();
-
-            FontBank.CountDownFont.RenderTextSpan(
-                spriteBatch,
-                _countDownCharBuffer,
-                projectionX + countDownPositionOffset.X,
-                projectionY + countDownPositionOffset.Y,
-                1,
-                Color.White);
+            RenderCountDown(spriteBatch, projectionX, projectionY);
         }
 
         if (_lemming.ParticleTimer > 0)
@@ -150,10 +138,43 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         }*/
     }
 
+    private void RenderLemmingSprite(
+        SpriteBatch spriteBatch,
+        Rectangle sourceRectangle,
+        int projectionX,
+        int projectionY)
+    {
+        var renderDestination = new Rectangle(
+            projectionX,
+            projectionY,
+            sourceRectangle.Width,
+            sourceRectangle.Height);
+
+        sourceRectangle.Y += _lemming.AnimationFrame * _actionSprite.SpriteSize.H;
+
+        _actionSprite.RenderLemming(spriteBatch, _lemming, sourceRectangle, renderDestination);
+    }
+
+    private void RenderCountDown(
+        SpriteBatch spriteBatch,
+        int projectionX,
+        int projectionY)
+    {
+        var countDownPositionOffset = new Point();
+
+        FontBank.CountDownFont.RenderTextSpan(
+            spriteBatch,
+            _countDownCharBuffer,
+            projectionX + countDownPositionOffset.X,
+            projectionY + countDownPositionOffset.Y,
+            1,
+            Color.White);
+    }
+
     private void RenderParticles(
         SpriteBatch spriteBatch,
-        int screenX,
-        int screenY)
+        int projectionX,
+        int projectionY)
     {
         var destRectangle = new Rectangle(0, 0, 1, 1);
         var explosionParticleColors = EngineConstants.GetExplosionParticleColors();
@@ -161,8 +182,8 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         var dht = new DihedralTransformation(_lemming.Orientation, _lemming.FacingDirection);
         var anchorPoint = dht.Transform(_actionSprite.AnchorPoint, _actionSprite.SpriteSize);
 
-        screenX += anchorPoint.X;
-        screenY += anchorPoint.Y;
+        projectionX += anchorPoint.X;
+        projectionY += anchorPoint.Y;
 
         for (var i = 0; i < EngineConstants.NumberOfParticles; i++)
         {
@@ -171,10 +192,10 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
             if (offset.X == -128 || offset.Y == -128)
                 continue;
 
-            var color = explosionParticleColors[i & EngineConstants.NumberOfExplosionParticleColorsMask];
+            var color = explosionParticleColors.At(i & EngineConstants.NumberOfExplosionParticleColorsMask);
 
-            destRectangle.X = screenX + offset.X;
-            destRectangle.Y = screenY + offset.Y;
+            destRectangle.X = projectionX + offset.X;
+            destRectangle.Y = projectionY + offset.Y;
 
             spriteBatch.FillRect(
                 destRectangle,

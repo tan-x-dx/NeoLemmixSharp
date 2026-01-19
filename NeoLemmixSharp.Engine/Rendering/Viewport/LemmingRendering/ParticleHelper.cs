@@ -1,7 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
@@ -10,10 +11,24 @@ public static class ParticleHelper
     private const int NumberOfBytesPerCall = 2;
     private const int ByteLength = NumberOfBytesPerCall * EngineConstants.NumberOfParticles * EngineConstants.ParticleFrameCount;
 
-    private static readonly sbyte[] ParticleOffsets = new sbyte[ByteLength];
+    private static readonly Point[] ParticleOffsets = new Point[EngineConstants.NumberOfParticles * EngineConstants.ParticleFrameCount];
 
     [Pure]
-    public static Span<byte> GetByteBuffer() => MemoryMarshal.Cast<sbyte, byte>(new Span<sbyte>(ParticleOffsets));
+    public static Span<byte> GetByteBuffer() => new(new byte[ByteLength]);
+
+    public static void SetByteData(ReadOnlySpan<byte> rawBytes)
+    {
+        Debug.Assert(rawBytes.Length == ByteLength);
+
+        var j = 0;
+        for (var i = 0; i < rawBytes.Length; i += 2)
+        {
+            var x = (int)(sbyte)rawBytes.At(i);
+            var y = (int)(sbyte)rawBytes.At(i + 1);
+
+            ParticleOffsets.At(j++) = new Point(x, y);
+        }
+    }
 
     [Pure]
     public static Point GetParticleOffsets(
@@ -21,7 +36,7 @@ public static class ParticleHelper
         int particleId)
     {
         var index = GetParticleIndex(frame, particleId);
-        return new Point(ParticleOffsets[index], ParticleOffsets[index + 1]);
+        return ParticleOffsets[index];
     }
 
     [Pure]
@@ -30,7 +45,6 @@ public static class ParticleHelper
         int frame,
         int particleId)
     {
-        return NumberOfBytesPerCall *
-               (EngineConstants.NumberOfParticles * (EngineConstants.ParticleFrameCount - frame) + particleId);
+        return EngineConstants.NumberOfParticles * (EngineConstants.ParticleFrameCount - frame) + particleId;
     }
 }

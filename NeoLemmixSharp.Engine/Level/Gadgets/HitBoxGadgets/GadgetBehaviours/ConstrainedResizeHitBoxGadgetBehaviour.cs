@@ -29,7 +29,7 @@ public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
         _max = max;
     }
 
-    protected override void PerformInternalBehaviour(int _)
+    protected override void PerformInternalBehaviour()
     {
         if (_tickCount.IntValue < _tickDelay)
         {

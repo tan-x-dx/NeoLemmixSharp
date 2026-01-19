@@ -54,9 +54,9 @@ public sealed class LemmingManager :
 
     public LemmingManager(
         nint dataHandle,
+        HatchGroup[] hatchGroups,
         Lemming[] lemmings,
         int numberOfPreplacedLemmings,
-        HatchGroup[] hatchGroups,
         int maxNumberOfClonedLemmings,
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
@@ -97,7 +97,7 @@ public sealed class LemmingManager :
         _maxNumberOfClonedLemmings = maxNumberOfClonedLemmings;
 
         _simulationLemmingDataBuffer = new RawArray(LemmingData.LemmingDataSize);
-        SimulationLemming = new Lemming(_simulationLemmingDataBuffer.Handle, int.MinValue);
+        SimulationLemming = new Lemming(_simulationLemmingDataBuffer.Handle, EngineConstants.SimulationLemmingId);
     }
 
     [Pure]
@@ -232,6 +232,18 @@ public sealed class LemmingManager :
         }
     }
 
+    public void UpdateZombieState(Lemming lemming)
+    {
+        if (lemming.State.IsZombie)
+        {
+            RegisterZombie(lemming);
+        }
+        else
+        {
+            DeregisterZombie(lemming);
+        }
+    }
+
     public void RemoveLemming(Lemming lemming, LemmingRemovalReason removalReason)
     {
         lemming.State.IsActive = false;
@@ -242,7 +254,7 @@ public sealed class LemmingManager :
             DeregisterZombie(lemming);
         }
 
-        if (lemming.CurrentAction == LemmingActionConstants.BlockerActionId)
+        if (lemming.CurrentActionId == LemmingActionConstants.BlockerActionId)
         {
             DeregisterBlocker(lemming);
         }
@@ -433,12 +445,7 @@ public sealed class LemmingManager :
             if (!lemming.State.IsActive)
                 continue;
 
-            _lemmingSpacialHashGrid.AddItem(lemming);
-
-            if (lemming.State.IsZombie)
-            {
-                _zombieSpacialHashGrid.AddItem(lemming);
-            }
+            _lemmingSpacialHashGrid.AddItem(lemming); // Just do lemming positions here - zombies are handled elsewhere
         }
     }
 }

@@ -184,7 +184,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IEquatable<int>
         Lemming lemming,
         bool turnAround)
     {
-        if (lemming.CurrentAction.Id == LemmingActionConstants.BlockerActionId &&
+        if (lemming.CurrentActionId == LemmingActionConstants.BlockerActionId &&
             Id != LemmingActionConstants.BlockerActionId &&
             Id != LemmingActionConstants.OhNoerActionId)
         {
@@ -238,13 +238,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IEquatable<int>
     public static bool operator ==(LemmingAction left, LemmingAction right) => left.Id == right.Id;
     [DebuggerStepThrough]
     public static bool operator !=(LemmingAction left, LemmingAction right) => left.Id != right.Id;
-
-    [DebuggerStepThrough]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator ==(LemmingAction left, int id) => left.Id == id;
-    [DebuggerStepThrough]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool operator !=(LemmingAction left, int id) => left.Id != id;
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,9 +1,9 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Collections;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -19,7 +19,11 @@ public sealed class GadgetManager :
     private readonly GadgetTrigger[] _allTriggers;
     private readonly GadgetBehaviour[] _allBehaviours;
     private readonly BitArraySet<GadgetManager, ArrayBitBuffer, GadgetTrigger> _indeterminateTriggers;
-    private readonly SimpleList<CauseAndEffectData> _causeAndEffectData = new(256);
+    private readonly List<GadgetLemmingInteraction> _gadgetLemmingInteractions = new(256);
+
+    private readonly HitBoxGadgetSpacialHashGrid _hitBoxGadgetSpacialHashGrid;
+    private readonly GadgetSet _fastForwardGadgets;
+    private readonly GadgetSet _gadgetsToReEvaluate;
 
     private const int RequiredNumberOfGadgetBitSets =
         1 + // spacial hash grid
@@ -27,10 +31,6 @@ public sealed class GadgetManager :
 
     private readonly RawArray _gadgetByteBuffer;
     private int _bitArrayBufferUsageCount = RequiredNumberOfGadgetBitSets;
-
-    private readonly HitBoxGadgetSpacialHashGrid _hitBoxGadgetSpacialHashGrid;
-    private readonly GadgetSet _fastForwardGadgets;
-    private readonly GadgetSet _gadgetsToReEvaluate;
 
     private bool _isDisposed;
 
@@ -91,7 +91,7 @@ public sealed class GadgetManager :
     public void ResetForNewTick()
     {
         _gadgetsToReEvaluate.Clear();
-        _causeAndEffectData.Clear();
+        _gadgetLemmingInteractions.Clear();
         _indeterminateTriggers.Fill();
 
         foreach (var trigger in _allTriggers)
@@ -116,11 +116,18 @@ public sealed class GadgetManager :
             TickFastForwardGadgets();
         }
 
-        for (var i = 0; i < _causeAndEffectData.Count; i++)
+        foreach (var gadgetLemmingInteraction in _gadgetLemmingInteractions)
         {
-            var causeAndEffectDatum = _causeAndEffectData[i];
-            var behaviour = _allBehaviours[causeAndEffectDatum.GadgetBehaviourId];
-            behaviour.PerformBehaviour(causeAndEffectDatum.TriggerData);
+            var gadgetBehaviour = _allBehaviours[gadgetLemmingInteraction.LemmingBehaviourId];
+
+            if (gadgetBehaviour is LemmingBehaviour lemmingBehaviour)
+            {
+                lemmingBehaviour.PerformBehaviour(gadgetLemmingInteraction.LemmingId);
+            }
+            else
+            {
+                gadgetBehaviour.PerformBehaviour();
+            }
         }
 
         FlagIndeterminateTriggersAsNotTriggered();
@@ -156,14 +163,9 @@ public sealed class GadgetManager :
         }
     }
 
-    public void RegisterCauseAndEffectData(GadgetBehaviour behaviour)
+    public void RegisterCauseAndEffectData(GadgetBehaviour gadgetBehaviour, int lemmingId)
     {
-        _causeAndEffectData.Add(new CauseAndEffectData(behaviour.Id, 0));
-    }
-
-    public void RegisterCauseAndEffectData(GadgetBehaviour behaviour, int payload)
-    {
-        _causeAndEffectData.Add(new CauseAndEffectData(behaviour.Id, payload));
+        _gadgetLemmingInteractions.Add(new GadgetLemmingInteraction(gadgetBehaviour.Id, lemmingId));
     }
 
     public void MarkTriggerAsEvaluated(GadgetTrigger gadgetTrigger)
@@ -214,7 +216,7 @@ public sealed class GadgetManager :
 
     int IPerfectHasher<GadgetBase>.NumberOfItems => _allGadgets.Length;
     int IPerfectHasher<GadgetBase>.Hash(GadgetBase item) => item.Id;
-    GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets[index];
+    GadgetBase IPerfectHasher<GadgetBase>.UnHash(int index) => _allGadgets.At(index);
 
     void IBitBufferCreator<RawBitBuffer, GadgetBase>.CreateBitBuffer(out RawBitBuffer buffer) =>
         buffer = GetNextRawBitBuffer();

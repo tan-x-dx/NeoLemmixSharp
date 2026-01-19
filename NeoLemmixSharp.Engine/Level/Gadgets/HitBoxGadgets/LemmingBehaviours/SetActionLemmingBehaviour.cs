@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
@@ -14,9 +15,8 @@ public sealed class SetActionLemmingBehaviour : LemmingBehaviour
         _action = action;
     }
 
-    protected override void PerformInternalBehaviour(int triggerData)
+    protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        var lemming = GetLemming(triggerData);
         _action.TransitionLemmingToAction(lemming, false);
     }
 }

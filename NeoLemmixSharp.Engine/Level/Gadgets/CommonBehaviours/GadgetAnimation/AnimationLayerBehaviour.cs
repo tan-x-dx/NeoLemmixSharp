@@ -90,7 +90,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
         _gadgetLayerColorData = gadgetLayerColorData;
     }
 
-    protected override void PerformInternalBehaviour(int triggerData)
+    protected override void PerformInternalBehaviour()
     {
         if (_frameDelta == FrameDeltaType.Increment)
         {

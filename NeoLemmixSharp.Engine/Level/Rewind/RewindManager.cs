@@ -82,7 +82,7 @@ public sealed class RewindManager : IDisposable
     private static unsafe void ValidateLemmingReplayAction(Lemming lemming, SkillAssignmentEventData* previouslyRecordedSkillAssignment)
     {
         if (lemming.AnchorPosition == previouslyRecordedSkillAssignment->LemmingPosition &&
-            lemming.State.TribeAffiliation.Id == previouslyRecordedSkillAssignment->TribeId &&
+            lemming.State.TribeId == previouslyRecordedSkillAssignment->TribeId &&
             lemming.Orientation == previouslyRecordedSkillAssignment->LemmingOrientation &&
             lemming.FacingDirection == previouslyRecordedSkillAssignment->LemmingFacingDirection)
             return;

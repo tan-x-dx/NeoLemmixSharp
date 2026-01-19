@@ -26,6 +26,8 @@ public static class EngineConstants
 
     #region Engine Constants
 
+    public const int SimulationLemmingId = int.MinValue;
+
     public const int MaxNumberOfTribes = 6;
     public const int ClassicTribeId = 0;
 

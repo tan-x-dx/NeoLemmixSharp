@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
@@ -15,9 +16,8 @@ public sealed class SetLemmingPositionBehaviour : LemmingBehaviour
         _relativePositioningType = relativePositioningType;
     }
 
-    protected override void PerformInternalBehaviour(int triggerData)
+    protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        var lemming = GetLemming(triggerData);
         SetLemmingPosition(ref lemming.AnchorPosition);
 
         LevelScreen.LemmingManager.UpdateLemmingPosition(lemming);

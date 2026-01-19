@@ -35,12 +35,9 @@ public sealed class LemmingBuilder
 
             var lemming = new Lemming(handle, i);
 
-            lemming.AnchorPosition = prototype.Position;
-            lemming.Orientation = prototype.Orientation;
-            lemming.FacingDirection = prototype.FacingDirection;
             lemming.CurrentAction = LemmingAction.GetActionOrDefault(prototype.InitialLemmingActionId);
-
-            lemming.State.SetData(prototype.TribeId, prototype.State);
+            lemming.AnchorPosition = prototype.Position;
+            lemming.SetRawData(prototype.Orientation, prototype.FacingDirection, prototype.TribeId, prototype.State);
 
             _lemmingList.At(i++) = lemming;
             handle += LemmingData.LemmingDataSize;

@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Theme;
@@ -26,7 +27,7 @@ public sealed class LemmingSpriteBank
     {
         var actionSprites = GetActionSprites(lemming);
 
-        var id = lemming.CurrentAction.Id;
+        var id = lemming.CurrentActionId;
         if ((uint)id < (uint)actionSprites.Length)
             return actionSprites[id];
 
@@ -35,7 +36,9 @@ public sealed class LemmingSpriteBank
 
     private LemmingActionSprite[] GetActionSprites(Lemming lemming)
     {
-        var styleIdentifier = lemming.State.TribeAffiliation.TribeIdentifier.StyleIdentifier;
+        var lemmingTribeId = lemming.State.TribeId; 
+        var lemmingTribe = LevelScreen.TribeManager.GetTribe(lemmingTribeId);
+        var styleIdentifier = lemmingTribe.TribeIdentifier.StyleIdentifier;
         return _lookupData[styleIdentifier].ActionSprites;
     }
 }

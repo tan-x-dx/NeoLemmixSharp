@@ -64,8 +64,8 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
             return false;
 
         _size--;
-        _data[index] = _data[_size];
-        _data[_size] = default;
+        _data.At(index) = _data.At(_size);
+        _data.At(_size) = default;
 
         if (_size == 0)
             Clear();
@@ -82,7 +82,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
             return false;
         }
 
-        value = _data[index].Value;
+        value = _data.At(index).Value;
         return true;
     }
 
@@ -93,7 +93,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
             var index = FindIndex(key);
             if (index < 0)
                 throw new KeyNotFoundException();
-            return _data[index].Value;
+            return _data.At(index).Value;
         }
         set
         {
@@ -104,7 +104,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
                 return;
             }
 
-            _data[index] = new KeyValuePair<TKey, TValue>(key, value);
+            _data.At(index) = new KeyValuePair<TKey, TValue>(key, value);
         }
     }
 
@@ -112,7 +112,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
     {
         for (var i = 0; i < _size; i++)
         {
-            if (key.Equals(_data[i].Key))
+            if (key.Equals(_data.At(i).Key))
                 return i;
         }
 
@@ -128,7 +128,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
                 return [];
             var result = new TKey[size];
             for (var i = 0; i < size; i++)
-                result[i] = _data[i].Key;
+                result[i] = _data.At(i).Key;
             return result;
         }
     }
@@ -142,7 +142,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
                 return [];
             var result = new TValue[size];
             for (var i = 0; i < size; i++)
-                result[i] = _data[i].Value;
+                result[i] = _data.At(i).Value;
             return result;
         }
     }
@@ -166,14 +166,13 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
             _current = default;
         }
 
-
         public bool MoveNext()
         {
             var localLookup = _lookup;
 
             if ((uint)_index < (uint)localLookup._size)
             {
-                _current = localLookup._data[_index];
+                _current = localLookup._data.At(_index);
                 _index++;
                 return true;
             }
