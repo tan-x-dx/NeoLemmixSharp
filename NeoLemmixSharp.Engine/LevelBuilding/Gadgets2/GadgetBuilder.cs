@@ -131,7 +131,7 @@ public sealed class GadgetBuilder
             _gadgets.Add(newGadget);
 
             dataHandle--;
-            dataHandle |= sizeof(ulong) - 1;
+            dataHandle |= (sizeof(ulong) - 1);
             dataHandle++;
         }
     }
