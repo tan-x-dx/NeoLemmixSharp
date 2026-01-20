@@ -48,8 +48,8 @@ public static class HitBoxBuilder
     {
         Debug.Assert(hitBoxRegionData.HitBoxDefinitionData.Length == 2);
 
-        var p0 = hitBoxRegionData.HitBoxDefinitionData[0];
-        var p1 = hitBoxRegionData.HitBoxDefinitionData[1];
+        var p0 = hitBoxRegionData.HitBoxDefinitionData.At(0);
+        var p1 = hitBoxRegionData.HitBoxDefinitionData.At(1);
 
         return new ResizableRectangularHitBoxRegion(gadgetBounds, p0.X, p0.Y, p1.X, p1.Y);
     }
@@ -59,7 +59,9 @@ public static class HitBoxBuilder
     {
         Debug.Assert(hitBoxRegionData.HitBoxDefinitionData.Length == 2);
 
-        return new RectangularHitBoxRegion(hitBoxRegionData.HitBoxDefinitionData[0], hitBoxRegionData.HitBoxDefinitionData[1]);
+        return new RectangularHitBoxRegion(
+            hitBoxRegionData.HitBoxDefinitionData.At(0),
+            hitBoxRegionData.HitBoxDefinitionData.At(1));
     }
 
     private static PointSetHitBoxRegion BuildPointSetHitBoxRegion(

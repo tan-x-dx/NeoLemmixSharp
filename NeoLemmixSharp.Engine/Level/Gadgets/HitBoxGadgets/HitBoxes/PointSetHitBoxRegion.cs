@@ -8,7 +8,6 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 public sealed class PointSetHitBoxRegion : HitBoxRegion
 {
     private const int DimensionCutoffSize = 64;
-    private const int AreaCutoffSize = 64 * 64;
 
     private readonly uint[] _levelPositionBits;
 
@@ -28,9 +27,6 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
 
         var totalNumberOfPoints = _bounds.Size.Area();
 
-        if (totalNumberOfPoints > AreaCutoffSize)
-            throw new ArgumentException($"The region enclosed by this set of points is far too large! Area:{totalNumberOfPoints}");
-
         _levelPositionBits = BitArrayHelpers.CreateBitArray(totalNumberOfPoints, false);
         var span = new Span<uint>(_levelPositionBits);
 
@@ -46,26 +42,36 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
     [Pure]
     public override bool ContainsPoint(Point levelPosition)
     {
-        levelPosition -= _bounds.Position;
-        var index = IndexFor(levelPosition);
+        var p = levelPosition - _bounds.Position;
+        if (!_bounds.Size.EncompassesPoint(p))
+            return false;
 
-        return _bounds.Size.EncompassesPoint(levelPosition) &&
-               BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_levelPositionBits), index);
+        var pointIndex = IndexFor(p);
+
+        return BitArrayHelpers.GetBit(new ReadOnlySpan<uint>(_levelPositionBits), pointIndex);
     }
 
     [Pure]
     public override bool ContainsEitherPoint(Point p1, Point p2)
     {
-        p1 -= _bounds.Position;
-        p2 -= _bounds.Position;
-        var index1 = IndexFor(p1);
-        var index2 = IndexFor(p2);
+        int pointIndex;
+        Point p;
         var span = new ReadOnlySpan<uint>(_levelPositionBits);
 
-        return _bounds.Size.EncompassesPoint(p1) &&
-                BitArrayHelpers.GetBit(span, index1) ||
-               _bounds.Size.EncompassesPoint(p2) &&
-                BitArrayHelpers.GetBit(span, index2);
+        p = p1 - _bounds.Position;
+        if (_bounds.Size.EncompassesPoint(p))
+        {
+            pointIndex = IndexFor(p);
+            if (BitArrayHelpers.GetBit(span, pointIndex))
+                return true;
+        }
+
+        p = p2 - _bounds.Position;
+        if (!_bounds.Size.EncompassesPoint(p))
+            return false;
+
+        pointIndex = IndexFor(p);
+        return BitArrayHelpers.GetBit(span, pointIndex);
     }
 
     [Pure]
