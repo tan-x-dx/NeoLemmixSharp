@@ -127,7 +127,7 @@ public sealed class LevelObjectiveBuilder
 
     public SkillSetManager BuildSkillSetManager(TribeManager tribeManager, SafeBufferAllocator safeBufferAllocator)
     {
-        SkillSetDataBuffer = safeBufferAllocator.AllocateRawArray(sizeof(int) + (_levelObjectiveData.SkillSetData.Length * Level.Objectives.SkillSetData.SkillSetDataSize));
+        SkillSetDataBuffer = safeBufferAllocator.AllocateRawArray(PointerWrapper.SizeInBytes + (_levelObjectiveData.SkillSetData.Length * Level.Objectives.SkillSetData.SizeInBytes));
 
         var skillTrackingData = BuildSkillTrackingData(tribeManager);
 
@@ -145,7 +145,7 @@ public sealed class LevelObjectiveBuilder
 
         var result = new SkillTrackingData[baseSkillData.Length];
 
-        nint handle = SkillSetDataBuffer.Handle + sizeof(int);
+        nint handle = SkillSetDataBuffer.Handle + PointerWrapper.SizeInBytes;
 
         for (var i = 0; i < result.Length; i++)
         {
@@ -162,8 +162,7 @@ public sealed class LevelObjectiveBuilder
                 ? null
                 : tribeManager.TryGetTribe(skillSetData.TribeId);
 
-            result[i] = new SkillTrackingData(handle, skill, tribe, i, skillSetData.InitialQuantity, initialSkillLimit);
-            handle += Level.Objectives.SkillSetData.SkillSetDataSize;
+            result[i] = new SkillTrackingData(ref handle, skill, tribe, i, skillSetData.InitialQuantity, initialSkillLimit);
         }
 
         return result;
@@ -173,7 +172,7 @@ public sealed class LevelObjectiveBuilder
     {
         var timeLimitCriterionData = TryFindSmallestTimeLimitCriterion();
 
-        LevelTimerDataBuffer = safeBufferAllocator.AllocateRawArray(LevelTimerData.LevelTimerDataSize);
+        LevelTimerDataBuffer = safeBufferAllocator.AllocateRawArray(LevelTimerData.SizeInBytes);
 
         return timeLimitCriterionData is null
             ? LevelTimer.CreateCountUpTimer(LevelTimerDataBuffer.Handle)

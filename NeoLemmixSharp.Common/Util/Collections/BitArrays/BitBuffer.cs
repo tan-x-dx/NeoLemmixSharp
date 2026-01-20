@@ -63,7 +63,7 @@ public readonly struct ArrayBitBuffer : IBitBuffer
     public ReadOnlySpan<uint> AsReadOnlySpan() => new(_array, _start, _length);
 }
 
-public unsafe readonly struct RawBitBuffer : IBitBuffer
+public readonly unsafe struct RawBitBuffer : IBitBuffer
 {
     private readonly void* _pointer;
     private readonly int _length;

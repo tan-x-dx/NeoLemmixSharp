@@ -19,7 +19,7 @@ public sealed class LemmingBuilder
         var numberOfLemmings = _levelData.CalculateTotalNumberOfLemmingsInLevel();
 
         _lemmingList = new Lemming[numberOfLemmings];
-        _lemmingDataBuffer = safeBufferAllocator.AllocateRawArray(numberOfLemmings * LemmingData.LemmingDataSize);
+        _lemmingDataBuffer = safeBufferAllocator.AllocateRawArray(numberOfLemmings * LemmingData.SizeInBytes);
     }
 
     public RawArray LemmingDataBuffer => _lemmingDataBuffer;
@@ -33,19 +33,18 @@ public sealed class LemmingBuilder
         {
             var prototype = _levelData.PrePlacedLemmingData[i];
 
-            var lemming = new Lemming(handle, i);
+            var lemming = new Lemming(ref handle, i);
 
             lemming.CurrentAction = LemmingAction.GetActionOrDefault(prototype.InitialLemmingActionId);
             lemming.AnchorPosition = prototype.Position;
             lemming.SetRawData(prototype.Orientation, prototype.FacingDirection, prototype.TribeId, prototype.State);
 
             _lemmingList.At(i++) = lemming;
-            handle += LemmingData.LemmingDataSize;
         }
 
         while (i < _lemmingList.Length)
         {
-            var lemming = new Lemming(handle, i);
+            var lemming = new Lemming(ref handle, i);
 
             lemming.AnchorPosition = default;
             lemming.Orientation = Orientation.Down;
@@ -53,7 +52,6 @@ public sealed class LemmingBuilder
             lemming.CurrentAction = NoneAction.Instance;
 
             _lemmingList.At(i++) = lemming;
-            handle += LemmingData.LemmingDataSize;
         }
 
         return _lemmingList;

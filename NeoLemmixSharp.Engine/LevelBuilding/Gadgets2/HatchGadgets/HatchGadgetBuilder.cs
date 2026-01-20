@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.Tribes;
@@ -48,7 +49,7 @@ public readonly ref struct HatchGadgetBuilder
             hatchSpawnData,
             spawnPointOffset)
         {
-            DataHandle = dataHandleRef,
+            DataHandle = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandleRef),
             Id = _hatchGadgetInstanceData.Identifier.GadgetId,
             GadgetName = gadgetName,
             CurrentGadgetBounds = gadgetBounds,
@@ -57,8 +58,6 @@ public readonly ref struct HatchGadgetBuilder
             FacingDirection = _hatchGadgetInstanceData.FacingDirection,
             IsFastForward = false,
         };
-
-        dataHandleRef += sizeof(int);
 
         return result;
     }
@@ -127,15 +126,13 @@ public readonly ref struct HatchGadgetBuilder
     private HatchSpawnData BuildHatchSpawnData(ref nint dataHandleRef)
     {
         var result = new HatchSpawnData(
-            dataHandleRef,
+            ref dataHandleRef,
             _hatchGadgetTypeInstanceData.NumberOfLemmingsToRelease,
             _hatchGadgetInstanceData.Orientation,
             _hatchGadgetInstanceData.FacingDirection,
             _hatchGadgetTypeInstanceData.TribeId,
             _hatchGadgetTypeInstanceData.RawStateData,
             _hatchGadgetTypeInstanceData.HatchGroupId);
-
-        dataHandleRef += sizeof(int);
 
         return result;
     }

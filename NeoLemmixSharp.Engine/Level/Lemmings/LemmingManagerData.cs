@@ -1,11 +1,17 @@
-﻿using System.Runtime.CompilerServices;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public unsafe readonly struct LemmingManagerData
+public readonly unsafe struct LemmingManagerData : IPointerData<LemmingManagerData>
 {
-    public const int LemmingManagerDataSize = 6 * sizeof(int);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static LemmingManagerData Create(nint dataRef) => new(dataRef);
+
+    public static int SizeInBytes => LemmingManagerDataSize;
+
+    private const int LemmingManagerDataSize = 6 * sizeof(int);
 
     [StructLayout(LayoutKind.Sequential, Size = LemmingManagerDataSize)]
     private struct LemmingManagerDataRaw
@@ -21,8 +27,7 @@ public unsafe readonly struct LemmingManagerData
 
     private readonly LemmingManagerDataRaw* _data;
 
-    public LemmingManagerData(void* pointer) => _data = (LemmingManagerDataRaw*)pointer;
-    public LemmingManagerData(nint pointerHandle) => _data = (LemmingManagerDataRaw*)pointerHandle;
+    private LemmingManagerData(nint pointerHandle) => _data = (LemmingManagerDataRaw*)pointerHandle;
 
     public ref int NumberOfLemmingsReleasedFromHatch => ref Unsafe.AsRef<int>(&_data->NumberOfLemmingsReleasedFromHatch);
     public ref int NumberOfClonedLemmings => ref Unsafe.AsRef<int>(&_data->NumberOfClonedLemmings);

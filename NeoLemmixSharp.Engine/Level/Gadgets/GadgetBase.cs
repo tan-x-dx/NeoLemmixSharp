@@ -9,9 +9,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public abstract class GadgetBase : IEquatable<GadgetBase>
 {
     private readonly PointerWrapper _stateIndex;
-    public required nint DataHandle
+    public required PointerWrapper DataHandle
     {
-        init => _stateIndex = new PointerWrapper(value);
+        init => _stateIndex = value;
     }
     public required GadgetName GadgetName { get; init; }
     public GadgetType GadgetType { get; }

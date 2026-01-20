@@ -25,13 +25,13 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
     public uint CurrentSpawnInterval => _data.CurrentSpawnInterval;
 
     public HatchGroup(
-        nint dataHandle,
+        ref nint dataHandle,
         int id,
         uint minSpawnInterval,
         uint maxSpawnInterval,
         uint initialSpawnInterval)
     {
-        _data = new HatchGroupData(dataHandle);
+        _data = PointerDataHelper.CreateItem<HatchGroupData>(ref dataHandle);
         Id = id;
 
         Debug.Assert(minSpawnInterval <= initialSpawnInterval);
@@ -76,12 +76,13 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
         if (_data.LemmingsToRelease == 0)
             return null;
 
-        _data.NextLemmingCountDown--;
+        ref var nextLemmingCountDownRef = ref _data.NextLemmingCountDown;
+        nextLemmingCountDownRef--;
 
-        if (_data.NextLemmingCountDown != 0)
+        if (nextLemmingCountDownRef != 0)
             return null;
 
-        _data.NextLemmingCountDown = _data.CurrentSpawnInterval;
+        nextLemmingCountDownRef = _data.CurrentSpawnInterval;
         return GetNextLogicalHatchGadget();
     }
 
@@ -91,7 +92,8 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
         if (c < 0)
             return null;
 
-        var hatchIndex = _data.HatchIndex;
+        ref var hatchIndexRef = ref _data.HatchIndex;
+        var hatchIndex = hatchIndexRef;
 
         do
         {
@@ -103,13 +105,13 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
 
             if (hatchGadget.CanReleaseLemmings())
             {
-                _data.HatchIndex = hatchIndex;
+                hatchIndexRef = hatchIndex;
                 return hatchGadget;
             }
             c--;
         } while (c >= 0);
 
-        _data.HatchIndex = hatchIndex;
+        hatchIndexRef = hatchIndex;
         return null;
     }
 

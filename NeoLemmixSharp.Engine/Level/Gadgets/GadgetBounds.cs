@@ -4,14 +4,18 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
-public unsafe readonly struct GadgetBounds : IRectangularBounds
+public readonly unsafe struct GadgetBounds : IRectangularBounds, IPointerData<GadgetBounds>
 {
-    public const int GadgetBoundsDataSize = RectangularRegion.RectangularRegionSize;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static GadgetBounds Create(nint dataRef) => new(dataRef);
+
+    public static int SizeInBytes => GadgetBoundsDataSize;
+
+    private const int GadgetBoundsDataSize = RectangularRegion.RectangularRegionSize;
 
     private readonly RectangularRegion* _data;
 
-    public GadgetBounds(void* pointer) => _data = (RectangularRegion*)pointer;
-    public GadgetBounds(nint pointerHandle) => _data = (RectangularRegion*)pointerHandle;
+    private GadgetBounds(nint pointerHandle) => _data = (RectangularRegion*)pointerHandle;
 
     public ref int X => ref Unsafe.AsRef<int>(&_data->X);
     public ref int Y => ref Unsafe.AsRef<int>(&_data->Y);

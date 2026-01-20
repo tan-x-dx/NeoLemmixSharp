@@ -1,11 +1,17 @@
-﻿using System.Runtime.CompilerServices;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
 
-public unsafe readonly struct LevelTimerData
+public readonly unsafe struct LevelTimerData : IPointerData<LevelTimerData>
 {
-    public const int LevelTimerDataSize = 1 * sizeof(int);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static LevelTimerData Create(nint dataRef) => new(dataRef);
+
+    public static int SizeInBytes => LevelTimerDataSize;
+
+    private const int LevelTimerDataSize = 1 * sizeof(int);
 
     [StructLayout(LayoutKind.Sequential, Size = LevelTimerDataSize)]
     private struct LevelTimerDataRaw
@@ -15,8 +21,7 @@ public unsafe readonly struct LevelTimerData
 
     private readonly LevelTimerDataRaw* _data;
 
-    public LevelTimerData(void* pointer) => _data = (LevelTimerDataRaw*)pointer;
-    public LevelTimerData(nint pointerHandle) => _data = (LevelTimerDataRaw*)pointerHandle;
+    private LevelTimerData(nint pointerHandle) => _data = (LevelTimerDataRaw*)pointerHandle;
 
     public ref int AdditionalSeconds => ref Unsafe.AsRef<int>(&_data->AdditionalSeconds);
 }

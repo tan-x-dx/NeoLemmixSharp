@@ -59,7 +59,7 @@ public readonly ref struct HitBoxGadgetBuilder
             resizeType,
             lemmingTracker)
         {
-            DataHandle = dataHandleRef,
+            DataHandle = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandleRef),
             Id = _hitBoxGadgetInstanceData.Identifier.GadgetId,
             GadgetName = gadgetName,
             CurrentGadgetBounds = gadgetBounds,
@@ -68,8 +68,6 @@ public readonly ref struct HitBoxGadgetBuilder
             FacingDirection = _hitBoxGadgetInstanceData.FacingDirection,
             IsFastForward = _hitBoxGadgetInstanceData.IsFastForward,
         };
-
-        dataHandleRef += sizeof(int);
 
         return result;
     }

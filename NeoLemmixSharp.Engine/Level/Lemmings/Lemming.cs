@@ -106,22 +106,19 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public Span<Point> GetJumperPositions() => _data.GetJumperPositions();
 
     public Lemming(
-        nint dataHandle,
+        ref nint dataHandle,
         int id)
     {
         Id = id;
-        _data = new LemmingData(dataHandle)
-        {
-            PreviousActionId = LemmingActionConstants.NoneActionId,
-            CurrentActionId = LemmingActionConstants.NoneActionId,
-            NextActionId = LemmingActionConstants.NoneActionId,
-            CountDownActionId = LemmingActionConstants.NoneActionId,
-
-            DehoistPin = new(-1, -1),
-            LaserHitLevelPosition = new(-1, -1),
-            AnchorPosition = new(-1, -1),
-            PreviousAnchorPosition = new(-1, -1)
-        };
+        _data = PointerDataHelper.CreateItem<LemmingData>(ref dataHandle);
+        _data.PreviousActionId = LemmingActionConstants.NoneActionId;
+        _data.CurrentActionId = LemmingActionConstants.NoneActionId;
+        _data.NextActionId = LemmingActionConstants.NoneActionId;
+        _data.CountDownActionId = LemmingActionConstants.NoneActionId;
+        _data.DehoistPin = new(-1, -1);
+        _data.LaserHitLevelPosition = new(-1, -1);
+        _data.AnchorPosition = new(-1, -1);
+        _data.PreviousAnchorPosition = new(-1, -1);
 
         State = _data.CreateLemmingState(this);
         Renderer = new LemmingRenderer(this);
@@ -473,8 +470,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* destinationPointer)
     {
-        var sourceSpan = Helpers.CreateReadOnlySpan<byte>(sourcePointer, LemmingData.LemmingDataSize);
-        var destinationSpan = Helpers.CreateSpan<byte>(destinationPointer, LemmingData.LemmingDataSize);
+        var sourceSpan = Helpers.CreateReadOnlySpan<byte>(sourcePointer, LemmingData.SizeInBytes);
+        var destinationSpan = Helpers.CreateSpan<byte>(destinationPointer, LemmingData.SizeInBytes);
         sourceSpan.CopyTo(destinationSpan);
     }
 

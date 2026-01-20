@@ -2,8 +2,13 @@
 
 namespace NeoLemmixSharp.Common.Util;
 
-public unsafe readonly struct PointerWrapper
+public readonly unsafe struct PointerWrapper : IPointerData<PointerWrapper>
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static PointerWrapper Create(nint dataRef) => new(dataRef);
+
+    public static int SizeInBytes => sizeof(int);
+
     private readonly void* _pointer;
 
     public PointerWrapper(void* pointer) => _pointer = pointer;

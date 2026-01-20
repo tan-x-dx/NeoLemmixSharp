@@ -87,20 +87,18 @@ public readonly ref struct GadgetBehaviourBuilder
         {
             GadgetBehaviourType.None => throw new InvalidOperationException("Invalid Behaviour Type!"),
 
-            GadgetBehaviourType.GadgetOutputSignal => BuildGadgetOutputSignalBehaviour(dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetChangeInternalState => BuildGadgetChangeInternalStateBehaviour(dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetMove => BuildMoveGadgetBehaviour(dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetFreeResize => BuildFreeResizeGadgetBehaviour(dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetConstrainedResize => BuildConstrainedResizeGadgetBehaviour(dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GadgetAnimationRenderLayer => BuildGadgetAnimationRenderLayerBehaviour(dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.LemmingBehaviour => LemmingBehaviourBuilder.BuildLemmingBehaviour(dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GlobalAdditionalTime => BuildGlobalAdditionalTimeBehaviour(dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
-            GadgetBehaviourType.GlobalSkillCountChange => BuildGlobalSkillCountChangeBehaviour(dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetOutputSignal => BuildGadgetOutputSignalBehaviour(ref dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetChangeInternalState => BuildGadgetChangeInternalStateBehaviour(ref dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetMove => BuildMoveGadgetBehaviour(ref dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetFreeResize => BuildFreeResizeGadgetBehaviour(ref dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetConstrainedResize => BuildConstrainedResizeGadgetBehaviour(ref dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GadgetAnimationRenderLayer => BuildGadgetAnimationRenderLayerBehaviour(ref dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.LemmingBehaviour => LemmingBehaviourBuilder.BuildLemmingBehaviour(ref dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GlobalAdditionalTime => BuildGlobalAdditionalTimeBehaviour(ref dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
+            GadgetBehaviourType.GlobalSkillCountChange => BuildGlobalSkillCountChangeBehaviour(ref dataHandleRef, newBehaviourId, in gadgetBehaviourDatum),
 
             _ => Helpers.ThrowUnknownEnumValueException<GadgetBehaviourType, GadgetBehaviour>(gadgetBehaviourDatum.GadgetBehaviourType),
         };
-
-        dataHandleRef += GadgetBehaviourTypeHasher.NumberOfSnapshotBytesRequiredForBehaviour(gadgetBehaviourDatum.GadgetBehaviourType);
 
         _gadgetBehaviours.Add(newGadgetBehaviour);
 
@@ -108,7 +106,7 @@ public readonly ref struct GadgetBehaviourBuilder
     }
 
     private static OutputSignalBehaviour BuildGadgetOutputSignalBehaviour(
-        nint dataHandleRef,
+        ref nint dataHandleRef,
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
@@ -121,7 +119,7 @@ public readonly ref struct GadgetBehaviourBuilder
     }
 
     private static StateChangeBehaviour BuildGadgetChangeInternalStateBehaviour(
-        nint dataHandleRef,
+        ref nint dataHandleRef,
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
@@ -136,7 +134,7 @@ public readonly ref struct GadgetBehaviourBuilder
     }
 
     private MoveGadgetBehaviour BuildMoveGadgetBehaviour(
-        nint dataHandleRef,
+        ref nint dataHandleRef,
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
@@ -145,7 +143,7 @@ public readonly ref struct GadgetBehaviourBuilder
         var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data1);
         var limit = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
 
-        return new MoveGadgetBehaviour(dataHandleRef, _gadgetIdentifier, tickDelay, delta, limit)
+        return new MoveGadgetBehaviour(ref dataHandleRef, _gadgetIdentifier, tickDelay, delta, limit)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
@@ -154,14 +152,14 @@ public readonly ref struct GadgetBehaviourBuilder
     }
 
     private FreeResizeHitBoxGadgetBehaviour BuildFreeResizeGadgetBehaviour(
-        nint dataHandleRef,
+        ref nint dataHandleRef,
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
         var tickDelay = gadgetBehaviourDatum.DataChunk.Data1;
         var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
 
-        return new FreeResizeHitBoxGadgetBehaviour(dataHandleRef, _gadgetIdentifier, tickDelay, delta.X, delta.Y)
+        return new FreeResizeHitBoxGadgetBehaviour(ref dataHandleRef, _gadgetIdentifier, tickDelay, delta.X, delta.Y)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
@@ -170,7 +168,7 @@ public readonly ref struct GadgetBehaviourBuilder
     }
 
     private ConstrainedResizeHitBoxGadgetBehaviour BuildConstrainedResizeGadgetBehaviour(
-        nint dataHandleRef,
+        ref nint dataHandleRef,
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
@@ -179,7 +177,7 @@ public readonly ref struct GadgetBehaviourBuilder
         var delta = gadgetBehaviourDatum.DataChunk.Data1;
         var max = gadgetBehaviourDatum.DataChunk.Data2;
 
-        return new ConstrainedResizeHitBoxGadgetBehaviour(dataHandleRef, _gadgetIdentifier, tickDelay, delta, max)
+        return new ConstrainedResizeHitBoxGadgetBehaviour(ref dataHandleRef, _gadgetIdentifier, tickDelay, delta, max)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
@@ -188,7 +186,7 @@ public readonly ref struct GadgetBehaviourBuilder
     }
 
     private static AnimationLayerBehaviour BuildGadgetAnimationRenderLayerBehaviour(
-        nint dataHandleRef,
+        ref nint dataHandleRef,
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
@@ -250,7 +248,7 @@ public readonly ref struct GadgetBehaviourBuilder
     }
 
     private static AdditionalTimeBehaviour BuildGlobalAdditionalTimeBehaviour(
-        nint dataHandleRef,
+        ref nint dataHandleRef,
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
@@ -265,7 +263,7 @@ public readonly ref struct GadgetBehaviourBuilder
     }
 
     private static SkillCountChangeBehaviour BuildGlobalSkillCountChangeBehaviour(
-        nint dataHandleRef,
+        ref nint dataHandleRef,
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {

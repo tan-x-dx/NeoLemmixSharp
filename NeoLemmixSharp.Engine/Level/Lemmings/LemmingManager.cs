@@ -61,7 +61,7 @@ public sealed class LemmingManager :
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
-        _data = new LemmingManagerData(dataHandle);
+        _data = PointerDataHelper.CreateItem<LemmingManagerData>(ref dataHandle);
 
         if (hatchGroups.Length > 0)
         {
@@ -96,8 +96,9 @@ public sealed class LemmingManager :
         _numberOfPreplacedLemmings = numberOfPreplacedLemmings;
         _maxNumberOfClonedLemmings = maxNumberOfClonedLemmings;
 
-        _simulationLemmingDataBuffer = new RawArray(LemmingData.LemmingDataSize);
-        SimulationLemming = new Lemming(_simulationLemmingDataBuffer.Handle, EngineConstants.SimulationLemmingId);
+        _simulationLemmingDataBuffer = new RawArray(LemmingData.SizeInBytes);
+        var handle = _simulationLemmingDataBuffer.Handle;
+        SimulationLemming = new Lemming(ref handle, EngineConstants.SimulationLemmingId);
     }
 
     [Pure]

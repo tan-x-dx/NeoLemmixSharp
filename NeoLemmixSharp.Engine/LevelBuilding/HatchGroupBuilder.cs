@@ -16,7 +16,7 @@ public sealed class HatchGroupBuilder
         _levelData = levelData;
 
         var numberOfHatchGroups = _levelData.AllHatchGroupData.Count;
-        HatchGroupDataBuffer = safeBufferAllocator.AllocateRawArray(numberOfHatchGroups * Level.Gadgets.HatchGadgets.HatchGroupData.HatchGroupDataSize);
+        HatchGroupDataBuffer = safeBufferAllocator.AllocateRawArray(numberOfHatchGroups * Level.Gadgets.HatchGadgets.HatchGroupData.SizeInBytes);
     }
 
     public HatchGroup[] BuildHatchGroups()
@@ -28,14 +28,13 @@ public sealed class HatchGroupBuilder
         {
             var prototype = _levelData.AllHatchGroupData[i];
             var hatchGroup = new HatchGroup(
-                handle,
+                ref handle,
                 i,
                 prototype.MinSpawnInterval,
                 prototype.MaxSpawnInterval,
                 prototype.InitialSpawnInterval);
 
             result[i] = hatchGroup;
-            handle += Level.Gadgets.HatchGadgets.HatchGroupData.HatchGroupDataSize;
         }
 
         return result;

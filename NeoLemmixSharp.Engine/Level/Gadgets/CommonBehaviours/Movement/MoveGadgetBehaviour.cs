@@ -14,14 +14,14 @@ public sealed class MoveGadgetBehaviour : GadgetBehaviour
     private readonly Point _limitPoint;
 
     public MoveGadgetBehaviour(
-        nint dataHandle,
+        ref nint dataHandle,
         GadgetIdentifier gadgetIdentifier,
         int tickDelay,
         Point delta,
         Point limitPoint)
         : base(GadgetBehaviourType.GadgetMove)
     {
-        _tickCount = new PointerWrapper(dataHandle);
+        _tickCount = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandle);
         _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;
         _delta = delta;

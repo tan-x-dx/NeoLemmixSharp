@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
@@ -21,14 +22,14 @@ public sealed class SkillTrackingData
     public bool IsInfinite => InitialSkillQuantity == EngineConstants.InfiniteSkillCount;
 
     public SkillTrackingData(
-        nint dataHandle,
+        ref nint dataHandle,
         LemmingSkill skill,
         Tribe? tribe,
         int skillTrackingDataId,
         int initialSkillQuantity,
         int initialSkillLimit)
     {
-        _data = new SkillSetData(dataHandle);
+        _data = PointerDataHelper.CreateItem<SkillSetData>(ref dataHandle);
 
         Skill = skill;
         Tribe = tribe;
