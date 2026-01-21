@@ -42,11 +42,11 @@ public readonly ref struct HitBoxGadgetBuilder
     public HitBoxGadget BuildHitBoxGadget(
         LemmingManager lemmingManager,
         TribeManager tribeManager,
-        ref nint dataHandleRef,
-        int lemmingTrackerByteRequirement)
+        ref nint dataHandleRef)
     {
-        var lemmingTracker = new LemmingTracker(lemmingManager, dataHandleRef);
-        dataHandleRef += lemmingTrackerByteRequirement;
+        // The lemming tracker needs to be created first before any other component,
+        // as it gets first dibs on the space allocated to the snapshot data.
+        var lemmingTracker = new LemmingTracker(lemmingManager, ref dataHandleRef);
 
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(_hitBoxGadgetArchetypeData, _hitBoxGadgetInstanceData);
         var gadgetBounds = GadgetBuildingHelpers.CreateHitBoxGadgetBounds(ref dataHandleRef, _hitBoxGadgetArchetypeData, _hitBoxGadgetSpecificationData, _hitBoxGadgetInstanceData, _hitBoxGadgetInstanceSpecificationData);
@@ -55,9 +55,9 @@ public readonly ref struct HitBoxGadgetBuilder
 
         var result = new HitBoxGadget(
             gadgetStates,
+            lemmingTracker,
             _hitBoxGadgetInstanceSpecificationData.InitialStateId,
-            resizeType,
-            lemmingTracker)
+            resizeType)
         {
             DataHandle = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandleRef),
             Id = _hitBoxGadgetInstanceData.Identifier.GadgetId,

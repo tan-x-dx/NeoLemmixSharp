@@ -182,7 +182,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         if (!HandleLemmingAction(in gadgetsNearLemming)) return;
         if (!CheckLevelBoundaries()) return;
-        if (!CheckTriggerAreas(false, gadgetCheckPositions, in gadgetsNearLemming)) return;
+        if (!CheckTriggerAreas(in gadgetsNearLemming, gadgetCheckPositions, false)) return;
         if (CurrentActionId == LemmingActionConstants.ExiterActionId) return;
         if (State.IsZombie) return;
         if (!LevelScreen.LemmingManager.AnyZombies()) return;
@@ -220,7 +220,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (handleGadgets)
         {
             // Reuse the above span. LemmingMovementHelper will overwrite existing values
-            CheckTriggerAreas(false, gadgetCheckPositions, in gadgetsNearLemming);
+            CheckTriggerAreas(in gadgetsNearLemming, gadgetCheckPositions, false);
         }
     }
 
@@ -327,16 +327,16 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
 
     private bool CheckTriggerAreas(
-        bool isPostTeleportCheck,
+        in GadgetEnumerable gadgetsNearLemming,
         Span<Point> gadgetCheckPositions,
-        in GadgetEnumerable gadgetsNearLemming)
+        bool isPostTeleportCheck)
     {
         if (isPostTeleportCheck)
         {
             _data.PreviousAnchorPosition = _data.AnchorPosition;
         }
 
-        var result = CheckGadgets(gadgetCheckPositions, in gadgetsNearLemming) && LemmingManager.DoBlockerCheck(this);
+        var result = CheckGadgets(in gadgetsNearLemming, gadgetCheckPositions) && LemmingManager.DoBlockerCheck(this);
 
         NextAction.TransitionLemmingToAction(this, false);
 
@@ -344,8 +344,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
 
     private bool CheckGadgets(
-        Span<Point> gadgetCheckPositions,
-        in GadgetEnumerable gadgetsNearLemming)
+        in GadgetEnumerable gadgetsNearLemming,
+        Span<Point> gadgetCheckPositions)
     {
         if (gadgetsNearLemming.Count == 0)
             return true;

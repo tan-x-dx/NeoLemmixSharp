@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
-public unsafe sealed class ItemTracker<TPerfectHasher, T>
+public readonly unsafe struct ItemTracker<TPerfectHasher, T>
     where TPerfectHasher : IPerfectHasher<T>
     where T : notnull
 {
@@ -13,10 +13,13 @@ public unsafe sealed class ItemTracker<TPerfectHasher, T>
     private readonly TPerfectHasher _hasher;
     private readonly ulong* _bits;
 
-    public ItemTracker(TPerfectHasher hasher, nint bitsHandle)
+    public ItemTracker(TPerfectHasher hasher, ref nint bitsHandle)
     {
         _hasher = hasher;
         _bits = (ulong*)bitsHandle;
+
+        var numberOfBytes = BitArrayHelpers.CalculateBitArrayBufferLength(hasher.NumberOfItems) * sizeof(ulong);
+        bitsHandle += numberOfBytes;
     }
 
     public void Tick()

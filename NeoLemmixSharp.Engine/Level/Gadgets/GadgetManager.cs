@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
+using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -163,9 +164,9 @@ public sealed class GadgetManager :
         }
     }
 
-    public void RegisterCauseAndEffectData(GadgetBehaviour gadgetBehaviour, int lemmingId)
+    public void RegisterCauseAndEffectData(GadgetBehaviour gadgetBehaviour, Lemming lemming)
     {
-        _gadgetLemmingInteractions.Add(new GadgetLemmingInteraction(gadgetBehaviour.Id, lemmingId));
+        _gadgetLemmingInteractions.Add(new GadgetLemmingInteraction(gadgetBehaviour.Id, lemming.Id));
     }
 
     public void MarkTriggerAsEvaluated(GadgetTrigger gadgetTrigger)

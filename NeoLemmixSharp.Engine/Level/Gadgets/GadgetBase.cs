@@ -23,7 +23,6 @@ public abstract class GadgetBase : IEquatable<GadgetBase>
     public required bool IsFastForward { get; init; }
 
     public Point Position => CurrentGadgetBounds.Position;
-    public Size Size => CurrentGadgetBounds.Size;
 
     public abstract GadgetState CurrentState { get; }
 
