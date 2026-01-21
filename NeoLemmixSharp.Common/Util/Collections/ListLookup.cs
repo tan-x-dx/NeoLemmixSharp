@@ -46,7 +46,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
 
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
     {
-        var sourceSpan = new ReadOnlySpan<KeyValuePair<TKey, TValue>>(_data, 0, _size);
+        var sourceSpan = Helpers.CreateReadOnlySpan(_data, 0, _size);
         var destSpan = new Span<KeyValuePair<TKey, TValue>>(array, arrayIndex, _size);
 
         sourceSpan.CopyTo(destSpan);

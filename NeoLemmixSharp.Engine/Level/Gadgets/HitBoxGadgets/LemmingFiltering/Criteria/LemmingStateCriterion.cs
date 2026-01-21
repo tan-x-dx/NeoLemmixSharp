@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -53,9 +54,9 @@ public sealed class LemmingStateCriterion : LemmingCriterion
         allowedLemmingStates = new ILemmingState[numberOfStates];
         requiredStates = BitArrayHelpers.CreateBitArray(numberOfStates, true);
 
-        var stateSpan = new Span<ILemmingState>(allowedLemmingStates, 0, allowedStates.Count);
+        var stateSpan = Helpers.CreateSpan(allowedLemmingStates, 0, allowedStates.Count);
         allowedStates.CopyTo(stateSpan);
-        stateSpan = new Span<ILemmingState>(allowedLemmingStates, allowedStates.Count, disallowedStates.Count);
+        stateSpan = Helpers.CreateSpan(allowedLemmingStates, allowedStates.Count, disallowedStates.Count);
         disallowedStates.CopyTo(stateSpan);
 
         var bitsSpan = new Span<uint>(requiredStates);

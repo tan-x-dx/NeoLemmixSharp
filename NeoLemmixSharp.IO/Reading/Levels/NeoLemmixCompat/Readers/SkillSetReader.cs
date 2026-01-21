@@ -7,7 +7,7 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 internal sealed class SkillSetReader : NeoLemmixDataReader
 {
-    private readonly HashSet<string> _seenSkills = new(10);
+    private readonly HashSet<string> _seenSkills = new(10, StringComparer.OrdinalIgnoreCase);
     private readonly UniqueStringSet _uniqueStringSet;
 
     public List<SkillSetData> SkillSetData { get; } = new();

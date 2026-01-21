@@ -179,7 +179,7 @@ public sealed class LemmingManager :
 
     private void UpdateHatchGroups()
     {
-        var hatchLemmingSpan = new ReadOnlySpan<Lemming>(_lemmings, _numberOfPreplacedLemmings, _totalNumberOfHatchLemmings);
+        var hatchLemmingSpan = Helpers.CreateReadOnlySpan(_lemmings, _numberOfPreplacedLemmings, _totalNumberOfHatchLemmings);
         foreach (var hatchGroup in _hatchGroups)
         {
             var hatchGadget = hatchGroup.Tick();

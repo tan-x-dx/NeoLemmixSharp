@@ -59,8 +59,8 @@ public readonly struct ArrayBitBuffer : IBitBuffer
         _length = length;
     }
 
-    public Span<uint> AsSpan() => new(_array, _start, _length);
-    public ReadOnlySpan<uint> AsReadOnlySpan() => new(_array, _start, _length);
+    public Span<uint> AsSpan() => Helpers.CreateSpan(_array, _start, _length);
+    public ReadOnlySpan<uint> AsReadOnlySpan() => Helpers.CreateReadOnlySpan(_array, _start, _length);
 }
 
 public readonly unsafe struct RawBitBuffer : IBitBuffer
