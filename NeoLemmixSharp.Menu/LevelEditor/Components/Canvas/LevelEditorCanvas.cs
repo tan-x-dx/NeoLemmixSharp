@@ -37,7 +37,7 @@ public sealed class LevelEditorCanvas : Component
     public override void Render(SpriteBatch spriteBatch)
     {
         RenderCanvasBorder(spriteBatch);
-        RenderLevel(spriteBatch);
+        RenderCanvas(spriteBatch);
     }
 
     private void RenderCanvasBorder(SpriteBatch spriteBatch)
@@ -47,7 +47,7 @@ public sealed class LevelEditorCanvas : Component
         spriteBatch.FillRect(rectangle, LevelEditorConstants.CanvasBorderColour);
     }
 
-    private void RenderLevel(SpriteBatch spriteBatch)
+    private void RenderCanvas(SpriteBatch spriteBatch)
     {
         var sourceRectangle = GetSourceRectangle();
         var destinationRectangle = GetDestinationRectangle();

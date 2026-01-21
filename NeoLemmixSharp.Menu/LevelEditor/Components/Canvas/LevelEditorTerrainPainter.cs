@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.IO.Data.Level;
-using System.Runtime.CompilerServices;
 using Point = NeoLemmixSharp.Common.Point;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
@@ -38,18 +37,15 @@ public sealed class LevelEditorTerrainPainter
         var levelDimensions = _levelData.LevelDimensions;
         int x;
         int y = levelDimensions.H + LevelEditorConstants.LevelOuterBoundarySize + 1;
-        ref Color color = ref Unsafe.NullRef<Color>();
         Point p;
 
         for (x = levelDimensions.W + 1; x >= -1; x--)
         {
             p = new Point(x + LevelEditorConstants.LevelOuterBoundarySize, LevelEditorConstants.LevelOuterBoundarySize - 1);
-            color = ref rawColors[p];
-            RenderingHelpers.Negate(ref color);
+            RenderingHelpers.Negate(ref rawColors[p]);
 
             p = new Point(x + LevelEditorConstants.LevelOuterBoundarySize, y);
-            color = ref rawColors[p];
-            RenderingHelpers.Negate(ref color);
+            RenderingHelpers.Negate(ref rawColors[p]);
         }
 
         x = levelDimensions.W + LevelEditorConstants.LevelOuterBoundarySize + 1;
@@ -57,12 +53,10 @@ public sealed class LevelEditorTerrainPainter
         for (y = levelDimensions.H; y >= 0; y--)
         {
             p = new Point(LevelEditorConstants.LevelOuterBoundarySize - 1, y + LevelEditorConstants.LevelOuterBoundarySize);
-            color = ref rawColors[p];
-            RenderingHelpers.Negate(ref color);
+            RenderingHelpers.Negate(ref rawColors[p]);
 
             p = new Point(x, y + LevelEditorConstants.LevelOuterBoundarySize);
-            color = ref rawColors[p];
-            RenderingHelpers.Negate(ref color);
+            RenderingHelpers.Negate(ref rawColors[p]);
         }
     }
 }

@@ -277,40 +277,38 @@ public sealed class LemmingState
     public void UpdateHairAndBodyColors()
     {
         var tribe = LevelScreen.TribeManager.GetTribe(_tribeId.IntValue);
-        ref readonly var tribeColorData = ref tribe.ColorData;
 
         if (HasPermanentSkill)
         {
-            HairColor = tribeColorData.PermanentSkillHairColor;
+            HairColor = tribe.ColorData.PermanentSkillHairColor;
             BodyColor = IsNeutral
-                ? tribeColorData.NeutralBodyColor
-                : tribeColorData.PermanentSkillBodyColor;
+                ? tribe.ColorData.NeutralBodyColor
+                : tribe.ColorData.PermanentSkillBodyColor;
         }
         else
         {
-            HairColor = tribeColorData.HairColor;
+            HairColor = tribe.ColorData.HairColor;
             BodyColor = IsNeutral
-                ? tribeColorData.NeutralBodyColor
-                : tribeColorData.BodyColor;
+                ? tribe.ColorData.NeutralBodyColor
+                : tribe.ColorData.BodyColor;
         }
     }
 
     public void UpdateSkinColor()
     {
         var tribe = LevelScreen.TribeManager.GetTribe(_tribeId.IntValue);
-        ref readonly var tribeColorData = ref tribe.ColorData;
 
         SkinColor = IsZombie
-            ? tribeColorData.ZombieSkinColor
-            : tribeColorData.SkinColor;
+            ? tribe.ColorData.ZombieSkinColor
+            : tribe.ColorData.SkinColor;
 
         if (IsAcidLemming)
         {
-            FootColor = tribeColorData.AcidLemmingFootColor;
+            FootColor = tribe.ColorData.AcidLemmingFootColor;
         }
         else if (IsWaterLemming)
         {
-            FootColor = tribeColorData.WaterLemmingFootColor;
+            FootColor = tribe.ColorData.WaterLemmingFootColor;
         }
         else
         {

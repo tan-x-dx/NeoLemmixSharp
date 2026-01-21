@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util;
 
@@ -25,15 +26,15 @@ public static class NumberFormattingHelpers
         FormatParameters formatParameters,
         out int charsWritten)
     {
-        var requiredCharLength = CalculateRequiredCharLength(source);
-        if (destination.Length < requiredCharLength)
+        charsWritten = CalculateRequiredCharLength(source);
+        if (destination.Length < charsWritten)
         {
             charsWritten = 0;
             return false;
         }
 
-        destination.At(0) = formatParameters.OpenBracket;
-        var c = 1;
+        var c = 0;
+        destination.At(c++) = formatParameters.OpenBracket;
 
         for (var i = 0; i < source.Length; i++)
         {
@@ -56,28 +57,35 @@ public static class NumberFormattingHelpers
             c--;
 
         destination.At(c++) = formatParameters.CloseBracket;
-        charsWritten = c;
+
+        Debug.Assert(charsWritten == c);
+
         return true;
-    }
 
-    private static int CalculateRequiredCharLength(ReadOnlySpan<int> source)
-    {
-        if (source.Length == 0)
-            return 2;
-
-        var result = source.Length + 1;
-        for (var i = 0; i < source.Length; i++)
+        static int CalculateRequiredCharLength(ReadOnlySpan<int> source)
         {
-            var n = source[i];
-            if (n < 0)
-            {
-                result++;
-                n = -n;
-            }
-            result += GetNumberStringLength((uint)n);
-        }
+            var result = 2;
+            if (source.Length == 0)
+                return result;
 
-        return result;
+            result = source.Length + 1;
+            var i = source.Length;
+            i--;
+            do
+            {
+                var n = source.At(i);
+                if (n < 0)
+                {
+                    result++;
+                    n = -n;
+                }
+                result += GetNumberStringLength((uint)n);
+                i--;
+            }
+            while (i >= 0);
+
+            return result;
+        }
     }
 
     public static int WriteDigits(Span<char> span, uint valueToWrite, char blankCharValue = ' ')
@@ -89,27 +97,29 @@ public static class NumberFormattingHelpers
         if (length < 0)
             return digitsWritten;
 
-        WriteDigit:
-        (valueToWrite, uint rem) = Math.DivRem(valueToWrite, 10);
+        do
+        {
+            (valueToWrite, uint rem) = Math.DivRem(valueToWrite, 10);
 
-        span.At(length) = DigitToChar(rem);
-        length--;
-        digitsWritten++;
+            span.At(length) = DigitToChar(rem);
+            digitsWritten++;
+            length--;
 
-        if (length < 0)
-            return digitsWritten;
+            if (length < 0)
+                return digitsWritten;
 
-        if (valueToWrite == 0)
-            goto WriteBlank;
+            if (valueToWrite == 0)
+                break;
+        }
+        while (length >= 0);
 
-        goto WriteDigit;
+        do
+        {
+            span.At(length) = blankCharValue;
+            length--;
+        }
+        while (length >= 0);
 
-    WriteBlank:
-        span.At(length) = blankCharValue;
-        length--;
-
-        if (length >= 0)
-            goto WriteBlank;
         return digitsWritten;
     }
 
