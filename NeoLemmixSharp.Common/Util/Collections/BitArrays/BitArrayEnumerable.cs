@@ -1,8 +1,10 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
+[DebuggerDisplay("Count = {Count}")]
 public readonly ref struct BitArrayEnumerable<TPerfectHasher, T>
     where TPerfectHasher : IPerfectHasher<T>
     where T : notnull
