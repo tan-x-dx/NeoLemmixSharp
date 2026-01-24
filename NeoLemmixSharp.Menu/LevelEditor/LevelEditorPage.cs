@@ -17,7 +17,7 @@ public sealed class LevelEditorPage : PageBase
 {
     private LevelEditorMenuBar _topPanel;
     private LevelEditorControlPanel _leftPanel;
-    private readonly LevelEditorCanvas _levelCanvas;
+    private LevelEditorCanvas _levelCanvas;
     private PieceBank _pieceBank;
 
     private StyleData _levelStyleData;
@@ -30,7 +30,7 @@ public sealed class LevelEditorPage : PageBase
     public LevelEditorPage(MenuInputController menuInputController, GraphicsDevice graphicsDevice) : base(menuInputController)
     {
         _topPanel = new LevelEditorMenuBar();
-        _leftPanel = new LevelEditorControlPanel();
+        _leftPanel = new LevelEditorControlPanel(UiHandler);
         _levelCanvas = new LevelEditorCanvas(graphicsDevice);
         _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 
@@ -136,6 +136,7 @@ public sealed class LevelEditorPage : PageBase
 
         _topPanel = null!;
         _leftPanel = null!;
+        _levelCanvas = null!;
         _pieceBank = null!;
     }
 

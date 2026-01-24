@@ -8,7 +8,17 @@ public sealed class UiHandler : IDisposable
 {
     private readonly InputController _inputController;
 
-    public Component? CurrentSelection { get; private set; } = null;
+    public Component? CurrentSelection { get; private set; }
+    public TextField? SelectedTextField
+    {
+        get => field;
+        private set
+        {
+            field?.IsSelected = false;
+            field = value;
+            field?.IsSelected = true;
+        }
+    }
 
     public Component RootComponent { get; set; }
 
@@ -74,6 +84,7 @@ public sealed class UiHandler : IDisposable
         }
         else
         {
+            SelectedTextField = CurrentSelection as TextField;
             CurrentSelection.InvokeMouseDown(mousePosition);
         }
     }
@@ -94,7 +105,8 @@ public sealed class UiHandler : IDisposable
 
     private void HandleKeyDown(in KeysEnumerable pressedKeys)
     {
-        CurrentSelection?.InvokeKeyDown(in pressedKeys);
+        var component = SelectedTextField ?? CurrentSelection;
+        component?.InvokeKeyDown(in pressedKeys);
     }
 
     private void HandleKeyUp(in KeysEnumerable releasedKeys)
@@ -130,6 +142,11 @@ public sealed class UiHandler : IDisposable
         {
             CurrentSelection = RootComponent;
         }
+    }
+
+    public void DeselectTextField()
+    {
+        SelectedTextField = null;
     }
 
     public void Dispose()

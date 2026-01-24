@@ -14,7 +14,7 @@ public sealed class PageTransition
 
     public bool IsTransitioning => _transitionCount >= 0;
     public bool IsHalfWayDone => _transitionCount == EngineConstants.PageTransitionDurationInFrames + 1;
-    public bool IsDone => _transitionCount == 1 + EngineConstants.PageTransitionDurationInFrames * 2;
+    public bool IsDone => _transitionCount == 1 + (EngineConstants.PageTransitionDurationInFrames * 2);
 
     public void BeginTransition()
     {
