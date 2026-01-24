@@ -26,8 +26,8 @@ public sealed class GroupedButton : Component
         : base(x, y, label)
     {
         MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MouseDown.RegisterMouseEvent(SetMousePress);
-        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MousePressed.RegisterMouseEvent(SetMousePress);
+        MouseReleased.RegisterMouseEvent(SetMouseOver);
         MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
@@ -35,8 +35,8 @@ public sealed class GroupedButton : Component
         : base(x, y, width, height, label)
     {
         MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MouseDown.RegisterMouseEvent(SetMousePress);
-        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MousePressed.RegisterMouseEvent(SetMousePress);
+        MouseReleased.RegisterMouseEvent(SetMouseOver);
         MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
@@ -101,7 +101,7 @@ public sealed class GroupedButton : Component
                 _activeIndex = button._index;
                 if (performClick)
                 {
-                    button.MouseDown.Invoke(button, new Point());
+                    button.MousePressed.Invoke(button, new Point());
                 }
             }
         }

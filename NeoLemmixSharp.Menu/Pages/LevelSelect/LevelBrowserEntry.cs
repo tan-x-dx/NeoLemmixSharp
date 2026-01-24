@@ -19,8 +19,8 @@ public abstract class LevelBrowserEntry : Component
         _indentationLevel = indentationLevel;
 
         MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MouseDown.RegisterMouseEvent(SetMousePress);
-        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MousePressed.RegisterMouseEvent(SetMousePress);
+        MouseReleased.RegisterMouseEvent(SetMouseOver);
         MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 

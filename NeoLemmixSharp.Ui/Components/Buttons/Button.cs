@@ -6,8 +6,8 @@ public sealed class Button : Component
         : base(x, y, width, height, label)
     {
         MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MouseDown.RegisterMouseEvent(SetMousePress);
-        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MousePressed.RegisterMouseEvent(SetMousePress);
+        MouseReleased.RegisterMouseEvent(SetMouseOver);
         MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
@@ -15,8 +15,8 @@ public sealed class Button : Component
         : base(x, y, label)
     {
         MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MouseDown.RegisterMouseEvent(SetMousePress);
-        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MousePressed.RegisterMouseEvent(SetMousePress);
+        MouseReleased.RegisterMouseEvent(SetMouseOver);
         MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 }

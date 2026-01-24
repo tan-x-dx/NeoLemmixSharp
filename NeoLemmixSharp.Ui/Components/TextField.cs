@@ -8,16 +8,14 @@ namespace NeoLemmixSharp.Ui.Components;
 
 public sealed class TextField : Component
 {
-    private const int CaretBlinkShift = 4;
+    private const int CaretBlinkShift = 5;
     private const int CaretBlinkDelay = 1 << CaretBlinkShift;
     private const int CaretBlinkMask = (1 << (CaretBlinkShift + 1)) - 1;
 
-    private readonly UiHandler _uiHandler;
-
     private char[] _charBuffer = [];
     private string _currentString = string.Empty;
+    private int _currentStringLength;
     private int _caretPosition;
-    private int _stringLength;
     private int _caretFlashCount;
 
     public bool IsSelected
@@ -25,17 +23,18 @@ public sealed class TextField : Component
         get => field;
         set
         {
+            if (field == value)
+                return;
+
             field = value;
+            _caretPosition = 0;
             _caretFlashCount = 0;
         }
     }
 
-    public TextField(UiHandler uiHandler, int x, int y, string label) : base(x, y, label)
+    public TextField(int x, int y, string label) : base(x, y, label)
     {
-        _uiHandler = uiHandler;
-
-        KeyDown.RegisterMouseEvent(HandleKeyDown);
-        Width = 120;
+        KeyPressed.RegisterMouseEvent(HandleKeyDown);
     }
 
     public void SetCapacity(int capacity)
@@ -43,26 +42,27 @@ public sealed class TextField : Component
         Array.Resize(ref _charBuffer, capacity);
     }
 
-    public void SetText(string text)
+    public void SetText(string newText)
     {
         _caretPosition = 0;
-        var textLength = text.Length;
-        var textSpan = text.AsSpan(0, _charBuffer.Length);
+        var clippedTextLength = Math.Min(_charBuffer.Length, newText.Length);
+        var newTextSpan = newText.AsSpan(0, clippedTextLength);
         var span = new Span<char>(_charBuffer);
 
-        textSpan.CopyTo(span);
-        _stringLength = textLength;
+        newTextSpan.CopyTo(span);
 
-        textSpan = Helpers.CreateReadOnlySpan(_charBuffer, 0, textLength);
-        _currentString = textSpan.ToString();
+        _currentString = clippedTextLength == newText.Length
+            ? newText
+            : newTextSpan.ToString();
+        _currentStringLength = clippedTextLength;
     }
 
     public void Clear()
     {
         new Span<char>(_charBuffer).Clear();
-        _stringLength = 0;
         _caretPosition = 0;
         _currentString = string.Empty;
+        _currentStringLength = 0;
     }
 
     private void HandleKeyDown(Component _, in KeysEnumerable keys)
@@ -101,11 +101,11 @@ public sealed class TextField : Component
                 break;
 
             case KeyboardInputType.CaretStart:
-                MoveCaret(-_charBuffer.Length);
+                SetCaretPosition(0);
                 break;
 
             case KeyboardInputType.CaretEnd:
-                MoveCaret(_charBuffer.Length);
+                SetCaretPosition(_currentStringLength);
                 break;
 
             case KeyboardInputType.Backspace:
@@ -125,35 +125,35 @@ public sealed class TextField : Component
         }
     }
 
-    private void HandleCharacter(char keyboardChar)
+    public void HandleCharacter(char keyboardChar)
     {
-        if (_stringLength == _charBuffer.Length)
+        if (_currentStringLength == _charBuffer.Length)
             return;
 
-        var i = _stringLength - 1;
+        _currentStringLength--;
+        var i = _currentStringLength;
         while (i >= _caretPosition)
         {
-            _charBuffer[i + 1] = _charBuffer[i];
+            _charBuffer.At(i + 1) = _charBuffer.At(i);
             i--;
         }
 
-        _charBuffer[_caretPosition] = keyboardChar;
-        _stringLength++;
+        _charBuffer.At(_caretPosition) = keyboardChar;
         MoveCaret(1);
         UpdateCurrentString();
     }
 
-    private void MoveCaret(int delta)
-    {
-        var newCaretPosition = _caretPosition + delta;
+    public void MoveCaret(int delta) => SetCaretPosition(_caretPosition + delta);
 
+    public void SetCaretPosition(int newCaretPosition)
+    {
         if (newCaretPosition < 0)
         {
             _caretPosition = 0;
         }
-        else if (newCaretPosition >= _stringLength)
+        else if (newCaretPosition > _currentStringLength)
         {
-            _caretPosition = _stringLength;
+            _caretPosition = _currentStringLength;
         }
         else
         {
@@ -161,30 +161,47 @@ public sealed class TextField : Component
         }
     }
 
-    private void HandleEnter()
+    public void HandleEnter()
     {
-        throw new NotImplementedException();
     }
 
-    private void HandleBackspace()
+    public void HandleBackspace()
     {
-        throw new NotImplementedException();
+        if (_caretPosition == 0)
+            return;
+
+        var i = _caretPosition - 1;
+        var lastCharIndex = _currentStringLength - 1;
+        while (i < lastCharIndex)
+        {
+            _charBuffer.At(i) = _charBuffer.At(i + 1);
+            i++;
+        }
+
+        _charBuffer.At(lastCharIndex) = (char)0;
+        _currentStringLength--;
+        MoveCaret(-1);
+        UpdateCurrentString();
     }
 
-    private void HandleDelete()
+    public void HandleDelete()
     {
-        throw new NotImplementedException();
+        if (_caretPosition == _currentStringLength)
+            return;
+
+        MoveCaret(1);
+        HandleBackspace();
     }
 
-    private void Deselect()
+    public void Deselect()
     {
-        _uiHandler.DeselectTextField();
+        UiHandler.Instance.DeselectTextField();
     }
 
     private void UpdateCurrentString()
     {
         var currentStringSpan = _currentString.AsSpan();
-        var newStringSpan = Helpers.CreateReadOnlySpan(_charBuffer, 0, _stringLength);
+        var newStringSpan = Helpers.CreateReadOnlySpan(_charBuffer, 0, _currentStringLength);
 
         if (currentStringSpan.Equals(newStringSpan, StringComparison.Ordinal))
             return;
@@ -205,7 +222,7 @@ public sealed class TextField : Component
             rect,
             Color.Red);
 
-        var textPosition = new Vector2(rect.X, rect.Y);
+        var textPosition = new Vector2(rect.X + 2, rect.Y + 2);
         spriteBatch.DrawString(
             UiSprites.UiFont,
             _currentString,

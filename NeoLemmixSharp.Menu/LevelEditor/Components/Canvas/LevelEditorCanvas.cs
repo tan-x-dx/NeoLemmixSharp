@@ -25,7 +25,7 @@ public sealed class LevelEditorCanvas : Component
     {
         _graphicsDevice = graphicsDevice;
 
-        MouseDown.RegisterMouseEvent(OnMouseDown);
+        MousePressed.RegisterMouseEvent(OnMouseDown);
     }
 
     public void SetLevelData(LevelData levelData)
