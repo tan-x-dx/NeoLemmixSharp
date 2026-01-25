@@ -9,13 +9,17 @@ using Point = NeoLemmixSharp.Common.Point;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
-public sealed class LevelEditorCanvas : Component
+public sealed partial class LevelEditorCanvas : Component
 {
     private readonly GraphicsDevice _graphicsDevice;
     private RenderTarget2D _levelTexture;
 
     private readonly CanvasBorderBehaviour _horizontalBorderBehaviour = new();
     private readonly CanvasBorderBehaviour _verticalBorderBehaviour = new();
+
+    private readonly List<CanvasPiece> _terrainPieces = new(64);
+    private readonly List<CanvasPiece> _gadgetPieces = new(16);
+    private readonly List<CanvasPiece> _preplacedLemmingPieces = new(16);
 
     private LevelEditorTerrainPainter _terrainPainter;
 
@@ -122,8 +126,13 @@ public sealed class LevelEditorCanvas : Component
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);
     }
+    public void RepaintLevel()
+    {
+        SortCanvasPieces();
+        RepopulateLevelDataContents();
 
-    public void RepaintLevel() => _terrainPainter.RepaintTerrain();
+        _terrainPainter.RepaintTerrain();
+    }
 
     public Point GetCenterPositionOfViewport()
     {

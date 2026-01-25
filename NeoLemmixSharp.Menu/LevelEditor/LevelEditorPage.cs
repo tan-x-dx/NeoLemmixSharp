@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Level.Terrain;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
@@ -142,44 +142,19 @@ public sealed class LevelEditorPage : PageBase
 
     private void OnSelectTerrainPiece(Component c, Point pos)
     {
-        if (c is not PieceSelector terrainPieceSelector || terrainPieceSelector.StylePiece is not TerrainArchetypeData terrainArchetypeData)
+        if (c is not PieceSelector pieceSelector)
             return;
 
-        AddTerrainPiece(terrainArchetypeData);
-    }
-
-    private void AddTerrainPiece(TerrainArchetypeData terrainArchetypeData)
-    {
-        var defaultArchetypeSize = terrainArchetypeData.DefaultSize;
-
-        int? initialWidth = null;
-        int? initialHeight = null;
-
-        if (defaultArchetypeSize.W > 0)
-            initialWidth = defaultArchetypeSize.W;
-
-        if (defaultArchetypeSize.H > 0)
-            initialHeight = defaultArchetypeSize.H;
-
-        var position = _levelCanvas.GetCenterPositionOfViewport();
-
-        var newTerrainData = new TerrainInstanceData()
+        if (pieceSelector.StylePiece is TerrainArchetypeData terrainArchetypeData)
         {
-            GroupName = null,
-            StyleIdentifier = terrainArchetypeData.StyleIdentifier,
-            PieceIdentifier = terrainArchetypeData.PieceIdentifier,
-            Position = position,
-            Orientation = Orientation.Down,
-            FacingDirection = FacingDirection.Right,
-            NoOverwrite = false,
-            Erase = false,
-            Tint = null,
-            Width = initialWidth,
-            Height = initialHeight,
-        };
-        _currentLevelData.AllTerrainInstanceData.Add(newTerrainData);
+            _levelCanvas.AddTerrainPiece(terrainArchetypeData);
+            return;
+        }
 
-        _levelCanvas.RepaintLevel();
+        if (pieceSelector.StylePiece is GadgetArchetypeData gadgetArchetypeData)
+        {
+            _levelCanvas.AddGadgetPiece(gadgetArchetypeData);
+        }
     }
 
     private void OnSelectGadgetPiece(Component c, Point pos)
