@@ -6,6 +6,7 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 public sealed class CanvasPiece
 {
     public int PieceOrder { get; set; }
+
     public IInstanceData InstanceData { get; }
 
     public Point Position => InstanceData.Position;

@@ -6,7 +6,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.Ui.Components;
 using Color = Microsoft.Xna.Framework.Color;
 using Point = NeoLemmixSharp.Common.Point;
@@ -25,6 +24,10 @@ public sealed partial class LevelEditorCanvas : Component
     private readonly List<CanvasPiece> _gadgetPieces = new(16);
     private readonly List<CanvasPiece> _preplacedLemmingPieces = new(16);
 
+    private readonly List<CanvasPiece> _selectedCanvasPieces = new(16);
+
+    private Point _canvasMousePosition;
+
     private LevelEditorTerrainPainter _terrainPainter;
 
     private LevelData _levelData;
@@ -33,7 +36,11 @@ public sealed partial class LevelEditorCanvas : Component
     {
         _graphicsDevice = graphicsDevice;
 
+        MouseEnter.RegisterMouseEvent(OnMouseEnter);
+        MouseMovement.RegisterMouseEvent(OnMouseMove);
         MousePressed.RegisterMouseEvent(OnMouseDown);
+        MouseHeld.RegisterMouseEvent(OnMouseHeld);
+        MouseExit.RegisterMouseEvent(OnMouseExit);
         KeyPressed.RegisterKeyEvent(OnKeyDown);
     }
 
@@ -198,8 +205,40 @@ public sealed partial class LevelEditorCanvas : Component
         _verticalBorderBehaviour.RecentreViewport();
     }
 
+    private void OnMouseEnter(Component c, Point screenPosition)
+    {
+        RecalculateCanvasMousePosition(screenPosition);
+    }
+
+    private void OnMouseMove(Component c, Point screenPosition)
+    {
+        RecalculateCanvasMousePosition(screenPosition);
+    }
+
+    private void RecalculateCanvasMousePosition(Point screenPosition)
+    {
+        var localX = screenPosition.X - Left;
+        var canvasMouseX = _horizontalBorderBehaviour.ToLevelCoordinate(localX);
+        canvasMouseX -= LevelEditorConstants.LevelOuterBoundarySize;
+
+        var localY = screenPosition.Y - Top;
+        var canvasMouseY = _verticalBorderBehaviour.ToLevelCoordinate(localY);
+        canvasMouseY -= LevelEditorConstants.LevelOuterBoundarySize;
+
+        _canvasMousePosition = new Point(canvasMouseX, canvasMouseY);
+    }
+
     private void OnMouseDown(Component c, Point position)
     {
+    }
+
+    private void OnMouseHeld(Component c, Point position)
+    {
+    }
+
+    private void OnMouseExit(Component c, Point position)
+    {
+        _canvasMousePosition = new Point(-4000, -4000);
     }
 
     private void OnKeyDown(Component c, in BitArrayEnumerable<InputController, Keys> keys)
