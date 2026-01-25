@@ -27,24 +27,18 @@ public sealed class CanvasBorderBehaviour
         if (ViewportIsLargerThanLevel)
             return new Interval(0, _levelLength);
 
-        var start = _viewportStart;
+        if (_viewportStart < 0)
+            return new Interval(0, _viewportStart + _actualViewportLength);
+
         var length = _actualViewportLength;
-        if (start < 0)
-        {
-            length += start;
-            start = 0;
-        }
-        else
-        {
-            var viewportEnd = _viewportStart + _actualViewportLength;
+        var viewportEnd = _viewportStart + _actualViewportLength;
 
-            if (viewportEnd > _levelLength)
-            {
-                length = _levelLength - _viewportStart;
-            }
+        if (viewportEnd > _levelLength)
+        {
+            length = _levelLength - _viewportStart;
         }
 
-        return new Interval(start, length);
+        return new Interval(_viewportStart, length);
     }
 
     [Pure]
@@ -148,5 +142,20 @@ public sealed class CanvasBorderBehaviour
         _screenLength = newRawViewportLength * _zoom;
 
         ClampViewportPosition();
+    }
+
+    public int ToLevelCoordinate(int screenCoordinate)
+    {
+        if (ViewportIsLargerThanLevel)
+        {
+            var screenStart = (_canvasLength - _screenLength) / 2;
+            var result =  screenCoordinate - screenStart;
+
+            return result /= _zoom;
+        }
+
+        screenCoordinate /= _zoom;
+
+        return screenCoordinate + _viewportStart;
     }
 }
