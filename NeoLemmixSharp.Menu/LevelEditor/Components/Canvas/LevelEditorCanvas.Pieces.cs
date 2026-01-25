@@ -32,7 +32,7 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
             FacingDirection = FacingDirection.Right,
             NoOverwrite = false,
             Erase = false,
-            Tint = null,
+            HueAngle = 0,
             Width = initialWidth,
             Height = initialHeight,
         };

@@ -148,18 +148,18 @@ public sealed class LevelEditorPage : PageBase
         if (pieceSelector.StylePiece is TerrainArchetypeData terrainArchetypeData)
         {
             _levelCanvas.AddTerrainPiece(terrainArchetypeData);
-            return;
-        }
-
-        if (pieceSelector.StylePiece is GadgetArchetypeData gadgetArchetypeData)
-        {
-            _levelCanvas.AddGadgetPiece(gadgetArchetypeData);
         }
     }
 
     private void OnSelectGadgetPiece(Component c, Point pos)
     {
+        if (c is not PieceSelector pieceSelector)
+            return;
 
+        if (pieceSelector.StylePiece is GadgetArchetypeData gadgetArchetypeData)
+        {
+            _levelCanvas.AddGadgetPiece(gadgetArchetypeData);
+        }
     }
 
     private void OnSelectBackgroundPiece(Component c, Point pos)

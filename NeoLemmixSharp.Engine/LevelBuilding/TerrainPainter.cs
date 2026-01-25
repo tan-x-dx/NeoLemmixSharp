@@ -158,6 +158,8 @@ public readonly struct TerrainPainter
             terrainData.FacingDirection,
             sourceSize);
 
+        var hueMultiplyMatrix = new HueMultiplyMatrix(terrainData.HueAngle);
+
         for (var y = 0; y < sourceSize.H; y++)
         {
             for (var x = 0; x < sourceSize.W; x++)
@@ -173,7 +175,7 @@ public readonly struct TerrainPainter
 
                 if (targetSize.EncompassesPoint(p0))
                 {
-                    ChangePixel(terrainData, terrainArchetypeData, targetPixelColorData, sourcePixelColor, p0);
+                    ChangePixel(terrainData, terrainArchetypeData, in targetPixelColorData, in hueMultiplyMatrix, sourcePixelColor, p0);
                 }
             }
         }
@@ -183,12 +185,13 @@ public readonly struct TerrainPainter
         TerrainInstanceData terrainData,
         ITerrainArchetypeData terrainArchetypeData,
         in ArrayWrapper2D<Color> targetPixelColorData,
+        in HueMultiplyMatrix matrix,
         Color sourcePixelColor,
         Point p0)
     {
-        if (terrainData.Tint.HasValue)
+        if (terrainData.HueAngle != 0)
         {
-            sourcePixelColor = BlendColors(terrainData.Tint.Value, sourcePixelColor);
+            sourcePixelColor = matrix.ShiftHue(sourcePixelColor);
         }
 
         ref var targetPixelColor = ref targetPixelColorData[p0];
@@ -247,10 +250,10 @@ public readonly struct TerrainPainter
         var bgR = backgroundColor.R / 255f;
         var bgG = backgroundColor.G / 255f;
         var bgB = backgroundColor.B / 255f;
-        var newA = 1.0f - (1.0f - fgA) * (1.0f - bgA);
-        var newR = fgR * fgA / newA + bgR * bgA * (1.0f - fgA) / newA;
-        var newG = fgG * fgA / newA + bgG * bgA * (1.0f - fgA) / newA;
-        var newB = fgB * fgA / newA + bgB * bgA * (1.0f - fgA) / newA;
+        var newA = 1f - (1f - fgA) * (1f - bgA);
+        var newR = fgR * fgA / newA + bgR * bgA * (1f - fgA) / newA;
+        var newG = fgG * fgA / newA + bgG * bgA * (1f - fgA) / newA;
+        var newB = fgB * fgA / newA + bgB * bgA * (1f - fgA) / newA;
 
         return new Color(newR, newG, newB, newA);
     }
@@ -298,5 +301,51 @@ public readonly struct TerrainPainter
     private TerrainArchetypeData GetTerrainArchetypeData(TerrainInstanceData terrainData)
     {
         return StyleCache.GetTerrainArchetypeData(terrainData.StyleIdentifier, terrainData.PieceIdentifier, _levelData.FileFormatType);
+    }
+
+    private readonly struct HueMultiplyMatrix
+    {
+        private const float OneThird = 1f / 3f;
+        private const float SqrtOneThird = 0.5773502691896257645091488f;
+
+        private readonly float _00;
+        private readonly float _01;
+        private readonly float _02;
+        private readonly float _10;
+        private readonly float _11;
+        private readonly float _12;
+        private readonly float _20;
+        private readonly float _21;
+        private readonly float _22;
+
+        public HueMultiplyMatrix(uint angle)
+        {
+            var radianValue = angle * MathF.PI / 180f;
+
+            var (sinA, cosA) = MathF.SinCos(radianValue);
+
+            _00 = cosA + ((1f - cosA) / 3f);
+            _01 = (OneThird * (1f - cosA)) - (SqrtOneThird * sinA);
+            _02 = (OneThird * (1f - cosA)) + (SqrtOneThird * sinA);
+            _10 = (OneThird * (1f - cosA)) + (SqrtOneThird * sinA);
+            _11 = cosA + (OneThird * (1f - cosA));
+            _12 = (OneThird * (1f - cosA)) - (SqrtOneThird * sinA);
+            _20 = (OneThird * (1f - cosA)) - (SqrtOneThird * sinA);
+            _21 = (OneThird * (1f - cosA)) + (SqrtOneThird * sinA);
+            _22 = cosA + (OneThird * (1f - cosA));
+        }
+
+        public Color ShiftHue(Color color)
+        {
+            var r = (float)color.R;
+            var g = (float)color.G;
+            var b = (float)color.B;
+
+            var rx = r * _00 + g * _01 + b * _02;
+            var gx = r * _10 + g * _11 + b * _12;
+            var bx = r * _20 + g * _21 + b * _22;
+
+            return new Color((int)rx, (int)gx, (int)bx);
+        }
     }
 }

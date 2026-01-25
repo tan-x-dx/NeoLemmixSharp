@@ -1,8 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.Ui.Components;
 using Color = Microsoft.Xna.Framework.Color;
 using Point = NeoLemmixSharp.Common.Point;
@@ -30,6 +34,7 @@ public sealed partial class LevelEditorCanvas : Component
         _graphicsDevice = graphicsDevice;
 
         MousePressed.RegisterMouseEvent(OnMouseDown);
+        KeyPressed.RegisterKeyEvent(OnKeyDown);
     }
 
     public void SetLevelData(LevelData levelData)
@@ -195,7 +200,10 @@ public sealed partial class LevelEditorCanvas : Component
 
     private void OnMouseDown(Component c, Point position)
     {
+    }
 
+    private void OnKeyDown(Component c, in BitArrayEnumerable<InputController, Keys> keys)
+    {
     }
 
     protected override void OnDispose()

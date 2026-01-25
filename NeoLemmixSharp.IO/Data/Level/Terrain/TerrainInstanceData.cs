@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Data.Level.Terrain;
 
@@ -16,7 +15,7 @@ public sealed class TerrainInstanceData : IInstanceData
     public required bool NoOverwrite { get; set; }
     public required bool Erase { get; set; }
 
-    public required Color? Tint { get; set; }
+    public required uint HueAngle { get; set; }
 
     public required int? Width { get; set; }
     public required int? Height { get; set; }

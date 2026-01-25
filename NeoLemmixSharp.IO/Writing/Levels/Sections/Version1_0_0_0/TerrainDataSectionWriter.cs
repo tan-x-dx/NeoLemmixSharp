@@ -48,25 +48,11 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         TerrainInstanceData terrainData)
     {
-        const byte ZeroByte = 0;
+        writer.Write16BitUnsignedInteger((ushort)(terrainData.HueAngle % 360));
 
         var miscDataBits = ReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainData);
 
         writer.Write8BitUnsignedInteger(miscDataBits);
-
-        if (terrainData.Tint.HasValue)
-        {
-            var tint = terrainData.Tint.Value;
-            writer.Write8BitUnsignedInteger(tint.R);
-            writer.Write8BitUnsignedInteger(tint.G);
-            writer.Write8BitUnsignedInteger(tint.B);
-        }
-        else
-        {
-            writer.Write8BitUnsignedInteger(ZeroByte);
-            writer.Write8BitUnsignedInteger(ZeroByte);
-            writer.Write8BitUnsignedInteger(ZeroByte);
-        }
 
         if (terrainData.Width.HasValue)
         {
@@ -74,8 +60,8 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         }
         else
         {
-            writer.Write8BitUnsignedInteger(ZeroByte);
-            writer.Write8BitUnsignedInteger(ZeroByte);
+            writer.Write8BitUnsignedInteger(0);
+            writer.Write8BitUnsignedInteger(0);
         }
 
         if (terrainData.Height.HasValue)
@@ -84,8 +70,8 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         }
         else
         {
-            writer.Write8BitUnsignedInteger(ZeroByte);
-            writer.Write8BitUnsignedInteger(ZeroByte);
+            writer.Write8BitUnsignedInteger(0);
+            writer.Write8BitUnsignedInteger(0);
         }
     }
 }

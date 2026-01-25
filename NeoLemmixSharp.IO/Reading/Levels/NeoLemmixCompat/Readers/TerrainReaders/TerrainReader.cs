@@ -145,7 +145,7 @@ internal sealed class TerrainReader : NeoLemmixDataReader
             FacingDirection = dht.FacingDirection,
             Erase = _currentTerrainData.Erase,
 
-            Tint = null,
+            HueAngle = 0,
 
             Width = _currentTerrainData.Width,
             Height = _currentTerrainData.Height,

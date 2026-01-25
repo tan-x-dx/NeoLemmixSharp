@@ -34,7 +34,7 @@ public sealed class TextField : Component
 
     public TextField(int x, int y, string label) : base(x, y, label)
     {
-        KeyPressed.RegisterMouseEvent(HandleKeyDown);
+        KeyPressed.RegisterKeyEvent(HandleKeyDown);
     }
 
     public void SetCapacity(int capacity)

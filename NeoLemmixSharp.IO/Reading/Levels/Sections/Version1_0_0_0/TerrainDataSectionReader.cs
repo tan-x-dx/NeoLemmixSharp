@@ -4,7 +4,6 @@ using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
@@ -42,14 +41,10 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
+        uint hueAngle = ReadTerrainDataHueAngle(reader);
+
         uint terrainDataMiscByte = reader.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = ReadWriteHelpers.DecodeTerrainDataMiscByte(terrainDataMiscByte);
-
-        Color? tintColor = ReadTerrainDataTintColor(reader);
-        if (!decipheredTerrainDataMisc.HasTintSpecified)
-        {
-            tintColor = null;
-        }
 
         int? width = reader.Read16BitUnsignedInteger();
         if (!decipheredTerrainDataMisc.HasWidthSpecified)
@@ -76,17 +71,17 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
             FacingDirection = dht.FacingDirection,
             Erase = decipheredTerrainDataMisc.Erase,
 
-            Tint = tintColor,
+            HueAngle = hueAngle,
 
             Width = width,
             Height = height,
         };
     }
 
-    private static Color ReadTerrainDataTintColor(RawLevelFileDataReader reader)
+    private static uint ReadTerrainDataHueAngle(RawLevelFileDataReader reader)
     {
-        var bytes = reader.ReadBytes(3);
+        uint bytes = reader.Read16BitUnsignedInteger();
 
-        return ReadWriteHelpers.ReadRgbBytes(bytes);
+        return bytes % 360;
     }
 }

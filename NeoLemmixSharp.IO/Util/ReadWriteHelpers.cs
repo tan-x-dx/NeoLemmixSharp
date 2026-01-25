@@ -16,29 +16,12 @@ public static class ReadWriteHelpers
 
     #endregion
 
-    #region Level Text Data Read/Write Stuff
-
-    #endregion
-
-    #region Hatch Group Data Read/Write Stuff
-
-    #endregion
-
-    #region Level Objectives Data Read/Write Stuff
-
-    #endregion
-
-    #region Pre-placed Lemming Data Read/Write Stuff
-
-    #endregion
-
     #region Terrain Data Read/Write Stuff
 
     private const int TerrainDataEraseBitShift = 0;
     private const int TerrainDataNoOverwriteBitShift = 1;
-    private const int TerrainDataTintBitShift = 2;
-    private const int TerrainDataResizeWidthBitShift = 3;
-    private const int TerrainDataResizeHeightBitShift = 4;
+    private const int TerrainDataResizeWidthBitShift = 2;
+    private const int TerrainDataResizeHeightBitShift = 3;
 
     internal const int NumberOfBytesForMainTerrainData = 9;
 
@@ -46,7 +29,6 @@ public static class ReadWriteHelpers
     {
         var miscDataBits = (terrainData.Erase ? 1 << TerrainDataEraseBitShift : 0) |
                            (terrainData.NoOverwrite ? 1 << TerrainDataNoOverwriteBitShift : 0) |
-                           (terrainData.Tint.HasValue ? 1 << TerrainDataTintBitShift : 0) |
                            (terrainData.Width.HasValue ? 1 << TerrainDataResizeWidthBitShift : 0) |
                            (terrainData.Height.HasValue ? 1 << TerrainDataResizeHeightBitShift : 0);
 
@@ -57,23 +39,20 @@ public static class ReadWriteHelpers
     {
         var erase = ((terrainDataMiscByte >>> TerrainDataEraseBitShift) & 1) != 0;
         var noOverwrite = ((terrainDataMiscByte >>> TerrainDataNoOverwriteBitShift) & 1) != 0;
-        var hasTintSpecified = ((terrainDataMiscByte >>> TerrainDataTintBitShift) & 1) != 0;
         var hasWidthSpecified = ((terrainDataMiscByte >>> TerrainDataResizeWidthBitShift) & 1) != 0;
         var hasHeightSpecified = ((terrainDataMiscByte >>> TerrainDataResizeHeightBitShift) & 1) != 0;
 
         return new DecodedTerrainDataMisc(
             erase,
             noOverwrite,
-            hasTintSpecified,
             hasWidthSpecified,
             hasHeightSpecified);
     }
 
-    internal readonly ref struct DecodedTerrainDataMisc(bool erase, bool noOverwrite, bool hasTintSpecified, bool hasWidthSpecified, bool hasHeightSpecified)
+    internal readonly ref struct DecodedTerrainDataMisc(bool erase, bool noOverwrite, bool hasWidthSpecified, bool hasHeightSpecified)
     {
         internal readonly bool Erase = erase;
         internal readonly bool NoOverwrite = noOverwrite;
-        internal readonly bool HasTintSpecified = hasTintSpecified;
         internal readonly bool HasWidthSpecified = hasWidthSpecified;
         internal readonly bool HasHeightSpecified = hasHeightSpecified;
     }
