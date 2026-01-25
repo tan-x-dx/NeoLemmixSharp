@@ -8,7 +8,7 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReader
 internal sealed class TerrainReader : NeoLemmixDataReader
 {
     private readonly UniqueStringSet _uniqueStringSet;
-    private readonly List<TerrainData> _allTerrainData;
+    private readonly List<TerrainInstanceData> _allTerrainData;
 
     private TempTerrainData _currentTerrainData;
 
@@ -16,7 +16,7 @@ internal sealed class TerrainReader : NeoLemmixDataReader
 
     public TerrainReader(
         UniqueStringSet uniqueStringSet,
-        List<TerrainData> allTerrainData)
+        List<TerrainInstanceData> allTerrainData)
         : base("$TERRAIN")
     {
         _uniqueStringSet = uniqueStringSet;
@@ -132,7 +132,7 @@ internal sealed class TerrainReader : NeoLemmixDataReader
             _currentTerrainData.FlipVertically,
             _currentTerrainData.Rotate);
 
-        var newTerrainData = new TerrainData
+        var newTerrainData = new TerrainInstanceData
         {
             GroupName = _currentTerrainData.GroupName,
             StyleIdentifier = new StyleIdentifier(_currentTerrainData.Style),

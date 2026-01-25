@@ -5,16 +5,16 @@ namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
 internal sealed class SketchReader : NeoLemmixDataReader
 {
-    private readonly List<SketchData> _allSketchData;
+    private readonly List<SketchInstanceData> _allSketchData;
 
-    private SketchData? _currentSketchData;
+    private SketchInstanceData? _currentSketchData;
 
     private bool _rotate;
     private bool _flipHorizontally;
     private bool _flipVertically;
 
     public SketchReader(
-        List<SketchData> allSketchData)
+        List<SketchInstanceData> allSketchData)
         : base("$SKETCH")
     {
         _allSketchData = allSketchData;
@@ -33,7 +33,7 @@ internal sealed class SketchReader : NeoLemmixDataReader
 
     public override bool BeginReading(ReadOnlySpan<char> line)
     {
-        _currentSketchData = new SketchData();
+        _currentSketchData = new SketchInstanceData();
         _rotate = false;
         _flipHorizontally = false;
         _flipVertically = false;

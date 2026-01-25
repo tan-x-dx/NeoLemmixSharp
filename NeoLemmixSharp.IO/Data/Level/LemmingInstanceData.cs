@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.IO.Data.Level;
 
-public sealed class LemmingInstanceData
+public sealed class LemmingInstanceData : IInstanceData
 {
     public Point Position { get; set; }
     public uint State { get; set; }

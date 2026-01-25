@@ -74,7 +74,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
 
     private void RecordTerrainDataStrings(LevelData levelData)
     {
-        foreach (var terrainDatum in levelData.AllTerrainData)
+        foreach (var terrainDatum in levelData.AllTerrainInstanceData)
         {
             _stringIdLookup.RecordString(terrainDatum.StyleIdentifier);
             _stringIdLookup.RecordString(terrainDatum.PieceIdentifier);
@@ -87,7 +87,7 @@ internal sealed class StringDataSectionWriter : LevelDataSectionWriter
         {
             _stringIdLookup.RecordString(terrainGroup.GroupName!);
 
-            foreach (var terrainDatum in levelData.AllTerrainData)
+            foreach (var terrainDatum in levelData.AllTerrainInstanceData)
             {
                 _stringIdLookup.RecordString(terrainDatum.StyleIdentifier);
                 _stringIdLookup.RecordString(terrainDatum.PieceIdentifier);

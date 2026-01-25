@@ -3,7 +3,7 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Data.Level.Terrain;
 
-public sealed class TerrainData
+public sealed class TerrainInstanceData : IInstanceData
 {
     public required string? GroupName { get; set; }
     public required StyleIdentifier StyleIdentifier { get; init; }
@@ -21,7 +21,7 @@ public sealed class TerrainData
     public required int? Width { get; set; }
     public required int? Height { get; set; }
 
-    public TerrainData()
+    public TerrainInstanceData()
     {
     }
 

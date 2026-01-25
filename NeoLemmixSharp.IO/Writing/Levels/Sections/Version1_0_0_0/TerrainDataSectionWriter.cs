@@ -18,14 +18,14 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
 
     public override ushort CalculateNumberOfItemsInSection(LevelData levelData)
     {
-        return (ushort)levelData.AllTerrainData.Count;
+        return (ushort)levelData.AllTerrainInstanceData.Count;
     }
 
     public override void WriteSection(
         RawLevelFileDataWriter writer,
         LevelData levelData)
     {
-        foreach (var terrainDatum in levelData.AllTerrainData)
+        foreach (var terrainDatum in levelData.AllTerrainInstanceData)
         {
             WriteTerrainData(writer, terrainDatum);
         }
@@ -33,7 +33,7 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
 
     public void WriteTerrainData(
         RawLevelFileDataWriter writer,
-        TerrainData terrainDatum)
+        TerrainInstanceData terrainDatum)
     {
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainDatum.StyleIdentifier));
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainDatum.PieceIdentifier));
@@ -46,7 +46,7 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
 
     private static void WriteTerrainDataMisc(
         RawLevelFileDataWriter writer,
-        TerrainData terrainData)
+        TerrainInstanceData terrainData)
     {
         const byte ZeroByte = 0;
 

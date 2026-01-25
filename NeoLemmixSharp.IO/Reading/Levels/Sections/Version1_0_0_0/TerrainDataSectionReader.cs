@@ -21,16 +21,16 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
 
     public override void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection)
     {
-        levelData.AllTerrainData.Capacity = numberOfItemsInSection;
+        levelData.AllTerrainInstanceData.Capacity = numberOfItemsInSection;
 
         while (numberOfItemsInSection-- > 0)
         {
             var newTerrainDatum = ReadNextTerrainData(reader);
-            levelData.AllTerrainData.Add(newTerrainDatum);
+            levelData.AllTerrainInstanceData.Add(newTerrainDatum);
         }
     }
 
-    private TerrainData ReadNextTerrainData(RawLevelFileDataReader reader)
+    private TerrainInstanceData ReadNextTerrainData(RawLevelFileDataReader reader)
     {
         int styleId = reader.Read16BitUnsignedInteger();
         int pieceId = reader.Read16BitUnsignedInteger();
@@ -63,7 +63,7 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
             height = null;
         }
 
-        return new TerrainData
+        return new TerrainInstanceData
         {
             GroupName = null,
             StyleIdentifier = new StyleIdentifier(_stringIdLookup[styleId]),

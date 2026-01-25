@@ -41,7 +41,7 @@ internal sealed class NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelReader>
             _levelDataReader,
             _skillSetReader,
             _terrainGroupReader,
-            new TerrainReader(_uniqueStringSet, _levelData.AllTerrainData),
+            new TerrainReader(_uniqueStringSet, _levelData.AllTerrainInstanceData),
             new LemmingReader(_levelData.PrePlacedLemmingData),
             _gadgetReader,
             _talismanReader,

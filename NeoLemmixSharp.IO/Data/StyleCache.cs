@@ -48,7 +48,7 @@ public static class StyleCache
             levelData.LevelStyle
         };
 
-        foreach (var terrainData in levelData.AllTerrainData)
+        foreach (var terrainData in levelData.AllTerrainInstanceData)
         {
             result.Add(terrainData.StyleIdentifier);
         }
@@ -96,7 +96,7 @@ public static class StyleCache
     {
         var result = new Dictionary<StylePiecePair, TerrainArchetypeData>(IoConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
 
-        foreach (var prototype in levelData.AllTerrainData)
+        foreach (var prototype in levelData.AllTerrainInstanceData)
         {
             FetchTerrainArchetypeData(prototype);
         }
@@ -111,7 +111,7 @@ public static class StyleCache
 
         return result;
 
-        void FetchTerrainArchetypeData(TerrainData terrainData)
+        void FetchTerrainArchetypeData(TerrainInstanceData terrainData)
         {
             ref var terrainArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, terrainData.GetStylePiecePair(), out var exists);
 

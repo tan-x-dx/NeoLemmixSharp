@@ -163,7 +163,7 @@ public sealed class LevelEditorPage : PageBase
 
         var position = _levelCanvas.GetCenterPositionOfViewport();
 
-        var newTerrainData = new TerrainData()
+        var newTerrainData = new TerrainInstanceData()
         {
             GroupName = null,
             StyleIdentifier = terrainArchetypeData.StyleIdentifier,
@@ -177,7 +177,7 @@ public sealed class LevelEditorPage : PageBase
             Width = initialWidth,
             Height = initialHeight,
         };
-        _currentLevelData.AllTerrainData.Add(newTerrainData);
+        _currentLevelData.AllTerrainInstanceData.Add(newTerrainData);
 
         _levelCanvas.RepaintLevel();
     }

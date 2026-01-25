@@ -57,7 +57,7 @@ public readonly struct TerrainPainter
 
         var textureData = new ArrayWrapper2D<Color>(TerrainColors.Array, new Size(TerrainTexture.Width, TerrainTexture.Height));
 
-        DrawTerrainPieces(_levelData.AllTerrainData, in textureData);
+        DrawTerrainPieces(_levelData.AllTerrainInstanceData, in textureData);
     }
 
     public void Apply()
@@ -108,7 +108,7 @@ public readonly struct TerrainPainter
     }
 
     private void DrawTerrainPieces(
-        List<TerrainData> terrainDataList,
+        List<TerrainInstanceData> terrainDataList,
         in ArrayWrapper2D<Color> targetData)
     {
         foreach (var terrainData in terrainDataList)
@@ -144,7 +144,7 @@ public readonly struct TerrainPainter
     }
 
     private void DrawTerrainPiece(
-        TerrainData terrainData,
+        TerrainInstanceData terrainData,
         ITerrainArchetypeData terrainArchetypeData,
         in ArrayWrapper2D<Color> targetPixelColorData)
     {
@@ -180,7 +180,7 @@ public readonly struct TerrainPainter
     }
 
     private void ChangePixel(
-        TerrainData terrainData,
+        TerrainInstanceData terrainData,
         ITerrainArchetypeData terrainArchetypeData,
         in ArrayWrapper2D<Color> targetPixelColorData,
         Color sourcePixelColor,
@@ -230,7 +230,7 @@ public readonly struct TerrainPainter
     }
 
     private void PaintResizeableTerrainPiece(
-        TerrainData terrainData,
+        TerrainInstanceData terrainData,
         TerrainArchetypeData terrainArchetypeData,
         in ArrayWrapper2D<Color> targetPixelColorData)
     {
@@ -263,7 +263,7 @@ public readonly struct TerrainPainter
 
     private void LoadAllColorData()
     {
-        foreach (var terrainData in _levelData.AllTerrainData)
+        foreach (var terrainData in _levelData.AllTerrainInstanceData)
         {
             LoadColorData(terrainData);
         }
@@ -277,7 +277,7 @@ public readonly struct TerrainPainter
         }
     }
 
-    private void LoadColorData(TerrainData terrainData)
+    private void LoadColorData(TerrainInstanceData terrainData)
     {
         var stylePiecePair = terrainData.GetStylePiecePair();
 
@@ -295,7 +295,7 @@ public readonly struct TerrainPainter
         colorData = ArrayWrapperHelpers.GetPixelColorDataFromTexture(mainTexture);
     }
 
-    private TerrainArchetypeData GetTerrainArchetypeData(TerrainData terrainData)
+    private TerrainArchetypeData GetTerrainArchetypeData(TerrainInstanceData terrainData)
     {
         return StyleCache.GetTerrainArchetypeData(terrainData.StyleIdentifier, terrainData.PieceIdentifier, _levelData.FileFormatType);
     }

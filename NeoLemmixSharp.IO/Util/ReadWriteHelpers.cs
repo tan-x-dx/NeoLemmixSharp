@@ -42,7 +42,7 @@ public static class ReadWriteHelpers
 
     internal const int NumberOfBytesForMainTerrainData = 9;
 
-    internal static byte EncodeTerrainArchetypeDataByte(TerrainData terrainData)
+    internal static byte EncodeTerrainArchetypeDataByte(TerrainInstanceData terrainData)
     {
         var miscDataBits = (terrainData.Erase ? 1 << TerrainDataEraseBitShift : 0) |
                            (terrainData.NoOverwrite ? 1 << TerrainDataNoOverwriteBitShift : 0) |
