@@ -62,9 +62,9 @@ public abstract class GadgetBehaviour : IEquatable<GadgetBehaviour>
         OnTrigger();
     }
 
-    protected void OnTrigger() => _currentTickTriggerCount++;
-
     protected abstract void PerformInternalBehaviour();
+
+    protected void OnTrigger() => _currentTickTriggerCount++;
 
     public bool Equals(GadgetBehaviour? other)
     {

@@ -59,7 +59,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             {
                 IsVisible = _selectionMode == PieceBankSelectionMode.Terrain
             };
-            terrainPieceSelector.MouseDown.RegisterMouseEvent(_onSelectTerrainPiece);
+            terrainPieceSelector.MousePressed.RegisterMouseEvent(_onSelectTerrainPiece);
             terrainPieceSelector.Left = offset;
             terrainPieceSelector.Top = UiConstants.TwiceStandardInset;
             offset += PieceOffsetDelta;
@@ -83,7 +83,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             {
                 IsVisible = _selectionMode == PieceBankSelectionMode.Gadgets
             };
-            gadgetPieceSelector.MouseDown.RegisterMouseEvent(_onSelectGadgetPiece);
+            gadgetPieceSelector.MousePressed.RegisterMouseEvent(_onSelectGadgetPiece);
             gadgetPieceSelector.Left = offset;
             gadgetPieceSelector.Top = UiConstants.TwiceStandardInset;
             offset += PieceOffsetDelta;

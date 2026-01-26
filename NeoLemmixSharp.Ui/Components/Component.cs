@@ -28,23 +28,27 @@ public abstract class Component : IDisposable
 
     private MouseEventHandler? _mouseEnter;
     private MouseEventHandler? _mouseMovement;
-    private MouseEventHandler? _mouseDown;
+    private MouseEventHandler? _mousePressed;
+    private MouseEventHandler? _mouseHeld;
     private MouseEventHandler? _mouseDoubleClick;
-    private MouseEventHandler? _mouseUp;
+    private MouseEventHandler? _mouseReleased;
     private MouseEventHandler? _mouseExit;
 
-    private KeyboardEventHandler? _keyDown;
-    private KeyboardEventHandler? _keyUp;
+    private KeyboardEventHandler? _keyPressed;
+    private KeyboardEventHandler? _keyHeld;
+    private KeyboardEventHandler? _keyReleased;
 
     public MouseEventHandler MouseEnter => _mouseEnter ??= new MouseEventHandler();
     public MouseEventHandler MouseMovement => _mouseMovement ??= new MouseEventHandler();
-    public MouseEventHandler MouseDown => _mouseDown ??= new MouseEventHandler();
+    public MouseEventHandler MousePressed => _mousePressed ??= new MouseEventHandler();
+    public MouseEventHandler MouseHeld => _mouseHeld ??= new MouseEventHandler();
     public MouseEventHandler MouseDoubleClick => _mouseDoubleClick ??= new MouseEventHandler();
-    public MouseEventHandler MouseUp => _mouseUp ??= new MouseEventHandler();
+    public MouseEventHandler MouseReleased => _mouseReleased ??= new MouseEventHandler();
     public MouseEventHandler MouseExit => _mouseExit ??= new MouseEventHandler();
 
-    public KeyboardEventHandler KeyDown => _keyDown ??= new KeyboardEventHandler();
-    public KeyboardEventHandler KeyUp => _keyUp ??= new KeyboardEventHandler();
+    public KeyboardEventHandler KeyPressed => _keyPressed ??= new KeyboardEventHandler();
+    public KeyboardEventHandler KeyHeld => _keyHeld ??= new KeyboardEventHandler();
+    public KeyboardEventHandler KeyReleased => _keyReleased ??= new KeyboardEventHandler();
 
     protected Component()
     {
@@ -345,13 +349,15 @@ public abstract class Component : IDisposable
 
     public void InvokeMouseEnter(Point mousePosition) => _mouseEnter?.Invoke(this, mousePosition);
     public void InvokeMouseMovement(Point mousePosition) => _mouseMovement?.Invoke(this, mousePosition);
-    public void InvokeMouseDown(Point mousePosition) => _mouseDown?.Invoke(this, mousePosition);
+    public void InvokeMousePressed(Point mousePosition) => _mousePressed?.Invoke(this, mousePosition);
+    public void InvokeMouseHeld(Point mousePosition) => _mousePressed?.Invoke(this, mousePosition);
     public void InvokeMouseDoubleClick(Point mousePosition) => _mouseDoubleClick?.Invoke(this, mousePosition);
-    public void InvokeMouseUp(Point mousePosition) => _mouseUp?.Invoke(this, mousePosition);
+    public void InvokeMouseReleased(Point mousePosition) => _mouseReleased?.Invoke(this, mousePosition);
     public void InvokeMouseExit(Point mousePosition) => _mouseExit?.Invoke(this, mousePosition);
 
-    public void InvokeKeyDown(in KeysEnumerable pressedKeys) => _keyDown?.Invoke(this, in pressedKeys);
-    public void InvokeKeyUp(in KeysEnumerable pressedKeys) => _keyUp?.Invoke(this, in pressedKeys);
+    public void InvokeKeyPressed(in KeysEnumerable pressedKeys) => _keyPressed?.Invoke(this, in pressedKeys);
+    public void InvokeKeyHeld(in KeysEnumerable heldKeys) => _keyHeld?.Invoke(this, in heldKeys);
+    public void InvokeKeyReleased(in KeysEnumerable releasedKeys) => _keyReleased?.Invoke(this, in releasedKeys);
 
     protected void SetMouseOver(Component c, Point p) => State = ComponentState.MouseOver;
     protected void SetMousePress(Component c, Point p) => State = ComponentState.MousePress;
@@ -378,13 +384,15 @@ public abstract class Component : IDisposable
 
             _mouseEnter?.Clear();
             _mouseMovement?.Clear();
-            _mouseDown?.Clear();
+            _mousePressed?.Clear();
+            _mouseHeld?.Clear();
             _mouseDoubleClick?.Clear();
-            _mouseUp?.Clear();
+            _mouseReleased?.Clear();
             _mouseExit?.Clear();
 
-            _keyDown?.Clear();
-            _keyUp?.Clear();
+            _keyPressed?.Clear();
+            _keyHeld?.Clear();
+            _keyReleased?.Clear();
 
             OnDispose();
         }

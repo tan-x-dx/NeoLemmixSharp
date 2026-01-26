@@ -12,7 +12,9 @@ public sealed class InputController :
     private const int NumberOfKeys = 256;
 
     private readonly List<KeyToInputMapping> _keyMapping = new(16);
-    private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _pressedKeys;
+    private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _previouslyPressedKeys;
+    private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _currentlyPressedKeys;
+    private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _heldKeys;
     private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _releasedKeys;
     private readonly List<InputAction> _inputActions = new(16);
 
@@ -27,12 +29,15 @@ public sealed class InputController :
     public InputAction MouseButton4Action { get; }
     public InputAction MouseButton5Action { get; }
 
-    public BitArrayEnumerable<InputController, Keys> CurrentlyPressedKeys => _pressedKeys.AsEnumerable();
-    public BitArrayEnumerable<InputController, Keys> CurrentlyReleasedKeys => _releasedKeys.AsEnumerable();
+    public BitArrayEnumerable<InputController, Keys> CurrentlyPressedKeys => _currentlyPressedKeys.AsEnumerable();
+    public BitArrayEnumerable<InputController, Keys> CurrentlyHeldKeys => _heldKeys.AsEnumerable();
+    public BitArrayEnumerable<InputController, Keys> JustReleasedKeys => _releasedKeys.AsEnumerable();
 
     public InputController()
     {
-        _pressedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
+        _previouslyPressedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
+        _currentlyPressedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
+        _heldKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
         _releasedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
 
         LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
@@ -70,7 +75,7 @@ public sealed class InputController :
 
         foreach (var keyToInputMapping in _keyMapping)
         {
-            if (_pressedKeys.Contains(keyToInputMapping.Key))
+            if (_currentlyPressedKeys.Contains(keyToInputMapping.Key))
             {
                 keyToInputMapping.InputAction.DoPress();
             }
@@ -82,7 +87,9 @@ public sealed class InputController :
 
     public void ClearAllInputActions()
     {
-        _pressedKeys.Clear();
+        _previouslyPressedKeys.Clear();
+        _currentlyPressedKeys.Clear();
+        _heldKeys.Clear();
         _releasedKeys.Clear();
 
         foreach (var inputAction in _inputActions)
@@ -98,12 +105,16 @@ public sealed class InputController :
         // in the same way as a BitArraySet would do.
         // Just copy it in...
         var keyBoardState = Keyboard.GetState();
-        var keysSpan = new ReadOnlySpan<uint>(&keyBoardState, KeysBitBuffer.KeysBitBufferLength);
+        var keysSpan = Helpers.CreateReadOnlySpan<uint>(&keyBoardState, KeysBitBuffer.KeysBitBufferLength);
 
-        _releasedKeys.SetFrom(_pressedKeys);
-        _pressedKeys.ReadFrom(keysSpan);
+        _previouslyPressedKeys.SetFrom(_currentlyPressedKeys);
+        _currentlyPressedKeys.ReadFrom(keysSpan);
 
-        _releasedKeys.ExceptWith(_pressedKeys);
+        _heldKeys.SetFrom(_currentlyPressedKeys);
+        _heldKeys.IntersectWith(_previouslyPressedKeys);
+
+        _releasedKeys.SetFrom(_previouslyPressedKeys);
+        _releasedKeys.ExceptWith(_currentlyPressedKeys);
     }
 
     private void UpdateMouseButtonStates()
@@ -122,6 +133,28 @@ public sealed class InputController :
         MouseButton4Action.ActionState |= (ulong)mouseState.XButton1;
         MouseButton5Action.ActionState |= (ulong)mouseState.XButton2;
     }
+
+    /// <summary>
+    /// Is the key currently pressed down?
+    /// </summary>
+    public bool IsKeyDown(Keys key) => _currentlyPressedKeys.Contains(key);
+    /// <summary>
+    /// Is the key currently released?
+    /// </summary>
+    public bool IsKeyUp(Keys key) => !_currentlyPressedKeys.Contains(key);
+    /// <summary>
+    /// Is the key currently pressed down, but it was previously released?
+    /// </summary>
+    public bool IsKeyPressed(Keys key) => _currentlyPressedKeys.Contains(key) &&
+                                          !_previouslyPressedKeys.Contains(key);
+    /// <summary>
+    /// Is the key currently released, but it was previously pressed down?
+    /// </summary>
+    public bool IsKeyReleased(Keys key) => _releasedKeys.Contains(key);
+    /// <summary>
+    /// Is the key currently being pressed down, and it was previously pressed down?
+    /// </summary>
+    public bool IsKeyHeld(Keys key) => _heldKeys.Contains(key);
 
     int IPerfectHasher<Keys>.NumberOfItems => NumberOfKeys;
     int IPerfectHasher<Keys>.Hash(Keys item) => (int)item;

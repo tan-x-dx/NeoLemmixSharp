@@ -328,7 +328,7 @@ public static class BitArrayHelpers
         return;
     }
 
-    private static unsafe void LargeSpanUnionWith(Span<uint> span, ReadOnlySpan<uint> other)
+    private static void LargeSpanUnionWith(Span<uint> span, ReadOnlySpan<uint> other)
     {
         TensorPrimitives.BitwiseOr(span, other, span);
     }

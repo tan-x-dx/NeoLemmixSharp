@@ -1,11 +1,17 @@
-﻿using System.Runtime.CompilerServices;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Objectives;
 
-public unsafe readonly struct SkillSetData
+public readonly unsafe struct SkillSetData : IPointerData<SkillSetData>
 {
-    public const int SkillSetDataSize = 3 * sizeof(int);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static SkillSetData Create(nint dataRef) => new(dataRef);
+
+    public static int SizeInBytes => SkillSetDataSize;
+
+    private const int SkillSetDataSize = 3 * sizeof(int);
 
     [StructLayout(LayoutKind.Sequential, Size = SkillSetDataSize)]
     private struct SkillSetDataRaw
@@ -17,8 +23,7 @@ public unsafe readonly struct SkillSetData
 
     private readonly SkillSetDataRaw* _data;
 
-    public SkillSetData(void* pointer) => _data = (SkillSetDataRaw*)pointer;
-    public SkillSetData(nint pointerHandle) => _data = (SkillSetDataRaw*)pointerHandle;
+    private SkillSetData(nint pointerHandle) => _data = (SkillSetDataRaw*)pointerHandle;
 
     public ref int AdditionalQuantity => ref Unsafe.AsRef<int>(&_data->AdditionalQuantity);
     public ref int AmountUsed => ref Unsafe.AsRef<int>(&_data->AmountUsed);

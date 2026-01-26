@@ -9,9 +9,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 public abstract class GadgetBase : IEquatable<GadgetBase>
 {
     private readonly PointerWrapper _stateIndex;
-    public required nint DataHandle
+    public required PointerWrapper DataHandle
     {
-        init => _stateIndex = new PointerWrapper(value);
+        init => _stateIndex = value;
     }
     public required GadgetName GadgetName { get; init; }
     public GadgetType GadgetType { get; }
@@ -23,7 +23,6 @@ public abstract class GadgetBase : IEquatable<GadgetBase>
     public required bool IsFastForward { get; init; }
 
     public Point Position => CurrentGadgetBounds.Position;
-    public Size Size => CurrentGadgetBounds.Size;
 
     public abstract GadgetState CurrentState { get; }
 

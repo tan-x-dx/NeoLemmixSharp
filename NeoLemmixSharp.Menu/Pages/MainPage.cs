@@ -26,25 +26,25 @@ public sealed class MainPage : PageBase
         {
             ScaleMultiplier = menuScaleMultiplier,
         };
-        _playButton.MouseDown.RegisterMouseEvent(PlayButtonClick);
+        _playButton.MousePressed.RegisterMouseEvent(PlayButtonClick);
 
         _levelSelectButton = new TextureButton(0, 0, MenuSpriteBank.SignLevelSelect)
         {
             ScaleMultiplier = menuScaleMultiplier,
         };
-        _levelSelectButton.MouseDown.RegisterMouseEvent(LevelSelectButtonClick);
+        _levelSelectButton.MousePressed.RegisterMouseEvent(LevelSelectButtonClick);
 
         _configButton = new TextureButton(0, 0, MenuSpriteBank.SignConfig)
         {
             ScaleMultiplier = menuScaleMultiplier,
         };
-        _configButton.MouseDown.RegisterMouseEvent(ConfigButtonClick);
+        _configButton.MousePressed.RegisterMouseEvent(ConfigButtonClick);
 
         _quitButton = new TextureButton(0, 0, MenuSpriteBank.SignQuit)
         {
             ScaleMultiplier = menuScaleMultiplier,
         };
-        _quitButton.MouseDown.RegisterMouseEvent(QuitButtonClick);
+        _quitButton.MousePressed.RegisterMouseEvent(QuitButtonClick);
     }
 
     protected override void OnInitialise()

@@ -11,6 +11,8 @@ public readonly struct GadgetName : IEquatable<GadgetName>
         _gadgetName = gadgetName ?? string.Empty;
     }
 
+    public static GadgetName Empty => new(string.Empty);
+
     public bool IsTrivial => string.IsNullOrWhiteSpace(_gadgetName);
     public override string ToString() => _gadgetName;
 

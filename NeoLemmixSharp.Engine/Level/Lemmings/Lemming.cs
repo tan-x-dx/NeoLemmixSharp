@@ -93,7 +93,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref int JumpProgress => ref _data.JumpProgress;
     public ref int TrueDistanceFallen => ref _data.TrueDistanceFallen;
     public ref int LaserRemainTime => ref _data.LaserRemainTime;
-    public ref int FastForwardTime => ref _data.FastForwardTime;
     public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref int ParticleTimer => ref _data.ParticleTimer;
 
@@ -107,22 +106,19 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public Span<Point> GetJumperPositions() => _data.GetJumperPositions();
 
     public Lemming(
-        nint dataHandle,
+        ref nint dataHandle,
         int id)
     {
         Id = id;
-        _data = new LemmingData(dataHandle)
-        {
-            PreviousActionId = LemmingActionConstants.NoneActionId,
-            CurrentActionId = LemmingActionConstants.NoneActionId,
-            NextActionId = LemmingActionConstants.NoneActionId,
-            CountDownActionId = LemmingActionConstants.NoneActionId,
-
-            DehoistPin = new(-1, -1),
-            LaserHitLevelPosition = new(-1, -1),
-            AnchorPosition = new(-1, -1),
-            PreviousAnchorPosition = new(-1, -1)
-        };
+        _data = PointerDataHelper.CreateItem<LemmingData>(ref dataHandle);
+        _data.PreviousActionId = LemmingActionConstants.NoneActionId;
+        _data.CurrentActionId = LemmingActionConstants.NoneActionId;
+        _data.NextActionId = LemmingActionConstants.NoneActionId;
+        _data.CountDownActionId = LemmingActionConstants.NoneActionId;
+        _data.DehoistPin = new(-1, -1);
+        _data.LaserHitLevelPosition = new(-1, -1);
+        _data.AnchorPosition = new(-1, -1);
+        _data.PreviousAnchorPosition = new(-1, -1);
 
         State = _data.CreateLemmingState(this);
         Renderer = new LemmingRenderer(this);
@@ -186,7 +182,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         if (!HandleLemmingAction(in gadgetsNearLemming)) return;
         if (!CheckLevelBoundaries()) return;
-        if (!CheckTriggerAreas(false, gadgetCheckPositions, in gadgetsNearLemming)) return;
+        if (!CheckTriggerAreas(in gadgetsNearLemming, gadgetCheckPositions, false)) return;
         if (CurrentActionId == LemmingActionConstants.ExiterActionId) return;
         if (State.IsZombie) return;
         if (!LevelScreen.LemmingManager.AnyZombies()) return;
@@ -224,7 +220,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (handleGadgets)
         {
             // Reuse the above span. LemmingMovementHelper will overwrite existing values
-            CheckTriggerAreas(false, gadgetCheckPositions, in gadgetsNearLemming);
+            CheckTriggerAreas(in gadgetsNearLemming, gadgetCheckPositions, false);
         }
     }
 
@@ -252,14 +248,15 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     private void HandleFastForwardTimer()
     {
-        if (_data.FastForwardTime > 0)
-        {
-            _data.FastForwardTime--;
-        }
-        else
-        {
+        ref var fastForwardTime = ref _data.FastForwardTime;
+
+        if (fastForwardTime <= 0)
+            return;
+
+        fastForwardTime--;
+
+        if (fastForwardTime == 0)
             LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
-        }
     }
 
     /// <summary>
@@ -330,16 +327,16 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
 
     private bool CheckTriggerAreas(
-        bool isPostTeleportCheck,
+        in GadgetEnumerable gadgetsNearLemming,
         Span<Point> gadgetCheckPositions,
-        in GadgetEnumerable gadgetsNearLemming)
+        bool isPostTeleportCheck)
     {
         if (isPostTeleportCheck)
         {
             _data.PreviousAnchorPosition = _data.AnchorPosition;
         }
 
-        var result = CheckGadgets(gadgetCheckPositions, in gadgetsNearLemming) && LemmingManager.DoBlockerCheck(this);
+        var result = CheckGadgets(in gadgetsNearLemming, gadgetCheckPositions) && LemmingManager.DoBlockerCheck(this);
 
         NextAction.TransitionLemmingToAction(this, false);
 
@@ -347,8 +344,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
 
     private bool CheckGadgets(
-        Span<Point> gadgetCheckPositions,
-        in GadgetEnumerable gadgetsNearLemming)
+        in GadgetEnumerable gadgetsNearLemming,
+        Span<Point> gadgetCheckPositions)
     {
         if (gadgetsNearLemming.Count == 0)
             return true;
@@ -432,6 +429,12 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         gadget.OnLemmingHit(filter, this);
     }
 
+    public void SetFastForwardTime(int fastForwardTime)
+    {
+        _data.FastForwardTime = fastForwardTime;
+        LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
+    }
+
     public void SetCountDownAction(uint countDownTimer, LemmingAction countDownAction, bool displayTimer)
     {
         _data.CountDownTimer = countDownTimer;
@@ -467,8 +470,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* destinationPointer)
     {
-        var sourceSpan = Helpers.CreateReadOnlySpan<byte>(sourcePointer, LemmingData.LemmingDataSize);
-        var destinationSpan = Helpers.CreateSpan<byte>(destinationPointer, LemmingData.LemmingDataSize);
+        var sourceSpan = Helpers.CreateReadOnlySpan<byte>(sourcePointer, LemmingData.SizeInBytes);
+        var destinationSpan = Helpers.CreateSpan<byte>(destinationPointer, LemmingData.SizeInBytes);
         sourceSpan.CopyTo(destinationSpan);
     }
 

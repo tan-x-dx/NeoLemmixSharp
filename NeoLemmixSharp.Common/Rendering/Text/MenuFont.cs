@@ -27,19 +27,23 @@ public sealed class MenuFont
         int scaleMultiplier,
         Color color)
     {
-        var dest = new Rectangle(x, y, GlyphWidth * scaleMultiplier, GlyphHeight * scaleMultiplier);
+        var dx = GlyphWidth * scaleMultiplier;
+        var source = new Rectangle(0, 0, GlyphWidth, GlyphHeight);
+        var dest = new Rectangle(x, y, dx, GlyphHeight * scaleMultiplier);
+
         foreach (var c in charactersToRender)
         {
             if (c < LowerCharLimit || c > UpperCharLimit)
                 continue;
 
-            var source = new Rectangle(GlyphWidth * (c - (1 + LowerCharLimit)), 0, GlyphWidth, GlyphHeight);
+            source.X = (GlyphWidth * c) - (GlyphWidth * (1 + LowerCharLimit));
+
             spriteBatch.Draw(
                 _texture,
                 dest,
                 source,
                 color);
-            dest.X += GlyphWidth * scaleMultiplier;
+            dest.X += dx;
         }
     }
 }

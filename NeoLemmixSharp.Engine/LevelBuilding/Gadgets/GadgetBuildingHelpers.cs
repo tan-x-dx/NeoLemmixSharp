@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
@@ -88,7 +89,7 @@ public static class GadgetBuildingHelpers
         ArgumentOutOfRangeException.ThrowIfGreaterThan(numberOfTriggers, EngineConstants.MaxAllowedNumberOfGadgetTriggers);
 
         if (numberOfTriggers <= BasicTriggerNames.Length)
-            return new ReadOnlySpan<GadgetTriggerName>(BasicTriggerNames, 0, numberOfTriggers);
+            return Helpers.CreateReadOnlySpan<GadgetTriggerName>(BasicTriggerNames, 0, numberOfTriggers);
 
         return ConstructLargeTriggerNameArray(numberOfTriggers);
     }
@@ -114,7 +115,7 @@ public static class GadgetBuildingHelpers
         ArgumentOutOfRangeException.ThrowIfZero(numberOfStates);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(numberOfStates, EngineConstants.MaxAllowedNumberOfGadgetStates);
 
-        return new ReadOnlySpan<GadgetStateName>(BasicStateNames, 0, numberOfStates);
+        return Helpers.CreateReadOnlySpan(BasicStateNames, 0, numberOfStates);
     }
 
     public static string GetGadgetName(

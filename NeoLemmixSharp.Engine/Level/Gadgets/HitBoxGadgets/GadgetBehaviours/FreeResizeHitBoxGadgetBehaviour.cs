@@ -14,14 +14,14 @@ public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
     private readonly int _dh;
 
     public FreeResizeHitBoxGadgetBehaviour(
-        nint dataHandle,
+        ref nint dataHandle,
         GadgetIdentifier gadgetIdentifier,
         int tickDelay,
         int dw,
         int dh)
         : base(GadgetBehaviourType.GadgetFreeResize)
     {
-        _tickCount = new PointerWrapper(dataHandle);
+        _tickCount = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandle);
         _tickDelay = tickDelay;
         _gadgetIdentifier = gadgetIdentifier;
         _dw = dw;

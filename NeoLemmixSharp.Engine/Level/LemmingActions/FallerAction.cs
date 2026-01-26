@@ -96,10 +96,8 @@ public sealed class FallerAction : LemmingAction
 
             var filters = gadget.CurrentState.Filters;
 
-            for (var i = 0; i < filters.Length; i++)
+            foreach (var filter in filters)
             {
-                var filter = filters[i];
-
                 if (!filter.MatchesLemming(lemming))
                     continue;
 
@@ -126,16 +124,16 @@ public sealed class FallerAction : LemmingAction
             return true;
         }
 
-        if (lemming.State.IsGlider &&
-            (lemming.TrueDistanceFallen > 8 ||
-             (lemming.InitialFall &&
-              lemming.TrueDistanceFallen > 6)))
-        {
-            GliderAction.Instance.TransitionLemmingToAction(lemming, false);
-            return true;
-        }
+        if (!lemming.State.IsGlider)
+            return false;
 
-        return false;
+        if (lemming.TrueDistanceFallen <= 8 &&
+            (!lemming.InitialFall ||
+             lemming.TrueDistanceFallen <= 6))
+            return false;
+
+        GliderAction.Instance.TransitionLemmingToAction(lemming, false);
+        return true;
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)

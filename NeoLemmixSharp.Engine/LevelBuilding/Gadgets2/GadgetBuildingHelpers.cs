@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
@@ -92,7 +93,7 @@ public static class GadgetBuildingHelpers
         ArgumentOutOfRangeException.ThrowIfGreaterThan(numberOfTriggers, EngineConstants.MaxAllowedNumberOfGadgetTriggers);
 
         if (numberOfTriggers <= BasicTriggerNames.Length)
-            return new ReadOnlySpan<GadgetTriggerName>(BasicTriggerNames, 0, numberOfTriggers);
+            return Helpers.CreateReadOnlySpan(BasicTriggerNames, 0, numberOfTriggers);
 
         return ConstructLargeTriggerNameArray(numberOfTriggers);
     }
@@ -118,7 +119,7 @@ public static class GadgetBuildingHelpers
         ArgumentOutOfRangeException.ThrowIfZero(numberOfStates);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(numberOfStates, EngineConstants.MaxAllowedNumberOfGadgetStates);
 
-        return new ReadOnlySpan<GadgetStateName>(BasicStateNames, 0, numberOfStates);
+        return Helpers.CreateReadOnlySpan(BasicStateNames, 0, numberOfStates);
     }
 
     public static GadgetName GetGadgetName(
@@ -146,14 +147,10 @@ public static class GadgetBuildingHelpers
     {
         var baseSize = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(gadgetArchetypeData.BaseSpriteSize);
 
-        var result = new GadgetBounds(dataHandleRef)
-        {
-            Position = gadgetData.Position,
-            Width = baseSize.W,
-            Height = baseSize.H
-        };
-
-        dataHandleRef += GadgetBounds.GadgetBoundsDataSize;
+        var result = PointerDataHelper.CreateItem<GadgetBounds>(ref dataHandleRef);
+        result.Position = gadgetData.Position;
+        result.Width = baseSize.W;
+        result.Height = baseSize.H;
 
         return result;
     }
@@ -174,14 +171,10 @@ public static class GadgetBuildingHelpers
 
         size = new DihedralTransformation(hitBoxGadgetData.Orientation, hitBoxGadgetData.FacingDirection).Transform(size);
 
-        var result = new GadgetBounds(dataHandleRef)
-        {
-            Position = hitBoxGadgetData.Position,
-            Width = size.W,
-            Height = size.H
-        };
-
-        dataHandleRef += GadgetBounds.GadgetBoundsDataSize;
+        var result = PointerDataHelper.CreateItem<GadgetBounds>(ref dataHandleRef);
+        result.Position = hitBoxGadgetData.Position;
+        result.Width = size.W;
+        result.Height = size.H;
 
         return result;
     }

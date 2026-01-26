@@ -13,8 +13,8 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 #pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 #pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 {
-    private readonly LemmingTracker _lemmingTracker;
     private readonly HitBoxGadgetState[] _states;
+    private readonly LemmingTracker _lemmingTracker;
 
     // The below properties refer to the positions of the hitboxes, not the gadget itself
     public RectangularRegion CurrentBounds => CurrentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
@@ -23,16 +23,14 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 
     public HitBoxGadget(
         HitBoxGadgetState[] states,
+        LemmingTracker lemmingTracker,
         int initialStateIndex,
-        ResizeType resizeType,
-        LemmingTracker lemmingTracker)
+        ResizeType resizeType)
         : base(Common.Enums.GadgetType.HitBoxGadget)
     {
-        _lemmingTracker = lemmingTracker;
         _states = states;
-
+        _lemmingTracker = lemmingTracker;
         StateIndex = initialStateIndex;
-
         ResizeType = resizeType;
 
         foreach (var state in _states)
@@ -82,13 +80,13 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         var onHitBehaviours = activeFilter.OnLemmingHitBehaviours;
         foreach (var gadgetBehaviour in onHitBehaviours)
         {
-            gadgetManager.RegisterCauseAndEffectData(gadgetBehaviour, lemming.Id);
+            gadgetManager.RegisterCauseAndEffectData(gadgetBehaviour, lemming);
         }
 
         var lemmingTrackingHitBoxBehaviours = GetLemmingTrackingHitBoxBehaviours(activeFilter, lemming);
         foreach (var gadgetBehaviour in lemmingTrackingHitBoxBehaviours)
         {
-            gadgetManager.RegisterCauseAndEffectData(gadgetBehaviour, lemming.Id);
+            gadgetManager.RegisterCauseAndEffectData(gadgetBehaviour, lemming);
         }
     }
 

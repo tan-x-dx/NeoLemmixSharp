@@ -38,7 +38,6 @@ public sealed class TerrainManager
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool PixelIsSolidToLemming(
         Lemming lemming,
         Point levelPosition)
@@ -59,7 +58,6 @@ public sealed class TerrainManager
     }
 
     [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool PixelIsSteel(Point levelPosition)
     {
         return PixelTypeAtPosition(levelPosition).IsSteel();

@@ -27,9 +27,9 @@ public sealed class ToggleButton : Component
     {
         _alternateLabel = label;
 
-        MouseDown.RegisterMouseEvent(OnMouseDown);
+        MousePressed.RegisterMouseEvent(OnMouseDown);
         MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MouseReleased.RegisterMouseEvent(SetMouseOver);
         MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
@@ -38,9 +38,9 @@ public sealed class ToggleButton : Component
     {
         _alternateLabel = label;
 
-        MouseDown.RegisterMouseEvent(OnMouseDown);
+        MousePressed.RegisterMouseEvent(OnMouseDown);
         MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MouseUp.RegisterMouseEvent(SetMouseOver);
+        MouseReleased.RegisterMouseEvent(SetMouseOver);
         MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 

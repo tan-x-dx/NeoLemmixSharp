@@ -3,7 +3,7 @@ using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Level.Terrain;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
@@ -17,7 +17,7 @@ public sealed class LevelEditorPage : PageBase
 {
     private LevelEditorMenuBar _topPanel;
     private LevelEditorControlPanel _leftPanel;
-    private readonly LevelEditorCanvas _levelCanvas;
+    private LevelEditorCanvas _levelCanvas;
     private PieceBank _pieceBank;
 
     private StyleData _levelStyleData;
@@ -136,54 +136,30 @@ public sealed class LevelEditorPage : PageBase
 
         _topPanel = null!;
         _leftPanel = null!;
+        _levelCanvas = null!;
         _pieceBank = null!;
     }
 
     private void OnSelectTerrainPiece(Component c, Point pos)
     {
-        if (c is not PieceSelector terrainPieceSelector || terrainPieceSelector.StylePiece is not TerrainArchetypeData terrainArchetypeData)
+        if (c is not PieceSelector pieceSelector)
             return;
 
-        AddTerrainPiece(terrainArchetypeData);
-    }
-
-    private void AddTerrainPiece(TerrainArchetypeData terrainArchetypeData)
-    {
-        var defaultArchetypeSize = terrainArchetypeData.DefaultSize;
-
-        int? initialWidth = null;
-        int? initialHeight = null;
-
-        if (defaultArchetypeSize.W > 0)
-            initialWidth = defaultArchetypeSize.W;
-
-        if (defaultArchetypeSize.H > 0)
-            initialHeight = defaultArchetypeSize.H;
-
-        var position = _levelCanvas.GetCenterPositionOfViewport();
-
-        var newTerrainData = new TerrainData()
+        if (pieceSelector.StylePiece is TerrainArchetypeData terrainArchetypeData)
         {
-            GroupName = null,
-            StyleIdentifier = terrainArchetypeData.StyleIdentifier,
-            PieceIdentifier = terrainArchetypeData.PieceIdentifier,
-            Position = position,
-            Orientation = Orientation.Down,
-            FacingDirection = FacingDirection.Right,
-            NoOverwrite = false,
-            Erase = false,
-            Tint = null,
-            Width = initialWidth,
-            Height = initialHeight,
-        };
-        _currentLevelData.AllTerrainData.Add(newTerrainData);
-
-        _levelCanvas.RepaintLevel();
+            _levelCanvas.AddTerrainPiece(terrainArchetypeData);
+        }
     }
 
     private void OnSelectGadgetPiece(Component c, Point pos)
     {
+        if (c is not PieceSelector pieceSelector)
+            return;
 
+        if (pieceSelector.StylePiece is GadgetArchetypeData gadgetArchetypeData)
+        {
+            _levelCanvas.AddGadgetPiece(gadgetArchetypeData);
+        }
     }
 
     private void OnSelectBackgroundPiece(Component c, Point pos)

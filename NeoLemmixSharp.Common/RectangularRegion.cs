@@ -15,9 +15,11 @@ namespace NeoLemmixSharp.Common;
 /// <para>Note that a <see cref="RectangularRegion"/> can never be empty - the smallest region size is 1x1.</para>
 /// </summary>
 [SkipLocalsInit]
-[StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(int))]
+[StructLayout(LayoutKind.Explicit, Size = RectangularRegionSize)]
 public readonly struct RectangularRegion : IEquatable<RectangularRegion>
 {
+    public const int RectangularRegionSize = 4 * sizeof(int);
+
     [FieldOffset(0 * sizeof(int))] public readonly Point Position;
     [FieldOffset(0 * sizeof(int))] public readonly int X;
     [FieldOffset(1 * sizeof(int))] public readonly int Y;
@@ -95,11 +97,15 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
         X = Math.Min(p1.X, p2.X);
         Y = Math.Min(p1.Y, p2.Y);
         var w0 = p1.X - p2.X;
-        W = w0 < 0 ? -w0 : w0;
-        W++;
+        if (w0 < 0)
+            w0 = -w0;
+        w0++;
+        W = w0;
         var h0 = p1.Y - p2.Y;
-        H = h0 < 0 ? -h0 : h0;
-        H++;
+        if (h0 < 0)
+            h0 = -h0;
+        h0++;
+        H = h0;
     }
 
     [DebuggerStepThrough]
@@ -137,6 +143,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
         H = h;
     }
 
+    [DebuggerStepThrough]
     public unsafe RectangularRegion(void* pointer)
     {
         int* intPointer = (int*)pointer;

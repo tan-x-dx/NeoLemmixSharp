@@ -1,11 +1,17 @@
-﻿using System.Runtime.CompilerServices;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 
-public unsafe readonly struct HatchGroupData
+public readonly unsafe struct HatchGroupData : IPointerData<HatchGroupData>
 {
-    public const int HatchGroupDataSize = 4 * sizeof(int);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static HatchGroupData Create(nint dataRef) => new(dataRef);
+
+    public static int SizeInBytes => HatchGroupDataSize;
+
+    private const int HatchGroupDataSize = 4 * sizeof(int);
 
     [StructLayout(LayoutKind.Sequential, Size = HatchGroupDataSize)]
     private struct HatchGroupDataRaw
@@ -18,8 +24,7 @@ public unsafe readonly struct HatchGroupData
 
     private readonly HatchGroupDataRaw* _data;
 
-    public HatchGroupData(void* pointer) => _data = (HatchGroupDataRaw*)pointer;
-    public HatchGroupData(nint pointerHandle) => _data = (HatchGroupDataRaw*)pointerHandle;
+    private HatchGroupData(nint pointerHandle) => _data = (HatchGroupDataRaw*)pointerHandle;
 
     public ref int HatchIndex => ref Unsafe.AsRef<int>(&_data->HatchIndex);
     public ref uint NextLemmingCountDown => ref Unsafe.AsRef<uint>(&_data->NextLemmingCountDown);

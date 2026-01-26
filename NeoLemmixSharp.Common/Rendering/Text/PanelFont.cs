@@ -29,44 +29,47 @@ public sealed class PanelFont
         int scaleMultiplier,
         Color color)
     {
+        if (charactersToRender.Length == 0)
+            return;
+
         var dx = GlyphWidth * scaleMultiplier;
+        var source = new Rectangle(0, GlyphHeight, GlyphWidth, GlyphHeight);
         var dest = new Rectangle(x, y, dx, GlyphHeight * scaleMultiplier);
+
         foreach (var c in charactersToRender)
         {
-            if (!CanRenderChar(c, out var adjustedChar))
+            if (CanRenderChar(c, out var charIndex))
             {
-                dest.X += dx;
-                continue;
+                source.X = GlyphWidth * charIndex;
+                source.Y = 0;
+                spriteBatch.Draw(
+                    _texture,
+                    dest,
+                    source,
+                    Color.White);
+
+                source.Y = GlyphHeight;
+                spriteBatch.Draw(
+                    _texture,
+                    dest,
+                    source,
+                    color);
             }
-
-            var source = new Rectangle(GlyphWidth * adjustedChar, 0, GlyphWidth, GlyphHeight);
-            spriteBatch.Draw(
-                _texture,
-                dest,
-                source,
-                Color.White);
-
-            source.Y = GlyphHeight;
-            spriteBatch.Draw(
-                _texture,
-                dest,
-                source,
-                color);
 
             dest.X += dx;
         }
     }
 
-    private static bool CanRenderChar(uint c, out int adjustedChar)
+    private static bool CanRenderChar(uint c, out int charIndex)
     {
         if (c is '%')
         {
-            adjustedChar = IndexOfPercentInPng;
+            charIndex = IndexOfPercentInPng;
             return true;
         }
         if (c is '-')
         {
-            adjustedChar = IndexOfDashInPng;
+            charIndex = IndexOfDashInPng;
             return true;
         }
 
@@ -74,7 +77,7 @@ public sealed class PanelFont
         if (c0 <= '9' - '0')
         {
             c0 += IndexOfZeroInPng;
-            adjustedChar = (int)c0;
+            charIndex = (int)c0;
             return true;
         }
 
@@ -82,7 +85,7 @@ public sealed class PanelFont
         if (c0 <= 'z' - 'a')
         {
             c0 += IndexOfAInPng;
-            adjustedChar = (int)c0;
+            charIndex = (int)c0;
             return true;
         }
 
@@ -90,11 +93,11 @@ public sealed class PanelFont
         if (c0 <= 'Z' - 'A')
         {
             c0 += IndexOfAInPng;
-            adjustedChar = (int)c0;
+            charIndex = (int)c0;
             return true;
         }
 
-        adjustedChar = -1;
+        charIndex = 0;
         return false;
     }
 }

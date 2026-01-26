@@ -10,14 +10,14 @@ public static class LevelParameterHelpers
     {
         var timedBombers = parameters.Contains(LevelParameters.TimedBombers);
 
-        if (timedBombers)
-        {
-            if (lemming.IsFastForward)
-                return EngineConstants.DefaultFastForwardLemmingCountDownActionTicks;
+        uint result = 1;
+        if (!timedBombers)
+            return result; // I.e. the next frame
 
-            return EngineConstants.DefaultCountDownActionTicks;
-        }
+        result = EngineConstants.DefaultCountDownActionTicks;
+        if (lemming.IsFastForward)
+            result = EngineConstants.DefaultFastForwardLemmingCountDownActionTicks;
 
-        return 1; // I.e. the next frame
+        return result;
     }
 }

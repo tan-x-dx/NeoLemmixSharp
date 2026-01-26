@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.Ui.Components;
 using Color = Microsoft.Xna.Framework.Color;
@@ -9,13 +12,21 @@ using Point = NeoLemmixSharp.Common.Point;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
-public sealed class LevelEditorCanvas : Component
+public sealed partial class LevelEditorCanvas : Component
 {
     private readonly GraphicsDevice _graphicsDevice;
     private RenderTarget2D _levelTexture;
 
     private readonly CanvasBorderBehaviour _horizontalBorderBehaviour = new();
     private readonly CanvasBorderBehaviour _verticalBorderBehaviour = new();
+
+    private readonly List<CanvasPiece> _terrainPieces = new(64);
+    private readonly List<CanvasPiece> _gadgetPieces = new(16);
+    private readonly List<CanvasPiece> _preplacedLemmingPieces = new(16);
+
+    private readonly List<CanvasPiece> _selectedCanvasPieces = new(16);
+
+    private Point _canvasMousePosition;
 
     private LevelEditorTerrainPainter _terrainPainter;
 
@@ -25,7 +36,11 @@ public sealed class LevelEditorCanvas : Component
     {
         _graphicsDevice = graphicsDevice;
 
-        MouseDown.RegisterMouseEvent(OnMouseDown);
+        MouseEnter.RegisterMouseEvent(OnMouseEnter);
+        MouseMovement.RegisterMouseEvent(OnMouseMove);
+        MousePressed.RegisterMouseEvent(OnMouseDown);
+        MouseExit.RegisterMouseEvent(OnMouseExit);
+        KeyPressed.RegisterKeyEvent(OnKeyDown);
     }
 
     public void SetLevelData(LevelData levelData)
@@ -37,7 +52,7 @@ public sealed class LevelEditorCanvas : Component
     public override void Render(SpriteBatch spriteBatch)
     {
         RenderCanvasBorder(spriteBatch);
-        RenderLevel(spriteBatch);
+        RenderCanvas(spriteBatch);
     }
 
     private void RenderCanvasBorder(SpriteBatch spriteBatch)
@@ -47,7 +62,7 @@ public sealed class LevelEditorCanvas : Component
         spriteBatch.FillRect(rectangle, LevelEditorConstants.CanvasBorderColour);
     }
 
-    private void RenderLevel(SpriteBatch spriteBatch)
+    private void RenderCanvas(SpriteBatch spriteBatch)
     {
         var sourceRectangle = GetSourceRectangle();
         var destinationRectangle = GetDestinationRectangle();
@@ -122,8 +137,13 @@ public sealed class LevelEditorCanvas : Component
             _graphicsDevice.PresentationParameters.BackBufferFormat,
             DepthFormat.Depth24);
     }
+    public void RepaintLevel()
+    {
+        SortCanvasPieces();
+        RepopulateLevelDataContents();
 
-    public void RepaintLevel() => _terrainPainter.RepaintTerrain();
+        _terrainPainter.RepaintTerrain();
+    }
 
     public Point GetCenterPositionOfViewport()
     {
@@ -184,9 +204,43 @@ public sealed class LevelEditorCanvas : Component
         _verticalBorderBehaviour.RecentreViewport();
     }
 
+    private void OnMouseEnter(Component c, Point screenPosition)
+    {
+        RecalculateCanvasMousePosition(screenPosition);
+    }
+
+    private void OnMouseMove(Component c, Point screenPosition)
+    {
+        RecalculateCanvasMousePosition(screenPosition);
+    }
+
+    private void RecalculateCanvasMousePosition(Point screenPosition)
+    {
+        var localX = screenPosition.X - Left;
+        var localY = screenPosition.Y - Top;
+
+        var canvasMouseX = _horizontalBorderBehaviour.ToLevelCoordinate(localX);
+        var canvasMouseY = _verticalBorderBehaviour.ToLevelCoordinate(localY);
+
+        canvasMouseX -= LevelEditorConstants.LevelOuterBoundarySize;
+        canvasMouseY -= LevelEditorConstants.LevelOuterBoundarySize;
+
+        var canvasMousePosition = new Point(canvasMouseX, canvasMouseY);
+
+        _canvasMousePosition = canvasMousePosition;
+    }
+
     private void OnMouseDown(Component c, Point position)
     {
+    }
 
+    private void OnMouseExit(Component c, Point position)
+    {
+        _canvasMousePosition = new Point(-4000, -4000);
+    }
+
+    private void OnKeyDown(Component c, in BitArrayEnumerable<InputController, Keys> keys)
+    {
     }
 
     protected override void OnDispose()

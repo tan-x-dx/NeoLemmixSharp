@@ -140,13 +140,13 @@ public sealed class LevelData
     public List<LemmingInstanceData> PrePlacedLemmingData { get; } = [];
     public List<TribeStyleIdentifier> TribeIdentifiers { get; } = [];
 
-    public List<TerrainData> AllTerrainData { get; } = [];
+    public List<TerrainInstanceData> AllTerrainInstanceData { get; } = [];
     public List<TerrainGroupData> AllTerrainGroups { get; } = [];
     public List<HatchGroupData> AllHatchGroupData { get; } = [];
 
     public List<GadgetInstanceData> AllGadgetInstanceData { get; } = [];
     public List<GadgetLinkData> AllGadgetLinkData { get; } = [];
-    public List<SketchData> AllSketchData { get; } = [];
+    public List<SketchInstanceData> AllSketchData { get; } = [];
 
     public List<string> PreTextLines { get; } = [];
     public List<string> PostTextLines { get; } = [];

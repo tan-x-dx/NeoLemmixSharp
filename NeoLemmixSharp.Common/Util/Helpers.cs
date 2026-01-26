@@ -52,6 +52,50 @@ public static class Helpers
     }
 
     /// <summary>
+    /// Creates a span from an array, a start offset, and a length.
+    /// 
+    /// Generally speaking, when creating a span, the compiler emits checks to ensure the start and length are valid.
+    /// This method bypasses these checks. Only use this method if you can guarantee the inputs are valid!
+    /// </summary>
+    /// <typeparam name="T">The type of the span.</typeparam>
+    /// <param name="array">The array to create a span over.</param>
+    /// <param name="start">The (assumed valid) desired start of the span.</param>
+    /// <param name="length">The (assumed valid) desired length of the span.</param>
+    /// <returns>A span over the desired data.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe Span<T> CreateSpan<T>(T[] array, int start, int length)
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+
+        return MemoryMarshal.CreateSpan(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), start), length);
+    }
+
+    /// <summary>
+    /// Creates a span from a pointer, a start offset, and a length.
+    /// 
+    /// Generally speaking, when creating a span, the compiler emits checks to ensure the start and length are valid.
+    /// This method bypasses these checks. Only use this method if you can guarantee the inputs are valid!
+    /// </summary>
+    /// <typeparam name="T">The type of the span.</typeparam>
+    /// <param name="p">The pointer to use.</param>
+    /// <param name="start">The (assumed valid) desired start of the span.</param>
+    /// <param name="length">The (assumed valid) desired length of the span.</param>
+    /// <returns>A span over the desired data.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe Span<T> CreateSpan<T>(void* p, int start, int length) where T : unmanaged
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+        T* tP = (T*)p;
+        return MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(tP + start), length);
+    }
+
+    /// <summary>
     /// Creates a read-only span from a pointer and a length.
     /// 
     /// Generally speaking, when creating a read-only span, the compiler emits checks to ensure the length is valid.
@@ -69,6 +113,50 @@ public static class Helpers
 #endif
 
         return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(p), length);
+    }
+
+    /// <summary>
+    /// Creates a read-only span from an array, a start offset, and a length.
+    /// 
+    /// Generally speaking, when creating a read-only span, the compiler emits checks to ensure the start and length are valid.
+    /// This method bypasses these checks. Only use this method if you can guarantee the inputs are valid!
+    /// </summary>
+    /// <typeparam name="T">The type of the read-only span.</typeparam>
+    /// <param name="array">The array to create a read-only span over.</param>
+    /// <param name="start">The (assumed valid) desired start of the read-only span.</param>
+    /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
+    /// <returns>A span over the desired data.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(T[] array, int start, int length)
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+
+        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), start), length);
+    }
+
+    /// <summary>
+    /// Creates a read-only span from a pointer and a length.
+    /// 
+    /// Generally speaking, when creating a read-only span, the compiler emits checks to ensure the start and length are valid.
+    /// This method bypasses these checks. Only use this method if you can guarantee the inputs are valid!
+    /// </summary>
+    /// <typeparam name="T">The type of the read-only span.</typeparam>
+    /// <param name="p">The pointer to use.</param>
+    /// <param name="start">The (assumed valid) desired start of the read-only span.</param>
+    /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
+    /// <returns>A span over the desired data.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(void* p, int start, int length) where T : unmanaged
+    {
+#if DEBUG
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#endif
+        T* tP = (T*)p;
+        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(tP + start), length);
     }
 
     /// <summary>

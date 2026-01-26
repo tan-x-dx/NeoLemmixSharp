@@ -117,22 +117,21 @@ public static class RootDirectoryManager
         var allFiles = Directory.GetFiles(folderPath);
         var numberOfRelevantFiles = 0;
 
-        for (var i = 0; i < allFiles.Length; i++)
+        foreach (var file in allFiles)
         {
-            var file = allFiles[i];
             var fileExtensionSpan = Path.GetExtension(file.AsSpan());
 
             if (Helpers.StringSpansMatch(fileExtensionSpan, requiredFileExtension))
             {
-                allFiles[numberOfRelevantFiles++] = file;
+                allFiles.At(numberOfRelevantFiles++) = file;
             }
         }
 
         // Clear the unused strings to encourage garbage collection
-        var upperSpan = new Span<string>(allFiles, numberOfRelevantFiles, allFiles.Length - numberOfRelevantFiles);
+        var upperSpan = Helpers.CreateSpan(allFiles, numberOfRelevantFiles, allFiles.Length - numberOfRelevantFiles);
         upperSpan.Clear();
 
-        return new ReadOnlySpan<string>(allFiles, 0, numberOfRelevantFiles);
+        return Helpers.CreateReadOnlySpan(allFiles, 0, numberOfRelevantFiles);
     }
 
     public static ReadOnlySpan<char> GetFullFilePathWithoutExtension(ReadOnlySpan<char> fullFilePath)

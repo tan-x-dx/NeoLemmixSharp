@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
+[DebuggerDisplay("Count = {Count}")]
 public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
     where TPerfectHasher : IBitBufferCreator<TBuffer, TKey>
     where TBuffer : struct, IBitBuffer

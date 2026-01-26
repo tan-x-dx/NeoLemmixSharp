@@ -40,7 +40,7 @@ public sealed class LevelTimer
 
     private LevelTimer(nint dataHandle)
     {
-        _data = new LevelTimerData(dataHandle);
+        _data = PointerDataHelper.CreateItem<LevelTimerData>(ref dataHandle);
         _charBuffer[2] = TimerSeparatorChar;
         Type = TimerType.CountUp;
         TimeLimitInSeconds = -1;
@@ -51,7 +51,7 @@ public sealed class LevelTimer
 
     private LevelTimer(nint dataHandle, uint timeLimitInSeconds)
     {
-        _data = new LevelTimerData(dataHandle);
+        _data = PointerDataHelper.CreateItem<LevelTimerData>(ref dataHandle);
         _charBuffer[2] = TimerSeparatorChar;
         Type = TimerType.CountDown;
         TimeLimitInSeconds = (int)timeLimitInSeconds;

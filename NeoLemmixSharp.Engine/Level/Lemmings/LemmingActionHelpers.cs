@@ -93,10 +93,8 @@ public static class LemmingActionHelpers
 
             var filters = currentState.Filters;
 
-            for (var i = 0; i < filters.Length; i++)
+            foreach (var filter in filters)
             {
-                var filter = filters[i];
-
                 if (filter.MatchesLemming(lemming) &&
                     filter.LemmingSolidityType == lemmingSolidityType)
                     return true;
@@ -132,19 +130,17 @@ public static class LemmingActionHelpers
             var filters = gadget.CurrentState.Filters;
             LemmingHitBoxFilter? firstMatchingFilter = null;
 
-            for (var i = 0; i < filters.Length; i++)
+            foreach (var filter in filters)
             {
-                var filter = filters[i];
-
-                if (filter.MatchesLemming(lemming) &&
-                    filter.HitBoxBehaviour == HitBoxInteractionType.Updraft)
+                if (filter.HitBoxBehaviour == HitBoxInteractionType.Updraft &&
+                    filter.MatchesLemming(lemming))
                 {
                     firstMatchingFilter = filter;
                     break;
                 }
             }
 
-            if (firstMatchingFilter is null || firstMatchingFilter.HitBoxBehaviour != HitBoxInteractionType.Updraft)
+            if (firstMatchingFilter is null)
                 continue;
 
             var deltaRotNum = gadget.Orientation.RotNum - lemmingOrientationRotNum;

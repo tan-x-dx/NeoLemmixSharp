@@ -95,7 +95,7 @@ public sealed class GadgetBuilder
         int lemmingTrackerByteRequirement)
     {
         var result =
-            GadgetBounds.GadgetBoundsDataSize + // A gadget will always have bounds
+            GadgetBounds.SizeInBytes + // A gadget will always have bounds
             sizeof(int); // A gadget will always have a state index
 
         result += gadgetArchetypeData.SpecificationData.CalculateExtraNumberOfBytesNeededForSnapshotting();
@@ -117,8 +117,6 @@ public sealed class GadgetBuilder
 
         var gadgetArchetypeDataLookup = StyleCache.GetAllGadgetArchetypeData(_levelData);
 
-        var lemmingTrackerByteRequirement = BitArrayHelpers.CalculateBitArrayBufferLength(lemmingManager.NumberOfLemmings) * sizeof(ulong);
-
         foreach (var gadgetInstanceData in _levelData.AllGadgetInstanceData)
         {
             var stylePiecePair = new StylePiecePair(gadgetInstanceData.StyleIdentifier, gadgetInstanceData.PieceIdentifier);
@@ -127,7 +125,7 @@ public sealed class GadgetBuilder
             if (gadgetArchetypeData.SpecificationData.GadgetType != gadgetInstanceData.SpecificationData.GadgetType)
                 throw new Exception("GadgetType mismatch!");
 
-            var newGadget = BuildGadget(gadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager, ref dataHandleRef, lemmingTrackerByteRequirement);
+            var newGadget = BuildGadget(gadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager, ref dataHandleRef);
             _gadgets.Add(newGadget);
 
             dataHandle--;
@@ -141,12 +139,11 @@ public sealed class GadgetBuilder
         GadgetInstanceData gadgetInstanceData,
         LemmingManager lemmingManager,
         TribeManager tribeManager,
-        ref nint dataHandleRef,
-        int lemmingTrackerByteRequirement)
+        ref nint dataHandleRef)
     {
         return gadgetArchetypeData.SpecificationData.GadgetType switch
         {
-            GadgetType.HitBoxGadget => BuildHitBoxGadget(gadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager, ref dataHandleRef, lemmingTrackerByteRequirement),
+            GadgetType.HitBoxGadget => BuildHitBoxGadget(gadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager, ref dataHandleRef),
             GadgetType.HatchGadget => BuildHatchGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, ref dataHandleRef),
             GadgetType.LogicGate => BuildLogicGateGadget(gadgetArchetypeData, gadgetInstanceData, ref dataHandleRef),
             //  GadgetType.Counter => 
@@ -161,12 +158,11 @@ public sealed class GadgetBuilder
         GadgetInstanceData gadgetInstanceData,
         LemmingManager lemmingManager,
         TribeManager tribeManager,
-        ref nint dataHandleRef,
-        int lemmingTrackerByteRequirement)
+        ref nint dataHandleRef)
     {
         var hitBoxGadgetBuilder = new HitBoxGadgetBuilder(gadgetArchetypeData, gadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
 
-        return hitBoxGadgetBuilder.BuildHitBoxGadget(lemmingManager, tribeManager, ref dataHandleRef, lemmingTrackerByteRequirement);
+        return hitBoxGadgetBuilder.BuildHitBoxGadget(lemmingManager, tribeManager, ref dataHandleRef);
     }
 
     private HatchGadget BuildHatchGadget(

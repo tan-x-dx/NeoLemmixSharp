@@ -52,7 +52,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
         foreach (var levelBrowserEntry in _levelBrowserEntries.SelectMany(l => l.GetSubEntries()))
         {
             levelBrowserEntry.Index = children.Count;
-            levelBrowserEntry.MouseDown.RegisterMouseEvent(OnEntryClick);
+            levelBrowserEntry.MousePressed.RegisterMouseEvent(OnEntryClick);
             levelBrowserEntry.MouseDoubleClick.RegisterMouseEvent(OnEntryDoubleClick);
 
             children.Add(levelBrowserEntry);

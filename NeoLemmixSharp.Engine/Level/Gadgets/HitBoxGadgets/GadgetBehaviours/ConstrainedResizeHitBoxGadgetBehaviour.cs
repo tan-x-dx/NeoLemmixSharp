@@ -15,14 +15,14 @@ public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
     private readonly int _max;
 
     public ConstrainedResizeHitBoxGadgetBehaviour(
-        nint dataHandle,
+        ref nint dataHandle,
         GadgetIdentifier gadgetIdentifier,
         int tickDelay,
         int delta,
         int max)
         : base(GadgetBehaviourType.GadgetConstrainedResize)
     {
-        _tickCount = new PointerWrapper(dataHandle);
+        _tickCount = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandle);
         _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;
         _delta = delta;

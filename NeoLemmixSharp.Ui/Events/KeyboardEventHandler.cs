@@ -8,7 +8,7 @@ public sealed class KeyboardEventHandler
 
     private readonly List<ComponentKeyboardAction> _actions = new();
 
-    public void RegisterMouseEvent(ComponentKeyboardAction action)
+    public void RegisterKeyEvent(ComponentKeyboardAction action)
     {
         if (!_actions.Contains(action))
         {

@@ -14,6 +14,8 @@ public sealed class LevelEditorControlPanel : Component
         var titleLabel = new TextLabel(UiConstants.StandardInset, UiConstants.StandardInset, "Title", UiConstants.RectangularButtonDefaultColours);
         AddComponent(titleLabel);
         var titleTextField = new TextField(titleLabel.Width + UiConstants.TwiceStandardInset, titleLabel.Top, string.Empty);
+        titleLabel.Width = 120;
+        titleTextField.SetCapacity(100);
         AddComponent(titleTextField);
 
     }

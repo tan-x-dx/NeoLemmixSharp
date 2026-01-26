@@ -8,15 +8,28 @@ public sealed class UiHandler : IDisposable
 {
     private readonly InputController _inputController;
 
-    public Component? CurrentSelection { get; private set; } = null;
+    internal static UiHandler Instance { get; private set; } = null!;
+
+    public Component? CurrentSelection { get; private set; }
+    public TextField? SelectedTextField
+    {
+        get => field;
+        private set
+        {
+            field?.IsSelected = false;
+            field = value;
+            field?.IsSelected = true;
+        }
+    }
 
     public Component RootComponent { get; set; }
 
-    public UiHandler(
-        InputController inputController)
+    public UiHandler(InputController inputController)
     {
         RootComponent = new Tab(0, 0, 0, 0);
         _inputController = inputController;
+
+        Instance = this;
     }
 
     public void Render(SpriteBatch spriteBatch) => RootComponent.Render(spriteBatch);
@@ -34,18 +47,20 @@ public sealed class UiHandler : IDisposable
         }
         if (leftMouseButton.IsPressed)
         {
-            HandleMouseDown(mousePosition);
+            HandleMousePress(mousePosition);
         }
         else if (leftMouseButton.IsReleased)
         {
-            HandleMouseUp(mousePosition);
+            HandleMouseRelease(mousePosition);
         }
 
         var currentlyPressedKeys = _inputController.CurrentlyPressedKeys;
-        var currentlyReleasedKeys = _inputController.CurrentlyReleasedKeys;
+        var currentlyHeldKeys = _inputController.CurrentlyHeldKeys;
+        var justReleasedKeys = _inputController.JustReleasedKeys;
 
-        HandleKeyDown(in currentlyPressedKeys);
-        HandleKeyUp(in currentlyReleasedKeys);
+        HandleKeyPressed(in currentlyPressedKeys);
+        HandleKeyHeld(in currentlyHeldKeys);
+        HandleKeyReleased(in justReleasedKeys);
     }
 
     private void HandleMouseMove(Point mousePosition) => LocateComponent(mousePosition);
@@ -64,7 +79,7 @@ public sealed class UiHandler : IDisposable
         }
     }
 
-    private void HandleMouseDown(Point mousePosition)
+    private void HandleMousePress(Point mousePosition)
     {
         LocateComponent(mousePosition);
 
@@ -74,11 +89,12 @@ public sealed class UiHandler : IDisposable
         }
         else
         {
-            CurrentSelection.InvokeMouseDown(mousePosition);
+            SelectedTextField = CurrentSelection as TextField;
+            CurrentSelection.InvokeMousePressed(mousePosition);
         }
     }
 
-    private void HandleMouseUp(Point mousePosition)
+    private void HandleMouseRelease(Point mousePosition)
     {
         LocateComponent(mousePosition);
 
@@ -88,18 +104,25 @@ public sealed class UiHandler : IDisposable
         }
         else
         {
-            CurrentSelection.InvokeMouseUp(mousePosition);
+            CurrentSelection.InvokeMouseReleased(mousePosition);
         }
     }
 
-    private void HandleKeyDown(in KeysEnumerable pressedKeys)
+    private void HandleKeyPressed(in KeysEnumerable pressedKeys)
     {
-        CurrentSelection?.InvokeKeyDown(in pressedKeys);
+        var component = SelectedTextField ?? CurrentSelection;
+        component?.InvokeKeyPressed(in pressedKeys);
     }
 
-    private void HandleKeyUp(in KeysEnumerable releasedKeys)
+    private void HandleKeyHeld(in KeysEnumerable heldKeys)
     {
-        CurrentSelection?.InvokeKeyUp(in releasedKeys);
+        var component = SelectedTextField ?? CurrentSelection;
+        component?.InvokeKeyHeld(in heldKeys);
+    }
+
+    private void HandleKeyReleased(in KeysEnumerable releasedKeys)
+    {
+        CurrentSelection?.InvokeKeyReleased(in releasedKeys);
     }
 
     private void LocateComponent(Point mousePosition)
@@ -132,9 +155,15 @@ public sealed class UiHandler : IDisposable
         }
     }
 
+    public void DeselectTextField()
+    {
+        SelectedTextField = null;
+    }
+
     public void Dispose()
     {
         RootComponent.Dispose();
+        Instance = null!;
         GC.SuppressFinalize(this);
     }
 }

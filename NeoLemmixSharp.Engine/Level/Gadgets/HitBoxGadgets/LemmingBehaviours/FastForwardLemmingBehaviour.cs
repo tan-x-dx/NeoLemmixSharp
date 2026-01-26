@@ -14,6 +14,6 @@ public sealed class FastForwardLemmingBehaviour : LemmingBehaviour
 
     protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        lemming.FastForwardTime = _fastForwardTime;
+        lemming.SetFastForwardTime(_fastForwardTime);
     }
 }

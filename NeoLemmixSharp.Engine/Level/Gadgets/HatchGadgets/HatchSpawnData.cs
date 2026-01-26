@@ -17,7 +17,7 @@ public sealed class HatchSpawnData
     public int LemmingsToRelease => _lemmingsToRelease.IntValue;
 
     public HatchSpawnData(
-        nint dataHandle,
+        ref nint dataHandle,
         int lemmingsToRelease,
         Orientation orientation,
         FacingDirection facingDirection,
@@ -25,7 +25,7 @@ public sealed class HatchSpawnData
         uint rawStateData,
         int hatchGroupId)
     {
-        _lemmingsToRelease = new PointerWrapper(dataHandle);
+        _lemmingsToRelease = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandle);
         _lemmingsToRelease.IntValue = lemmingsToRelease;
         _orientation = orientation;
         _facingDirection = facingDirection;

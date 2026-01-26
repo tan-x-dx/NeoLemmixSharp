@@ -40,7 +40,7 @@ public ref struct ArrayListWrapper<T>
     [DoesNotReturn]
     private static void ThrowReachedCapacityException() => throw new InvalidOperationException("This array is full!");
 
-    public readonly ReadOnlySpan<T> AsReadOnlySpan() => new(_array, 0, _size);
+    public readonly ReadOnlySpan<T> AsReadOnlySpan() => Helpers.CreateReadOnlySpan(_array, 0, _size);
 
     public readonly T[] GetArray() => _array;
 }

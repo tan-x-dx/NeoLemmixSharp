@@ -1,23 +1,25 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
-public unsafe sealed class ItemTracker<TPerfectHasher, T>
+public readonly unsafe struct ItemTracker<TPerfectHasher, T>
     where TPerfectHasher : IPerfectHasher<T>
     where T : notnull
 {
-    private const ulong BigMask = 0xAAAA_AAAA_AAAA_AAAAUL;
+    private const ulong BigMask = 0xaaaa_aaaa_aaaa_aaaaUL;
 
     private readonly TPerfectHasher _hasher;
     private readonly ulong* _bits;
 
-    public ItemTracker(TPerfectHasher hasher, nint bitsHandle)
+    public ItemTracker(TPerfectHasher hasher, ref nint bitsHandle)
     {
         _hasher = hasher;
         _bits = (ulong*)bitsHandle;
+
+        var numberOfBytes = BitArrayHelpers.CalculateBitArrayBufferLength(hasher.NumberOfItems) * sizeof(ulong);
+        bitsHandle += numberOfBytes;
     }
 
     public void Tick()
@@ -28,7 +30,10 @@ public unsafe sealed class ItemTracker<TPerfectHasher, T>
 
         while (startPointer != endPointer)
         {
-            *startPointer = (*startPointer << 1) & BigMask;
+            var value = *startPointer;
+            value <<= 1;
+            value &= BigMask;
+            *startPointer = value;
             startPointer++;
         }
     }
@@ -61,7 +66,6 @@ public unsafe sealed class ItemTracker<TPerfectHasher, T>
         return (TrackingStatus)(result & 3);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear()
     {
         var arrayLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
