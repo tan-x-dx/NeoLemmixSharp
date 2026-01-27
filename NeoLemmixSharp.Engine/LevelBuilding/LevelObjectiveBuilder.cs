@@ -66,8 +66,8 @@ public sealed class LevelObjectiveBuilder
 
         for (var i = 0; i < _levelObjectiveData.TalismanData.Length; i++)
         {
-            var talismanData = _levelObjectiveData.TalismanData[i];
-            result[i] = BuildTalismanObjective(talismanData);
+            var talismanData = _levelObjectiveData.TalismanData.At(i);
+            result.At(i) = BuildTalismanObjective(talismanData);
         }
 
         return result;
@@ -147,9 +147,9 @@ public sealed class LevelObjectiveBuilder
 
         nint handle = SkillSetDataBuffer.Handle + PointerWrapper.SizeInBytes;
 
-        for (var i = 0; i < result.Length; i++)
+        for (var i = 0; i < baseSkillData.Length; i++)
         {
-            var skillSetData = baseSkillData[i];
+            var skillSetData = baseSkillData.At(i);
 
             var skillLimitModifier = TryGetAnySpecificSkillModifier(_levelObjectiveData.ObjectiveModifiers, _selectedTalisman?.AdditionalObjectiveModifiers, skillSetData);
             var initialSkillLimit = EngineConstants.TrivialSkillLimit;
@@ -162,7 +162,7 @@ public sealed class LevelObjectiveBuilder
                 ? null
                 : tribeManager.TryGetTribe(skillSetData.TribeId);
 
-            result[i] = new SkillTrackingData(ref handle, skill, tribe, i, skillSetData.InitialQuantity, initialSkillLimit);
+            result.At(i) = new SkillTrackingData(ref handle, skill, tribe, i, skillSetData.InitialQuantity, initialSkillLimit);
         }
 
         return result;

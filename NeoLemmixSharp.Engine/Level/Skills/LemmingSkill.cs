@@ -168,7 +168,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
             return false;
         }
 
-        lemmingSkill = LemmingSkills[skillId];
+        lemmingSkill = LemmingSkills.At(skillId);
         return true;
     }
 
@@ -180,7 +180,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     public static LemmingSkill GetSkillOrDefault(int unboundSkillId)
     {
         return (uint)unboundSkillId < (uint)LemmingSkills.Length
-            ? LemmingSkills[unboundSkillId]
+            ? LemmingSkills.At(unboundSkillId)
             : NoneSkill.Instance;
     }
 

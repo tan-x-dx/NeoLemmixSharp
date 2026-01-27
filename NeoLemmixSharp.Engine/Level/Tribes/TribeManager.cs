@@ -27,7 +27,7 @@ public sealed class TribeManager :
 
         var actualId = id.Value;
         if ((uint)actualId < (uint)_tribes.Length)
-            return _tribes[actualId];
+            return _tribes.At(actualId);
 
         return null;
     }

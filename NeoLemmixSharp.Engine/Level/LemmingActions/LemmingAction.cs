@@ -124,7 +124,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IEquatable<int>
     public static LemmingAction GetActionOrDefault(int unboundActionId)
     {
         return (uint)unboundActionId < (uint)LemmingActions.Length
-            ? LemmingActions[unboundActionId]
+            ? LemmingActions.At(unboundActionId)
             : NoneAction.Instance;
     }
 
