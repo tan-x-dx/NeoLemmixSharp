@@ -21,6 +21,12 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     /// </summary>
     private const int LemmingDataSize = 192;
 
+    [InlineArray(JumperAction.JumperPositionCount)]
+    private struct JumperPositionBuffer
+    {
+        private Point _0;
+    }
+
     [StructLayout(LayoutKind.Sequential, Size = LemmingDataSize)]
     private struct LemmingDataRaw
     {
