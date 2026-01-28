@@ -1,6 +1,4 @@
 ﻿using NeoLemmixSharp.IO.Data.Level;
-using NeoLemmixSharp.IO.Data.Level.Gadget;
-using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
@@ -92,71 +90,27 @@ public static class StyleCache
         return style.TerrainArchetypeDataLookup[pieceIdentifier];
     }
 
-    public static Dictionary<StylePiecePair, TerrainArchetypeData> GetAllTerrainArchetypeData(LevelData levelData)
-    {
-        var result = new Dictionary<StylePiecePair, TerrainArchetypeData>(IoConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
-
-        foreach (var prototype in levelData.AllTerrainInstanceData)
-        {
-            FetchTerrainArchetypeData(prototype);
-        }
-
-        foreach (var terrainGroup in levelData.AllTerrainGroups)
-        {
-            foreach (var prototype in terrainGroup.AllBasicTerrainData)
-            {
-                FetchTerrainArchetypeData(prototype);
-            }
-        }
-
-        return result;
-
-        void FetchTerrainArchetypeData(TerrainInstanceData terrainData)
-        {
-            ref var terrainArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, terrainData.GetStylePiecePair(), out var exists);
-
-            if (exists)
-                return;
-
-            var key = new StyleFormatPair(terrainData.StyleIdentifier, levelData.FileFormatType);
-
-            if (!CachedStyles.TryGetValue(key, out var styleData))
-                throw new InvalidOperationException("Style not present in cache!");
-
-            ref var terrainArchetypeDataForStyle = ref CollectionsMarshal.GetValueRefOrAddDefault(styleData.TerrainArchetypeDataLookup, terrainData.PieceIdentifier, out exists);
-            if (!exists)
-                throw new InvalidOperationException("Terrain data does not exist in style!");
-
-            terrainArchetypeDataForLevel = terrainArchetypeDataForStyle;
-        }
-    }
-
     public static Dictionary<StylePiecePair, GadgetArchetypeData> GetAllGadgetArchetypeData(LevelData levelData)
     {
         var result = new Dictionary<StylePiecePair, GadgetArchetypeData>(IoConstants.AssumedNumberOfGadgetArchetypeDataInLevel);
 
         foreach (var prototype in levelData.AllGadgetInstanceData)
         {
-            FetchGadgetArchetypeData(prototype);
-        }
-
-        return result;
-
-        void FetchGadgetArchetypeData(GadgetInstanceData gadgetData)
-        {
-            var stylePiecePair = new StylePiecePair(gadgetData.StyleIdentifier, gadgetData.PieceIdentifier);
+            var stylePiecePair = new StylePiecePair(prototype.StyleIdentifier, prototype.PieceIdentifier);
             ref var gadgetArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, stylePiecePair, out var exists);
 
             if (exists)
-                return;
+                continue;
 
-            var styleKey = new StyleFormatPair(gadgetData.StyleIdentifier, levelData.FileFormatType);
+            var styleKey = new StyleFormatPair(prototype.StyleIdentifier, levelData.FileFormatType);
 
             if (!CachedStyles.TryGetValue(styleKey, out var styleData))
                 throw new InvalidOperationException("Style not present in cache!");
 
-            gadgetArchetypeDataForLevel = styleData.GadgetArchetypeDataLookup[gadgetData.PieceIdentifier];
+            gadgetArchetypeDataForLevel = styleData.GadgetArchetypeDataLookup[prototype.PieceIdentifier];
         }
+
+        return result;
     }
 
     public static ThemeData GetThemeData(StyleFormatPair styleFormatPair)

@@ -20,7 +20,6 @@ public readonly struct TerrainPainter
     public readonly ArrayWrapper2D<Color> TerrainColors;
     public readonly ArrayWrapper2D<PixelType> TerrainPixels;
 
-    private readonly Dictionary<StylePiecePair, TerrainArchetypeData> _terrainArchetypeDataLookup;
     private readonly Dictionary<StylePiecePair, ArrayWrapper2D<Color>> _colorDataLookup = new(IoConstants.AssumedNumberOfTerrainArchetypeDataInLevel);
 
     private readonly Point _terrainOffset;
@@ -42,8 +41,6 @@ public readonly struct TerrainPainter
         TerrainPixels = new ArrayWrapper2D<PixelType>(rawPixels, terrainDimensions);
         var rawColors = new Color[area];
         TerrainColors = new ArrayWrapper2D<Color>(rawColors, terrainDimensions);
-
-        _terrainArchetypeDataLookup = StyleCache.GetAllTerrainArchetypeData(levelData);
     }
 
     public void PaintTerrain()
@@ -175,7 +172,7 @@ public readonly struct TerrainPainter
 
                 if (targetSize.EncompassesPoint(p0))
                 {
-                    ChangePixel(terrainData, terrainArchetypeData, in targetPixelColorData, in hueMultiplyMatrix, sourcePixelColor, p0);
+                    ChangePixel(terrainData, terrainArchetypeData, in targetPixelColorData, hueMultiplyMatrix, sourcePixelColor, p0);
                 }
             }
         }
@@ -185,7 +182,7 @@ public readonly struct TerrainPainter
         TerrainInstanceData terrainData,
         ITerrainArchetypeData terrainArchetypeData,
         in ArrayWrapper2D<Color> targetPixelColorData,
-        in HueMultiplyMatrix matrix,
+        HueMultiplyMatrix matrix,
         Color sourcePixelColor,
         Point p0)
     {
@@ -303,7 +300,7 @@ public readonly struct TerrainPainter
         return StyleCache.GetTerrainArchetypeData(terrainData.StyleIdentifier, terrainData.PieceIdentifier, _levelData.FileFormatType);
     }
 
-    private readonly struct HueMultiplyMatrix
+    private readonly ref struct HueMultiplyMatrix
     {
         private const float OneThird = 1f / 3f;
         private const float SqrtOneThird = 0.5773502691896257645091488f;
@@ -311,28 +308,19 @@ public readonly struct TerrainPainter
         private readonly float _00;
         private readonly float _01;
         private readonly float _02;
-        private readonly float _10;
-        private readonly float _11;
-        private readonly float _12;
-        private readonly float _20;
-        private readonly float _21;
-        private readonly float _22;
 
         public HueMultiplyMatrix(uint angle)
         {
             var radianValue = angle * MathF.PI / 180f;
 
             var (sinA, cosA) = MathF.SinCos(radianValue);
+            var oneMinusCosA = 1f - cosA;
+            var oneThirdOfOneMinusCosA = OneThird * oneMinusCosA;
+            var sqrtOneThirdTimesSinA = SqrtOneThird * sinA;
 
-            _00 = cosA + ((1f - cosA) / 3f);
-            _01 = (OneThird * (1f - cosA)) - (SqrtOneThird * sinA);
-            _02 = (OneThird * (1f - cosA)) + (SqrtOneThird * sinA);
-            _10 = (OneThird * (1f - cosA)) + (SqrtOneThird * sinA);
-            _11 = cosA + (OneThird * (1f - cosA));
-            _12 = (OneThird * (1f - cosA)) - (SqrtOneThird * sinA);
-            _20 = (OneThird * (1f - cosA)) - (SqrtOneThird * sinA);
-            _21 = (OneThird * (1f - cosA)) + (SqrtOneThird * sinA);
-            _22 = cosA + (OneThird * (1f - cosA));
+            _00 = cosA + oneThirdOfOneMinusCosA;
+            _01 = oneThirdOfOneMinusCosA - sqrtOneThirdTimesSinA;
+            _02 = oneThirdOfOneMinusCosA + sqrtOneThirdTimesSinA;
         }
 
         public Color ShiftHue(Color color)
@@ -341,11 +329,30 @@ public readonly struct TerrainPainter
             var g = (float)color.G;
             var b = (float)color.B;
 
-            var rx = r * _00 + g * _01 + b * _02;
-            var gx = r * _10 + g * _11 + b * _12;
-            var bx = r * _20 + g * _21 + b * _22;
+            var rx = (r * _00) + (g * _01) + (b * _02);
+            var intR = (int)rx;
 
-            return new Color((int)rx, (int)gx, (int)bx);
+            var gx = (r * _02) + (g * _00) + (b * _01);
+            var intG = (int)gx;
+
+            var bx = (r * _01) + (g * _02) + (b * _00);
+            var intB = (int)bx;
+
+            if (intR < 0)
+                intR = 0;
+            if (intG < 0)
+                intG = 0;
+            if (intB < 0)
+                intB = 0;
+
+            if (intR > 255)
+                intR = 255;
+            if (intG > 255)
+                intG = 255;
+            if (intB > 255)
+                intB = 255;
+
+            return new Color(r: intR, g: intG, b: intB);
         }
     }
 }
