@@ -103,10 +103,7 @@ public sealed class CanvasBorderBehaviour
 
     public void RecentreViewport()
     {
-        var halfLevelLength = _levelLength / 2;
-        var halfViewportLength = _actualViewportLength / 2;
-
-        _viewportStart = halfLevelLength - halfViewportLength;
+        _viewportStart = (_levelLength - _actualViewportLength) / 2;
         ClampViewportPosition();
     }
 
