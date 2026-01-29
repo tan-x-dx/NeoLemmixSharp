@@ -157,74 +157,49 @@ public sealed class BoundaryBehaviour
     [Pure]
     public bool IntervalContainsPoint(Interval interval, int n)
     {
-        // If it's the Void type, that's easy
-        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
-            return interval.Start <= n && n < interval.End;
+        // Shift both inputs over by the same amount
+        // This does not change whether or not they intersect
+        n -= interval.Start;
 
-        var a = NormaliseWrap(interval.Start);
-        interval = new Interval(a, interval.End);
-        a = NormaliseWrap(n);
-
-        // If the interval actually contains the point after normalisation, that's easy
-        if (interval.Start <= a && a < interval.End)
+        // The interval now starts at zero, simplifying a check
+        // If the point is smaller than the interval length, they intersect in all cases
+        if (n >= 0 && n < interval.Length)
             return true;
 
-        // Edge case for Wrap behaviour (literally)
-        // Suppose the test point is just above zero
-        // And suppose the interval is just below _levelLength
-        // The interval could "wrap around" to overlap with the point
-        // We check this case here
+        // By this point, the inputs definitely do not overlap for the Void type
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
+            return false;
 
-        // By this point, for the case we need to check we definitely have:
-        // 0 <= a < intervalStart < _levelLength <= a + _levelLength
-        // Therefore can safely eliminate one interval check
-
-        return a + _levelLength < interval.End;
+        n = NormaliseWrap(n);
+        // Save a check since normalisation implies n >= 0 anyway
+        return n < interval.Length;
     }
 
     [Pure]
     public bool IntervalsOverlap(Interval i1, Interval i2)
     {
-        // If it's the Void type, that's easy
-        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
-            return i1.Start < i2.End &&
-                   i2.Start < i1.End;
+        // Shift both intervals over by the same amount
+        // This does not change whether or not they intersect
 
-        var interval1Start = NormaliseWrap(i1.Start);
-        var interval1End = interval1Start + i1.Length;
+        // This variable corresponds to the start point of the second interval
+        // The first interval now starts at zero, simplifying a check
+        var s = i2.Start - i1.Start;
 
-        var interval2Start = NormaliseWrap(i2.Start);
-        var interval2End = interval2Start + i2.Length;
-
-        // If the intervals actually overlap after normalisation, that's easy
-        if (interval1Start < interval2End &&
-            interval2Start < interval1End)
+        // If this check succeeds, the intervals intersect in all cases
+        if (s + i2.Length >= 0 &&
+            s < i1.Length)
             return true;
 
-        // Edge case for Wrap behaviour (literally)
-        // Suppose one interval is just above zero
-        // And suppose the other interval is just below _levelLength
-        // The second interval could "wrap around" to overlap with the first
-        // We check this case here
+        // By this point, the intervals definitely do not intersect for the Void type
+        if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
+            return false;
 
-        // By this point, for the case we need to check we definitely have:
-        // 0 <= leftStart < leftEnd < rightStart < _levelLength <= leftStart + _levelLength < leftEnd + _levelLength
-        // Therefore can safely eliminate one interval check
+        s = NormaliseWrap(s);
 
-        if (interval1Start < interval2Start)
-        {
-            // interval1 <=> leftInterval
-            // interval2 <=> rightInterval
-
-            return interval1Start + _levelLength < interval2End;
-        }
-        else
-        {
-            // interval1 <=> rightInterval
-            // interval2 <=> leftInterval
-
-            return interval2Start + _levelLength < interval1End;
-        }
+        // After normalisation, s >= 0, so skip a check
+        return s < i1.Length ||
+        // Check for overlap across level boundary
+               s + i2.Length > _levelLength;
     }
 
     public void UpdateMouseCoordinate(int windowCoordinate)
