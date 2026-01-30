@@ -39,12 +39,17 @@ public sealed class ResizableRectangularHitBoxRegion : HitBoxRegion
         var w = GetWidth();
         if (w <= 0)
             return false;
+
+        var interval = new Interval(GetX(), w);
+        if (!LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(interval, levelPosition.X))
+            return false;
+
         var h = GetHeight();
         if (h <= 0)
             return false;
 
-        return LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetX(), w), levelPosition.X) &&
-               LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(GetY(), h), levelPosition.Y);
+        interval = new Interval(GetY(), h);
+        return LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(interval, levelPosition.Y);
     }
 
     public override bool ContainsEitherPoint(Point p1, Point p2)
@@ -56,12 +61,12 @@ public sealed class ResizableRectangularHitBoxRegion : HitBoxRegion
         if (h <= 0)
             return false;
 
-        var x = GetX();
-        var y = GetY();
+        var horizontalInterval = new Interval(GetX(), w);
+        var verticalInterval = new Interval(GetY(), h);
 
-        return LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(x, w), p1.X) &&
-               LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(y, h), p1.Y) ||
-               LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(new Interval(x, w), p1.X) &&
-               LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(new Interval(y, h), p1.Y);
+        return (LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(horizontalInterval, p1.X) &&
+                LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(verticalInterval, p1.Y)) ||
+               (LevelScreen.HorizontalBoundaryBehaviour.IntervalContainsPoint(horizontalInterval, p2.X) &&
+                LevelScreen.VerticalBoundaryBehaviour.IntervalContainsPoint(verticalInterval, p2.Y));
     }
 }
