@@ -2,33 +2,31 @@
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics.Contracts;
 
-namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
+namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public readonly unsafe struct ItemTracker<TPerfectHasher, T>
-    where TPerfectHasher : IPerfectHasher<T>
-    where T : notnull
+public readonly unsafe struct LemmingTracker
 {
     private const ulong BigMask = 0xaaaa_aaaa_aaaa_aaaaUL;
 
-    private readonly TPerfectHasher _hasher;
+    private readonly LemmingManager _lemmingManager;
     private readonly ulong* _bits;
 
-    public ItemTracker(TPerfectHasher hasher, ref nint bitsHandle)
+    public LemmingTracker(LemmingManager lemmingManager, ref nint bitsHandle)
     {
-        _hasher = hasher;
+        _lemmingManager = lemmingManager;
         _bits = (ulong*)bitsHandle;
 
-        var numberOfBytes = BitArrayHelpers.CalculateBitArrayBufferLength(hasher.NumberOfItems) * sizeof(ulong);
+        var numberOfBytes = BitArrayHelpers.CalculateBitArrayBufferLength(lemmingManager.NumberOfLemmings) * sizeof(ulong);
         bitsHandle += numberOfBytes;
     }
 
     public void Tick()
     {
-        var arrayLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
+        var arrayLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmingManager.NumberOfLemmings);
         ulong* startPointer = _bits;
         ulong* endPointer = _bits + arrayLength;
 
-        while (startPointer != endPointer)
+        while (startPointer < endPointer)
         {
             var value = *startPointer;
             value <<= 1;
@@ -38,9 +36,9 @@ public readonly unsafe struct ItemTracker<TPerfectHasher, T>
         }
     }
 
-    public TrackingStatus TrackItem(T item)
+    public TrackingStatus UpdateLemmingTrackingStatus(Lemming lemming)
     {
-        var id = _hasher.Hash(item);
+        var id = _lemmingManager.HashLemming(lemming);
 
         var bitIndex = (id & BitArrayHelpers.Mask) << 1;
         var longIndex = id >>> BitArrayHelpers.Shift;
@@ -53,9 +51,9 @@ public readonly unsafe struct ItemTracker<TPerfectHasher, T>
     }
 
     [Pure]
-    public TrackingStatus QueryItemStatus(T item)
+    public TrackingStatus QueryLemmingTrackingStatus(Lemming lemming)
     {
-        var id = _hasher.Hash(item);
+        var id = _lemmingManager.HashLemming(lemming);
 
         var bitIndex = (id & BitArrayHelpers.Mask) << 1;
         var longIndex = id >>> BitArrayHelpers.Shift;
@@ -68,7 +66,7 @@ public readonly unsafe struct ItemTracker<TPerfectHasher, T>
 
     public void Clear()
     {
-        var arrayLength = BitArrayHelpers.CalculateBitArrayBufferLength(_hasher.NumberOfItems);
+        var arrayLength = BitArrayHelpers.CalculateBitArrayBufferLength(_lemmingManager.NumberOfLemmings);
 
         Helpers.CreateSpan<ulong>(_bits, arrayLength).Clear();
     }
