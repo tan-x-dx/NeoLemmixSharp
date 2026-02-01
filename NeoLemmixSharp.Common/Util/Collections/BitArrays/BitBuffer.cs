@@ -33,34 +33,16 @@ public struct BitBuffer32 : IBitBuffer
 public readonly struct ArrayBitBuffer : IBitBuffer
 {
     private readonly uint[] _array;
-    private readonly int _start;
-    private readonly int _length;
 
-    public int Length => _length;
-
-    public ArrayBitBuffer(uint[] array)
-    {
-        _array = array;
-        _start = 0;
-        _length = _array.Length;
-    }
+    public int Length => _array.Length;
 
     public ArrayBitBuffer(int numberOfItems)
     {
         _array = BitArrayHelpers.CreateBitArray(numberOfItems, false);
-        _start = 0;
-        _length = _array.Length;
     }
 
-    public ArrayBitBuffer(uint[] array, int start, int length)
-    {
-        _array = array;
-        _start = start;
-        _length = length;
-    }
-
-    public Span<uint> AsSpan() => Helpers.CreateSpan(_array, _start, _length);
-    public ReadOnlySpan<uint> AsReadOnlySpan() => Helpers.CreateReadOnlySpan(_array, _start, _length);
+    public Span<uint> AsSpan() => new(_array);
+    public ReadOnlySpan<uint> AsReadOnlySpan() => new(_array);
 }
 
 public readonly unsafe struct RawBitBuffer : IBitBuffer
@@ -72,6 +54,8 @@ public readonly unsafe struct RawBitBuffer : IBitBuffer
 
     public RawBitBuffer(void* pointer, int length)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+
         _pointer = pointer;
         _length = length;
     }
