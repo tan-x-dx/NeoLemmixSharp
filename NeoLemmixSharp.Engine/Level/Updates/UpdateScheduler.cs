@@ -214,7 +214,7 @@ end;
         }
         else
         {
-            SetQueuedSkill(lemming, skillTrackingData.Skill);
+            SetQueuedSkill(lemming, skillTrackingData.LemmingSkill);
         }
     }
 
@@ -223,7 +223,7 @@ end;
         Lemming lemming,
         bool isReplay)
     {
-        skillTrackingData.Skill.AssignToLemming(lemming);
+        skillTrackingData.LemmingSkill.AssignToLemming(lemming);
         skillTrackingData.UseSkill();
 
         if (isReplay)

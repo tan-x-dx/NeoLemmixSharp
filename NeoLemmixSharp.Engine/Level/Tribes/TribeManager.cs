@@ -20,12 +20,9 @@ public sealed class TribeManager :
 
     public Tribe GetTribe(int id) => _tribes[id];
 
-    public Tribe? TryGetTribe(int? id)
+    public Tribe? GetTribeOrDefault(int id)
     {
-        if (!id.HasValue)
-            return null;
-
-        var actualId = id.Value;
+        var actualId = id;
         if ((uint)actualId < (uint)_tribes.Length)
             return _tribes.At(actualId);
 

@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Criteria;
-using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
@@ -156,13 +155,7 @@ public sealed class LevelObjectiveBuilder
             if (skillLimitModifier is not null)
                 initialSkillLimit = skillLimitModifier.MaxSkillAssignments;
 
-            var skill = LemmingSkill.GetSkillOrDefault(skillSetData.SkillId);
-
-            var tribe = skillSetData.TribeId == -1
-                ? null
-                : tribeManager.TryGetTribe(skillSetData.TribeId);
-
-            result.At(i) = new SkillTrackingData(ref handle, skill, tribe, i, skillSetData.InitialQuantity, initialSkillLimit);
+            result.At(i) = new SkillTrackingData(ref handle, skillSetData.SkillId, skillSetData.TribeId, i, skillSetData.InitialQuantity, initialSkillLimit);
         }
 
         return result;

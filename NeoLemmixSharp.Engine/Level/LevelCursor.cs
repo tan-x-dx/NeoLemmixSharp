@@ -172,9 +172,9 @@ public sealed class LevelCursor
             return false;
 
         var previousCandidateTribe = LevelScreen.TribeManager.GetTribe(previousCandidate.State.TribeId);
-        var newCandidateTribe = LevelScreen.TribeManager.GetTribe(newCandidate.State.TribeId);
-
         var previousCandidateMatchesTribe = previousCandidateTribe.Equals(skillTrackingData.Tribe);
+
+        var newCandidateTribe = LevelScreen.TribeManager.GetTribe(newCandidate.State.TribeId);
         var newCandidateMatchesTribe = newCandidateTribe.Equals(skillTrackingData.Tribe);
 
         return newCandidateMatchesTribe && !previousCandidateMatchesTribe;

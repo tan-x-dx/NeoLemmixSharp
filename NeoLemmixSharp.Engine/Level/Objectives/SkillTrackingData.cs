@@ -8,14 +8,16 @@ namespace NeoLemmixSharp.Engine.Level.Objectives;
 
 public sealed class SkillTrackingData
 {
-    public LemmingSkill Skill { get; }
-    public Tribe? Tribe { get; }
-
     private readonly SkillSetData _data;
+
+    public int LemmingSkillId { get; }
+    public LemmingSkill LemmingSkill => LemmingSkill.GetSkillOrDefault(LemmingSkillId);
+
+    public int TribeId { get; }
+    public Tribe? Tribe => LevelScreen.TribeManager.GetTribeOrDefault(TribeId);
 
     public int SkillTrackingDataId { get; }
     public int InitialSkillQuantity { get; }
-
 
     public int EffectiveQuantity { get; private set; }
 
@@ -23,16 +25,16 @@ public sealed class SkillTrackingData
 
     public SkillTrackingData(
         ref nint dataHandle,
-        LemmingSkill skill,
-        Tribe? tribe,
+        int lemmingSkillId,
+        int tribeId,
         int skillTrackingDataId,
         int initialSkillQuantity,
         int initialSkillLimit)
     {
         _data = PointerDataHelper.CreateItem<SkillSetData>(ref dataHandle);
 
-        Skill = skill;
-        Tribe = tribe;
+        LemmingSkillId = lemmingSkillId;
+        TribeId = tribeId;
         SkillTrackingDataId = skillTrackingDataId;
         InitialSkillQuantity = Math.Min(initialSkillQuantity, initialSkillLimit);
         _data.CurrentSkillLimit = initialSkillLimit;
@@ -60,18 +62,19 @@ public sealed class SkillTrackingData
         return EffectiveQuantity > 0 &&
                TribesMatch(lemming) &&
                lemming.State.CanHaveSkillsAssigned &&
-               Skill.CanAssignToLemming(lemming);
+               LemmingSkill.CanAssignToLemming(lemming);
     }
 
     private bool TribesMatch(Lemming lemming)
     {
-        if (Tribe is null)
+        var thisTribe = Tribe;
+        if (thisTribe is null)
             return true;
 
         var lemmingTribeId = lemming.State.TribeId;
         var lemmingTribe = LevelScreen.TribeManager.GetTribe(lemmingTribeId);
 
-        return Tribe.Equals(lemmingTribe);
+        return thisTribe.Equals(lemmingTribe);
     }
 
     public void RecalculateEffectiveQuantity(int totalSkillLimit)

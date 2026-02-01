@@ -60,12 +60,12 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
     }
 
     [Pure]
-    public SkillTrackingData? TryGetSkillTrackingData(int skillId, int? tribeId)
+    public SkillTrackingData? TryGetSkillTrackingData(int skillId, int tribeId)
     {
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
-            if (skillTrackingData.Skill.Id == skillId &&
-                skillTrackingData.Tribe?.Id == tribeId)
+            if (skillTrackingData.LemmingSkillId == skillId &&
+                skillTrackingData.TribeId == tribeId)
                 return skillTrackingData;
         }
 
@@ -85,7 +85,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         var result = true;
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
-            result &= skillTrackingData.Skill.IsClassicSkill() && // only classic skills
+            result &= skillTrackingData.LemmingSkill.IsClassicSkill() && // only classic skills
                       skillTrackingData.Tribe is null; // no tribe specified
         }
 
@@ -156,8 +156,8 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         if (tribeComparison != 0)
             return tribeComparison;
 
-        var gt = x.Skill.Id > y.Skill.Id ? 1 : 0;
-        var lt = x.Skill.Id < y.Skill.Id ? 1 : 0;
+        var gt = x.LemmingSkillId > y.LemmingSkillId ? 1 : 0;
+        var lt = x.LemmingSkillId < y.LemmingSkillId ? 1 : 0;
         return gt - lt;
 
         static int CompareTribes(Tribe? tribeX, Tribe? tribeY)

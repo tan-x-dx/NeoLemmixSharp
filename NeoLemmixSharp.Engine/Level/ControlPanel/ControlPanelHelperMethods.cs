@@ -74,7 +74,7 @@ public static class ControlPanelHelperMethods
                     _buttonId++,
                     i,
                     i,
-                    skillTrackingData.Skill.Id,
+                    skillTrackingData.LemmingSkillId,
                     skillTrackingData.SkillTrackingDataId);
                 result[i++] = skillAssignButton;
                 skillAssignButton.UpdateSkillCount();
