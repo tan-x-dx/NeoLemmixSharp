@@ -85,7 +85,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
 
         var gadgetBuilder = new GadgetBuilder(levelData, _safeBufferAllocator, levelLemmings.Length);
-        gadgetBuilder.BuildLevelGadgets(lemmingManager, tribeManager);
+        gadgetBuilder.BuildLevelGadgets(tribeManager, lemmingManager.NumberOfLemmings);
 
         var levelGadgets = gadgetBuilder.GetGadgets();
         var gadgetTriggers = gadgetBuilder.GetGadgetTriggers();

@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
@@ -41,13 +40,13 @@ public readonly ref struct HitBoxGadgetBuilder
     }
 
     public HitBoxGadget BuildHitBoxGadget(
-        LemmingManager lemmingManager,
         TribeManager tribeManager,
+        int numberOfLemmings,
         ref nint dataHandleRef)
     {
         // The lemming tracker needs to be created first before any other component,
         // as it gets first dibs on the space allocated to the snapshot data.
-        var lemmingTracker = new LemmingTracker(lemmingManager, ref dataHandleRef);
+        var lemmingTracker = new LemmingTracker(ref dataHandleRef, numberOfLemmings);
 
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(_hitBoxGadgetArchetypeData, _hitBoxGadgetInstanceData);
         var gadgetBounds = GadgetBuildingHelpers.CreateHitBoxGadgetBounds(ref dataHandleRef, _hitBoxGadgetArchetypeData, _hitBoxGadgetSpecificationData, _hitBoxGadgetInstanceData, _hitBoxGadgetInstanceSpecificationData);

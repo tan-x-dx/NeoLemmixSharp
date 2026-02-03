@@ -4,7 +4,6 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
-using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HatchGadgets;
 using NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;
@@ -110,7 +109,7 @@ public sealed class GadgetBuilder
         return result;
     }
 
-    public void BuildLevelGadgets(LemmingManager lemmingManager, TribeManager tribeManager)
+    public void BuildLevelGadgets(TribeManager tribeManager, int numberOfLemmings)
     {
         nint dataHandle = GadgetDataBuffer.Handle;
         ref nint dataHandleRef = ref dataHandle;
@@ -125,7 +124,7 @@ public sealed class GadgetBuilder
             if (gadgetArchetypeData.SpecificationData.GadgetType != gadgetInstanceData.SpecificationData.GadgetType)
                 throw new Exception("GadgetType mismatch!");
 
-            var newGadget = BuildGadget(gadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager, ref dataHandleRef);
+            var newGadget = BuildGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, numberOfLemmings, ref dataHandleRef);
             _gadgets.Add(newGadget);
 
             dataHandle--;
@@ -137,13 +136,13 @@ public sealed class GadgetBuilder
     private GadgetBase BuildGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetInstanceData,
-        LemmingManager lemmingManager,
         TribeManager tribeManager,
+        int numberOfLemmings,
         ref nint dataHandleRef)
     {
         return gadgetArchetypeData.SpecificationData.GadgetType switch
         {
-            GadgetType.HitBoxGadget => BuildHitBoxGadget(gadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager, ref dataHandleRef),
+            GadgetType.HitBoxGadget => BuildHitBoxGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, numberOfLemmings, ref dataHandleRef),
             GadgetType.HatchGadget => BuildHatchGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, ref dataHandleRef),
             GadgetType.LogicGate => BuildLogicGateGadget(gadgetArchetypeData, gadgetInstanceData, ref dataHandleRef),
             //  GadgetType.Counter => 
@@ -156,13 +155,13 @@ public sealed class GadgetBuilder
     private HitBoxGadget BuildHitBoxGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetInstanceData,
-        LemmingManager lemmingManager,
         TribeManager tribeManager,
+        int numberOfLemmings,
         ref nint dataHandleRef)
     {
         var hitBoxGadgetBuilder = new HitBoxGadgetBuilder(gadgetArchetypeData, gadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
 
-        return hitBoxGadgetBuilder.BuildHitBoxGadget(lemmingManager, tribeManager, ref dataHandleRef);
+        return hitBoxGadgetBuilder.BuildHitBoxGadget(tribeManager, numberOfLemmings, ref dataHandleRef);
     }
 
     private HatchGadget BuildHatchGadget(
