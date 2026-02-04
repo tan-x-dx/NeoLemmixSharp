@@ -157,11 +157,12 @@ public sealed class BoundaryBehaviour
     [Pure]
     public bool IntervalContainsPoint(Interval interval, int n)
     {
-        // Shift both inputs over by the same amount
-        // This does not change whether or not they intersect
+        // If we were to shift both inputs over by the same amount,
+        // this would not change whether or not they intersect
+        // We can be lazy and only move the int parameter
         n -= interval.Start;
 
-        // The interval now starts at zero, simplifying a check
+        // Pretend the interval now starts at zero, simplifying a check
         // If the point is smaller than the interval length, they intersect in all cases
         if (n >= 0 && n < interval.Length)
             return true;
@@ -171,18 +172,20 @@ public sealed class BoundaryBehaviour
             return false;
 
         n = NormaliseWrap(n);
-        // Save a check since normalisation implies n >= 0 anyway
+
+        // After normalisation, s >= 0, so skip a check
         return n < interval.Length;
     }
 
     [Pure]
     public bool IntervalsOverlap(Interval i1, Interval i2)
     {
-        // Shift both intervals over by the same amount
-        // This does not change whether or not they intersect
+        // If we were to shift both intervals over by the same amount,
+        // this would not change whether or not they intersect
+        // We can be lazy and only "move" the second interval
 
         // This variable corresponds to the start point of the second interval
-        // The first interval now starts at zero, simplifying a check
+        // Pretend the first interval now starts at zero, simplifying a check
         var s = i2.Start - i1.Start;
 
         // If this check succeeds, the intervals intersect in all cases
