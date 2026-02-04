@@ -5,6 +5,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
 public abstract class HitBoxRegion : IRectangularBounds
 {
+    public abstract bool IsTrivial();
     public abstract RectangularRegion CurrentBounds { get; }
 
     public abstract bool ContainsPoint(Point levelPosition);

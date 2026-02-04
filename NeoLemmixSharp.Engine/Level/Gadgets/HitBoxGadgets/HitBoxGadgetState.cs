@@ -46,9 +46,16 @@ public sealed class HitBoxGadgetState : GadgetState
         var maxX = int.MinValue;
         var maxY = int.MinValue;
 
+        var anyNonTrivialHitBox = false;
+
         foreach (var kvp in _hitBoxLookup)
         {
-            var hitBoxBounds = kvp.Value.CurrentBounds;
+            var hitBox = kvp.Value;
+            if (hitBox.IsTrivial())
+                continue;
+            anyNonTrivialHitBox = true;
+
+            var hitBoxBounds = hitBox.CurrentBounds;
             var bottomRight = hitBoxBounds.GetBottomRight();
 
             if (hitBoxBounds.X < minX)
@@ -61,12 +68,17 @@ public sealed class HitBoxGadgetState : GadgetState
                 maxY = bottomRight.Y;
         }
 
-        minX += offset.X;
-        minY += offset.Y;
-        maxX += offset.X;
-        maxY += offset.Y;
+        if (anyNonTrivialHitBox)
+        {
+            minX += offset.X;
+            minY += offset.Y;
+            maxX += offset.X;
+            maxY += offset.Y;
 
-        return new RectangularRegion(new Point(minX, minY), new Point(maxX, maxY));
+            return new RectangularRegion(new Point(minX, minY), new Point(maxX, maxY));
+        }
+
+        return new RectangularRegion(offset);
     }
 
     public override GadgetRenderer Renderer => throw new NotImplementedException();
