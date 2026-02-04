@@ -15,10 +15,10 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 {
+    private readonly LemmingData _data;
+
     public LemmingState State { get; }
     public LemmingRenderer Renderer { get; }
-
-    private readonly LemmingData _data;
 
     public readonly int Id;
 
@@ -470,8 +470,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     private static unsafe void CopyLemmingSnapshotBytes(void* sourcePointer, void* destinationPointer)
     {
-        var sourceSpan = Helpers.CreateReadOnlySpan<byte>(sourcePointer, LemmingData.SizeInBytes);
-        var destinationSpan = Helpers.CreateSpan<byte>(destinationPointer, LemmingData.SizeInBytes);
+        var sourceSpan = new ReadOnlySpan<byte>(sourcePointer, LemmingData.SizeInBytes);
+        var destinationSpan = new Span<byte>(destinationPointer, LemmingData.SizeInBytes);
         sourceSpan.CopyTo(destinationSpan);
     }
 

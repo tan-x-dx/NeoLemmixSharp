@@ -103,10 +103,7 @@ public sealed class CanvasBorderBehaviour
 
     public void RecentreViewport()
     {
-        var halfLevelLength = _levelLength / 2;
-        var halfViewportLength = _actualViewportLength / 2;
-
-        _viewportStart = halfLevelLength - halfViewportLength;
+        _viewportStart = (_levelLength - _actualViewportLength) / 2;
         ClampViewportPosition();
     }
 
@@ -146,16 +143,19 @@ public sealed class CanvasBorderBehaviour
 
     public int ToLevelCoordinate(int screenCoordinate)
     {
+        var result = screenCoordinate;
         if (ViewportIsLargerThanLevel)
         {
             var screenStart = (_canvasLength - _screenLength) / 2;
-            var result =  screenCoordinate - screenStart;
+            result -= screenStart;
+            result /= _zoom;
 
-            return result /= _zoom;
+            return result;
         }
 
-        screenCoordinate /= _zoom;
+        result /= _zoom;
+        result += _viewportStart;
 
-        return screenCoordinate + _viewportStart;
+        return result;
     }
 }

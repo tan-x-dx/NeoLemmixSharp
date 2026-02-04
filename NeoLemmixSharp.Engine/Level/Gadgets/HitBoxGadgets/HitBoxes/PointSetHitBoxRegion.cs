@@ -13,6 +13,7 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
 
     private readonly RectangularRegion _bounds;
 
+    public override bool IsTrivial() => false;
     public override RectangularRegion CurrentBounds => _bounds;
 
     public PointSetHitBoxRegion(ReadOnlySpan<Point> points)

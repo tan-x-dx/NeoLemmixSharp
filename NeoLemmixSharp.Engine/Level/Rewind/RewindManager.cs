@@ -105,7 +105,7 @@ public sealed class RewindManager : IDisposable
 
         SkillAssignmentEventData* newSkillAssignementData = _skillAssignmentList.GetNewDataPointer();
 
-        *newSkillAssignementData = new SkillAssignmentEventData(tick, lemming, skillTrackingData.Skill);
+        *newSkillAssignementData = new SkillAssignmentEventData(tick, lemming, skillTrackingData.LemmingSkillId);
     }
 
     public unsafe int RewindBackTo(int specifiedTick)

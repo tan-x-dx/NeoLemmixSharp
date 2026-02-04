@@ -38,12 +38,15 @@ public sealed class GadgetBuilder
 
     public RawArray GadgetDataBuffer { get; }
 
+    private readonly int _numberOfHitBoxGadgets;
+
     public GadgetBuilder(
         LevelData levelData,
         SafeBufferAllocator safeBufferAllocator,
-        int numberOfLemmingsInLevel)
+        int numberOfLemmings)
     {
         _levelData = levelData;
+        _numberOfHitBoxGadgets = CalculateNumberOfHitBoxGadgets(levelData);
 
         var numberOfGadgetInstances = _levelData.AllGadgetInstanceData.Count;
 
@@ -54,17 +57,18 @@ public sealed class GadgetBuilder
         _gadgetTriggers = new List<GadgetTrigger>(numberOfGadgetInstances * GadgetStateCapacityMultiplier * GadgetTriggerCapacityMultiplier);
         _gadgetBehaviours = new List<GadgetBehaviour>(numberOfGadgetInstances * GadgetStateCapacityMultiplier * GadgetBehaviourCapacityMultiplier);
 
-        var gadgetDataBufferLength = CalculateGadgetBufferSizes(levelData, numberOfLemmingsInLevel);
+        var gadgetDataBufferLength = CalculateGadgetBufferSizes(levelData, numberOfLemmings);
 
         GadgetDataBuffer = safeBufferAllocator.AllocateRawArray(gadgetDataBufferLength);
     }
 
-    private static int CalculateGadgetBufferSizes(
+    private int CalculateGadgetBufferSizes(
         LevelData levelData,
-        int numberOfLemmingsInLevel)
+        int numberOfLemmings)
     {
-        var lemmingTrackerByteRequirement = BitArrayHelpers.CalculateBitArrayBufferLength(numberOfLemmingsInLevel) * sizeof(ulong);
-        var result = 0;
+        var numberOfBytesPerLemmingTracker = CalculateNumberOfBytesPerLemmingTracker(numberOfLemmings);
+
+        var result = _numberOfHitBoxGadgets * numberOfBytesPerLemmingTracker; // LemmingTracker data goes at the start
 
         var gadgetArchetypeDataLookup = StyleCache.GetAllGadgetArchetypeData(levelData);
 
@@ -76,12 +80,7 @@ public sealed class GadgetBuilder
             if (gadgetArchetypeData.SpecificationData.GadgetType != gadgetInstanceData.SpecificationData.GadgetType)
                 throw new Exception("GadgetType mismatch!");
 
-            var numberOfBytesNeededForThisGadget = CalculateNumberOfBytesNeededForThisGadget(gadgetArchetypeData, gadgetInstanceData, lemmingTrackerByteRequirement);
-
-            // Ensure 8-byte alignment for the next gadget
-            numberOfBytesNeededForThisGadget--;
-            numberOfBytesNeededForThisGadget |= sizeof(ulong) - 1;
-            numberOfBytesNeededForThisGadget++;
+            var numberOfBytesNeededForThisGadget = CalculateNumberOfBytesNeededForThisGadget(gadgetArchetypeData, gadgetInstanceData);
 
             result += numberOfBytesNeededForThisGadget;
         }
@@ -89,10 +88,21 @@ public sealed class GadgetBuilder
         return result;
     }
 
+    private static int CalculateNumberOfHitBoxGadgets(LevelData levelData)
+    {
+        var result = 0;
+        foreach (var gadgetInstanceData in levelData.AllGadgetInstanceData)
+        {
+            if (gadgetInstanceData.SpecificationData.GadgetType == GadgetType.HitBoxGadget)
+                result++;
+        }
+
+        return result;
+    }
+
     private static int CalculateNumberOfBytesNeededForThisGadget(
         GadgetArchetypeData gadgetArchetypeData,
-        GadgetInstanceData gadgetInstanceData,
-        int lemmingTrackerByteRequirement)
+        GadgetInstanceData gadgetInstanceData)
     {
         var result =
             GadgetBounds.SizeInBytes + // A gadget will always have bounds
@@ -101,19 +111,17 @@ public sealed class GadgetBuilder
         result += gadgetArchetypeData.SpecificationData.CalculateExtraNumberOfBytesNeededForSnapshotting();
         result += gadgetInstanceData.SpecificationData.CalculateExtraNumberOfBytesNeededForSnapshotting();
 
-        if (gadgetArchetypeData.SpecificationData.GadgetType == GadgetType.HitBoxGadget)
-            result += lemmingTrackerByteRequirement; // HitBoxGadgets need extra space to fit lemming collision data.
-
-        if (gadgetArchetypeData.SpecificationData.GadgetType == GadgetType.HatchGadget)
-            result += sizeof(int); // HatchGadgets need an int for tracking the number of lemmings yet to be released.
-
         return result;
     }
 
-    public void BuildLevelGadgets(LemmingManager lemmingManager, TribeManager tribeManager)
+    public void BuildLevelGadgets(TribeManager tribeManager, int numberOfLemmings)
     {
         nint dataHandle = GadgetDataBuffer.Handle;
         ref nint dataHandleRef = ref dataHandle;
+        var hitBoxGadgetIndex = 0;
+
+        var numberOfBytesPerLemmingTracker = CalculateNumberOfBytesPerLemmingTracker(numberOfLemmings);
+        dataHandleRef += _numberOfHitBoxGadgets * numberOfBytesPerLemmingTracker;
 
         var gadgetArchetypeDataLookup = StyleCache.GetAllGadgetArchetypeData(_levelData);
 
@@ -125,25 +133,25 @@ public sealed class GadgetBuilder
             if (gadgetArchetypeData.SpecificationData.GadgetType != gadgetInstanceData.SpecificationData.GadgetType)
                 throw new Exception("GadgetType mismatch!");
 
-            var newGadget = BuildGadget(gadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager, ref dataHandleRef);
-            _gadgets.Add(newGadget);
+            var newGadget = BuildGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, numberOfBytesPerLemmingTracker, hitBoxGadgetIndex, ref dataHandleRef);
+            if (gadgetInstanceData.SpecificationData.GadgetType == GadgetType.HitBoxGadget)
+                hitBoxGadgetIndex++;
 
-            dataHandle--;
-            dataHandle |= sizeof(ulong) - 1;
-            dataHandle++;
+            _gadgets.Add(newGadget);
         }
     }
 
     private GadgetBase BuildGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetInstanceData,
-        LemmingManager lemmingManager,
         TribeManager tribeManager,
+        int numberOfBytesPerLemmingTracker,
+        int hitBoxGadgetIndex,
         ref nint dataHandleRef)
     {
         return gadgetArchetypeData.SpecificationData.GadgetType switch
         {
-            GadgetType.HitBoxGadget => BuildHitBoxGadget(gadgetArchetypeData, gadgetInstanceData, lemmingManager, tribeManager, ref dataHandleRef),
+            GadgetType.HitBoxGadget => BuildHitBoxGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, numberOfBytesPerLemmingTracker, hitBoxGadgetIndex, ref dataHandleRef),
             GadgetType.HatchGadget => BuildHatchGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, ref dataHandleRef),
             GadgetType.LogicGate => BuildLogicGateGadget(gadgetArchetypeData, gadgetInstanceData, ref dataHandleRef),
             //  GadgetType.Counter => 
@@ -156,13 +164,30 @@ public sealed class GadgetBuilder
     private HitBoxGadget BuildHitBoxGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetInstanceData,
-        LemmingManager lemmingManager,
         TribeManager tribeManager,
+        int numberOfBytesPerLemmingTracker,
+        int hitBoxGadgetIndex,
         ref nint dataHandleRef)
     {
-        var hitBoxGadgetBuilder = new HitBoxGadgetBuilder(gadgetArchetypeData, gadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
+        var hitBoxGadgetBuilder = new HitBoxGadgetBuilder(
+            gadgetArchetypeData,
+            gadgetInstanceData,
+            _gadgetTriggers,
+            _gadgetBehaviours);
 
-        return hitBoxGadgetBuilder.BuildHitBoxGadget(lemmingManager, tribeManager, ref dataHandleRef);
+        nint lemmingTrackerDataHandle = GadgetDataBuffer.Handle + (numberOfBytesPerLemmingTracker * hitBoxGadgetIndex);
+
+        if (hitBoxGadgetIndex >= _numberOfHitBoxGadgets)
+            throw new InvalidOperationException("More hit box gadgets than previously expected!");
+
+        var lemmingTracker = new LemmingTracker(lemmingTrackerDataHandle);
+
+        var result = hitBoxGadgetBuilder.BuildHitBoxGadget(
+            tribeManager,
+            ref dataHandleRef,
+            lemmingTracker);
+
+        return result;
     }
 
     private HatchGadget BuildHatchGadget(
@@ -197,4 +222,14 @@ public sealed class GadgetBuilder
     public GadgetBase[] GetGadgets() => _gadgets.ToArray();
     public GadgetTrigger[] GetGadgetTriggers() => _gadgetTriggers.ToArray();
     public GadgetBehaviour[] GetGadgetBehaviours() => _gadgetBehaviours.ToArray();
+
+    public LemmingTrackerManager BuildLevelTrackerManager(int numberOfLemmings)
+    {
+        var numberOfBytesPerLemmingTracker = CalculateNumberOfBytesPerLemmingTracker(numberOfLemmings);
+        var numberOfBytesTotalForLemmingTrackerData = _numberOfHitBoxGadgets * numberOfBytesPerLemmingTracker;
+
+        return new LemmingTrackerManager(GadgetDataBuffer.Handle, numberOfBytesTotalForLemmingTrackerData);
+    }
+
+    private static int CalculateNumberOfBytesPerLemmingTracker(int numberOfLemmings) => BitArrayHelpers.CalculateBitArrayBufferLength(numberOfLemmings) * sizeof(ulong);
 }

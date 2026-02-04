@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.Data;
 
@@ -6,6 +7,7 @@ public readonly struct PieceIdentifier : IEquatable<PieceIdentifier>
 {
     private readonly string _pieceName;
 
+    [DebuggerStepThrough]
     public PieceIdentifier(string? pieceName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(pieceName);

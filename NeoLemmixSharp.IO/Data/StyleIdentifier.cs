@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.Data;
 
@@ -6,6 +7,7 @@ public readonly struct StyleIdentifier : IEquatable<StyleIdentifier>
 {
     private readonly string _styleIdentifier;
 
+    [DebuggerStepThrough]
     public StyleIdentifier(string? styleIdentifier)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(styleIdentifier);

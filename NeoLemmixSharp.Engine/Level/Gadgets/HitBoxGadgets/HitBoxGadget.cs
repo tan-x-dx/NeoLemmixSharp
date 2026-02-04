@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Movement;
-using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
@@ -13,10 +12,12 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 #pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
 #pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
 {
-    private readonly HitBoxGadgetState[] _states;
     private readonly LemmingTracker _lemmingTracker;
+    private readonly HitBoxGadgetState[] _states;
 
-    // The below properties refer to the positions of the hitboxes, not the gadget itself
+    /// <summary>
+    /// This property refers to the positions of the hitboxes, not the gadget itself
+    /// </summary>
     public RectangularRegion CurrentBounds => CurrentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
 
     public ResizeType ResizeType { get; }
@@ -43,8 +44,6 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 
     public override void Tick()
     {
-        _lemmingTracker.Tick();
-
         CurrentState.Tick();
     }
 
@@ -94,7 +93,7 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         LemmingHitBoxFilter activeFilter,
         Lemming lemming)
     {
-        var trackingStatus = _lemmingTracker.TrackItem(lemming);
+        var trackingStatus = _lemmingTracker.UpdateLemmingTrackingStatus(lemming);
 
         return trackingStatus switch
         {

@@ -9,7 +9,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding;
 public sealed class LemmingBuilder
 {
     private readonly LevelData _levelData;
-    private readonly Lemming[] _lemmingList;
+    private readonly Lemming[] _levelLemmings;
     private readonly RawArray _lemmingDataBuffer;
 
     public LemmingBuilder(LevelData levelData, SafeBufferAllocator safeBufferAllocator)
@@ -18,7 +18,7 @@ public sealed class LemmingBuilder
 
         var numberOfLemmings = _levelData.CalculateTotalNumberOfLemmingsInLevel();
 
-        _lemmingList = new Lemming[numberOfLemmings];
+        _levelLemmings = new Lemming[numberOfLemmings];
         _lemmingDataBuffer = safeBufferAllocator.AllocateRawArray(numberOfLemmings * LemmingData.SizeInBytes);
     }
 
@@ -39,10 +39,10 @@ public sealed class LemmingBuilder
             lemming.AnchorPosition = prototype.Position;
             lemming.SetRawData(prototype.Orientation, prototype.FacingDirection, prototype.TribeId, prototype.State);
 
-            _lemmingList.At(i++) = lemming;
+            _levelLemmings.At(i++) = lemming;
         }
 
-        while (i < _lemmingList.Length)
+        while (i < _levelLemmings.Length)
         {
             var lemming = new Lemming(ref handle, i);
 
@@ -51,9 +51,9 @@ public sealed class LemmingBuilder
             lemming.FacingDirection = FacingDirection.Right;
             lemming.CurrentAction = NoneAction.Instance;
 
-            _lemmingList.At(i++) = lemming;
+            _levelLemmings.At(i++) = lemming;
         }
 
-        return _lemmingList;
+        return _levelLemmings;
     }
 }

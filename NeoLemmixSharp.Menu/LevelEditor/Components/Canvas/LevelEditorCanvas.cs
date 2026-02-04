@@ -39,6 +39,7 @@ public sealed partial class LevelEditorCanvas : Component
         MouseEnter.RegisterMouseEvent(OnMouseEnter);
         MouseMovement.RegisterMouseEvent(OnMouseMove);
         MousePressed.RegisterMouseEvent(OnMouseDown);
+        MouseHeld.RegisterMouseEvent(OnMouseHeld);
         MouseExit.RegisterMouseEvent(OnMouseExit);
         KeyPressed.RegisterKeyEvent(OnKeyDown);
     }
@@ -217,20 +218,21 @@ public sealed partial class LevelEditorCanvas : Component
     private void RecalculateCanvasMousePosition(Point screenPosition)
     {
         var localX = screenPosition.X - Left;
-        var localY = screenPosition.Y - Top;
-
         var canvasMouseX = _horizontalBorderBehaviour.ToLevelCoordinate(localX);
-        var canvasMouseY = _verticalBorderBehaviour.ToLevelCoordinate(localY);
-
         canvasMouseX -= LevelEditorConstants.LevelOuterBoundarySize;
+
+        var localY = screenPosition.Y - Top;
+        var canvasMouseY = _verticalBorderBehaviour.ToLevelCoordinate(localY);
         canvasMouseY -= LevelEditorConstants.LevelOuterBoundarySize;
 
-        var canvasMousePosition = new Point(canvasMouseX, canvasMouseY);
-
-        _canvasMousePosition = canvasMousePosition;
+        _canvasMousePosition = new Point(canvasMouseX, canvasMouseY);
     }
 
     private void OnMouseDown(Component c, Point position)
+    {
+    }
+
+    private void OnMouseHeld(Component c, Point position)
     {
     }
 

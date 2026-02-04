@@ -85,11 +85,12 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
 
         var gadgetBuilder = new GadgetBuilder(levelData, _safeBufferAllocator, levelLemmings.Length);
-        gadgetBuilder.BuildLevelGadgets(lemmingManager, tribeManager);
+        gadgetBuilder.BuildLevelGadgets(tribeManager, lemmingManager.NumberOfLemmings);
 
         var levelGadgets = gadgetBuilder.GetGadgets();
         var gadgetTriggers = gadgetBuilder.GetGadgetTriggers();
         var gadgetBehaviours = gadgetBuilder.GetGadgetBehaviours();
+        var lemmingTrackerManager = gadgetBuilder.BuildLevelTrackerManager(lemmingManager.NumberOfLemmings);
 
         foreach (var hatchGroup in hatchGroups)
         {
@@ -109,7 +110,13 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         // Need to call this here instead of initialising in LevelScreen
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 
-        var gadgetManager = new GadgetManager(levelGadgets, gadgetTriggers, gadgetBehaviours, horizontalBoundaryBehaviour, verticalBoundaryBehaviour);
+        var gadgetManager = new GadgetManager(
+            levelGadgets,
+            gadgetTriggers,
+            gadgetBehaviours,
+            horizontalBoundaryBehaviour,
+            verticalBoundaryBehaviour,
+            lemmingTrackerManager);
 
         SetUpGadgetConnections(levelData, gadgetManager);
 

@@ -6,6 +6,7 @@ public sealed class RectangularHitBoxRegion : HitBoxRegion
 {
     private readonly RectangularRegion _region;
 
+    public override bool IsTrivial() => false;
     public override RectangularRegion CurrentBounds => _region;
 
     public RectangularHitBoxRegion(
