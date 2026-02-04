@@ -41,7 +41,9 @@ public readonly struct ArrayBitBuffer : IBitBuffer
         _array = BitArrayHelpers.CreateBitArray(numberOfItems, false);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<uint> AsSpan() => new(_array);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<uint> AsReadOnlySpan() => new(_array);
 }
 
