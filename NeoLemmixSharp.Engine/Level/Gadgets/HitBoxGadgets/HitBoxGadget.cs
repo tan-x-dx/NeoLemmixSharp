@@ -15,7 +15,9 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
     private readonly LemmingTracker _lemmingTracker;
     private readonly HitBoxGadgetState[] _states;
 
-    // The below properties refer to the positions of the hitboxes, not the gadget itself
+    /// <summary>
+    /// This property refers to the positions of the hitboxes, not the gadget itself
+    /// </summary>
     public RectangularRegion CurrentBounds => CurrentState.GetMininmumBoundingBoxForAllHitBoxes(CurrentGadgetBounds.Position);
 
     public ResizeType ResizeType { get; }
@@ -42,8 +44,6 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 
     public override void Tick()
     {
-        _lemmingTracker.Tick();
-
         CurrentState.Tick();
     }
 

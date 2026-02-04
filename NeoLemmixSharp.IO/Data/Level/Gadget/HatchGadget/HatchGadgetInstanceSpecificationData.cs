@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
@@ -19,7 +20,7 @@ public sealed class HatchGadgetInstanceSpecificationData : IGadgetInstanceSpecif
 
     public int CalculateExtraNumberOfBytesNeededForSnapshotting()
     {
-        var result = 0;
+        var result = PointerWrapper.PointerWrapperSize; // HatchGadgets need an int for tracking the number of lemmings yet to be released.
 
         foreach (var state in GadgetStates)
         {

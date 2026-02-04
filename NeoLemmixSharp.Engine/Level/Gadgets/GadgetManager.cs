@@ -33,6 +33,8 @@ public sealed class GadgetManager :
     private readonly RawArray _gadgetByteBuffer;
     private int _bitArrayBufferUsageCount = RequiredNumberOfGadgetBitSets;
 
+    private readonly LemmingTrackerManager _lemmingTrackerManager;
+
     private bool _isDisposed;
 
     public ReadOnlySpan<GadgetBase> AllItems => new(_allGadgets);
@@ -44,7 +46,8 @@ public sealed class GadgetManager :
         GadgetTrigger[] allTriggers,
         GadgetBehaviour[] allBehaviours,
         BoundaryBehaviour horizontalBoundaryBehaviour,
-        BoundaryBehaviour verticalBoundaryBehaviour)
+        BoundaryBehaviour verticalBoundaryBehaviour,
+        LemmingTrackerManager lemmingTrackerManager)
     {
         this.AssertUniqueIds(new ReadOnlySpan<GadgetBase>(allGadgets));
         Array.Sort(allGadgets, this);
@@ -71,6 +74,8 @@ public sealed class GadgetManager :
 
         _fastForwardGadgets = new GadgetSet(this);
         _gadgetsToReEvaluate = new GadgetSet(this);
+
+        _lemmingTrackerManager = lemmingTrackerManager;
     }
 
     public void Initialise()
@@ -108,6 +113,8 @@ public sealed class GadgetManager :
 
     public void Tick(bool isMajorTick)
     {
+        _lemmingTrackerManager.Tick();
+
         if (isMajorTick)
         {
             TickAllGadgets();
@@ -179,6 +186,7 @@ public sealed class GadgetManager :
         foreach (var trigger in _indeterminateTriggers)
         {
             trigger.DetermineTrigger(false);
+            _indeterminateTriggers.Remove(trigger);
         }
     }
 
