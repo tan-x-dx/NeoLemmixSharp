@@ -86,11 +86,8 @@ public readonly struct TerrainPainter
         {
             var colorData = _colorDataLookup[terrainData.GetStylePiecePair()];
 
-            var w = terrainData.Width ?? colorData.Size.W;
-            var h = terrainData.Height ?? colorData.Size.H;
-
-            maxX = Math.Max(maxX, terrainData.Position.X + w);
-            maxY = Math.Max(maxY, terrainData.Position.Y + h);
+            maxX = Math.Max(maxX, terrainData.Position.X + terrainData.Width);
+            maxY = Math.Max(maxY, terrainData.Position.Y + terrainData.Height);
         }
 
         var size = new Size(maxX, maxY);
@@ -247,10 +244,13 @@ public readonly struct TerrainPainter
         var bgR = backgroundColor.R / 255f;
         var bgG = backgroundColor.G / 255f;
         var bgB = backgroundColor.B / 255f;
-        var newA = 1f - (1f - fgA) * (1f - bgA);
-        var newR = fgR * fgA / newA + bgR * bgA * (1f - fgA) / newA;
-        var newG = fgG * fgA / newA + bgG * bgA * (1f - fgA) / newA;
-        var newB = fgB * fgA / newA + bgB * bgA * (1f - fgA) / newA;
+
+        var fga2 = 1f - fgA;
+
+        var newA = 1f - (fga2 * (1f - bgA));
+        var newR = (fgR * fgA / newA) + (bgR * bgA * fga2 / newA);
+        var newG = (fgG * fgA / newA) + (bgG * bgA * fga2 / newA);
+        var newB = (fgB * fgA / newA) + (bgB * bgA * fga2 / newA);
 
         return new Color(newR, newG, newB, newA);
     }

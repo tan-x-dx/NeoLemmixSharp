@@ -4,6 +4,7 @@ using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
@@ -41,22 +42,14 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
+        Color tint = ReadWriteHelpers.ReadRgbBytes(reader.ReadBytes(3));
         uint hueAngle = ReadTerrainDataHueAngle(reader);
 
         uint terrainDataMiscByte = reader.Read8BitUnsignedInteger();
         var decipheredTerrainDataMisc = ReadWriteHelpers.DecodeTerrainDataMiscByte(terrainDataMiscByte);
 
-        int? width = reader.Read16BitUnsignedInteger();
-        if (!decipheredTerrainDataMisc.HasWidthSpecified)
-        {
-            width = null;
-        }
-
-        int? height = reader.Read16BitUnsignedInteger();
-        if (!decipheredTerrainDataMisc.HasHeightSpecified)
-        {
-            height = null;
-        }
+        int width = reader.Read16BitUnsignedInteger();
+        int height = reader.Read16BitUnsignedInteger();
 
         return new TerrainInstanceData
         {
@@ -71,6 +64,7 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
             FacingDirection = dht.FacingDirection,
             Erase = decipheredTerrainDataMisc.Erase,
 
+            Tint = tint,
             HueAngle = hueAngle,
 
             Width = width,

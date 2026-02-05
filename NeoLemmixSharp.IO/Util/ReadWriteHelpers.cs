@@ -20,17 +20,11 @@ public static class ReadWriteHelpers
 
     private const int TerrainDataEraseBitShift = 0;
     private const int TerrainDataNoOverwriteBitShift = 1;
-    private const int TerrainDataResizeWidthBitShift = 2;
-    private const int TerrainDataResizeHeightBitShift = 3;
-
-    internal const int NumberOfBytesForMainTerrainData = 9;
 
     internal static byte EncodeTerrainArchetypeDataByte(TerrainInstanceData terrainData)
     {
         var miscDataBits = (terrainData.Erase ? 1 << TerrainDataEraseBitShift : 0) |
-                           (terrainData.NoOverwrite ? 1 << TerrainDataNoOverwriteBitShift : 0) |
-                           (terrainData.Width.HasValue ? 1 << TerrainDataResizeWidthBitShift : 0) |
-                           (terrainData.Height.HasValue ? 1 << TerrainDataResizeHeightBitShift : 0);
+                           (terrainData.NoOverwrite ? 1 << TerrainDataNoOverwriteBitShift : 0);
 
         return (byte)miscDataBits;
     }
@@ -39,22 +33,16 @@ public static class ReadWriteHelpers
     {
         var erase = ((terrainDataMiscByte >>> TerrainDataEraseBitShift) & 1) != 0;
         var noOverwrite = ((terrainDataMiscByte >>> TerrainDataNoOverwriteBitShift) & 1) != 0;
-        var hasWidthSpecified = ((terrainDataMiscByte >>> TerrainDataResizeWidthBitShift) & 1) != 0;
-        var hasHeightSpecified = ((terrainDataMiscByte >>> TerrainDataResizeHeightBitShift) & 1) != 0;
 
         return new DecodedTerrainDataMisc(
             erase,
-            noOverwrite,
-            hasWidthSpecified,
-            hasHeightSpecified);
+            noOverwrite);
     }
 
-    internal readonly ref struct DecodedTerrainDataMisc(bool erase, bool noOverwrite, bool hasWidthSpecified, bool hasHeightSpecified)
+    internal readonly ref struct DecodedTerrainDataMisc(bool erase, bool noOverwrite)
     {
         internal readonly bool Erase = erase;
         internal readonly bool NoOverwrite = noOverwrite;
-        internal readonly bool HasWidthSpecified = hasWidthSpecified;
-        internal readonly bool HasHeightSpecified = hasHeightSpecified;
     }
 
     #endregion

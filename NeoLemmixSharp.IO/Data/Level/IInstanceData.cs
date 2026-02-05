@@ -5,6 +5,7 @@ namespace NeoLemmixSharp.IO.Data.Level;
 public interface IInstanceData
 {
     Point Position { get; set; }
+    // Size Size { get; set; }
     Orientation Orientation { get; set; }
     FacingDirection FacingDirection { get; set; }
 }

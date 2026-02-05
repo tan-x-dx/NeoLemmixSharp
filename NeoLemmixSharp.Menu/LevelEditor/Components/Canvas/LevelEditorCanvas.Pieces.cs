@@ -4,6 +4,7 @@ using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
@@ -13,14 +14,8 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
     {
         var defaultArchetypeSize = terrainArchetypeData.DefaultSize;
 
-        int? initialWidth = null;
-        int? initialHeight = null;
-
-        if (defaultArchetypeSize.W > 0)
-            initialWidth = defaultArchetypeSize.W;
-
-        if (defaultArchetypeSize.H > 0)
-            initialHeight = defaultArchetypeSize.H;
+        var initialWidth = defaultArchetypeSize.W;
+        var initialHeight = defaultArchetypeSize.H;
 
         var newTerrainData = new TerrainInstanceData()
         {
@@ -31,6 +26,7 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
             Orientation = Orientation.Down,
             FacingDirection = FacingDirection.Right,
             NoOverwrite = false,
+            Tint = Color.White,
             Erase = false,
             HueAngle = 0,
             Width = initialWidth,

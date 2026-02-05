@@ -2,6 +2,7 @@
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Util;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
 
@@ -145,6 +146,7 @@ internal sealed class TerrainReader : NeoLemmixDataReader
             FacingDirection = dht.FacingDirection,
             Erase = _currentTerrainData.Erase,
 
+            Tint = Color.White,
             HueAngle = 0,
 
             Width = _currentTerrainData.Width,
@@ -172,7 +174,7 @@ internal sealed class TerrainReader : NeoLemmixDataReader
         public bool NoOverwrite;
         public bool Erase;
 
-        public int? Width;
-        public int? Height;
+        public int Width;
+        public int Height;
     }
 }
