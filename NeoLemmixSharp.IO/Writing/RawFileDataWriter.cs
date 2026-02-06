@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Util;
@@ -38,6 +39,8 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
     private TEnum? _currentSectionIdentifier;
 
     private bool _isDisposed;
+
+    public int Position => _mainDataPosition;
 
     public RawFileDataWriter()
     {
@@ -137,6 +140,25 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
 
         var destinationSpan = Helpers.CreateSpan<byte>(pointer, data.Length);
         data.CopyTo(destinationSpan);
+    }
+
+    public void WriteRgbColor(Color color)
+    {
+        AssertWithinSection();
+
+        WriteSingleByte(color.R, ref _mainDataByteBuffer, ref _mainDataPosition);
+        WriteSingleByte(color.G, ref _mainDataByteBuffer, ref _mainDataPosition);
+        WriteSingleByte(color.B, ref _mainDataByteBuffer, ref _mainDataPosition);
+    }
+
+    public void WriteArgbColor(Color color)
+    {
+        AssertWithinSection();
+
+        WriteSingleByte(color.A, ref _mainDataByteBuffer, ref _mainDataPosition);
+        WriteSingleByte(color.R, ref _mainDataByteBuffer, ref _mainDataPosition);
+        WriteSingleByte(color.G, ref _mainDataByteBuffer, ref _mainDataPosition);
+        WriteSingleByte(color.B, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
     private static void DoubleByteBufferLength(ref RawArray byteBuffer)

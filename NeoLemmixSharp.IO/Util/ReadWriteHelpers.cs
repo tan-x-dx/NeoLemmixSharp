@@ -1,10 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Reading;
 using NeoLemmixSharp.IO.Writing;
-using System.Runtime.CompilerServices;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Util;
 
@@ -93,38 +90,6 @@ public static class ReadWriteHelpers
         const int upperBitsMask = ~7;
 
         FileReadingException.ReaderAssert((dhtByte & upperBitsMask) == 0, "Read suspicious dihedral transformation byte!");
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static void WriteArgbBytes(Color color, Span<byte> bytes)
-    {
-        FileWritingException.WriterAssert(bytes.Length == 4, "Expected span length of exactly 4");
-        bytes.At(0) = color.A;
-        bytes.At(1) = color.R;
-        bytes.At(2) = color.G;
-        bytes.At(3) = color.B;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static void WriteRgbBytes(Color color, Span<byte> bytes)
-    {
-        FileWritingException.WriterAssert(bytes.Length == 3, "Expected span length of exactly 3");
-        bytes.At(0) = color.R;
-        bytes.At(1) = color.G;
-        bytes.At(2) = color.B;
-    }
-
-    internal static Color ReadArgbBytes(ReadOnlySpan<byte> bytes)
-    {
-        FileReadingException.ReaderAssert(bytes.Length == 4, "Expected span length of exactly 4");
-        return new Color(alpha: bytes.At(0), r: bytes.At(1), g: bytes.At(2), b: bytes.At(3));
-    }
-
-    internal static Color ReadRgbBytes(ReadOnlySpan<byte> bytes)
-    {
-        const byte alphaByte = 0xff;
-        FileReadingException.ReaderAssert(bytes.Length == 3, "Expected span length of exactly 3");
-        return new Color(alpha: alphaByte, r: bytes.At(0), g: bytes.At(1), b: bytes.At(2));
     }
 
     internal static int EncodePoint(Point point)

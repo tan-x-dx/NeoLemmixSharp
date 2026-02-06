@@ -1,9 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
@@ -75,24 +73,29 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
         var backgroundData = levelData.LevelBackground;
 
         // Ensure that 5 bytes are always written, even if fewer bytes are utilized
-        Span<byte> rawBytes = [0, 0, 0, 0, 0];
+
+        var previousPosition = writer.Position;
 
         if (backgroundData is null)
         {
-            rawBytes.At(0) = (byte)BackgroundType.NoBackgroundSpecified;
+            writer.Write8BitUnsignedInteger((byte)BackgroundType.NoBackgroundSpecified);
+            writer.Write32BitUnsignedInteger(0);
         }
         else if (backgroundData.IsSolidColor)
         {
-            rawBytes.At(0) = (byte)BackgroundType.SolidColorBackground;
-            ReadWriteHelpers.WriteArgbBytes(backgroundData.Color, rawBytes[1..]);
+            writer.Write8BitUnsignedInteger((byte)BackgroundType.SolidColorBackground);
+            writer.WriteArgbColor(backgroundData.Color);
         }
         else
         {
-            rawBytes.At(0) = (byte)BackgroundType.TextureBackground;
+            writer.Write8BitUnsignedInteger((byte)BackgroundType.TextureBackground);
             ushort backgroundStringId = _stringIdLookup.GetStringId(backgroundData.BackgroundImageName);
-            Unsafe.WriteUnaligned(ref rawBytes.At(1), backgroundStringId);
+            writer.Write16BitUnsignedInteger(backgroundStringId);
+            writer.Write16BitUnsignedInteger(0);
         }
 
-        writer.WriteBytes(rawBytes);
+        var positionAfterWritingBackgroundData = writer.Position;
+
+        FileWritingException.WriterAssert(positionAfterWritingBackgroundData - previousPosition == 4, "Need to write exactly FOUR bytes when processing background data!");
     }
 }

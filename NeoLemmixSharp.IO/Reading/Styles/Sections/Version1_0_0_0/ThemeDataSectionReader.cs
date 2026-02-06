@@ -4,8 +4,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
-using NeoLemmixSharp.IO.Util;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.Sections.Version1_0_0_0;
 
@@ -41,12 +39,12 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader
 
     private ThemeData ReadThemeData(RawStyleFileDataReader reader, StyleIdentifier originalStyleIdentifier)
     {
-        var maskColor = ReadRgbColor(reader);
-        var minimap = ReadRgbColor(reader);
-        var background = ReadRgbColor(reader);
-        var oneWayArrows = ReadRgbColor(reader);
-        var pickupBorder = ReadRgbColor(reader);
-        var pickupInside = ReadRgbColor(reader);
+        var maskColor = reader.ReadRgbColor();
+        var minimap = reader.ReadRgbColor();
+        var background = reader.ReadRgbColor();
+        var oneWayArrows = reader.ReadRgbColor();
+        var pickupBorder = reader.ReadRgbColor();
+        var pickupInside = reader.ReadRgbColor();
 
         var lemmingSpriteData = ReadLemmingSpriteData(reader, originalStyleIdentifier);
 
@@ -134,16 +132,16 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader
         var result = new TribeColorData[EngineConstants.MaxNumberOfTribes];
         for (var i = 0; i < result.Length; i++)
         {
-            var hairColor = ReadArgbColor(reader);
-            var permanentSkillHairColor = ReadArgbColor(reader);
-            var skinColor = ReadArgbColor(reader);
-            var zombieSkinColor = ReadArgbColor(reader);
-            var bodyColor = ReadArgbColor(reader);
-            var permanentSkillBodyColor = ReadArgbColor(reader);
-            var neutralBodyColor = ReadArgbColor(reader);
-            var acidLemmingFootColor = ReadArgbColor(reader);
-            var waterLemmingFootColor = ReadArgbColor(reader);
-            var paintColor = ReadArgbColor(reader);
+            var hairColor = reader.ReadArgbColor();
+            var permanentSkillHairColor = reader.ReadArgbColor();
+            var skinColor = reader.ReadArgbColor();
+            var zombieSkinColor = reader.ReadArgbColor();
+            var bodyColor = reader.ReadArgbColor();
+            var permanentSkillBodyColor = reader.ReadArgbColor();
+            var neutralBodyColor = reader.ReadArgbColor();
+            var acidLemmingFootColor = reader.ReadArgbColor();
+            var waterLemmingFootColor = reader.ReadArgbColor();
+            var paintColor = reader.ReadArgbColor();
 
             result[i] = new TribeColorData(
                 hairColor,
@@ -159,17 +157,5 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader
         }
 
         return result;
-    }
-
-    private static Color ReadRgbColor(RawStyleFileDataReader reader)
-    {
-        var bytes = reader.ReadBytes(3);
-        return ReadWriteHelpers.ReadRgbBytes(bytes);
-    }
-
-    private static Color ReadArgbColor(RawStyleFileDataReader reader)
-    {
-        var bytes = reader.ReadBytes(4);
-        return ReadWriteHelpers.ReadArgbBytes(bytes);
     }
 }

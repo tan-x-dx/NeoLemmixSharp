@@ -42,7 +42,7 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);
         var dht = new DihedralTransformation(dhtByte);
 
-        Color tint = ReadWriteHelpers.ReadRgbBytes(reader.ReadBytes(3));
+        Color tint = reader.ReadRgbColor();
         uint hueAngle = ReadTerrainDataHueAngle(reader);
 
         uint terrainDataMiscByte = reader.Read8BitUnsignedInteger();

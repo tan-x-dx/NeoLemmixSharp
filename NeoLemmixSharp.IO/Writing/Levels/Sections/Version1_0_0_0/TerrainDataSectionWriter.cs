@@ -50,10 +50,7 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         RawLevelFileDataWriter writer,
         TerrainInstanceData terrainData)
     {
-        Span<byte> colorBuffer = stackalloc byte[3];
-        ReadWriteHelpers.WriteRgbBytes(terrainData.Tint, colorBuffer);
-
-        writer.WriteBytes(colorBuffer);
+        writer.WriteRgbColor(terrainData.Tint);
         writer.Write16BitUnsignedInteger((ushort)(terrainData.HueAngle % 360));
 
         var miscDataBits = ReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainData);

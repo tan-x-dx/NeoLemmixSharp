@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Util;
@@ -165,6 +166,28 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
         _position = newPosition;
 
         return Helpers.CreateReadOnlySpan<byte>(pointer, numberOfBytes);
+    }
+
+    public Color ReadRgbColor()
+    {
+        const byte alphaByte = 0xff;
+
+        var bytes = ReadBytes(3);
+        return new Color(
+            alpha: alphaByte,
+            r: bytes.At(0),
+            g: bytes.At(1),
+            b: bytes.At(2));
+    }
+
+    public Color ReadArgbColor()
+    {
+        var bytes = ReadBytes(4);
+        return new Color(
+            alpha: bytes.At(0), 
+            r: bytes.At(1),
+            g: bytes.At(2), 
+            b: bytes.At(3));
     }
 
     public void SetReaderPosition(int position)
