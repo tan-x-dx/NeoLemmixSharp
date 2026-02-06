@@ -105,7 +105,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         static BackgroundData ReadSolidColorBackgroundData(ReadOnlySpan<byte> rawBytes)
         {
-            return new BackgroundData(ReadWriteHelpers.ReadArgbBytes(rawBytes[1..]));
+            return new BackgroundData(ReadWriteHelpers.ReadArgbBytes(Helpers.Slice(rawBytes, 1, 4)));
         }
 
         BackgroundData ReadTextureBackgroundData(ReadOnlySpan<byte> rawBytes)
