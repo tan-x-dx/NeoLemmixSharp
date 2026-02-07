@@ -13,6 +13,8 @@ public sealed class GadgetInstanceData : IInstanceData
     public required PieceIdentifier PieceIdentifier { get; init; }
 
     public required Point Position { get; set; }
+
+    public Size Size => default;//SpecificationData.;
     public required GadgetRenderMode GadgetRenderMode { get; init; }
 
     public required Orientation Orientation { get; set; }

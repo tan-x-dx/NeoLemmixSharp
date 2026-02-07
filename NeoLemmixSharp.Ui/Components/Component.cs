@@ -350,7 +350,7 @@ public abstract class Component : IDisposable
     public void InvokeMouseEnter(Point mousePosition) => _mouseEnter?.Invoke(this, mousePosition);
     public void InvokeMouseMovement(Point mousePosition) => _mouseMovement?.Invoke(this, mousePosition);
     public void InvokeMousePressed(Point mousePosition) => _mousePressed?.Invoke(this, mousePosition);
-    public void InvokeMouseHeld(Point mousePosition) => _mousePressed?.Invoke(this, mousePosition);
+    public void InvokeMouseHeld(Point mousePosition) => _mouseHeld?.Invoke(this, mousePosition);
     public void InvokeMouseDoubleClick(Point mousePosition) => _mouseDoubleClick?.Invoke(this, mousePosition);
     public void InvokeMouseReleased(Point mousePosition) => _mouseReleased?.Invoke(this, mousePosition);
     public void InvokeMouseExit(Point mousePosition) => _mouseExit?.Invoke(this, mousePosition);

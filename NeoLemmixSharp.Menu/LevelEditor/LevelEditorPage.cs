@@ -31,7 +31,7 @@ public sealed class LevelEditorPage : PageBase
     {
         _topPanel = new LevelEditorMenuBar();
         _leftPanel = new LevelEditorControlPanel();
-        _levelCanvas = new LevelEditorCanvas(graphicsDevice);
+        _levelCanvas = new LevelEditorCanvas(graphicsDevice, menuInputController.InputController);
         _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 
         SetLevelData(CreateBlankLevelData());
@@ -43,9 +43,9 @@ public sealed class LevelEditorPage : PageBase
 
         var root = UiHandler.RootComponent;
         root.IsVisible = false;
+        root.AddComponent(_levelCanvas);
         root.AddComponent(_topPanel);
         root.AddComponent(_leftPanel);
-        root.AddComponent(_levelCanvas);
         root.AddComponent(_pieceBank);
 
         var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("dex_brass"), IO.FileFormats.FileFormatType.NeoLemmix));

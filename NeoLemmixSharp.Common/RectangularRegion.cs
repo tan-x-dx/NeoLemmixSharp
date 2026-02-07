@@ -178,6 +178,12 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
 
     public bool Contains(Point point) => Size.EncompassesPoint(point - Position);
 
+    public bool Overlaps(RectangularRegion other)
+    {
+        return GetHorizontalInterval().Intersects(other.GetHorizontalInterval()) &&
+               GetVerticalInterval().Intersects(other.GetVerticalInterval());
+    }
+
     [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

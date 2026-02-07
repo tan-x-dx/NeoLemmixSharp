@@ -1,21 +1,24 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
+using System.Diagnostics.CodeAnalysis;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
 public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
 {
+    private readonly List<CanvasPiece> _terrainPieces = new(IoConstants.AssumedNumberOfTerrainInstanceDataInLevel);
+    private readonly List<CanvasPiece> _gadgetPieces = new(IoConstants.AssumedNumberOfGadgetInstanceDataInLevel);
+    private readonly List<CanvasPiece> _preplacedLemmingPieces = [];
+
     public void AddTerrainPiece(TerrainArchetypeData terrainArchetypeData)
     {
         var defaultArchetypeSize = terrainArchetypeData.DefaultSize;
-
-        var initialWidth = defaultArchetypeSize.W;
-        var initialHeight = defaultArchetypeSize.H;
 
         var newTerrainData = new TerrainInstanceData()
         {
@@ -29,8 +32,8 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
             Tint = Color.White,
             Erase = false,
             HueAngle = 0,
-            Width = initialWidth,
-            Height = initialHeight,
+            Width = defaultArchetypeSize.W,
+            Height = defaultArchetypeSize.H,
         };
 
         var newCanvasTerrainPiece = new CanvasPiece(newTerrainData)
@@ -121,13 +124,70 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
         }
     }
 
+    private void TrySelectSingleItem()
+    {
+        if (TrySelectSingleItemInList(_preplacedLemmingPieces, out var selectedPiece))
+        {
+            _selectedCanvasPieces.Add(selectedPiece);
+            return;
+        }
+
+        if (TrySelectSingleItemInList(_gadgetPieces, out selectedPiece))
+        {
+            _selectedCanvasPieces.Add(selectedPiece);
+            return;
+        }
+
+        if (TrySelectSingleItemInList(_terrainPieces, out selectedPiece))
+        {
+            _selectedCanvasPieces.Add(selectedPiece);
+            return;
+        }
+    }
+
+    private bool TrySelectSingleItemInList(List<CanvasPiece> pieces, [MaybeNullWhen(false)] out CanvasPiece selectedPiece)
+    {
+        for (int i = pieces.Count - 1; i >= 0; i--)
+        {
+            var piece = pieces[i];
+
+            if (piece.ContainsPoint(_canvasMouseDownPosition))
+            {
+                selectedPiece = piece;
+                return true;
+            }
+        }
+
+        selectedPiece = null;
+        return false;
+    }
+
+    private void TrySelectMultipleItems(RectangularRegion clickDragBounds)
+    {
+        TrySelectMultipleItemsFromList(clickDragBounds, _preplacedLemmingPieces);
+        TrySelectMultipleItemsFromList(clickDragBounds, _gadgetPieces);
+        TrySelectMultipleItemsFromList(clickDragBounds, _terrainPieces);
+    }
+
+    private void TrySelectMultipleItemsFromList(RectangularRegion clickDragBounds, List<CanvasPiece> pieces)
+    {
+        foreach (var piece in pieces)
+        {
+            var pieceBounds = piece.GetBounds();
+            if (clickDragBounds.Overlaps(pieceBounds))
+            {
+                _selectedCanvasPieces.Add(piece);
+            }
+        }
+    }
+
     int IComparer<CanvasPiece>.Compare(CanvasPiece? x, CanvasPiece? y)
     {
         if (ReferenceEquals(x, y)) return 0;
         if (x is null) return -1;
         if (y is null) return 1;
 
-        if (x.GetType() != y.GetType())
+        if (x.InstanceData.GetType() != y.InstanceData.GetType())
             throw new InvalidOperationException("Items are not the same type!");
 
         var xPieceOrder = x.PieceOrder;

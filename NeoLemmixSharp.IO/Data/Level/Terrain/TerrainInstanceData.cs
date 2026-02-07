@@ -10,6 +10,7 @@ public sealed class TerrainInstanceData : IInstanceData
     public required PieceIdentifier PieceIdentifier { get; init; }
 
     public required Point Position { get; set; }
+    public Size Size => new(Width, Height);
 
     public required Orientation Orientation { get; set; }
     public required FacingDirection FacingDirection { get; set; }
@@ -28,4 +29,5 @@ public sealed class TerrainInstanceData : IInstanceData
     }
 
     public StylePiecePair GetStylePiecePair() => new(StyleIdentifier, PieceIdentifier);
+
 }

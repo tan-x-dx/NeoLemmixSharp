@@ -1,4 +1,6 @@
-﻿using NeoLemmixSharp.Common;
+﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Reading;
 using NeoLemmixSharp.IO.Writing;
@@ -107,4 +109,15 @@ public static class ReadWriteHelpers
 
         return new Point(x, y);
     }
+
+    #region NeoLemmix Compat Helpers
+
+    public static Texture2D GetOrLoadTerrainTexture(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier, string terrainPieceFilePath)
+    {
+        // Need to load the texture here to get its dimensions, since that data is not present in the NeoLemmix config file
+        var pngFilePath = RootDirectoryManager.GetCorrespondingImageFile(terrainPieceFilePath);
+        return TextureCache.GetOrLoadTexture(pngFilePath, styleIdentifier, pieceIdentifier, TextureType.TerrainSprite);
+    }
+
+    #endregion
 }

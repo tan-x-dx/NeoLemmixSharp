@@ -12,12 +12,14 @@ public sealed class CanvasBorderBehaviour
     private int _rawViewportLength;
     private int _actualViewportLength;
 
+    private int _screenStart;
     private int _screenLength;
 
     private int _zoom = LevelEditorConstants.CanvasMinZoom;
 
     public int ViewportStart => _viewportStart;
     public int ViewportLength => _actualViewportLength;
+    public int ZoomValue => _zoom;
 
     private bool ViewportIsLargerThanLevel => _rawViewportLength > _levelLength;
 
@@ -141,6 +143,7 @@ public sealed class CanvasBorderBehaviour
         ClampViewportPosition();
     }
 
+    [Pure]
     public int ToLevelCoordinate(int screenCoordinate)
     {
         var result = screenCoordinate;

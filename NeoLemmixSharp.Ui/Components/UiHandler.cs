@@ -49,6 +49,10 @@ public sealed class UiHandler : IDisposable
         {
             HandleMousePress(mousePosition);
         }
+        else if (leftMouseButton.IsHeld)
+        {
+            HandleMouseHeld(mousePosition);
+        }
         else if (leftMouseButton.IsReleased)
         {
             HandleMouseRelease(mousePosition);
@@ -91,6 +95,21 @@ public sealed class UiHandler : IDisposable
         {
             SelectedTextField = CurrentSelection as TextField;
             CurrentSelection.InvokeMousePressed(mousePosition);
+        }
+    }
+
+    private void HandleMouseHeld(Point mousePosition)
+    {
+        LocateComponent(mousePosition);
+
+        if (CurrentSelection is null || !CurrentSelection.IsVisible)
+        {
+            CurrentSelection = RootComponent;
+        }
+        else
+        {
+            SelectedTextField = CurrentSelection as TextField;
+            CurrentSelection.InvokeMouseHeld(mousePosition);
         }
     }
 
