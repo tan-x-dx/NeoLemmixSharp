@@ -71,9 +71,13 @@ public sealed class BoundaryBehaviour
     public int MouseScreenCoordinate => _mouseScreenCoordinate;
 
     [Pure]
-    public ReadOnlySpan<ViewPortRenderInterval> GetRenderViewPortIntervals() => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<ViewPortRenderIntervalBuffer, ViewPortRenderInterval>(ref Unsafe.AsRef(in _viewPortRenderIntervalBuffer)), _viewPortSpanLength);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadOnlySpan<ViewPortRenderInterval> GetRenderViewPortIntervals() => MemoryMarshal.CreateReadOnlySpan(
+        ref Unsafe.As<ViewPortRenderIntervalBuffer, ViewPortRenderInterval>(ref Unsafe.AsRef(in _viewPortRenderIntervalBuffer)), _viewPortSpanLength);
     [Pure]
-    public ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals() => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<ScreenRenderIntervalBuffer, ScreenRenderInterval>(ref Unsafe.AsRef(in _screenRenderIntervalBuffer)), _screenSpanLength);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals() => MemoryMarshal.CreateReadOnlySpan(
+        ref Unsafe.As<ScreenRenderIntervalBuffer, ScreenRenderInterval>(ref Unsafe.AsRef(in _screenRenderIntervalBuffer)), _screenSpanLength);
 
     public BoundaryBehaviour(
         DimensionType dimensionType,
@@ -163,17 +167,17 @@ public sealed class BoundaryBehaviour
         n -= interval.Start;
 
         // Pretend the interval now starts at zero, simplifying a check
-        // If the point is smaller than the interval length, they intersect in all cases
+        // If this check succeeds, the interval contains the point in all cases
         if (n >= 0 && n < interval.Length)
             return true;
 
-        // By this point, the inputs definitely do not overlap for the Void type
+        // Here, for the Void type the interval definitely does not contain the point
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
         n = NormaliseWrap(n);
 
-        // After normalisation, s >= 0, so skip a check
+        // After normalisation, n >= 0, so skip a check
         return n < interval.Length;
     }
 
