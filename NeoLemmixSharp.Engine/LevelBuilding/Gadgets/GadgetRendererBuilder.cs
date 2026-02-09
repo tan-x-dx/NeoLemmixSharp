@@ -48,10 +48,7 @@ public sealed class GadgetRendererBuilder
 
     private static Texture2D LoadSprite(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier)
     {
-        var pngPath = RootDirectoryManager.GetCorrespondingGadgetPngFilePath(styleIdentifier, pieceIdentifier);
-
         return TextureCache.GetOrLoadTexture(
-            pngPath,
             styleIdentifier,
             pieceIdentifier,
             TextureType.GadgetSprite);

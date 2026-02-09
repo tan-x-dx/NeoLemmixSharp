@@ -133,11 +133,19 @@ internal sealed class TerrainReader : NeoLemmixDataReader
             _currentTerrainData.FlipVertically,
             _currentTerrainData.Rotate);
 
+        var styleIdentifier = new StyleIdentifier(_currentTerrainData.Style);
+        var pieceIdentifier = new PieceIdentifier(_currentTerrainData.TerrainPiece);
+
+        var terrainTexture = TextureCache.GetOrLoadTexture(
+            styleIdentifier,
+            pieceIdentifier,
+            TextureType.TerrainSprite);
+
         var newTerrainData = new TerrainInstanceData
         {
             GroupName = _currentTerrainData.GroupName,
-            StyleIdentifier = new StyleIdentifier(_currentTerrainData.Style),
-            PieceIdentifier = new PieceIdentifier(_currentTerrainData.TerrainPiece),
+            StyleIdentifier = styleIdentifier,
+            PieceIdentifier = pieceIdentifier,
 
             Position = new Point(_currentTerrainData.X, _currentTerrainData.Y),
 
@@ -149,8 +157,8 @@ internal sealed class TerrainReader : NeoLemmixDataReader
             Tint = Color.White,
             HueAngle = 0,
 
-            Width = _currentTerrainData.Width,
-            Height = _currentTerrainData.Height,
+            Width = _currentTerrainData.Width == -1 ? terrainTexture.Width : _currentTerrainData.Width,
+            Height = _currentTerrainData.Height == -1 ? terrainTexture.Height : _currentTerrainData.Height,
         };
 
         _allTerrainData.Add(newTerrainData);
@@ -162,7 +170,7 @@ internal sealed class TerrainReader : NeoLemmixDataReader
     {
         public string? GroupName;
         public string? Style;
-        public string TerrainPiece;
+        public string TerrainPiece = null!;
 
         public int X;
         public int Y;
@@ -174,7 +182,11 @@ internal sealed class TerrainReader : NeoLemmixDataReader
         public bool NoOverwrite;
         public bool Erase;
 
-        public int Width;
-        public int Height;
+        public int Width = -1;
+        public int Height = -1;
+
+        public TempTerrainData()
+        {            
+        }
     }
 }

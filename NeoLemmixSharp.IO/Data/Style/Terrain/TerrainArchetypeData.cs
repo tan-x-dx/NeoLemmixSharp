@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Util;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.IO.Data.Style.Terrain;
@@ -37,7 +36,7 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData, IArchetypeData
        PieceIdentifier pieceIdentifier,
        string textureFilePath)
     {
-        var texture = ReadWriteHelpers.GetOrLoadTerrainTexture(styleIdentifier, pieceIdentifier, textureFilePath);
+        var texture = TextureCache.GetOrLoadTexture(styleIdentifier, pieceIdentifier, TextureType.TerrainSprite);
 
         return new()
         {

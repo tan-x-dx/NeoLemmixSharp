@@ -2,7 +2,6 @@
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
-using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat.Readers;
 
@@ -132,7 +131,7 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 
     private RectangularRegion GetNineSliceData()
     {
-        var texture = ReadWriteHelpers.GetOrLoadTerrainTexture(_styleIdentifier, _terrainPieceIdentifier, _terrainPieceFilePath);
+        var texture = TextureCache.GetOrLoadTexture(_styleIdentifier, _terrainPieceIdentifier, TextureType.TerrainSprite);
 
         var nineSliceWidth = texture.Width - (_nineSliceRight + _nineSliceLeft);
         var nineSliceHeight = texture.Height - (_nineSliceBottom + _nineSliceTop);
