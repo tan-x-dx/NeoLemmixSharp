@@ -17,6 +17,38 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
     private readonly List<CanvasPiece> _gadgetPieces = new(IoConstants.AssumedNumberOfGadgetInstanceDataInLevel);
     private readonly List<CanvasPiece> _preplacedLemmingPieces = [];
 
+    private RectangularRegion GetPieceClampBounds()
+    {
+        var levelSize = _levelData.LevelDimensions;
+        var bottomRightPosition = new Point(
+            levelSize.W + LevelEditorConstants.LevelOuterBoundarySize,
+            levelSize.H + LevelEditorConstants.LevelOuterBoundarySize);
+
+        return new RectangularRegion(
+            LevelEditorConstants.InverseRenderOffset,
+            bottomRightPosition);
+    }
+
+    private void RecreatePieces()
+    {
+        PopulatePieceList(_terrainPieces, _levelData.AllTerrainInstanceData);
+        PopulatePieceList(_gadgetPieces, _levelData.AllGadgetInstanceData);
+        PopulatePieceList(_preplacedLemmingPieces, _levelData.PrePlacedLemmingData);
+
+        return;
+
+        void PopulatePieceList(List<CanvasPiece> pieceList, IEnumerable<IInstanceData> list)
+        {
+            pieceList.Clear();
+            pieceList.EnsureCapacity(list.Count());
+            foreach (var instanceData in list)
+            {
+                pieceList.Add(new CanvasPiece(instanceData));
+            }
+            FixPiecePositions(pieceList);
+        }
+    }
+
     public void AddTerrainPiece(TerrainArchetypeData terrainArchetypeData)
     {
         var defaultArchetypeSize = terrainArchetypeData.DefaultSize;
@@ -80,18 +112,20 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
         throw new NotImplementedException();
     }
 
-    private void ReorderAllPieces()
+    private void RenumberAllPieces()
     {
-        ReorderPieces(_gadgetPieces);
-        ReorderPieces(_terrainPieces);
-        ReorderPieces(_preplacedLemmingPieces);
-    }
+        RenumberPieces(_gadgetPieces);
+        RenumberPieces(_terrainPieces);
+        RenumberPieces(_preplacedLemmingPieces);
 
-    private static void ReorderPieces(List<CanvasPiece> canvasPieces)
-    {
-        for (var i = 0; i < canvasPieces.Count; i++)
+        return;
+
+        static void RenumberPieces(List<CanvasPiece> canvasPieces)
         {
-            canvasPieces[i].PieceOrder = i;
+            for (var i = 0; i < canvasPieces.Count; i++)
+            {
+                canvasPieces[i].PieceOrder = i;
+            }
         }
     }
 
@@ -138,23 +172,23 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
             return selectedPiece;
 
         return null;
-    }
 
-    private bool TrySelectSingleItemInList(List<CanvasPiece> pieces, [MaybeNullWhen(false)] out CanvasPiece selectedPiece)
-    {
-        for (int i = pieces.Count - 1; i >= 0; i--)
+        bool TrySelectSingleItemInList(List<CanvasPiece> pieces, [MaybeNullWhen(false)] out CanvasPiece selectedPiece)
         {
-            var piece = pieces[i];
-
-            if (piece.ContainsPoint(_canvasMouseDownPosition))
+            for (int i = pieces.Count - 1; i >= 0; i--)
             {
-                selectedPiece = piece;
-                return true;
-            }
-        }
+                var piece = pieces[i];
 
-        selectedPiece = null;
-        return false;
+                if (piece.ContainsPoint(_canvasMouseDownPosition))
+                {
+                    selectedPiece = piece;
+                    return true;
+                }
+            }
+
+            selectedPiece = null;
+            return false;
+        }
     }
 
     private void TrySelectMultipleItems(RectangularRegion clickDragBounds)
@@ -164,16 +198,18 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
         TrySelectMultipleItemsFromList(clickDragBounds, _preplacedLemmingPieces);
         TrySelectMultipleItemsFromList(clickDragBounds, _gadgetPieces);
         TrySelectMultipleItemsFromList(clickDragBounds, _terrainPieces);
-    }
 
-    private void TrySelectMultipleItemsFromList(RectangularRegion clickDragBounds, List<CanvasPiece> pieces)
-    {
-        foreach (var piece in pieces)
+        return;
+
+        void TrySelectMultipleItemsFromList(RectangularRegion clickDragBounds, List<CanvasPiece> pieces)
         {
-            var pieceBounds = piece.GetBounds();
-            if (clickDragBounds.Overlaps(pieceBounds))
+            foreach (var piece in pieces)
             {
-                _selectedCanvasPieces.Add(piece);
+                var pieceBounds = piece.GetBounds();
+                if (clickDragBounds.Overlaps(pieceBounds))
+                {
+                    _selectedCanvasPieces.Add(piece);
+                }
             }
         }
     }

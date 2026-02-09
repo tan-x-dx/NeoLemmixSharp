@@ -36,10 +36,10 @@ public sealed class LevelEditorTerrainPainter
         var rawColors = _terrainPainter.TerrainColors;
         var levelDimensions = _levelData.LevelDimensions;
         int x;
-        int y = levelDimensions.H + LevelEditorConstants.LevelOuterBoundarySize + 1;
+        int y = levelDimensions.H + LevelEditorConstants.LevelOuterBoundarySize;
         Point p;
 
-        for (x = levelDimensions.W + 1; x >= -1; x--)
+        for (x = levelDimensions.W; x >= -1; x--)
         {
             p = new Point(x + LevelEditorConstants.LevelOuterBoundarySize, LevelEditorConstants.LevelOuterBoundarySize - 1);
             RenderingHelpers.Negate(ref rawColors[p]);
@@ -48,9 +48,9 @@ public sealed class LevelEditorTerrainPainter
             RenderingHelpers.Negate(ref rawColors[p]);
         }
 
-        x = levelDimensions.W + LevelEditorConstants.LevelOuterBoundarySize + 1;
+        x = levelDimensions.W + LevelEditorConstants.LevelOuterBoundarySize;
 
-        for (y = levelDimensions.H; y >= 0; y--)
+        for (y = levelDimensions.H - 1; y >= 0; y--)
         {
             p = new Point(LevelEditorConstants.LevelOuterBoundarySize - 1, y + LevelEditorConstants.LevelOuterBoundarySize);
             RenderingHelpers.Negate(ref rawColors[p]);

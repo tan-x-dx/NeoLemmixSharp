@@ -61,10 +61,11 @@ public sealed partial class LevelEditorCanvas
 
         _clickDragMode = ClickDragMode.DragPieces;
         var offset = _canvasMouseMovePosition - _canvasMouseDownPosition;
+        var clampBounds = GetPieceClampBounds();
 
         foreach (var piece in _selectedCanvasPieces)
         {
-            piece.Move(offset);
+            piece.Move(offset, clampBounds);
         }
 
         RepaintLevel();
@@ -81,10 +82,7 @@ public sealed partial class LevelEditorCanvas
         }
         else if (_clickDragMode == ClickDragMode.DragPieces)
         {
-            foreach (var piece in _selectedCanvasPieces)
-            {
-                piece.FixPosition();
-            }
+            FixPiecePositions(_selectedCanvasPieces);
         }
 
         _clickDragMode = ClickDragMode.None;
@@ -92,9 +90,18 @@ public sealed partial class LevelEditorCanvas
 
     private void OnMouseExit(Component c, Point screenPosition)
     {
-        _clickDragMode = ClickDragMode.None;
+        OnMouseReleased(c, screenPosition);
         _canvasMouseDownPosition = new Point(-4000, -4000);
         _canvasMouseMovePosition = new Point(-4000, -4000);
+    }
+
+    private void FixPiecePositions(List<CanvasPiece> pieces)
+    {
+        var clampBounds = GetPieceClampBounds();
+        foreach (var piece in pieces)
+        {
+            piece.FixPosition(clampBounds);
+        }
     }
 
     [Pure]

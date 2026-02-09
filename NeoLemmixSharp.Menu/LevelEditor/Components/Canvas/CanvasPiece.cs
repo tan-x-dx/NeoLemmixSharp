@@ -31,7 +31,7 @@ public sealed class CanvasPiece
     public CanvasPiece(IInstanceData instanceData)
     {
         InstanceData = instanceData;
-        FixPosition();
+        _anchorPosition = instanceData.Position;
     }
 
     public void SetPosition(Point position)
@@ -40,14 +40,26 @@ public sealed class CanvasPiece
         _anchorPosition = position;
     }
 
-    public void Move(Point offsetPosition)
+    public void Move(Point offsetPosition, RectangularRegion clampBounds)
     {
         InstanceData.Position = _anchorPosition + offsetPosition;
+        ClampPosition(clampBounds);
     }
 
-    public void FixPosition()
+    public void FixPosition(RectangularRegion clampBounds)
     {
         _anchorPosition = InstanceData.Position;
+        ClampPosition(clampBounds);
+    }
+
+    private void ClampPosition(RectangularRegion clampBounds)
+    {
+        var piecePosition = InstanceData.Position;
+        var pieceSize = InstanceData.Size;
+        var x = Math.Clamp(piecePosition.X, clampBounds.X, clampBounds.X + clampBounds.W - pieceSize.W);
+        var y = Math.Clamp(piecePosition.Y, clampBounds.Y, clampBounds.Y + clampBounds.H - pieceSize.H);
+
+        InstanceData.Position = new Point(x, y);
     }
 
     public bool ContainsPoint(Point point) => GetBounds().Contains(point);

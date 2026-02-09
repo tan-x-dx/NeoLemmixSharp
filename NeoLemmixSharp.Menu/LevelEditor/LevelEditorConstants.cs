@@ -23,4 +23,7 @@ public static class LevelEditorConstants
 
     public const int CanvasMinZoom = 1;
     public const int CanvasMaxZoom = 12;
+
+    public const int BaseSpriteRenderDimension = 80;
+    public const int TileBorderSize = 2;
 }

@@ -38,10 +38,13 @@ public sealed partial class LevelEditorCanvas : Component
     private void OnLevelDataChanged()
     {
         RecreateRenderers();
-        RepaintLevel();
-
         _horizontalBorderBehaviour.SetLevelLength(_levelTexture.Width);
         _verticalBorderBehaviour.SetLevelLength(_levelTexture.Height);
+        OnCanvasResize();
+
+        RecreatePieces();
+        RenumberAllPieces();
+        RepaintLevel();
 
         RecentreViewport();
     }
