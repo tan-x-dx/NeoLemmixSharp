@@ -5,6 +5,7 @@ using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Color = Microsoft.Xna.Framework.Color;
 
@@ -19,13 +20,14 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
     public void AddTerrainPiece(TerrainArchetypeData terrainArchetypeData)
     {
         var defaultArchetypeSize = terrainArchetypeData.DefaultSize;
+        var initialPosition = GetCenterPositionOfViewport() - new Point(defaultArchetypeSize.W / 2, defaultArchetypeSize.H / 2);
 
         var newTerrainData = new TerrainInstanceData()
         {
             GroupName = null,
             StyleIdentifier = terrainArchetypeData.StyleIdentifier,
             PieceIdentifier = terrainArchetypeData.PieceIdentifier,
-            Position = GetCenterPositionOfViewport(),
+            Position = initialPosition,
             Orientation = Orientation.Down,
             FacingDirection = FacingDirection.Right,
             NoOverwrite = false,
@@ -124,25 +126,18 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
         }
     }
 
-    private void TrySelectSingleItem()
+    private CanvasPiece? TrySelectSingleItem()
     {
         if (TrySelectSingleItemInList(_preplacedLemmingPieces, out var selectedPiece))
-        {
-            _selectedCanvasPieces.Add(selectedPiece);
-            return;
-        }
+            return selectedPiece;
 
         if (TrySelectSingleItemInList(_gadgetPieces, out selectedPiece))
-        {
-            _selectedCanvasPieces.Add(selectedPiece);
-            return;
-        }
+            return selectedPiece;
 
         if (TrySelectSingleItemInList(_terrainPieces, out selectedPiece))
-        {
-            _selectedCanvasPieces.Add(selectedPiece);
-            return;
-        }
+            return selectedPiece;
+
+        return null;
     }
 
     private bool TrySelectSingleItemInList(List<CanvasPiece> pieces, [MaybeNullWhen(false)] out CanvasPiece selectedPiece)
@@ -164,6 +159,8 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
 
     private void TrySelectMultipleItems(RectangularRegion clickDragBounds)
     {
+        Debug.Assert(_selectedCanvasPieces.Count == 0);
+
         TrySelectMultipleItemsFromList(clickDragBounds, _preplacedLemmingPieces);
         TrySelectMultipleItemsFromList(clickDragBounds, _gadgetPieces);
         TrySelectMultipleItemsFromList(clickDragBounds, _terrainPieces);

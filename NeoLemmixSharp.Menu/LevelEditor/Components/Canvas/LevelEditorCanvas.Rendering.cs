@@ -20,7 +20,7 @@ public sealed partial class LevelEditorCanvas
         RenderCanvas(spriteBatch);
         RenderSelectedPieces(spriteBatch);
 
-        if (_isPerformingClickDrag)
+        if (_clickDragMode == ClickDragMode.SelectPieces)
         {
             var screenDragBounds = new RectangularRegion(_screenMouseDownPosition, _screenMouseMovePosition);
 
@@ -88,9 +88,7 @@ public sealed partial class LevelEditorCanvas
 
         foreach (var piece in _selectedCanvasPieces)
         {
-            var pieceBounds = piece.GetBounds();
-
-            if (!viewBounds.Overlaps(pieceBounds))
+            if (!piece.OverlapsRegion(viewBounds))
                 continue;
 
             var pieceLocation = piece.Position - viewBounds.Position;

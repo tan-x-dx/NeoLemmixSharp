@@ -48,7 +48,7 @@ public sealed class LevelEditorPage : PageBase
         root.AddComponent(_leftPanel);
         root.AddComponent(_pieceBank);
 
-        var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("dex_brass"), IO.FileFormats.FileFormatType.NeoLemmix));
+        var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), IO.FileFormats.FileFormatType.NeoLemmix));
         SetStyle(styleData);
 
         OnResize();

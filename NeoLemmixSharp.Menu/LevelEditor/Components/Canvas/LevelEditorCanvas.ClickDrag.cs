@@ -15,7 +15,7 @@ public sealed partial class LevelEditorCanvas
 
     private Point _canvasMouseDownPosition;
     private Point _canvasMouseMovePosition;
-    private bool _isPerformingClickDrag;
+    private ClickDragMode _clickDragMode = ClickDragMode.None;
 
     private void OnMouseEnter(Component c, Point screenPosition)
     {
@@ -24,55 +24,75 @@ public sealed partial class LevelEditorCanvas
     private void OnMouseMove(Component c, Point screenPosition)
     {
         _screenMouseMovePosition = screenPosition;
-        if (_isPerformingClickDrag)
-        {
-            _canvasMouseMovePosition = CalculateCanvasMousePosition(screenPosition);
-        }
+        _canvasMouseMovePosition = CalculateCanvasMousePosition(screenPosition);
     }
 
     private void OnMousePressed(Component c, Point screenPosition)
     {
         _screenMouseDownPosition = screenPosition;
         _canvasMouseDownPosition = CalculateCanvasMousePosition(screenPosition);
+        _screenMouseMovePosition = screenPosition;
+        _canvasMouseMovePosition = _canvasMouseDownPosition;
+
+        var pieceBeneathMouse = TrySelectSingleItem();
+        if (pieceBeneathMouse is null)
+        {
+            _selectedCanvasPieces.Clear();
+            _clickDragMode = ClickDragMode.SelectPieces;
+            return;
+        }
+
+        if (_selectedCanvasPieces.Contains(pieceBeneathMouse))
+            return;
+
+        _selectedCanvasPieces.Clear();
+        _selectedCanvasPieces.Add(pieceBeneathMouse);
     }
 
     private void OnMouseHeld(Component c, Point screenPosition)
     {
-        var numberOfFramesLeftClickHasBeenHeldFor = _inputController.LeftMouseButtonAction.NumberOfFramesHeldDownFor;
-
-        if (numberOfFramesLeftClickHasBeenHeldFor >= LevelEditorConstants.CanvasClickDragDelay)
+        var pieceBeneathMouse = TrySelectSingleItem();
+        if (pieceBeneathMouse is null || !_selectedCanvasPieces.Contains(pieceBeneathMouse))
         {
-            BeginClickDrag();
+            _selectedCanvasPieces.Clear();
+            _clickDragMode = ClickDragMode.SelectPieces;
+            return;
         }
+
+        _clickDragMode = ClickDragMode.DragPieces;
+        var offset = _canvasMouseMovePosition - _canvasMouseDownPosition;
+
+        foreach (var piece in _selectedCanvasPieces)
+        {
+            piece.Move(offset);
+        }
+
+        RepaintLevel();
     }
 
     private void OnMouseReleased(Component c, Point screenPosition)
     {
-        if (_isPerformingClickDrag)
+        if (_clickDragMode == ClickDragMode.SelectPieces)
         {
-            EndClickDrag(screenPosition);
-            EvaluateSelection(true);
+            _screenMouseDownPosition = screenPosition;
+            _selectedCanvasPieces.Clear();
+            var clickDragBounds = new RectangularRegion(_canvasMouseDownPosition, _canvasMouseMovePosition);
+            TrySelectMultipleItems(clickDragBounds);
         }
-        else
+        else if (_clickDragMode == ClickDragMode.DragPieces)
         {
-            EvaluateSelection(false);
+            foreach (var piece in _selectedCanvasPieces)
+            {
+                piece.FixPosition();
+            }
         }
-    }
 
-    private void BeginClickDrag()
-    {
-        _isPerformingClickDrag = true;
-    }
-
-    private void EndClickDrag(Point screenPosition)
-    {
-        _isPerformingClickDrag = false;
-        _screenMouseDownPosition = screenPosition;
+        _clickDragMode = ClickDragMode.None;
     }
 
     private void OnMouseExit(Component c, Point screenPosition)
     {
-        _isPerformingClickDrag = false;
+        _clickDragMode = ClickDragMode.None;
         _canvasMouseDownPosition = new Point(-4000, -4000);
         _canvasMouseMovePosition = new Point(-4000, -4000);
     }
@@ -91,18 +111,10 @@ public sealed partial class LevelEditorCanvas
         return new Point(canvasMouseX, canvasMouseY);
     }
 
-    private void EvaluateSelection(bool isClickDrag)
+    private enum ClickDragMode
     {
-        _selectedCanvasPieces.Clear();
-
-        if (isClickDrag)
-        {
-            var clickDragBounds = new RectangularRegion(_canvasMouseDownPosition, _canvasMouseMovePosition);
-            TrySelectMultipleItems(clickDragBounds);
-        }
-        else
-        {
-            TrySelectSingleItem();
-        }
+        None,
+        SelectPieces,
+        DragPieces
     }
 }

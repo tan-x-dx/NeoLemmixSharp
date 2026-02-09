@@ -12,10 +12,11 @@ public sealed class CanvasPiece
 
     public IInstanceData InstanceData { get; }
 
+    private Point _anchorPosition;
     public Point Position => InstanceData.Position;
     public Size Size => InstanceData.Size;
 
-    public RectangularRegion GetBounds() => new(InstanceData.Position, InstanceData.Size);
+    public RectangularRegion GetBounds() => new(_anchorPosition, InstanceData.Size);
 
     public Color GetOutlineColor() => InstanceData switch
     {
@@ -30,16 +31,23 @@ public sealed class CanvasPiece
     public CanvasPiece(IInstanceData instanceData)
     {
         InstanceData = instanceData;
-    }
-
-    public void SetPosition(int x, int y)
-    {
-        InstanceData.Position = new Point(x, y);
+        FixPosition();
     }
 
     public void SetPosition(Point position)
     {
         InstanceData.Position = position;
+        _anchorPosition = position;
+    }
+
+    public void Move(Point offsetPosition)
+    {
+        InstanceData.Position = _anchorPosition + offsetPosition;
+    }
+
+    public void FixPosition()
+    {
+        _anchorPosition = InstanceData.Position;
     }
 
     public bool ContainsPoint(Point point) => GetBounds().Contains(point);

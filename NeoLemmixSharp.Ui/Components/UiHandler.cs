@@ -160,10 +160,7 @@ public sealed class UiHandler : IDisposable
             return;
         }
 
-        if (CurrentSelection == null)
-            return;
-
-        CurrentSelection.InvokeMouseExit(mousePosition);
+        CurrentSelection?.InvokeMouseExit(mousePosition);
 
         CurrentSelection = c;
         CurrentSelection.InvokeMouseEnter(mousePosition);

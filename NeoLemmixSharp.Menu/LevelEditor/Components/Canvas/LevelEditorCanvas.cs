@@ -53,15 +53,15 @@ public sealed partial class LevelEditorCanvas : Component
         Scroll(0, 0);
     }
 
-    public Point GetCenterPositionOfViewport()
+    private Point GetCenterPositionOfViewport()
     {
-        var viewportX = _horizontalBorderBehaviour.ViewportStart;
-        var viewportY = _verticalBorderBehaviour.ViewportStart;
+        var viewportX = _horizontalBorderBehaviour.ViewportStart - LevelEditorConstants.LevelOuterBoundarySize;
+        var viewportY = _verticalBorderBehaviour.ViewportStart - LevelEditorConstants.LevelOuterBoundarySize;
 
         var offsetX = _horizontalBorderBehaviour.ViewportLength / 2;
         var offsetY = _verticalBorderBehaviour.ViewportLength / 2;
 
-        return new Point(viewportX + offsetX - Left, viewportY + offsetY - Top);
+        return new Point(viewportX + offsetX, viewportY + offsetY);
     }
 
     public void HandleUserInput(MenuInputController inputController)
@@ -69,7 +69,7 @@ public sealed partial class LevelEditorCanvas : Component
         if (!ContainsPoint(inputController.MousePosition))
             return;
 
-        if (inputController.ScrollDelta != 0)
+        if (inputController.ScrollDelta != 0 && _clickDragMode == ClickDragMode.None)
             Zoom(inputController.ScrollDelta);
 
         var scrollDelta = CalculateArrowKeyScrollDelta(inputController);

@@ -55,14 +55,14 @@ public static class RenderingHelpers
             CommonSprites.RectangleForWhitePixelAlpha(0xff),
             color);
 
-        var bottom = new Rectangle(destinationRectangle.Left, destinationRectangle.Top + destinationRectangle.Height, destinationRectangle.Width, 1);
+        var bottom = new Rectangle(destinationRectangle.Left, destinationRectangle.Top + destinationRectangle.Height - 1, destinationRectangle.Width, 1);
         spriteBatch.Draw(
             CommonSprites.WhitePixelGradientSprite,
             bottom,
             CommonSprites.RectangleForWhitePixelAlpha(0xff),
             color);
 
-        var right = new Rectangle(destinationRectangle.Left + destinationRectangle.Width, destinationRectangle.Top, 1, destinationRectangle.Height);
+        var right = new Rectangle(destinationRectangle.Left + destinationRectangle.Width - 1, destinationRectangle.Top, 1, destinationRectangle.Height);
         spriteBatch.Draw(
             CommonSprites.WhitePixelGradientSprite,
             right,
