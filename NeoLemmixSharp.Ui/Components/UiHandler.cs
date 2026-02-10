@@ -8,7 +8,7 @@ public sealed class UiHandler : IDisposable
 {
     private readonly InputController _inputController;
 
-    internal static UiHandler Instance { get; private set; } = null!;
+    internal InputController InputController => _inputController;
 
     public Component? CurrentSelection { get; private set; }
     public TextField? SelectedTextField
@@ -28,8 +28,6 @@ public sealed class UiHandler : IDisposable
     {
         RootComponent = new Tab(0, 0, 0, 0);
         _inputController = inputController;
-
-        Instance = this;
     }
 
     public void Render(SpriteBatch spriteBatch) => RootComponent.Render(spriteBatch);
@@ -179,7 +177,6 @@ public sealed class UiHandler : IDisposable
     public void Dispose()
     {
         RootComponent.Dispose();
-        Instance = null!;
         GC.SuppressFinalize(this);
     }
 }

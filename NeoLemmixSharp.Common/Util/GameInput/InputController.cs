@@ -29,6 +29,14 @@ public sealed class InputController :
     public InputAction MouseButton4Action { get; }
     public InputAction MouseButton5Action { get; }
 
+    private KeyboardInputType _keyboardInputType;
+    private KeyboardInputModifiers _inputModifiers;
+    private int _numberOfFramesThisKeyHasBeenPressed;
+    private char _keyboardChar;
+    public bool _capsLock;
+
+    public KeyboardInput LatestKeyboardInput() => new(_keyboardInputType, _inputModifiers, _numberOfFramesThisKeyHasBeenPressed, _keyboardChar, _capsLock);
+
     public BitArrayEnumerable<InputController, Keys> CurrentlyPressedKeys => _currentlyPressedKeys.AsEnumerable();
     public BitArrayEnumerable<InputController, Keys> CurrentlyHeldKeys => _heldKeys.AsEnumerable();
     public BitArrayEnumerable<InputController, Keys> JustReleasedKeys => _releasedKeys.AsEnumerable();
@@ -83,6 +91,7 @@ public sealed class InputController :
 
         UpdateKeyStates();
         UpdateMouseButtonStates();
+        EvaluateCurrentKeyboardInput();
     }
 
     public void ClearAllInputActions()
@@ -105,6 +114,8 @@ public sealed class InputController :
         // in the same way as a BitArraySet would do.
         // Just copy it in...
         var keyBoardState = Keyboard.GetState();
+        _capsLock = keyBoardState.CapsLock;
+
         var keysSpan = Helpers.CreateReadOnlySpan<uint>(&keyBoardState, KeysBitBuffer.KeysBitBufferLength);
 
         _previouslyPressedKeys.SetFrom(_currentlyPressedKeys);
@@ -132,6 +143,71 @@ public sealed class InputController :
 
         MouseButton4Action.ActionState |= (ulong)mouseState.XButton1;
         MouseButton5Action.ActionState |= (ulong)mouseState.XButton2;
+    }
+
+    private void EvaluateCurrentKeyboardInput()
+    {
+        if (_currentlyPressedKeys.Count == 0)
+            goto BlankOutCharData;
+
+        var uniqueKeyboardInputType = KeyboardInputType.None;
+        var inputModifiers = KeyboardInputModifiers.None;
+        var uniqueChar = (char)0;
+
+        foreach (var key in _currentlyPressedKeys)
+        {
+            if (key == Keys.LeftShift || key == Keys.RightShift)
+            {
+                inputModifiers |= KeyboardInputModifiers.Shift;
+                continue;
+            }
+            if (key == Keys.LeftControl || key == Keys.RightControl)
+            {
+                inputModifiers |= KeyboardInputModifiers.Ctrl;
+                continue;
+            }
+            if (key == Keys.LeftAlt || key == Keys.RightAlt)
+            {
+                inputModifiers |= KeyboardInputModifiers.Alt;
+                continue;
+            }
+
+            var currentKeyboardInputType = KeyboardHelpers.GetKeyboardInputType(key);
+            if (uniqueKeyboardInputType != KeyboardInputType.None)
+            {
+                if (_previouslyPressedKeys.Contains(key))
+                    continue;
+
+                goto BlankOutCharData;
+            }
+
+            uniqueKeyboardInputType = currentKeyboardInputType;
+            if (currentKeyboardInputType != KeyboardInputType.Character)
+                continue;
+
+            uniqueChar = KeyboardHelpers.GetCharFromKey(key);
+        }
+
+        if (_keyboardInputType == uniqueKeyboardInputType &&
+            _inputModifiers == inputModifiers &&
+            _keyboardChar == uniqueChar)
+        {
+            _numberOfFramesThisKeyHasBeenPressed++;
+            return;
+        }
+
+        _keyboardInputType = uniqueKeyboardInputType;
+        _inputModifiers = inputModifiers;
+        _numberOfFramesThisKeyHasBeenPressed = 1;
+        _keyboardChar = uniqueChar;
+
+        return;
+
+    BlankOutCharData:
+        _keyboardInputType = KeyboardInputType.None;
+        _inputModifiers = KeyboardInputModifiers.None;
+        _numberOfFramesThisKeyHasBeenPressed = 0;
+        _keyboardChar = (char)0;
     }
 
     /// <summary>
