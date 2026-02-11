@@ -23,7 +23,7 @@ public sealed class LevelEditorTerrainPainter
     public void RepaintTerrain()
     {
         var rawColors = _terrainPainter.TerrainColors;
-        new Span<Color>(rawColors.Array).Fill(Color.Black);
+        new Span<Color>(rawColors.Array).Fill(Color.Transparent);
         _terrainPainter.PaintTerrain();
 
         DrawLevelSpaceBoundary();

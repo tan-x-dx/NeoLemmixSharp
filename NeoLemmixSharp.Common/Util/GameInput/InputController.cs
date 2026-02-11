@@ -81,6 +81,10 @@ public sealed class InputController :
             keyAction.UpdateState();
         }
 
+        UpdateKeyStates();
+        UpdateMouseButtonStates();
+        EvaluateCurrentKeyboardInput();
+
         foreach (var keyToInputMapping in _keyMapping)
         {
             if (_currentlyPressedKeys.Contains(keyToInputMapping.Key))
@@ -88,10 +92,6 @@ public sealed class InputController :
                 keyToInputMapping.InputAction.DoPress();
             }
         }
-
-        UpdateKeyStates();
-        UpdateMouseButtonStates();
-        EvaluateCurrentKeyboardInput();
     }
 
     public void ClearAllInputActions()

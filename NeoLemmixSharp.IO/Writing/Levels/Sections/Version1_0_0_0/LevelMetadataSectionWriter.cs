@@ -96,6 +96,6 @@ internal sealed class LevelMetadataSectionWriter : LevelDataSectionWriter
 
         var positionAfterWritingBackgroundData = writer.Position;
 
-        FileWritingException.WriterAssert(positionAfterWritingBackgroundData - previousPosition == 4, "Need to write exactly FOUR bytes when processing background data!");
+        FileWritingException.WriterAssert(positionAfterWritingBackgroundData - previousPosition == 5, "Need to write exactly FIVE bytes when processing background data!");
     }
 }

@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
@@ -15,8 +16,8 @@ namespace NeoLemmixSharp.Menu.LevelEditor;
 
 public sealed class LevelEditorPage : PageBase
 {
-    private LevelEditorMenuBar _topPanel;
-    private LevelEditorControlPanel _leftPanel;
+    private LevelEditorMenuBar _menuBar;
+    private LevelEditorControlPanel _controlPanel;
     private LevelEditorCanvas _levelCanvas;
     private PieceBank _pieceBank;
 
@@ -29,8 +30,8 @@ public sealed class LevelEditorPage : PageBase
 
     public LevelEditorPage(MenuInputController menuInputController, GraphicsDevice graphicsDevice) : base(menuInputController)
     {
-        _topPanel = new LevelEditorMenuBar();
-        _leftPanel = new LevelEditorControlPanel(UiHandler);
+        _menuBar = new LevelEditorMenuBar();
+        _controlPanel = new LevelEditorControlPanel(UiHandler);
         _levelCanvas = new LevelEditorCanvas(graphicsDevice, menuInputController.InputController);
         _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 
@@ -44,12 +45,14 @@ public sealed class LevelEditorPage : PageBase
         var root = UiHandler.RootComponent;
         root.IsVisible = false;
         root.AddComponent(_levelCanvas);
-        root.AddComponent(_topPanel);
-        root.AddComponent(_leftPanel);
+        root.AddComponent(_menuBar);
+        root.AddComponent(_controlPanel);
         root.AddComponent(_pieceBank);
 
-        var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), IO.FileFormats.FileFormatType.NeoLemmix));
-        SetStyle(styleData);
+        LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\Amiga Lemmings\Lemmings\Tricky\04_Here's_one_I_prepared_earlier.nxlv");
+
+       // var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), IO.FileFormats.FileFormatType.NeoLemmix));
+       // SetStyle(styleData);
 
         OnResize();
     }
@@ -57,6 +60,7 @@ public sealed class LevelEditorPage : PageBase
     private void SetLevelData(LevelData levelData)
     {
         _currentLevelData = levelData;
+        _controlPanel.SetLevelData(levelData);
         _levelCanvas.SetLevelData(levelData);
     }
 
@@ -69,22 +73,22 @@ public sealed class LevelEditorPage : PageBase
     {
         var windowSize = IGameWindow.Instance.WindowSize;
 
-        _topPanel.Left = 0;
-        _topPanel.Top = 0;
-        _topPanel.Width = windowSize.W;
+        _menuBar.Left = 0;
+        _menuBar.Top = 0;
+        _menuBar.Width = windowSize.W;
 
-        _leftPanel.Left = 0;
-        _leftPanel.Top = _topPanel.Height;
-        _leftPanel.Height = windowSize.H - _topPanel.Height - _pieceBank.Height;
+        _controlPanel.Left = 0;
+        _controlPanel.Top = _menuBar.Height;
+        _controlPanel.Height = windowSize.H - _menuBar.Height - _pieceBank.Height;
 
         _pieceBank.Left = 0;
         _pieceBank.Top = windowSize.H - _pieceBank.Height;
         _pieceBank.Width = windowSize.W;
 
-        _levelCanvas.Left = _leftPanel.Width;
-        _levelCanvas.Top = _topPanel.Height;
-        _levelCanvas.Width = windowSize.W - _leftPanel.Width;
-        _levelCanvas.Height = windowSize.H - _topPanel.Height - _pieceBank.Height;
+        _levelCanvas.Left = _controlPanel.Width;
+        _levelCanvas.Top = _menuBar.Height;
+        _levelCanvas.Width = windowSize.W - _controlPanel.Width;
+        _levelCanvas.Height = windowSize.H - _menuBar.Height - _pieceBank.Height;
 
         _levelCanvas.OnCanvasResize();
         _pieceBank.OnResize();
@@ -99,6 +103,11 @@ public sealed class LevelEditorPage : PageBase
 
         _levelCanvas.HandleUserInput(InputController);
         _pieceBank.HandleUserInput(InputController);
+
+        if (InputController.F1.IsPressed)
+        {
+            SaveLevel(@"C:\Temp\TestLevel.ullv");
+        }
     }
 
     private void SetStyle(StyleData styleData)
@@ -134,8 +143,8 @@ public sealed class LevelEditorPage : PageBase
 
         MenuScreen.Instance.MenuScreenRenderer.RenderBackground = true;
 
-        _topPanel = null!;
-        _leftPanel = null!;
+        _menuBar = null!;
+        _controlPanel = null!;
         _levelCanvas = null!;
         _pieceBank = null!;
     }
@@ -167,12 +176,28 @@ public sealed class LevelEditorPage : PageBase
 
     }
 
-    private static LevelData CreateBlankLevelData()
+    private LevelData CreateBlankLevelData()
     {
         var result = new LevelData(IO.FileFormats.FileFormatType.NeoLemmix);
         result.SetLevelWidth(320);
         result.SetLevelHeight(160);
         result.LevelId = new LevelIdentifier((ulong)Random.Shared.NextInt64());
+        result.LevelStyle = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), IO.FileFormats.FileFormatType.NeoLemmix)).Identifier;
+        result.MaxNumberOfClonedLemmings = 0;
+
+        var objective = new LevelObjectiveData()
+        {
+            ObjectiveName = "Save Lemmings",
+
+            SkillSetData = [],
+            ObjectiveCriteria = [new SaveLemmingsCriterionData { SaveRequirement = 40, TribeId = 0 }],
+            ObjectiveModifiers = [],
+            TalismanData = []
+        };
+
+        result.SetObjectiveData(objective);
+
+        result.TribeIdentifiers.Add(new(result.LevelStyle, 0));
 
         return result;
     }
