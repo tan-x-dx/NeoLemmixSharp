@@ -9,8 +9,8 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 
 public sealed class PieceBank : Component, IComparer<PieceSelector>
 {
-    private const int InitialPieceOffset = UiConstants.TwiceStandardInset + PieceSelector.BaseSpriteRenderDimension;
-    private const int PieceOffsetDelta = UiConstants.StandardInset + PieceSelector.BaseSpriteRenderDimension;
+    private const int InitialPieceOffset = UiConstants.TwiceStandardInset + LevelEditorConstants.BaseSpriteRenderDimension;
+    private const int PieceOffsetDelta = UiConstants.StandardInset + LevelEditorConstants.BaseSpriteRenderDimension;
 
     private readonly List<PieceSelector> _terrainPieces = [];
     private readonly List<PieceSelector> _gadgetPieces = [];
@@ -33,7 +33,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
         _onSelectGadgetPiece = onSelectGadgetPiece;
         _onSelectBackgroundPiece = onSelectBackgroundPiece;
 
-        Height = PieceSelector.BaseSpriteRenderDimension + 32;
+        Height = LevelEditorConstants.BaseSpriteRenderDimension + 32;
     }
 
     public void SetStyle(StyleData styleData)
@@ -191,9 +191,8 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             var effectiveIndex = Helpers.LogicalMod(i + _scrollIndex, currentlyDisplayedItems.Count);
             var piece = currentlyDisplayedItems[effectiveIndex];
             piece.IsVisible = i < _numberOfPiecesToDisplay;
-            piece.Top = Bottom - (PieceSelector.BaseSpriteRenderDimension + UiConstants.StandardInset);
+            piece.Top = Bottom - (LevelEditorConstants.BaseSpriteRenderDimension + UiConstants.StandardInset);
             piece.Left = Left + InitialPieceOffset + (i * PieceOffsetDelta);
-
         }
     }
 

@@ -14,13 +14,10 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 
 public sealed class PieceSelector : Component
 {
-    public const int BaseSpriteRenderDimension = 80;
-    private const int TileBorderSize = 2;
-
     public IArchetypeData StylePiece { get; }
     private readonly Texture2D _sourceTexture;
 
-    public PieceSelector(IArchetypeData piece) : base(0, 0, BaseSpriteRenderDimension, BaseSpriteRenderDimension, piece.PieceIdentifier.ToString())
+    public PieceSelector(IArchetypeData piece) : base(0, 0, LevelEditorConstants.BaseSpriteRenderDimension, LevelEditorConstants.BaseSpriteRenderDimension, piece.PieceIdentifier.ToString())
     {
         StylePiece = piece;
         _sourceTexture = TextureCache.GetOrLoadTexture(piece.TextureFilePath, piece.StyleIdentifier, piece.PieceIdentifier, piece.TextureType);
@@ -58,14 +55,22 @@ public sealed class PieceSelector : Component
 
     private void RenderTile(SpriteBatch spriteBatch)
     {
-        var p = Position - new Point(TileBorderSize, TileBorderSize);
-        var s = new Size(BaseSpriteRenderDimension + TileBorderSize, BaseSpriteRenderDimension + TileBorderSize);
+        var p = Position - new Point(
+            LevelEditorConstants.TileBorderSize,
+            LevelEditorConstants.TileBorderSize);
+        var s = new Size(
+            LevelEditorConstants.BaseSpriteRenderDimension + LevelEditorConstants.TileBorderSize,
+            LevelEditorConstants.BaseSpriteRenderDimension + LevelEditorConstants.TileBorderSize);
+
         var fillRectangle = Helpers.CreateRectangle(p, s);
 
         spriteBatch.FillRect(fillRectangle, new Color(0xff696969));
 
         p = Position;
-        s = new Size(BaseSpriteRenderDimension, BaseSpriteRenderDimension);
+        s = new Size(
+            LevelEditorConstants.BaseSpriteRenderDimension,
+            LevelEditorConstants.BaseSpriteRenderDimension);
+
         fillRectangle = Helpers.CreateRectangle(p, s);
 
         spriteBatch.FillRect(fillRectangle, Color.Black);
@@ -93,9 +98,9 @@ public sealed class PieceSelector : Component
 
         static void DetermineRenderSizes(int textureLength, out Interval sourceInterval, out Interval destinationInterval)
         {
-            var delta = (textureLength - BaseSpriteRenderDimension) / 2;
+            var delta = (textureLength - LevelEditorConstants.BaseSpriteRenderDimension) / 2;
 
-            if (textureLength <= BaseSpriteRenderDimension)
+            if (textureLength <= LevelEditorConstants.BaseSpriteRenderDimension)
             {
                 delta = -delta;
                 sourceInterval = new Interval(0, textureLength);
@@ -103,8 +108,8 @@ public sealed class PieceSelector : Component
             }
             else
             {
-                sourceInterval = new Interval(delta, BaseSpriteRenderDimension);
-                destinationInterval = new Interval(0, BaseSpriteRenderDimension);
+                sourceInterval = new Interval(delta, LevelEditorConstants.BaseSpriteRenderDimension);
+                destinationInterval = new Interval(0, LevelEditorConstants.BaseSpriteRenderDimension);
             }
         }
     }

@@ -71,9 +71,13 @@ public sealed class BoundaryBehaviour
     public int MouseScreenCoordinate => _mouseScreenCoordinate;
 
     [Pure]
-    public ReadOnlySpan<ViewPortRenderInterval> GetRenderViewPortIntervals() => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<ViewPortRenderIntervalBuffer, ViewPortRenderInterval>(ref Unsafe.AsRef(in _viewPortRenderIntervalBuffer)), _viewPortSpanLength);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadOnlySpan<ViewPortRenderInterval> GetRenderViewPortIntervals() => MemoryMarshal.CreateReadOnlySpan(
+        ref Unsafe.As<ViewPortRenderIntervalBuffer, ViewPortRenderInterval>(ref Unsafe.AsRef(in _viewPortRenderIntervalBuffer)), _viewPortSpanLength);
     [Pure]
-    public ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals() => MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<ScreenRenderIntervalBuffer, ScreenRenderInterval>(ref Unsafe.AsRef(in _screenRenderIntervalBuffer)), _screenSpanLength);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadOnlySpan<ScreenRenderInterval> GetScreenRenderIntervals() => MemoryMarshal.CreateReadOnlySpan(
+        ref Unsafe.As<ScreenRenderIntervalBuffer, ScreenRenderInterval>(ref Unsafe.AsRef(in _screenRenderIntervalBuffer)), _screenSpanLength);
 
     public BoundaryBehaviour(
         DimensionType dimensionType,
@@ -157,32 +161,35 @@ public sealed class BoundaryBehaviour
     [Pure]
     public bool IntervalContainsPoint(Interval interval, int n)
     {
-        // Shift both inputs over by the same amount
-        // This does not change whether or not they intersect
+        // If we were to shift both inputs over by the same amount,
+        // this would not change whether or not they intersect
+        // We can be lazy and only move the int parameter
         n -= interval.Start;
 
-        // The interval now starts at zero, simplifying a check
-        // If the point is smaller than the interval length, they intersect in all cases
+        // Pretend the interval now starts at zero, simplifying a check
+        // If this check succeeds, the interval contains the point in all cases
         if (n >= 0 && n < interval.Length)
             return true;
 
-        // By this point, the inputs definitely do not overlap for the Void type
+        // Here, for the Void type the interval definitely does not contain the point
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
         n = NormaliseWrap(n);
-        // Save a check since normalisation implies n >= 0 anyway
+
+        // After normalisation, n >= 0, so skip a check
         return n < interval.Length;
     }
 
     [Pure]
     public bool IntervalsOverlap(Interval i1, Interval i2)
     {
-        // Shift both intervals over by the same amount
-        // This does not change whether or not they intersect
+        // If we were to shift both intervals over by the same amount,
+        // this would not change whether or not they intersect
+        // We can be lazy and only "move" the second interval
 
         // This variable corresponds to the start point of the second interval
-        // The first interval now starts at zero, simplifying a check
+        // Pretend the first interval now starts at zero, simplifying a check
         var s = i2.Start - i1.Start;
 
         // If this check succeeds, the intervals intersect in all cases

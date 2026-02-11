@@ -5,7 +5,6 @@ using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
@@ -78,40 +77,45 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
     private void ReadBackgroundData(RawLevelFileDataReader reader, LevelData levelData)
     {
-        const int NumberOfBytesWrittenForBackgroundData =
-            1 + // Enum specifier
-            4; // Four bytes for actual data, padding with zeros where necessary
+        uint rawBackgroundType = reader.Read8BitUnsignedInteger();
 
-        var rawBytes = reader.ReadBytes(NumberOfBytesWrittenForBackgroundData);
+        var backgroundType = BackgroundTypeHelpers.GetEnumValue(rawBackgroundType);
 
-        int rawBackgroundType = rawBytes.At(0);
-        var backgroundType = (BackgroundType)rawBackgroundType;
+        var previousPosition = reader.Position; 
 
         levelData.LevelBackground = backgroundType switch
         {
-            BackgroundType.NoBackgroundSpecified => ReadNoBackgroundData(rawBytes),
-            BackgroundType.SolidColorBackground => ReadSolidColorBackgroundData(rawBytes),
-            BackgroundType.TextureBackground => ReadTextureBackgroundData(rawBytes),
+            BackgroundType.NoBackgroundSpecified => ReadNoBackgroundData(),
+            BackgroundType.SolidColorBackground => ReadSolidColorBackgroundData(),
+            BackgroundType.TextureBackground => ReadTextureBackgroundData(),
 
             _ => Helpers.ThrowUnknownEnumValueException<BackgroundType, BackgroundData?>(backgroundType)
         };
 
+        var positionAfterReadingBackgroundData = reader.Position;
+
+        FileReadingException.ReaderAssert(positionAfterReadingBackgroundData - previousPosition == 4, "Need to read exactly FOUR bytes when processing background data!");
+
         return;
 
-        static BackgroundData? ReadNoBackgroundData(ReadOnlySpan<byte> rawBytes)
+        // Aways read four bytes for actual data, discarding unnecessary bytes where relevant
+
+        BackgroundData? ReadNoBackgroundData()
         {
+            reader.ReadBytes(4);
             return null;
         }
 
-        static BackgroundData ReadSolidColorBackgroundData(ReadOnlySpan<byte> rawBytes)
+        BackgroundData ReadSolidColorBackgroundData()
         {
-            return new BackgroundData(ReadWriteHelpers.ReadArgbBytes(rawBytes[1..]));
+            var color = reader.ReadArgbColor();
+            return new BackgroundData(color);
         }
 
-        BackgroundData ReadTextureBackgroundData(ReadOnlySpan<byte> rawBytes)
+        BackgroundData ReadTextureBackgroundData()
         {
-            ushort backgroundStringId = Unsafe.ReadUnaligned<ushort>(in rawBytes.At(1));
-
+            int backgroundStringId = reader.Read16BitUnsignedInteger();
+            reader.Read16BitUnsignedInteger();
             return new BackgroundData(_stringIdLookup[backgroundStringId]);
         }
     }

@@ -70,8 +70,41 @@ public static class TextureCache
         return texture;
     }
 
+    public static Texture2D GetOrLoadTexture(
+        StyleIdentifier styleIdentifier,
+        PieceIdentifier pieceIdentifier,
+        TextureType textureType)
+    {
+        var key = new TextureTypeKey(styleIdentifier, pieceIdentifier, textureType);
+
+        ref var textureUsageData = ref CollectionsMarshal.GetValueRefOrAddDefault(LongLivedTextures, key, out var exists);
+
+        var texture = exists
+            ? textureUsageData.Texture
+            : LoadTexture(styleIdentifier, pieceIdentifier, textureType);
+
+        textureUsageData = new TextureUsageData(texture);
+
+        return texture;
+    }
+
     private static Texture2D LoadTexture(string filePath)
     {
+        return Texture2D.FromFile(GraphicsDevice, filePath);
+    }
+
+    private static Texture2D LoadTexture(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier, TextureType textureType)
+    {
+        var filePath = textureType switch
+        {
+            TextureType.LemmingSprite => throw new NotImplementedException(),
+            TextureType.GadgetSprite => RootDirectoryManager.GetCorrespondingGadgetPngFilePath(styleIdentifier, pieceIdentifier),
+            TextureType.TerrainSprite => RootDirectoryManager.GetCorrespondingTerrainPngFilePath(styleIdentifier, pieceIdentifier),
+            TextureType.Background => throw new NotImplementedException(),
+
+            _ => Helpers.ThrowUnknownEnumValueException<TextureType, string>(textureType),
+        };
+
         return Texture2D.FromFile(GraphicsDevice, filePath);
     }
 

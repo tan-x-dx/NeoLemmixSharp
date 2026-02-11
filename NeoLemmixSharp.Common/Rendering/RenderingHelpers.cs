@@ -36,6 +36,40 @@ public static class RenderingHelpers
             color);
     }
 
+    public static void DrawRect(
+        this SpriteBatch spriteBatch,
+        Rectangle destinationRectangle,
+        Color color)
+    {
+        var top = new Rectangle(destinationRectangle.Left, destinationRectangle.Top, destinationRectangle.Width, 1);
+        spriteBatch.Draw(
+            CommonSprites.WhitePixelGradientSprite,
+            top,
+            CommonSprites.RectangleForWhitePixelAlpha(0xff),
+            color);
+
+        var left = new Rectangle(destinationRectangle.Left, destinationRectangle.Top, 1, destinationRectangle.Height);
+        spriteBatch.Draw(
+            CommonSprites.WhitePixelGradientSprite,
+            left,
+            CommonSprites.RectangleForWhitePixelAlpha(0xff),
+            color);
+
+        var bottom = new Rectangle(destinationRectangle.Left, destinationRectangle.Top + destinationRectangle.Height - 1, destinationRectangle.Width, 1);
+        spriteBatch.Draw(
+            CommonSprites.WhitePixelGradientSprite,
+            bottom,
+            CommonSprites.RectangleForWhitePixelAlpha(0xff),
+            color);
+
+        var right = new Rectangle(destinationRectangle.Left + destinationRectangle.Width - 1, destinationRectangle.Top, 1, destinationRectangle.Height);
+        spriteBatch.Draw(
+            CommonSprites.WhitePixelGradientSprite,
+            right,
+            CommonSprites.RectangleForWhitePixelAlpha(0xff),
+            color);
+    }
+
     public static void Negate(ref Color color)
     {
         ref uint x = ref Unsafe.As<Color, uint>(ref color);

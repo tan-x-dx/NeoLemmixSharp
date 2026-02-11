@@ -1,8 +1,6 @@
 ﻿using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.FileFormats;
-using NeoLemmixSharp.IO.Util;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.IO.Writing.Styles.Sections.Version1_0_0_0;
 
@@ -40,21 +38,12 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter
 
     private static void WriteColorData(RawStyleFileDataWriter writer, ThemeData themeData)
     {
-        Span<byte> bytes = [0, 0, 0];
-
-        WriteRgbColor(themeData.Minimap, bytes);
-        WriteRgbColor(themeData.Background, bytes);
-        WriteRgbColor(themeData.OneWayArrows, bytes);
-        WriteRgbColor(themeData.PickupBorder, bytes);
-        WriteRgbColor(themeData.PickupInside, bytes);
-
-        return;
-
-        void WriteRgbColor(Color color, Span<byte> buffer)
-        {
-            ReadWriteHelpers.WriteRgbBytes(color, buffer);
-            writer.WriteBytes(buffer);
-        }
+        writer.WriteRgbColor(themeData.Mask);
+        writer.WriteRgbColor(themeData.Minimap);
+        writer.WriteRgbColor(themeData.Background);
+        writer.WriteRgbColor(themeData.OneWayArrows);
+        writer.WriteRgbColor(themeData.PickupBorder);
+        writer.WriteRgbColor(themeData.PickupInside);
     }
 
     private void WriteLemmingSpriteData(RawStyleFileDataWriter writer, StyleIdentifier originalStyleIdentifier, LemmingSpriteData lemmingSpriteData)
@@ -96,29 +85,20 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter
 
     private static void WriteTribeColorData(RawStyleFileDataWriter writer, ReadOnlySpan<TribeColorData> tribeColorData)
     {
-        Span<byte> bytes = [0, 0, 0, 0];
         for (var i = 0; i < tribeColorData.Length; i++)
         {
             ref readonly var colorData = ref tribeColorData[i];
 
-            WriteArgbColor(colorData.HairColor, bytes);
-            WriteArgbColor(colorData.PermanentSkillHairColor, bytes);
-            WriteArgbColor(colorData.SkinColor, bytes);
-            WriteArgbColor(colorData.ZombieSkinColor, bytes);
-            WriteArgbColor(colorData.BodyColor, bytes);
-            WriteArgbColor(colorData.PermanentSkillBodyColor, bytes);
-            WriteArgbColor(colorData.NeutralBodyColor, bytes);
-            WriteArgbColor(colorData.AcidLemmingFootColor, bytes);
-            WriteArgbColor(colorData.WaterLemmingFootColor, bytes);
-            WriteArgbColor(colorData.PaintColor, bytes);
-        }
-
-        return;
-
-        void WriteArgbColor(Color color, Span<byte> buffer)
-        {
-            ReadWriteHelpers.WriteArgbBytes(color, buffer);
-            writer.WriteBytes(buffer);
+            writer.WriteArgbColor(colorData.HairColor);
+            writer.WriteArgbColor(colorData.PermanentSkillHairColor);
+            writer.WriteArgbColor(colorData.SkinColor);
+            writer.WriteArgbColor(colorData.ZombieSkinColor);
+            writer.WriteArgbColor(colorData.BodyColor);
+            writer.WriteArgbColor(colorData.PermanentSkillBodyColor);
+            writer.WriteArgbColor(colorData.NeutralBodyColor);
+            writer.WriteArgbColor(colorData.AcidLemmingFootColor);
+            writer.WriteArgbColor(colorData.WaterLemmingFootColor);
+            writer.WriteArgbColor(colorData.PaintColor);
         }
     }
 }

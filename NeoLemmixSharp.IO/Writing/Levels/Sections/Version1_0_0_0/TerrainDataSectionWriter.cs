@@ -3,6 +3,7 @@ using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
@@ -44,34 +45,19 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         WriteTerrainDataMisc(writer, terrainDatum);
     }
 
+    [SkipLocalsInit]
     private static void WriteTerrainDataMisc(
         RawLevelFileDataWriter writer,
         TerrainInstanceData terrainData)
     {
+        writer.WriteRgbColor(terrainData.Tint);
         writer.Write16BitUnsignedInteger((ushort)(terrainData.HueAngle % 360));
 
         var miscDataBits = ReadWriteHelpers.EncodeTerrainArchetypeDataByte(terrainData);
 
         writer.Write8BitUnsignedInteger(miscDataBits);
 
-        if (terrainData.Width.HasValue)
-        {
-            writer.Write16BitUnsignedInteger((ushort)terrainData.Width.Value);
-        }
-        else
-        {
-            writer.Write8BitUnsignedInteger(0);
-            writer.Write8BitUnsignedInteger(0);
-        }
-
-        if (terrainData.Height.HasValue)
-        {
-            writer.Write16BitUnsignedInteger((ushort)terrainData.Height.Value);
-        }
-        else
-        {
-            writer.Write8BitUnsignedInteger(0);
-            writer.Write8BitUnsignedInteger(0);
-        }
+        writer.Write16BitUnsignedInteger((ushort)terrainData.Width);
+        writer.Write16BitUnsignedInteger((ushort)terrainData.Height);
     }
 }

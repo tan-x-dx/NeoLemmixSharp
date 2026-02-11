@@ -24,13 +24,6 @@ public readonly struct Interval : IEquatable<Interval>
                other.Start < End;
     }
 
-    public Interval Intersect(Interval other)
-    {
-        var num = Math.Min(End, other.End);
-        var num2 = Math.Max(Start, other.Start);
-        return new Interval(num2, num - num2);
-    }
-
     public bool Equals(Interval other) => Start == other.Start &&
                                           Length == other.Length;
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Interval other && Equals(other);

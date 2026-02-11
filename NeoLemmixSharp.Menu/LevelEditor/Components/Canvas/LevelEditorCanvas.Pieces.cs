@@ -1,40 +1,73 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
 public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
 {
+    private readonly List<CanvasPiece> _terrainPieces = new(IoConstants.AssumedNumberOfTerrainInstanceDataInLevel);
+    private readonly List<CanvasPiece> _gadgetPieces = new(IoConstants.AssumedNumberOfGadgetInstanceDataInLevel);
+    private readonly List<CanvasPiece> _preplacedLemmingPieces = [];
+
+    private RectangularRegion GetPieceClampBounds()
+    {
+        var levelSize = _levelData.LevelDimensions;
+        var bottomRightPosition = new Point(
+            levelSize.W + LevelEditorConstants.LevelOuterBoundarySize,
+            levelSize.H + LevelEditorConstants.LevelOuterBoundarySize);
+
+        return new RectangularRegion(
+            LevelEditorConstants.InverseRenderOffset,
+            bottomRightPosition);
+    }
+
+    private void RecreatePieces()
+    {
+        PopulatePieceList(_terrainPieces, _levelData.AllTerrainInstanceData);
+        PopulatePieceList(_gadgetPieces, _levelData.AllGadgetInstanceData);
+        PopulatePieceList(_preplacedLemmingPieces, _levelData.PrePlacedLemmingData);
+
+        return;
+
+        void PopulatePieceList(List<CanvasPiece> pieceList, IEnumerable<IInstanceData> list)
+        {
+            pieceList.Clear();
+            pieceList.EnsureCapacity(list.Count());
+            foreach (var instanceData in list)
+            {
+                pieceList.Add(new CanvasPiece(instanceData));
+            }
+            FixPiecePositions(pieceList);
+        }
+    }
+
     public void AddTerrainPiece(TerrainArchetypeData terrainArchetypeData)
     {
         var defaultArchetypeSize = terrainArchetypeData.DefaultSize;
-
-        int? initialWidth = null;
-        int? initialHeight = null;
-
-        if (defaultArchetypeSize.W > 0)
-            initialWidth = defaultArchetypeSize.W;
-
-        if (defaultArchetypeSize.H > 0)
-            initialHeight = defaultArchetypeSize.H;
+        var initialPosition = GetCenterPositionOfViewport() - new Point(defaultArchetypeSize.W / 2, defaultArchetypeSize.H / 2);
 
         var newTerrainData = new TerrainInstanceData()
         {
             GroupName = null,
             StyleIdentifier = terrainArchetypeData.StyleIdentifier,
             PieceIdentifier = terrainArchetypeData.PieceIdentifier,
-            Position = GetCenterPositionOfViewport(),
+            Position = initialPosition,
             Orientation = Orientation.Down,
             FacingDirection = FacingDirection.Right,
             NoOverwrite = false,
+            Tint = Color.White,
             Erase = false,
             HueAngle = 0,
-            Width = initialWidth,
-            Height = initialHeight,
+            Width = defaultArchetypeSize.W,
+            Height = defaultArchetypeSize.H,
         };
 
         var newCanvasTerrainPiece = new CanvasPiece(newTerrainData)
@@ -79,18 +112,20 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
         throw new NotImplementedException();
     }
 
-    private void ReorderAllPieces()
+    private void RenumberAllPieces()
     {
-        ReorderPieces(_gadgetPieces);
-        ReorderPieces(_terrainPieces);
-        ReorderPieces(_preplacedLemmingPieces);
-    }
+        RenumberPieces(_gadgetPieces);
+        RenumberPieces(_terrainPieces);
+        RenumberPieces(_preplacedLemmingPieces);
 
-    private static void ReorderPieces(List<CanvasPiece> canvasPieces)
-    {
-        for (var i = 0; i < canvasPieces.Count; i++)
+        return;
+
+        static void RenumberPieces(List<CanvasPiece> canvasPieces)
         {
-            canvasPieces[i].PieceOrder = i;
+            for (var i = 0; i < canvasPieces.Count; i++)
+            {
+                canvasPieces[i].PieceOrder = i;
+            }
         }
     }
 
@@ -125,13 +160,67 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
         }
     }
 
+    private CanvasPiece? TrySelectSingleItem()
+    {
+        if (TrySelectSingleItemInList(_preplacedLemmingPieces, out var selectedPiece))
+            return selectedPiece;
+
+        if (TrySelectSingleItemInList(_gadgetPieces, out selectedPiece))
+            return selectedPiece;
+
+        if (TrySelectSingleItemInList(_terrainPieces, out selectedPiece))
+            return selectedPiece;
+
+        return null;
+
+        bool TrySelectSingleItemInList(List<CanvasPiece> pieces, [MaybeNullWhen(false)] out CanvasPiece selectedPiece)
+        {
+            for (int i = pieces.Count - 1; i >= 0; i--)
+            {
+                var piece = pieces[i];
+
+                if (piece.ContainsPoint(_canvasMouseDownPosition))
+                {
+                    selectedPiece = piece;
+                    return true;
+                }
+            }
+
+            selectedPiece = null;
+            return false;
+        }
+    }
+
+    private void TrySelectMultipleItems(RectangularRegion clickDragBounds)
+    {
+        Debug.Assert(_selectedCanvasPieces.Count == 0);
+
+        TrySelectMultipleItemsFromList(clickDragBounds, _preplacedLemmingPieces);
+        TrySelectMultipleItemsFromList(clickDragBounds, _gadgetPieces);
+        TrySelectMultipleItemsFromList(clickDragBounds, _terrainPieces);
+
+        return;
+
+        void TrySelectMultipleItemsFromList(RectangularRegion clickDragBounds, List<CanvasPiece> pieces)
+        {
+            foreach (var piece in pieces)
+            {
+                var pieceBounds = piece.GetBounds();
+                if (clickDragBounds.Overlaps(pieceBounds))
+                {
+                    _selectedCanvasPieces.Add(piece);
+                }
+            }
+        }
+    }
+
     int IComparer<CanvasPiece>.Compare(CanvasPiece? x, CanvasPiece? y)
     {
         if (ReferenceEquals(x, y)) return 0;
         if (x is null) return -1;
         if (y is null) return 1;
 
-        if (x.GetType() != y.GetType())
+        if (x.InstanceData.GetType() != y.InstanceData.GetType())
             throw new InvalidOperationException("Items are not the same type!");
 
         var xPieceOrder = x.PieceOrder;

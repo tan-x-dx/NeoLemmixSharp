@@ -8,7 +8,7 @@ public sealed class UiHandler : IDisposable
 {
     private readonly InputController _inputController;
 
-    internal static UiHandler Instance { get; private set; } = null!;
+    internal InputController InputController => _inputController;
 
     public Component? CurrentSelection { get; private set; }
     public TextField? SelectedTextField
@@ -28,8 +28,6 @@ public sealed class UiHandler : IDisposable
     {
         RootComponent = new Tab(0, 0, 0, 0);
         _inputController = inputController;
-
-        Instance = this;
     }
 
     public void Render(SpriteBatch spriteBatch) => RootComponent.Render(spriteBatch);
@@ -48,6 +46,10 @@ public sealed class UiHandler : IDisposable
         if (leftMouseButton.IsPressed)
         {
             HandleMousePress(mousePosition);
+        }
+        else if (leftMouseButton.IsHeld)
+        {
+            HandleMouseHeld(mousePosition);
         }
         else if (leftMouseButton.IsReleased)
         {
@@ -91,6 +93,21 @@ public sealed class UiHandler : IDisposable
         {
             SelectedTextField = CurrentSelection as TextField;
             CurrentSelection.InvokeMousePressed(mousePosition);
+        }
+    }
+
+    private void HandleMouseHeld(Point mousePosition)
+    {
+        LocateComponent(mousePosition);
+
+        if (CurrentSelection is null || !CurrentSelection.IsVisible)
+        {
+            CurrentSelection = RootComponent;
+        }
+        else
+        {
+            SelectedTextField = CurrentSelection as TextField;
+            CurrentSelection.InvokeMouseHeld(mousePosition);
         }
     }
 
@@ -141,10 +158,7 @@ public sealed class UiHandler : IDisposable
             return;
         }
 
-        if (CurrentSelection == null)
-            return;
-
-        CurrentSelection.InvokeMouseExit(mousePosition);
+        CurrentSelection?.InvokeMouseExit(mousePosition);
 
         CurrentSelection = c;
         CurrentSelection.InvokeMouseEnter(mousePosition);
@@ -163,7 +177,6 @@ public sealed class UiHandler : IDisposable
     public void Dispose()
     {
         RootComponent.Dispose();
-        Instance = null!;
         GC.SuppressFinalize(this);
     }
 }

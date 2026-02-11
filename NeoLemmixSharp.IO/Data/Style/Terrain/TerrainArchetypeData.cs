@@ -34,16 +34,21 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData, IArchetypeData
     internal static TerrainArchetypeData CreateTrivialTerrainArchetypeData(
        StyleIdentifier styleIdentifier,
        PieceIdentifier pieceIdentifier,
-       string textureFilePath) => new()
-       {
-           StyleIdentifier = styleIdentifier,
-           PieceIdentifier = pieceIdentifier,
-           Name = pieceIdentifier.ToString(),
-           TextureFilePath = textureFilePath,
+       string textureFilePath)
+    {
+        var texture = TextureCache.GetOrLoadTexture(styleIdentifier, pieceIdentifier, TextureType.TerrainSprite);
 
-           NineSliceData = default,
-           ResizeType = ResizeType.None,
-           DefaultSize = default,
-           IsSteel = false
-       };
+        return new()
+        {
+            StyleIdentifier = styleIdentifier,
+            PieceIdentifier = pieceIdentifier,
+            Name = pieceIdentifier.ToString(),
+            TextureFilePath = textureFilePath,
+
+            NineSliceData = default,
+            ResizeType = ResizeType.None,
+            DefaultSize = new Size(texture.Width, texture.Height),
+            IsSteel = false
+        };
+    }
 }

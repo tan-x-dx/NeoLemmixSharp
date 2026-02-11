@@ -73,13 +73,16 @@ internal sealed class LevelDataReader : NeoLemmixDataReader
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         var levelTitle = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
-        _levelData.LevelAuthor = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
+        _levelData.LevelTitle = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
     }
 
     private void SetAuthor(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var levelAuthor = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
-        _levelData.LevelAuthor = string.IsNullOrWhiteSpace(levelAuthor) ? "Unknown Author" : levelAuthor;
+        var levelAuthor = secondTokenIndex == -1 
+            ? string.Empty
+            : _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
+
+        _levelData.LevelAuthor = levelAuthor;
     }
 
     private void SetId(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

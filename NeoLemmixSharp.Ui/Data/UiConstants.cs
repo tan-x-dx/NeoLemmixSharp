@@ -26,4 +26,6 @@ public static class UiConstants
     ];
 
     public static ColorPacket RectangularButtonDefaultColours => Unsafe.As<uint, ColorPacket>(ref MemoryMarshal.GetReference(RawDefaultColors));
+
+    public const int KeyboardInputFrameDelay = 30;
 }
