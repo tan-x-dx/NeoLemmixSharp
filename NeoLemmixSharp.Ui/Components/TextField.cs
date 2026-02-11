@@ -16,9 +16,9 @@ public sealed class TextField : Component
     private const int CaretBlinkMask = (1 << (CaretBlinkShift + 1)) - 1;
 
     private readonly UiHandler _uiHandler;
+    private string? _charMask;
 
     private char[] _charBuffer = [];
-    private string _currentString = string.Empty;
     private int _currentStringLength;
     private int _caretPosition;
     private int _caretFlashCount;
@@ -37,10 +37,26 @@ public sealed class TextField : Component
         }
     }
 
+    public ReadOnlySpan<char> CurrentText => Helpers.CreateReadOnlySpan(_charBuffer, 0, _currentStringLength);
+    public string CurrentString => CurrentString.ToString();
+    public bool TryParseInt(out int value) => int.TryParse(CurrentText, out value);
+
     public TextField(UiHandler uiHandler, int x, int y, string label) : base(x, y, label)
     {
         _uiHandler = uiHandler;
         KeyPressed.RegisterKeyEvent(HandleKeyDown);
+
+        Colors = new ColorPacket(
+            Color.Wheat,
+            new Color(0xff666666),
+            new Color(0xff888888),
+            new Color(0xff006600));
+    }
+
+    public void SetTextMask(string? charMask)
+    {
+        _charMask = charMask;
+        Clear();
     }
 
     public void SetCapacity(int capacity)
@@ -56,10 +72,6 @@ public sealed class TextField : Component
         var span = new Span<char>(_charBuffer);
 
         newTextSpan.CopyTo(span);
-
-        _currentString = clippedTextLength == newText.Length
-            ? newText
-            : newTextSpan.ToString();
         _currentStringLength = clippedTextLength;
     }
 
@@ -67,7 +79,6 @@ public sealed class TextField : Component
     {
         new Span<char>(_charBuffer).Clear();
         _caretPosition = 0;
-        _currentString = string.Empty;
         _currentStringLength = 0;
     }
 
@@ -144,17 +155,26 @@ public sealed class TextField : Component
         if (_currentStringLength == _charBuffer.Length)
             return;
 
+        var c = keyboardInput.GetCorrespondingChar();
+
+        if (!MaskAllowsCharacter(c))
+            return;
+
         var i = _currentStringLength;
         _currentStringLength++;
-        while (i >= _caretPosition)
+        while (i > _caretPosition)
         {
-            _charBuffer.At(i + 1) = _charBuffer.At(i);
+            _charBuffer.At(i) = _charBuffer.At(i - 1);
             i--;
         }
 
-        _charBuffer.At(_caretPosition) = keyboardInput.GetCorrespondingChar();
+        _charBuffer.At(_caretPosition) = c;
         MoveCaret(1);
-        UpdateCurrentString();
+    }
+
+    private bool MaskAllowsCharacter(char c)
+    {
+        return _charMask is null || _charMask.Contains(c);
     }
 
     public void MoveCaret(int delta) => SetCaretPosition(_caretPosition + delta);
@@ -195,7 +215,6 @@ public sealed class TextField : Component
         _charBuffer.At(lastCharIndex) = (char)0;
         _currentStringLength--;
         MoveCaret(-1);
-        UpdateCurrentString();
     }
 
     public void HandleDelete()
@@ -212,17 +231,6 @@ public sealed class TextField : Component
         _uiHandler.DeselectTextField();
     }
 
-    private void UpdateCurrentString()
-    {
-        var currentStringSpan = _currentString.AsSpan();
-        var newStringSpan = Helpers.CreateReadOnlySpan(_charBuffer, 0, _currentStringLength);
-
-        if (currentStringSpan.Equals(newStringSpan, StringComparison.Ordinal))
-            return;
-
-        _currentString = newStringSpan.ToString();
-    }
-
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {
         var caretFlashCount = _caretFlashCount;
@@ -230,27 +238,16 @@ public sealed class TextField : Component
         caretFlashCount &= CaretBlinkMask;
         _caretFlashCount = caretFlashCount;
 
+        UiSprites.DrawBeveledRectangle(spriteBatch, this);
+
         var rect = new Rectangle(Left, Top, Width, Height);
-
-        spriteBatch.FillRect(
-            rect,
-            Color.Red);
-
-        //   var textPosition = new Vector2(rect.X + 2, rect.Y + 2);
-
-        var newStringSpan = Helpers.CreateReadOnlySpan(_charBuffer, 0, _currentStringLength);
         FontBank.MenuFont.RenderText(
             spriteBatch,
-            newStringSpan,
+            CurrentText,
             rect.X + 2,
             rect.Y + 6,
             1,
             EngineConstants.PanelBlue);
-        /* spriteBatch.DrawString(
-             UiSprites.UiFont,
-             _currentString,
-             textPosition,
-             Color.White);*/
 
         if (!IsSelected)
             return;

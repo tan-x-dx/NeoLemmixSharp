@@ -15,7 +15,8 @@ public sealed class LevelEditorControlPanel : Component
         AddComponent(titleLabel);
         var titleTextField = new TextField(uiHandler, titleLabel.Width + UiConstants.TwiceStandardInset, titleLabel.Top, string.Empty);
         titleLabel.Width = 120;
-        titleTextField.SetCapacity(100);
+        titleTextField.Width = 200;
+        titleTextField.SetCapacity(6);
         AddComponent(titleTextField);
 
     }
