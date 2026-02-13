@@ -6,6 +6,11 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
+public interface ILevelEventData
+{
+    int TickNumber { get; }
+}
+
 public sealed class LevelEventList<TEventData> : IDisposable
     where TEventData : unmanaged, ILevelEventData
 {
