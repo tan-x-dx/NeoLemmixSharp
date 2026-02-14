@@ -97,7 +97,7 @@ public static class ReadWriteHelpers
         FileWritingException.WriterAssert(point.X <= short.MaxValue && point.X >= short.MinValue, "Point outside of valid scope");
         FileWritingException.WriterAssert(point.Y <= short.MaxValue && point.Y >= short.MinValue, "Point outside of valid scope");
 
-        return (point.Y & 0xffff) << 16 | point.X & 0xffff;
+        return ((point.Y & 0xffff) << 16) | (point.X & 0xffff);
     }
 
     public static Point DecodePoint(int combinedBits)

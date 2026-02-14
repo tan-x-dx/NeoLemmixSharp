@@ -49,11 +49,12 @@ public sealed class LevelEditorPage : PageBase
         root.AddComponent(_controlPanel);
         root.AddComponent(_pieceBank);
 
+        // LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\Amiga Lemmings\Lemmings\Fun\21_You_Live_and_Lem.nxlv");
         // LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\Amiga Lemmings\Lemmings\Tricky\04_Here's_one_I_prepared_earlier.nxlv");
         LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\skill test.nxlv");
 
-       // var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), IO.FileFormats.FileFormatType.NeoLemmix));
-       // SetStyle(styleData);
+        // var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), IO.FileFormats.FileFormatType.NeoLemmix));
+        // SetStyle(styleData);
 
         OnResize();
     }
@@ -107,7 +108,7 @@ public sealed class LevelEditorPage : PageBase
 
         if (InputController.F1.IsPressed)
         {
-            SaveLevel(@"C:\Temp\TestLevel.ullv");
+            SaveLevel($@"C:\Temp\{_currentLevelData.LevelTitle}.ullv");
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.IO.Data;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Trigger;
 using System.Diagnostics.Contracts;
@@ -92,7 +93,7 @@ internal readonly struct MutableFileWriterStringIdLookup
             var byteCount = Encoding.UTF8.GetBytes(stringToWrite, buffer);
 
             writer.Write16BitUnsignedInteger((ushort)byteCount);
-            writer.WriteBytes(buffer[..byteCount]);
+            writer.WriteBytes(Helpers.Slice(buffer, 0, byteCount));
         }
     }
 
@@ -114,16 +115,14 @@ internal readonly struct MutableFileWriterStringIdLookup
     [Pure]
     private Span<KeyValuePair<string, ushort>> GetOrderedPairs()
     {
-        var array = _lookup.ToArray();
-        var span = new Span<KeyValuePair<string, ushort>>(array);
-        span.Sort(ByValue);
-        return span;
+        var result = new KeyValuePair<string, ushort>[_lookup.Count];
 
-        static int ByValue(KeyValuePair<string, ushort> x, KeyValuePair<string, ushort> y)
+        foreach (var kvp in _lookup)
         {
-            int xValue = x.Value;
-            int yValue = y.Value;
-            return xValue.CompareTo(yValue);
+            int index = kvp.Value - 1;
+            result.At(index) = kvp;
         }
+
+        return new Span<KeyValuePair<string, ushort>>(result);
     }
 }
