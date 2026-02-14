@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
@@ -47,10 +46,7 @@ public sealed class SnapshotRecorder : IDisposable
 
     private void DoubleSnapshotBufferCapacity()
     {
-        var newBufferLength = _snapshotBuffer.Length * 2;
-
-        nint newHandle = Marshal.ReAllocHGlobal(_snapshotBuffer.Handle, newBufferLength);
-        _snapshotBuffer = new RawArray(newHandle, newBufferLength);
+        RawArray.DoubleBufferSize(ref _snapshotBuffer);
         _snapshotBufferCapacity *= 2;
     }
 

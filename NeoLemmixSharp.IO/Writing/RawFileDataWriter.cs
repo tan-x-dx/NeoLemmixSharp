@@ -5,7 +5,6 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.IO.Util;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.IO.Writing;
 
@@ -163,12 +162,9 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
 
     private static void DoubleByteBufferLength(ref RawArray byteBuffer)
     {
-        var newByteBufferLength = byteBuffer.Length << 1;
+        RawArray.DoubleBufferSize(ref byteBuffer);
 
-        FileWritingException.WriterAssert(newByteBufferLength <= IoConstants.MaxAllowedFileSizeInBytes, IoConstants.FileSizeTooLargeExceptionMessage);
-
-        nint newHandle = Marshal.ReAllocHGlobal(byteBuffer.Handle, newByteBufferLength);
-        byteBuffer = new RawArray(newHandle, newByteBufferLength);
+        FileWritingException.WriterAssert(byteBuffer.Length <= IoConstants.MaxAllowedFileSizeInBytes, IoConstants.FileSizeTooLargeExceptionMessage);
     }
 
     public void EndWritingSection(TEnum sectionIdentifier)

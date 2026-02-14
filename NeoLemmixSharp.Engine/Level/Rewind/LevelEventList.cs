@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Util;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
@@ -172,11 +171,8 @@ public sealed class LevelEventList<TEventData> : IDisposable
 
     private void DoubleByteBufferLength()
     {
-        var newBufferLength = _buffer.Length << 1;
-
-        nint newHandle = Marshal.ReAllocHGlobal(_buffer.Handle, newBufferLength);
-        _buffer = new RawArray(newHandle, newBufferLength);
-        _bufferLength <<= 1;
+        RawArray.DoubleBufferSize(ref _buffer);
+        _bufferLength *= 2;
     }
 
     [Pure]

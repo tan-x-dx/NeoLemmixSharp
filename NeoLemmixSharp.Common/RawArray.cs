@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -10,10 +11,8 @@ public readonly struct RawArray : IDisposable
     public readonly int Length;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public RawArray(nint handle, int length)
+    private RawArray(nint handle, int length)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(length);
-
         Handle = handle;
         Length = length;
     }
@@ -25,6 +24,13 @@ public readonly struct RawArray : IDisposable
 
         Handle = Marshal.AllocHGlobal(length);
         Length = length;
+    }
+
+    public static void DoubleBufferSize(ref RawArray rawArray)
+    {
+        var newBufferLength = rawArray.Length * 2;
+        nint newHandle = Marshal.ReAllocHGlobal(rawArray.Handle, newBufferLength);
+        rawArray = new RawArray(newHandle, newBufferLength);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
