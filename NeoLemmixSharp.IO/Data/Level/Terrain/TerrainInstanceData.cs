@@ -30,4 +30,5 @@ public sealed class TerrainInstanceData : IInstanceData
 
     public StylePiecePair GetStylePiecePair() => new(StyleIdentifier, PieceIdentifier);
 
+    RectangularRegion IInstanceData.GetBounds(Point anchorPosition) => new(anchorPosition, Size);
 }

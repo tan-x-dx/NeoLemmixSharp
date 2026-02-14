@@ -88,14 +88,16 @@ public sealed partial class LevelEditorCanvas
 
         foreach (var piece in _selectedCanvasPieces)
         {
-            if (!piece.OverlapsRegion(viewBounds))
+            var pieceBounds = piece.GetBounds();
+
+            if (!pieceBounds.Overlaps(viewBounds))
                 continue;
 
             var pieceLocation = piece.Position - viewBounds.Position;
             pieceLocation = new Point(pieceLocation.X * _horizontalBorderBehaviour.ZoomValue, pieceLocation.Y * _verticalBorderBehaviour.ZoomValue);
             pieceLocation += offset;
 
-            var pieceSize = piece.Size.Scale(_horizontalBorderBehaviour.ZoomValue, _verticalBorderBehaviour.ZoomValue);
+            var pieceSize = pieceBounds.Size.Scale(_horizontalBorderBehaviour.ZoomValue, _verticalBorderBehaviour.ZoomValue);
             var outlineColor = piece.GetOutlineColor();
 
             spriteBatch.DrawRect(Helpers.CreateRectangle(pieceLocation, pieceSize), outlineColor);

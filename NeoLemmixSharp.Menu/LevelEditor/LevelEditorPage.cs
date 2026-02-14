@@ -49,7 +49,8 @@ public sealed class LevelEditorPage : PageBase
         root.AddComponent(_controlPanel);
         root.AddComponent(_pieceBank);
 
-        LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\Amiga Lemmings\Lemmings\Tricky\04_Here's_one_I_prepared_earlier.nxlv");
+        // LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\Amiga Lemmings\Lemmings\Tricky\04_Here's_one_I_prepared_earlier.nxlv");
+        LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\skill test.nxlv");
 
        // var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), IO.FileFormats.FileFormatType.NeoLemmix));
        // SetStyle(styleData);
@@ -190,7 +191,7 @@ public sealed class LevelEditorPage : PageBase
             ObjectiveName = "Save Lemmings",
 
             SkillSetData = [],
-            ObjectiveCriteria = [new SaveLemmingsCriterionData { SaveRequirement = 40, TribeId = 0 }],
+            ObjectiveCriteria = [new SaveLemmingsCriterionData { SaveRequirement = 20, TribeId = 0 }],
             ObjectiveModifiers = [],
             TalismanData = []
         };
