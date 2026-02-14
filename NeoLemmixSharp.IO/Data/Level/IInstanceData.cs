@@ -8,4 +8,6 @@ public interface IInstanceData
     Size Size { get; }
     Orientation Orientation { get; set; }
     FacingDirection FacingDirection { get; set; }
+
+    RectangularRegion GetBounds(Point anchorPosition);
 }

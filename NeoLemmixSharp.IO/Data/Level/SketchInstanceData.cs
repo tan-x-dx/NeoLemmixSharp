@@ -14,4 +14,5 @@ public sealed class SketchInstanceData : IInstanceData
     {
     }
 
+    RectangularRegion IInstanceData.GetBounds(Point anchorPosition) => new(anchorPosition, Size);
 }

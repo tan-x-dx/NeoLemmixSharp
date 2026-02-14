@@ -24,4 +24,6 @@ public sealed class GadgetInstanceData : IInstanceData
     public required IGadgetInstanceSpecificationData SpecificationData { get; init; }
 
     public StylePiecePair GetStylePiecePair() => new(StyleIdentifier, PieceIdentifier);
+
+    RectangularRegion IInstanceData.GetBounds(Point anchorPosition) => new(anchorPosition, Size);
 }

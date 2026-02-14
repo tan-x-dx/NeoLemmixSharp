@@ -16,13 +16,13 @@ public sealed class CanvasPiece
     public Point Position => InstanceData.Position;
     public Size Size => InstanceData.Size;
 
-    public RectangularRegion GetBounds() => new(_anchorPosition, InstanceData.Size);
+    public RectangularRegion GetBounds() => InstanceData.GetBounds(_anchorPosition);
 
     public Color GetOutlineColor() => InstanceData switch
     {
-        GadgetInstanceData => Color.Green,
-        LemmingInstanceData => Color.Green,
-        SketchInstanceData => Color.Green,
+        GadgetInstanceData => Color.SpringGreen,
+        LemmingInstanceData => Color.SpringGreen,
+        SketchInstanceData => Color.SpringGreen,
         TerrainInstanceData => Color.Yellow,
 
         _ => Color.White
@@ -63,6 +63,4 @@ public sealed class CanvasPiece
     }
 
     public bool ContainsPoint(Point point) => GetBounds().Contains(point);
-
-    public bool OverlapsRegion(RectangularRegion rectangularRegion) => GetBounds().Overlaps(rectangularRegion);
 }

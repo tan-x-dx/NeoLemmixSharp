@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
+using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 using NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers.TerrainReaders;
@@ -78,22 +79,17 @@ internal sealed class NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelReader>
         _levelData.TribeIdentifiers.Capacity = 1;
         _levelData.TribeIdentifiers.Add(new TribeStyleIdentifier(_levelData.LevelStyle, EngineConstants.ClassicTribeId));
 
-        /*  var objectiveRequirementsList = new List<IObjectiveRequirement>
-          {
-              new BasicSkillSetRequirement(_skillSetReader.SkillSetData.ToArray()),
-              new SaveRequirement(_levelDataReader.SaveRequirement)
-          };
+        var objective = new LevelObjectiveData()
+        {
+            ObjectiveName = "Save Lemmings",
 
-          if (_levelDataReader.TimeLimitInSeconds.HasValue)
-          {
-              objectiveRequirementsList.Add(new TimeRequirement(_levelDataReader.TimeLimitInSeconds.Value));
-          }
+            SkillSetData = _skillSetReader.SkillSetData.ToArray(),
+            ObjectiveCriteria = [new SaveLemmingsCriterionData { SaveRequirement = _levelDataReader.SaveRequirement, TribeId = EngineConstants.ClassicTribeId }],
+            ObjectiveModifiers = [],
+            TalismanData = []
+        };
 
-          _levelData.LevelObjectives.Capacity = 1 + _talismanReader.TalismanData.Count;
-          _levelData.LevelObjectives.Add(new LevelObjective(
-              0,
-              "Save Lemmings",
-              objectiveRequirementsList.ToArray()));*/
+        _levelData.SetObjectiveData(objective);
     }
 
     private void ProcessTalismans()
