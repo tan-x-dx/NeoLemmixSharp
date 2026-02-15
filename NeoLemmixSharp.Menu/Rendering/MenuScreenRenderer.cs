@@ -44,7 +44,7 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     public void RenderScreen(GameTime gameTime, SpriteBatch spriteBatch)
     {
         // background
-        spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
+        spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
 
         if (RenderBackground)
             _backgroundRenderer.Render(spriteBatch);
