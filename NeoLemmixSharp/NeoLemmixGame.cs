@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Rendering.Shaders;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
@@ -107,6 +108,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         RootDirectoryManager.Initialise();
+        ShaderBank.Initialise(Content);
         FontBank.Initialise(Content);
         MenuSpriteBank.Initialise(Content);
         CommonSprites.Initialise(Content, GraphicsDevice);

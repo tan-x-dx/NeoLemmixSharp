@@ -620,6 +620,19 @@
 /processorParam:TextureFormat=Color
 /build:panel/skills_placeholder2.png
 
+#begin shaders/GreyScaleTintShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:shaders/GreyScaleTintShader.fx
+
+#begin shaders/TintShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/processorParam:Defines=
+/build:shaders/TintShader.fx
+
 #begin sprites/lemming/ascender.png
 /importer:TextureImporter
 /processor:TextureProcessor
