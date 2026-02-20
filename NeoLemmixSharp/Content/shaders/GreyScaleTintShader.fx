@@ -7,8 +7,6 @@
 	#define PS_SHADERMODEL ps_4_0_level_9_1
 #endif
 
-extern float4 TintColor;
-
 Texture2D SpriteTexture;
 
 sampler2D SpriteTextureSampler = sampler_state
@@ -23,12 +21,12 @@ struct VertexShaderOutput
 	float2 TextureCoordinates : TEXCOORD0;
 };
 
-float4 MainPS(VertexShaderOutput input): COLOR0
+float4 MainPS(VertexShaderOutput input) : COLOR0
 {
-	float4 pixelColor = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
+	float4 pixelColor = tex2D(SpriteTextureSampler, input.TextureCoordinates);
 	
-	pixelColor.rgb = pixelColor.r * 0.2126 + pixelColor.g * 0.7152 + pixelColor.b * 0.0722;
-	float4 tintedPixelColor = pixelColor * TintColor;
+	pixelColor.rgb = (pixelColor.r * 0.2126) + (pixelColor.g * 0.7152) + (pixelColor.b * 0.0722);
+	float4 tintedPixelColor = pixelColor * input.Color;
 
 	return tintedPixelColor;
 }
