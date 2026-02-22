@@ -88,17 +88,17 @@ public sealed partial class LevelEditorCanvas : Component
         _verticalBorderBehaviour.Zoom(scrollDelta);
     }
 
-    private Point CalculateArrowKeyScrollDelta(MenuInputController inputController)
+    private static Point CalculateArrowKeyScrollDelta(MenuInputController inputController)
     {
         if (UiHandler.Instance.SelectedTextField is not null)
             return new Point();
 
-        var downFrames = inputController.DownArrow.NumberOfFramesHeldDownFor;
         var leftFrames = inputController.LeftArrow.NumberOfFramesHeldDownFor;
-        var upFrames = inputController.UpArrow.NumberOfFramesHeldDownFor;
         var rightFrames = inputController.RightArrow.NumberOfFramesHeldDownFor;
-
         var scrollDx = EvaluateScrollDelta(leftFrames, rightFrames);
+
+        var upFrames = inputController.UpArrow.NumberOfFramesHeldDownFor;
+        var downFrames = inputController.DownArrow.NumberOfFramesHeldDownFor;
         var scrollDy = EvaluateScrollDelta(upFrames, downFrames);
 
         return new Point(scrollDx, scrollDy);
@@ -107,15 +107,12 @@ public sealed partial class LevelEditorCanvas : Component
         {
             if (numberOfFramesNegativeHeldDownFor == 0 && numberOfFramesPositiveHeldDownFor == 0)
                 return 0;
+            if (numberOfFramesNegativeHeldDownFor > 0 && numberOfFramesPositiveHeldDownFor > 0)
+                return 0;
 
             var mult = 1;
             if (numberOfFramesNegativeHeldDownFor > 0)
-            {
                 mult = -1;
-
-                if (numberOfFramesPositiveHeldDownFor > 0)
-                    return 0;
-            }
 
             var numberOfFramesHeldDownFor = numberOfFramesNegativeHeldDownFor | numberOfFramesPositiveHeldDownFor;
 
