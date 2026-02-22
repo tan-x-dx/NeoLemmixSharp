@@ -186,6 +186,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Update(GameTime gameTime)
     {
+        if (!IsActive)
+            return;
+
         _screen!.Tick(gameTime);
     }
 
