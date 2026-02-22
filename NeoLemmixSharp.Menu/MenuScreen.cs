@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
@@ -62,6 +63,8 @@ public sealed class MenuScreen : IBaseScreen
 
         ReadLevelPacks();
     }
+
+    public TimeSpan GetTargetElapsedTime() => EngineConstants.MenuFramesPerSecondTimeSpan;
 
     private void ReadLevelPacks()
     {

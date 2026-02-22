@@ -55,7 +55,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
         IsFixedTimeStep = true;
-        TargetElapsedTime = EngineConstants.FramesPerSecondTimeSpan;
+        TargetElapsedTime = EngineConstants.MenuFramesPerSecondTimeSpan;
 
         IGameWindow.Instance = this;
     }
@@ -170,6 +170,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         _screenRenderer = _screen.ScreenRenderer;
 
         Window.Title = _screen.ScreenTitle;
+        TargetElapsedTime = _screen.GetTargetElapsedTime();
         _screen.OnActivated();
     }
 
