@@ -4,14 +4,15 @@ using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Ui.Data;
+using NeoLemmixSharp.Ui.Events;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Ui.Components;
 
 public sealed class TextField : Component
 {
-    private const int TextXOffset = 4;
-    private const int TextYOffset = 6;
+    private const int DefaultTextXOffset = 4;
+    private const int DefaultTextYOffset = 6;
 
     private const int CaretBlinkShift = 5;
     private const int CaretBlinkDelay = 1 << CaretBlinkShift;
@@ -21,12 +22,19 @@ public sealed class TextField : Component
     private string? _charMask;
     private char[] _charBuffer = [];
 
+    private GenericEventHandler? _textSubmit;
+
+    public int TextXOffset { get; set; } = DefaultTextXOffset;
+    public int TextYOffset { get; set; } = DefaultTextYOffset;
+
     private int _currentStringLength;
     private int _caretPosition;
     private int _caretFlashCount;
     private int _caretPhysicalOffset;
 
     private bool _isSelected;
+
+    public GenericEventHandler TextSubmit => _textSubmit ??= new GenericEventHandler();
 
     private int CaretPosition
     {
@@ -55,8 +63,13 @@ public sealed class TextField : Component
         }
     }
 
+    public bool AutoCapitaliseLetters { get; set; }
+
+    public void InvokeTextSubmit() => _textSubmit?.Invoke(this);
+
     public ReadOnlySpan<char> CurrentTextSpan => Helpers.CreateReadOnlySpan(_charBuffer, 0, _currentStringLength);
-    public string CurrentString => CurrentString.ToString();
+    public string CurrentString => _currentString;
+    public int ParseInt() => int.Parse(CurrentTextSpan);
     public bool TryParseInt(out int value) => int.TryParse(CurrentTextSpan, out value);
 
     public TextField(int x, int y) : base(x, y)
@@ -64,7 +77,7 @@ public sealed class TextField : Component
         KeyPressed.RegisterKeyEvent(HandleKeyDown);
 
         Colors = new ColorPacket(
-            Color.Wheat,
+            Color.WhiteSmoke,
             0xff666666.AsAbgrColor(),
             0xff888888.AsAbgrColor(),
             0xff006600.AsAbgrColor());
@@ -83,9 +96,14 @@ public sealed class TextField : Component
 
     public void SetText(string newText)
     {
+        SetText(newText.AsSpan());
+    }
+
+    public void SetText(ReadOnlySpan<char> newText)
+    {
         CaretPosition = 0;
         var clippedTextLength = Math.Min(_charBuffer.Length, newText.Length);
-        var newTextSpan = newText.AsSpan(0, clippedTextLength);
+        var newTextSpan = Helpers.Slice(newText, 0, clippedTextLength);
         var span = new Span<char>(_charBuffer);
 
         newTextSpan.CopyTo(span);
@@ -175,6 +193,9 @@ public sealed class TextField : Component
 
         var c = keyboardInput.GetCorrespondingChar();
 
+        if (AutoCapitaliseLetters)
+            c = char.ToUpper(c);
+
         if (!MaskAllowsCharacter(c))
             return;
 
@@ -216,6 +237,7 @@ public sealed class TextField : Component
 
     public void HandleEnter()
     {
+        InvokeTextSubmit();
     }
 
     public void HandleBackspace()
@@ -330,5 +352,10 @@ public sealed class TextField : Component
 
         caretPhysicalOffset -= 1f;
         return (int)caretPhysicalOffset;
+    }
+
+    protected override void OnDispose()
+    {
+        _textSubmit?.Clear();
     }
 }

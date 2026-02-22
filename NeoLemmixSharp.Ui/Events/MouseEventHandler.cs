@@ -7,7 +7,7 @@ public sealed class MouseEventHandler
 {
     public delegate void ComponentMouseAction(Component c, Point position);
 
-    private readonly List<ComponentMouseAction> _actions = new();
+    private readonly List<ComponentMouseAction> _actions = [];
 
     public void RegisterMouseEvent(ComponentMouseAction action)
     {

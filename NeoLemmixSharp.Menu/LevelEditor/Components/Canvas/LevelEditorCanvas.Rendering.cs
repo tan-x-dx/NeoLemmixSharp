@@ -19,6 +19,7 @@ public sealed partial class LevelEditorCanvas
         RenderCanvasBorder(spriteBatch);
         RenderCanvas(spriteBatch);
         RenderSelectedPieces(spriteBatch);
+        RenderLevelBorder(spriteBatch);
 
         if (_clickDragMode == ClickDragMode.SelectPieces)
         {
@@ -102,6 +103,29 @@ public sealed partial class LevelEditorCanvas
 
             spriteBatch.DrawRect(Helpers.CreateRectangle(pieceLocation, pieceSize), outlineColor);
         }
+    }
+
+    private void RenderLevelBorder(SpriteBatch spriteBatch)
+    {
+        var viewBounds = new RectangularRegion(
+            _horizontalBorderBehaviour.GetViewportSourceInterval(),
+            _verticalBorderBehaviour.GetViewportSourceInterval())
+            .Translate(LevelEditorConstants.InverseRenderOffset);
+        var horizontalScreenBounds = _horizontalBorderBehaviour.GetScreenDestinationInterval();
+        var verticalScreenBounds = _verticalBorderBehaviour.GetScreenDestinationInterval();
+        var offset = Position + new Point(horizontalScreenBounds.Start, verticalScreenBounds.Start);
+
+        var pieceBounds = new RectangularRegion(new Point(), _levelData.LevelDimensions);
+
+        var pieceLocation = new Point() - viewBounds.Position;
+        pieceLocation = new Point(pieceLocation.X * _horizontalBorderBehaviour.ZoomValue, pieceLocation.Y * _verticalBorderBehaviour.ZoomValue);
+        pieceLocation += offset;
+
+        var pieceSize = pieceBounds.Size.Scale(_horizontalBorderBehaviour.ZoomValue, _verticalBorderBehaviour.ZoomValue);
+        pieceLocation -= new Point(1, 1);
+        pieceSize = new Size(pieceSize.W + 2, pieceSize.H + 2);
+
+        spriteBatch.DrawRect(Helpers.CreateRectangle(pieceLocation, pieceSize), Color.White);
     }
 
     private void RecreateRenderers()

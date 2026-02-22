@@ -6,11 +6,13 @@ using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
+using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 using NeoLemmixSharp.Menu.LevelEditor.Menu;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Menu.LevelEditor;
 
@@ -26,7 +28,7 @@ public sealed class LevelEditorPage : PageBase
 
     private LevelData _currentLevelData;
 
-    public bool IsNeoLemmix => _currentLevelData.FileFormatType == IO.FileFormats.FileFormatType.NeoLemmix;
+    public bool IsNeoLemmix => _currentLevelData.FileFormatType == FileFormatType.NeoLemmix;
 
     public LevelEditorPage(MenuInputController menuInputController, GraphicsDevice graphicsDevice) : base(menuInputController)
     {
@@ -49,11 +51,13 @@ public sealed class LevelEditorPage : PageBase
         root.AddComponent(_controlPanel);
         root.AddComponent(_pieceBank);
 
+        SetUpHandlers();
+
         // LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\Amiga Lemmings\Lemmings\Fun\21_You_Live_and_Lem.nxlv");
         // LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\Amiga Lemmings\Lemmings\Tricky\04_Here's_one_I_prepared_earlier.nxlv");
         LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\skill test.nxlv");
 
-        // var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), IO.FileFormats.FileFormatType.NeoLemmix));
+        // var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), FileFormatType.NeoLemmix));
         // SetStyle(styleData);
 
         OnResize();
@@ -122,7 +126,7 @@ public sealed class LevelEditorPage : PageBase
 
     private void LoadLevel(string levelFilePath)
     {
-        var levelData = IO.FileFormats.FileTypeHandler.ReadLevel(levelFilePath);
+        var levelData = FileTypeHandler.ReadLevel(levelFilePath);
 
         StyleCache.EnsureStylesAreLoadedForLevel(levelData);
         SetLevelData(levelData);
@@ -135,7 +139,7 @@ public sealed class LevelEditorPage : PageBase
     {
         _currentLevelData.IncrementVersion();
 
-        IO.FileFormats.FileTypeHandler.WriteLevel(_currentLevelData, levelFilePath);
+        FileTypeHandler.WriteLevel(_currentLevelData, levelFilePath);
     }
 
     protected override void OnDispose()
@@ -178,13 +182,100 @@ public sealed class LevelEditorPage : PageBase
 
     }
 
+    private void SetUpHandlers()
+    {
+        _controlPanel.TitleTextField.TextSubmit.RegisterEvent(SetLevelTitle);
+        _controlPanel.AuthorTextField.TextSubmit.RegisterEvent(SetLevelAuthor);
+        _controlPanel.MusicTextField.TextSubmit.RegisterEvent(SetLevelMusic);
+
+        _controlPanel.LevelWidthTextField.TextSubmit.RegisterEvent(SetLevelWidth);
+        _controlPanel.LevelHeightTextField.TextSubmit.RegisterEvent(SetLevelHeight);
+
+        _controlPanel.LevelIdTextField.TextSubmit.RegisterEvent(SetLevelId);
+    }
+
+    private void SetLevelTitle(Component c)
+    {
+        var textField = (TextField)c;
+        _currentLevelData.LevelTitle = textField.CurrentString;
+    }
+
+    private void SetLevelAuthor(Component c)
+    {
+        var textField = (TextField)c;
+        _currentLevelData.LevelAuthor = textField.CurrentString;
+    }
+
+    private void SetLevelMusic(Component c)
+    {
+        var textField = (TextField)c;
+        //_currentLevelData.Music = textField.CurrentString;
+    }
+
+    [SkipLocalsInit]
+    private void SetLevelWidth(Component c)
+    {
+        var textField = (TextField)c;
+
+        var currentLevelDimensions = _currentLevelData.LevelDimensions;
+        var newLevelWidth = textField.ParseInt();
+
+        if (newLevelWidth > EngineConstants.MaxLevelWidth)
+        {
+            newLevelWidth = EngineConstants.MaxLevelWidth;
+
+            Span<char> numberBuffer = stackalloc char[4];
+            newLevelWidth.TryFormat(numberBuffer, out var charsWritten);
+            textField.SetText(Helpers.Slice(numberBuffer, 0, charsWritten));
+        }
+
+        if (currentLevelDimensions.W == newLevelWidth)
+            return;
+
+        _currentLevelData.SetLevelWidth(newLevelWidth);
+        _levelCanvas.OnLevelDataChanged();
+    }
+
+    [SkipLocalsInit]
+    private void SetLevelHeight(Component c)
+    {
+        var textField = (TextField)c;
+
+        var currentLevelDimensions = _currentLevelData.LevelDimensions;
+        var newLevelHeight = textField.ParseInt();
+
+        if (newLevelHeight > EngineConstants.MaxLevelHeight)
+        {
+            newLevelHeight = EngineConstants.MaxLevelHeight;
+
+            Span<char> numberBuffer = stackalloc char[4];
+            newLevelHeight.TryFormat(numberBuffer, out var charsWritten);
+            textField.SetText(Helpers.Slice(numberBuffer, 0, charsWritten));
+        }
+
+        if (currentLevelDimensions.H == newLevelHeight)
+            return;
+
+        _currentLevelData.SetLevelHeight(newLevelHeight);
+        _levelCanvas.OnLevelDataChanged();
+    }
+
+    private void SetLevelId(Component c)
+    {
+        var textField = (TextField)c;
+
+        var newLevelId = ulong.Parse(textField.CurrentTextSpan, System.Globalization.NumberStyles.AllowHexSpecifier, null);
+
+        _currentLevelData.LevelId = new LevelIdentifier(newLevelId);
+    }
+
     private LevelData CreateBlankLevelData()
     {
-        var result = new LevelData(IO.FileFormats.FileFormatType.NeoLemmix);
+        var result = new LevelData(FileFormatType.NeoLemmix);
         result.SetLevelWidth(320);
         result.SetLevelHeight(160);
         result.LevelId = new LevelIdentifier((ulong)Random.Shared.NextInt64());
-        result.LevelStyle = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), IO.FileFormats.FileFormatType.NeoLemmix)).Identifier;
+        result.LevelStyle = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), FileFormatType.NeoLemmix)).Identifier;
         result.MaxNumberOfClonedLemmings = 0;
 
         var objective = new LevelObjectiveData()
@@ -192,14 +283,14 @@ public sealed class LevelEditorPage : PageBase
             ObjectiveName = "Save Lemmings",
 
             SkillSetData = [],
-            ObjectiveCriteria = [new SaveLemmingsCriterionData { SaveRequirement = 20, TribeId = 0 }],
+            ObjectiveCriteria = [new SaveLemmingsCriterionData { SaveRequirement = 20, TribeId = EngineConstants.ClassicTribeId }],
             ObjectiveModifiers = [],
             TalismanData = []
         };
 
         result.SetObjectiveData(objective);
 
-        result.TribeIdentifiers.Add(new(result.LevelStyle, 0));
+        result.TribeIdentifiers.Add(new(result.LevelStyle, EngineConstants.ClassicTribeId));
 
         return result;
     }

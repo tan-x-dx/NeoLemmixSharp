@@ -18,6 +18,10 @@ public sealed class UiHandler : IDisposable
         get => field;
         private set
         {
+            if (field == value)
+                return;
+
+            field?.InvokeTextSubmit();
             field?.IsSelected = false;
             field = value;
             field?.IsSelected = true;

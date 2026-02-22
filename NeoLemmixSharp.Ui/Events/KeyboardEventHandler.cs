@@ -6,7 +6,7 @@ public sealed class KeyboardEventHandler
 {
     public delegate void ComponentKeyboardAction(Component c, in KeysEnumerable keys);
 
-    private readonly List<ComponentKeyboardAction> _actions = new();
+    private readonly List<ComponentKeyboardAction> _actions = [];
 
     public void RegisterKeyEvent(ComponentKeyboardAction action)
     {

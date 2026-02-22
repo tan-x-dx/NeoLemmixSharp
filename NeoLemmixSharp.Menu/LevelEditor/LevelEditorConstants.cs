@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Util;
 using Point = NeoLemmixSharp.Common.Point;
 
 namespace NeoLemmixSharp.Menu.LevelEditor;
@@ -17,8 +18,8 @@ public static class LevelEditorConstants
     public static Point RenderOffset => new(LevelOuterBoundarySize, LevelOuterBoundarySize);
     public static Point InverseRenderOffset => new(-LevelOuterBoundarySize, -LevelOuterBoundarySize);
 
-    public const uint CanvasBorderColourValue = 0xff696969;
-    public static Color CanvasBorderColour => new(CanvasBorderColourValue);
+    public const uint CanvasBorderColourValue = 0xff5a5a5a;
+    public static Color CanvasBorderColour => CanvasBorderColourValue.AsAbgrColor();
     public const int CanvasExtraSpaceBoundary = 16;
 
     public const int CanvasMinZoom = 1;

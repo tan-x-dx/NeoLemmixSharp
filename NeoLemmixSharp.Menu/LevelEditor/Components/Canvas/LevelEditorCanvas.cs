@@ -35,7 +35,7 @@ public sealed partial class LevelEditorCanvas : Component
         OnLevelDataChanged();
     }
 
-    private void OnLevelDataChanged()
+    public void OnLevelDataChanged()
     {
         RecreateRenderers();
         _horizontalBorderBehaviour.SetLevelLength(_levelTexture.Width);
