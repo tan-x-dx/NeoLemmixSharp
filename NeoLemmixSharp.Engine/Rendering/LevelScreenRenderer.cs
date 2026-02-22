@@ -63,7 +63,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 
         _graphicsDevice.SetRenderTarget(null);
 
-        spriteBatch.Begin(SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
+        spriteBatch.Begin(SpriteSortMode.Deferred, samplerState: SamplerState.PointClamp);
 
         //     _graphicsDevice.Clear(Color.DarkGray);
         _levelRenderer.DrawToScreen(spriteBatch);

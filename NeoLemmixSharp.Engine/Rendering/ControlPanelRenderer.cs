@@ -82,7 +82,7 @@ public sealed class ControlPanelRenderer : IDisposable
     public void RenderControlPanel(SpriteBatch spriteBatch)
     {
         _graphicsDevice.SetRenderTarget(_controlPanelRenderTarget);
-        spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
+        spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, samplerState: SamplerState.PointClamp);
 
         RenderSkillAssignButtons(spriteBatch);
         RenderTextualDataAndIcons(spriteBatch);

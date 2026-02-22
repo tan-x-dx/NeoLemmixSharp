@@ -168,11 +168,10 @@ public sealed class LevelScreen : IBaseScreen
         this.InitialiseFields();
     }
 
+    public TimeSpan GetTargetElapsedTime() => EngineConstants.EngineFramesPerSecondTimeSpan;
+
     public void Tick(Microsoft.Xna.Framework.GameTime gameTime)
     {
-        if (!IGameWindow.Instance.IsActive)
-            return;
-
         _levelControlPanel.TextualData.ClearTextualData();
         _levelInputController.Tick();
         _levelCursor.Tick();

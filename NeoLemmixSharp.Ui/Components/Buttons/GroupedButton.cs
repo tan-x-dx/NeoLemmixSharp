@@ -22,8 +22,8 @@ public sealed class GroupedButton : Component
         }
     }
 
-    public GroupedButton(int x, int y, string? label)
-        : base(x, y, label)
+    public GroupedButton(int x, int y)
+        : base(x, y)
     {
         MouseEnter.RegisterMouseEvent(SetMouseOver);
         MousePressed.RegisterMouseEvent(SetMousePress);
@@ -31,8 +31,8 @@ public sealed class GroupedButton : Component
         MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
-    public GroupedButton(int x, int y, int width, int height, string label)
-        : base(x, y, width, height, label)
+    public GroupedButton(int x, int y, int width, int height)
+        : base(x, y, width, height)
     {
         MouseEnter.RegisterMouseEvent(SetMouseOver);
         MousePressed.RegisterMouseEvent(SetMousePress);

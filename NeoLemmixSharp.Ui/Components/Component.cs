@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Ui.Data;
 using NeoLemmixSharp.Ui.Events;
-using Color = Microsoft.Xna.Framework.Color;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace NeoLemmixSharp.Ui.Components;
 
@@ -16,9 +14,6 @@ public abstract class Component : IDisposable
     private ComponentState _state = ComponentState.Normal;
 
     private ColorPacket _colourPacket;
-
-    private string? _textLabel = null;
-    private int _labelOffsetX, _labelOffsetY;
 
     private bool _isVisible = true;
     private bool _isDisposed;
@@ -58,23 +53,14 @@ public abstract class Component : IDisposable
         Width = 10;
         Height = 10;
         _colourPacket = UiConstants.RectangularButtonDefaultColours;
-
-        Label = string.Empty;
-        LabelOffsetX = UiConstants.StandardInset;
-        LabelOffsetY = UiConstants.StandardInset;
     }
 
-    protected Component(int x, int y, string? label)
-        : this(x, y, UiConstants.TwiceStandardInset + (int)(0.5f + (label?.Length ?? 10) * UiConstants.FontGlyphWidthMultiplier), UiConstants.StandardButtonHeight, label)
+    protected Component(int x, int y)
+        : this(x, y, UiConstants.StandardButtonHeight, UiConstants.StandardButtonHeight)
     {
     }
 
     protected Component(int x, int y, int width, int height)
-        : this(x, y, width, height, null)
-    {
-    }
-
-    protected Component(int x, int y, int width, int height, string? label)
     {
         Left = x;
         Top = y;
@@ -82,10 +68,6 @@ public abstract class Component : IDisposable
         Width = width;
         Height = height;
         _colourPacket = UiConstants.RectangularButtonDefaultColours;
-
-        Label = label;
-        LabelOffsetX = UiConstants.StandardInset;
-        LabelOffsetY = UiConstants.StandardInset;
     }
 
     public int Left
@@ -224,24 +206,6 @@ public abstract class Component : IDisposable
         set => _isVisible = value;
     }
 
-    public virtual string? Label
-    {
-        get => _textLabel;
-        set => _textLabel = value;
-    }
-
-    public int LabelOffsetX
-    {
-        get => _labelOffsetX;
-        set => _labelOffsetX = value;
-    }
-
-    public int LabelOffsetY
-    {
-        get => _labelOffsetY;
-        set => _labelOffsetY = value;
-    }
-
     public virtual void Render(SpriteBatch spriteBatch)
     {
         if (_isVisible)
@@ -263,25 +227,6 @@ public abstract class Component : IDisposable
     protected virtual void RenderComponent(SpriteBatch spriteBatch)
     {
         UiSprites.DrawBeveledRectangle(spriteBatch, this);
-        RenderLabel(spriteBatch);
-    }
-
-    private void RenderLabel(SpriteBatch spriteBatch)
-    {
-        if (string.IsNullOrWhiteSpace(Label))
-            return;
-
-        var labelPosition = new Vector2(Left + LabelOffsetX, Top + LabelOffsetY);
-        spriteBatch.DrawString(
-            UiSprites.UiFont,
-            _textLabel,
-            labelPosition,
-            Color.White,
-            0f,
-            Vector2.Zero,
-            UiConstants.FontScaleFactor,
-            SpriteEffects.None,
-            1.0f);
     }
 
     public void AddComponent(Component? c) => AddComponent(c, -1);

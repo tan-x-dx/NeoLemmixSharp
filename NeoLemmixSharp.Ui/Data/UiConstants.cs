@@ -1,11 +1,14 @@
-﻿using NeoLemmixSharp.Ui.Components;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Ui.Data;
 
 public static class UiConstants
 {
+    public const string NumericTextFieldMask = "0123456789";
+    public const string HexdecimalTextFieldMask = "0123456789ABCDEF";
+
     public const int StandardButtonHeight = 32;
 
     public const int StandardInset = 8;
@@ -13,19 +16,25 @@ public static class UiConstants
 
     public const int RaisedRectangleBorder = 2;
 
-    private const float FontGlyphWidth = 26f;
-    public const float FontScaleFactor = 1.0f;
-    public const float FontGlyphWidthMultiplier = FontGlyphWidth * FontScaleFactor;
+    public enum TextRenderMode
+    {
+        UseFont,
+        UseSprites
+    }
 
-    private static ReadOnlySpan<uint> RawDefaultColors =>
-    [
-        0xff444444,
-        0xff666666,
-        0xff888888,
-        0xff006600
-    ];
+    public static ColorPacket RectangularButtonDefaultColours => new(
+        0xff444444.AsAbgrColor(),
+        0xff666666.AsAbgrColor(),
+        0xff888888.AsAbgrColor(),
+        0xff006600.AsAbgrColor());
 
-    public static ColorPacket RectangularButtonDefaultColours => Unsafe.As<uint, ColorPacket>(ref MemoryMarshal.GetReference(RawDefaultColors));
+    public static ColorPacket LighterRectangularButtonColours => new(
+        0xffa3a3a3.AsAbgrColor(),
+        0xffd6d6d6.AsAbgrColor(),
+        0xfff9f9f9.AsAbgrColor(),
+        0xff00aa00.AsAbgrColor());
+
+    public static ColorPacket AllBlackColours => new(Color.Black, Color.Black, Color.Black, Color.Black);
 
     public const int KeyboardInputFrameDelay = 30;
 }

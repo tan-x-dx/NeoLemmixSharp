@@ -12,7 +12,6 @@ public sealed class CanvasBorderBehaviour
     private int _rawViewportLength;
     private int _actualViewportLength;
 
-    private int _screenStart;
     private int _screenLength;
 
     private int _zoom = LevelEditorConstants.CanvasMinZoom;

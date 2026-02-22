@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Rendering.Shaders;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
@@ -54,7 +55,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         Window.ClientSizeChanged += WindowOnClientSizeChanged;
 
         IsFixedTimeStep = true;
-        TargetElapsedTime = EngineConstants.FramesPerSecondTimeSpan;
+        TargetElapsedTime = EngineConstants.MenuFramesPerSecondTimeSpan;
 
         IGameWindow.Instance = this;
     }
@@ -107,6 +108,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         RootDirectoryManager.Initialise();
+        ShaderBank.Initialise(Content);
         FontBank.Initialise(Content);
         MenuSpriteBank.Initialise(Content);
         CommonSprites.Initialise(Content, GraphicsDevice);
@@ -168,6 +170,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         _screenRenderer = _screen.ScreenRenderer;
 
         Window.Title = _screen.ScreenTitle;
+        TargetElapsedTime = _screen.GetTargetElapsedTime();
         _screen.OnActivated();
     }
 
@@ -183,6 +186,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Update(GameTime gameTime)
     {
+        if (!IsActive)
+            return;
+
         _screen!.Tick(gameTime);
     }
 

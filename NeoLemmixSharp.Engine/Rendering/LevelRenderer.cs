@@ -92,7 +92,7 @@ public sealed class LevelRenderer :
     public void RenderLevel(SpriteBatch spriteBatch)
     {
         _graphicsDevice.SetRenderTarget(_levelRenderTarget);
-        spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
+        spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, samplerState: SamplerState.PointClamp);
 
         _backgroundRenderer.RenderBackground(spriteBatch);
         RenderSprites(spriteBatch);

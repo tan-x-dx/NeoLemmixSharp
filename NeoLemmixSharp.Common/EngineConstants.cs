@@ -13,8 +13,13 @@ public static class EngineConstants
     public const int FastForwardSpeedMultiplier = 3;
     public const int EngineTicksPerSecond = GameplayTicksPerSecond * FastForwardSpeedMultiplier;
 
-    private const long FramesPerSecondInTicks = (long)(TimeSpan.TicksPerMillisecond * (1000d / (double)EngineTicksPerSecond));
-    public static TimeSpan FramesPerSecondTimeSpan => TimeSpan.FromTicks(FramesPerSecondInTicks);
+    private const long EngineFramesPerSecondInTicks = (long)(TimeSpan.TicksPerMillisecond * (1000d / EngineTicksPerSecond));
+    public static TimeSpan EngineFramesPerSecondTimeSpan => TimeSpan.FromTicks(EngineFramesPerSecondInTicks);
+
+    public const int MenuTicksPerSecond = 60;
+
+    private const long MenuFramesPerSecondInTicks = (long)(TimeSpan.TicksPerMillisecond * (1000d / MenuTicksPerSecond));
+    public static TimeSpan MenuFramesPerSecondTimeSpan => TimeSpan.FromTicks(MenuFramesPerSecondInTicks);
 
     public const int DoubleTapFrameCountMax = 17;
 

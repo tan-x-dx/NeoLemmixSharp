@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Rendering.Shaders;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
@@ -44,13 +45,24 @@ public sealed class MenuScreenRenderer : IScreenRenderer
     public void RenderScreen(GameTime gameTime, SpriteBatch spriteBatch)
     {
         // background
-        spriteBatch.Begin(sortMode: SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
+        spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
 
         if (RenderBackground)
             _backgroundRenderer.Render(spriteBatch);
 
         // draw ui
         _uiHandler.Render(spriteBatch);
+
+        if (_uiHandler.HasMenuFontsToRender())
+        {
+            spriteBatch.End();
+            spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp, effect: ShaderBank.GreyScaleTintShader);
+
+            _uiHandler.RenderMenuFontText(spriteBatch);
+
+            spriteBatch.End();
+            spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
+        }
 
         _menuCursorRenderer.RenderCursor(spriteBatch);
 

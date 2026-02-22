@@ -14,13 +14,16 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 
 public sealed class PieceSelector : Component
 {
-    public IArchetypeData StylePiece { get; }
     private readonly Texture2D _sourceTexture;
 
-    public PieceSelector(IArchetypeData piece) : base(0, 0, LevelEditorConstants.BaseSpriteRenderDimension, LevelEditorConstants.BaseSpriteRenderDimension, piece.PieceIdentifier.ToString())
+    public IArchetypeData StylePiece { get; }
+    public string Label { get; }
+
+    public PieceSelector(IArchetypeData piece) : base(0, 0, LevelEditorConstants.BaseSpriteRenderDimension, LevelEditorConstants.BaseSpriteRenderDimension)
     {
-        StylePiece = piece;
         _sourceTexture = TextureCache.GetOrLoadTexture(piece.TextureFilePath, piece.StyleIdentifier, piece.PieceIdentifier, piece.TextureType);
+        StylePiece = piece;
+        Label = piece.PieceIdentifier.ToString();
     }
 
     public override void Render(SpriteBatch spriteBatch)
@@ -45,12 +48,7 @@ public sealed class PieceSelector : Component
             UiSprites.UiFont,
             StylePiece.Name,
             new Vector2(Left + 2f, Bottom - 18f),
-            Color.White,
-            0f,
-            Vector2.Zero,
-            UiConstants.FontScaleFactor,
-            SpriteEffects.None,
-            1.0f);
+            Color.White);
     }
 
     private void RenderTile(SpriteBatch spriteBatch)

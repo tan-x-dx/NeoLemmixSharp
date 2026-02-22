@@ -72,7 +72,10 @@ internal sealed class LevelDataReader : NeoLemmixDataReader
 
     private void SetTitle(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var levelTitle = _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
+        var levelTitle = secondTokenIndex == -1
+            ? string.Empty
+            : _uniqueStringSet.GetUniqueStringInstance(line[secondTokenIndex..]);
+
         _levelData.LevelTitle = string.IsNullOrWhiteSpace(levelTitle) ? "Untitled" : levelTitle;
     }
 

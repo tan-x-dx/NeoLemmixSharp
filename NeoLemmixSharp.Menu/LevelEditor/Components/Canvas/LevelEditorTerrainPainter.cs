@@ -26,7 +26,7 @@ public sealed class LevelEditorTerrainPainter
         new Span<Color>(rawColors.Array).Fill(Color.Transparent);
         _terrainPainter.PaintTerrain();
 
-        DrawLevelSpaceBoundary();
+      //  DrawLevelSpaceBoundary();
 
         _terrainPainter.Apply();
     }

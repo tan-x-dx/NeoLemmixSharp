@@ -7,7 +7,9 @@ namespace NeoLemmixSharp.Ui.Components;
 public sealed class UiHandler : IDisposable
 {
     private readonly InputController _inputController;
+    private readonly List<TextLabel> _menuFontTextLabels = [];
 
+    public static UiHandler Instance { get; set; } = null!;
     internal InputController InputController => _inputController;
 
     public Component? CurrentSelection { get; private set; }
@@ -16,6 +18,10 @@ public sealed class UiHandler : IDisposable
         get => field;
         private set
         {
+            if (field == value)
+                return;
+
+            field?.InvokeTextSubmit();
             field?.IsSelected = false;
             field = value;
             field?.IsSelected = true;
@@ -28,9 +34,27 @@ public sealed class UiHandler : IDisposable
     {
         RootComponent = new Tab(0, 0, 0, 0);
         _inputController = inputController;
+
+        Instance = this;
     }
 
-    public void Render(SpriteBatch spriteBatch) => RootComponent.Render(spriteBatch);
+    public void Render(SpriteBatch spriteBatch)
+    {
+        RootComponent.Render(spriteBatch);
+
+        if (_menuFontTextLabels.Count == 0)
+            return;
+    }
+
+    public bool HasMenuFontsToRender() => _menuFontTextLabels.Count > 0;
+
+    public void RenderMenuFontText(SpriteBatch spriteBatch)
+    {
+        foreach (var label in _menuFontTextLabels)
+        {
+            label.RenderMenuFont(spriteBatch);
+        }
+    }
 
     public void Tick()
     {
@@ -174,9 +198,22 @@ public sealed class UiHandler : IDisposable
         SelectedTextField = null;
     }
 
+    public void RegisterTextLabelForShaderRendering(TextLabel textLabel)
+    {
+        if (_menuFontTextLabels.Contains(textLabel))
+            return;
+        _menuFontTextLabels.Add(textLabel);
+    }
+
+    public void DeregisterTextLabelForShaderRendering(TextLabel textLabel)
+    {
+        _menuFontTextLabels.Remove(textLabel);
+    }
+
     public void Dispose()
     {
         RootComponent.Dispose();
+        Instance = null!;
         GC.SuppressFinalize(this);
     }
 }
