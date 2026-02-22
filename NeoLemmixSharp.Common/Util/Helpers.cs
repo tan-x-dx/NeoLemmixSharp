@@ -63,7 +63,7 @@ public static class Helpers
     /// <param name="length">The (assumed valid) desired length of the span.</param>
     /// <returns>A span over the desired data.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe Span<T> CreateSpan<T>(T[] array, int start, int length)
+    public static Span<T> CreateSpan<T>(T[] array, int start, int length)
     {
 #if DEBUG
         ArgumentOutOfRangeException.ThrowIfNegative(start);
@@ -127,7 +127,7 @@ public static class Helpers
     /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
     /// <returns>A span over the desired data.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(T[] array, int start, int length)
+    public static ReadOnlySpan<T> CreateReadOnlySpan<T>(T[] array, int start, int length)
     {
 #if DEBUG
         ArgumentOutOfRangeException.ThrowIfNegative(start);
@@ -293,6 +293,10 @@ public static class Helpers
             result += b;
         return result;
     }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Color AsAbgrColor(this uint value) => new(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TEnum GetEnumValue<TEnum>(uint rawValue, uint numberOfEnumValues)

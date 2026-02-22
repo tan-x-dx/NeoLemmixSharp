@@ -27,7 +27,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
     public PieceBank(
         MouseEventHandler.ComponentMouseAction onSelectTerrainPiece,
         MouseEventHandler.ComponentMouseAction onSelectGadgetPiece,
-        MouseEventHandler.ComponentMouseAction onSelectBackgroundPiece) : base(0, 0, string.Empty)
+        MouseEventHandler.ComponentMouseAction onSelectBackgroundPiece) : base(0, 0)
     {
         _onSelectTerrainPiece = onSelectTerrainPiece;
         _onSelectGadgetPiece = onSelectGadgetPiece;
@@ -198,11 +198,11 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
 
     int IComparer<PieceSelector>.Compare(PieceSelector? x, PieceSelector? y)
     {
-        string? nameX = string.Empty;
+        var nameX = string.Empty;
         if (x is not null)
             nameX = x.Label;
 
-        string? nameY = string.Empty;
+        var nameY = string.Empty;
         if (y is not null)
             nameY = y.Label;
 

@@ -10,6 +10,7 @@ public static class UiSprites
 {
     internal static Texture2D BevelTexture { get; private set; } = null!;
     public static SpriteFont UiFont { get; private set; } = null!;
+    public static Dictionary<char, SpriteFont.Glyph> UiFontGlyphs { get; private set; } = null!;
 
     public static void Initialise(ContentManager contentManager)
     {
@@ -17,6 +18,7 @@ public static class UiSprites
             throw new InvalidOperationException($"Cannot initialise {nameof(UiSprites)} more than once!");
 
         UiFont = contentManager.Load<SpriteFont>("Fonts/UiFont");
+        UiFontGlyphs = UiFont.GetGlyphs();
 
         BevelTexture = contentManager.Load<Texture2D>("menu/bevel");
     }

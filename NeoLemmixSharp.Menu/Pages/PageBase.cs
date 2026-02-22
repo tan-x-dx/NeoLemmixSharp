@@ -25,6 +25,8 @@ public abstract class PageBase : IInitialisable, IDisposable
         if (IsInitialised)
             return;
 
+        UiHandler.Instance = UiHandler;
+
         OnInitialise();
         IsInitialised = true;
     }

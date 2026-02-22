@@ -10,7 +10,7 @@ public sealed class TextureButton : Component
     public float ScaleMultiplier { get; set; } = 1f;
 
     public TextureButton(int x, int y, Texture2D texture)
-        : base(x, y, texture.Width, texture.Height, null)
+        : base(x, y, texture.Width, texture.Height)
     {
         _texture = texture;
     }

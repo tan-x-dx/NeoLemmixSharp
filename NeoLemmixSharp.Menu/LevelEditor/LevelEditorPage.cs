@@ -31,7 +31,7 @@ public sealed class LevelEditorPage : PageBase
     public LevelEditorPage(MenuInputController menuInputController, GraphicsDevice graphicsDevice) : base(menuInputController)
     {
         _menuBar = new LevelEditorMenuBar();
-        _controlPanel = new LevelEditorControlPanel(UiHandler);
+        _controlPanel = new LevelEditorControlPanel();
         _levelCanvas = new LevelEditorCanvas(graphicsDevice, menuInputController.InputController);
         _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 

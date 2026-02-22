@@ -14,7 +14,7 @@ public abstract class LevelBrowserEntry : Component
 
     protected LevelBrowserEntry(
         int indentationLevel)
-        : base(0, 0, null)
+        : base(0, 0)
     {
         _indentationLevel = indentationLevel;
 

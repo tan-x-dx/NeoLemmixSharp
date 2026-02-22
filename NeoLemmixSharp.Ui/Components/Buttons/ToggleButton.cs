@@ -5,7 +5,6 @@ namespace NeoLemmixSharp.Ui.Components.Buttons;
 
 public sealed class ToggleButton : Component
 {
-    private string? _alternateLabel;
     private bool _isActive = false;
 
     public MouseEventHandler OnDeactivated { get; } = new();
@@ -22,34 +21,22 @@ public sealed class ToggleButton : Component
         }
     }
 
-    public ToggleButton(int x, int y, string? label)
-        : base(x, y, label)
+    public ToggleButton(int x, int y)
+        : base(x, y)
     {
-        _alternateLabel = label;
-
         MousePressed.RegisterMouseEvent(OnMouseDown);
         MouseEnter.RegisterMouseEvent(SetMouseOver);
         MouseReleased.RegisterMouseEvent(SetMouseOver);
         MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
-    public ToggleButton(int x, int y, int width, int height, string? label)
-        : base(x, y, width, height, label)
+    public ToggleButton(int x, int y, int width, int height)
+        : base(x, y, width, height)
     {
-        _alternateLabel = label;
-
         MousePressed.RegisterMouseEvent(OnMouseDown);
         MouseEnter.RegisterMouseEvent(SetMouseOver);
         MouseReleased.RegisterMouseEvent(SetMouseOver);
         MouseExit.RegisterMouseEvent(SetMouseNormal);
-    }
-
-    public void SetAlternateLabel(string message) => _alternateLabel = message;
-
-    public override string? Label
-    {
-        get => IsActive ? _alternateLabel : base.Label;
-        set => base.Label = value;
     }
 
     public bool IsActive

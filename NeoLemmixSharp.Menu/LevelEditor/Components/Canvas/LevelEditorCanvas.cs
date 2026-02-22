@@ -87,8 +87,11 @@ public sealed partial class LevelEditorCanvas : Component
         _verticalBorderBehaviour.Zoom(scrollDelta);
     }
 
-    private static Point CalculateArrowKeyScrollDelta(MenuInputController inputController)
+    private Point CalculateArrowKeyScrollDelta(MenuInputController inputController)
     {
+        if (UiHandler.Instance.SelectedTextField is not null)
+            return new Point();
+
         var down = inputController.DownArrow.IsActionDown ? 1 : 0;
         var left = inputController.LeftArrow.IsActionDown ? 1 : 0;
         var up = inputController.UpArrow.IsActionDown ? 1 : 0;

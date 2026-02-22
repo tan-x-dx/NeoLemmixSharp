@@ -10,14 +10,14 @@ public sealed class LevelEditorControlPanel : Component
 
     private readonly TextField _titleTextField;
 
-    public LevelEditorControlPanel(UiHandler uiHandler)
+    public LevelEditorControlPanel()
     {
         Width = LevelControlPanelWidth;
 
-        var titleLabel = new TextLabel(UiConstants.StandardInset, UiConstants.StandardInset, "Title", UiConstants.RectangularButtonDefaultColours);
+        var titleLabel = new TextLabel(UiConstants.StandardInset, UiConstants.StandardInset, "Title", UiConstants.AllBlackColours);
         AddComponent(titleLabel);
-        _titleTextField = new TextField(uiHandler, titleLabel.Width + UiConstants.TwiceStandardInset, titleLabel.Top, string.Empty);
-        titleLabel.Width = 120;
+        _titleTextField = new TextField(titleLabel.Width + UiConstants.TwiceStandardInset, UiConstants.StandardInset);
+        titleLabel.Top = UiConstants.StandardInset + 6;
         _titleTextField.Width = 200;
         _titleTextField.SetCapacity(100);
         AddComponent(_titleTextField);

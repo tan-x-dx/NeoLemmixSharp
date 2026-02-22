@@ -1,56 +1,73 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
-using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Ui.Data;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Ui.Components;
 
 public sealed class TextField : Component
 {
+    private const int TextXOffset = 4;
+    private const int TextYOffset = 6;
+
     private const int CaretBlinkShift = 5;
     private const int CaretBlinkDelay = 1 << CaretBlinkShift;
     private const int CaretBlinkMask = (1 << (CaretBlinkShift + 1)) - 1;
 
-    private readonly UiHandler _uiHandler;
+    private string _currentString = string.Empty;
     private string? _charMask;
-
     private char[] _charBuffer = [];
+
     private int _currentStringLength;
     private int _caretPosition;
     private int _caretFlashCount;
+    private int _caretPhysicalOffset;
+
+    private bool _isSelected;
+
+    private int CaretPosition
+    {
+        get => _caretPosition;
+        set
+        {
+            if (_caretPosition == value)
+                return;
+
+            _caretPosition = value;
+            _caretPhysicalOffset = CalculateCaretPhysicalOffset();
+        }
+    }
 
     public bool IsSelected
     {
-        get => field;
+        get => _isSelected;
         set
         {
-            if (field == value)
+            if (_isSelected == value)
                 return;
 
-            field = value;
-            _caretPosition = 0;
+            _isSelected = value;
+            CaretPosition = 0;
             _caretFlashCount = 0;
         }
     }
 
-    public ReadOnlySpan<char> CurrentText => Helpers.CreateReadOnlySpan(_charBuffer, 0, _currentStringLength);
+    public ReadOnlySpan<char> CurrentTextSpan => Helpers.CreateReadOnlySpan(_charBuffer, 0, _currentStringLength);
     public string CurrentString => CurrentString.ToString();
-    public bool TryParseInt(out int value) => int.TryParse(CurrentText, out value);
+    public bool TryParseInt(out int value) => int.TryParse(CurrentTextSpan, out value);
 
-    public TextField(UiHandler uiHandler, int x, int y, string label) : base(x, y, label)
+    public TextField(int x, int y) : base(x, y)
     {
-        _uiHandler = uiHandler;
         KeyPressed.RegisterKeyEvent(HandleKeyDown);
 
         Colors = new ColorPacket(
             Color.Wheat,
-            new Color(0xff666666),
-            new Color(0xff888888),
-            new Color(0xff006600));
+            0xff666666.AsAbgrColor(),
+            0xff888888.AsAbgrColor(),
+            0xff006600.AsAbgrColor());
     }
 
     public void SetTextMask(string? charMask)
@@ -66,19 +83,20 @@ public sealed class TextField : Component
 
     public void SetText(string newText)
     {
-        _caretPosition = 0;
+        CaretPosition = 0;
         var clippedTextLength = Math.Min(_charBuffer.Length, newText.Length);
         var newTextSpan = newText.AsSpan(0, clippedTextLength);
         var span = new Span<char>(_charBuffer);
 
         newTextSpan.CopyTo(span);
         _currentStringLength = clippedTextLength;
+        OnStringContentsChanged();
     }
 
     public void Clear()
     {
         new Span<char>(_charBuffer).Clear();
-        _caretPosition = 0;
+        CaretPosition = 0;
         _currentStringLength = 0;
     }
 
@@ -93,7 +111,7 @@ public sealed class TextField : Component
 
     private void EvaluatePressedKey()
     {
-        var keyboardInput = _uiHandler.InputController.LatestKeyboardInput();
+        var keyboardInput = UiHandler.Instance.InputController.LatestKeyboardInput();
 
         var numberOfFramesThisKeyHasBeenPressed = keyboardInput.NumberOfFramesThisKeyHasBeenPressed;
         if (numberOfFramesThisKeyHasBeenPressed > 1 &&
@@ -162,13 +180,14 @@ public sealed class TextField : Component
 
         var i = _currentStringLength;
         _currentStringLength++;
-        while (i > _caretPosition)
+        while (i > CaretPosition)
         {
             _charBuffer.At(i) = _charBuffer.At(i - 1);
             i--;
         }
 
-        _charBuffer.At(_caretPosition) = c;
+        _charBuffer.At(CaretPosition) = c;
+        OnStringContentsChanged();
         MoveCaret(1);
     }
 
@@ -177,21 +196,21 @@ public sealed class TextField : Component
         return _charMask is null || _charMask.Contains(c);
     }
 
-    public void MoveCaret(int delta) => SetCaretPosition(_caretPosition + delta);
+    public void MoveCaret(int delta) => SetCaretPosition(CaretPosition + delta);
 
     public void SetCaretPosition(int newCaretPosition)
     {
         if (newCaretPosition < 0)
         {
-            _caretPosition = 0;
+            CaretPosition = 0;
         }
         else if (newCaretPosition > _currentStringLength)
         {
-            _caretPosition = _currentStringLength;
+            CaretPosition = _currentStringLength;
         }
         else
         {
-            _caretPosition = newCaretPosition;
+            CaretPosition = newCaretPosition;
         }
     }
 
@@ -201,10 +220,10 @@ public sealed class TextField : Component
 
     public void HandleBackspace()
     {
-        if (_caretPosition == 0)
+        if (CaretPosition == 0)
             return;
 
-        var i = _caretPosition - 1;
+        var i = CaretPosition - 1;
         var lastCharIndex = _currentStringLength - 1;
         while (i < lastCharIndex)
         {
@@ -214,12 +233,24 @@ public sealed class TextField : Component
 
         _charBuffer.At(lastCharIndex) = (char)0;
         _currentStringLength--;
+        OnStringContentsChanged();
         MoveCaret(-1);
+    }
+
+    private void OnStringContentsChanged()
+    {
+        var currentStringSpan = _currentString.AsSpan();
+        var currentTextSpan = CurrentTextSpan;
+
+        if (currentTextSpan.Equals(currentStringSpan, StringComparison.Ordinal))
+            return;
+
+        _currentString = currentTextSpan.ToString();
     }
 
     public void HandleDelete()
     {
-        if (_caretPosition == _currentStringLength)
+        if (CaretPosition == _currentStringLength)
             return;
 
         MoveCaret(1);
@@ -228,7 +259,7 @@ public sealed class TextField : Component
 
     public void Deselect()
     {
-        _uiHandler.DeselectTextField();
+        UiHandler.Instance.DeselectTextField();
     }
 
     protected override void RenderComponent(SpriteBatch spriteBatch)
@@ -240,29 +271,64 @@ public sealed class TextField : Component
 
         UiSprites.DrawBeveledRectangle(spriteBatch, this);
 
-        var rect = new Rectangle(Left, Top, Width, Height);
-        FontBank.MenuFont.RenderText(
-            spriteBatch,
-            CurrentText,
-            rect.X + 2,
-            rect.Y + 6,
-            1,
-            EngineConstants.PanelBlue);
+        var textPosition = new Vector2(Left + TextXOffset, Top + TextYOffset);
+        spriteBatch.DrawString(
+             UiSprites.UiFont,
+             _currentString,
+             textPosition,
+             Color.Black);
 
         if (!IsSelected)
             return;
         if (caretFlashCount >= CaretBlinkDelay)
             return;
 
-        rect.Y += 2;
-        rect.Width = 1;
-        rect.Height -= 4;
-
-        const int charWidth = MenuFont.GlyphWidth;
-        rect.X = Left + 2 + (_caretPosition * charWidth);
+        var rect = new Rectangle(Left + TextXOffset, Top, 1, Height);
+        rect.X += _caretPhysicalOffset;
+        rect.Y += 4;
+        rect.Height -= 10;
 
         spriteBatch.FillRect(
             rect,
-            Color.White);
+            Color.Black);
+    }
+
+    private int CalculateCaretPhysicalOffset()
+    {
+        if (CaretPosition == 0)
+            return 0;
+
+        var characterGlyphs = UiSprites.UiFontGlyphs;
+        var currentTextSpan = Helpers.CreateReadOnlySpan(_charBuffer, 0, CaretPosition);
+
+        float caretPhysicalOffset = 0f;
+        float zero = 0f;
+        bool startOfText = true;
+        foreach (var c in currentTextSpan)
+        {
+            ref var glyph = ref CollectionsMarshal.GetValueRefOrNullRef(characterGlyphs, c);
+
+            if (startOfText)
+            {
+                zero = Math.Max(glyph.LeftSideBearing, 0f);
+                startOfText = false;
+            }
+            else
+            {
+                zero += UiSprites.UiFont.Spacing + glyph.LeftSideBearing;
+            }
+
+            zero += glyph.Width;
+            float charBearingOffset = zero + Math.Max(glyph.RightSideBearing, 0f);
+            if (charBearingOffset > caretPhysicalOffset)
+            {
+                caretPhysicalOffset = charBearingOffset;
+            }
+
+            zero += glyph.RightSideBearing;
+        }
+
+        caretPhysicalOffset -= 1f;
+        return (int)caretPhysicalOffset;
     }
 }

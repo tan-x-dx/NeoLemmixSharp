@@ -2,8 +2,8 @@
 
 public sealed class Button : Component
 {
-    public Button(int x, int y, int width, int height, string? label)
-        : base(x, y, width, height, label)
+    public Button(int x, int y, int width, int height)
+        : base(x, y, width, height)
     {
         MouseEnter.RegisterMouseEvent(SetMouseOver);
         MousePressed.RegisterMouseEvent(SetMousePress);
@@ -12,7 +12,7 @@ public sealed class Button : Component
     }
 
     public Button(int x, int y, string? label)
-        : base(x, y, label)
+        : base(x, y)
     {
         MouseEnter.RegisterMouseEvent(SetMouseOver);
         MousePressed.RegisterMouseEvent(SetMousePress);
