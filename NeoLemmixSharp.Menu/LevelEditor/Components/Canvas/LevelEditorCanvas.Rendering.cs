@@ -18,8 +18,8 @@ public sealed partial class LevelEditorCanvas
     {
         RenderCanvasBorder(spriteBatch);
         RenderCanvas(spriteBatch);
-        RenderSelectedPieces(spriteBatch);
         RenderLevelBorder(spriteBatch);
+        RenderSelectedPieces(spriteBatch);
 
         if (_clickDragMode == ClickDragMode.SelectPieces)
         {

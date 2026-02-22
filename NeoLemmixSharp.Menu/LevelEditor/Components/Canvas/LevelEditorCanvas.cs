@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.Ui.Components;
+using NeoLemmixSharp.Ui.Data;
 using Point = NeoLemmixSharp.Common.Point;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
@@ -92,24 +93,60 @@ public sealed partial class LevelEditorCanvas : Component
         if (UiHandler.Instance.SelectedTextField is not null)
             return new Point();
 
-        var down = inputController.DownArrow.IsActionDown ? 1 : 0;
-        var left = inputController.LeftArrow.IsActionDown ? 1 : 0;
-        var up = inputController.UpArrow.IsActionDown ? 1 : 0;
-        var right = inputController.RightArrow.IsActionDown ? 1 : 0;
+        var downFrames = inputController.DownArrow.NumberOfFramesHeldDownFor;
+        var leftFrames = inputController.LeftArrow.NumberOfFramesHeldDownFor;
+        var upFrames = inputController.UpArrow.NumberOfFramesHeldDownFor;
+        var rightFrames = inputController.RightArrow.NumberOfFramesHeldDownFor;
 
-        var scrollDx = right - left;
-        var scrollDy = down - up;
-
-        scrollDx *= LevelEditorConstants.ArrowKeyScrollDelta;
-        scrollDy *= LevelEditorConstants.ArrowKeyScrollDelta;
+        var scrollDx = EvaluateScrollDelta(leftFrames, rightFrames);
+        var scrollDy = EvaluateScrollDelta(upFrames, downFrames);
 
         return new Point(scrollDx, scrollDy);
+
+        static int EvaluateScrollDelta(int numberOfFramesNegativeHeldDownFor, int numberOfFramesPositiveHeldDownFor)
+        {
+            if (numberOfFramesNegativeHeldDownFor == 0 && numberOfFramesPositiveHeldDownFor == 0)
+                return 0;
+
+            var mult = 1;
+            if (numberOfFramesNegativeHeldDownFor > 0)
+            {
+                mult = -1;
+
+                if (numberOfFramesPositiveHeldDownFor > 0)
+                    return 0;
+            }
+
+            var numberOfFramesHeldDownFor = numberOfFramesNegativeHeldDownFor | numberOfFramesPositiveHeldDownFor;
+
+            if (numberOfFramesHeldDownFor > 1 &&
+                numberOfFramesHeldDownFor < UiConstants.KeyboardInputFrameDelay)
+                return 0;
+
+            return mult;
+        }
     }
 
     public void Scroll(int dx, int dy)
     {
-        _horizontalBorderBehaviour.Scroll(dx);
-        _verticalBorderBehaviour.Scroll(dy);
+        if (_selectedCanvasPieces.Count > 0)
+        {
+            var delta = new Point(dx, dy);
+            var clampBounds = GetPieceClampBounds();
+
+            foreach (var piece in _selectedCanvasPieces)
+            {
+                piece.Move(delta, clampBounds);
+                piece.FixPosition(clampBounds);
+            }
+
+            RepaintLevel();
+        }
+        else
+        {
+            _horizontalBorderBehaviour.Scroll(dx * LevelEditorConstants.ArrowKeyScrollDelta);
+            _verticalBorderBehaviour.Scroll(dy * LevelEditorConstants.ArrowKeyScrollDelta);
+        }
     }
 
     private void RecentreViewport()
