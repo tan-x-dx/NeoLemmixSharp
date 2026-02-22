@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -41,6 +42,7 @@ public static class Helpers
     /// <param name="p">The pointer to use.</param>
     /// <param name="length">The (assumed valid) desired length of the span.</param>
     /// <returns>A span over the desired data.</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe Span<T> CreateSpan<T>(void* p, int length) where T : unmanaged
     {
@@ -62,6 +64,7 @@ public static class Helpers
     /// <param name="start">The (assumed valid) desired start of the span.</param>
     /// <param name="length">The (assumed valid) desired length of the span.</param>
     /// <returns>A span over the desired data.</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Span<T> CreateSpan<T>(T[] array, int start, int length)
     {
@@ -84,6 +87,7 @@ public static class Helpers
     /// <param name="start">The (assumed valid) desired start of the span.</param>
     /// <param name="length">The (assumed valid) desired length of the span.</param>
     /// <returns>A span over the desired data.</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe Span<T> CreateSpan<T>(void* p, int start, int length) where T : unmanaged
     {
@@ -105,6 +109,7 @@ public static class Helpers
     /// <param name="p">The pointer to use.</param>
     /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
     /// <returns>A span over the desired data.</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(void* p, int length) where T : unmanaged
     {
@@ -126,6 +131,7 @@ public static class Helpers
     /// <param name="start">The (assumed valid) desired start of the read-only span.</param>
     /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
     /// <returns>A span over the desired data.</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ReadOnlySpan<T> CreateReadOnlySpan<T>(T[] array, int start, int length)
     {
@@ -148,6 +154,7 @@ public static class Helpers
     /// <param name="start">The (assumed valid) desired start of the read-only span.</param>
     /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
     /// <returns>A span over the desired data.</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(void* p, int start, int length) where T : unmanaged
     {
@@ -170,6 +177,7 @@ public static class Helpers
     /// <param name="start">The (assumed valid) start of the slice.</param>
     /// <param name="length">The (assumed valid) desired length of the span.</param>
     /// <returns>A span over the desired data.</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Span<T> Slice<T>(Span<T> span, int start, int length)
     {
@@ -192,6 +200,7 @@ public static class Helpers
     /// <param name="start">The (assumed valid) start of the slice.</param>
     /// <param name="length">The (assumed valid) desired length of the read-only span.</param>
     /// <returns>A span over the desired data.</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ReadOnlySpan<T> Slice<T>(ReadOnlySpan<T> span, int start, int length)
     {
@@ -213,6 +222,7 @@ public static class Helpers
     /// <param name="array">The array to index into.</param>
     /// <param name="index">The (assumed valid) index.</param>
     /// <returns>A mutable reference to the data at that index</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ref T At<T>(this T[] array, int index)
     {
@@ -233,6 +243,7 @@ public static class Helpers
     /// <param name="span">The span to index into.</param>
     /// <param name="index">The (assumed valid) index.</param>
     /// <returns>A mutable reference to the data at that index</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ref T At<T>(this Span<T> span, int index)
     {
@@ -253,6 +264,7 @@ public static class Helpers
     /// <param name="span">The read-only span to index into.</param>
     /// <param name="index">The (assumed valid) index.</param>
     /// <returns>A read-only reference to the data at that index</returns>
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ref readonly T At<T>(this ReadOnlySpan<T> span, int index)
     {
@@ -264,10 +276,12 @@ public static class Helpers
     }
 
     [Pure]
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rectangle CreateRectangle(Point pos, Size size) => new(pos.X, pos.Y, size.W, size.H);
 
     [Pure]
+    [DebuggerStepThrough]
     public static int CountIfNotNull<T>(this T? item)
         where T : class
     {
@@ -275,6 +289,7 @@ public static class Helpers
     }
 
     [Pure]
+    [DebuggerStepThrough]
     public static int CountIfNotNull<T>(this T? item)
         where T : struct
     {
@@ -285,6 +300,7 @@ public static class Helpers
     /// Calculates a % b, but does not return negative numbers for negative inputs.
     /// </summary>
     [Pure]
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int LogicalMod(int a, int b)
     {
@@ -295,6 +311,7 @@ public static class Helpers
     }
 
     [Pure]
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Color AsAbgrColor(this uint value) => new(value);
 
