@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public abstract class LemmingAction : IEquatable<LemmingAction>, IEquatable<int>
+public abstract class LemmingAction : IEquatable<LemmingAction>
 {
     private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
     private static readonly LemmingActionSet AirborneActions = GetAirborneActions();
@@ -200,7 +200,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IEquatable<int>
             lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
         }
 
-        if (lemming.CurrentAction == this)
+        if (this == lemming.CurrentAction)
             return;
 
         lemming.CurrentAction = this;
@@ -222,10 +222,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>, IEquatable<int>
         if (other is not null) otherValue = other.Id;
         return Id == otherValue;
     }
-
-    [DebuggerStepThrough]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Equals(int id) => Id == id;
 
     [DebuggerStepThrough]
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingAction other && Id == other.Id;

@@ -20,7 +20,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public LemmingState State { get; }
     public LemmingRenderer Renderer { get; }
 
-    public readonly int Id;
+    public int Id { get; }
 
     public int PreviousActionId => _data.PreviousActionId;
     public LemmingAction PreviousAction => LemmingAction.GetActionOrDefault(_data.PreviousActionId);
