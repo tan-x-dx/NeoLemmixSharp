@@ -45,7 +45,11 @@ public sealed class TextField : Component
                 return;
 
             _caretPosition = value;
-            _caretPhysicalOffset = CalculateCaretPhysicalOffset();
+
+            var caretPhysicalOffset = 0;
+            if (value > 0)
+                caretPhysicalOffset = CalculateCaretPhysicalOffset();
+            _caretPhysicalOffset = caretPhysicalOffset;
         }
     }
 
@@ -317,9 +321,6 @@ public sealed class TextField : Component
 
     private int CalculateCaretPhysicalOffset()
     {
-        if (CaretPosition == 0)
-            return 0;
-
         var characterGlyphs = UiSprites.UiFontGlyphs;
         var currentTextSpan = Helpers.CreateReadOnlySpan(_charBuffer, 0, CaretPosition);
 
@@ -356,6 +357,6 @@ public sealed class TextField : Component
 
     protected override void OnDispose()
     {
-        _textSubmit?.Clear();
+        DisposableHelperMethods.DisposeOf(ref _textSubmit);
     }
 }

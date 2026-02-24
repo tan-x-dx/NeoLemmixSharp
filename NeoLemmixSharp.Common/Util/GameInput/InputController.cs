@@ -18,16 +18,15 @@ public sealed class InputController :
     private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _releasedKeys;
     private readonly List<InputAction> _inputActions = new(16);
 
-    private int _previousScrollValue;
-
-    public Point MousePosition { get; private set; }
-    public int ScrollDelta { get; private set; }
-
     public InputAction LeftMouseButtonAction { get; }
     public InputAction RightMouseButtonAction { get; }
     public InputAction MiddleMouseButtonAction { get; }
     public InputAction MouseButton4Action { get; }
     public InputAction MouseButton5Action { get; }
+
+    public Point MousePosition { get; private set; }
+    private int _previousScrollValue;
+    public int ScrollDelta { get; private set; }
 
     private KeyboardInputType _keyboardInputType;
     private KeyboardInputModifiers _inputModifiers;

@@ -28,11 +28,11 @@ public sealed class UiHandler : IDisposable
         }
     }
 
-    public Component RootComponent { get; set; }
+    public Component RootComponent { get; }
 
     public UiHandler(InputController inputController)
     {
-        RootComponent = new Tab(0, 0, 0, 0);
+        RootComponent = new Root();
         _inputController = inputController;
 
         Instance = this;
@@ -215,5 +215,10 @@ public sealed class UiHandler : IDisposable
         RootComponent.Dispose();
         Instance = null!;
         GC.SuppressFinalize(this);
+    }
+
+    private sealed class Root : Component
+    {
+        public Root() : base(0, 0, 0, 0) { }
     }
 }

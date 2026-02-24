@@ -1,9 +1,8 @@
-﻿
-using NeoLemmixSharp.Ui.Components;
+﻿using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Ui.Events;
 
-public sealed class GenericEventHandler
+public sealed class GenericEventHandler : IDisposable
 {
     public delegate void ComponentAction(Component c);
 
@@ -26,4 +25,9 @@ public sealed class GenericEventHandler
     }
 
     public void Clear() => _actions.Clear();
+
+    public void Dispose()
+    {
+        Clear();
+    }
 }
