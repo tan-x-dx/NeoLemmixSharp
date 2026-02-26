@@ -226,7 +226,7 @@ public sealed class LevelEditorPage : PageBase
 
             Span<char> numberBuffer = stackalloc char[4];
             newLevelWidth.TryFormat(numberBuffer, out var charsWritten);
-            textField.SetText(Helpers.Slice(numberBuffer, 0, charsWritten));
+            textField.SetText(numberBuffer.SliceUnsafe(0, charsWritten));
         }
 
         if (currentLevelDimensions.W == newLevelWidth)
@@ -250,7 +250,7 @@ public sealed class LevelEditorPage : PageBase
 
             Span<char> numberBuffer = stackalloc char[4];
             newLevelHeight.TryFormat(numberBuffer, out var charsWritten);
-            textField.SetText(Helpers.Slice(numberBuffer, 0, charsWritten));
+            textField.SetText(numberBuffer.SliceUnsafe(0, charsWritten));
         }
 
         if (currentLevelDimensions.H == newLevelHeight)

@@ -9,9 +9,9 @@ public ref struct BitArrayEnumerator<TPerfectHasher, T>
 {
     private readonly ReadOnlySpan<uint> _bits;
 
+    private uint _v;
     private int _index;
     private int _current;
-    private uint _v;
 
     private readonly TPerfectHasher _hasher;
 
@@ -20,11 +20,11 @@ public ref struct BitArrayEnumerator<TPerfectHasher, T>
         TPerfectHasher hasher,
         ReadOnlySpan<uint> bits)
     {
-        _hasher = hasher;
         _bits = bits;
+        _v = bits.Length == 0 ? 0U : bits.At(0);
         _index = 0;
         _current = 0;
-        _v = _bits.Length == 0 ? 0U : _bits[0];
+        _hasher = hasher;
     }
 
     public bool MoveNext()
@@ -58,17 +58,17 @@ public ref struct BitArrayEnumerator
 {
     private readonly ReadOnlySpan<uint> _bits;
 
+    private uint _v;
     private int _index;
     private int _current;
-    private uint _v;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public BitArrayEnumerator(ReadOnlySpan<uint> bits)
     {
         _bits = bits;
+        _v = bits.Length == 0 ? 0U : bits.At(0);
         _index = 0;
         _current = 0;
-        _v = _bits.Length == 0 ? 0U : _bits[0];
     }
 
     public bool MoveNext()

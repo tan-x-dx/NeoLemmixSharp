@@ -48,7 +48,7 @@ public static class NumberFormattingHelpers
 
             var requiredLength = GetNumberStringLength((uint)n);
 
-            var destSpan = Helpers.Slice(destination, c, requiredLength);
+            var destSpan = destination.SliceUnsafe(c, requiredLength);
             c += WriteDigits(destSpan, (uint)n);
             destination.At(c++) = formatParameters.Separator;
         }

@@ -205,7 +205,7 @@ public static class BitArrayHelpers
         // This implementation is faster than using TensorPrimitives - benchmarks
 
         ref uint startRef = ref MemoryMarshal.GetReference(bits);
-        ref readonly uint endRef = ref bits.At(bits.Length);
+        ref readonly uint endRef = ref Unsafe.Add(ref startRef, bits.Length);
         var result = 0;
         while (Unsafe.IsAddressLessThan(ref startRef, in endRef))
         {
@@ -466,7 +466,7 @@ public static class BitArrayHelpers
 
         ref uint sourceRef = ref MemoryMarshal.GetReference(span);
         ref uint otherRef = ref MemoryMarshal.GetReference(other);
-        ref readonly uint endRef = ref span.At(spanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref sourceRef, spanLength);
 
         while (Unsafe.IsAddressLessThan(ref sourceRef, in endRef))
         {
@@ -554,7 +554,7 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
@@ -583,7 +583,7 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, firstSpanLength);
 
         var allEqual = true;
 
@@ -615,7 +615,7 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
@@ -639,7 +639,7 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
@@ -657,39 +657,39 @@ public static class BitArrayHelpers
         private readonly uint[] _bits;
 
         private uint _v;
-        private int _remaining;
         private int _index;
 
         public int Current { get; private set; }
 
-        public SimpleBitEnumerator(uint[] bits, int popCount)
+        public SimpleBitEnumerator(uint[] bits)
         {
             _bits = bits;
+            _v = bits.Length == 0 ? 0U : bits.At(0);
             _index = 0;
-            _v = _bits.Length == 0 ? 0U : _bits[0];
-            _remaining = popCount;
             Current = 0;
         }
 
         public bool MoveNext()
         {
+            var v = _v;
+            var index = _index;
             if (_v == 0U)
             {
-                if (_remaining == 0)
-                    return false;
-
                 do
                 {
-                    _v = _bits[++_index];
+                    ++index;
+                    if ((uint)index >= (uint)_bits.Length)
+                        return false;
+
+                    v = _bits.At(index);
                 }
-                while (_v == 0U);
+                while (v == 0U);
+                _index = index;
             }
 
-            var m = BitOperations.TrailingZeroCount(_v);
-            _v &= _v - 1;
-
-            Current = (_index << Shift) | m;
-            _remaining--;
+            Current = (index << Shift) | BitOperations.TrailingZeroCount(v);
+            v &= v - 1;
+            _v = v;
             return true;
         }
     }

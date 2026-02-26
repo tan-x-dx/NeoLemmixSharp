@@ -179,14 +179,20 @@ public static class Helpers
     /// <returns>A span over the desired data.</returns>
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Span<T> Slice<T>(Span<T> span, int start, int length)
+    public static Span<T> SliceUnsafe<T>(this Span<T> span, int start, int length)
     {
 #if DEBUG
-        ArgumentOutOfRangeException.ThrowIfNegative(start);
-        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#if TARGET_64BIT
+            // See comment in Span<T>.Slice for how this works.
+            if ((ulong)(uint)start + (ulong)(uint)length > (ulong)(uint)span.Length)
+                ThrowInvalidSpanInputsException();
+#else
+        if ((uint)start > (uint)span.Length || (uint)length > (uint)(span.Length - start))
+            ThrowInvalidSpanInputsException();
+#endif
 #endif
 
-        return MemoryMarshal.CreateSpan(ref Unsafe.Add(ref MemoryMarshal.GetReference(span), start), length);
+        return MemoryMarshal.CreateSpan(ref Unsafe.Add(ref MemoryMarshal.GetReference(span), (nint)(uint)start /* force zero-extension */), length);
     }
 
     /// <summary>
@@ -202,14 +208,20 @@ public static class Helpers
     /// <returns>A span over the desired data.</returns>
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ReadOnlySpan<T> Slice<T>(ReadOnlySpan<T> span, int start, int length)
+    public static ReadOnlySpan<T> SliceUnsafe<T>(this ReadOnlySpan<T> span, int start, int length)
     {
 #if DEBUG
-        ArgumentOutOfRangeException.ThrowIfNegative(start);
-        ArgumentOutOfRangeException.ThrowIfNegative(length);
+#if TARGET_64BIT
+            // See comment in Span<T>.Slice for how this works.
+            if ((ulong)(uint)start + (ulong)(uint)length > (ulong)(uint)span.Length)
+                ThrowInvalidSpanInputsException();
+#else
+        if ((uint)start > (uint)span.Length || (uint)length > (uint)(span.Length - start))
+            ThrowInvalidSpanInputsException();
+#endif
 #endif
 
-        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.Add(ref MemoryMarshal.GetReference(span), start), length);
+        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.Add(ref MemoryMarshal.GetReference(span), (nint)(uint)start /* force zero-extension */), length);
     }
 
     /// <summary>
@@ -228,6 +240,7 @@ public static class Helpers
     {
 #if DEBUG
         ArgumentOutOfRangeException.ThrowIfNegative(index);
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, array.Length);
 #endif
 
         return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), index);
@@ -249,6 +262,7 @@ public static class Helpers
     {
 #if DEBUG
         ArgumentOutOfRangeException.ThrowIfNegative(index);
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, span.Length);
 #endif
 
         return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
@@ -270,6 +284,7 @@ public static class Helpers
     {
 #if DEBUG
         ArgumentOutOfRangeException.ThrowIfNegative(index);
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, span.Length);
 #endif
 
         return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
@@ -366,6 +381,8 @@ public static class Helpers
         return firstSpan.Equals(secondSpan, StringComparison.OrdinalIgnoreCase);
     }
 
+    [DoesNotReturn]
+    private static void ThrowInvalidSpanInputsException() => throw new InvalidOperationException("Invalid inputs!");
     [DoesNotReturn]
     public static void ThrowKeyAlreadyAddedException<TKey>(TKey key) => throw new ArgumentException("Key already added!", nameof(key));
     [DoesNotReturn]

@@ -107,7 +107,7 @@ public sealed class TextField : Component
     {
         CaretPosition = 0;
         var clippedTextLength = Math.Min(_charBuffer.Length, newText.Length);
-        var newTextSpan = Helpers.Slice(newText, 0, clippedTextLength);
+        var newTextSpan = newText.SliceUnsafe(0, clippedTextLength);
         var span = new Span<char>(_charBuffer);
 
         newTextSpan.CopyTo(span);

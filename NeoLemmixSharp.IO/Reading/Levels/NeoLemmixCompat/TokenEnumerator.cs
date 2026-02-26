@@ -51,6 +51,6 @@ public ref struct TokenEnumerator
         return true;
     }
 
-    public readonly ReadOnlySpan<char> Current => Helpers.Slice(_input, _spanStart, _spanLength);
+    public readonly ReadOnlySpan<char> Current => _input.SliceUnsafe(_spanStart, _spanLength);
     public readonly int CurrentSpanStart => _spanStart;
 }

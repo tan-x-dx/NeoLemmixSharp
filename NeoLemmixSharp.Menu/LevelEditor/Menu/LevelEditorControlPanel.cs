@@ -126,10 +126,10 @@ public sealed class LevelEditorControlPanel : Component
         Span<char> numberBuffer = stackalloc char[16];
 
         levelDimensions.W.TryFormat(numberBuffer, out var charsWritten);
-        LevelWidthTextField.SetText(Helpers.Slice(numberBuffer, 0, charsWritten));
+        LevelWidthTextField.SetText(numberBuffer.SliceUnsafe(0, charsWritten));
 
         levelDimensions.H.TryFormat(numberBuffer, out charsWritten);
-        LevelHeightTextField.SetText(Helpers.Slice(numberBuffer, 0, charsWritten));
+        LevelHeightTextField.SetText(numberBuffer.SliceUnsafe(0, charsWritten));
 
         levelData.LevelId.LevelId.TryFormat(numberBuffer, out var idWritten, "X16");
         LevelIdTextField.SetText(numberBuffer);

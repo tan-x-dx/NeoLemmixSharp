@@ -191,7 +191,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         public ReferenceTypeEnumerator(BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> dictionary)
         {
             _hasher = dictionary._hasher;
-            _enumerator = new BitArrayHelpers.SimpleBitEnumerator(dictionary._bits.AsReadOnlySpan().ToArray(), dictionary._popCount);
+            _enumerator = new BitArrayHelpers.SimpleBitEnumerator(dictionary._bits.AsReadOnlySpan().ToArray());
             _values = dictionary._values;
         }
 
