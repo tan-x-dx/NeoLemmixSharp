@@ -6,25 +6,27 @@ namespace NeoLemmixSharp.Ui.Components;
 
 public sealed class UiHandler : IDisposable
 {
+    public static UiHandler Instance { get; set; } = null!;
+
     private readonly InputController _inputController;
     private readonly List<TextLabel> _menuFontTextLabels = [];
+    private TextField? _selectedTextField;
 
-    public static UiHandler Instance { get; set; } = null!;
     internal InputController InputController => _inputController;
 
     public Component? CurrentSelection { get; private set; }
     public TextField? SelectedTextField
     {
-        get => field;
+        get => _selectedTextField;
         private set
         {
-            if (field == value)
+            if (_selectedTextField == value)
                 return;
 
-            field?.InvokeTextSubmit();
-            field?.IsSelected = false;
-            field = value;
-            field?.IsSelected = true;
+            _selectedTextField?.InvokeTextSubmit();
+            _selectedTextField?.Deselect();
+            _selectedTextField = value;
+            _selectedTextField?.SetSelected();
         }
     }
 

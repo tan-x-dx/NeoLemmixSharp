@@ -104,7 +104,7 @@ public sealed class LevelEditorPage : PageBase
     {
         if (InputController.Quit.IsPressed)
         {
-            IGameWindow.Instance.Escape();
+        //    IGameWindow.Instance.Escape();
         }
 
         _levelCanvas.HandleUserInput(InputController);
@@ -212,21 +212,28 @@ public sealed class LevelEditorPage : PageBase
         //_currentLevelData.Music = textField.CurrentString;
     }
 
-    [SkipLocalsInit]
     private void SetLevelWidth(Component c)
     {
         var textField = (TextField)c;
 
         var currentLevelDimensions = _currentLevelData.LevelDimensions;
-        var newLevelWidth = textField.ParseInt();
 
-        if (newLevelWidth > EngineConstants.MaxLevelWidth)
+        int newLevelWidth;
+
+        if (textField.IsBlank())
         {
-            newLevelWidth = EngineConstants.MaxLevelWidth;
+            newLevelWidth = EngineConstants.MinLevelWidth;
+            WriteNumberInLevelDimensionsTextField(textField, EngineConstants.MinLevelWidth);
+        }
+        else
+        {
+            newLevelWidth = textField.ParseInt();
 
-            Span<char> numberBuffer = stackalloc char[4];
-            newLevelWidth.TryFormat(numberBuffer, out var charsWritten);
-            textField.SetText(numberBuffer.SliceUnsafe(0, charsWritten));
+            if (newLevelWidth > EngineConstants.MaxLevelWidth)
+            {
+                newLevelWidth = EngineConstants.MaxLevelWidth;
+                WriteNumberInLevelDimensionsTextField(textField, EngineConstants.MaxLevelWidth);
+            }
         }
 
         if (currentLevelDimensions.W == newLevelWidth)
@@ -236,21 +243,27 @@ public sealed class LevelEditorPage : PageBase
         _levelCanvas.OnLevelDataChanged();
     }
 
-    [SkipLocalsInit]
     private void SetLevelHeight(Component c)
     {
         var textField = (TextField)c;
 
         var currentLevelDimensions = _currentLevelData.LevelDimensions;
-        var newLevelHeight = textField.ParseInt();
+        int newLevelHeight;
 
-        if (newLevelHeight > EngineConstants.MaxLevelHeight)
+        if (textField.IsBlank())
         {
-            newLevelHeight = EngineConstants.MaxLevelHeight;
+            newLevelHeight = EngineConstants.MinLevelHeight;
+            WriteNumberInLevelDimensionsTextField(textField, EngineConstants.MinLevelHeight);
+        }
+        else
+        {
+            newLevelHeight = textField.ParseInt();
 
-            Span<char> numberBuffer = stackalloc char[4];
-            newLevelHeight.TryFormat(numberBuffer, out var charsWritten);
-            textField.SetText(numberBuffer.SliceUnsafe(0, charsWritten));
+            if (newLevelHeight > EngineConstants.MaxLevelHeight)
+            {
+                newLevelHeight = EngineConstants.MaxLevelHeight;
+                WriteNumberInLevelDimensionsTextField(textField, EngineConstants.MaxLevelHeight);
+            }
         }
 
         if (currentLevelDimensions.H == newLevelHeight)
@@ -258,6 +271,15 @@ public sealed class LevelEditorPage : PageBase
 
         _currentLevelData.SetLevelHeight(newLevelHeight);
         _levelCanvas.OnLevelDataChanged();
+    }
+
+    [SkipLocalsInit]
+    private static unsafe void WriteNumberInLevelDimensionsTextField(TextField textField, uint valueToWrite)
+    {
+        char* numberBuffer = stackalloc char[4];
+        var charsWritten = NumberFormattingHelpers.WriteDigits(numberBuffer, valueToWrite);
+        var span = Helpers.CreateReadOnlySpan<char>(numberBuffer, charsWritten);
+        textField.SetText(span);
     }
 
     private void SetLevelId(Component c)

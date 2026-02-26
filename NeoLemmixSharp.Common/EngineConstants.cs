@@ -60,7 +60,10 @@ public static class EngineConstants
 
     public const int MaxNumberOfLemmings = 2048;
     public const int MaxTimeLimitInSeconds = 99 * 60 + 59; // 99 minutes, 59 seconds
+
+    public const int MinLevelWidth = 64;
     public const int MaxLevelWidth = 2400;
+    public const int MinLevelHeight = 64;
     public const int MaxLevelHeight = 2400;
 
     public const int FloaterGliderStartCycleFrame = 9;
