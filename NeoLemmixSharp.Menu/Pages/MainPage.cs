@@ -150,6 +150,11 @@ public sealed class MainPage : PageBase
         {
             LevelEditorButtonClick(null!, new Point());
         }
+
+        if (InputController.ToggleFullScreen.IsPressed)
+        {
+            IGameWindow.Instance.ToggleFullscreenSetting();
+        }
     }
 
     protected override void OnDispose()

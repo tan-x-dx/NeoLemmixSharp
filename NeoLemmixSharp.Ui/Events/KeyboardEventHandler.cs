@@ -10,10 +10,7 @@ public sealed class KeyboardEventHandler : IDisposable
 
     public void RegisterKeyEvent(ComponentKeyboardAction action)
     {
-        if (!_actions.Contains(action))
-        {
-            _actions.Add(action);
-        }
+        _actions.Add(action);
     }
 
     public void Invoke(Component c, in KeysEnumerable keys)

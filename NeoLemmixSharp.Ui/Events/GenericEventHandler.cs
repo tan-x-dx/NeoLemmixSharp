@@ -10,10 +10,7 @@ public sealed class GenericEventHandler : IDisposable
 
     public void RegisterEvent(ComponentAction action)
     {
-        if (!_actions.Contains(action))
-        {
-            _actions.Add(action);
-        }
+        _actions.Add(action);
     }
 
     public void Invoke(Component c)

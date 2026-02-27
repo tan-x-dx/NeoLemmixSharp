@@ -279,23 +279,30 @@ public sealed class LevelEditorControlPanel : Component
         var wrapHorizontal = levelData.HorizontalBoundaryBehaviour == Common.BoundaryBehaviours.BoundaryBehaviourType.Wrap;
         WrapHorizontalCheckBox.SetCheckedValue(wrapHorizontal);
 
-        var wrapVerical = levelData.VerticalBoundaryBehaviour == Common.BoundaryBehaviours.BoundaryBehaviourType.Wrap;
-        WrapVerticalCheckBox.SetCheckedValue(wrapVerical);
+        var wrapVertical = levelData.VerticalBoundaryBehaviour == Common.BoundaryBehaviours.BoundaryBehaviourType.Wrap;
+        WrapVerticalCheckBox.SetCheckedValue(wrapVertical);
     }
 
     [SkipLocalsInit]
-    public void SetNumericalLevelData(LevelData levelData)
+    public unsafe void SetNumericalLevelData(LevelData levelData)
     {
-        Span<char> numberBuffer = stackalloc char[16];
+        char* numberBuffer = stackalloc char[16];
 
         var levelDimensions = levelData.LevelDimensions;
-        levelDimensions.W.TryFormat(numberBuffer, out var charsWritten);
-        LevelWidthTextField.SetText(numberBuffer.SliceUnsafe(0, charsWritten));
 
-        levelDimensions.H.TryFormat(numberBuffer, out charsWritten);
-        LevelHeightTextField.SetText(numberBuffer.SliceUnsafe(0, charsWritten));
+        uint uintValue = (uint)levelDimensions.W;
+        var digitsWritten = NumberFormattingHelpers.WriteDigits(numberBuffer, uintValue);
+        var span = Helpers.CreateReadOnlySpan<char>(numberBuffer, digitsWritten);
+        LevelWidthTextField.SetText(span);
 
-        levelData.LevelId.LevelId.TryFormat(numberBuffer, out var idWritten, "X16");
-        LevelIdTextField.SetText(numberBuffer);
+        uintValue = (uint)levelDimensions.H;
+        digitsWritten = NumberFormattingHelpers.WriteDigits(numberBuffer, uintValue);
+        span = Helpers.CreateReadOnlySpan<char>(numberBuffer, digitsWritten);
+        LevelHeightTextField.SetText(span);
+
+        ulong levelId = levelData.LevelId.LevelId;
+        NumberFormattingHelpers.WriteHexDigits(numberBuffer, levelId);
+        span = Helpers.CreateReadOnlySpan<char>(numberBuffer, 16);
+        LevelIdTextField.SetText(span);
     }
 }

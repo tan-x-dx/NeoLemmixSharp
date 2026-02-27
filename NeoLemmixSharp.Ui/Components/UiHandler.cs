@@ -23,8 +23,13 @@ public sealed class UiHandler : IDisposable
             if (_selectedTextField == value)
                 return;
 
-            _selectedTextField?.InvokeTextSubmit();
-            _selectedTextField?.Deselect();
+            var currentTextField = _selectedTextField;
+            if (currentTextField != null)
+            {
+                currentTextField.InvokeTextSubmit();
+                currentTextField.Deselect();
+            }
+
             _selectedTextField = value;
             _selectedTextField?.SetSelected();
         }

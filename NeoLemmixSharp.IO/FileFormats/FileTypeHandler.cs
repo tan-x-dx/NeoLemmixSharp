@@ -95,4 +95,12 @@ public static class FileTypeHandler
         using var reader = TReaderType.Create(styleIdentifier);
         return reader.ReadStyle();
     }
+
+    internal static string GetFileExtensionForLevelType(FileFormatType fileFormatType) => fileFormatType switch
+    {
+        FileFormatType.Default => DefaultFileExtensions.LevelFileExtension,
+        FileFormatType.NeoLemmix => NeoLemmixFileExtensions.LevelFileExtension,
+
+        _ => Helpers.ThrowUnknownEnumValueException<FileFormatType, string>(fileFormatType)
+    };
 }

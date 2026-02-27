@@ -83,6 +83,7 @@ public static class BitArrayHelpers
         ref var arrayValue = ref bits[index >>> Shift];
         var oldValue = arrayValue;
         arrayValue |= 1U << index;
+        // delta will always be either zero or one
         var delta = (arrayValue ^ oldValue) >>> index;
         popCount += (int)delta;
         return (delta & 1U) != 0U;
@@ -128,6 +129,7 @@ public static class BitArrayHelpers
         ref var arrayValue = ref bits[index >>> Shift];
         var oldValue = arrayValue;
         arrayValue &= ~(1U << index);
+        // delta will always be either zero or one
         var delta = (arrayValue ^ oldValue) >>> index;
         popCount -= (int)delta;
         return (delta & 1U) != 0U;

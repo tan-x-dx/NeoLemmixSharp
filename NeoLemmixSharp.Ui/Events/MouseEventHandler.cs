@@ -11,10 +11,7 @@ public sealed class MouseEventHandler : IDisposable
 
     public void RegisterMouseEvent(ComponentMouseAction action)
     {
-        if (!_actions.Contains(action))
-        {
-            _actions.Add(action);
-        }
+        _actions.Add(action);
     }
 
     public void Invoke(Component c, Point position)

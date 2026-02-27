@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
+using NeoLemmixSharp.IO.FileFormats;
 
 namespace NeoLemmixSharp.IO;
 
@@ -110,6 +111,15 @@ public static class RootDirectoryManager
             StyleFolderDirectory,
             styleIdentifier.ToString(),
             LemmingsFolderName);
+    }
+
+    public static string GetLevelFilePath(string levelName, FileFormatType fileFormatType)
+    {
+        var fileExtension = FileTypeHandler.GetFileExtensionForLevelType(fileFormatType);
+
+        var result = Path.Combine(LevelFolderDirectory, levelName);
+
+        return Path.ChangeExtension(result, fileExtension);
     }
 
     public static ReadOnlySpan<string> GetFilePathsWithExtension(string folderPath, ReadOnlySpan<char> requiredFileExtension)

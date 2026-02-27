@@ -97,11 +97,6 @@ public sealed class MenuScreen : IBaseScreen
 
         InputController.Tick();
         _currentPage.Tick();
-
-        if (InputController.ToggleFullScreen.IsPressed)
-        {
-            IGameWindow.Instance.ToggleFullscreenSetting();
-        }
     }
 
     private void HandlePageTransition()

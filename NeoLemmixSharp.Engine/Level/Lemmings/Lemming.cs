@@ -143,7 +143,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
 
     [SkipLocalsInit]
-    public void Tick()
+    public unsafe void Tick()
     {
         _data.PreviousActionId = _data.CurrentActionId;
         // No transition to do at the end of lemming movement
@@ -153,7 +153,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         HandleCountDownTimer();
         HandleFastForwardTimer();
 
-        Span<Point> gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
+        Point* gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
 
         // Use first four entries of span to hold level positions.
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
@@ -169,16 +169,16 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         p = PreviousAction.GetFootPosition(this, p);
         gadgetCheckPositions[3] = p;
 
-        var checkPositionsBounds = new RectangularRegion(gadgetCheckPositions[..4]);
+        var checkPositionsBounds = new RectangularRegion(Helpers.CreateReadOnlySpan<Point>(gadgetCheckPositions, 4));
 
         LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetsNearLemming);
 
-        EvaluateLemmingLogic(gadgetCheckPositions, in gadgetsNearLemming);
+        EvaluateLemmingLogic(in gadgetsNearLemming, Helpers.CreateSpan<Point>(gadgetCheckPositions, LemmingMovementHelper.MaxIntermediateCheckPositions));
     }
 
     private void EvaluateLemmingLogic(
-        Span<Point> gadgetCheckPositions,
-        in GadgetEnumerable gadgetsNearLemming)
+        in GadgetEnumerable gadgetsNearLemming,
+        Span<Point> gadgetCheckPositions)
     {
         if (!HandleLemmingAction(in gadgetsNearLemming)) return;
         if (!CheckLevelBoundaries()) return;
