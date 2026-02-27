@@ -4,6 +4,7 @@ using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Data;
 using NeoLemmixSharp.Ui.Events;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Ui.Components;
 
@@ -234,15 +235,9 @@ public abstract class Component : IDisposable
 
     public void AddComponent(Component? c, int index)
     {
-        ArgumentNullException.ThrowIfNull(c);
-
-        if (this == c)
-            throw new InvalidOperationException("Cannot add a component to itself [" + ToString() + "]");
-
-        if (c._parent is not null)
-            throw new InvalidOperationException("Component is already a child [" + c.ToString() + "]");
-
         _children ??= new List<Component>();
+
+        AssertValidComponentAdd(this, c);
 
         if (index < 0)
         {
@@ -256,6 +251,17 @@ public abstract class Component : IDisposable
         c._parent = this;
 
         c.Translate(Left, Top);
+    }
+
+    private static void AssertValidComponentAdd(Component parent, [NotNull]Component? child)
+    {
+        ArgumentNullException.ThrowIfNull(child);
+
+        if (parent == child)
+            throw new InvalidOperationException($"Cannot add a component to itself [{parent}]");
+
+        if (child.IsChild())
+            throw new InvalidOperationException($"Component is already a child [{child}]");
     }
 
     public bool IsChild() => _parent != null;

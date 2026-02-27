@@ -15,7 +15,7 @@ public sealed class LevelSelectPage : PageBase
 
     protected override void OnInitialise()
     {
-        UiHandler.RootComponent.AddComponent(new Button(1600, 100, "ABCD"));
+        UiHandler.RootComponent.AddComponent(new Button(1600, 100));
 
         UiHandler.RootComponent.AddComponent(_levelList);
 

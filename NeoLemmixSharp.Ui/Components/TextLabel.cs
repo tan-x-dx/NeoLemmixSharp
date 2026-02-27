@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Data;
@@ -10,11 +11,11 @@ namespace NeoLemmixSharp.Ui.Components;
 public sealed class TextLabel : Component
 {
     private string _textLabel = string.Empty;
-    private UiConstants.TextRenderMode _textRenderMode;
+    private TextRenderMode _textRenderMode;
     private int _labelOffsetX;
     private int _labelOffsetY;
 
-    public UiConstants.TextRenderMode TextRenderMode
+    public TextRenderMode TextRenderMode
     {
         get => _textRenderMode;
         set
@@ -23,7 +24,7 @@ public sealed class TextLabel : Component
                 return;
 
             _textRenderMode = value;
-            if (value == UiConstants.TextRenderMode.UseFont)
+            if (value == TextRenderMode.UseFont)
             {
                 UiHandler.Instance.DeregisterTextLabelForShaderRendering(this);
             }
@@ -34,7 +35,7 @@ public sealed class TextLabel : Component
         }
     }
 
-    public string? Label
+    public string Label
     {
         get => _textLabel;
         set => _textLabel = value ?? string.Empty;
@@ -52,19 +53,24 @@ public sealed class TextLabel : Component
         set => _labelOffsetY = value;
     }
 
-    public TextLabel(int x, int y, string label, ColorPacket colors)
+    public TextLabel(string label)
+        : this(0, 0, label)
+    {
+    }
+
+    public TextLabel(int x, int y, string label)
         : base(x, y, 0, 0)
     {
         Label = label;
 
         SetSize(MenuFont.GlyphWidth * label.Length, MenuFont.GlyphHeight);
-
-        Colors = colors;
     }
+
+    public override bool ContainsPoint(Point position) => false;
 
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {
-        if (TextRenderMode != UiConstants.TextRenderMode.UseFont)
+        if (TextRenderMode != TextRenderMode.UseFont)
             return;
 
         var colors = Colors.AsSpan();
@@ -83,7 +89,7 @@ public sealed class TextLabel : Component
 
     internal void RenderMenuFont(SpriteBatch spriteBatch)
     {
-        Debug.Assert(TextRenderMode == UiConstants.TextRenderMode.UseSprites);
+        Debug.Assert(TextRenderMode == TextRenderMode.UseSprites);
 
         var colors = Colors.AsSpan();
         var color = colors.At((int)State);

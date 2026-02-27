@@ -9,6 +9,7 @@ namespace NeoLemmixSharp.Ui.Data;
 public static class UiSprites
 {
     internal static Texture2D BevelTexture { get; private set; } = null!;
+    internal static Texture2D CheckMarkTexture { get; private set; } = null!;
     public static SpriteFont UiFont { get; private set; } = null!;
     public static Dictionary<char, SpriteFont.Glyph> UiFontGlyphs { get; private set; } = null!;
 
@@ -21,6 +22,7 @@ public static class UiSprites
         UiFontGlyphs = UiFont.GetGlyphs();
 
         BevelTexture = contentManager.Load<Texture2D>("menu/bevel");
+        CheckMarkTexture = contentManager.Load<Texture2D>("menu/checkMarkTest");
     }
 
     public static void DrawBeveledRectangle(

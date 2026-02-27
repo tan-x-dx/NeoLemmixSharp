@@ -11,7 +11,7 @@ public sealed class Button : Component
         MouseExit.RegisterMouseEvent(SetMouseNormal);
     }
 
-    public Button(int x, int y, string? label)
+    public Button(int x, int y)
         : base(x, y)
     {
         MouseEnter.RegisterMouseEvent(SetMouseOver);

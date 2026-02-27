@@ -11,9 +11,6 @@ namespace NeoLemmixSharp.Ui.Components;
 
 public sealed class TextField : Component
 {
-    private const int DefaultTextXOffset = 4;
-    private const int DefaultTextYOffset = 6;
-
     private const int CaretBlinkShift = 5;
     private const int CaretBlinkDelay = 1 << CaretBlinkShift;
     private const int CaretBlinkMask = (1 << (CaretBlinkShift + 1)) - 1;
@@ -25,8 +22,8 @@ public sealed class TextField : Component
 
     private GenericEventHandler? _textSubmit;
 
-    public int TextXOffset { get; set; } = DefaultTextXOffset;
-    public int TextYOffset { get; set; } = DefaultTextYOffset;
+    public int TextXOffset { get; set; } = UiConstants.DefaultTextXOffset;
+    public int TextYOffset { get; set; } = UiConstants.DefaultTextYOffset;
 
     private int _previousStringLength;
     private int _currentStringLength;
@@ -67,6 +64,10 @@ public sealed class TextField : Component
     public int ParseInt() => int.Parse(CurrentTextSpan);
     public bool TryParseInt(out int value) => int.TryParse(CurrentTextSpan, out value);
 
+    public TextField() : this(0, 0)
+    {
+    }
+
     public TextField(int x, int y) : base(x, y)
     {
         KeyPressed.RegisterKeyEvent(HandleKeyDown);
@@ -88,6 +89,7 @@ public sealed class TextField : Component
     {
         Array.Resize(ref _currentContentsCharBuffer, capacity);
         Array.Resize(ref _previousContentsCharBuffer, capacity);
+        Clear();
     }
 
     public void SetText(string newText)
@@ -152,7 +154,8 @@ public sealed class TextField : Component
                 break;
 
             case KeyboardInputType.Enter:
-                HandleEnter();
+                InvokeTextSubmit();
+                Deselect();
                 break;
 
             case KeyboardInputType.CaretLeft:
@@ -227,22 +230,13 @@ public sealed class TextField : Component
     {
         if (newCaretPosition < 0)
         {
-            CaretPosition = 0;
+            newCaretPosition = 0;
         }
         else if (newCaretPosition > _currentStringLength)
         {
-            CaretPosition = _currentStringLength;
+            newCaretPosition = _currentStringLength;
         }
-        else
-        {
-            CaretPosition = newCaretPosition;
-        }
-    }
-
-    public void HandleEnter()
-    {
-        InvokeTextSubmit();
-        Deselect();
+        CaretPosition = newCaretPosition;
     }
 
     public void HandleBackspace()

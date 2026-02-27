@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
@@ -102,9 +103,9 @@ public sealed class LevelEditorPage : PageBase
 
     protected override void HandleUserInput()
     {
-        if (InputController.Quit.IsPressed)
+        if (InputController.Quit.IsPressed && UiHandler.SelectedTextField is null)
         {
-        //    IGameWindow.Instance.Escape();
+            IGameWindow.Instance.Escape();
         }
 
         _levelCanvas.HandleUserInput(InputController);
@@ -192,6 +193,12 @@ public sealed class LevelEditorPage : PageBase
         _controlPanel.LevelHeightTextField.TextSubmit.RegisterEvent(SetLevelHeight);
 
         _controlPanel.LevelIdTextField.TextSubmit.RegisterEvent(SetLevelId);
+        _controlPanel.GenerateNewLevelIdButton.MouseReleased.RegisterMouseEvent(GenerateNewLevelId);
+
+        _controlPanel.WrapHorizontalCheckBox.OnChecked.RegisterEvent(SetWrapHorizontal);
+        _controlPanel.WrapHorizontalCheckBox.OnUnchecked.RegisterEvent(SetWrapHorizontal);
+        _controlPanel.WrapVerticalCheckBox.OnChecked.RegisterEvent(SetWrapVertical);
+        _controlPanel.WrapVerticalCheckBox.OnUnchecked.RegisterEvent(SetWrapVertical);
     }
 
     private void SetLevelTitle(Component c)
@@ -287,11 +294,39 @@ public sealed class LevelEditorPage : PageBase
         var textField = (TextField)c;
 
         var newLevelId = ulong.Parse(textField.CurrentTextSpan, System.Globalization.NumberStyles.AllowHexSpecifier, null);
-
         _currentLevelData.LevelId = new LevelIdentifier(newLevelId);
     }
 
-    private LevelData CreateBlankLevelData()
+    private void GenerateNewLevelId(Component c, Point position)
+    {
+        var newLevelId = (ulong)Random.Shared.NextInt64();
+        _currentLevelData.LevelId = new LevelIdentifier(newLevelId);
+        _controlPanel.SetNumericalLevelData(_currentLevelData);
+    }
+
+    private void SetWrapHorizontal(Component c)
+    {
+        var checkBox = (CheckBox)c;
+
+        var newWrapType = checkBox.IsChecked
+            ? BoundaryBehaviourType.Wrap
+            : BoundaryBehaviourType.Void;
+
+        _currentLevelData.HorizontalBoundaryBehaviour = newWrapType;
+    }
+
+    private void SetWrapVertical(Component c)
+    {
+        var checkBox = (CheckBox)c;
+
+        var newWrapType = checkBox.IsChecked
+            ? BoundaryBehaviourType.Wrap
+            : BoundaryBehaviourType.Void;
+
+        _currentLevelData.VerticalBoundaryBehaviour = newWrapType;
+    }
+
+    private static LevelData CreateBlankLevelData()
     {
         var result = new LevelData(FileFormatType.NeoLemmix);
         result.SetLevelWidth(320);
