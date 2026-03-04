@@ -65,6 +65,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
     }
 
+    public DihedralTransformation GetDihedralTransformation() => _data.GetDihedralTransformation();
+
     public RectangularRegion CurrentBounds
     {
         get => _data.CurrentBounds;
@@ -154,20 +156,24 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         HandleFastForwardTimer();
 
         Point* gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
+        Point* p = gadgetCheckPositions;
 
         // Use first four entries of span to hold level positions.
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the minimum bounding box of four level positions:
         // the anchor and foot positions of the previous frame, and a large box around the current position.
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
-        var p = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
-        gadgetCheckPositions[0] = p;
-        p = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
-        gadgetCheckPositions[1] = p;
-        p = _data.PreviousAnchorPosition;
-        gadgetCheckPositions[2] = p;
-        p = PreviousAction.GetFootPosition(this, p);
-        gadgetCheckPositions[3] = p;
+        var positionTemp = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
+        *p = positionTemp;
+        p++;
+        positionTemp = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
+        *p = positionTemp;
+        p++;
+        positionTemp = _data.PreviousAnchorPosition;
+        *p = positionTemp;
+        p++;
+        positionTemp = PreviousAction.GetFootPosition(this, positionTemp);
+        *p = positionTemp;
 
         var checkPositionsBounds = new RectangularRegion(Helpers.CreateReadOnlySpan<Point>(gadgetCheckPositions, 4));
 
@@ -191,7 +197,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
 
     [SkipLocalsInit]
-    public void Simulate(bool checkGadgets)
+    public unsafe void Simulate(bool checkGadgets)
     {
         if (!IsSimulation)
             throw new InvalidOperationException("Use simulation lemming for simulations!");
@@ -200,19 +206,27 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         HandleCountDownTimer();
         HandleFastForwardTimer();
 
-        Span<Point> gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
+        Point* gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
+        Point* p = gadgetCheckPositions;
 
         // Use first four entries of span to hold level positions.
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the minimum bounding box of four level positions:
         // the anchor and foot positions of the previous frame, and a large box around the current position.
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
-        gadgetCheckPositions[0] = _data.Orientation.Move(_data.AnchorPosition, -8, -16);
-        gadgetCheckPositions[1] = _data.Orientation.Move(_data.AnchorPosition, 8, 16);
-        gadgetCheckPositions[2] = _data.PreviousAnchorPosition;
-        gadgetCheckPositions[3] = PreviousAction.GetFootPosition(this, gadgetCheckPositions[2]);
+        var positionTemp = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
+        *p = positionTemp;
+        p++;
+        positionTemp = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
+        *p = positionTemp;
+        p++;
+        positionTemp = _data.PreviousAnchorPosition;
+        *p = positionTemp;
+        p++;
+        positionTemp = PreviousAction.GetFootPosition(this, positionTemp);
+        *p = positionTemp;
 
-        var checkPositionsBounds = new RectangularRegion(gadgetCheckPositions[..4]);
+        var checkPositionsBounds = new RectangularRegion(Helpers.CreateReadOnlySpan<Point>(gadgetCheckPositions, 4));
 
         LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetsNearLemming);
 
@@ -220,7 +234,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (handleGadgets)
         {
             // Reuse the above span. LemmingMovementHelper will overwrite existing values
-            CheckTriggerAreas(in gadgetsNearLemming, gadgetCheckPositions, false);
+            CheckTriggerAreas(in gadgetsNearLemming, Helpers.CreateSpan<Point>(gadgetCheckPositions, LemmingMovementHelper.MaxIntermediateCheckPositions), false);
         }
     }
 

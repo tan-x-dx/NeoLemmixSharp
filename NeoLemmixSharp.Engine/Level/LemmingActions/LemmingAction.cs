@@ -156,15 +156,13 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
     public abstract bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming);
 
-    public RectangularRegion GetLemmingBounds(Lemming lemming) => GetLemmingBounds(lemming.Orientation, lemming.FacingDirection, lemming.AnchorPosition);
-
-    public RectangularRegion GetLemmingBounds(Orientation orientation, FacingDirection facingDirection, Point anchorPosition)
+    public RectangularRegion GetLemmingBounds(Lemming lemming)
     {
-        var dht = new DihedralTransformation(orientation, facingDirection);
+        var dht = lemming.GetDihedralTransformation();
         var actionBounds = _actionBounds;
 
         actionBounds = dht.Transform(actionBounds);
-        actionBounds = actionBounds.Translate(anchorPosition);
+        actionBounds = actionBounds.Translate(lemming.AnchorPosition);
 
         return actionBounds;
     }
