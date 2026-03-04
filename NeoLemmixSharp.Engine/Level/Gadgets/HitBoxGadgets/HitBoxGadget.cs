@@ -123,11 +123,21 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         if (ResizeType == ResizeType.None)
             return;
 
+        int tempSize;
+
         if (ResizeType.CanResizeHorizontally())
-            CurrentGadgetBounds.Width += dw;
+        {
+            tempSize = CurrentGadgetBounds.Width;
+            tempSize = Math.Clamp(tempSize + dw, 0, EngineConstants.MaxLevelSize);
+            CurrentGadgetBounds.Width = tempSize;
+        }
 
         if (ResizeType.CanResizeVertically())
-            CurrentGadgetBounds.Height += dh;
+        {
+            tempSize = CurrentGadgetBounds.Height;
+            tempSize = Math.Clamp(tempSize + dh, 0, EngineConstants.MaxLevelSize);
+            CurrentGadgetBounds.Height = tempSize;
+        }
 
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
@@ -137,11 +147,19 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
         if (ResizeType == ResizeType.None)
             return;
 
+        int tempSize;
+
         if (ResizeType.CanResizeHorizontally())
-            CurrentGadgetBounds.Width = w;
+        {
+            tempSize = Math.Clamp(w, 0, EngineConstants.MaxLevelSize);
+            CurrentGadgetBounds.Width = tempSize;
+        }
 
         if (ResizeType.CanResizeVertically())
-            CurrentGadgetBounds.Height = h;
+        {
+            tempSize = Math.Clamp(h, 0, EngineConstants.MaxLevelSize);
+            CurrentGadgetBounds.Height = tempSize;
+        }
 
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);
     }
