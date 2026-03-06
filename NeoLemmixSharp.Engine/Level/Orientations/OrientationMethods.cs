@@ -29,32 +29,6 @@ public static class OrientationMethods
      * stuff.
      */
 
-    /// <summary>
-    /// Computes the Sine of an angle, interpreting the input as an integer multiple of pi/2 radians.
-    /// This method maps <see langword="int" />s to <see langword="int" />s, and avoids any floating point calculations.
-    /// This function effectively maps (theta mod 4) -> [0, 1, 0, -1]
-    /// </summary>
-    /// <param name="theta">The angle as a multiple of pi/2 radians.</param>
-    /// <returns>The Sine of that angle, as an <see langword="int" />.</returns>
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int IntSin(int theta)
-    {
-        ReadOnlySpan<int> Values = [0, 1, 0, -1];
-        return Values[theta & 3];
-    }
-
-    /// <summary>
-    /// Computes the Cosine of an angle, interpreting the input as an integer multiple of pi/2 radians.
-    /// This method maps <see langword="int" />s to <see langword="int" />s, and avoids any floating point calculations.
-    /// This function effectively maps (theta mod 4) -> [1, 0, -1, 0]
-    /// </summary>
-    /// <param name="theta">The angle as a multiple of pi/2 radians.</param>
-    /// <returns>The Cosine of that angle, as an <see langword="int" />.</returns>
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int IntCos(int theta) => IntSin(theta + 1);
-
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Point MoveRelativeToOrientation(
@@ -63,8 +37,8 @@ public static class OrientationMethods
         Point position,
         int step)
     {
-        var s = IntSin(orientation.RotNum + relativeOrientationRotNum);
-        var c = IntCos(orientation.RotNum + relativeOrientationRotNum);
+        var s = OrientationConstants.IntSin(orientation.RotNum + relativeOrientationRotNum);
+        var c = OrientationConstants.IntCos(orientation.RotNum + relativeOrientationRotNum);
 
         var absoluteDx = s * step;
         var absoluteDy = c * step;
@@ -116,8 +90,8 @@ public static class OrientationMethods
         int dx,
         int dy)
     {
-        var s = IntSin(orientation.RotNum);
-        var c = IntCos(orientation.RotNum);
+        var s = OrientationConstants.IntSin(orientation.RotNum);
+        var c = OrientationConstants.IntCos(orientation.RotNum);
 
         var absoluteDx = (c * dx) + (s * dy);
         var absoluteDy = (s * dx) - (c * dy);
@@ -139,8 +113,8 @@ public static class OrientationMethods
     {
         var delta = LevelScreen.GetNormalisedDelta(fromPosition, toPosition);
 
-        var s = IntSin(orientation.RotNum);
-        var c = IntCos(orientation.RotNum);
+        var s = OrientationConstants.IntSin(orientation.RotNum);
+        var c = OrientationConstants.IntCos(orientation.RotNum);
 
         return (c * delta.Y) - (s * delta.X);
     }
@@ -189,8 +163,8 @@ public static class OrientationMethods
     {
         var delta = LevelScreen.GetNormalisedDelta(fromPosition, toPosition);
 
-        var s = IntSin(orientation.RotNum);
-        var c = IntCos(orientation.RotNum);
+        var s = OrientationConstants.IntSin(orientation.RotNum);
+        var c = OrientationConstants.IntCos(orientation.RotNum);
 
         return (c * delta.X) + (s * delta.Y);
     }

@@ -97,76 +97,61 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
 
     public readonly ref struct TransformationData
     {
-        private readonly int _a;
-        private readonly int _b;
+        private readonly int _cos;
+        private readonly int _sin;
         private readonly int _w;
         private readonly int _h;
-        private readonly int _s;
-        private readonly int _d;
+        private readonly int _facingDirectionOffset;
+        private readonly int _facingDirectionDelta;
 
         public TransformationData(
             Orientation orientation,
             FacingDirection facingDirection,
             Size size)
         {
-            _w = size.W - 1;
-            _h = size.H - 1;
+            var wTemp = size.W - 1;
+            var hTemp = size.H - 1;
 
-            _s = GetRotationCoefficients(orientation, out _a, out _b, ref _w, ref _h);
-            _s *= facingDirection.Id;
-            _d = facingDirection.DeltaX;
+            var r = orientation.RotNum;
+            var s = OrientationConstants.IntSin(r);
+            var c = OrientationConstants.IntCos(r);
+            _cos = c;
+            _sin = s;
+            s &= 1;
+            c &= 1;
+
+            _facingDirectionOffset = (c * wTemp) + (s * hTemp);
+            _facingDirectionOffset *= facingDirection.Id;
+            _facingDirectionDelta = facingDirection.DeltaX;
+
+            r--;
+            r &= 3;
+
+            var l0 = IsZero(r);
+            r--;
+            r &= 3;
+
+            var l1 = IsZero(r);
+            _w = (l1 * wTemp) + (l0 * hTemp);
+
+            r--;
+            r &= 3;
+
+            l0 = IsZero(r);
+            _h = (l0 * wTemp) + (l1 * hTemp);
         }
 
-        private static int GetRotationCoefficients(
-            Orientation orientation,
-            out int a,
-            out int b,
-            ref int w,
-            ref int h)
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int IsZero(int n)
         {
-            var wTemp = w;
-            var hTemp = h;
-            switch (orientation.RotNum)
-            {
-                case OrientationConstants.DownOrientationRotNum:
-                    a = 1;
-                    b = 0;
-                    w = 0;
-                    h = 0;
-                    return wTemp;
-
-                case OrientationConstants.LeftOrientationRotNum:
-                    a = 0;
-                    b = 1;
-                    w = hTemp;
-                    h = 0;
-                    return hTemp;
-
-                case OrientationConstants.UpOrientationRotNum:
-                    a = -1;
-                    b = 0;
-                    // w unchanged
-                    // h unchanged
-                    return wTemp;
-
-                case OrientationConstants.RightOrientationRotNum:
-                    a = 0;
-                    b = -1;
-                    w = 0;
-                    h = wTemp;
-                    return hTemp;
-
-                default:
-                    a = 0;
-                    b = 0;
-                    return Orientation.ThrowOrientationOutOfRangeException<int>(orientation);
-            }
+            return n == 0 ? 1 : 0;
         }
 
         public Point Transform(Point p)
         {
-            var x0 = _s + (_d * ((_a * p.X) - (_b * p.Y) + _w));
-            var y0 = (_b * p.X) + (_a * p.Y) + _h;
+            var x0 = _facingDirectionOffset + (_facingDirectionDelta * ((_cos * p.X) - (_sin * p.Y) + _w));
+            var y0 = (_sin * p.X) + (_cos * p.Y) + _h;
             return new Point(x0, y0);
         }
     }
