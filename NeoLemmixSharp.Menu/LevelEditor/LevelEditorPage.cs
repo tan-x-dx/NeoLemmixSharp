@@ -47,10 +47,10 @@ public sealed class LevelEditorPage : PageBase
 
         var root = UiHandler.RootComponent;
         root.IsVisible = false;
-        root.AddComponent(_levelCanvas);
-        root.AddComponent(_menuBar);
-        root.AddComponent(_controlPanel);
-        root.AddComponent(_pieceBank);
+        root.AddChild(_levelCanvas);
+        root.AddChild(_menuBar);
+        root.AddChild(_controlPanel);
+        root.AddChild(_pieceBank);
 
         SetUpHandlers();
 

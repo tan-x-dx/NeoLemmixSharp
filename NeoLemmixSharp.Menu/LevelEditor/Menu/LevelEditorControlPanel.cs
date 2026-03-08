@@ -238,34 +238,34 @@ public sealed class LevelEditorControlPanel : Component
             Top = y
         };
 
-        AddComponent(TitleTextField);
-        AddComponent(titleLabel);
-        AddComponent(AuthorTextField);
-        AddComponent(authorLabel);
-        AddComponent(MusicTextField);
-        AddComponent(musicLabel);
+        AddChild(TitleTextField);
+        AddChild(titleLabel);
+        AddChild(AuthorTextField);
+        AddChild(authorLabel);
+        AddChild(MusicTextField);
+        AddChild(musicLabel);
 
-        AddComponent(LevelWidthTextField);
-        AddComponent(LevelHeightTextField);
-        AddComponent(sizeLabel);
-        AddComponent(wLabel);
-        AddComponent(hLabel);
+        AddChild(LevelWidthTextField);
+        AddChild(LevelHeightTextField);
+        AddChild(sizeLabel);
+        AddChild(wLabel);
+        AddChild(hLabel);
 
-        AddComponent(LevelXStartTextField);
-        AddComponent(LevelYStartTextField);
-        AddComponent(startLabel);
-        AddComponent(xLabel);
-        AddComponent(yLabel);
+        AddChild(LevelXStartTextField);
+        AddChild(LevelYStartTextField);
+        AddChild(startLabel);
+        AddChild(xLabel);
+        AddChild(yLabel);
 
-        AddComponent(LevelIdTextField);
-        AddComponent(idLabel);
-        AddComponent(GenerateNewLevelIdButton);
-        AddComponent(generateNewLevelIdLabel);
+        AddChild(LevelIdTextField);
+        AddChild(idLabel);
+        AddChild(GenerateNewLevelIdButton);
+        AddChild(generateNewLevelIdLabel);
 
-        AddComponent(wrapHorizontalLabel);
-        AddComponent(WrapHorizontalCheckBox);
-        AddComponent(wrapVerticalLabel);
-        AddComponent(WrapVerticalCheckBox);
+        AddChild(wrapHorizontalLabel);
+        AddChild(WrapHorizontalCheckBox);
+        AddChild(wrapVerticalLabel);
+        AddChild(WrapVerticalCheckBox);
     }
 
     public void SetLevelData(LevelData levelData)

@@ -231,9 +231,9 @@ public abstract class Component : IDisposable
         UiSprites.DrawBeveledRectangle(spriteBatch, this);
     }
 
-    public void AddComponent(Component? c) => AddComponent(c, -1);
+    public void AddChild(Component? c) => AddChild(c, -1);
 
-    public void AddComponent(Component? c, int index)
+    public void AddChild(Component? c, int index)
     {
         _children ??= new List<Component>();
 
