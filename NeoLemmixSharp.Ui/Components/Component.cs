@@ -264,13 +264,13 @@ public abstract class Component : IDisposable
             throw new InvalidOperationException($"Component is already a child [{child}]");
     }
 
-    public bool IsChild() => _parent != null;
+    internal bool IsChild() => _parent != null;
 
-    public bool HasChildren() => _children != null;
+    internal bool HasChildren() => _children != null;
 
-    public Component? GetParent() => _parent;
+    internal Component? GetParent() => _parent;
 
-    public Component GetTopParent()
+    internal Component GetTopParent()
     {
         Component parent = this;
 
@@ -283,7 +283,7 @@ public abstract class Component : IDisposable
         }
     }
 
-    public Component? GetChildAt(Point position)
+    internal Component? GetChildAt(Point position)
     {
         if (_children != null)
         {
@@ -299,17 +299,17 @@ public abstract class Component : IDisposable
         return ContainsPoint(position) ? this : null;
     }
 
-    public void InvokeMouseEnter(Point mousePosition) => _mouseEnter?.Invoke(this, mousePosition);
-    public void InvokeMouseMovement(Point mousePosition) => _mouseMovement?.Invoke(this, mousePosition);
-    public void InvokeMousePressed(Point mousePosition) => _mousePressed?.Invoke(this, mousePosition);
-    public void InvokeMouseHeld(Point mousePosition) => _mouseHeld?.Invoke(this, mousePosition);
-    public void InvokeMouseDoubleClick(Point mousePosition) => _mouseDoubleClick?.Invoke(this, mousePosition);
-    public void InvokeMouseReleased(Point mousePosition) => _mouseReleased?.Invoke(this, mousePosition);
-    public void InvokeMouseExit(Point mousePosition) => _mouseExit?.Invoke(this, mousePosition);
+    internal void InvokeMouseEnter(Point mousePosition) => _mouseEnter?.Invoke(this, mousePosition);
+    internal void InvokeMouseMovement(Point mousePosition) => _mouseMovement?.Invoke(this, mousePosition);
+    internal void InvokeMousePressed(Point mousePosition) => _mousePressed?.Invoke(this, mousePosition);
+    internal void InvokeMouseHeld(Point mousePosition) => _mouseHeld?.Invoke(this, mousePosition);
+    internal void InvokeMouseDoubleClick(Point mousePosition) => _mouseDoubleClick?.Invoke(this, mousePosition);
+    internal void InvokeMouseReleased(Point mousePosition) => _mouseReleased?.Invoke(this, mousePosition);
+    internal void InvokeMouseExit(Point mousePosition) => _mouseExit?.Invoke(this, mousePosition);
 
-    public void InvokeKeyPressed(in KeysEnumerable pressedKeys) => _keyPressed?.Invoke(this, in pressedKeys);
-    public void InvokeKeyHeld(in KeysEnumerable heldKeys) => _keyHeld?.Invoke(this, in heldKeys);
-    public void InvokeKeyReleased(in KeysEnumerable releasedKeys) => _keyReleased?.Invoke(this, in releasedKeys);
+    internal void InvokeKeyPressed(in KeysEnumerable pressedKeys) => _keyPressed?.Invoke(this, in pressedKeys);
+    internal void InvokeKeyHeld(in KeysEnumerable heldKeys) => _keyHeld?.Invoke(this, in heldKeys);
+    internal void InvokeKeyReleased(in KeysEnumerable releasedKeys) => _keyReleased?.Invoke(this, in releasedKeys);
 
     protected void SetMouseOver(Component c, Point p) => State = ComponentState.MouseOver;
     protected void SetMousePress(Component c, Point p) => State = ComponentState.MousePress;

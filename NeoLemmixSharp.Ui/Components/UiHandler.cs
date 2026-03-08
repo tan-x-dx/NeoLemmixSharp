@@ -11,6 +11,7 @@ public sealed class UiHandler : IDisposable
     private readonly InputController _inputController;
     private readonly List<TextLabel> _menuFontTextLabels = [];
     private TextField? _selectedTextField;
+    private PopupMenu? _currentMenu;
 
     internal InputController InputController => _inputController;
 
@@ -32,6 +33,22 @@ public sealed class UiHandler : IDisposable
 
             _selectedTextField = value;
             _selectedTextField?.SetSelected();
+        }
+    }
+    public PopupMenu? CurrentMenu
+    {
+        get => _currentMenu;
+        set
+        {
+            if (_currentMenu == value)
+                return;
+
+            var currentMenu = _currentMenu;
+            if (currentMenu != null)
+            {
+            }
+
+            _currentMenu = value;
         }
     }
 
@@ -175,7 +192,9 @@ public sealed class UiHandler : IDisposable
 
     private void LocateComponent(Point mousePosition)
     {
-        var c = RootComponent.GetChildAt(mousePosition);
+        var c = CurrentMenu ?? RootComponent;
+
+        c = c.GetChildAt(mousePosition);
 
         if (c == null)
         {
@@ -198,21 +217,23 @@ public sealed class UiHandler : IDisposable
         {
             CurrentSelection = RootComponent;
         }
+
+        return;
     }
 
-    public void DeselectTextField()
+    internal void DeselectTextField()
     {
         SelectedTextField = null;
     }
 
-    public void RegisterTextLabelForShaderRendering(TextLabel textLabel)
+    internal void RegisterTextLabelForShaderRendering(TextLabel textLabel)
     {
         if (_menuFontTextLabels.Contains(textLabel))
             return;
         _menuFontTextLabels.Add(textLabel);
     }
 
-    public void DeregisterTextLabelForShaderRendering(TextLabel textLabel)
+    internal void DeregisterTextLabelForShaderRendering(TextLabel textLabel)
     {
         _menuFontTextLabels.Remove(textLabel);
     }
