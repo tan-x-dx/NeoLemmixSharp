@@ -393,7 +393,7 @@ public sealed class LemmingManager :
 
     public int NumberOfLemmings => _lemmings.Length;
     int IPerfectHasher<Lemming>.NumberOfItems => NumberOfLemmings;
-    public int HashLemming(Lemming lemming) => lemming.Id;
+    public static int HashLemming(Lemming lemming) => lemming.Id;
     int IPerfectHasher<Lemming>.Hash(Lemming lemming) => HashLemming(lemming);
     public Lemming UnHashLemming(int index) => _lemmings.At(index);
     Lemming IPerfectHasher<Lemming>.UnHash(int index) => UnHashLemming(index);

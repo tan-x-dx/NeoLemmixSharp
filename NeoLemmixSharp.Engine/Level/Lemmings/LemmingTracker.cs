@@ -24,7 +24,7 @@ public readonly unsafe struct LemmingTracker
 
     public TrackingStatus UpdateLemmingTrackingStatus(Lemming lemming)
     {
-        var id = LevelScreen.LemmingManager.HashLemming(lemming);
+        var id = LemmingManager.HashLemming(lemming);
 
         var uintIndex = id >>> LemmingTrackerShift;
         uint* p = _pointer + uintIndex;
@@ -39,7 +39,7 @@ public readonly unsafe struct LemmingTracker
     [Pure]
     public TrackingStatus QueryLemmingTrackingStatus(Lemming lemming)
     {
-        var id = LevelScreen.LemmingManager.HashLemming(lemming);
+        var id = LemmingManager.HashLemming(lemming);
 
         var uintIndex = id >>> LemmingTrackerShift;
         uint* p = _pointer + uintIndex;
