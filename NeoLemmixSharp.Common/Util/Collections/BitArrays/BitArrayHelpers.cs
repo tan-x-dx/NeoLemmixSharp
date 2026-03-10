@@ -207,12 +207,12 @@ public static class BitArrayHelpers
         // This implementation is faster than using TensorPrimitives - benchmarks
 
         ref uint startRef = ref MemoryMarshal.GetReference(bits);
-        ref readonly uint endRef = ref Unsafe.Add(ref startRef, bits.Length);
+        ref readonly uint endRef = ref Unsafe.Add(ref startRef, (nint)bits.Length);
         var result = 0;
         while (Unsafe.IsAddressLessThan(ref startRef, in endRef))
         {
             result += BitOperations.PopCount(startRef);
-            startRef = ref Unsafe.Add(ref startRef, 1);
+            startRef = ref Unsafe.Add(ref startRef, (nint)1);
         }
 
         return result;
@@ -468,13 +468,13 @@ public static class BitArrayHelpers
 
         ref uint sourceRef = ref MemoryMarshal.GetReference(span);
         ref uint otherRef = ref MemoryMarshal.GetReference(other);
-        ref readonly uint endRef = ref Unsafe.Add(ref sourceRef, spanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref sourceRef, (nint)spanLength);
 
         while (Unsafe.IsAddressLessThan(ref sourceRef, in endRef))
         {
             sourceRef &= ~otherRef;
-            sourceRef = ref Unsafe.Add(ref sourceRef, 1);
-            otherRef = ref Unsafe.Add(ref otherRef, 1);
+            sourceRef = ref Unsafe.Add(ref sourceRef, (nint)1);
+            otherRef = ref Unsafe.Add(ref otherRef, (nint)1);
         }
     }
 
@@ -556,7 +556,7 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, (nint)firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
@@ -567,8 +567,8 @@ public static class BitArrayHelpers
 
             if (firstValue != secondValue)
                 return false;
-            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
-            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, (nint)1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, (nint)1);
         }
 
         return true;
@@ -585,7 +585,7 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, (nint)firstSpanLength);
 
         var allEqual = true;
 
@@ -599,8 +599,8 @@ public static class BitArrayHelpers
 
             if (firstValue != secondValue)
                 return false;
-            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
-            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, (nint)1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, (nint)1);
         }
 
         return !allEqual;
@@ -617,14 +617,14 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, (nint)firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
             if ((firstSpanRef & secondSpanRef) != 0U)
                 return true;
-            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
-            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, (nint)1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, (nint)1);
         }
 
         return false;
@@ -641,14 +641,14 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, (nint)firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
             if (firstSpanRef != secondSpanRef)
                 return false;
-            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
-            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, (nint)1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, (nint)1);
         }
 
         return true;

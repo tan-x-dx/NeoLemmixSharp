@@ -73,7 +73,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 #endif
 
-        return MemoryMarshal.CreateSpan(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), start), length);
+        return MemoryMarshal.CreateSpan(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), (nint)start), length);
     }
 
     /// <summary>
@@ -140,7 +140,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 #endif
 
-        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), start), length);
+        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), (nint)start), length);
     }
 
     /// <summary>
@@ -163,7 +163,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 #endif
         T* tP = (T*)p;
-        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(tP + start), length);
+        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(tP + (nint)start), length);
     }
 
     /// <summary>
@@ -243,7 +243,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, array.Length);
 #endif
 
-        return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), index);
+        return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), (nint)index);
     }
 
     /// <summary>
@@ -265,7 +265,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, span.Length);
 #endif
 
-        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), (nint)index);
     }
 
     /// <summary>
@@ -287,7 +287,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, span.Length);
 #endif
 
-        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), index);
+        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), (nint)index);
     }
 
     [Pure]
