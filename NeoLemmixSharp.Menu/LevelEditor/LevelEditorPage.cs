@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
@@ -12,7 +14,6 @@ using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 using NeoLemmixSharp.Menu.LevelEditor.Menu;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Menu.LevelEditor;
 
@@ -46,16 +47,16 @@ public sealed class LevelEditorPage : PageBase
 
         var root = UiHandler.RootComponent;
         root.IsVisible = false;
-        root.AddComponent(_levelCanvas);
-        root.AddComponent(_menuBar);
-        root.AddComponent(_controlPanel);
-        root.AddComponent(_pieceBank);
+        root.AddChild(_levelCanvas);
+        root.AddChild(_menuBar);
+        root.AddChild(_controlPanel);
+        root.AddChild(_pieceBank);
 
         SetUpHandlers();
 
-        // LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\Amiga Lemmings\Lemmings\Fun\21_You_Live_and_Lem.nxlv");
-        // LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\Amiga Lemmings\Lemmings\Tricky\04_Here's_one_I_prepared_earlier.nxlv");
-        LoadLevel(@"C:\Users\andre\Documents\NeoLemmix_V12.14.0\levels\skill test.nxlv");
+        // LoadLevel(RootDirectoryManager.GetLevelFilePath(@"Amiga Lemmings\Lemmings\Fun\21_You_Live_and_Lem", FileFormatType.NeoLemmix));
+        // LoadLevel(RootDirectoryManager.GetLevelFilePath(@"Amiga Lemmings\Lemmings\Tricky\04_Here's_one_I_prepared_earlier", FileFormatType.NeoLemmix));
+        LoadLevel(RootDirectoryManager.GetLevelFilePath("skill test", FileFormatType.NeoLemmix));
 
         // var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), FileFormatType.NeoLemmix));
         // SetStyle(styleData);
@@ -102,7 +103,7 @@ public sealed class LevelEditorPage : PageBase
 
     protected override void HandleUserInput()
     {
-        if (InputController.Quit.IsPressed)
+        if (InputController.Quit.IsPressed && UiHandler.SelectedTextField is null)
         {
             IGameWindow.Instance.Escape();
         }
@@ -113,6 +114,11 @@ public sealed class LevelEditorPage : PageBase
         if (InputController.F1.IsPressed)
         {
             SaveLevel($@"C:\Temp\{_currentLevelData.LevelTitle}.ullv");
+        }
+
+        if (InputController.ToggleFullScreen.IsPressed)
+        {
+            IGameWindow.Instance.ToggleFullscreenSetting();
         }
     }
 
@@ -192,6 +198,12 @@ public sealed class LevelEditorPage : PageBase
         _controlPanel.LevelHeightTextField.TextSubmit.RegisterEvent(SetLevelHeight);
 
         _controlPanel.LevelIdTextField.TextSubmit.RegisterEvent(SetLevelId);
+        _controlPanel.GenerateNewLevelIdButton.MouseReleased.RegisterMouseEvent(GenerateNewLevelId);
+
+        _controlPanel.WrapHorizontalCheckBox.OnChecked.RegisterEvent(SetWrapHorizontal);
+        _controlPanel.WrapHorizontalCheckBox.OnUnchecked.RegisterEvent(SetWrapHorizontal);
+        _controlPanel.WrapVerticalCheckBox.OnChecked.RegisterEvent(SetWrapVertical);
+        _controlPanel.WrapVerticalCheckBox.OnUnchecked.RegisterEvent(SetWrapVertical);
     }
 
     private void SetLevelTitle(Component c)
@@ -212,52 +224,47 @@ public sealed class LevelEditorPage : PageBase
         //_currentLevelData.Music = textField.CurrentString;
     }
 
-    [SkipLocalsInit]
     private void SetLevelWidth(Component c)
     {
         var textField = (TextField)c;
 
         var currentLevelDimensions = _currentLevelData.LevelDimensions;
-        var newLevelWidth = textField.ParseInt();
-
-        if (newLevelWidth > EngineConstants.MaxLevelWidth)
-        {
-            newLevelWidth = EngineConstants.MaxLevelWidth;
-
-            Span<char> numberBuffer = stackalloc char[4];
-            newLevelWidth.TryFormat(numberBuffer, out var charsWritten);
-            textField.SetText(Helpers.Slice(numberBuffer, 0, charsWritten));
-        }
+        var newLevelWidth = EvaluateLevelDimensionFromTextField(textField);
 
         if (currentLevelDimensions.W == newLevelWidth)
             return;
 
         _currentLevelData.SetLevelWidth(newLevelWidth);
+        _controlPanel.SetNumericalLevelData(_currentLevelData);
         _levelCanvas.OnLevelDataChanged();
     }
 
-    [SkipLocalsInit]
     private void SetLevelHeight(Component c)
     {
         var textField = (TextField)c;
 
         var currentLevelDimensions = _currentLevelData.LevelDimensions;
-        var newLevelHeight = textField.ParseInt();
-
-        if (newLevelHeight > EngineConstants.MaxLevelHeight)
-        {
-            newLevelHeight = EngineConstants.MaxLevelHeight;
-
-            Span<char> numberBuffer = stackalloc char[4];
-            newLevelHeight.TryFormat(numberBuffer, out var charsWritten);
-            textField.SetText(Helpers.Slice(numberBuffer, 0, charsWritten));
-        }
+        var newLevelHeight = EvaluateLevelDimensionFromTextField(textField);
 
         if (currentLevelDimensions.H == newLevelHeight)
             return;
 
         _currentLevelData.SetLevelHeight(newLevelHeight);
+        _controlPanel.SetNumericalLevelData(_currentLevelData);
         _levelCanvas.OnLevelDataChanged();
+    }
+
+    private static int EvaluateLevelDimensionFromTextField(TextField textField)
+    {
+        if (textField.IsBlank())
+            return EngineConstants.MinLevelSize;
+
+        var newLevelSize = textField.ParseInt();
+
+        if (newLevelSize > EngineConstants.MaxLevelSize)
+            newLevelSize = EngineConstants.MaxLevelSize;
+
+        return newLevelSize;
     }
 
     private void SetLevelId(Component c)
@@ -265,11 +272,39 @@ public sealed class LevelEditorPage : PageBase
         var textField = (TextField)c;
 
         var newLevelId = ulong.Parse(textField.CurrentTextSpan, System.Globalization.NumberStyles.AllowHexSpecifier, null);
-
         _currentLevelData.LevelId = new LevelIdentifier(newLevelId);
     }
 
-    private LevelData CreateBlankLevelData()
+    private void GenerateNewLevelId(Component c, Point position)
+    {
+        var newLevelId = (ulong)Random.Shared.NextInt64();
+        _currentLevelData.LevelId = new LevelIdentifier(newLevelId);
+        _controlPanel.SetNumericalLevelData(_currentLevelData);
+    }
+
+    private void SetWrapHorizontal(Component c)
+    {
+        var checkBox = (CheckBox)c;
+
+        var newWrapType = checkBox.IsChecked
+            ? BoundaryBehaviourType.Wrap
+            : BoundaryBehaviourType.Void;
+
+        _currentLevelData.HorizontalBoundaryBehaviour = newWrapType;
+    }
+
+    private void SetWrapVertical(Component c)
+    {
+        var checkBox = (CheckBox)c;
+
+        var newWrapType = checkBox.IsChecked
+            ? BoundaryBehaviourType.Wrap
+            : BoundaryBehaviourType.Void;
+
+        _currentLevelData.VerticalBoundaryBehaviour = newWrapType;
+    }
+
+    private static LevelData CreateBlankLevelData()
     {
         var result = new LevelData(FileFormatType.NeoLemmix);
         result.SetLevelWidth(320);

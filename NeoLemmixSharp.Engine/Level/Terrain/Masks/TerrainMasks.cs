@@ -50,7 +50,7 @@ public static class TerrainMasks
         Lemming lemming,
         out ArrayWrapper2D<PixelType> scratchSpaceData)
     {
-        var dht = new DihedralTransformation(lemming.Orientation, lemming.FacingDirection);
+        var dht = lemming.GetDihedralTransformation();
         var terrainManager = LevelScreen.TerrainManager;
 
         var sourceRegion = BasherMask.Dimensions.Translate(lemming.AnchorPosition);

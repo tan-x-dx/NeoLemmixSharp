@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
@@ -11,16 +12,25 @@ public readonly unsafe struct GadgetBounds : IPointerData<GadgetBounds>
 
     public static int SizeInBytes => GadgetBoundsDataSize;
 
-    private const int GadgetBoundsDataSize = RectangularRegion.RectangularRegionSize;
+    private const int GadgetBoundsDataSize = 4 * sizeof(int);
 
-    private readonly RectangularRegion* _data;
+    [StructLayout(LayoutKind.Sequential, Size = GadgetBoundsDataSize)]
+    private struct GadgetBoundsRaw
+    {
+        public int X;
+        public int Y;
+        public int Width;
+        public int Height;
+    }
 
-    private GadgetBounds(nint pointerHandle) => _data = (RectangularRegion*)pointerHandle;
+    private readonly GadgetBoundsRaw* _data;
+
+    private GadgetBounds(nint pointerHandle) => _data = (GadgetBoundsRaw*)pointerHandle;
 
     public ref int X => ref Unsafe.AsRef<int>(&_data->X);
     public ref int Y => ref Unsafe.AsRef<int>(&_data->Y);
-    public ref int Width => ref Unsafe.AsRef<int>(&_data->W);
-    public ref int Height => ref Unsafe.AsRef<int>(&_data->H);
+    public ref int Width => ref Unsafe.AsRef<int>(&_data->Width);
+    public ref int Height => ref Unsafe.AsRef<int>(&_data->Height);
 
-    public ref Point Position => ref Unsafe.AsRef<Point>(&_data->Position);
+    public ref Point Position => ref Unsafe.AsRef<Point>(&_data->X);
 }

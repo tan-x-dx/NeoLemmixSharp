@@ -25,7 +25,7 @@ public static class EngineConstants
 
     public const int PageTransitionDurationInFrames = 4;
 
-    public const Keys FullscreenKey = Keys.F12;
+    public const Keys FullscreenKey = Keys.F10;
 
     #endregion
 
@@ -60,8 +60,9 @@ public static class EngineConstants
 
     public const int MaxNumberOfLemmings = 2048;
     public const int MaxTimeLimitInSeconds = 99 * 60 + 59; // 99 minutes, 59 seconds
-    public const int MaxLevelWidth = 2400;
-    public const int MaxLevelHeight = 2400;
+
+    public const int MinLevelSize = 64;
+    public const int MaxLevelSize = 2400;
 
     public const int FloaterGliderStartCycleFrame = 9;
 

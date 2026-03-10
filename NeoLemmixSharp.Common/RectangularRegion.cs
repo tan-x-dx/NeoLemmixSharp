@@ -18,7 +18,7 @@ namespace NeoLemmixSharp.Common;
 [StructLayout(LayoutKind.Explicit, Size = RectangularRegionSize)]
 public readonly struct RectangularRegion : IEquatable<RectangularRegion>
 {
-    public const int RectangularRegionSize = 4 * sizeof(int);
+    private const int RectangularRegionSize = 4 * sizeof(int);
 
     [FieldOffset(0 * sizeof(int))] public readonly Point Position;
     [FieldOffset(0 * sizeof(int))] public readonly int X;

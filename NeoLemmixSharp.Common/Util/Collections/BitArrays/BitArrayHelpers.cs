@@ -83,6 +83,7 @@ public static class BitArrayHelpers
         ref var arrayValue = ref bits[index >>> Shift];
         var oldValue = arrayValue;
         arrayValue |= 1U << index;
+        // delta will always be either zero or one
         var delta = (arrayValue ^ oldValue) >>> index;
         popCount += (int)delta;
         return (delta & 1U) != 0U;
@@ -128,6 +129,7 @@ public static class BitArrayHelpers
         ref var arrayValue = ref bits[index >>> Shift];
         var oldValue = arrayValue;
         arrayValue &= ~(1U << index);
+        // delta will always be either zero or one
         var delta = (arrayValue ^ oldValue) >>> index;
         popCount -= (int)delta;
         return (delta & 1U) != 0U;
@@ -205,12 +207,12 @@ public static class BitArrayHelpers
         // This implementation is faster than using TensorPrimitives - benchmarks
 
         ref uint startRef = ref MemoryMarshal.GetReference(bits);
-        ref readonly uint endRef = ref bits.At(bits.Length);
+        ref readonly uint endRef = ref Unsafe.Add(ref startRef, (nint)bits.Length);
         var result = 0;
         while (Unsafe.IsAddressLessThan(ref startRef, in endRef))
         {
             result += BitOperations.PopCount(startRef);
-            startRef = ref Unsafe.Add(ref startRef, 1);
+            startRef = ref Unsafe.Add(ref startRef, (nint)1);
         }
 
         return result;
@@ -466,13 +468,13 @@ public static class BitArrayHelpers
 
         ref uint sourceRef = ref MemoryMarshal.GetReference(span);
         ref uint otherRef = ref MemoryMarshal.GetReference(other);
-        ref readonly uint endRef = ref span.At(spanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref sourceRef, (nint)spanLength);
 
         while (Unsafe.IsAddressLessThan(ref sourceRef, in endRef))
         {
             sourceRef &= ~otherRef;
-            sourceRef = ref Unsafe.Add(ref sourceRef, 1);
-            otherRef = ref Unsafe.Add(ref otherRef, 1);
+            sourceRef = ref Unsafe.Add(ref sourceRef, (nint)1);
+            otherRef = ref Unsafe.Add(ref otherRef, (nint)1);
         }
     }
 
@@ -554,7 +556,7 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, (nint)firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
@@ -565,8 +567,8 @@ public static class BitArrayHelpers
 
             if (firstValue != secondValue)
                 return false;
-            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
-            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, (nint)1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, (nint)1);
         }
 
         return true;
@@ -583,7 +585,7 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, (nint)firstSpanLength);
 
         var allEqual = true;
 
@@ -597,8 +599,8 @@ public static class BitArrayHelpers
 
             if (firstValue != secondValue)
                 return false;
-            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
-            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, (nint)1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, (nint)1);
         }
 
         return !allEqual;
@@ -615,14 +617,14 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, (nint)firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
             if ((firstSpanRef & secondSpanRef) != 0U)
                 return true;
-            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
-            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, (nint)1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, (nint)1);
         }
 
         return false;
@@ -639,14 +641,14 @@ public static class BitArrayHelpers
 
         ref uint firstSpanRef = ref MemoryMarshal.GetReference(firstSpan);
         ref uint secondSpanRef = ref MemoryMarshal.GetReference(secondSpan);
-        ref readonly uint endRef = ref firstSpan.At(firstSpanLength);
+        ref readonly uint endRef = ref Unsafe.Add(ref firstSpanRef, (nint)firstSpanLength);
 
         while (Unsafe.IsAddressLessThan(ref firstSpanRef, in endRef))
         {
             if (firstSpanRef != secondSpanRef)
                 return false;
-            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, 1);
-            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, 1);
+            firstSpanRef = ref Unsafe.Add(ref firstSpanRef, (nint)1);
+            secondSpanRef = ref Unsafe.Add(ref secondSpanRef, (nint)1);
         }
 
         return true;
@@ -657,39 +659,39 @@ public static class BitArrayHelpers
         private readonly uint[] _bits;
 
         private uint _v;
-        private int _remaining;
         private int _index;
 
         public int Current { get; private set; }
 
-        public SimpleBitEnumerator(uint[] bits, int popCount)
+        public SimpleBitEnumerator(uint[] bits)
         {
             _bits = bits;
+            _v = bits.Length == 0 ? 0U : bits.At(0);
             _index = 0;
-            _v = _bits.Length == 0 ? 0U : _bits[0];
-            _remaining = popCount;
             Current = 0;
         }
 
         public bool MoveNext()
         {
+            var v = _v;
+            var index = _index;
             if (_v == 0U)
             {
-                if (_remaining == 0)
-                    return false;
-
                 do
                 {
-                    _v = _bits[++_index];
+                    ++index;
+                    if ((uint)index >= (uint)_bits.Length)
+                        return false;
+
+                    v = _bits.At(index);
                 }
-                while (_v == 0U);
+                while (v == 0U);
+                _index = index;
             }
 
-            var m = BitOperations.TrailingZeroCount(_v);
-            _v &= _v - 1;
-
-            Current = (_index << Shift) | m;
-            _remaining--;
+            Current = (index << Shift) | BitOperations.TrailingZeroCount(v);
+            v &= v - 1;
+            _v = v;
             return true;
         }
     }

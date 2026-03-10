@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
+using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Criteria;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
@@ -185,8 +186,7 @@ public readonly ref struct HitBoxGadgetBuilder
         ReadOnlySpan<GadgetBehaviourData> alternateLemmingPresentBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingPresentBehaviours ?? [];
         ReadOnlySpan<GadgetBehaviourData> alternateLemmingExitBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingExitBehaviours ?? [];
 
-        var lemmingCriteriaBuilder = new LemmingCriteriaBuilder(tribeManager, instanceOrientation, instanceFacingDirection);
-        var lemmingCriteria = lemmingCriteriaBuilder.BuildLemmingCriteria(mainHitBoxFilterInstanceDatum.HitBoxCriteria);
+        var lemmingCriteria = BuildLemmingCriteria(tribeManager, mainHitBoxFilterInstanceDatum.HitBoxCriteria, instanceOrientation, instanceFacingDirection);
         var onLemmingHitBehaviours = behaviourBuilder.BuildBehaviours(ref dataHandleRef, mainHitBoxFilterInstanceDatum.OnLemmingHitBehaviours, alternateLemmingHitBehaviours);
         var onLemmingEnterBehaviours = behaviourBuilder.BuildBehaviours(ref dataHandleRef, mainHitBoxFilterInstanceDatum.OnLemmingEnterBehaviours, alternateLemmingEnterBehaviours);
         var onLemmingPresentBehaviours = behaviourBuilder.BuildBehaviours(ref dataHandleRef, mainHitBoxFilterInstanceDatum.OnLemmingPresentBehaviours, alternateLemmingPresentBehaviours);
@@ -229,5 +229,15 @@ public readonly ref struct HitBoxGadgetBuilder
     private ResizeType GetResizeType(HitBoxGadgetArchetypeSpecificationData gadgetArchetypeData)
     {
         return new DihedralTransformation(_hitBoxGadgetInstanceData.Orientation, _hitBoxGadgetInstanceData.FacingDirection).Transform(gadgetArchetypeData.ResizeType);
+    }
+
+    private static LemmingCriterion[] BuildLemmingCriteria(
+        TribeManager tribeManager,
+        HitBoxCriteriaData[] hitBoxCriteria,
+        Orientation instanceOrientation,
+        FacingDirection instanceFacingDirection)
+    {
+        var lemmingCriteriaBuilder = new LemmingCriteriaBuilder(tribeManager, instanceOrientation, instanceFacingDirection);
+        return lemmingCriteriaBuilder.BuildLemmingCriteria(hitBoxCriteria);
     }
 }

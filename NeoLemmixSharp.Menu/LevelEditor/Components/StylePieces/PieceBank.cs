@@ -63,7 +63,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             terrainPieceSelector.Left = offset;
             terrainPieceSelector.Top = UiConstants.TwiceStandardInset;
             offset += PieceOffsetDelta;
-            AddComponent(terrainPieceSelector);
+            AddChild(terrainPieceSelector);
             _terrainPieces.Add(terrainPieceSelector);
         }
 
@@ -87,7 +87,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             gadgetPieceSelector.Left = offset;
             gadgetPieceSelector.Top = UiConstants.TwiceStandardInset;
             offset += PieceOffsetDelta;
-            AddComponent(gadgetPieceSelector);
+            AddChild(gadgetPieceSelector);
             _gadgetPieces.Add(gadgetPieceSelector);
         }
 

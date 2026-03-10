@@ -8,16 +8,17 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetBase : IEquatable<GadgetBase>
 {
+    public required int Id { get; init; }
+    public GadgetType GadgetType { get; }
+
     private readonly PointerWrapper _stateIndex;
     public required PointerWrapper DataHandle
     {
         init => _stateIndex = value;
     }
     public required GadgetName GadgetName { get; init; }
-    public GadgetType GadgetType { get; }
     public required GadgetBounds CurrentGadgetBounds { get; init; }
 
-    public required int Id { get; init; }
     public required Orientation Orientation { get; init; }
     public required FacingDirection FacingDirection { get; init; }
     public required bool IsFastForward { get; init; }

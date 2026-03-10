@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Data;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Menu.Pages.LevelSelect;
 
@@ -23,11 +23,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
         : base(0, 0, 0, 0)
     {
         _children = new List<Component>();
-        Colors = new ColorPacket(
-            new Color(0xff111111),
-            new Color(0xff111111),
-            new Color(0xff111111),
-            new Color(0xff111111));
+        Colors = new ColorPacket(0xff111111.AsAbgrColor());
     }
 
     public int ScrollIndex

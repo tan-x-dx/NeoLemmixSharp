@@ -52,11 +52,11 @@ public sealed class MainPage : PageBase
         var root = UiHandler.RootComponent;
         root.IsVisible = false;
 
-        root.AddComponent(_playButton);
-        root.AddComponent(_levelSelectButton);
+        root.AddChild(_playButton);
+        root.AddChild(_levelSelectButton);
 
-        root.AddComponent(_configButton);
-        root.AddComponent(_quitButton);
+        root.AddChild(_configButton);
+        root.AddChild(_quitButton);
 
         OnResize();
     }
@@ -149,6 +149,11 @@ public sealed class MainPage : PageBase
         if (InputController.Space.IsPressed)
         {
             LevelEditorButtonClick(null!, new Point());
+        }
+
+        if (InputController.ToggleFullScreen.IsPressed)
+        {
+            IGameWindow.Instance.ToggleFullscreenSetting();
         }
     }
 

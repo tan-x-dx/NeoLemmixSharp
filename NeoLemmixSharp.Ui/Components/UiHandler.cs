@@ -6,33 +6,58 @@ namespace NeoLemmixSharp.Ui.Components;
 
 public sealed class UiHandler : IDisposable
 {
+    public static UiHandler Instance { get; set; } = null!;
+
     private readonly InputController _inputController;
     private readonly List<TextLabel> _menuFontTextLabels = [];
+    private TextField? _selectedTextField;
+    private PopupMenu? _currentMenu;
 
-    public static UiHandler Instance { get; set; } = null!;
     internal InputController InputController => _inputController;
 
     public Component? CurrentSelection { get; private set; }
     public TextField? SelectedTextField
     {
-        get => field;
+        get => _selectedTextField;
         private set
         {
-            if (field == value)
+            if (_selectedTextField == value)
                 return;
 
-            field?.InvokeTextSubmit();
-            field?.IsSelected = false;
-            field = value;
-            field?.IsSelected = true;
+            var currentTextField = _selectedTextField;
+            if (currentTextField != null)
+            {
+                currentTextField.InvokeTextSubmit();
+                currentTextField.Deselect();
+            }
+
+            _selectedTextField = value;
+            _selectedTextField?.SetSelected();
+        }
+    }
+    public PopupMenu? CurrentMenu
+    {
+        get => _currentMenu;
+        set
+        {
+            if (_currentMenu == value)
+                return;
+
+            var currentMenu = _currentMenu;
+            if (currentMenu != null)
+            {
+                currentMenu.CloseMenu();
+            }
+
+            _currentMenu = value;
         }
     }
 
-    public Component RootComponent { get; set; }
+    public Component RootComponent { get; }
 
     public UiHandler(InputController inputController)
     {
-        RootComponent = new Tab(0, 0, 0, 0);
+        RootComponent = new Root();
         _inputController = inputController;
 
         Instance = this;
@@ -168,7 +193,9 @@ public sealed class UiHandler : IDisposable
 
     private void LocateComponent(Point mousePosition)
     {
-        var c = RootComponent.GetChildAt(mousePosition);
+        var c = CurrentMenu ?? RootComponent;
+
+        c = c.GetChildAt(mousePosition);
 
         if (c == null)
         {
@@ -191,21 +218,23 @@ public sealed class UiHandler : IDisposable
         {
             CurrentSelection = RootComponent;
         }
+
+        return;
     }
 
-    public void DeselectTextField()
+    internal void DeselectTextField()
     {
         SelectedTextField = null;
     }
 
-    public void RegisterTextLabelForShaderRendering(TextLabel textLabel)
+    internal void RegisterTextLabelForShaderRendering(TextLabel textLabel)
     {
         if (_menuFontTextLabels.Contains(textLabel))
             return;
         _menuFontTextLabels.Add(textLabel);
     }
 
-    public void DeregisterTextLabelForShaderRendering(TextLabel textLabel)
+    internal void DeregisterTextLabelForShaderRendering(TextLabel textLabel)
     {
         _menuFontTextLabels.Remove(textLabel);
     }
@@ -215,5 +244,10 @@ public sealed class UiHandler : IDisposable
         RootComponent.Dispose();
         Instance = null!;
         GC.SuppressFinalize(this);
+    }
+
+    private sealed class Root : Component
+    {
+        public Root() : base(0, 0, 0, 0) { }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Ui.Events;
 
-public sealed class KeyboardEventHandler
+public sealed class KeyboardEventHandler : IDisposable
 {
     public delegate void ComponentKeyboardAction(Component c, in KeysEnumerable keys);
 
@@ -10,10 +10,7 @@ public sealed class KeyboardEventHandler
 
     public void RegisterKeyEvent(ComponentKeyboardAction action)
     {
-        if (!_actions.Contains(action))
-        {
-            _actions.Add(action);
-        }
+        _actions.Add(action);
     }
 
     public void Invoke(Component c, in KeysEnumerable keys)
@@ -25,4 +22,9 @@ public sealed class KeyboardEventHandler
     }
 
     public void Clear() => _actions.Clear();
+
+    public void Dispose()
+    {
+        Clear();
+    }
 }

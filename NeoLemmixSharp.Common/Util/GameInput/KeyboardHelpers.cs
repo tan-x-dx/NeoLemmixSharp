@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public static class KeyboardHelpers
+internal static class KeyboardHelpers
 {
     public static KeyboardInputType GetKeyboardInputType(Keys key)
     {

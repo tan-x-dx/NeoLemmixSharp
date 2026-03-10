@@ -14,13 +14,10 @@ public static class UiConstants
     public const int StandardInset = 8;
     public const int TwiceStandardInset = StandardInset * 2;
 
-    public const int RaisedRectangleBorder = 2;
+    public const int DefaultTextXOffset = 4;
+    public const int DefaultTextYOffset = 6;
 
-    public enum TextRenderMode
-    {
-        UseFont,
-        UseSprites
-    }
+    public const int RaisedRectangleBorder = 2;
 
     public static ColorPacket RectangularButtonDefaultColours => new(
         0xff444444.AsAbgrColor(),
@@ -34,7 +31,7 @@ public static class UiConstants
         0xfff9f9f9.AsAbgrColor(),
         0xff00aa00.AsAbgrColor());
 
-    public static ColorPacket AllBlackColours => new(Color.Black, Color.Black, Color.Black, Color.Black);
+    public static ColorPacket AllBlackColours => new(Color.Black);
 
     public const int KeyboardInputFrameDelay = 30;
 }

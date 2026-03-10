@@ -131,6 +131,12 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     public ref uint CountDownTimer => ref Unsafe.AsRef<uint>(&_data->CountDownTimer);
     public ref int ParticleTimer => ref Unsafe.AsRef<int>(&_data->ParticleTimer);
 
+    public DihedralTransformation GetDihedralTransformation()
+    {
+        void* p = &_data->Orientation;
+        return *(DihedralTransformation*)p;
+    }
+
     public Span<Point> GetJumperPositions()
     {
         void* p = &_data->JumperPositionBuffer;

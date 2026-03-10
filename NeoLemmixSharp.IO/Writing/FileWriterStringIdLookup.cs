@@ -93,7 +93,7 @@ internal readonly struct MutableFileWriterStringIdLookup
             var byteCount = Encoding.UTF8.GetBytes(stringToWrite, buffer);
 
             writer.Write16BitUnsignedInteger((ushort)byteCount);
-            writer.WriteBytes(Helpers.Slice(buffer, 0, byteCount));
+            writer.WriteBytes(buffer.SliceUnsafe(0, byteCount));
         }
     }
 

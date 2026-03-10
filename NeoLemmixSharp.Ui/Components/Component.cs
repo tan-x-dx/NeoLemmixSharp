@@ -1,23 +1,15 @@
 ﻿global using KeysEnumerable = NeoLemmixSharp.Common.Util.Collections.BitArrays.BitArrayEnumerable<NeoLemmixSharp.Common.Util.GameInput.InputController, Microsoft.Xna.Framework.Input.Keys>;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Data;
 using NeoLemmixSharp.Ui.Events;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Ui.Components;
 
 public abstract class Component : IDisposable
 {
-    public Point Position { get; private set; }
-    public Size Dimensions { get; private set; }
-
-    private ComponentState _state = ComponentState.Normal;
-
-    private ColorPacket _colourPacket;
-
-    private bool _isVisible = true;
-    private bool _isDisposed;
-
     private Component? _parent = null;
     protected List<Component>? _children = null;
 
@@ -32,6 +24,16 @@ public abstract class Component : IDisposable
     private KeyboardEventHandler? _keyPressed;
     private KeyboardEventHandler? _keyHeld;
     private KeyboardEventHandler? _keyReleased;
+
+    public Point Position { get; private set; }
+    public Size Dimensions { get; private set; }
+
+    private ColorPacket _colourPacket;
+
+    private ComponentState _state = ComponentState.Normal;
+
+    private bool _isVisible = true;
+    private bool _isDisposed;
 
     public MouseEventHandler MouseEnter => _mouseEnter ??= new MouseEventHandler();
     public MouseEventHandler MouseMovement => _mouseMovement ??= new MouseEventHandler();
@@ -143,7 +145,7 @@ public abstract class Component : IDisposable
         }
     }
 
-    public void Translate(int dx, int dy)
+    private void Translate(int dx, int dy)
     {
         var delta = new Point(dx, dy);
         Position += delta;
@@ -213,7 +215,7 @@ public abstract class Component : IDisposable
         RenderChildren(spriteBatch);
     }
 
-    protected void RenderChildren(SpriteBatch spriteBatch)
+    private void RenderChildren(SpriteBatch spriteBatch)
     {
         if (_children == null)
             return;
@@ -229,19 +231,13 @@ public abstract class Component : IDisposable
         UiSprites.DrawBeveledRectangle(spriteBatch, this);
     }
 
-    public void AddComponent(Component? c) => AddComponent(c, -1);
+    public void AddChild(Component? c) => AddChild(c, -1);
 
-    public void AddComponent(Component? c, int index)
+    public void AddChild(Component? c, int index)
     {
-        ArgumentNullException.ThrowIfNull(c);
-
-        if (this == c)
-            throw new InvalidOperationException("Cannot add a component to itself [" + ToString() + "]");
-
-        if (c._parent is not null)
-            throw new InvalidOperationException("Component is already a child [" + c.ToString() + "]");
-
         _children ??= new List<Component>();
+
+        AssertValidComponentAdd(this, c);
 
         if (index < 0)
         {
@@ -257,13 +253,24 @@ public abstract class Component : IDisposable
         c.Translate(Left, Top);
     }
 
-    public bool IsChild() => _parent != null;
+    private static void AssertValidComponentAdd(Component parent, [NotNull]Component? child)
+    {
+        ArgumentNullException.ThrowIfNull(child);
 
-    public bool HasChildren() => _children != null;
+        if (parent == child)
+            throw new InvalidOperationException($"Cannot add a component to itself [{parent}]");
 
-    public Component? GetParent() => _parent;
+        if (child.IsChild())
+            throw new InvalidOperationException($"Component is already a child [{child}]");
+    }
 
-    public Component GetTopParent()
+    internal bool IsChild() => _parent != null;
+
+    internal bool HasChildren() => _children != null;
+
+    internal Component? GetParent() => _parent;
+
+    internal Component GetTopParent()
     {
         Component parent = this;
 
@@ -276,7 +283,7 @@ public abstract class Component : IDisposable
         }
     }
 
-    public Component? GetChildAt(Point position)
+    internal Component? GetChildAt(Point position)
     {
         if (_children != null)
         {
@@ -292,17 +299,17 @@ public abstract class Component : IDisposable
         return ContainsPoint(position) ? this : null;
     }
 
-    public void InvokeMouseEnter(Point mousePosition) => _mouseEnter?.Invoke(this, mousePosition);
-    public void InvokeMouseMovement(Point mousePosition) => _mouseMovement?.Invoke(this, mousePosition);
-    public void InvokeMousePressed(Point mousePosition) => _mousePressed?.Invoke(this, mousePosition);
-    public void InvokeMouseHeld(Point mousePosition) => _mouseHeld?.Invoke(this, mousePosition);
-    public void InvokeMouseDoubleClick(Point mousePosition) => _mouseDoubleClick?.Invoke(this, mousePosition);
-    public void InvokeMouseReleased(Point mousePosition) => _mouseReleased?.Invoke(this, mousePosition);
-    public void InvokeMouseExit(Point mousePosition) => _mouseExit?.Invoke(this, mousePosition);
+    internal void InvokeMouseEnter(Point mousePosition) => _mouseEnter?.Invoke(this, mousePosition);
+    internal void InvokeMouseMovement(Point mousePosition) => _mouseMovement?.Invoke(this, mousePosition);
+    internal void InvokeMousePressed(Point mousePosition) => _mousePressed?.Invoke(this, mousePosition);
+    internal void InvokeMouseHeld(Point mousePosition) => _mouseHeld?.Invoke(this, mousePosition);
+    internal void InvokeMouseDoubleClick(Point mousePosition) => _mouseDoubleClick?.Invoke(this, mousePosition);
+    internal void InvokeMouseReleased(Point mousePosition) => _mouseReleased?.Invoke(this, mousePosition);
+    internal void InvokeMouseExit(Point mousePosition) => _mouseExit?.Invoke(this, mousePosition);
 
-    public void InvokeKeyPressed(in KeysEnumerable pressedKeys) => _keyPressed?.Invoke(this, in pressedKeys);
-    public void InvokeKeyHeld(in KeysEnumerable heldKeys) => _keyHeld?.Invoke(this, in heldKeys);
-    public void InvokeKeyReleased(in KeysEnumerable releasedKeys) => _keyReleased?.Invoke(this, in releasedKeys);
+    internal void InvokeKeyPressed(in KeysEnumerable pressedKeys) => _keyPressed?.Invoke(this, in pressedKeys);
+    internal void InvokeKeyHeld(in KeysEnumerable heldKeys) => _keyHeld?.Invoke(this, in heldKeys);
+    internal void InvokeKeyReleased(in KeysEnumerable releasedKeys) => _keyReleased?.Invoke(this, in releasedKeys);
 
     protected void SetMouseOver(Component c, Point p) => State = ComponentState.MouseOver;
     protected void SetMousePress(Component c, Point p) => State = ComponentState.MousePress;
@@ -327,17 +334,17 @@ public abstract class Component : IDisposable
 
             _parent = null;
 
-            _mouseEnter?.Clear();
-            _mouseMovement?.Clear();
-            _mousePressed?.Clear();
-            _mouseHeld?.Clear();
-            _mouseDoubleClick?.Clear();
-            _mouseReleased?.Clear();
-            _mouseExit?.Clear();
+            DisposableHelperMethods.DisposeOf(ref _mouseEnter);
+            DisposableHelperMethods.DisposeOf(ref _mouseMovement);
+            DisposableHelperMethods.DisposeOf(ref _mousePressed);
+            DisposableHelperMethods.DisposeOf(ref _mouseHeld);
+            DisposableHelperMethods.DisposeOf(ref _mouseDoubleClick);
+            DisposableHelperMethods.DisposeOf(ref _mouseReleased);
+            DisposableHelperMethods.DisposeOf(ref _mouseExit);
 
-            _keyPressed?.Clear();
-            _keyHeld?.Clear();
-            _keyReleased?.Clear();
+            DisposableHelperMethods.DisposeOf(ref _keyPressed);
+            DisposableHelperMethods.DisposeOf(ref _keyHeld);
+            DisposableHelperMethods.DisposeOf(ref _keyReleased);
 
             OnDispose();
         }

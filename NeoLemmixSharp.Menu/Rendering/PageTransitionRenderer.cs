@@ -12,6 +12,8 @@ public sealed class PageTransitionRenderer : IDisposable
 
     private Size _windowSize;
 
+    public bool IsTransitioning => _pageTransition.IsTransitioning;
+
     public PageTransitionRenderer(PageTransition pageTransition)
     {
         _pageTransition = pageTransition;
@@ -24,9 +26,6 @@ public sealed class PageTransitionRenderer : IDisposable
 
     public void Render(SpriteBatch spriteBatch)
     {
-        if (!_pageTransition.IsTransitioning)
-            return;
-
         spriteBatch.Draw(
             CommonSprites.WhitePixelGradientSprite,
             Helpers.CreateRectangle(new Point(), _windowSize),

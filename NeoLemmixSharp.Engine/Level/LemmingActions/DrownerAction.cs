@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
@@ -32,7 +33,7 @@ public sealed class DrownerAction : LemmingAction
 
         if (lemming.EndOfAnimation)
         {
-            // remove lemming
+            LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathDrown);
         }
 
         return false;

@@ -11,22 +11,21 @@ namespace NeoLemmixSharp.Ui.Components;
 
 public sealed class TextField : Component
 {
-    private const int DefaultTextXOffset = 4;
-    private const int DefaultTextYOffset = 6;
-
     private const int CaretBlinkShift = 5;
     private const int CaretBlinkDelay = 1 << CaretBlinkShift;
     private const int CaretBlinkMask = (1 << (CaretBlinkShift + 1)) - 1;
 
     private string _currentString = string.Empty;
     private string? _charMask;
-    private char[] _charBuffer = [];
+    private char[] _previousContentsCharBuffer = [];
+    private char[] _currentContentsCharBuffer = [];
 
     private GenericEventHandler? _textSubmit;
 
-    public int TextXOffset { get; set; } = DefaultTextXOffset;
-    public int TextYOffset { get; set; } = DefaultTextYOffset;
+    public int TextXOffset { get; set; } = UiConstants.DefaultTextXOffset;
+    public int TextYOffset { get; set; } = UiConstants.DefaultTextYOffset;
 
+    private int _previousStringLength;
     private int _currentStringLength;
     private int _caretPosition;
     private int _caretFlashCount;
@@ -45,32 +44,29 @@ public sealed class TextField : Component
                 return;
 
             _caretPosition = value;
-            _caretPhysicalOffset = CalculateCaretPhysicalOffset();
+
+            var caretPhysicalOffset = 0;
+            if (value > 0)
+                caretPhysicalOffset = CalculateCaretPhysicalOffset();
+            _caretPhysicalOffset = caretPhysicalOffset;
         }
     }
 
-    public bool IsSelected
-    {
-        get => _isSelected;
-        set
-        {
-            if (_isSelected == value)
-                return;
-
-            _isSelected = value;
-            CaretPosition = 0;
-            _caretFlashCount = 0;
-        }
-    }
+    public bool IsSelected => _isSelected;
 
     public bool AutoCapitaliseLetters { get; set; }
 
     public void InvokeTextSubmit() => _textSubmit?.Invoke(this);
 
-    public ReadOnlySpan<char> CurrentTextSpan => Helpers.CreateReadOnlySpan(_charBuffer, 0, _currentStringLength);
+    public ReadOnlySpan<char> CurrentTextSpan => Helpers.CreateReadOnlySpan(_currentContentsCharBuffer, 0, _currentStringLength);
     public string CurrentString => _currentString;
+    public bool IsBlank() => _currentStringLength == 0;
     public int ParseInt() => int.Parse(CurrentTextSpan);
     public bool TryParseInt(out int value) => int.TryParse(CurrentTextSpan, out value);
+
+    public TextField() : this(0, 0)
+    {
+    }
 
     public TextField(int x, int y) : base(x, y)
     {
@@ -91,7 +87,9 @@ public sealed class TextField : Component
 
     public void SetCapacity(int capacity)
     {
-        Array.Resize(ref _charBuffer, capacity);
+        Array.Resize(ref _currentContentsCharBuffer, capacity);
+        Array.Resize(ref _previousContentsCharBuffer, capacity);
+        Clear();
     }
 
     public void SetText(string newText)
@@ -102,19 +100,25 @@ public sealed class TextField : Component
     public void SetText(ReadOnlySpan<char> newText)
     {
         CaretPosition = 0;
-        var clippedTextLength = Math.Min(_charBuffer.Length, newText.Length);
-        var newTextSpan = Helpers.Slice(newText, 0, clippedTextLength);
-        var span = new Span<char>(_charBuffer);
+        var clippedTextLength = Math.Min(_currentContentsCharBuffer.Length, newText.Length);
+        var newTextSpan = newText.SliceUnsafe(0, clippedTextLength);
 
+        var span = new Span<char>(_currentContentsCharBuffer);
         newTextSpan.CopyTo(span);
+        span = new Span<char>(_previousContentsCharBuffer);
+        newTextSpan.CopyTo(span);
+
         _currentStringLength = clippedTextLength;
+        _previousStringLength = clippedTextLength;
         OnStringContentsChanged();
     }
 
     public void Clear()
     {
-        new Span<char>(_charBuffer).Clear();
+        new Span<char>(_previousContentsCharBuffer).Clear();
+        new Span<char>(_currentContentsCharBuffer).Clear();
         CaretPosition = 0;
+        _previousStringLength = 0;
         _currentStringLength = 0;
     }
 
@@ -150,7 +154,8 @@ public sealed class TextField : Component
                 break;
 
             case KeyboardInputType.Enter:
-                HandleEnter();
+                InvokeTextSubmit();
+                Deselect();
                 break;
 
             case KeyboardInputType.CaretLeft:
@@ -178,8 +183,10 @@ public sealed class TextField : Component
                 break;
 
             case KeyboardInputType.Escape:
+                Revert();
                 Deselect();
                 break;
+
             default:
                 Deselect();
                 break;
@@ -188,7 +195,7 @@ public sealed class TextField : Component
 
     public void HandleCharacter(KeyboardInput keyboardInput)
     {
-        if (_currentStringLength == _charBuffer.Length)
+        if (_currentStringLength == _currentContentsCharBuffer.Length)
             return;
 
         var c = keyboardInput.GetCorrespondingChar();
@@ -203,11 +210,11 @@ public sealed class TextField : Component
         _currentStringLength++;
         while (i > CaretPosition)
         {
-            _charBuffer.At(i) = _charBuffer.At(i - 1);
+            _currentContentsCharBuffer.At(i) = _currentContentsCharBuffer.At(i - 1);
             i--;
         }
 
-        _charBuffer.At(CaretPosition) = c;
+        _currentContentsCharBuffer.At(CaretPosition) = c;
         OnStringContentsChanged();
         MoveCaret(1);
     }
@@ -223,21 +230,13 @@ public sealed class TextField : Component
     {
         if (newCaretPosition < 0)
         {
-            CaretPosition = 0;
+            newCaretPosition = 0;
         }
         else if (newCaretPosition > _currentStringLength)
         {
-            CaretPosition = _currentStringLength;
+            newCaretPosition = _currentStringLength;
         }
-        else
-        {
-            CaretPosition = newCaretPosition;
-        }
-    }
-
-    public void HandleEnter()
-    {
-        InvokeTextSubmit();
+        CaretPosition = newCaretPosition;
     }
 
     public void HandleBackspace()
@@ -249,11 +248,11 @@ public sealed class TextField : Component
         var lastCharIndex = _currentStringLength - 1;
         while (i < lastCharIndex)
         {
-            _charBuffer.At(i) = _charBuffer.At(i + 1);
+            _currentContentsCharBuffer.At(i) = _currentContentsCharBuffer.At(i + 1);
             i++;
         }
 
-        _charBuffer.At(lastCharIndex) = (char)0;
+        _currentContentsCharBuffer.At(lastCharIndex) = (char)0;
         _currentStringLength--;
         OnStringContentsChanged();
         MoveCaret(-1);
@@ -279,8 +278,39 @@ public sealed class TextField : Component
         HandleBackspace();
     }
 
+    private void Revert()
+    {
+        var newTextBuffer = new Span<char>(_currentContentsCharBuffer);
+        var previousTextBuffer = new ReadOnlySpan<char>(_previousContentsCharBuffer);
+        previousTextBuffer.CopyTo(newTextBuffer);
+        _currentStringLength = _previousStringLength;
+
+        OnStringContentsChanged();
+    }
+
+    public void SetSelected()
+    {
+        if (_isSelected)
+            return;
+
+        _isSelected = true;
+        CaretPosition = 0;
+        _caretFlashCount = 0;
+    }
+
     public void Deselect()
     {
+        if (!_isSelected)
+            return;
+
+        _isSelected = false;
+        CaretPosition = 0;
+        _caretFlashCount = 0;
+
+        var newTextBuffer = new ReadOnlySpan<char>(_currentContentsCharBuffer);
+        var previousTextBuffer = new Span<char>(_previousContentsCharBuffer);
+        newTextBuffer.CopyTo(previousTextBuffer);
+        _previousStringLength = _currentStringLength;
         UiHandler.Instance.DeselectTextField();
     }
 
@@ -317,11 +347,8 @@ public sealed class TextField : Component
 
     private int CalculateCaretPhysicalOffset()
     {
-        if (CaretPosition == 0)
-            return 0;
-
         var characterGlyphs = UiSprites.UiFontGlyphs;
-        var currentTextSpan = Helpers.CreateReadOnlySpan(_charBuffer, 0, CaretPosition);
+        var currentTextSpan = Helpers.CreateReadOnlySpan(_currentContentsCharBuffer, 0, CaretPosition);
 
         float caretPhysicalOffset = 0f;
         float zero = 0f;
@@ -356,6 +383,6 @@ public sealed class TextField : Component
 
     protected override void OnDispose()
     {
-        _textSubmit?.Clear();
+        DisposableHelperMethods.DisposeOf(ref _textSubmit);
     }
 }

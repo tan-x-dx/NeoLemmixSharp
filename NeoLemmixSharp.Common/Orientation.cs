@@ -25,6 +25,34 @@ public static class OrientationConstants
     public const int RightOrientationRotNum = 3;
     public const string RightOrientationName = "Right";
     public const float RightOrientationRotationAngle = MathF.PI * 0.5f;
+
+    /// <summary>
+    /// Computes the Sine of an angle, interpreting the input as an integer multiple of pi/2 radians.
+    /// This method maps <see langword="int" />s to <see langword="int" />s, and avoids any floating point calculations.
+    /// This function effectively maps (theta mod 4) -> [0, 1, 0, -1]
+    /// </summary>
+    /// <param name="theta">The angle as a multiple of pi/2 radians.</param>
+    /// <returns>The Sine of that angle, as an <see langword="int" />.</returns>
+    [Pure]
+    [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int IntSin(int theta)
+    {
+        ReadOnlySpan<int> Values = [0, 1, 0, -1];
+        return Values[theta & 3];
+    }
+
+    /// <summary>
+    /// Computes the Cosine of an angle, interpreting the input as an integer multiple of pi/2 radians.
+    /// This method maps <see langword="int" />s to <see langword="int" />s, and avoids any floating point calculations.
+    /// This function effectively maps (theta mod 4) -> [1, 0, -1, 0]
+    /// </summary>
+    /// <param name="theta">The angle as a multiple of pi/2 radians.</param>
+    /// <returns>The Cosine of that angle, as an <see langword="int" />.</returns>
+    [Pure]
+    [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int IntCos(int theta) => IntSin(theta + 1);
 }
 
 public readonly struct Orientation : IEquatable<Orientation>
@@ -61,10 +89,10 @@ public readonly struct Orientation : IEquatable<Orientation>
     public Orientation RotateClockwise() => new(RotNum + 1);
     [Pure]
     [DebuggerStepThrough]
-    public Orientation GetOpposite() => new(RotNum + 2);
+    public Orientation GetOpposite() => new(RotNum ^ 2);
     [Pure]
     [DebuggerStepThrough]
-    public Orientation RotateCounterClockwise() => new(RotNum + 3);
+    public Orientation RotateCounterClockwise() => new(RotNum - 1);
     [Pure]
     [DebuggerStepThrough]
     public Orientation Rotate(int clockwiseRotationOffset) => new(RotNum + clockwiseRotationOffset);

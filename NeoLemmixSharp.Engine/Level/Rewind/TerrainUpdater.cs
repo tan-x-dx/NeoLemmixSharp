@@ -88,12 +88,12 @@ public sealed class TerrainUpdater : IDisposable
 
     private readonly struct PixelChangeData : ILevelEventData
     {
-        public readonly Point Position;
         public readonly int Tick;
-        public readonly Color FromColor;
-        public readonly Color ToColor;
         public readonly PixelType FromPixelType;
         public readonly PixelType ToPixelType;
+        public readonly Point Position;
+        public readonly Color FromColor;
+        public readonly Color ToColor;
 
         public int TickNumber => Tick;
 

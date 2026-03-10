@@ -48,7 +48,7 @@ public static class NumberFormattingHelpers
 
             var requiredLength = GetNumberStringLength((uint)n);
 
-            var destSpan = Helpers.Slice(destination, c, requiredLength);
+            var destSpan = destination.SliceUnsafe(c, requiredLength);
             c += WriteDigits(destSpan, (uint)n);
             destination.At(c++) = formatParameters.Separator;
         }
@@ -139,6 +139,24 @@ public static class NumberFormattingHelpers
         while (length >= 0);
 
         return digitsWritten;
+    }
+
+    public static unsafe void WriteHexDigits(char* pointer, ulong valueToWrite)
+    {
+        ReadOnlySpan<char> HexDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+
+        var length = 15;
+
+        do
+        {
+            var rem = (int)(valueToWrite & 15);
+            var charToWrite = HexDigits.At(rem);
+            valueToWrite >>>= 4;
+
+            pointer[length] = charToWrite;
+            length--;
+        }
+        while (length >= 0);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

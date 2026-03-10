@@ -3,7 +3,7 @@ using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Ui.Events;
 
-public sealed class MouseEventHandler
+public sealed class MouseEventHandler : IDisposable
 {
     public delegate void ComponentMouseAction(Component c, Point position);
 
@@ -11,10 +11,7 @@ public sealed class MouseEventHandler
 
     public void RegisterMouseEvent(ComponentMouseAction action)
     {
-        if (!_actions.Contains(action))
-        {
-            _actions.Add(action);
-        }
+        _actions.Add(action);
     }
 
     public void Invoke(Component c, Point position)
@@ -26,4 +23,9 @@ public sealed class MouseEventHandler
     }
 
     public void Clear() => _actions.Clear();
+
+    public void Dispose()
+    {
+        Clear();
+    }
 }

@@ -26,9 +26,9 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
     private readonly char* _lemmingsOutPointer;
     private readonly char* _goalCountPointer;
 
-    private int _numberOfCharsForlemmingActionAndCount = 0;
-    private int _numberOfCharsForhatchCount = 0;
-    private int _numberOfCharsForlemmingsOut = 0;
+    private int _numberOfCharsForLemmingActionAndCount = 0;
+    private int _numberOfCharsForHatchCount = 0;
+    private int _numberOfCharsForLemmingsOut = 0;
     private int _numberOfCharsForGoalCount = 0;
 
     private readonly ControlPanelParameterSet _controlPanelParameters;
@@ -36,9 +36,9 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
 
     private bool _isDisposed;
 
-    public ReadOnlySpan<char> LemmingActionAndCountSpan => Helpers.CreateReadOnlySpan<char>(_lemmingActionAndCountPointer, _numberOfCharsForlemmingActionAndCount);
-    public ReadOnlySpan<char> HatchCountSpan => Helpers.CreateReadOnlySpan<char>(_hatchCountPointer, _numberOfCharsForhatchCount);
-    public ReadOnlySpan<char> LemmingsOutSpan => Helpers.CreateReadOnlySpan<char>(_lemmingsOutPointer, _numberOfCharsForlemmingsOut);
+    public ReadOnlySpan<char> LemmingActionAndCountSpan => Helpers.CreateReadOnlySpan<char>(_lemmingActionAndCountPointer, _numberOfCharsForLemmingActionAndCount);
+    public ReadOnlySpan<char> HatchCountSpan => Helpers.CreateReadOnlySpan<char>(_hatchCountPointer, _numberOfCharsForHatchCount);
+    public ReadOnlySpan<char> LemmingsOutSpan => Helpers.CreateReadOnlySpan<char>(_lemmingsOutPointer, _numberOfCharsForLemmingsOut);
     public ReadOnlySpan<char> GoalCountSpan => Helpers.CreateReadOnlySpan<char>(_goalCountPointer, _numberOfCharsForGoalCount);
 
     public ControlPanelTextualData(ControlPanelParameterSet controlPanelParameters)
@@ -55,9 +55,9 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
 
     public void ClearTextualData()
     {
-        _numberOfCharsForlemmingActionAndCount = 0;
-        _numberOfCharsForhatchCount = 0;
-        _numberOfCharsForlemmingsOut = 0;
+        _numberOfCharsForLemmingActionAndCount = 0;
+        _numberOfCharsForHatchCount = 0;
+        _numberOfCharsForLemmingsOut = 0;
         _numberOfCharsForGoalCount = 0;
     }
 
@@ -71,7 +71,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         textLength++;
         textLength += NumberFormattingHelpers.WriteDigits(p, numberOfLemmingsUnderCursor);
 
-        _numberOfCharsForlemmingActionAndCount = textLength;
+        _numberOfCharsForLemmingActionAndCount = textLength;
     }
 
     private int WriteLemmingInfo(Lemming lemming)
@@ -115,14 +115,14 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         LemmingAction action,
         LemmingState state)
     {
-        ReadOnlySpan<char> sourceSpan = GetSourceString(action, state).AsSpan();
+        ReadOnlySpan<char> sourceSpan = GetSourceString(action, state);
         Span<char> destSpan = new(_lemmingActionAndCountPointer, LemmingActionConstants.LongestActionNameLength);
 
         sourceSpan.CopyTo(destSpan);
 
         return sourceSpan.Length;
 
-        static string GetSourceString(
+        static ReadOnlySpan<char> GetSourceString(
             LemmingAction action,
             LemmingState state)
         {
@@ -156,14 +156,14 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
     {
         Debug.Assert(hatchCount >= 0);
 
-        _numberOfCharsForhatchCount = NumberFormattingHelpers.WriteDigits(_hatchCountPointer, (uint)hatchCount);
+        _numberOfCharsForHatchCount = NumberFormattingHelpers.WriteDigits(_hatchCountPointer, (uint)hatchCount);
     }
 
     public void SetLemmingData(int lemmingCount)
     {
         Debug.Assert(lemmingCount >= 0);
 
-        _numberOfCharsForlemmingsOut = NumberFormattingHelpers.WriteDigits(_lemmingsOutPointer, (uint)lemmingCount);
+        _numberOfCharsForLemmingsOut = NumberFormattingHelpers.WriteDigits(_lemmingsOutPointer, (uint)lemmingCount);
     }
 
     public void SetGoalData(int goalNumber)

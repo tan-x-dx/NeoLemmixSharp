@@ -38,7 +38,8 @@ public sealed class LevelData
     public void SetLevelWidth(int value)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(value, EngineConstants.MaxLevelWidth);
+        ArgumentOutOfRangeException.ThrowIfLessThan(value, EngineConstants.MinLevelSize);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(value, EngineConstants.MaxLevelSize);
 
         _levelWidth = value;
     }
@@ -46,7 +47,8 @@ public sealed class LevelData
     public void SetLevelHeight(int value)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(value, EngineConstants.MaxLevelHeight);
+        ArgumentOutOfRangeException.ThrowIfLessThan(value, EngineConstants.MinLevelSize);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(value, EngineConstants.MaxLevelSize);
 
         _levelHeight = value;
     }

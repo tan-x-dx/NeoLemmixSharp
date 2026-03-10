@@ -31,9 +31,9 @@ public static class DisposableHelperMethods
     /// <param name="obj">The object to dispose.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void DisposeOf<T>(ref T obj)
-        where T : class, IDisposable
+        where T : class?, IDisposable?
     {
-        obj.Dispose();
+        obj?.Dispose();
         obj = null!;
     }
 

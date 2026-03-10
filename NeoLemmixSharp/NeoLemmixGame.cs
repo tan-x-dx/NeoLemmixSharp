@@ -296,7 +296,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Dispose(bool disposing)
     {
-        MenuScreen.Instance.Dispose();
+        MenuScreen.Instance?.Dispose();
 
         base.Dispose(disposing);
     }

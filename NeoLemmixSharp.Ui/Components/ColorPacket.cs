@@ -11,6 +11,14 @@ public struct ColorPacket
     public Color MousePressColor;
     public Color ActiveColor;
 
+    public ColorPacket(Color color)
+    {
+        NormalColor = color;
+        MouseOverColor = color;
+        MousePressColor = color;
+        ActiveColor = color;
+    }
+
     public ColorPacket(Color normalColor, Color mouseOverColor, Color mousePressColor, Color activeColor)
     {
         NormalColor = normalColor;

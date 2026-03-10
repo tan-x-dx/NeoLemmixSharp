@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 
@@ -28,7 +29,9 @@ public sealed class ResizableRectangularHitBoxRegion : HitBoxRegion
     public override bool IsTrivial() => GetWidth() <= 0 || GetHeight() <= 0;
     private int GetX() => _gadgetBounds.X + _dx;
     private int GetY() => _gadgetBounds.Y + _dy;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int GetWidth() => _gadgetBounds.Width + _dw - _dx;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int GetHeight() => _gadgetBounds.Height + _dh - _dy;
 
     public override RectangularRegion CurrentBounds => new(

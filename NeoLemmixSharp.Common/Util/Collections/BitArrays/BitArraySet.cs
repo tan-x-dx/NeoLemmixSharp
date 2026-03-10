@@ -106,7 +106,9 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
             return Array.Empty<T>();
 
         var result = new T[count];
-        CopyTo(result, 0);
+
+        var resultSpan = new Span<T>(result);
+        CopyTo(resultSpan);
         return result;
     }
 
@@ -152,7 +154,7 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
         public ReferenceTypeEnumerator(BitArraySet<TPerfectHasher, TBuffer, T> set)
         {
             _hasher = set._hasher;
-            _bitEnumerator = new BitArrayHelpers.SimpleBitEnumerator(set._bits.AsReadOnlySpan().ToArray(), set._popCount);
+            _bitEnumerator = new BitArrayHelpers.SimpleBitEnumerator(set._bits.AsReadOnlySpan().ToArray());
         }
 
         public bool MoveNext() => _bitEnumerator.MoveNext();
