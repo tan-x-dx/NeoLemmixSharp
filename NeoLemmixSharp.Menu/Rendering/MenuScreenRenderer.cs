@@ -44,9 +44,9 @@ public sealed class MenuScreenRenderer : IScreenRenderer
 
     public void RenderScreen(GameTime gameTime, SpriteBatch spriteBatch)
     {
-        // background
         spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.PointClamp);
 
+        // background
         if (RenderBackground)
             _backgroundRenderer.Render(spriteBatch);
 
@@ -67,7 +67,9 @@ public sealed class MenuScreenRenderer : IScreenRenderer
         _menuCursorRenderer.RenderCursor(spriteBatch);
 
         // fade transition where necessary
-        _pageTransitionRenderer.Render(spriteBatch);
+        if (_pageTransitionRenderer.IsTransitioning)
+            _pageTransitionRenderer.Render(spriteBatch);
+
         spriteBatch.End();
     }
 

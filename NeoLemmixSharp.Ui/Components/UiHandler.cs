@@ -46,6 +46,7 @@ public sealed class UiHandler : IDisposable
             var currentMenu = _currentMenu;
             if (currentMenu != null)
             {
+                currentMenu.CloseMenu();
             }
 
             _currentMenu = value;
