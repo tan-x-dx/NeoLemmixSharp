@@ -169,7 +169,8 @@ public sealed class UiHandler : IDisposable
         }
         else
         {
-            SelectedTextField = CurrentSelection as TextField;
+            if (mouseButtonType == MouseButtonType.Left)
+                SelectedTextField = CurrentSelection as TextField;
             CurrentSelection.InvokeMousePressed(mousePosition, mouseButtonType);
         }
     }
@@ -182,7 +183,8 @@ public sealed class UiHandler : IDisposable
         }
         else
         {
-            SelectedTextField = CurrentSelection as TextField;
+            if (mouseButtonType == MouseButtonType.Left)
+                SelectedTextField = CurrentSelection as TextField;
             CurrentSelection.InvokeMouseHeld(mousePosition, mouseButtonType);
         }
     }
