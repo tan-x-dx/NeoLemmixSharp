@@ -5,6 +5,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Data;
 using NeoLemmixSharp.Ui.Events;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Ui.Components;
 
@@ -13,13 +14,13 @@ public abstract class Component : IDisposable
     private Component? _parent = null;
     protected List<Component>? _children = null;
 
-    private MouseEventHandler? _mouseEnter;
-    private MouseEventHandler? _mouseMovement;
-    private MouseEventHandler? _mousePressed;
-    private MouseEventHandler? _mouseHeld;
-    private MouseEventHandler? _mouseDoubleClick;
-    private MouseEventHandler? _mouseReleased;
-    private MouseEventHandler? _mouseExit;
+    private MouseMoveEventHandler? _mouseEnter;
+    private MouseMoveEventHandler? _mouseMovement;
+    private MousePressEventHandler? _mousePressed;
+    private MousePressEventHandler? _mouseHeld;
+    private MousePressEventHandler? _mouseDoubleClick;
+    private MousePressEventHandler? _mouseReleased;
+    private MouseMoveEventHandler? _mouseExit;
 
     private KeyboardEventHandler? _keyPressed;
     private KeyboardEventHandler? _keyHeld;
@@ -35,13 +36,13 @@ public abstract class Component : IDisposable
     private bool _isVisible = true;
     private bool _isDisposed;
 
-    public MouseEventHandler MouseEnter => _mouseEnter ??= new MouseEventHandler();
-    public MouseEventHandler MouseMovement => _mouseMovement ??= new MouseEventHandler();
-    public MouseEventHandler MousePressed => _mousePressed ??= new MouseEventHandler();
-    public MouseEventHandler MouseHeld => _mouseHeld ??= new MouseEventHandler();
-    public MouseEventHandler MouseDoubleClick => _mouseDoubleClick ??= new MouseEventHandler();
-    public MouseEventHandler MouseReleased => _mouseReleased ??= new MouseEventHandler();
-    public MouseEventHandler MouseExit => _mouseExit ??= new MouseEventHandler();
+    public MouseMoveEventHandler MouseEnter => _mouseEnter ??= new MouseMoveEventHandler();
+    public MouseMoveEventHandler MouseMovement => _mouseMovement ??= new MouseMoveEventHandler();
+    public MousePressEventHandler MousePressed => _mousePressed ??= new MousePressEventHandler();
+    public MousePressEventHandler MouseHeld => _mouseHeld ??= new MousePressEventHandler();
+    public MousePressEventHandler MouseDoubleClick => _mouseDoubleClick ??= new MousePressEventHandler();
+    public MousePressEventHandler MouseReleased => _mouseReleased ??= new MousePressEventHandler();
+    public MouseMoveEventHandler MouseExit => _mouseExit ??= new MouseMoveEventHandler();
 
     public KeyboardEventHandler KeyPressed => _keyPressed ??= new KeyboardEventHandler();
     public KeyboardEventHandler KeyHeld => _keyHeld ??= new KeyboardEventHandler();
@@ -194,6 +195,7 @@ public abstract class Component : IDisposable
         SetSize(width, height);
     }
 
+    [Pure]
     public virtual bool ContainsPoint(Point position)
     {
         return position.X >= Left &&
@@ -253,7 +255,7 @@ public abstract class Component : IDisposable
         c.Translate(Left, Top);
     }
 
-    private static void AssertValidComponentAdd(Component parent, [NotNull]Component? child)
+    private static void AssertValidComponentAdd(Component parent, [NotNull] Component? child)
     {
         ArgumentNullException.ThrowIfNull(child);
 
@@ -264,12 +266,16 @@ public abstract class Component : IDisposable
             throw new InvalidOperationException($"Component is already a child [{child}]");
     }
 
+    [Pure]
     internal bool IsChild() => _parent != null;
 
+    [Pure]
     internal bool HasChildren() => _children != null;
 
+    [Pure]
     internal Component? GetParent() => _parent;
 
+    [Pure]
     internal Component GetTopParent()
     {
         Component parent = this;
@@ -283,6 +289,7 @@ public abstract class Component : IDisposable
         }
     }
 
+    [Pure]
     internal Component? GetChildAt(Point position)
     {
         if (_children != null)
@@ -301,10 +308,10 @@ public abstract class Component : IDisposable
 
     internal void InvokeMouseEnter(Point mousePosition) => _mouseEnter?.Invoke(this, mousePosition);
     internal void InvokeMouseMovement(Point mousePosition) => _mouseMovement?.Invoke(this, mousePosition);
-    internal void InvokeMousePressed(Point mousePosition) => _mousePressed?.Invoke(this, mousePosition);
-    internal void InvokeMouseHeld(Point mousePosition) => _mouseHeld?.Invoke(this, mousePosition);
-    internal void InvokeMouseDoubleClick(Point mousePosition) => _mouseDoubleClick?.Invoke(this, mousePosition);
-    internal void InvokeMouseReleased(Point mousePosition) => _mouseReleased?.Invoke(this, mousePosition);
+    internal void InvokeMousePressed(Point mousePosition, MouseButtonType mouseButtonType) => _mousePressed?.Invoke(this, mousePosition, mouseButtonType);
+    internal void InvokeMouseHeld(Point mousePosition, MouseButtonType mouseButtonType) => _mouseHeld?.Invoke(this, mousePosition, mouseButtonType);
+    internal void InvokeMouseDoubleClick(Point mousePosition, MouseButtonType mouseButtonType) => _mouseDoubleClick?.Invoke(this, mousePosition, mouseButtonType);
+    internal void InvokeMouseReleased(Point mousePosition, MouseButtonType mouseButtonType) => _mouseReleased?.Invoke(this, mousePosition, mouseButtonType);
     internal void InvokeMouseExit(Point mousePosition) => _mouseExit?.Invoke(this, mousePosition);
 
     internal void InvokeKeyPressed(in KeysEnumerable pressedKeys) => _keyPressed?.Invoke(this, in pressedKeys);

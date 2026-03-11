@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.GameInput;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Ui.Components;
 
@@ -86,24 +87,11 @@ public sealed class UiHandler : IDisposable
         var mousePosition = _inputController.MousePosition;
         HandleMouseMove(mousePosition);
 
-        var leftMouseButton = _inputController.LeftMouseButtonAction;
-
-        if (leftMouseButton.IsDoubleTap)
-        {
-            HandleMouseDoubleClick(mousePosition);
-        }
-        if (leftMouseButton.IsPressed)
-        {
-            HandleMousePress(mousePosition);
-        }
-        else if (leftMouseButton.IsHeld)
-        {
-            HandleMouseHeld(mousePosition);
-        }
-        else if (leftMouseButton.IsReleased)
-        {
-            HandleMouseRelease(mousePosition);
-        }
+        HandleMouseInteraction(mousePosition, _inputController.LeftMouseButtonAction, MouseButtonType.Left);
+        HandleMouseInteraction(mousePosition, _inputController.MiddleMouseButtonAction, MouseButtonType.Middle);
+        HandleMouseInteraction(mousePosition, _inputController.RightMouseButtonAction, MouseButtonType.Right);
+        HandleMouseInteraction(mousePosition, _inputController.MouseButton4Action, MouseButtonType.Mouse4);
+        HandleMouseInteraction(mousePosition, _inputController.MouseButton5Action, MouseButtonType.Mouse5);
 
         var currentlyPressedKeys = _inputController.CurrentlyPressedKeys;
         var currentlyHeldKeys = _inputController.CurrentlyHeldKeys;
@@ -114,26 +102,67 @@ public sealed class UiHandler : IDisposable
         HandleKeyReleased(in justReleasedKeys);
     }
 
-    private void HandleMouseMove(Point mousePosition) => LocateComponent(mousePosition);
-
-    private void HandleMouseDoubleClick(Point mousePosition)
+    private void HandleMouseMove(Point mousePosition)
     {
-        LocateComponent(mousePosition);
+        var component = LocateComponent(mousePosition);
 
+        if (component == null)
+        {
+            CurrentSelection = RootComponent;
+            return;
+        }
+
+        if (component == CurrentSelection)
+        {
+            CurrentSelection.InvokeMouseMovement(mousePosition);
+            return;
+        }
+
+        CurrentSelection?.InvokeMouseExit(mousePosition);
+
+        CurrentSelection = component;
+        CurrentSelection.InvokeMouseEnter(mousePosition);
+
+        if (!CurrentSelection.IsVisible)
+        {
+            CurrentSelection = RootComponent;
+        }
+    }
+
+    private void HandleMouseInteraction(Point mousePosition, InputAction mouseButton, MouseButtonType mouseButtonType)
+    {
+        if (mouseButton.IsDoubleTap)
+        {
+            HandleMouseDoubleClick(mousePosition, mouseButtonType);
+        }
+        if (mouseButton.IsPressed)
+        {
+            HandleMousePress(mousePosition, mouseButtonType);
+        }
+        else if (mouseButton.IsHeld)
+        {
+            HandleMouseHeld(mousePosition, mouseButtonType);
+        }
+        else if (mouseButton.IsReleased)
+        {
+            HandleMouseRelease(mousePosition, mouseButtonType);
+        }
+    }
+
+    private void HandleMouseDoubleClick(Point mousePosition, MouseButtonType mouseButtonType)
+    {
         if (CurrentSelection is null || !CurrentSelection.IsVisible)
         {
             CurrentSelection = RootComponent;
         }
         else
         {
-            CurrentSelection.InvokeMouseDoubleClick(mousePosition);
+            CurrentSelection.InvokeMouseDoubleClick(mousePosition, mouseButtonType);
         }
     }
 
-    private void HandleMousePress(Point mousePosition)
+    private void HandleMousePress(Point mousePosition, MouseButtonType mouseButtonType)
     {
-        LocateComponent(mousePosition);
-
         if (CurrentSelection is null || !CurrentSelection.IsVisible)
         {
             CurrentSelection = RootComponent;
@@ -141,14 +170,12 @@ public sealed class UiHandler : IDisposable
         else
         {
             SelectedTextField = CurrentSelection as TextField;
-            CurrentSelection.InvokeMousePressed(mousePosition);
+            CurrentSelection.InvokeMousePressed(mousePosition, mouseButtonType);
         }
     }
 
-    private void HandleMouseHeld(Point mousePosition)
+    private void HandleMouseHeld(Point mousePosition, MouseButtonType mouseButtonType)
     {
-        LocateComponent(mousePosition);
-
         if (CurrentSelection is null || !CurrentSelection.IsVisible)
         {
             CurrentSelection = RootComponent;
@@ -156,21 +183,19 @@ public sealed class UiHandler : IDisposable
         else
         {
             SelectedTextField = CurrentSelection as TextField;
-            CurrentSelection.InvokeMouseHeld(mousePosition);
+            CurrentSelection.InvokeMouseHeld(mousePosition, mouseButtonType);
         }
     }
 
-    private void HandleMouseRelease(Point mousePosition)
+    private void HandleMouseRelease(Point mousePosition, MouseButtonType mouseButtonType)
     {
-        LocateComponent(mousePosition);
-
         if (CurrentSelection is null || !CurrentSelection.IsVisible)
         {
             CurrentSelection = RootComponent;
         }
         else
         {
-            CurrentSelection.InvokeMouseReleased(mousePosition);
+            CurrentSelection.InvokeMouseReleased(mousePosition, mouseButtonType);
         }
     }
 
@@ -191,35 +216,12 @@ public sealed class UiHandler : IDisposable
         CurrentSelection?.InvokeKeyReleased(in releasedKeys);
     }
 
-    private void LocateComponent(Point mousePosition)
+    [Pure]
+    private Component? LocateComponent(Point mousePosition)
     {
         var c = CurrentMenu ?? RootComponent;
 
-        c = c.GetChildAt(mousePosition);
-
-        if (c == null)
-        {
-            CurrentSelection = RootComponent;
-            return;
-        }
-
-        if (c == CurrentSelection)
-        {
-            CurrentSelection.InvokeMouseMovement(mousePosition);
-            return;
-        }
-
-        CurrentSelection?.InvokeMouseExit(mousePosition);
-
-        CurrentSelection = c;
-        CurrentSelection.InvokeMouseEnter(mousePosition);
-
-        if (!CurrentSelection.IsVisible)
-        {
-            CurrentSelection = RootComponent;
-        }
-
-        return;
+        return c.GetChildAt(mousePosition);
     }
 
     internal void DeselectTextField()

@@ -198,7 +198,7 @@ public sealed class LevelEditorPage : PageBase
         _controlPanel.LevelHeightTextField.TextSubmit.RegisterEvent(SetLevelHeight);
 
         _controlPanel.LevelIdTextField.TextSubmit.RegisterEvent(SetLevelId);
-        _controlPanel.GenerateNewLevelIdButton.MouseReleased.RegisterMouseEvent(GenerateNewLevelId);
+        _controlPanel.GenerateNewLevelIdButton.MouseReleased.RegisterMousePressEvent(GenerateNewLevelId, MouseButtonType.Left);
 
         _controlPanel.WrapHorizontalCheckBox.OnChecked.RegisterEvent(SetWrapHorizontal);
         _controlPanel.WrapHorizontalCheckBox.OnUnchecked.RegisterEvent(SetWrapHorizontal);

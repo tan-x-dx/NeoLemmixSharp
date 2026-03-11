@@ -7,7 +7,7 @@ public sealed class ToggleButton : Component
 {
     private bool _isActive = false;
 
-    public MouseEventHandler OnDeactivated { get; } = new();
+    public MousePressEventHandler OnDeactivated { get; } = new();
 
     public override ComponentState State
     {
@@ -24,19 +24,19 @@ public sealed class ToggleButton : Component
     public ToggleButton(int x, int y)
         : base(x, y)
     {
-        MousePressed.RegisterMouseEvent(OnMouseDown);
-        MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MouseReleased.RegisterMouseEvent(SetMouseOver);
-        MouseExit.RegisterMouseEvent(SetMouseNormal);
+        MousePressed.RegisterMousePressEvent(OnMouseDown, MouseButtonType.Left);
+        MouseEnter.RegisterMouseMoveEvent(SetMouseOver);
+        MouseReleased.RegisterMousePressEvent(SetMouseOver, MouseButtonType.Left);
+        MouseExit.RegisterMouseMoveEvent(SetMouseNormal);
     }
 
     public ToggleButton(int x, int y, int width, int height)
         : base(x, y, width, height)
     {
-        MousePressed.RegisterMouseEvent(OnMouseDown);
-        MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MouseReleased.RegisterMouseEvent(SetMouseOver);
-        MouseExit.RegisterMouseEvent(SetMouseNormal);
+        MousePressed.RegisterMousePressEvent(OnMouseDown, MouseButtonType.Left);
+        MouseEnter.RegisterMouseMoveEvent(SetMouseOver);
+        MouseReleased.RegisterMousePressEvent(SetMouseOver, MouseButtonType.Left);
+        MouseExit.RegisterMouseMoveEvent(SetMouseNormal);
     }
 
     public bool IsActive

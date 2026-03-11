@@ -29,12 +29,12 @@ public sealed class CheckBox : Component
             0xff118811.AsAbgrColor(),
             0xff006600.AsAbgrColor());
 
-        MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MousePressed.RegisterMouseEvent(SetMousePress);
-        MouseReleased.RegisterMouseEvent(SetMouseOver);
-        MouseExit.RegisterMouseEvent(SetMouseNormal);
+        MouseEnter.RegisterMouseMoveEvent(SetMouseOver);
+        MousePressed.RegisterMousePressEvent(SetMousePress, MouseButtonType.Left);
+        MouseReleased.RegisterMousePressEvent(SetMouseOver, MouseButtonType.Left);
+        MouseExit.RegisterMouseMoveEvent(SetMouseNormal);
 
-        MouseReleased.RegisterMouseEvent(OnMouseReleased);
+        MouseReleased.RegisterMousePressEvent(OnMouseReleased, MouseButtonType.Left);
     }
 
     public GenericEventHandler OnUnchecked => _onUnchecked ??= new GenericEventHandler();

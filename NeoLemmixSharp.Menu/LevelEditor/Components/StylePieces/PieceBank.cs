@@ -16,18 +16,18 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
     private readonly List<PieceSelector> _gadgetPieces = [];
     private readonly List<PieceSelector> _backgroundPieces = [];
 
-    private readonly MouseEventHandler.ComponentMouseAction _onSelectTerrainPiece;
-    private readonly MouseEventHandler.ComponentMouseAction _onSelectGadgetPiece;
-    private readonly MouseEventHandler.ComponentMouseAction _onSelectBackgroundPiece;
+    private readonly MousePressEventHandler.ComponentMousePressAction _onSelectTerrainPiece;
+    private readonly MousePressEventHandler.ComponentMousePressAction _onSelectGadgetPiece;
+    private readonly MousePressEventHandler.ComponentMousePressAction _onSelectBackgroundPiece;
 
     private PieceBankSelectionMode _selectionMode = PieceBankSelectionMode.Terrain;
     private int _scrollIndex;
     private int _numberOfPiecesToDisplay;
 
     public PieceBank(
-        MouseEventHandler.ComponentMouseAction onSelectTerrainPiece,
-        MouseEventHandler.ComponentMouseAction onSelectGadgetPiece,
-        MouseEventHandler.ComponentMouseAction onSelectBackgroundPiece) : base(0, 0)
+        MousePressEventHandler.ComponentMousePressAction onSelectTerrainPiece,
+        MousePressEventHandler.ComponentMousePressAction onSelectGadgetPiece,
+        MousePressEventHandler.ComponentMousePressAction onSelectBackgroundPiece) : base(0, 0)
     {
         _onSelectTerrainPiece = onSelectTerrainPiece;
         _onSelectGadgetPiece = onSelectGadgetPiece;
@@ -59,7 +59,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             {
                 IsVisible = _selectionMode == PieceBankSelectionMode.Terrain
             };
-            terrainPieceSelector.MousePressed.RegisterMouseEvent(_onSelectTerrainPiece);
+            terrainPieceSelector.MousePressed.RegisterMousePressEvent(_onSelectTerrainPiece, MouseButtonType.Left);
             terrainPieceSelector.Left = offset;
             terrainPieceSelector.Top = UiConstants.TwiceStandardInset;
             offset += PieceOffsetDelta;
@@ -83,7 +83,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             {
                 IsVisible = _selectionMode == PieceBankSelectionMode.Gadgets
             };
-            gadgetPieceSelector.MousePressed.RegisterMouseEvent(_onSelectGadgetPiece);
+            gadgetPieceSelector.MousePressed.RegisterMousePressEvent(_onSelectGadgetPiece, MouseButtonType.Left);
             gadgetPieceSelector.Left = offset;
             gadgetPieceSelector.Top = UiConstants.TwiceStandardInset;
             offset += PieceOffsetDelta;
