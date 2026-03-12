@@ -28,10 +28,10 @@ public sealed class InputController :
     private int _previousScrollValue;
     public int ScrollDelta { get; private set; }
 
-    private KeyboardInputType _keyboardInputType;
-    private KeyboardInputModifiers _inputModifiers;
     private int _numberOfFramesThisKeyHasBeenPressed;
     private char _keyboardChar;
+    private KeyboardInputType _keyboardInputType;
+    private KeyboardInputModifiers _inputModifiers;
     public bool _capsLock;
 
     public KeyboardInput LatestKeyboardInput() => new(_keyboardInputType, _inputModifiers, _numberOfFramesThisKeyHasBeenPressed, _keyboardChar, _capsLock);

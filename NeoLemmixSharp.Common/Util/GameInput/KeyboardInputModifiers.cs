@@ -1,7 +1,7 @@
 ﻿namespace NeoLemmixSharp.Common.Util.GameInput;
 
 [Flags]
-public enum KeyboardInputModifiers
+public enum KeyboardInputModifiers : byte
 {
     None = 0,
     Shift = 1 << KeyboardInputModifierHelpers.ShiftShift,

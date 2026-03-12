@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public enum KeyboardInputType
+public enum KeyboardInputType : byte
 {
     None,
 
