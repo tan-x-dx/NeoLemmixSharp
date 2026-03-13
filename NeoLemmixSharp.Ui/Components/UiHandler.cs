@@ -114,16 +114,16 @@ public sealed class UiHandler : IDisposable
 
         if (component == CurrentSelection)
         {
-            CurrentSelection.InvokeMouseMovement(mousePosition);
+            component.InvokeMouseMovement(mousePosition);
             return;
         }
 
         CurrentSelection?.InvokeMouseExit(mousePosition);
 
         CurrentSelection = component;
-        CurrentSelection.InvokeMouseEnter(mousePosition);
+        component.InvokeMouseEnter(mousePosition);
 
-        if (!CurrentSelection.IsVisible)
+        if (!component.IsVisible)
         {
             CurrentSelection = RootComponent;
         }
@@ -151,53 +151,69 @@ public sealed class UiHandler : IDisposable
 
     private void HandleMouseDoubleClick(Point mousePosition, MouseButtonType mouseButtonType)
     {
-        if (CurrentSelection is null || !CurrentSelection.IsVisible)
+        var selectedComponent = CurrentSelection;
+        if (selectedComponent is null || !selectedComponent.IsVisible)
         {
-            CurrentSelection = RootComponent;
+            selectedComponent = RootComponent;
         }
         else
         {
-            CurrentSelection.InvokeMouseDoubleClick(mousePosition, mouseButtonType);
+            selectedComponent.InvokeMouseDoubleClick(mousePosition, mouseButtonType);
         }
     }
 
     private void HandleMousePress(Point mousePosition, MouseButtonType mouseButtonType)
     {
-        if (CurrentSelection is null || !CurrentSelection.IsVisible)
+        var selectedComponent = CurrentSelection;
+        if (selectedComponent is null || !selectedComponent.IsVisible)
         {
-            CurrentSelection = RootComponent;
+            selectedComponent = RootComponent;
         }
         else
         {
             if (mouseButtonType == MouseButtonType.Left)
-                SelectedTextField = CurrentSelection as TextField;
-            CurrentSelection.InvokeMousePressed(mousePosition, mouseButtonType);
+            {
+                TrySelectTextField(selectedComponent, mousePosition);
+                SelectedTextField = selectedComponent as TextField;
+            }
+            selectedComponent.InvokeMousePressed(mousePosition, mouseButtonType);
         }
     }
 
     private void HandleMouseHeld(Point mousePosition, MouseButtonType mouseButtonType)
     {
-        if (CurrentSelection is null || !CurrentSelection.IsVisible)
+        var selectedComponent = CurrentSelection;
+        if (selectedComponent is null || !selectedComponent.IsVisible)
         {
-            CurrentSelection = RootComponent;
+            selectedComponent = RootComponent;
         }
         else
         {
             if (mouseButtonType == MouseButtonType.Left)
-                SelectedTextField = CurrentSelection as TextField;
-            CurrentSelection.InvokeMouseHeld(mousePosition, mouseButtonType);
+            {
+                TrySelectTextField(selectedComponent, mousePosition);
+                SelectedTextField = selectedComponent as TextField;
+            }
+            selectedComponent.InvokeMouseHeld(mousePosition, mouseButtonType);
         }
+    }
+
+    private void TrySelectTextField(Component selectedComponent, Point mousePosition)
+    {
+        SelectedTextField = selectedComponent as TextField;
+        SelectedTextField?.SetCaretPositionFromMousePosition(mousePosition);
     }
 
     private void HandleMouseRelease(Point mousePosition, MouseButtonType mouseButtonType)
     {
-        if (CurrentSelection is null || !CurrentSelection.IsVisible)
+        var selectedComponent = CurrentSelection;
+        if (selectedComponent is null || !selectedComponent.IsVisible)
         {
-            CurrentSelection = RootComponent;
+            selectedComponent = RootComponent;
         }
         else
         {
-            CurrentSelection.InvokeMouseReleased(mousePosition, mouseButtonType);
+            selectedComponent.InvokeMouseReleased(mousePosition, mouseButtonType);
         }
     }
 
