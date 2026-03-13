@@ -41,6 +41,14 @@ public static class UiSprites
         DrawNineSlicedBeveledRectangle(spriteBatch, dest, color);
     }
 
+    public static void DrawBeveledRectangle(
+        SpriteBatch spriteBatch,
+        Rectangle destination,
+        Color color)
+    {
+        DrawNineSlicedBeveledRectangle(spriteBatch, destination, color);
+    }
+
     private static void DrawNineSlicedBeveledRectangle(
         SpriteBatch spriteBatch,
         Rectangle dest,

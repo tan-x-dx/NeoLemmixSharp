@@ -17,7 +17,7 @@ using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.LevelEditor;
 
-public sealed class LevelEditorPage : PageBase
+public sealed partial class LevelEditorPage : PageBase
 {
     private LevelEditorMenuBar _menuBar;
     private LevelEditorControlPanel _controlPanel;
@@ -33,9 +33,11 @@ public sealed class LevelEditorPage : PageBase
 
     public LevelEditorPage(MenuInputController menuInputController, GraphicsDevice graphicsDevice) : base(menuInputController)
     {
-        _menuBar = new LevelEditorMenuBar();
+        var menuButtonHandler = GetMenuButtonHandler();
+
+        _menuBar = new LevelEditorMenuBar(menuButtonHandler);
         _controlPanel = new LevelEditorControlPanel();
-        _levelCanvas = new LevelEditorCanvas(graphicsDevice, menuInputController.InputController);
+        _levelCanvas = new LevelEditorCanvas(graphicsDevice);
         _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 
         SetLevelData(CreateBlankLevelData());
@@ -111,11 +113,6 @@ public sealed class LevelEditorPage : PageBase
         _levelCanvas.HandleUserInput(InputController);
         _pieceBank.HandleUserInput(InputController);
 
-        if (InputController.F1.IsPressed)
-        {
-            SaveLevel($@"C:\Temp\{_currentLevelData.LevelTitle}.ullv");
-        }
-
         if (InputController.ToggleFullScreen.IsPressed)
         {
             IGameWindow.Instance.ToggleFullscreenSetting();
@@ -150,9 +147,6 @@ public sealed class LevelEditorPage : PageBase
 
     protected override void OnDispose()
     {
-        if (IsDisposed)
-            return;
-
         MenuScreen.Instance.MenuScreenRenderer.RenderBackground = true;
 
         _menuBar = null!;

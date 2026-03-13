@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Ui.Components;
 using System.Diagnostics.Contracts;
 
@@ -7,7 +6,6 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
 public sealed partial class LevelEditorCanvas
 {
-    private readonly InputController _inputController;
     private readonly List<CanvasPiece> _selectedCanvasPieces = new(16);
 
     private Point _screenMouseDownPosition;
@@ -19,6 +17,11 @@ public sealed partial class LevelEditorCanvas
 
     private void OnMouseEnter(Component c, Point screenPosition)
     {
+        _screenMouseDownPosition = screenPosition;
+        _screenMouseMovePosition = screenPosition;
+        _canvasMouseDownPosition = CalculateCanvasMousePosition(screenPosition);
+        _canvasMouseMovePosition = _canvasMouseDownPosition;
+        _clickDragMode = ClickDragMode.None;
     }
 
     private void OnMouseMove(Component c, Point screenPosition)

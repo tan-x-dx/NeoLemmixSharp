@@ -16,8 +16,9 @@ public sealed class MouseMoveEventHandler : IDisposable
 
     public void Invoke(Component c, Point position)
     {
-        foreach (ComponentMouseMoveAction action in _actions)
+        for (int i = 0; i < _actions.Count; i++)
         {
+            var action = _actions[i];
             action(c, position);
         }
     }

@@ -16,10 +16,9 @@ public sealed partial class LevelEditorCanvas : Component
 
     private LevelData _levelData;
 
-    public LevelEditorCanvas(GraphicsDevice graphicsDevice, InputController inputController)
+    public LevelEditorCanvas(GraphicsDevice graphicsDevice)
     {
         _graphicsDevice = graphicsDevice;
-        _inputController = inputController;
 
         MouseEnter.RegisterMouseMoveEvent(OnMouseEnter);
         MouseMovement.RegisterMouseMoveEvent(OnMouseMove);

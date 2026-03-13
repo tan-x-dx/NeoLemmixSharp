@@ -28,8 +28,9 @@ public sealed class MousePressEventHandler : IDisposable
         if (buttonActions == null)
             return;
 
-        foreach (ComponentMousePressAction action in buttonActions)
+        for (int i = 0; i < buttonActions.Count; i++)
         {
+            var action = buttonActions[i];
             action(c, position);
         }
     }

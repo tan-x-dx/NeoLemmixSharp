@@ -210,6 +210,8 @@ public abstract class Component : IDisposable
         set => _isVisible = value;
     }
 
+    public virtual void Tick() { }
+
     public virtual void Render(SpriteBatch spriteBatch)
     {
         if (_isVisible)
@@ -330,7 +332,7 @@ public abstract class Component : IDisposable
 
             if (_children is not null)
             {
-                foreach (Component child in _children)
+                foreach (var child in _children)
                 {
                     child.Dispose();
                 }
@@ -352,6 +354,8 @@ public abstract class Component : IDisposable
             DisposableHelperMethods.DisposeOf(ref _keyPressed);
             DisposableHelperMethods.DisposeOf(ref _keyHeld);
             DisposableHelperMethods.DisposeOf(ref _keyReleased);
+
+            UiHandler.Instance.EliminateComponentReferences(this);
 
             OnDispose();
         }
