@@ -16,6 +16,8 @@ public sealed class UiHandler : IDisposable
 
     internal InputController InputController => _inputController;
 
+    public Component RootComponent { get; }
+
     public Component? CurrentSelection { get; private set; }
     public TextField? SelectedTextField
     {
@@ -36,6 +38,7 @@ public sealed class UiHandler : IDisposable
             _selectedTextField?.SetSelected();
         }
     }
+
     public PopupMenu? CurrentMenu
     {
         get => _currentMenu;
@@ -53,8 +56,6 @@ public sealed class UiHandler : IDisposable
             _currentMenu = value;
         }
     }
-
-    public Component RootComponent { get; }
 
     public UiHandler(InputController inputController)
     {
@@ -154,7 +155,7 @@ public sealed class UiHandler : IDisposable
         var selectedComponent = CurrentSelection;
         if (selectedComponent is null || !selectedComponent.IsVisible)
         {
-            selectedComponent = RootComponent;
+            CurrentSelection = RootComponent;
         }
         else
         {
@@ -167,7 +168,7 @@ public sealed class UiHandler : IDisposable
         var selectedComponent = CurrentSelection;
         if (selectedComponent is null || !selectedComponent.IsVisible)
         {
-            selectedComponent = RootComponent;
+            CurrentSelection = RootComponent;
         }
         else
         {
@@ -185,7 +186,7 @@ public sealed class UiHandler : IDisposable
         var selectedComponent = CurrentSelection;
         if (selectedComponent is null || !selectedComponent.IsVisible)
         {
-            selectedComponent = RootComponent;
+            CurrentSelection = RootComponent;
         }
         else
         {
@@ -209,7 +210,7 @@ public sealed class UiHandler : IDisposable
         var selectedComponent = CurrentSelection;
         if (selectedComponent is null || !selectedComponent.IsVisible)
         {
-            selectedComponent = RootComponent;
+            CurrentSelection = RootComponent;
         }
         else
         {

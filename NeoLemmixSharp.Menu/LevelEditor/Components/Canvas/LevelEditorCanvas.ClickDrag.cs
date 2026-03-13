@@ -27,7 +27,7 @@ public sealed partial class LevelEditorCanvas
         _canvasMouseMovePosition = CalculateCanvasMousePosition(screenPosition);
     }
 
-    private void OnMousePressed(Component c, Point screenPosition)
+    private void OnLeftMousePressed(Component c, Point screenPosition)
     {
         _screenMouseDownPosition = screenPosition;
         _canvasMouseDownPosition = CalculateCanvasMousePosition(screenPosition);
@@ -49,7 +49,12 @@ public sealed partial class LevelEditorCanvas
         _selectedCanvasPieces.Add(pieceBeneathMouse);
     }
 
-    private void OnMouseHeld(Component c, Point screenPosition)
+    private void OnRightMousePressed(Component c, Point screenPosition)
+    {
+
+    }
+
+    private void OnLeftMouseHeld(Component c, Point screenPosition)
     {
         var pieceBeneathMouse = TrySelectSingleItem();
         if (pieceBeneathMouse is null || !_selectedCanvasPieces.Contains(pieceBeneathMouse))
@@ -71,7 +76,7 @@ public sealed partial class LevelEditorCanvas
         RepaintLevel();
     }
 
-    private void OnMouseReleased(Component c, Point screenPosition)
+    private void OnLeftMouseReleased(Component c, Point screenPosition)
     {
         if (_clickDragMode == ClickDragMode.SelectPieces)
         {
@@ -90,7 +95,7 @@ public sealed partial class LevelEditorCanvas
 
     private void OnMouseExit(Component c, Point screenPosition)
     {
-        OnMouseReleased(c, screenPosition);
+        OnLeftMouseReleased(c, screenPosition);
         _canvasMouseDownPosition = new Point(-4000, -4000);
         _canvasMouseMovePosition = new Point(-4000, -4000);
     }

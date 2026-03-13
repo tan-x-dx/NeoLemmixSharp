@@ -23,9 +23,10 @@ public sealed partial class LevelEditorCanvas : Component
 
         MouseEnter.RegisterMouseMoveEvent(OnMouseEnter);
         MouseMovement.RegisterMouseMoveEvent(OnMouseMove);
-        MousePressed.RegisterMousePressEvent(OnMousePressed, MouseButtonType.Left);
-        MouseHeld.RegisterMousePressEvent(OnMouseHeld, MouseButtonType.Left);
-        MouseReleased.RegisterMousePressEvent(OnMouseReleased, MouseButtonType.Left);
+        MousePressed.RegisterMousePressEvent(OnLeftMousePressed, MouseButtonType.Left);
+        MousePressed.RegisterMousePressEvent(OnRightMousePressed, MouseButtonType.Right);
+        MouseHeld.RegisterMousePressEvent(OnLeftMouseHeld, MouseButtonType.Left);
+        MouseReleased.RegisterMousePressEvent(OnLeftMouseReleased, MouseButtonType.Left);
         MouseExit.RegisterMouseMoveEvent(OnMouseExit);
         KeyPressed.RegisterKeyEvent(OnKeyDown);
     }
