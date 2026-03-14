@@ -22,6 +22,8 @@ public sealed class LevelEditorController
     public InputAction UpArrow { get; }
     public InputAction RightArrow { get; }
 
+    public InputAction DeleteSelection { get; }
+
     public InputAction ToggleFullScreen { get; }
     public InputAction Quit { get; }
 
@@ -35,6 +37,8 @@ public sealed class LevelEditorController
         LeftArrow = _inputHandler.CreateInputAction(EngineConstants.LeftArrow);
         UpArrow = _inputHandler.CreateInputAction(EngineConstants.UpArrow);
         RightArrow = _inputHandler.CreateInputAction(EngineConstants.RightArrow);
+
+        DeleteSelection = _inputHandler.CreateInputAction("Delete Selection");
 
         ToggleFullScreen = _inputHandler.CreateInputAction("Toggle Full Screen");
         Quit = _inputHandler.CreateInputAction("Quit");
@@ -55,6 +59,9 @@ public sealed class LevelEditorController
         _inputHandler.Bind(Keys.Up, UpArrow);
         _inputHandler.Bind(Keys.Right, RightArrow);
         _inputHandler.Bind(Keys.Down, DownArrow);
+
+        _inputHandler.Bind(Keys.Delete, DeleteSelection);
+        _inputHandler.Bind(Keys.Back, DeleteSelection);
 
         _inputHandler.Bind(EngineConstants.FullscreenKey, ToggleFullScreen);
         _inputHandler.Bind(Keys.Escape, Quit);

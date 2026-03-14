@@ -34,6 +34,7 @@ public sealed class InputHandler :
     private KeyboardInputModifiers _inputModifiers;
     public bool _capsLock;
 
+    public KeyboardInputModifiers InputModifiers => _inputModifiers;
     public KeyboardInput LatestKeyboardInput() => new(_keyboardInputType, _inputModifiers, _numberOfFramesThisKeyHasBeenPressed, _keyboardChar, _capsLock);
 
     public BitArrayEnumerable<InputHandler, Keys> CurrentlyPressedKeys => _currentlyPressedKeys.AsEnumerable();

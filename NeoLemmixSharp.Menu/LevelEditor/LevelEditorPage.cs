@@ -10,25 +10,25 @@ using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.Menu.LevelEditor.ChangeSet;
 using NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 using NeoLemmixSharp.Menu.LevelEditor.Menu;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Menu.LevelEditor;
 
 public sealed partial class LevelEditorPage : PageBase
 {
     private readonly LevelEditorController _levelEditorController;
+    private readonly LevelEditorChangeTracker _levelEditorChangeTracker;
 
     private LevelEditorMenuBar _menuBar;
     private LevelEditorControlPanel _controlPanel;
     private LevelEditorCanvas _levelCanvas;
     private PieceBank _pieceBank;
-
-    private StyleData _levelStyleData;
-    private StyleData _pieceStyleData;
 
     private LevelData _currentLevelData;
 
@@ -37,9 +37,10 @@ public sealed partial class LevelEditorPage : PageBase
     public LevelEditorPage(InputHandler inputHandler, GraphicsDevice graphicsDevice) : base(inputHandler)
     {
         _levelEditorController = new LevelEditorController(inputHandler);
+        _levelEditorChangeTracker = new LevelEditorChangeTracker();
         _menuBar = new LevelEditorMenuBar(this);
         _controlPanel = new LevelEditorControlPanel();
-        _levelCanvas = new LevelEditorCanvas(graphicsDevice);
+        _levelCanvas = new LevelEditorCanvas(inputHandler, graphicsDevice);
         _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
 
         SetLevelData(CreateBlankLevelData());
@@ -68,6 +69,7 @@ public sealed partial class LevelEditorPage : PageBase
         OnResize();
     }
 
+    [MemberNotNull(nameof(_currentLevelData))]
     private void SetLevelData(LevelData levelData)
     {
         _currentLevelData = levelData;
@@ -123,9 +125,6 @@ public sealed partial class LevelEditorPage : PageBase
 
     private void SetStyle(StyleData styleData)
     {
-        _levelStyleData = styleData;
-        _pieceStyleData = styleData;
-
         _pieceBank.SetStyle(styleData);
     }
 

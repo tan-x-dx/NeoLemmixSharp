@@ -214,6 +214,37 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
         }
     }
 
+    private void DeleteSelection()
+    {
+        if (_selectedCanvasPieces.Count == 0)
+            return;
+
+        foreach (var piece in _selectedCanvasPieces)
+        {
+            switch (piece.InstanceData)
+            {
+                case GadgetInstanceData:
+                    _gadgetPieces.Remove(piece);
+                    break;
+
+                case LemmingInstanceData:
+                    _preplacedLemmingPieces.Remove(piece);
+                    break;
+
+                case TerrainInstanceData:
+                    _terrainPieces.Remove(piece);
+                    break;
+
+                case SketchInstanceData:
+                    //
+                    break;
+            }
+        }
+
+        _selectedCanvasPieces.Clear();
+        RepaintLevel();
+    }
+
     int IComparer<CanvasPiece>.Compare(CanvasPiece? x, CanvasPiece? y)
     {
         if (ReferenceEquals(x, y)) return 0;

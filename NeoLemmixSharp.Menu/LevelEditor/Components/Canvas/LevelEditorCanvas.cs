@@ -11,13 +11,16 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
 public sealed partial class LevelEditorCanvas : Component
 {
+    private readonly InputHandler _inputHandler;
+
     private readonly CanvasBorderBehaviour _horizontalBorderBehaviour = new();
     private readonly CanvasBorderBehaviour _verticalBorderBehaviour = new();
 
     private LevelData _levelData;
 
-    public LevelEditorCanvas(GraphicsDevice graphicsDevice)
+    public LevelEditorCanvas(InputHandler inputHandler, GraphicsDevice graphicsDevice)
     {
+        _inputHandler = inputHandler;
         _graphicsDevice = graphicsDevice;
 
         MouseEnter.RegisterMouseMoveEvent(OnMouseEnter);
@@ -72,6 +75,12 @@ public sealed partial class LevelEditorCanvas : Component
     {
         if (!ContainsPoint(inputController.MousePosition))
             return;
+
+        if (inputController.DeleteSelection.IsPressed)
+        {
+            DeleteSelection();
+            return;
+        }
 
         if (inputController.ScrollDelta != 0 && _clickDragMode == ClickDragMode.None)
             Zoom(inputController.ScrollDelta);

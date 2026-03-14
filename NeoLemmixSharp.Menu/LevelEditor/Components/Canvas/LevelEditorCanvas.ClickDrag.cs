@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Ui.Components;
 using System.Diagnostics.Contracts;
 
@@ -38,6 +39,22 @@ public sealed partial class LevelEditorCanvas
         _canvasMouseMovePosition = _canvasMouseDownPosition;
 
         var pieceBeneathMouse = TrySelectSingleItem();
+
+        var keyBoardInputModifiers = _inputHandler.InputModifiers;
+
+        if (keyBoardInputModifiers.CtrlDown())
+        {
+            _clickDragMode = ClickDragMode.None;
+            if (pieceBeneathMouse is null)
+                return;
+
+            if (_selectedCanvasPieces.Remove(pieceBeneathMouse))
+                return;
+
+            _selectedCanvasPieces.Add(pieceBeneathMouse);
+            return;
+        }
+
         if (pieceBeneathMouse is null)
         {
             _selectedCanvasPieces.Clear();
@@ -59,6 +76,10 @@ public sealed partial class LevelEditorCanvas
 
     private void OnLeftMouseHeld(Component c, Point screenPosition)
     {
+        var keyBoardInputModifiers = _inputHandler.InputModifiers;
+        if (keyBoardInputModifiers.CtrlDown())
+            return;
+
         var pieceBeneathMouse = TrySelectSingleItem();
         if (pieceBeneathMouse is null || !_selectedCanvasPieces.Contains(pieceBeneathMouse))
         {
