@@ -9,7 +9,7 @@ public sealed class LevelStartPage : PageBase
     private readonly LevelScreen _levelScreen;
 
     public LevelStartPage(
-        MenuInputController inputController,
+        MenuController inputController,
         LevelScreen levelScreen)
         : base(inputController)
     {

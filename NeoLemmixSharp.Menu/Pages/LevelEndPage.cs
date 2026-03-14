@@ -5,7 +5,7 @@ namespace NeoLemmixSharp.Menu.Pages;
 public sealed class LevelEndPage : PageBase
 {
     public LevelEndPage(
-        MenuInputController inputController)
+        MenuController inputController)
         : base(inputController)
     {
     }

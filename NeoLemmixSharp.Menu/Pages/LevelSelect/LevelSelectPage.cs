@@ -8,7 +8,7 @@ public sealed class LevelSelectPage : PageBase
 {
     private readonly LevelList _levelList = new();
 
-    public LevelSelectPage(MenuInputController inputController)
+    public LevelSelectPage(MenuController inputController)
         : base(inputController)
     {
     }

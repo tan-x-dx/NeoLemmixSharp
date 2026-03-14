@@ -15,6 +15,8 @@ namespace NeoLemmixSharp.IO.Data.Level;
 
 public sealed class LevelData
 {
+    public string? LevelFilePath { get; set; }
+
     public string LevelTitle { get; set; } = string.Empty;
     public string LevelAuthor { get; set; } = string.Empty;
     public LevelIdentifier LevelId { get; set; }
@@ -30,8 +32,9 @@ public sealed class LevelData
 
     public FileFormatType FileFormatType { get; }
 
-    public LevelData(FileFormatType fileFormatType)
+    public LevelData(FileFormatType fileFormatType, string? levelFilePath)
     {
+        LevelFilePath = levelFilePath;
         FileFormatType = fileFormatType;
     }
 

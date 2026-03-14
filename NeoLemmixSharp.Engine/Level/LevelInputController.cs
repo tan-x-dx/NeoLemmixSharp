@@ -9,16 +9,16 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelInputController : IInitialisable
 {
-    public InputController InputController { get; } = new();
+    public InputHandler InputHandler { get; } = new();
 
-    public Point MousePosition => InputController.MousePosition;
-    public int ScrollDelta => InputController.ScrollDelta;
+    public Point MousePosition => InputHandler.MousePosition;
+    public int ScrollDelta => InputHandler.ScrollDelta;
 
-    public InputAction LeftMouseButtonAction => InputController.LeftMouseButtonAction;
-    public InputAction RightMouseButtonAction => InputController.RightMouseButtonAction;
-    public InputAction MiddleMouseButtonAction => InputController.MiddleMouseButtonAction;
-    public InputAction MouseButton4Action => InputController.MouseButton4Action;
-    public InputAction MouseButton5Action => InputController.MouseButton5Action;
+    public InputAction LeftMouseButtonAction => InputHandler.LeftMouseButtonAction;
+    public InputAction RightMouseButtonAction => InputHandler.RightMouseButtonAction;
+    public InputAction MiddleMouseButtonAction => InputHandler.MiddleMouseButtonAction;
+    public InputAction MouseButton4Action => InputHandler.MouseButton4Action;
+    public InputAction MouseButton5Action => InputHandler.MouseButton5Action;
 
     public InputAction Pause { get; }
     public InputAction Quit { get; }
@@ -46,64 +46,64 @@ public sealed class LevelInputController : IInitialisable
 
     public LevelInputController()
     {
-        Pause = InputController.CreateInputAction("Pause");
-        Quit = InputController.CreateInputAction("Quit");
-        ToggleFullScreen = InputController.CreateInputAction("Toggle Fullscreen");
-        ToggleFastForwards = InputController.CreateInputAction("Toggle Fast Forwards");
-        SelectOnlyWalkers = InputController.CreateInputAction("Select Only Walkers");
-        SelectOnlyUnassignedLemmings = InputController.CreateInputAction("Select Only Unassigned Lemmings");
-        SelectLeftFacingLemmings = InputController.CreateInputAction("Select Left Facing Lemmings");
-        SelectRightFacingLemmings = InputController.CreateInputAction("Select Right Facing Lemmings");
+        Pause = InputHandler.CreateInputAction("Pause");
+        Quit = InputHandler.CreateInputAction("Quit");
+        ToggleFullScreen = InputHandler.CreateInputAction("Toggle Fullscreen");
+        ToggleFastForwards = InputHandler.CreateInputAction("Toggle Fast Forwards");
+        SelectOnlyWalkers = InputHandler.CreateInputAction("Select Only Walkers");
+        SelectOnlyUnassignedLemmings = InputHandler.CreateInputAction("Select Only Unassigned Lemmings");
+        SelectLeftFacingLemmings = InputHandler.CreateInputAction("Select Left Facing Lemmings");
+        SelectRightFacingLemmings = InputHandler.CreateInputAction("Select Right Facing Lemmings");
 
-        Rewind50Frames = InputController.CreateInputAction("Rewind 10 frames");
-        Reset = InputController.CreateInputAction("Reset");
+        Rewind50Frames = InputHandler.CreateInputAction("Rewind 10 frames");
+        Reset = InputHandler.CreateInputAction("Reset");
 
-        RightArrow = InputController.CreateInputAction("ABC");
-        UpArrow = InputController.CreateInputAction("ABC");
-        LeftArrow = InputController.CreateInputAction("ABC");
-        DownArrow = InputController.CreateInputAction("ABC");
+        RightArrow = InputHandler.CreateInputAction("ABC");
+        UpArrow = InputHandler.CreateInputAction("ABC");
+        LeftArrow = InputHandler.CreateInputAction("ABC");
+        DownArrow = InputHandler.CreateInputAction("ABC");
 
-        W = InputController.CreateInputAction("ABC");
-        A = InputController.CreateInputAction("ABC");
-        S = InputController.CreateInputAction("ABC");
-        D = InputController.CreateInputAction("ABC");
+        W = InputHandler.CreateInputAction("ABC");
+        A = InputHandler.CreateInputAction("ABC");
+        S = InputHandler.CreateInputAction("ABC");
+        D = InputHandler.CreateInputAction("ABC");
 
-        Space = InputController.CreateInputAction("Space");
+        Space = InputHandler.CreateInputAction("Space");
 
-        InputController.ValidateInputActions();
+        InputHandler.ValidateInputActions();
 
         SetUpBindings();
     }
 
     private void SetUpBindings()
     {
-        InputController.Bind(Keys.P, Pause);
-        InputController.Bind(Keys.Escape, Quit);
-        InputController.Bind(EngineConstants.FullscreenKey, ToggleFullScreen);
-        InputController.Bind(Keys.F, ToggleFastForwards);
+        InputHandler.Bind(Keys.P, Pause);
+        InputHandler.Bind(Keys.Escape, Quit);
+        InputHandler.Bind(EngineConstants.FullscreenKey, ToggleFullScreen);
+        InputHandler.Bind(Keys.F, ToggleFastForwards);
 
-        InputController.Bind(Keys.LeftControl, SelectOnlyUnassignedLemmings);
-        InputController.Bind(Keys.W, SelectOnlyWalkers);
+        InputHandler.Bind(Keys.LeftControl, SelectOnlyUnassignedLemmings);
+        InputHandler.Bind(Keys.W, SelectOnlyWalkers);
 
-        InputController.Bind(Keys.Left, SelectLeftFacingLemmings);
-        InputController.Bind(Keys.Right, SelectRightFacingLemmings);
+        InputHandler.Bind(Keys.Left, SelectLeftFacingLemmings);
+        InputHandler.Bind(Keys.Right, SelectRightFacingLemmings);
 
-        InputController.Bind(Keys.W, W);
-        InputController.Bind(Keys.A, A);
-        InputController.Bind(Keys.S, S);
-        InputController.Bind(Keys.D, D);
+        InputHandler.Bind(Keys.W, W);
+        InputHandler.Bind(Keys.A, A);
+        InputHandler.Bind(Keys.S, S);
+        InputHandler.Bind(Keys.D, D);
 
-        InputController.Bind(Keys.Up, UpArrow);
-        InputController.Bind(Keys.Down, DownArrow);
+        InputHandler.Bind(Keys.Up, UpArrow);
+        InputHandler.Bind(Keys.Down, DownArrow);
 
-        InputController.Bind(Keys.Space, Space);
+        InputHandler.Bind(Keys.Space, Space);
 
-        InputController.Bind(Keys.OemMinus, Rewind50Frames);
-        InputController.Bind(Keys.R, Reset);
+        InputHandler.Bind(Keys.OemMinus, Rewind50Frames);
+        InputHandler.Bind(Keys.R, Reset);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Tick() => InputController.Tick();
+    public void Tick() => InputHandler.Tick();
 
     public void Initialise()
     {

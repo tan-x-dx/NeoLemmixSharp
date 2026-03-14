@@ -22,7 +22,7 @@ public sealed class MenuScreen : IBaseScreen
     private PageBase _currentPage;
     private PageBase? _nextPage;
 
-    public MenuInputController InputController { get; } = new();
+    public MenuController InputController { get; } = new();
     public MenuPageCreator MenuPageCreator { get; }
     public MenuScreenRenderer MenuScreenRenderer { get; }
 

@@ -16,14 +16,14 @@ public sealed class MenuPageCreator
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
 
-    private readonly MenuInputController _inputController;
+    private readonly MenuController _inputController;
 
     public string LevelToLoadFilepath { get; set; }
 
     public MenuPageCreator(
         ContentManager contentManager,
         GraphicsDevice graphicsDevice,
-        MenuInputController inputController)
+        MenuController inputController)
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;

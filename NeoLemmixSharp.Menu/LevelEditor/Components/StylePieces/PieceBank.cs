@@ -160,7 +160,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
         }
     }
 
-    public void HandleUserInput(MenuInputController inputController)
+    public void HandleUserInput(MenuController inputController)
     {
         if (!ContainsPoint(inputController.MousePosition))
             return;

@@ -6,18 +6,17 @@ namespace NeoLemmixSharp.Menu.Pages;
 
 public abstract class PageBase : IInitialisable, IDisposable
 {
-    protected readonly MenuInputController InputController;
+    protected readonly MenuController InputController;
 
     protected bool IsInitialised { get; private set; }
     protected bool IsDisposed { get; private set; }
 
     public UiHandler UiHandler { get; }
 
-    protected PageBase(
-        MenuInputController menuInputController)
+    protected PageBase(MenuController menuInputController)
     {
         InputController = menuInputController;
-        UiHandler = new UiHandler(menuInputController.InputController);
+        UiHandler = new UiHandler(menuInputController.InputHandler);
     }
 
     public void Initialise()

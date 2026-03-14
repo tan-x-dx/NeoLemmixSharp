@@ -116,7 +116,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
         }
     }
 
-    public void HandleUserInput(MenuInputController inputController)
+    public void HandleUserInput(MenuController inputController)
     {
         if (inputController.RightArrow.IsPressed)
         {

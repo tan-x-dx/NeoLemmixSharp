@@ -9,13 +9,13 @@ public sealed class UiHandler : IDisposable
 {
     public static UiHandler Instance { get; set; } = null!;
 
-    private readonly InputController _inputController;
+    private readonly InputHandler _inputController;
     private readonly List<TextLabel> _menuFontTextLabels = [];
     private readonly List<Component> _componentsThatShouldBeTicked = [];
     private TextField? _selectedTextField;
     private PopupMenu? _currentMenu;
 
-    internal InputController InputController => _inputController;
+    internal InputHandler InputController => _inputController;
 
     public Component RootComponent { get; }
     public Component CurrentSelection { get; private set; }
@@ -54,7 +54,7 @@ public sealed class UiHandler : IDisposable
         }
     }
 
-    public UiHandler(InputController inputController)
+    public UiHandler(InputHandler inputController)
     {
         RootComponent = new Root();
         CurrentSelection = RootComponent;

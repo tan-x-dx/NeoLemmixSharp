@@ -24,9 +24,9 @@ public sealed class LevelEditorMenuBar : Component
         Color.CornflowerBlue
     );
 
-    private readonly MenuBarButtonHandler _buttonHandler;
+    private IMenuBarButtonHandler _buttonHandler;
 
-    public LevelEditorMenuBar(MenuBarButtonHandler buttonHandler)
+    public LevelEditorMenuBar(IMenuBarButtonHandler buttonHandler)
     {
         _buttonHandler = buttonHandler;
         Height = LevelEditorMenuBarHeight;
@@ -109,11 +109,11 @@ public sealed class LevelEditorMenuBar : Component
     {
         var fileMenu = CreatePopupMenu(
             c,
-            new ButtonDefinition("New (Ctrl + N)", _buttonHandler.FileNewAction),
-            new ButtonDefinition("Open (Ctrl + O)", _buttonHandler.FileOpenAction),
-            new ButtonDefinition("Save (Ctrl + S)", _buttonHandler.FileSaveAction),
-            new ButtonDefinition("Save As (Ctrl + Shift + S)", _buttonHandler.FileSaveAsAction),
-            new ButtonDefinition("Exit (Esc)", _buttonHandler.FileExitAction));
+            new ButtonDefinition("New (Ctrl + N)", _buttonHandler.OnNewLevel),
+            new ButtonDefinition("Open (Ctrl + O)", _buttonHandler.OnFileOpen),
+            new ButtonDefinition("Save (Ctrl + S)", _buttonHandler.OnSaveLevel),
+            new ButtonDefinition("Save As (Ctrl + Shift + S)", _buttonHandler.OnSaveLevelAs),
+            new ButtonDefinition("Exit (Esc)", _buttonHandler.OnExit));
 
         UiHandler.Instance.OpenPopupMenu(fileMenu);
     }
@@ -122,15 +122,15 @@ public sealed class LevelEditorMenuBar : Component
     {
         var editMenu = CreatePopupMenu(
             c,
-            new ButtonDefinition("Undo (Ctrl + Z)", _buttonHandler.EditorUndoAction),
-            new ButtonDefinition("Redo (Ctrl + Y)", _buttonHandler.EditorRedoAction),
-            new ButtonDefinition("Cut (Ctrl + X)", _buttonHandler.EditorCutAction),
-            new ButtonDefinition("Copy (Ctrl + C)", _buttonHandler.EditorCopyAction),
-            new ButtonDefinition("Paste (Ctrl + V)", _buttonHandler.EditorPasteAction),
-            new ButtonDefinition("Paste In Place (Ctrl + Shift + V)", _buttonHandler.EditorPasteInPlaceAction),
-            new ButtonDefinition("Duplicate (C)", _buttonHandler.EditorDuplicateAction),
-            new ButtonDefinition("Group (G)", _buttonHandler.EditorGroupAction),
-            new ButtonDefinition("Ungroup (H)", _buttonHandler.EditorUngroupAction));
+            new ButtonDefinition("Undo (Ctrl + Z)", _buttonHandler.EditorUndo),
+            new ButtonDefinition("Redo (Ctrl + Y)", _buttonHandler.EditorRedo),
+            new ButtonDefinition("Cut (Ctrl + X)", _buttonHandler.EditorCut),
+            new ButtonDefinition("Copy (Ctrl + C)", _buttonHandler.EditorCopy),
+            new ButtonDefinition("Paste (Ctrl + V)", _buttonHandler.EditorPaste),
+            new ButtonDefinition("Paste In Place (Ctrl + Shift + V)", _buttonHandler.EditorPasteInPlace),
+            new ButtonDefinition("Duplicate (C)", _buttonHandler.EditorDuplicate),
+            new ButtonDefinition("Group (G)", _buttonHandler.EditorGroup),
+            new ButtonDefinition("Ungroup (H)", _buttonHandler.EditorUngroup));
 
         UiHandler.Instance.OpenPopupMenu(editMenu);
     }
@@ -201,5 +201,10 @@ public sealed class LevelEditorMenuBar : Component
     private static void ClosePopupMenu(Component c, Common.Point position)
     {
         UiHandler.Instance.ClosePopupMenu();
+    }
+
+    protected override void OnDispose()
+    {
+        _buttonHandler = null!;
     }
 }

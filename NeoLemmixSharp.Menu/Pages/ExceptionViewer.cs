@@ -7,7 +7,7 @@ public sealed class ExceptionViewer : PageBase
     private readonly Exception _exception;
 
     public ExceptionViewer(
-        MenuInputController inputController,
+        MenuController inputController,
         Exception exception)
         : base(inputController)
     {

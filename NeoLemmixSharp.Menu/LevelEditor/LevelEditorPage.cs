@@ -31,11 +31,9 @@ public sealed partial class LevelEditorPage : PageBase
 
     public bool IsNeoLemmix => _currentLevelData.FileFormatType == FileFormatType.NeoLemmix;
 
-    public LevelEditorPage(MenuInputController menuInputController, GraphicsDevice graphicsDevice) : base(menuInputController)
+    public LevelEditorPage(MenuController menuController, GraphicsDevice graphicsDevice) : base(menuController)
     {
-        var menuButtonHandler = GetMenuButtonHandler();
-
-        _menuBar = new LevelEditorMenuBar(menuButtonHandler);
+        _menuBar = new LevelEditorMenuBar(this);
         _controlPanel = new LevelEditorControlPanel();
         _levelCanvas = new LevelEditorCanvas(graphicsDevice);
         _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
@@ -300,7 +298,7 @@ public sealed partial class LevelEditorPage : PageBase
 
     private static LevelData CreateBlankLevelData()
     {
-        var result = new LevelData(FileFormatType.NeoLemmix);
+        var result = new LevelData(FileFormatType.NeoLemmix, null);
         result.SetLevelWidth(320);
         result.SetLevelHeight(160);
         result.LevelId = new LevelIdentifier((ulong)Random.Shared.NextInt64());

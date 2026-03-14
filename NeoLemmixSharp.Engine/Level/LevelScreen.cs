@@ -183,7 +183,7 @@ public sealed class LevelScreen : IBaseScreen
 
     private void HandleMouseInput()
     {
-        _levelViewport.HandleMouseInput(_levelInputController.InputController);
+        _levelViewport.HandleMouseInput(_levelInputController.InputHandler);
 
         if (_levelViewport.MouseIsInLevelViewPort)
         {

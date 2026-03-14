@@ -17,7 +17,7 @@ public sealed class MainPage : PageBase
     private readonly TextureButton _quitButton;
 
     public MainPage(
-        MenuInputController inputController)
+        MenuController inputController)
         : base(inputController)
     {
         const float menuScaleMultiplier = 2.0f;

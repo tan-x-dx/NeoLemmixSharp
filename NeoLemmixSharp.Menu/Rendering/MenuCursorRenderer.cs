@@ -6,10 +6,10 @@ namespace NeoLemmixSharp.Menu.Rendering;
 
 public sealed class MenuCursorRenderer
 {
-    private readonly MenuInputController _menuInputController;
+    private readonly MenuController _menuInputController;
     private readonly Texture2D _cursorTexture;
 
-    public MenuCursorRenderer(MenuInputController menuInputController)
+    public MenuCursorRenderer(MenuController menuInputController)
     {
         _menuInputController = menuInputController;
         _cursorTexture = CommonSprites.CursorHandHiRes;
