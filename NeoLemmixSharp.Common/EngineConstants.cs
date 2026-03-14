@@ -171,4 +171,13 @@ public static class EngineConstants
     public const string LevelLoadingErrorOccurredDisplayString = "ERROR OCCURRED WHEN LOADING";
 
     #endregion
+
+    #region Misc Constants
+
+    public const string DownArrow = "↓";
+    public const string LeftArrow = "←";
+    public const string UpArrow = "↑";
+    public const string RightArrow = "→";
+
+    #endregion
 }

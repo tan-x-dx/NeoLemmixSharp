@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Engine.LevelBuilding;
 using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
@@ -16,18 +17,18 @@ public sealed class MenuPageCreator
     private readonly ContentManager _contentManager;
     private readonly GraphicsDevice _graphicsDevice;
 
-    private readonly MenuController _inputController;
+    private readonly InputHandler _inputHandler;
 
     public string LevelToLoadFilepath { get; set; }
 
     public MenuPageCreator(
         ContentManager contentManager,
         GraphicsDevice graphicsDevice,
-        MenuController inputController)
+        InputHandler inputHandler)
     {
         _contentManager = contentManager;
         _graphicsDevice = graphicsDevice;
-        _inputController = inputController;
+        _inputHandler = inputHandler;
         LevelToLoadFilepath = GetLevelFilePath();
     }
 
@@ -60,12 +61,12 @@ public sealed class MenuPageCreator
 
     public MainPage CreateMainPage()
     {
-        return new MainPage(_inputController);
+        return new MainPage(_inputHandler);
     }
 
     public LevelSelectPage CreateLevelSelectPage()
     {
-        return new LevelSelectPage(_inputController);
+        return new LevelSelectPage(_inputHandler);
     }
 
     public LevelStartPage? CreateLevelStartPage()
@@ -86,7 +87,7 @@ public sealed class MenuPageCreator
         {
             TextureCache.DisposeOfLevelSpecificTextures();
 
-            var exceptionWindow = new ExceptionViewer(_inputController, ex);
+            var exceptionWindow = new ExceptionViewer(_inputHandler, ex);
 
             exceptionWindow.Initialise();
         }
@@ -108,17 +109,17 @@ public sealed class MenuPageCreator
         TextureCache.CleanUpOldTextures();
 
         GC.Collect(2, GCCollectionMode.Forced);
-        return new LevelStartPage(_inputController, levelScreen);
+        return new LevelStartPage(_inputHandler, levelScreen);
     }
 
     public LevelEndPage CreateLevelEndPage(LevelData levelData, object successOutcome)
     {
 
-        return new LevelEndPage(_inputController);
+        return new LevelEndPage(_inputHandler);
     }
 
     public LevelEditorPage CreateLevelEditorPage()
     {
-        return new LevelEditorPage(_inputController, _graphicsDevice);
+        return new LevelEditorPage(_inputHandler, _graphicsDevice);
     }
 }

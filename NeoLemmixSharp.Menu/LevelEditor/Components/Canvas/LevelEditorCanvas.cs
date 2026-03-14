@@ -68,7 +68,7 @@ public sealed partial class LevelEditorCanvas : Component
         return new Point(viewportX + offsetX, viewportY + offsetY);
     }
 
-    public void HandleUserInput(MenuController inputController)
+    public void HandleUserInput(LevelEditorController inputController)
     {
         if (!ContainsPoint(inputController.MousePosition))
             return;
@@ -88,7 +88,7 @@ public sealed partial class LevelEditorCanvas : Component
         _verticalBorderBehaviour.Zoom(scrollDelta);
     }
 
-    private static Point CalculateArrowKeyScrollDelta(MenuController inputController)
+    private static Point CalculateArrowKeyScrollDelta(LevelEditorController inputController)
     {
         if (UiHandler.Instance.SelectedTextField is not null)
             return new Point();

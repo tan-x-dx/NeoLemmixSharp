@@ -1,23 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Util.GameInput;
 
 namespace NeoLemmixSharp.Menu.Rendering;
 
 public sealed class MenuCursorRenderer
 {
-    private readonly MenuController _menuInputController;
+    private readonly InputHandler _inputHandler;
     private readonly Texture2D _cursorTexture;
 
-    public MenuCursorRenderer(MenuController menuInputController)
+    public MenuCursorRenderer(InputHandler menuInputController)
     {
-        _menuInputController = menuInputController;
+        _inputHandler = menuInputController;
         _cursorTexture = CommonSprites.CursorHandHiRes;
     }
 
     public void RenderCursor(SpriteBatch spriteBatch)
     {
-        var mousePosition = _menuInputController.MousePosition;
+        var mousePosition = _inputHandler.MousePosition;
         var destination = new Rectangle(
             mousePosition.X + CommonSprites.CursorHiResXOffset,
             mousePosition.Y + CommonSprites.CursorHiResYOffset,

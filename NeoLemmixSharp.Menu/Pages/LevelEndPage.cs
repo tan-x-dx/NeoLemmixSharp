@@ -1,13 +1,17 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.GameInput;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelEndPage : PageBase
 {
+    private readonly MenuController _menuController;
+
     public LevelEndPage(
-        MenuController inputController)
-        : base(inputController)
+        InputHandler inputHandler)
+        : base(inputHandler)
     {
+        _menuController = new MenuController(inputHandler);
     }
 
     protected override void OnInitialise()
@@ -22,7 +26,7 @@ public sealed class LevelEndPage : PageBase
 
     protected override void HandleUserInput()
     {
-        if (InputController.Quit.IsPressed)
+        if (_menuController.Quit.IsPressed)
         {
             NavigateToMainMenuPage();
         }

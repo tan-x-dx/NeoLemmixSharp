@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
@@ -97,7 +98,8 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             HatchGroupBuilder.SetHatchesForHatchGroup(hatchGroup, levelGadgets);
         }
 
-        var inputController = new LevelInputController();
+        var inputHandler = new InputHandler();
+        var inputController = new LevelInputController(inputHandler);
 
         var selectedTalismanId = -1;
 
@@ -187,6 +189,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             updateScheduler,
             levelCursor,
             levelTimer,
+            inputHandler,
             inputController,
             new Level.Viewport(),
             rewindManager,

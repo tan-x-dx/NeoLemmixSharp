@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
@@ -19,6 +20,8 @@ namespace NeoLemmixSharp.Menu.LevelEditor;
 
 public sealed partial class LevelEditorPage : PageBase
 {
+    private readonly LevelEditorController _levelEditorController;
+
     private LevelEditorMenuBar _menuBar;
     private LevelEditorControlPanel _controlPanel;
     private LevelEditorCanvas _levelCanvas;
@@ -31,8 +34,9 @@ public sealed partial class LevelEditorPage : PageBase
 
     public bool IsNeoLemmix => _currentLevelData.FileFormatType == FileFormatType.NeoLemmix;
 
-    public LevelEditorPage(MenuController menuController, GraphicsDevice graphicsDevice) : base(menuController)
+    public LevelEditorPage(InputHandler inputHandler, GraphicsDevice graphicsDevice) : base(inputHandler)
     {
+        _levelEditorController = new LevelEditorController(inputHandler);
         _menuBar = new LevelEditorMenuBar(this);
         _controlPanel = new LevelEditorControlPanel();
         _levelCanvas = new LevelEditorCanvas(graphicsDevice);
@@ -103,15 +107,15 @@ public sealed partial class LevelEditorPage : PageBase
 
     protected override void HandleUserInput()
     {
-        if (InputController.Quit.IsPressed && UiHandler.SelectedTextField is null)
+        if (_levelEditorController.Quit.IsPressed && UiHandler.SelectedTextField is null)
         {
             IGameWindow.Instance.Escape();
         }
 
-        _levelCanvas.HandleUserInput(InputController);
-        _pieceBank.HandleUserInput(InputController);
+        _levelCanvas.HandleUserInput(_levelEditorController);
+        _pieceBank.HandleUserInput(_levelEditorController);
 
-        if (InputController.ToggleFullScreen.IsPressed)
+        if (_levelEditorController.ToggleFullScreen.IsPressed)
         {
             IGameWindow.Instance.ToggleFullscreenSetting();
         }

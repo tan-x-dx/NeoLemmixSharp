@@ -48,10 +48,26 @@ public sealed class InputHandler :
         _releasedKeys = new BitArraySet<InputHandler, KeysBitBuffer, Keys>(this);
 
         LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
-        RightMouseButtonAction = CreateInputAction("Right Mouse Button");
         MiddleMouseButtonAction = CreateInputAction("Middle Mouse Button");
+        RightMouseButtonAction = CreateInputAction("Right Mouse Button");
         MouseButton4Action = CreateInputAction("Mouse Button 4");
         MouseButton5Action = CreateInputAction("Mouse Button 5");
+    }
+
+    public void ClearDefinedActions()
+    {
+        _keyMapping.Clear();
+        _previouslyPressedKeys.Clear();
+        _currentlyPressedKeys.Clear();
+        _heldKeys.Clear();
+        _releasedKeys.Clear();
+        _inputActions.Clear();
+
+        _inputActions.Add(LeftMouseButtonAction);
+        _inputActions.Add(MiddleMouseButtonAction);
+        _inputActions.Add(RightMouseButtonAction);
+        _inputActions.Add(MouseButton4Action);
+        _inputActions.Add(MouseButton5Action);
     }
 
     public InputAction CreateInputAction(string actionName)

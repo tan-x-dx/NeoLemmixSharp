@@ -9,16 +9,16 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelInputController : IInitialisable
 {
-    public InputHandler InputHandler { get; } = new();
+    private readonly InputHandler _inputHandler;
 
-    public Point MousePosition => InputHandler.MousePosition;
-    public int ScrollDelta => InputHandler.ScrollDelta;
+    public Point MousePosition => _inputHandler.MousePosition;
+    public int ScrollDelta => _inputHandler.ScrollDelta;
 
-    public InputAction LeftMouseButtonAction => InputHandler.LeftMouseButtonAction;
-    public InputAction RightMouseButtonAction => InputHandler.RightMouseButtonAction;
-    public InputAction MiddleMouseButtonAction => InputHandler.MiddleMouseButtonAction;
-    public InputAction MouseButton4Action => InputHandler.MouseButton4Action;
-    public InputAction MouseButton5Action => InputHandler.MouseButton5Action;
+    public InputAction LeftMouseButtonAction => _inputHandler.LeftMouseButtonAction;
+    public InputAction RightMouseButtonAction => _inputHandler.RightMouseButtonAction;
+    public InputAction MiddleMouseButtonAction => _inputHandler.MiddleMouseButtonAction;
+    public InputAction MouseButton4Action => _inputHandler.MouseButton4Action;
+    public InputAction MouseButton5Action => _inputHandler.MouseButton5Action;
 
     public InputAction Pause { get; }
     public InputAction Quit { get; }
@@ -32,10 +32,10 @@ public sealed class LevelInputController : IInitialisable
     public InputAction Rewind50Frames { get; }
     public InputAction Reset { get; }
 
-    public InputAction RightArrow { get; }
-    public InputAction UpArrow { get; }
-    public InputAction LeftArrow { get; }
     public InputAction DownArrow { get; }
+    public InputAction LeftArrow { get; }
+    public InputAction UpArrow { get; }
+    public InputAction RightArrow { get; }
 
     public InputAction W { get; }
     public InputAction A { get; }
@@ -44,66 +44,65 @@ public sealed class LevelInputController : IInitialisable
 
     public InputAction Space { get; }
 
-    public LevelInputController()
+    public LevelInputController(InputHandler inputHandler)
     {
-        Pause = InputHandler.CreateInputAction("Pause");
-        Quit = InputHandler.CreateInputAction("Quit");
-        ToggleFullScreen = InputHandler.CreateInputAction("Toggle Fullscreen");
-        ToggleFastForwards = InputHandler.CreateInputAction("Toggle Fast Forwards");
-        SelectOnlyWalkers = InputHandler.CreateInputAction("Select Only Walkers");
-        SelectOnlyUnassignedLemmings = InputHandler.CreateInputAction("Select Only Unassigned Lemmings");
-        SelectLeftFacingLemmings = InputHandler.CreateInputAction("Select Left Facing Lemmings");
-        SelectRightFacingLemmings = InputHandler.CreateInputAction("Select Right Facing Lemmings");
+        _inputHandler = inputHandler;
 
-        Rewind50Frames = InputHandler.CreateInputAction("Rewind 10 frames");
-        Reset = InputHandler.CreateInputAction("Reset");
+        Pause = _inputHandler.CreateInputAction("Pause");
+        Quit = _inputHandler.CreateInputAction("Quit");
+        ToggleFullScreen = _inputHandler.CreateInputAction("Toggle Fullscreen");
+        ToggleFastForwards = _inputHandler.CreateInputAction("Toggle Fast Forwards");
+        SelectOnlyWalkers = _inputHandler.CreateInputAction("Select Only Walkers");
+        SelectOnlyUnassignedLemmings = _inputHandler.CreateInputAction("Select Only Unassigned Lemmings");
+        SelectLeftFacingLemmings = _inputHandler.CreateInputAction("Select Left Facing Lemmings");
+        SelectRightFacingLemmings = _inputHandler.CreateInputAction("Select Right Facing Lemmings");
 
-        RightArrow = InputHandler.CreateInputAction("ABC");
-        UpArrow = InputHandler.CreateInputAction("ABC");
-        LeftArrow = InputHandler.CreateInputAction("ABC");
-        DownArrow = InputHandler.CreateInputAction("ABC");
+        Rewind50Frames = _inputHandler.CreateInputAction("Rewind 10 frames");
+        Reset = _inputHandler.CreateInputAction("Reset");
 
-        W = InputHandler.CreateInputAction("ABC");
-        A = InputHandler.CreateInputAction("ABC");
-        S = InputHandler.CreateInputAction("ABC");
-        D = InputHandler.CreateInputAction("ABC");
+        DownArrow = _inputHandler.CreateInputAction(EngineConstants.DownArrow);
+        LeftArrow = _inputHandler.CreateInputAction(EngineConstants.LeftArrow);
+        UpArrow = _inputHandler.CreateInputAction(EngineConstants.UpArrow);
+        RightArrow = _inputHandler.CreateInputAction(EngineConstants.RightArrow);
 
-        Space = InputHandler.CreateInputAction("Space");
+        W = _inputHandler.CreateInputAction("ABC");
+        A = _inputHandler.CreateInputAction("ABC");
+        S = _inputHandler.CreateInputAction("ABC");
+        D = _inputHandler.CreateInputAction("ABC");
 
-        InputHandler.ValidateInputActions();
+        Space = _inputHandler.CreateInputAction("Space");
+
+        _inputHandler.ValidateInputActions();
 
         SetUpBindings();
     }
 
     private void SetUpBindings()
     {
-        InputHandler.Bind(Keys.P, Pause);
-        InputHandler.Bind(Keys.Escape, Quit);
-        InputHandler.Bind(EngineConstants.FullscreenKey, ToggleFullScreen);
-        InputHandler.Bind(Keys.F, ToggleFastForwards);
+        _inputHandler.Bind(Keys.P, Pause);
+        _inputHandler.Bind(Keys.Escape, Quit);
+        _inputHandler.Bind(EngineConstants.FullscreenKey, ToggleFullScreen);
+        _inputHandler.Bind(Keys.F, ToggleFastForwards);
 
-        InputHandler.Bind(Keys.LeftControl, SelectOnlyUnassignedLemmings);
-        InputHandler.Bind(Keys.W, SelectOnlyWalkers);
+        _inputHandler.Bind(Keys.LeftControl, SelectOnlyUnassignedLemmings);
+        _inputHandler.Bind(Keys.W, SelectOnlyWalkers);
 
-        InputHandler.Bind(Keys.Left, SelectLeftFacingLemmings);
-        InputHandler.Bind(Keys.Right, SelectRightFacingLemmings);
+        _inputHandler.Bind(Keys.Left, SelectLeftFacingLemmings);
+        _inputHandler.Bind(Keys.Right, SelectRightFacingLemmings);
 
-        InputHandler.Bind(Keys.W, W);
-        InputHandler.Bind(Keys.A, A);
-        InputHandler.Bind(Keys.S, S);
-        InputHandler.Bind(Keys.D, D);
+        _inputHandler.Bind(Keys.W, W);
+        _inputHandler.Bind(Keys.A, A);
+        _inputHandler.Bind(Keys.S, S);
+        _inputHandler.Bind(Keys.D, D);
 
-        InputHandler.Bind(Keys.Up, UpArrow);
-        InputHandler.Bind(Keys.Down, DownArrow);
+        _inputHandler.Bind(Keys.Up, UpArrow);
+        _inputHandler.Bind(Keys.Down, DownArrow);
 
-        InputHandler.Bind(Keys.Space, Space);
+        _inputHandler.Bind(Keys.Space, Space);
 
-        InputHandler.Bind(Keys.OemMinus, Rewind50Frames);
-        InputHandler.Bind(Keys.R, Reset);
+        _inputHandler.Bind(Keys.OemMinus, Rewind50Frames);
+        _inputHandler.Bind(Keys.R, Reset);
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Tick() => InputHandler.Tick();
 
     public void Initialise()
     {

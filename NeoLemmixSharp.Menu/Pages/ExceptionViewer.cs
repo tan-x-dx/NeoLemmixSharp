@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util.GameInput;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
@@ -7,9 +8,9 @@ public sealed class ExceptionViewer : PageBase
     private readonly Exception _exception;
 
     public ExceptionViewer(
-        MenuController inputController,
+        InputHandler inputHandler,
         Exception exception)
-        : base(inputController)
+        : base(inputHandler)
     {
         _exception = exception;
     }

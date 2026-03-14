@@ -6,25 +6,25 @@ namespace NeoLemmixSharp.Menu;
 
 public sealed class MenuController
 {
-    public InputHandler InputHandler { get; } = new();
+    private readonly InputHandler _inputHandler;
 
-    public Point MousePosition => InputHandler.MousePosition;
-    public int ScrollDelta => InputHandler.ScrollDelta;
+    public Point MousePosition => _inputHandler.MousePosition;
+    public int ScrollDelta => _inputHandler.ScrollDelta;
 
-    public InputAction LeftMouseButtonAction => InputHandler.LeftMouseButtonAction;
-    public InputAction RightMouseButtonAction => InputHandler.RightMouseButtonAction;
-    public InputAction MiddleMouseButtonAction => InputHandler.MiddleMouseButtonAction;
-    public InputAction MouseButton4Action => InputHandler.MouseButton4Action;
-    public InputAction MouseButton5Action => InputHandler.MouseButton5Action;
+    public InputAction LeftMouseButtonAction => _inputHandler.LeftMouseButtonAction;
+    public InputAction RightMouseButtonAction => _inputHandler.RightMouseButtonAction;
+    public InputAction MiddleMouseButtonAction => _inputHandler.MiddleMouseButtonAction;
+    public InputAction MouseButton4Action => _inputHandler.MouseButton4Action;
+    public InputAction MouseButton5Action => _inputHandler.MouseButton5Action;
 
     public InputAction F1 { get; }
     public InputAction F2 { get; }
     public InputAction F3 { get; }
 
-    public InputAction RightArrow { get; }
-    public InputAction UpArrow { get; }
-    public InputAction LeftArrow { get; }
     public InputAction DownArrow { get; }
+    public InputAction LeftArrow { get; }
+    public InputAction UpArrow { get; }
+    public InputAction RightArrow { get; }
 
     public InputAction Space { get; }
     public InputAction Enter { get; }
@@ -32,52 +32,52 @@ public sealed class MenuController
     public InputAction ToggleFullScreen { get; }
     public InputAction Quit { get; }
 
-    public MenuController()
+    public MenuController(InputHandler inputHandler)
     {
-        F1 = InputHandler.CreateInputAction("F1");
-        F2 = InputHandler.CreateInputAction("F2");
-        F3 = InputHandler.CreateInputAction("F3");
+        inputHandler.ClearDefinedActions();
 
-        RightArrow = InputHandler.CreateInputAction("\u2192");
-        UpArrow = InputHandler.CreateInputAction("\u2191");
-        LeftArrow = InputHandler.CreateInputAction("\u2190");
-        DownArrow = InputHandler.CreateInputAction("\u2193");
+        _inputHandler = inputHandler;
 
-        Space = InputHandler.CreateInputAction("Space");
-        Enter = InputHandler.CreateInputAction("Enter");
+        F1 = _inputHandler.CreateInputAction("F1");
+        F2 = _inputHandler.CreateInputAction("F2");
+        F3 = _inputHandler.CreateInputAction("F3");
 
-        ToggleFullScreen = InputHandler.CreateInputAction("Toggle Full Screen");
-        Quit = InputHandler.CreateInputAction("Quit");
+        DownArrow = _inputHandler.CreateInputAction(EngineConstants.DownArrow);
+        LeftArrow = _inputHandler.CreateInputAction(EngineConstants.LeftArrow);
+        UpArrow = _inputHandler.CreateInputAction(EngineConstants.UpArrow);
+        RightArrow = _inputHandler.CreateInputAction(EngineConstants.RightArrow);
 
-        InputHandler.ValidateInputActions();
+        Space = _inputHandler.CreateInputAction("Space");
+        Enter = _inputHandler.CreateInputAction("Enter");
+
+        ToggleFullScreen = _inputHandler.CreateInputAction("Toggle Full Screen");
+        Quit = _inputHandler.CreateInputAction("Quit");
+
+        _inputHandler.ValidateInputActions();
 
         SetUpBindings();
     }
 
     private void SetUpBindings()
     {
-        InputHandler.Bind(Keys.F1, F1);
-        InputHandler.Bind(Keys.F2, F2);
-        InputHandler.Bind(Keys.F3, F3);
+        _inputHandler.Bind(Keys.F1, F1);
+        _inputHandler.Bind(Keys.F2, F2);
+        _inputHandler.Bind(Keys.F3, F3);
 
-        InputHandler.Bind(Keys.A, LeftArrow);
-        InputHandler.Bind(Keys.W, UpArrow);
-        InputHandler.Bind(Keys.D, RightArrow);
-        InputHandler.Bind(Keys.S, DownArrow);
+        _inputHandler.Bind(Keys.A, LeftArrow);
+        _inputHandler.Bind(Keys.W, UpArrow);
+        _inputHandler.Bind(Keys.D, RightArrow);
+        _inputHandler.Bind(Keys.S, DownArrow);
 
-        InputHandler.Bind(Keys.Left, LeftArrow);
-        InputHandler.Bind(Keys.Up, UpArrow);
-        InputHandler.Bind(Keys.Right, RightArrow);
-        InputHandler.Bind(Keys.Down, DownArrow);
+        _inputHandler.Bind(Keys.Left, LeftArrow);
+        _inputHandler.Bind(Keys.Up, UpArrow);
+        _inputHandler.Bind(Keys.Right, RightArrow);
+        _inputHandler.Bind(Keys.Down, DownArrow);
 
-        InputHandler.Bind(Keys.Space, Space);
-        InputHandler.Bind(Keys.Enter, Enter);
+        _inputHandler.Bind(Keys.Space, Space);
+        _inputHandler.Bind(Keys.Enter, Enter);
 
-        InputHandler.Bind(EngineConstants.FullscreenKey, ToggleFullScreen);
-        InputHandler.Bind(Keys.Escape, Quit);
+        _inputHandler.Bind(EngineConstants.FullscreenKey, ToggleFullScreen);
+        _inputHandler.Bind(Keys.Escape, Quit);
     }
-
-    public void ClearAllInputActions() => InputHandler.ClearAllInputActions();
-
-    public void Tick() => InputHandler.Tick();
 }
