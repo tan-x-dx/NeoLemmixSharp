@@ -41,7 +41,7 @@ public sealed partial class LevelEditorPage : PageBase
         _menuBar = new LevelEditorMenuBar(this);
         _controlPanel = new LevelEditorControlPanel();
         _levelCanvas = new LevelEditorCanvas(inputHandler, graphicsDevice);
-        _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
+        _pieceBank = new PieceBank(this);
 
         SetLevelData(CreateBlankLevelData());
     }
@@ -154,33 +154,6 @@ public sealed partial class LevelEditorPage : PageBase
         _controlPanel = null!;
         _levelCanvas = null!;
         _pieceBank = null!;
-    }
-
-    private void OnSelectTerrainPiece(Component c, Point pos)
-    {
-        if (c is not PieceSelector pieceSelector)
-            return;
-
-        if (pieceSelector.StylePiece is TerrainArchetypeData terrainArchetypeData)
-        {
-            _levelCanvas.AddTerrainPiece(terrainArchetypeData);
-        }
-    }
-
-    private void OnSelectGadgetPiece(Component c, Point pos)
-    {
-        if (c is not PieceSelector pieceSelector)
-            return;
-
-        if (pieceSelector.StylePiece is GadgetArchetypeData gadgetArchetypeData)
-        {
-            _levelCanvas.AddGadgetPiece(gadgetArchetypeData);
-        }
-    }
-
-    private void OnSelectBackgroundPiece(Component c, Point pos)
-    {
-
     }
 
     private void SetUpHandlers()

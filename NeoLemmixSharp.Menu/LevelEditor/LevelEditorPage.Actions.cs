@@ -1,9 +1,12 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO.Data.Style.Gadget;
+using NeoLemmixSharp.IO.Data.Style.Terrain;
+using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.LevelEditor;
 
-public sealed partial class LevelEditorPage : IMenuBarButtonHandler
+public sealed partial class LevelEditorPage : IEditorOperationHandler
 {
     public void OnNewLevel(Component c, Point position)
     {
@@ -74,5 +77,32 @@ public sealed partial class LevelEditorPage : IMenuBarButtonHandler
 
     public void EditorUngroup(Component c, Point position)
     {
+    }
+
+    public void SelectTerrainPiece(Component c, Point pos)
+    {
+        if (c is not PieceSelector pieceSelector)
+            return;
+
+        if (pieceSelector.StylePiece is TerrainArchetypeData terrainArchetypeData)
+        {
+            _levelCanvas.AddTerrainPiece(terrainArchetypeData);
+        }
+    }
+
+    public void SelectGadgetPiece(Component c, Point pos)
+    {
+        if (c is not PieceSelector pieceSelector)
+            return;
+
+        if (pieceSelector.StylePiece is GadgetArchetypeData gadgetArchetypeData)
+        {
+            _levelCanvas.AddGadgetPiece(gadgetArchetypeData);
+        }
+    }
+
+    public void SelectBackgroundPiece(Component c, Point pos)
+    {
+
     }
 }

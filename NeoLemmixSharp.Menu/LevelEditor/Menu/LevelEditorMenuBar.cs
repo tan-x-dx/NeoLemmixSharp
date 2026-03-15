@@ -24,9 +24,9 @@ public sealed class LevelEditorMenuBar : Component
         Color.CornflowerBlue
     );
 
-    private IMenuBarButtonHandler _buttonHandler;
+    private IEditorOperationHandler _buttonHandler;
 
-    public LevelEditorMenuBar(IMenuBarButtonHandler buttonHandler)
+    public LevelEditorMenuBar(IEditorOperationHandler buttonHandler)
     {
         _buttonHandler = buttonHandler;
         Height = LevelEditorMenuBarHeight;

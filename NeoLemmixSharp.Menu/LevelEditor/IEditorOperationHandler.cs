@@ -3,13 +3,17 @@ using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.LevelEditor;
 
-public interface IMenuBarButtonHandler
+public interface IEditorOperationHandler
 {
     void OnNewLevel(Component c, Point position);
     void OnFileOpen(Component c, Point position);
     void OnSaveLevel(Component c, Point position);
     void OnSaveLevelAs(Component c, Point position);
     void OnExit(Component c, Point position);
+
+    void SelectTerrainPiece(Component c, Point pos);
+    void SelectGadgetPiece(Component c, Point pos);
+    void SelectBackgroundPiece(Component c, Point pos);
 
     void EditorUndo(Component c, Point position);
     void EditorRedo(Component c, Point position);

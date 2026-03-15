@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Data;
-using NeoLemmixSharp.Ui.Events;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 
@@ -16,23 +15,16 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
     private readonly List<PieceSelector> _gadgetPieces = [];
     private readonly List<PieceSelector> _backgroundPieces = [];
 
-    private readonly MousePressEventHandler.ComponentMousePressAction _onSelectTerrainPiece;
-    private readonly MousePressEventHandler.ComponentMousePressAction _onSelectGadgetPiece;
-    private readonly MousePressEventHandler.ComponentMousePressAction _onSelectBackgroundPiece;
+    private IEditorOperationHandler _buttonHandler;
 
     private PieceBankSelectionMode _selectionMode = PieceBankSelectionMode.Terrain;
     private int _scrollIndex;
     private int _numberOfPiecesToDisplay;
 
-    public PieceBank(
-        MousePressEventHandler.ComponentMousePressAction onSelectTerrainPiece,
-        MousePressEventHandler.ComponentMousePressAction onSelectGadgetPiece,
-        MousePressEventHandler.ComponentMousePressAction onSelectBackgroundPiece) : base(0, 0)
+    public PieceBank(IEditorOperationHandler buttonHandler)
+        : base(0, 0)
     {
-        _onSelectTerrainPiece = onSelectTerrainPiece;
-        _onSelectGadgetPiece = onSelectGadgetPiece;
-        _onSelectBackgroundPiece = onSelectBackgroundPiece;
-
+        _buttonHandler = buttonHandler;
         Height = LevelEditorConstants.BaseSpriteRenderDimension + 32;
     }
 
@@ -59,7 +51,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             {
                 IsVisible = _selectionMode == PieceBankSelectionMode.Terrain
             };
-            terrainPieceSelector.MousePressed.RegisterMousePressEvent(_onSelectTerrainPiece, MouseButtonType.Left);
+            terrainPieceSelector.MousePressed.RegisterMousePressEvent(_buttonHandler.SelectTerrainPiece, MouseButtonType.Left);
             terrainPieceSelector.Left = offset;
             terrainPieceSelector.Top = UiConstants.TwiceStandardInset;
             offset += PieceOffsetDelta;
@@ -83,7 +75,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             {
                 IsVisible = _selectionMode == PieceBankSelectionMode.Gadgets
             };
-            gadgetPieceSelector.MousePressed.RegisterMousePressEvent(_onSelectGadgetPiece, MouseButtonType.Left);
+            gadgetPieceSelector.MousePressed.RegisterMousePressEvent(_buttonHandler.SelectGadgetPiece, MouseButtonType.Left);
             gadgetPieceSelector.Left = offset;
             gadgetPieceSelector.Top = UiConstants.TwiceStandardInset;
             offset += PieceOffsetDelta;
@@ -194,6 +186,11 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             piece.Top = Bottom - (LevelEditorConstants.BaseSpriteRenderDimension + UiConstants.StandardInset);
             piece.Left = Left + InitialPieceOffset + (i * PieceOffsetDelta);
         }
+    }
+
+    protected override void OnDispose()
+    {
+        _buttonHandler = null!;
     }
 
     int IComparer<PieceSelector>.Compare(PieceSelector? x, PieceSelector? y)
