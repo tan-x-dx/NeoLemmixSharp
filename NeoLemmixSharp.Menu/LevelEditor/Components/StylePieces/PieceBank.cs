@@ -8,8 +8,8 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 
 public sealed class PieceBank : Component, IComparer<PieceSelector>
 {
-    private const int InitialPieceOffset = UiConstants.TwiceStandardInset + LevelEditorConstants.BaseSpriteRenderDimension;
-    private const int PieceOffsetDelta = UiConstants.StandardInset + LevelEditorConstants.BaseSpriteRenderDimension;
+    private const int InitialPieceOffset = UiConstants.TwiceStandardInset + LevelEditorConstants.BaseSpriteRenderSize;
+    private const int PieceOffsetDelta = UiConstants.StandardInset + LevelEditorConstants.BaseSpriteRenderSize;
 
     private readonly List<PieceSelector> _terrainPieces = [];
     private readonly List<PieceSelector> _gadgetPieces = [];
@@ -25,7 +25,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
         : base(0, 0)
     {
         _buttonHandler = buttonHandler;
-        Height = LevelEditorConstants.BaseSpriteRenderDimension + 32;
+        Height = LevelEditorConstants.BaseSpriteRenderSize + UiConstants.TwiceStandardInset + UiConstants.TwiceStandardInset;
     }
 
     public void SetStyle(StyleData styleData)
@@ -127,7 +127,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             PieceBankSelectionMode.Background => _backgroundPieces,
             PieceBankSelectionMode.Sketches => [],
 
-            _ => [],
+            _ => Helpers.ThrowUnknownEnumValueException<PieceBankSelectionMode, List<PieceSelector>>(_selectionMode),
         };
     }
 
@@ -183,7 +183,7 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
             var effectiveIndex = Helpers.LogicalMod(i + _scrollIndex, currentlyDisplayedItems.Count);
             var piece = currentlyDisplayedItems[effectiveIndex];
             piece.IsVisible = i < _numberOfPiecesToDisplay;
-            piece.Top = Bottom - (LevelEditorConstants.BaseSpriteRenderDimension + UiConstants.StandardInset);
+            piece.Top = Bottom - (LevelEditorConstants.BaseSpriteRenderSize + UiConstants.StandardInset);
             piece.Left = Left + InitialPieceOffset + (i * PieceOffsetDelta);
         }
     }
