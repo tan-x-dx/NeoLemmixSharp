@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Ui.Components;
 
@@ -26,7 +25,21 @@ public struct ColorPacket
         MousePressColor = mousePressColor;
         ActiveColor = activeColor;
     }
+}
 
-    public Span<Color> AsSpan() => MemoryMarshal.CreateSpan(
-        ref Unsafe.As<ColorPacket, Color>(ref this), 4);
+public static class ColorPacketHelpers
+{
+    extension(ColorPacket colorPacket)
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe Color GetColorFromState(ComponentState componentState)
+        {
+            var index = (int)componentState;
+            index &= 3;
+
+            Color* p = (Color*)&colorPacket;
+            p += index;
+            return *p;
+        }
+    }
 }

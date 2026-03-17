@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Data;
 using System.Diagnostics;
 using System.Numerics;
@@ -73,8 +72,7 @@ public sealed class TextLabel : Component
         if (TextRenderMode != TextRenderMode.UseFont)
             return;
 
-        var colors = Colors.AsSpan();
-        var color = colors.At((int)State);
+        var color = Colors.GetColorFromState(State);
 
         var labelX = Left + _labelOffsetX;
         var labelY = Top + _labelOffsetY;
@@ -91,8 +89,7 @@ public sealed class TextLabel : Component
     {
         Debug.Assert(TextRenderMode == TextRenderMode.UseSprites);
 
-        var colors = Colors.AsSpan();
-        var color = colors.At((int)State);
+        var color = Colors.GetColorFromState(State);
 
         var labelX = Left + _labelOffsetX;
         var labelY = Top + _labelOffsetY;
