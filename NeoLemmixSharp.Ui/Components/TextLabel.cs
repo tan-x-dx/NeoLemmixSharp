@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Ui.Components.Util;
 using NeoLemmixSharp.Ui.Data;
 using System.Diagnostics;
 using System.Numerics;
@@ -61,11 +61,10 @@ public sealed class TextLabel : Component
         : base(x, y, 0, 0)
     {
         Label = label;
+        CollisionBehaviour = IContainMousePosition.NoCollisionInstance;
 
         SetSize(MenuFont.GlyphWidth * label.Length, MenuFont.GlyphHeight);
     }
-
-    public override bool ContainsPoint(Point position) => false;
 
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {
