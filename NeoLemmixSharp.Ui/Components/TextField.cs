@@ -47,7 +47,10 @@ public sealed class TextField : Component
 
             var caretPhysicalOffset = 0;
             if (value > 0)
-                caretPhysicalOffset = CalculateCaretPhysicalOffset();
+            {
+                var currentTextSpan = Helpers.CreateReadOnlySpan(_currentContentsCharBuffer, 0, CaretPosition);
+                caretPhysicalOffset = CalculateCaretPhysicalOffset(currentTextSpan);
+            }
             _caretPhysicalOffset = caretPhysicalOffset;
         }
     }
@@ -345,10 +348,15 @@ public sealed class TextField : Component
             Color.Black);
     }
 
-    private int CalculateCaretPhysicalOffset()
+    internal void SetCaretPositionFromMousePosition(Common.Point mousePosition)
+    {
+        var localXPosition = mousePosition.X - Left - TextXOffset;
+        CaretPosition = CalculateCaretPosition(CurrentTextSpan, localXPosition);
+    }
+
+    private static int CalculateCaretPhysicalOffset(ReadOnlySpan<char> currentTextSpan)
     {
         var characterGlyphs = UiSprites.UiFontGlyphs;
-        var currentTextSpan = Helpers.CreateReadOnlySpan(_currentContentsCharBuffer, 0, CaretPosition);
 
         float caretPhysicalOffset = 0f;
         float zero = 0f;
@@ -379,6 +387,48 @@ public sealed class TextField : Component
 
         caretPhysicalOffset -= 1f;
         return (int)caretPhysicalOffset;
+    }
+
+    private static int CalculateCaretPosition(ReadOnlySpan<char> currentTextSpan, float localXPosition)
+    {
+        var characterGlyphs = UiSprites.UiFontGlyphs;
+
+        float caretPhysicalOffset = 0f;
+        float zero = 0f;
+        bool startOfText = true;
+        var i = 0;
+        for (; i < currentTextSpan.Length; i++)
+        {
+            var c = currentTextSpan[i];
+            ref var glyph = ref CollectionsMarshal.GetValueRefOrNullRef(characterGlyphs, c);
+
+            if (startOfText)
+            {
+                zero = Math.Max(glyph.LeftSideBearing, 0f);
+                startOfText = false;
+            }
+            else
+            {
+                zero += UiSprites.UiFont.Spacing + glyph.LeftSideBearing;
+            }
+
+            zero += glyph.Width;
+            float charBearingOffset = zero + Math.Max(glyph.RightSideBearing, 0f);
+            if (charBearingOffset > caretPhysicalOffset)
+            {
+                caretPhysicalOffset = charBearingOffset;
+            }
+
+            if (caretPhysicalOffset >= localXPosition)
+                break;
+
+            zero += glyph.RightSideBearing;
+        }
+
+        if (caretPhysicalOffset < localXPosition)
+            return currentTextSpan.Length;
+
+        return i;
     }
 
     protected override void OnDispose()

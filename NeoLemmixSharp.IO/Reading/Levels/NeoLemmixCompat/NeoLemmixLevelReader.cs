@@ -29,7 +29,7 @@ internal sealed class NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelReader>
 
     private NeoLemmixLevelReader(string filePath)
     {
-        _levelData = new LevelData(FileFormats.FileFormatType.NeoLemmix);
+        _levelData = new LevelData(FileFormats.FileFormatType.NeoLemmix, filePath);
 
         _levelDataReader = new LevelDataReader(_uniqueStringSet, _levelData);
         _skillSetReader = new SkillSetReader(_uniqueStringSet);

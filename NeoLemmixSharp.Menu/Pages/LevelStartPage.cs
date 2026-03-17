@@ -1,18 +1,21 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Engine.Level;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class LevelStartPage : PageBase
 {
+    private readonly MenuController _menuController;
     private readonly LevelScreen _levelScreen;
 
     public LevelStartPage(
-        MenuInputController inputController,
+        InputHandler inputHandler,
         LevelScreen levelScreen)
-        : base(inputController)
+        : base(inputHandler)
     {
+        _menuController = new MenuController(inputHandler);
         _levelScreen = levelScreen;
     }
 
@@ -26,12 +29,12 @@ public sealed class LevelStartPage : PageBase
 
     protected override void HandleUserInput()
     {
-        if (InputController.Quit.IsPressed)
+        if (_menuController.Quit.IsPressed)
         {
             NavigateToMainMenuPage();
         }
 
-        if (InputController.Space.IsPressed)
+        if (_menuController.Space.IsPressed)
         {
             StartLevel();
             return;

@@ -28,28 +28,30 @@ public sealed class PageTransition
             return;
 
         _transitionCount++;
-        if (_transitionCount <= EngineConstants.PageTransitionDurationInFrames)
+
+        var newTranslationAlpha = _transitionAlpha;
+
+        if (_transitionCount < EngineConstants.PageTransitionDurationInFrames + 1)
         {
-            _transitionAlpha = Math.Min(_transitionAlpha + TransitionDelta, 1d);
-
-            return;
+            newTranslationAlpha = Math.Min(_transitionAlpha + TransitionDelta, 1d);
         }
-
-        if (_transitionCount == EngineConstants.PageTransitionDurationInFrames + 1)
+        else if (_transitionCount == EngineConstants.PageTransitionDurationInFrames + 1)
         {
-            _transitionAlpha = 1d - TransitionAlphaOffset;
+            newTranslationAlpha = 1d - TransitionAlphaOffset;
         }
-
-        if (_transitionCount > EngineConstants.PageTransitionDurationInFrames + 1)
+        else if (_transitionCount > EngineConstants.PageTransitionDurationInFrames + 1)
         {
             if (IsDone)
             {
                 _transitionCount = -1;
-                _transitionAlpha = 0d;
-                return;
+                newTranslationAlpha = 0d;
             }
-
-            _transitionAlpha = Math.Max(_transitionAlpha - TransitionDelta, 0d);
+            else
+            {
+                newTranslationAlpha = Math.Max(_transitionAlpha - TransitionDelta, 0d);
+            }
         }
+
+        _transitionAlpha = newTranslationAlpha;
     }
 }

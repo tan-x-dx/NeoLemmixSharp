@@ -5,17 +5,17 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.GameInput;
 
-public sealed class InputController :
+public sealed class InputHandler :
     IPerfectHasher<InputAction>,
-    IBitBufferCreator<InputController.KeysBitBuffer, Keys>
+    IBitBufferCreator<InputHandler.KeysBitBuffer, Keys>
 {
     private const int NumberOfKeys = 256;
 
     private readonly List<KeyToInputMapping> _keyMapping = new(16);
-    private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _previouslyPressedKeys;
-    private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _currentlyPressedKeys;
-    private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _heldKeys;
-    private readonly BitArraySet<InputController, KeysBitBuffer, Keys> _releasedKeys;
+    private readonly BitArraySet<InputHandler, KeysBitBuffer, Keys> _previouslyPressedKeys;
+    private readonly BitArraySet<InputHandler, KeysBitBuffer, Keys> _currentlyPressedKeys;
+    private readonly BitArraySet<InputHandler, KeysBitBuffer, Keys> _heldKeys;
+    private readonly BitArraySet<InputHandler, KeysBitBuffer, Keys> _releasedKeys;
     private readonly List<InputAction> _inputActions = new(16);
 
     public InputAction LeftMouseButtonAction { get; }
@@ -28,30 +28,47 @@ public sealed class InputController :
     private int _previousScrollValue;
     public int ScrollDelta { get; private set; }
 
-    private KeyboardInputType _keyboardInputType;
-    private KeyboardInputModifiers _inputModifiers;
     private int _numberOfFramesThisKeyHasBeenPressed;
     private char _keyboardChar;
+    private KeyboardInputType _keyboardInputType;
+    private KeyboardInputModifiers _inputModifiers;
     public bool _capsLock;
 
+    public KeyboardInputModifiers InputModifiers => _inputModifiers;
     public KeyboardInput LatestKeyboardInput() => new(_keyboardInputType, _inputModifiers, _numberOfFramesThisKeyHasBeenPressed, _keyboardChar, _capsLock);
 
-    public BitArrayEnumerable<InputController, Keys> CurrentlyPressedKeys => _currentlyPressedKeys.AsEnumerable();
-    public BitArrayEnumerable<InputController, Keys> CurrentlyHeldKeys => _heldKeys.AsEnumerable();
-    public BitArrayEnumerable<InputController, Keys> JustReleasedKeys => _releasedKeys.AsEnumerable();
+    public BitArrayEnumerable<InputHandler, Keys> CurrentlyPressedKeys => _currentlyPressedKeys.AsEnumerable();
+    public BitArrayEnumerable<InputHandler, Keys> CurrentlyHeldKeys => _heldKeys.AsEnumerable();
+    public BitArrayEnumerable<InputHandler, Keys> JustReleasedKeys => _releasedKeys.AsEnumerable();
 
-    public InputController()
+    public InputHandler()
     {
-        _previouslyPressedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
-        _currentlyPressedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
-        _heldKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
-        _releasedKeys = new BitArraySet<InputController, KeysBitBuffer, Keys>(this);
+        _previouslyPressedKeys = new BitArraySet<InputHandler, KeysBitBuffer, Keys>(this);
+        _currentlyPressedKeys = new BitArraySet<InputHandler, KeysBitBuffer, Keys>(this);
+        _heldKeys = new BitArraySet<InputHandler, KeysBitBuffer, Keys>(this);
+        _releasedKeys = new BitArraySet<InputHandler, KeysBitBuffer, Keys>(this);
 
         LeftMouseButtonAction = CreateInputAction("Left Mouse Button");
-        RightMouseButtonAction = CreateInputAction("Right Mouse Button");
         MiddleMouseButtonAction = CreateInputAction("Middle Mouse Button");
+        RightMouseButtonAction = CreateInputAction("Right Mouse Button");
         MouseButton4Action = CreateInputAction("Mouse Button 4");
         MouseButton5Action = CreateInputAction("Mouse Button 5");
+    }
+
+    public void ClearDefinedActions()
+    {
+        _keyMapping.Clear();
+        _previouslyPressedKeys.Clear();
+        _currentlyPressedKeys.Clear();
+        _heldKeys.Clear();
+        _releasedKeys.Clear();
+        _inputActions.Clear();
+
+        _inputActions.Add(LeftMouseButtonAction);
+        _inputActions.Add(MiddleMouseButtonAction);
+        _inputActions.Add(RightMouseButtonAction);
+        _inputActions.Add(MouseButton4Action);
+        _inputActions.Add(MouseButton5Action);
     }
 
     public InputAction CreateInputAction(string actionName)

@@ -29,12 +29,12 @@ public sealed class Viewport
         LevelScreen.VerticalBoundaryBehaviour.UpdateScreenDimension(_viewportDimensions.H, _scaleMultiplier);
     }
 
-    public void HandleMouseInput(InputController inputController)
+    public void HandleMouseInput(InputHandler inputHandler)
     {
-        if (MouseIsInLevelViewport(inputController))
+        if (MouseIsInLevelViewport(inputHandler))
         {
             MouseIsInLevelViewPort = true;
-            TrackScrollWheel(inputController);
+            TrackScrollWheel(inputHandler);
         }
         else
         {
@@ -44,7 +44,7 @@ public sealed class Viewport
         var horizontalBoundaryBehaviour = LevelScreen.HorizontalBoundaryBehaviour;
         var verticalBoundaryBehaviour = LevelScreen.VerticalBoundaryBehaviour;
 
-        var mousePosition = inputController.MousePosition;
+        var mousePosition = inputHandler.MousePosition;
         if (mousePosition.X == 0)
         {
             horizontalBoundaryBehaviour.Scroll(-_scrollDelta);
@@ -67,15 +67,15 @@ public sealed class Viewport
         verticalBoundaryBehaviour.UpdateMouseCoordinate(mousePosition.Y);
     }
 
-    private bool MouseIsInLevelViewport(InputController inputController)
+    private bool MouseIsInLevelViewport(InputHandler inputHandler)
     {
-        return _viewportDimensions.EncompassesPoint(inputController.MousePosition);
+        return _viewportDimensions.EncompassesPoint(inputHandler.MousePosition);
     }
 
-    private void TrackScrollWheel(InputController inputController)
+    private void TrackScrollWheel(InputHandler inputHandler)
     {
         var currentValue = _scaleMultiplier;
-        var newValue = Math.Clamp(_scaleMultiplier + inputController.ScrollDelta, MinScaleMultiplier, MaxScaleMultiplier);
+        var newValue = Math.Clamp(_scaleMultiplier + inputHandler.ScrollDelta, MinScaleMultiplier, MaxScaleMultiplier);
 
         if (currentValue == newValue)
             return;

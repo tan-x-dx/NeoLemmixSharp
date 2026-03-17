@@ -5,6 +5,7 @@ using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.IO;
 using NeoLemmixSharp.Menu.LevelPack;
 using NeoLemmixSharp.Menu.LevelReading;
@@ -18,11 +19,11 @@ public sealed class MenuScreen : IBaseScreen
     public static MenuScreen Instance { get; private set; } = null!;
 
     private readonly PageTransition _pageTransition = new();
+    private readonly InputHandler _inputHandler = new();
 
     private PageBase _currentPage;
     private PageBase? _nextPage;
 
-    public MenuInputController InputController { get; } = new();
     public MenuPageCreator MenuPageCreator { get; }
     public MenuScreenRenderer MenuScreenRenderer { get; }
 
@@ -40,7 +41,7 @@ public sealed class MenuScreen : IBaseScreen
         if (Instance is not null)
             throw new InvalidOperationException("Cannot create more than one concurrent MenuScreen instance!");
 
-        var menuCursorRenderer = new MenuCursorRenderer(InputController);
+        var menuCursorRenderer = new MenuCursorRenderer(_inputHandler);
         MenuScreenRenderer = new MenuScreenRenderer(
             menuCursorRenderer,
             _pageTransition);
@@ -48,7 +49,7 @@ public sealed class MenuScreen : IBaseScreen
         MenuPageCreator = new MenuPageCreator(
             contentManager,
             graphicsDevice,
-            InputController);
+            _inputHandler);
         _currentPage = MenuPageCreator.CreateMainPage();
         MenuScreenRenderer.SetNextPage(_currentPage);
 
@@ -83,7 +84,7 @@ public sealed class MenuScreen : IBaseScreen
     {
         _nextPage = page;
         _pageTransition.BeginTransition();
-        InputController.ClearAllInputActions();
+        _inputHandler.ClearAllInputActions();
     }
 
     public void Tick(GameTime gameTime)
@@ -95,7 +96,7 @@ public sealed class MenuScreen : IBaseScreen
             return;
         }
 
-        InputController.Tick();
+        _inputHandler.Tick();
         _currentPage.Tick();
     }
 

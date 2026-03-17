@@ -7,7 +7,6 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
 public sealed partial class LevelEditorCanvas
 {
-    private readonly InputController _inputController;
     private readonly List<CanvasPiece> _selectedCanvasPieces = new(16);
 
     private Point _screenMouseDownPosition;
@@ -19,6 +18,11 @@ public sealed partial class LevelEditorCanvas
 
     private void OnMouseEnter(Component c, Point screenPosition)
     {
+        _screenMouseDownPosition = screenPosition;
+        _screenMouseMovePosition = screenPosition;
+        _canvasMouseDownPosition = CalculateCanvasMousePosition(screenPosition);
+        _canvasMouseMovePosition = _canvasMouseDownPosition;
+        _clickDragMode = ClickDragMode.None;
     }
 
     private void OnMouseMove(Component c, Point screenPosition)
@@ -27,7 +31,7 @@ public sealed partial class LevelEditorCanvas
         _canvasMouseMovePosition = CalculateCanvasMousePosition(screenPosition);
     }
 
-    private void OnMousePressed(Component c, Point screenPosition)
+    private void OnLeftMousePressed(Component c, Point screenPosition)
     {
         _screenMouseDownPosition = screenPosition;
         _canvasMouseDownPosition = CalculateCanvasMousePosition(screenPosition);
@@ -35,6 +39,22 @@ public sealed partial class LevelEditorCanvas
         _canvasMouseMovePosition = _canvasMouseDownPosition;
 
         var pieceBeneathMouse = TrySelectSingleItem();
+
+        var keyBoardInputModifiers = _inputHandler.InputModifiers;
+
+        if (keyBoardInputModifiers.CtrlDown())
+        {
+            _clickDragMode = ClickDragMode.None;
+            if (pieceBeneathMouse is null)
+                return;
+
+            if (_selectedCanvasPieces.Remove(pieceBeneathMouse))
+                return;
+
+            _selectedCanvasPieces.Add(pieceBeneathMouse);
+            return;
+        }
+
         if (pieceBeneathMouse is null)
         {
             _selectedCanvasPieces.Clear();
@@ -49,8 +69,17 @@ public sealed partial class LevelEditorCanvas
         _selectedCanvasPieces.Add(pieceBeneathMouse);
     }
 
-    private void OnMouseHeld(Component c, Point screenPosition)
+    private void OnRightMousePressed(Component c, Point screenPosition)
     {
+
+    }
+
+    private void OnLeftMouseHeld(Component c, Point screenPosition)
+    {
+        var keyBoardInputModifiers = _inputHandler.InputModifiers;
+        if (keyBoardInputModifiers.CtrlDown())
+            return;
+
         var pieceBeneathMouse = TrySelectSingleItem();
         if (pieceBeneathMouse is null || !_selectedCanvasPieces.Contains(pieceBeneathMouse))
         {
@@ -71,7 +100,7 @@ public sealed partial class LevelEditorCanvas
         RepaintLevel();
     }
 
-    private void OnMouseReleased(Component c, Point screenPosition)
+    private void OnLeftMouseReleased(Component c, Point screenPosition)
     {
         if (_clickDragMode == ClickDragMode.SelectPieces)
         {
@@ -90,7 +119,7 @@ public sealed partial class LevelEditorCanvas
 
     private void OnMouseExit(Component c, Point screenPosition)
     {
-        OnMouseReleased(c, screenPosition);
+        OnLeftMouseReleased(c, screenPosition);
         _canvasMouseDownPosition = new Point(-4000, -4000);
         _canvasMouseMovePosition = new Point(-4000, -4000);
     }

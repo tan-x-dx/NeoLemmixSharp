@@ -11,22 +11,25 @@ namespace NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 
 public sealed partial class LevelEditorCanvas : Component
 {
+    private readonly InputHandler _inputHandler;
+
     private readonly CanvasBorderBehaviour _horizontalBorderBehaviour = new();
     private readonly CanvasBorderBehaviour _verticalBorderBehaviour = new();
 
     private LevelData _levelData;
 
-    public LevelEditorCanvas(GraphicsDevice graphicsDevice, InputController inputController)
+    public LevelEditorCanvas(InputHandler inputHandler, GraphicsDevice graphicsDevice)
     {
+        _inputHandler = inputHandler;
         _graphicsDevice = graphicsDevice;
-        _inputController = inputController;
 
-        MouseEnter.RegisterMouseEvent(OnMouseEnter);
-        MouseMovement.RegisterMouseEvent(OnMouseMove);
-        MousePressed.RegisterMouseEvent(OnMousePressed);
-        MouseHeld.RegisterMouseEvent(OnMouseHeld);
-        MouseReleased.RegisterMouseEvent(OnMouseReleased);
-        MouseExit.RegisterMouseEvent(OnMouseExit);
+        MouseEnter.RegisterMouseMoveEvent(OnMouseEnter);
+        MouseMovement.RegisterMouseMoveEvent(OnMouseMove);
+        MousePressed.RegisterMousePressEvent(OnLeftMousePressed, MouseButtonType.Left);
+        MousePressed.RegisterMousePressEvent(OnRightMousePressed, MouseButtonType.Right);
+        MouseHeld.RegisterMousePressEvent(OnLeftMouseHeld, MouseButtonType.Left);
+        MouseReleased.RegisterMousePressEvent(OnLeftMouseReleased, MouseButtonType.Left);
+        MouseExit.RegisterMouseMoveEvent(OnMouseExit);
         KeyPressed.RegisterKeyEvent(OnKeyDown);
     }
 
@@ -68,10 +71,16 @@ public sealed partial class LevelEditorCanvas : Component
         return new Point(viewportX + offsetX, viewportY + offsetY);
     }
 
-    public void HandleUserInput(MenuInputController inputController)
+    public void HandleUserInput(LevelEditorController inputController)
     {
         if (!ContainsPoint(inputController.MousePosition))
             return;
+
+        if (inputController.DeleteSelection.IsPressed)
+        {
+            DeleteSelection();
+            return;
+        }
 
         if (inputController.ScrollDelta != 0 && _clickDragMode == ClickDragMode.None)
             Zoom(inputController.ScrollDelta);
@@ -88,7 +97,7 @@ public sealed partial class LevelEditorCanvas : Component
         _verticalBorderBehaviour.Zoom(scrollDelta);
     }
 
-    private static Point CalculateArrowKeyScrollDelta(MenuInputController inputController)
+    private static Point CalculateArrowKeyScrollDelta(LevelEditorController inputController)
     {
         if (UiHandler.Instance.SelectedTextField is not null)
             return new Point();
@@ -152,7 +161,7 @@ public sealed partial class LevelEditorCanvas : Component
         _verticalBorderBehaviour.RecentreViewport();
     }
 
-    private void OnKeyDown(Component c, in BitArrayEnumerable<InputController, Keys> keys)
+    private void OnKeyDown(Component c, in BitArrayEnumerable<InputHandler, Keys> keys)
     {
     }
 

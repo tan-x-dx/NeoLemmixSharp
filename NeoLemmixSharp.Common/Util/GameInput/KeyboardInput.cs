@@ -2,10 +2,10 @@
 
 public readonly ref struct KeyboardInput(KeyboardInputType keyboardInputType, KeyboardInputModifiers inputModifiers, int numberOfFramesThisKeyHasBeenPressed, char keyboardChar, bool capslock)
 {
-    public readonly KeyboardInputType KeyboardInputType = keyboardInputType;
-    public readonly KeyboardInputModifiers InputModifiers = inputModifiers;
     public readonly int NumberOfFramesThisKeyHasBeenPressed = numberOfFramesThisKeyHasBeenPressed;
     private readonly char _keyboardChar = keyboardChar;
+    public readonly KeyboardInputType KeyboardInputType = keyboardInputType;
+    public readonly KeyboardInputModifiers InputModifiers = inputModifiers;
     private readonly bool _capslock = capslock;
 
     public char GetCorrespondingChar()

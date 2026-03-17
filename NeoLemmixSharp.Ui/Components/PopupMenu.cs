@@ -1,14 +1,26 @@
 ﻿namespace NeoLemmixSharp.Ui.Components;
 
-public abstract class PopupMenu : Component
+public sealed class PopupMenu : Component
 {
+    public bool DisposeOnClose { get; set; } = true;
 
-    public void OpenMenu()
+    public PopupMenu()
     {
-
+        MousePressed.RegisterMousePressEvent(OnClickOutsideWindowBounds, MouseButtonType.Left);
+        MousePressed.RegisterMousePressEvent(OnClickOutsideWindowBounds, MouseButtonType.Right);
     }
 
-    public void CloseMenu()
+    internal void CloseMenu()
     {
+        if (DisposeOnClose)
+            Dispose();
+    }
+
+    private void OnClickOutsideWindowBounds(Component c, Common.Point position)
+    {
+        if (ContainsPoint(position))
+            return;
+
+        UiHandler.Instance.ClosePopupMenu();
     }
 }

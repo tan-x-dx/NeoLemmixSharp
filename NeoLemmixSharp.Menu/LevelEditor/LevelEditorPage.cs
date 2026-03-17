@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
@@ -9,34 +10,38 @@ using NeoLemmixSharp.IO.Data.Level.Objectives;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.IO.FileFormats;
+using NeoLemmixSharp.Menu.LevelEditor.ChangeSet;
 using NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 using NeoLemmixSharp.Menu.LevelEditor.Menu;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Menu.LevelEditor;
 
-public sealed class LevelEditorPage : PageBase
+public sealed partial class LevelEditorPage : PageBase
 {
+    private readonly LevelEditorController _levelEditorController;
+    private readonly LevelEditorChangeTracker _levelEditorChangeTracker;
+
     private LevelEditorMenuBar _menuBar;
     private LevelEditorControlPanel _controlPanel;
     private LevelEditorCanvas _levelCanvas;
     private PieceBank _pieceBank;
 
-    private StyleData _levelStyleData;
-    private StyleData _pieceStyleData;
-
     private LevelData _currentLevelData;
 
     public bool IsNeoLemmix => _currentLevelData.FileFormatType == FileFormatType.NeoLemmix;
 
-    public LevelEditorPage(MenuInputController menuInputController, GraphicsDevice graphicsDevice) : base(menuInputController)
+    public LevelEditorPage(InputHandler inputHandler, GraphicsDevice graphicsDevice) : base(inputHandler)
     {
-        _menuBar = new LevelEditorMenuBar();
+        _levelEditorController = new LevelEditorController(inputHandler);
+        _levelEditorChangeTracker = new LevelEditorChangeTracker();
+        _menuBar = new LevelEditorMenuBar(this);
         _controlPanel = new LevelEditorControlPanel();
-        _levelCanvas = new LevelEditorCanvas(graphicsDevice, menuInputController.InputController);
-        _pieceBank = new PieceBank(OnSelectTerrainPiece, OnSelectGadgetPiece, OnSelectBackgroundPiece);
+        _levelCanvas = new LevelEditorCanvas(inputHandler, graphicsDevice);
+        _pieceBank = new PieceBank(this);
 
         SetLevelData(CreateBlankLevelData());
     }
@@ -64,6 +69,7 @@ public sealed class LevelEditorPage : PageBase
         OnResize();
     }
 
+    [MemberNotNull(nameof(_currentLevelData))]
     private void SetLevelData(LevelData levelData)
     {
         _currentLevelData = levelData;
@@ -103,20 +109,15 @@ public sealed class LevelEditorPage : PageBase
 
     protected override void HandleUserInput()
     {
-        if (InputController.Quit.IsPressed && UiHandler.SelectedTextField is null)
+        if (_levelEditorController.Quit.IsPressed && UiHandler.SelectedTextField is null)
         {
             IGameWindow.Instance.Escape();
         }
 
-        _levelCanvas.HandleUserInput(InputController);
-        _pieceBank.HandleUserInput(InputController);
+        _levelCanvas.HandleUserInput(_levelEditorController);
+        _pieceBank.HandleUserInput(_levelEditorController);
 
-        if (InputController.F1.IsPressed)
-        {
-            SaveLevel($@"C:\Temp\{_currentLevelData.LevelTitle}.ullv");
-        }
-
-        if (InputController.ToggleFullScreen.IsPressed)
+        if (_levelEditorController.ToggleFullScreen.IsPressed)
         {
             IGameWindow.Instance.ToggleFullscreenSetting();
         }
@@ -124,9 +125,6 @@ public sealed class LevelEditorPage : PageBase
 
     private void SetStyle(StyleData styleData)
     {
-        _levelStyleData = styleData;
-        _pieceStyleData = styleData;
-
         _pieceBank.SetStyle(styleData);
     }
 
@@ -150,42 +148,12 @@ public sealed class LevelEditorPage : PageBase
 
     protected override void OnDispose()
     {
-        if (IsDisposed)
-            return;
-
         MenuScreen.Instance.MenuScreenRenderer.RenderBackground = true;
 
         _menuBar = null!;
         _controlPanel = null!;
         _levelCanvas = null!;
         _pieceBank = null!;
-    }
-
-    private void OnSelectTerrainPiece(Component c, Point pos)
-    {
-        if (c is not PieceSelector pieceSelector)
-            return;
-
-        if (pieceSelector.StylePiece is TerrainArchetypeData terrainArchetypeData)
-        {
-            _levelCanvas.AddTerrainPiece(terrainArchetypeData);
-        }
-    }
-
-    private void OnSelectGadgetPiece(Component c, Point pos)
-    {
-        if (c is not PieceSelector pieceSelector)
-            return;
-
-        if (pieceSelector.StylePiece is GadgetArchetypeData gadgetArchetypeData)
-        {
-            _levelCanvas.AddGadgetPiece(gadgetArchetypeData);
-        }
-    }
-
-    private void OnSelectBackgroundPiece(Component c, Point pos)
-    {
-
     }
 
     private void SetUpHandlers()
@@ -198,7 +166,7 @@ public sealed class LevelEditorPage : PageBase
         _controlPanel.LevelHeightTextField.TextSubmit.RegisterEvent(SetLevelHeight);
 
         _controlPanel.LevelIdTextField.TextSubmit.RegisterEvent(SetLevelId);
-        _controlPanel.GenerateNewLevelIdButton.MouseReleased.RegisterMouseEvent(GenerateNewLevelId);
+        _controlPanel.GenerateNewLevelIdButton.MouseReleased.RegisterMousePressEvent(GenerateNewLevelId, MouseButtonType.Left);
 
         _controlPanel.WrapHorizontalCheckBox.OnChecked.RegisterEvent(SetWrapHorizontal);
         _controlPanel.WrapHorizontalCheckBox.OnUnchecked.RegisterEvent(SetWrapHorizontal);
@@ -306,7 +274,7 @@ public sealed class LevelEditorPage : PageBase
 
     private static LevelData CreateBlankLevelData()
     {
-        var result = new LevelData(FileFormatType.NeoLemmix);
+        var result = new LevelData(FileFormatType.NeoLemmix, null);
         result.SetLevelWidth(320);
         result.SetLevelHeight(160);
         result.LevelId = new LevelIdentifier((ulong)Random.Shared.NextInt64());

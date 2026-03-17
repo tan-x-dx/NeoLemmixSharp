@@ -28,8 +28,8 @@ public ref struct ArrayListWrapper<T>
         var size = _size;
         if ((uint)size < (uint)_array.Length)
         {
+            _array.At(size) = item;
             _size = size + 1;
-            _array[size] = item;
 
             return;
         }

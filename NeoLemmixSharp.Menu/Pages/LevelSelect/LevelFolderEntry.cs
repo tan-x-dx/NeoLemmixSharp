@@ -35,7 +35,7 @@ public sealed class LevelFolderEntry : LevelBrowserEntry
     {
         _folderPath = folder;
 
-        MouseDoubleClick.RegisterMouseEvent(OnDoubleClick);
+        MouseDoubleClick.RegisterMousePressEvent(OnDoubleClick, MouseButtonType.Left);
     }
 
     private void OnDoubleClick(Component _, Point position)

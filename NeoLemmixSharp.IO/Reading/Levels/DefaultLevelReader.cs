@@ -8,6 +8,7 @@ namespace NeoLemmixSharp.IO.Reading.Levels;
 
 internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReader>
 {
+    private readonly string _levelFilePath;
     private readonly RawLevelFileDataReader _reader;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -15,13 +16,14 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
 
     private DefaultLevelReader(string filePath)
     {
+        _levelFilePath = filePath;
         using var fileStream = new FileStream(filePath, FileMode.Open);
         _reader = new RawLevelFileDataReader(fileStream);
     }
 
     public LevelData ReadLevel()
     {
-        var result = new LevelData(FileFormatType.Default);
+        var result = new LevelData(FileFormatType.Default, _levelFilePath);
 
         var fileFormatVersion = _reader.FileFormatVersion;
 

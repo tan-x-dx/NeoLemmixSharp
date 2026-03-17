@@ -15,8 +15,9 @@ public sealed class KeyboardEventHandler : IDisposable
 
     public void Invoke(Component c, in KeysEnumerable keys)
     {
-        foreach (ComponentKeyboardAction action in _actions)
+        for (int i = 0; i < _actions.Count; i++)
         {
+            var action = _actions[i];
             action(c, in keys);
         }
     }

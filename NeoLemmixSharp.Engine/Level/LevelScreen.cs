@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -41,6 +42,7 @@ public sealed class LevelScreen : IBaseScreen
     private readonly UpdateScheduler _updateScheduler;
     private readonly LevelCursor _levelCursor;
     private readonly LevelTimer _levelTimer;
+    private readonly InputHandler _inputHandler;
     private readonly LevelInputController _levelInputController;
     private readonly Viewport _levelViewport;
     private readonly RewindManager _rewindManager;
@@ -64,6 +66,7 @@ public sealed class LevelScreen : IBaseScreen
     public static UpdateScheduler UpdateScheduler => Instance._updateScheduler;
     public static LevelCursor LevelCursor => Instance._levelCursor;
     public static LevelTimer LevelTimer => Instance._levelTimer;
+    public InputHandler InputHandler => Instance._inputHandler;
     public static LevelInputController LevelInputController => Instance._levelInputController;
     public static RewindManager RewindManager => Instance._rewindManager;
     public static LemmingSpriteBank LemmingSpriteBank => Instance._lemmingSpriteBank;
@@ -132,6 +135,7 @@ public sealed class LevelScreen : IBaseScreen
         UpdateScheduler updateScheduler,
         LevelCursor levelCursor,
         LevelTimer levelTimer,
+        InputHandler inputHandler,
         LevelInputController levelInputController,
         Viewport levelViewport,
         RewindManager rewindManager,
@@ -154,6 +158,7 @@ public sealed class LevelScreen : IBaseScreen
         _updateScheduler = updateScheduler;
         _levelCursor = levelCursor;
         _levelTimer = levelTimer;
+        _inputHandler = inputHandler;
         _levelInputController = levelInputController;
         _levelViewport = levelViewport;
         _rewindManager = rewindManager;
@@ -173,7 +178,7 @@ public sealed class LevelScreen : IBaseScreen
     public void Tick(Microsoft.Xna.Framework.GameTime gameTime)
     {
         _levelControlPanel.TextualData.ClearTextualData();
-        _levelInputController.Tick();
+        _inputHandler.Tick();
         _levelCursor.Tick();
 
         HandleMouseInput();
@@ -183,7 +188,7 @@ public sealed class LevelScreen : IBaseScreen
 
     private void HandleMouseInput()
     {
-        _levelViewport.HandleMouseInput(_levelInputController.InputController);
+        _levelViewport.HandleMouseInput(_inputHandler);
 
         if (_levelViewport.MouseIsInLevelViewPort)
         {

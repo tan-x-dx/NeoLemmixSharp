@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Components.Buttons;
 
@@ -7,6 +8,8 @@ namespace NeoLemmixSharp.Menu.Pages;
 
 public sealed class MainPage : PageBase
 {
+    private readonly MenuController _menuController;
+
     private readonly TextureButton _playButton;
     private readonly TextureButton _levelSelectButton;
 
@@ -16,35 +19,36 @@ public sealed class MainPage : PageBase
     private readonly TextureButton _configButton;
     private readonly TextureButton _quitButton;
 
-    public MainPage(
-        MenuInputController inputController)
-        : base(inputController)
+    public MainPage(InputHandler inputHandler)
+        : base(inputHandler)
     {
+        _menuController = new MenuController(inputHandler);
+
         const float menuScaleMultiplier = 2.0f;
 
         _playButton = new TextureButton(0, 0, MenuSpriteBank.SignPlay)
         {
             ScaleMultiplier = menuScaleMultiplier,
         };
-        _playButton.MousePressed.RegisterMouseEvent(PlayButtonClick);
+        _playButton.MousePressed.RegisterMousePressEvent(PlayButtonClick, MouseButtonType.Left);
 
         _levelSelectButton = new TextureButton(0, 0, MenuSpriteBank.SignLevelSelect)
         {
             ScaleMultiplier = menuScaleMultiplier,
         };
-        _levelSelectButton.MousePressed.RegisterMouseEvent(LevelSelectButtonClick);
+        _levelSelectButton.MousePressed.RegisterMousePressEvent(LevelSelectButtonClick, MouseButtonType.Left);
 
         _configButton = new TextureButton(0, 0, MenuSpriteBank.SignConfig)
         {
             ScaleMultiplier = menuScaleMultiplier,
         };
-        _configButton.MousePressed.RegisterMouseEvent(ConfigButtonClick);
+        _configButton.MousePressed.RegisterMousePressEvent(ConfigButtonClick, MouseButtonType.Left);
 
         _quitButton = new TextureButton(0, 0, MenuSpriteBank.SignQuit)
         {
             ScaleMultiplier = menuScaleMultiplier,
         };
-        _quitButton.MousePressed.RegisterMouseEvent(QuitButtonClick);
+        _quitButton.MousePressed.RegisterMousePressEvent(QuitButtonClick, MouseButtonType.Left);
     }
 
     protected override void OnInitialise()
@@ -141,17 +145,17 @@ public sealed class MainPage : PageBase
 
     protected override void HandleUserInput()
     {
-        if (InputController.Quit.IsPressed)
+        if (_menuController.Quit.IsPressed)
         {
             IGameWindow.Instance.Escape();
         }
 
-        if (InputController.Space.IsPressed)
+        if (_menuController.Space.IsPressed)
         {
             LevelEditorButtonClick(null!, new Point());
         }
 
-        if (InputController.ToggleFullScreen.IsPressed)
+        if (_menuController.ToggleFullScreen.IsPressed)
         {
             IGameWindow.Instance.ToggleFullscreenSetting();
         }

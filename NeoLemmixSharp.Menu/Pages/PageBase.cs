@@ -1,34 +1,31 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.GameInput;
 using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
 public abstract class PageBase : IInitialisable, IDisposable
 {
-    protected readonly MenuInputController InputController;
-
-    protected bool IsInitialised { get; private set; }
-    protected bool IsDisposed { get; private set; }
-
     public UiHandler UiHandler { get; }
 
-    protected PageBase(
-        MenuInputController menuInputController)
+    private bool _isInitialised;
+    private bool _isDisposed;
+
+    protected PageBase(InputHandler inputHandler)
     {
-        InputController = menuInputController;
-        UiHandler = new UiHandler(menuInputController.InputController);
+        UiHandler = new UiHandler(inputHandler);
     }
 
     public void Initialise()
     {
-        if (IsInitialised)
+        if (_isInitialised)
             return;
 
         UiHandler.Instance = UiHandler;
 
         OnInitialise();
-        IsInitialised = true;
+        _isInitialised = true;
     }
 
     protected abstract void OnInitialise();
@@ -53,9 +50,9 @@ public abstract class PageBase : IInitialisable, IDisposable
 
     public void Dispose()
     {
-        if (!IsDisposed)
+        if (!_isDisposed)
         {
-            IsDisposed = true;
+            _isDisposed = true;
 
             UiHandler.Dispose();
             OnDispose();

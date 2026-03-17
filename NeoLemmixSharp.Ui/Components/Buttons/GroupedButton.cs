@@ -25,19 +25,19 @@ public sealed class GroupedButton : Component
     public GroupedButton(int x, int y)
         : base(x, y)
     {
-        MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MousePressed.RegisterMouseEvent(SetMousePress);
-        MouseReleased.RegisterMouseEvent(SetMouseOver);
-        MouseExit.RegisterMouseEvent(SetMouseNormal);
+        MouseEnter.RegisterMouseMoveEvent(SetMouseOver);
+        MousePressed.RegisterMousePressEvent(SetMousePress, MouseButtonType.Left);
+        MouseReleased.RegisterMousePressEvent(SetMouseOver, MouseButtonType.Left);
+        MouseExit.RegisterMouseMoveEvent(SetMouseNormal);
     }
 
     public GroupedButton(int x, int y, int width, int height)
         : base(x, y, width, height)
     {
-        MouseEnter.RegisterMouseEvent(SetMouseOver);
-        MousePressed.RegisterMouseEvent(SetMousePress);
-        MouseReleased.RegisterMouseEvent(SetMouseOver);
-        MouseExit.RegisterMouseEvent(SetMouseNormal);
+        MouseEnter.RegisterMouseMoveEvent(SetMouseOver);
+        MousePressed.RegisterMousePressEvent(SetMousePress, MouseButtonType.Left);
+        MouseReleased.RegisterMousePressEvent(SetMouseOver, MouseButtonType.Left);
+        MouseExit.RegisterMouseMoveEvent(SetMouseNormal);
     }
 
     public bool IsActive
@@ -101,7 +101,7 @@ public sealed class GroupedButton : Component
                 _activeIndex = button._index;
                 if (performClick)
                 {
-                    button.MousePressed.Invoke(button, new Point());
+                    button.MousePressed.Invoke(button, new Point(), MouseButtonType.Left);
                 }
             }
         }
