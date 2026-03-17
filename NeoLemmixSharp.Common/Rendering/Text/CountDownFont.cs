@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Common.Rendering.Text;
 
-public sealed class CountDownFont
+public readonly struct CountDownFont
 {
     private const int EmptyGlyphWidth = 2;
     private const int GlyphWidth = 4;
