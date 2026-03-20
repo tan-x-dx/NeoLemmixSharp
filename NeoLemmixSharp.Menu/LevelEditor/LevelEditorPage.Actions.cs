@@ -105,4 +105,69 @@ public sealed partial class LevelEditorPage : IEditorOperationHandler
     {
 
     }
+
+    public void ToggleClearPhysics(Component c, Point position)
+    {
+
+    }
+
+    public void ToggleTerrainRendering(Component c, Point position)
+    {
+
+    }
+
+    public void ToggleGadgetRendering(Component c, Point position)
+    {
+
+    }
+
+    public void ToggleTriggerAreaRendering(Component c, Point position)
+    {
+
+    }
+
+    public void ToggleScreenStartRendering(Component c, Point position)
+    {
+
+    }
+
+    public void ToggleBackgroundRendering(Component c, Point position)
+    {
+
+    }
+
+    public void ToggleDeprecatedPieces(Component c, Point position)
+    {
+
+    }
+
+    public void ToggleSnapToGrid(Component c, Point position)
+    {
+
+    }
+
+    public void TestLevel(Component c, Point position)
+    {
+
+    }
+
+    public void ValidateLevel(Component c, Point position)
+    {
+
+    }
+
+    public void ViewSettings(Component c, Point position)
+    {
+
+    }
+
+    public void ViewHotKeySettings(Component c, Point position)
+    {
+
+    }
+
+    public void ViewAbout(Component c, Point position)
+    {
+
+    }
 }

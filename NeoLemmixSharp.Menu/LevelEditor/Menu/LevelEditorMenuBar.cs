@@ -138,7 +138,14 @@ public sealed class LevelEditorMenuBar : Component
     private void OnViewButtonPress(Component c, Common.Point position)
     {
         var viewMenu = CreatePopupMenu(
-            c);
+            c,
+            new ButtonDefinition("Clear Physics (F1)", _buttonHandler.ToggleClearPhysics),
+            new ButtonDefinition("Terrain Rendering (F2)", _buttonHandler.ToggleTerrainRendering),
+            new ButtonDefinition("Gadget Rendering (F3)", _buttonHandler.ToggleGadgetRendering),
+            new ButtonDefinition("Trigger Areas (F4)", _buttonHandler.ToggleTriggerAreaRendering),
+            new ButtonDefinition("Screen Start (F5)", _buttonHandler.ToggleScreenStartRendering),
+            new ButtonDefinition("Background Image (F6)", _buttonHandler.ToggleBackgroundRendering),
+            new ButtonDefinition("Deprecated Pieces (F7)", _buttonHandler.ToggleDeprecatedPieces));
 
         UiHandler.Instance.OpenPopupMenu(viewMenu);
     }
@@ -146,7 +153,10 @@ public sealed class LevelEditorMenuBar : Component
     private void OnToolsButtonPress(Component c, Common.Point position)
     {
         var toolsMenu = CreatePopupMenu(
-            c);
+            c,
+            new ButtonDefinition("Snap To Grid (F9)", _buttonHandler.ToggleSnapToGrid),
+            new ButtonDefinition("Test Level (F12)", _buttonHandler.TestLevel),
+            new ButtonDefinition("Validate Level", _buttonHandler.ValidateLevel));
 
         UiHandler.Instance.OpenPopupMenu(toolsMenu);
     }
@@ -154,7 +164,10 @@ public sealed class LevelEditorMenuBar : Component
     private void OnOptionsButtonPress(Component c, Common.Point position)
     {
         var optionsMenu = CreatePopupMenu(
-            c);
+            c,
+            new ButtonDefinition("Settings (F10)", _buttonHandler.ViewSettings),
+            new ButtonDefinition("Hotkeys (F11)", _buttonHandler.ViewHotKeySettings),
+            new ButtonDefinition("About...", _buttonHandler.ViewAbout));
 
         UiHandler.Instance.OpenPopupMenu(optionsMenu);
     }

@@ -1,6 +1,6 @@
 ﻿namespace NeoLemmixSharp.Ui.Components;
 
-public sealed class PopupMenu : Component
+public class PopupMenu : Component
 {
     public bool DisposeOnClose { get; set; } = true;
 
