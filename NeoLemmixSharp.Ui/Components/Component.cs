@@ -26,7 +26,7 @@ public abstract class Component : IDisposable
     private KeyboardEventHandler? _keyPressed;
     private KeyboardEventHandler? _keyHeld;
     private KeyboardEventHandler? _keyReleased;
-    public IContainMousePosition CollisionBehaviour { get; set; } = IContainMousePosition.RectangularCollisionInstance;
+    public IMouseCollision CollisionBehaviour { get; set; } = IMouseCollision.RectangularCollisionInstance;
 
     public Point Position { get; private set; }
     public Size Dimensions { get; private set; }

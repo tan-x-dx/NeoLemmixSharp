@@ -2,14 +2,14 @@
 
 namespace NeoLemmixSharp.Ui.Components.Util;
 
-public interface IContainMousePosition
+public interface IMouseCollision
 {
     bool ContainsPoint(Component c, Point position);
 
-    public static IContainMousePosition RectangularCollisionInstance { get; } = new RectangularCollision();
-    public static IContainMousePosition NoCollisionInstance { get; } = new NoCollision();
+    public static IMouseCollision RectangularCollisionInstance { get; } = new RectangularCollision();
+    public static IMouseCollision NoCollisionInstance { get; } = new NoCollision();
 
-    private sealed class RectangularCollision : IContainMousePosition
+    private sealed class RectangularCollision : IMouseCollision
     {
         public bool ContainsPoint(Component c, Point position)
         {
@@ -20,7 +20,7 @@ public interface IContainMousePosition
         }
     }
 
-    private sealed class NoCollision : IContainMousePosition
+    private sealed class NoCollision : IMouseCollision
     {
         public bool ContainsPoint(Component c, Point position) => false;
     }

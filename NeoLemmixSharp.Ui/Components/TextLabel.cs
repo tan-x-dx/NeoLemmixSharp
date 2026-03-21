@@ -61,7 +61,7 @@ public sealed class TextLabel : Component
         : base(x, y, 0, 0)
     {
         Label = label;
-        CollisionBehaviour = IContainMousePosition.NoCollisionInstance;
+        CollisionBehaviour = IMouseCollision.NoCollisionInstance;
 
         SetSize(MenuFont.GlyphWidth * label.Length, MenuFont.GlyphHeight);
     }

@@ -205,7 +205,7 @@ public sealed class LevelEditorMenuBar : Component
                     Top = button.Top,
                     Colors = MenuButtonColors,
 
-                    CollisionBehaviour = IContainMousePosition.NoCollisionInstance
+                    CollisionBehaviour = IMouseCollision.NoCollisionInstance
                 };
             }
 
