@@ -24,10 +24,10 @@ public sealed class CheckBox : Component
 
         _uncheckedColors = UiConstants.RectangularButtonDefaultColors;
         _checkedColors = new ColorPacket(
-            0xff114411.AsAbgrColor(),
-            0xff226622.AsAbgrColor(),
-            0xff118811.AsAbgrColor(),
-            0xff006600.AsAbgrColor());
+            0xff114411,
+            0xff226622,
+            0xff118811,
+            0xff006600);
 
         MouseEnter.RegisterMouseMoveEvent(SetMouseOver);
         MousePressed.RegisterMousePressEvent(SetMousePress, MouseButtonType.Left);

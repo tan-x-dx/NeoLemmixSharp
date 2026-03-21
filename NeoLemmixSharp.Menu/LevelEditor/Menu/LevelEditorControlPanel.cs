@@ -205,7 +205,7 @@ public sealed class LevelEditorControlPanel : Component
             Left = TextFieldLeftPosition,
             LabelOffsetX = 36,
             LabelOffsetY = 10,
-            Colors = new ColorPacket(0xffbbbbbb.AsAbgrColor())
+            Colors = new ColorPacket(0xffbbbbbb)
         };
 
         y = UiConstants.TwiceStandardInset + GenerateNewLevelIdButton.Bottom;

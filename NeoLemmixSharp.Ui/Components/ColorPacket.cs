@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Util;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Ui.Components;
@@ -18,12 +19,30 @@ public struct ColorPacket
         ActiveColor = color;
     }
 
+    public ColorPacket(uint colorAbgr)
+    {
+        var color = colorAbgr.AsAbgrColor();
+
+        NormalColor = color;
+        MouseOverColor = color;
+        MousePressColor = color;
+        ActiveColor = color;
+    }
+
     public ColorPacket(Color normalColor, Color mouseOverColor, Color mousePressColor, Color activeColor)
     {
         NormalColor = normalColor;
         MouseOverColor = mouseOverColor;
         MousePressColor = mousePressColor;
         ActiveColor = activeColor;
+    }
+
+    public ColorPacket(uint normalColorAbgr, uint mouseOverColorAbgr, uint mousePressColorAbgr, uint activeColorAbgr)
+    {
+        NormalColor = normalColorAbgr.AsAbgrColor();
+        MouseOverColor = mouseOverColorAbgr.AsAbgrColor();
+        MousePressColor = mousePressColorAbgr.AsAbgrColor();
+        ActiveColor = activeColorAbgr.AsAbgrColor();
     }
 }
 

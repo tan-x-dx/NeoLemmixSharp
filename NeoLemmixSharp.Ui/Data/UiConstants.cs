@@ -20,16 +20,16 @@ public static class UiConstants
     public const int RaisedRectangleBorder = 2;
 
     public static ColorPacket RectangularButtonDefaultColors => new(
-        0xff444444.AsAbgrColor(),
-        0xff666666.AsAbgrColor(),
-        0xff888888.AsAbgrColor(),
-        0xff006600.AsAbgrColor());
+        0xff444444,
+        0xff666666,
+        0xff888888,
+        0xff006600);
 
     public static ColorPacket LighterRectangularButtonColors => new(
-        0xffa3a3a3.AsAbgrColor(),
-        0xffd6d6d6.AsAbgrColor(),
-        0xfff9f9f9.AsAbgrColor(),
-        0xff00aa00.AsAbgrColor());
+        0xffa3a3a3,
+        0xffd6d6d6,
+        0xfff9f9f9,
+        0xff00aa00);
 
     public static ColorPacket AllWhiteColors => new(Color.White);
     public static ColorPacket AllBlackColors => new(Color.Black);
