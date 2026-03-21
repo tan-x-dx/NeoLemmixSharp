@@ -112,12 +112,6 @@ public readonly struct Orientation : IEquatable<Orientation>
         return RotationAngles[RotNum & 3];
     }
 
-    [DoesNotReturn]
-    public static T ThrowOrientationOutOfRangeException<T>(Orientation orientation)
-    {
-        throw new ArgumentOutOfRangeException(nameof(RotNum), orientation.RotNum, "Invalid Orientation value!");
-    }
-
     [Pure]
     [DebuggerStepThrough]
     public bool Equals(Orientation other) => RotNum == other.RotNum;
