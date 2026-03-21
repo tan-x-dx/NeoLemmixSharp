@@ -59,6 +59,8 @@ public sealed partial class LevelEditorPage : PageBase
 
         SetUpHandlers();
 
+        //  "C:\\Users\\andre\\Documents\\NeoLemmix_V12.14.0\\levels\\Lemmings Faithful\\Safe\\BedOfRoses.nxlv"
+
         // LoadLevel(RootDirectoryManager.GetLevelFilePath(@"Amiga Lemmings\Lemmings\Fun\21_You_Live_and_Lem", FileFormatType.NeoLemmix));
         // LoadLevel(RootDirectoryManager.GetLevelFilePath(@"Amiga Lemmings\Lemmings\Tricky\04_Here's_one_I_prepared_earlier", FileFormatType.NeoLemmix));
         LoadLevel(RootDirectoryManager.GetLevelFilePath("skill test", FileFormatType.NeoLemmix));
@@ -130,13 +132,22 @@ public sealed partial class LevelEditorPage : PageBase
 
     private void LoadLevel(string levelFilePath)
     {
-        var levelData = FileTypeHandler.ReadLevel(levelFilePath);
+        try
+        {
+            var levelData = FileTypeHandler.ReadLevel(levelFilePath);
 
-        StyleCache.EnsureStylesAreLoadedForLevel(levelData);
-        SetLevelData(levelData);
+            StyleCache.EnsureStylesAreLoadedForLevel(levelData);
+            SetLevelData(levelData);
 
-        var styleData = StyleCache.GetOrLoadStyleData(levelData.GetStyleFormatPair());
-        SetStyle(styleData);
+            var styleData = StyleCache.GetOrLoadStyleData(levelData.GetStyleFormatPair());
+            SetStyle(styleData);
+        }
+        catch (Exception ex)
+        {
+            var exceptionViewer = new ExceptionViewer(ex);
+
+            UiHandler.Instance.OpenPopupMenu(exceptionViewer);
+        }
     }
 
     private void SaveLevel(string levelFilePath)

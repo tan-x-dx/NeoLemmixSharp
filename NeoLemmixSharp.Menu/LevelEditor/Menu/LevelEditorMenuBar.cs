@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Components.Buttons;
+using NeoLemmixSharp.Ui.Components.Util;
 using NeoLemmixSharp.Ui.Events;
 using static NeoLemmixSharp.Ui.Data.UiConstants;
 
@@ -30,7 +31,7 @@ public sealed class LevelEditorMenuBar : Component
     {
         _buttonHandler = buttonHandler;
         Height = LevelEditorMenuBarHeight;
-        Colors = LighterRectangularButtonColours;
+        Colors = LighterRectangularButtonColors;
 
         var fileButton = new Button(StandardInset, StandardInset, 64, MenuBarButtonHeight)
         {
@@ -40,7 +41,7 @@ public sealed class LevelEditorMenuBar : Component
         {
             Left = fileButton.Left + TextLabelXOffset,
             Top = fileButton.Top + TextLabelYOffset,
-            Colors = new ColorPacket(Color.White)
+            Colors = AllWhiteColors
         };
 
         var editButton = new Button(fileButton.Right + StandardInset, StandardInset, 64, MenuBarButtonHeight)
@@ -51,7 +52,7 @@ public sealed class LevelEditorMenuBar : Component
         {
             Left = editButton.Left + TextLabelXOffset,
             Top = editButton.Top + TextLabelYOffset,
-            Colors = new ColorPacket(Color.White)
+            Colors = AllWhiteColors
         };
 
         var viewButton = new Button(editButton.Right + StandardInset, StandardInset, 64, MenuBarButtonHeight)
@@ -62,7 +63,7 @@ public sealed class LevelEditorMenuBar : Component
         {
             Left = viewButton.Left + TextLabelXOffset,
             Top = viewButton.Top + TextLabelYOffset,
-            Colors = new ColorPacket(Color.White)
+            Colors = AllWhiteColors
         };
 
         var toolsButton = new Button(viewButton.Right + StandardInset, StandardInset, 72, MenuBarButtonHeight)
@@ -73,7 +74,7 @@ public sealed class LevelEditorMenuBar : Component
         {
             Left = toolsButton.Left + TextLabelXOffset,
             Top = toolsButton.Top + TextLabelYOffset,
-            Colors = new ColorPacket(Color.White)
+            Colors = AllWhiteColors
         };
 
         var optionsButton = new Button(toolsButton.Right + StandardInset, StandardInset, 84, MenuBarButtonHeight)
@@ -84,7 +85,7 @@ public sealed class LevelEditorMenuBar : Component
         {
             Left = optionsButton.Left + TextLabelXOffset,
             Top = optionsButton.Top + TextLabelYOffset,
-            Colors = new ColorPacket(Color.White)
+            Colors = AllWhiteColors
         };
 
         AddChild(fileButton);
@@ -139,13 +140,13 @@ public sealed class LevelEditorMenuBar : Component
     {
         var viewMenu = CreatePopupMenu(
             c,
-            new ButtonDefinition("Clear Physics (F1)", _buttonHandler.ToggleClearPhysics),
-            new ButtonDefinition("Terrain Rendering (F2)", _buttonHandler.ToggleTerrainRendering),
-            new ButtonDefinition("Gadget Rendering (F3)", _buttonHandler.ToggleGadgetRendering),
-            new ButtonDefinition("Trigger Areas (F4)", _buttonHandler.ToggleTriggerAreaRendering),
-            new ButtonDefinition("Screen Start (F5)", _buttonHandler.ToggleScreenStartRendering),
-            new ButtonDefinition("Background Image (F6)", _buttonHandler.ToggleBackgroundRendering),
-            new ButtonDefinition("Deprecated Pieces (F7)", _buttonHandler.ToggleDeprecatedPieces));
+            new ButtonDefinition("Clear Physics (F1)", _buttonHandler.ToggleClearPhysics, true),
+            new ButtonDefinition("Terrain Rendering (F2)", _buttonHandler.ToggleTerrainRendering, true),
+            new ButtonDefinition("Gadget Rendering (F3)", _buttonHandler.ToggleGadgetRendering, true),
+            new ButtonDefinition("Trigger Areas (F4)", _buttonHandler.ToggleTriggerAreaRendering, true),
+            new ButtonDefinition("Screen Start (F5)", _buttonHandler.ToggleScreenStartRendering, true),
+            new ButtonDefinition("Background Image (F6)", _buttonHandler.ToggleBackgroundRendering, true),
+            new ButtonDefinition("Deprecated Pieces (F7)", _buttonHandler.ToggleDeprecatedPieces, true));
 
         UiHandler.Instance.OpenPopupMenu(viewMenu);
     }
@@ -172,7 +173,7 @@ public sealed class LevelEditorMenuBar : Component
         UiHandler.Instance.OpenPopupMenu(optionsMenu);
     }
 
-    private static PopupMenu CreatePopupMenu(Component c, params ButtonDefinition[] buttonDefinitions)
+    private static PopupMenu CreatePopupMenu(Component c, params ReadOnlySpan<ButtonDefinition> buttonDefinitions)
     {
         var result = new PopupMenu()
         {
@@ -192,14 +193,33 @@ public sealed class LevelEditorMenuBar : Component
             button.MousePressed.RegisterMousePressEvent(buttonDefinition.ButtonAction, MouseButtonType.Left);
             button.MousePressed.RegisterMousePressEvent(ClosePopupMenu, MouseButtonType.Left);
 
+            var xOffset = 0;
+            CheckBox? checkBox = null;
+
+            if (buttonDefinition.includeCheckBox)
+            {
+                xOffset = StandardButtonHeight + TwiceStandardInset;
+                checkBox = new CheckBox
+                {
+                    Left = button.Left + StandardInset,
+                    Top = button.Top,
+                    Colors = MenuButtonColors,
+
+                    CollisionBehaviour = IContainMousePosition.NoCollisionInstance
+                };
+            }
+
             var buttonLabel = new TextLabel(buttonDefinition.ButtonLabel)
             {
-                Left = button.Left + TextLabelXOffset,
+                Left = button.Left + TextLabelXOffset + xOffset,
                 Top = button.Top + 8,
-                Colors = new ColorPacket(Color.White)
+                Colors = AllWhiteColors
             };
 
             y += StandardButtonHeight;
+
+            if (checkBox is not null)
+                result.AddChild(checkBox);
             result.AddChild(button);
             result.AddChild(buttonLabel);
         }
@@ -209,7 +229,7 @@ public sealed class LevelEditorMenuBar : Component
         return result;
     }
 
-    private readonly record struct ButtonDefinition(string ButtonLabel, MousePressEventHandler.ComponentMousePressAction ButtonAction);
+    private readonly record struct ButtonDefinition(string ButtonLabel, MousePressEventHandler.ComponentMousePressAction ButtonAction, bool includeCheckBox = false);
 
     private static void ClosePopupMenu(Component c, Common.Point position)
     {

@@ -57,7 +57,7 @@ public abstract class Component : IDisposable
 
         Width = 10;
         Height = 10;
-        _colourPacket = UiConstants.RectangularButtonDefaultColours;
+        _colourPacket = UiConstants.RectangularButtonDefaultColors;
     }
 
     protected Component(int x, int y)
@@ -72,7 +72,7 @@ public abstract class Component : IDisposable
 
         Width = width;
         Height = height;
-        _colourPacket = UiConstants.RectangularButtonDefaultColours;
+        _colourPacket = UiConstants.RectangularButtonDefaultColors;
     }
 
     public int Left

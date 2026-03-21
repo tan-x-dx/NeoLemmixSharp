@@ -1,33 +1,40 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util.GameInput;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Ui.Components;
+using NeoLemmixSharp.Ui.Data;
 
 namespace NeoLemmixSharp.Menu.Pages;
 
-public sealed class ExceptionViewer : PageBase
+public sealed class ExceptionViewer : PopupMenu
 {
     private readonly Exception _exception;
 
-    public ExceptionViewer(
-        InputHandler inputHandler,
-        Exception exception)
-        : base(inputHandler)
+    public ExceptionViewer(Exception exception)
     {
         _exception = exception;
+
+        Width = 800;
+        Height = 600;
     }
 
-    protected override void OnInitialise()
+    protected override void RenderComponent(SpriteBatch spriteBatch)
     {
-    }
+        UiSprites.DrawBeveledRectangle(spriteBatch, this);
 
-    protected override void OnWindowDimensionsChanged(Size windowSize)
-    {
-    }
+        var position = new Vector2(Left + UiConstants.DefaultTextXOffset, Top + UiConstants.DefaultTextYOffset);
 
-    protected override void HandleUserInput()
-    {
-    }
+        spriteBatch.DrawString(
+            UiSprites.UiFont,
+            _exception.Message,
+            position,
+            Color.White);
 
-    protected override void OnDispose()
-    {
+        position.Y = Top + 32 + UiConstants.DefaultTextYOffset;
+
+        spriteBatch.DrawString(
+            UiSprites.UiFont,
+            _exception.StackTrace,
+            position,
+            Color.White);
     }
 }

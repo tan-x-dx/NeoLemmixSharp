@@ -22,7 +22,7 @@ public sealed class CheckBox : Component
         Width = 32;
         Height = 32;
 
-        _uncheckedColors = UiConstants.RectangularButtonDefaultColours;
+        _uncheckedColors = UiConstants.RectangularButtonDefaultColors;
         _checkedColors = new ColorPacket(
             0xff114411.AsAbgrColor(),
             0xff226622.AsAbgrColor(),
@@ -34,18 +34,13 @@ public sealed class CheckBox : Component
         MouseReleased.RegisterMousePressEvent(SetMouseOver, MouseButtonType.Left);
         MouseExit.RegisterMouseMoveEvent(SetMouseNormal);
 
-        MouseReleased.RegisterMousePressEvent(OnMouseReleased, MouseButtonType.Left);
+        MouseReleased.RegisterMousePressEvent(ToggleCheckedStatus, MouseButtonType.Left);
     }
 
     public GenericEventHandler OnUnchecked => _onUnchecked ??= new GenericEventHandler();
     public GenericEventHandler OnChecked => _onChecked ??= new GenericEventHandler();
 
-    private void OnMouseReleased(Component c, Point position)
-    {
-        ToggleCheckedStatus();
-    }
-
-    public void ToggleCheckedStatus()
+    public void ToggleCheckedStatus(Component c, Point position)
     {
         SetCheckedValue(!IsChecked);
     }
