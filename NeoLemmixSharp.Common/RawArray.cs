@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common.Util;
-using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -20,7 +19,8 @@ public readonly struct RawArray : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public RawArray(int length)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(length);
+        if (length < 0)
+            throw new ArgumentOutOfRangeException(nameof(length));
 
         Handle = Marshal.AllocHGlobal(length);
         Length = length;

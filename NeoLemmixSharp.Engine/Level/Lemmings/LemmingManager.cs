@@ -438,6 +438,7 @@ public sealed class LemmingManager :
 
     private void ResetLemmings()
     {
+        _fastForwardLemmings.Clear();
         _lemmingSpacialHashGrid.Clear();
         _zombieSpacialHashGrid.Clear();
 
