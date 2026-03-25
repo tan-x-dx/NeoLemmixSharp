@@ -138,16 +138,15 @@ public readonly struct Orientation : IEquatable<Orientation>
 
     public bool TryFormat(Span<char> destination, out int charsWritten)
     {
-        var constString = ToString();
-        if (destination.Length < constString.Length)
+        var constSpan = ToString().AsSpan();
+        if (constSpan.TryCopyTo(destination))
         {
-            charsWritten = 0;
-            return false;
+            charsWritten = constSpan.Length;
+            return true;
         }
 
-        constString.AsSpan().CopyTo(destination);
-        charsWritten = constString.Length;
-        return true;
+        charsWritten = 0;
+        return false;
     }
 
     [Pure]

@@ -7,8 +7,6 @@ using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
-using NeoLemmixSharp.IO.Data.Style.Gadget;
-using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.Menu.LevelEditor.ChangeSet;
 using NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;

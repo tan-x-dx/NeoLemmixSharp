@@ -40,7 +40,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         if (!BitArrayHelpers.SetBit(_bits.AsSpan(), index, ref _popCount))
             Helpers.ThrowKeyAlreadyAddedException(key);
 
-        _values[index] = value;
+        _values.At(index) = value;
     }
 
     public void Clear()
@@ -70,7 +70,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         {
             var current = enumerator.Current;
             var key = hasher.UnHash(current);
-            var value = _values[current];
+            var value = _values.At(current);
             span.At(i++) = new KeyValuePair<TKey, TValue>(key, value);
         }
     }
@@ -101,7 +101,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         while (enumerator.MoveNext())
         {
             var current = enumerator.Current;
-            var value = _values[current];
+            var value = _values.At(current);
             valueSpan.At(i++) = value;
         }
     }
@@ -116,14 +116,14 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
     public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
     {
         var index = _hasher.Hash(key);
-        value = _values[index];
+        value = _values.At(index);
         return BitArrayHelpers.GetBit(_bits.AsReadOnlySpan(), index);
     }
 
     public bool Remove(TKey key)
     {
         var index = _hasher.Hash(key);
-        _values[index] = default!;
+        _values.At(index) = default!;
         return BitArrayHelpers.ClearBit(_bits.AsSpan(), index, ref _popCount);
     }
 
@@ -135,13 +135,13 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
             if (!BitArrayHelpers.GetBit(_bits.AsReadOnlySpan(), index))
                 Helpers.ThrowKeyNotFoundException();
 
-            return _values[index];
+            return _values.At(index);
         }
         set
         {
             var index = _hasher.Hash(key);
             BitArrayHelpers.SetBit(_bits.AsSpan(), index, ref _popCount);
-            _values[index] = value;
+            _values.At(index) = value;
         }
     }
 
@@ -171,7 +171,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
             {
                 var index = _bitEnumerator.Current;
                 var key = _hasher.UnHash(index);
-                var value = _values[index];
+                var value = _values.At(index);
                 return new KeyValuePair<TKey, TValue>(key, value);
             }
         }
@@ -204,7 +204,7 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
             {
                 var index = _enumerator.Current;
                 var key = _hasher.UnHash(index);
-                var value = _values[index];
+                var value = _values.At(index);
                 return new KeyValuePair<TKey, TValue>(key, value);
             }
         }
