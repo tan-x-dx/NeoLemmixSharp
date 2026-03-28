@@ -5,7 +5,7 @@ using NeoLemmixSharp.Ui.Components.Buttons;
 using NeoLemmixSharp.Ui.Data;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Menu.LevelEditor.Menu;
+namespace NeoLemmixSharp.Menu.LevelEditor.Menu.ControlPanel;
 
 public sealed class LevelEditorControlPanel : Component
 {

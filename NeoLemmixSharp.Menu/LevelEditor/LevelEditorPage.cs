@@ -12,6 +12,7 @@ using NeoLemmixSharp.Menu.LevelEditor.ChangeSet;
 using NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 using NeoLemmixSharp.Menu.LevelEditor.Menu;
+using NeoLemmixSharp.Menu.LevelEditor.Menu.ControlPanel;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
 using System.Diagnostics.CodeAnalysis;
