@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components;
 using System.Runtime.CompilerServices;
+using ButtonActionlist = System.Collections.Generic.List<NeoLemmixSharp.Ui.Events.MousePressEventHandler.ComponentMousePressAction>;
 
 namespace NeoLemmixSharp.Ui.Events;
 
@@ -9,11 +10,11 @@ public sealed class MousePressEventHandler : IDisposable
 {
     public delegate void ComponentMousePressAction(Component c, Point position);
 
-    private List<ComponentMousePressAction>? _leftButtonActions;
-    private List<ComponentMousePressAction>? _middleButtonActions;
-    private List<ComponentMousePressAction>? _rightButtonActions;
-    private List<ComponentMousePressAction>? _mouse4ButtonActions;
-    private List<ComponentMousePressAction>? _mouse5ButtonActions;
+    private ButtonActionlist? _leftButtonActions;
+    private ButtonActionlist? _middleButtonActions;
+    private ButtonActionlist? _rightButtonActions;
+    private ButtonActionlist? _mouse4ButtonActions;
+    private ButtonActionlist? _mouse5ButtonActions;
 
     public void RegisterMousePressEvent(ComponentMousePressAction action, MouseButtonType mouseButtonType)
     {
@@ -28,6 +29,7 @@ public sealed class MousePressEventHandler : IDisposable
         if (buttonActions == null)
             return;
 
+        // Do not convert to foreach loop!
         for (int i = 0; i < buttonActions.Count; i++)
         {
             var action = buttonActions[i];
@@ -35,7 +37,7 @@ public sealed class MousePressEventHandler : IDisposable
         }
     }
 
-    private ref List<ComponentMousePressAction>? GetButtonActionListRef(MouseButtonType mouseButtonType)
+    private ref ButtonActionlist? GetButtonActionListRef(MouseButtonType mouseButtonType)
     {
         switch (mouseButtonType)
         {
@@ -55,11 +57,11 @@ public sealed class MousePressEventHandler : IDisposable
                 return ref _mouse5ButtonActions;
 
             default:
-                Helpers.ThrowUnknownEnumValueException<MouseButtonType, List<ComponentMousePressAction>>(mouseButtonType);
+                Helpers.ThrowUnknownEnumValueException<MouseButtonType, ButtonActionlist>(mouseButtonType);
                 break;
         }
 
-        return ref Unsafe.NullRef<List<ComponentMousePressAction>?>();
+        return ref Unsafe.NullRef<ButtonActionlist?>();
     }
 
     public void Clear()
