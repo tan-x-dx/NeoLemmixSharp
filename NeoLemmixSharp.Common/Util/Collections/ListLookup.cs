@@ -33,7 +33,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
     {
         var index = FindIndex(key);
         if (index >= 0)
-            throw new ArgumentException("Key already added!", nameof(key));
+            Helpers.ThrowKeyAlreadyAddedException(key);
 
         _data[_size++] = new KeyValuePair<TKey, TValue>(key, value);
     }
@@ -92,7 +92,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
         {
             var index = FindIndex(key);
             if (index < 0)
-                throw new KeyNotFoundException();
+                Helpers.ThrowKeyNotFoundException();
             return _data.At(index).Value;
         }
         set

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Common.Rendering.Text;
 
-public sealed class PanelFont
+public readonly struct PanelFont
 {
     private const int IndexOfPercentInPng = 0;
     private const int IndexOfZeroInPng = 1;

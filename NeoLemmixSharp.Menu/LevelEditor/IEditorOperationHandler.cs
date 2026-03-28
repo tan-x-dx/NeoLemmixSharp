@@ -24,4 +24,20 @@ public interface IEditorOperationHandler
     void EditorDuplicate(Component c, Point position);
     void EditorGroup(Component c, Point position);
     void EditorUngroup(Component c, Point position);
+
+    void ToggleClearPhysics(Component c, Point position);
+    void ToggleTerrainRendering(Component c, Point position);
+    void ToggleGadgetRendering(Component c, Point position);
+    void ToggleTriggerAreaRendering(Component c, Point position);
+    void ToggleScreenStartRendering(Component c, Point position);
+    void ToggleBackgroundRendering(Component c, Point position);
+    void ToggleDeprecatedPieces(Component c, Point position);
+
+    void ToggleSnapToGrid(Component c, Point position);
+    void TestLevel(Component c, Point position);
+    void ValidateLevel(Component c, Point position);
+
+    void ViewSettings(Component c, Point position);
+    void ViewHotKeySettings(Component c, Point position);
+    void ViewAbout(Component c, Point position);
 }

@@ -87,9 +87,7 @@ public sealed class MenuPageCreator
         {
             TextureCache.DisposeOfLevelSpecificTextures();
 
-            var exceptionWindow = new ExceptionViewer(_inputHandler, ex);
-
-            exceptionWindow.Initialise();
+            var exceptionWindow = new ExceptionViewer(ex);
         }
         finally
         {

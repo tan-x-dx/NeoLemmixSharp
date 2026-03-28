@@ -26,8 +26,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     private IBaseScreen? _screen;
     private IScreenRenderer? _screenRenderer;
 
-    private int _baseWindowWidth = 2560;
-    private int _baseWindowHeight = 1440;
+    private RectangularRegion _windowedBounds = new(new Common.Point(200, 400), new Size(1920, 1080));
 
     private WindowMode _windowMode = WindowMode.Windowed;
     private WindowMode _fullscreenWindowMode = WindowMode.Borderless;
@@ -75,8 +74,12 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         if (_windowMode == WindowMode.Windowed)
         {
             var windowBounds = Window.ClientBounds;
-            _baseWindowWidth = windowBounds.Width;
-            _baseWindowHeight = windowBounds.Height;
+
+            var position = new Common.Point(windowBounds.Left, windowBounds.Top);
+            var size = new Size(
+                Math.Max(windowBounds.Width, 64),
+                Math.Max(windowBounds.Height, 64));
+            _windowedBounds = new RectangularRegion(position, size);
         }
 
         _screen?.OnWindowSizeChanged();
@@ -214,7 +217,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         }
         else
         {
-            ApplyHardwareMode();
+            SetBorderless();
         }
     }
 
@@ -222,12 +225,10 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     {
         if (_windowMode == WindowMode.Windowed)
         {
-            _windowMode = WindowMode.Fullscreen;
             SetFullscreen();
         }
         else
         {
-            _windowMode = WindowMode.Windowed;
             UnsetFullscreen();
         }
     }
@@ -236,55 +237,61 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     {
         if (_windowMode == WindowMode.Windowed)
         {
-            _windowMode = WindowMode.Borderless;
-            ApplyHardwareMode();
+            SetBorderless();
         }
         else
         {
-            _windowMode = WindowMode.Windowed;
             UnsetFullscreen();
         }
     }
 
-    private void ApplyHardwareMode()
+    private void SetBorderless()
     {
-        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-        _graphics.HardwareModeSwitch = false;
-        _graphics.ApplyChanges();
+        _windowMode = WindowMode.Borderless;
 
         Window.AllowUserResizing = false;
         Window.IsBorderless = true;
-        Window.Position = new(0, 0);
+        Window.Position = Microsoft.Xna.Framework.Point.Zero;
+
+        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+    //    _graphics.HardwareModeSwitch = false;
+    //    _graphics.IsFullScreen = false;
+        _graphics.ApplyChanges();
 
         _screen?.OnWindowSizeChanged();
     }
 
     private void SetFullscreen()
     {
-        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-        _graphics.HardwareModeSwitch = true;
-
-        _graphics.IsFullScreen = true;
-        _graphics.ApplyChanges();
+        _windowMode = WindowMode.Fullscreen;
 
         Window.AllowUserResizing = false;
         Window.IsBorderless = true;
-        Window.Position = new(0, 0);
+        Window.Position = Microsoft.Xna.Framework.Point.Zero;
+
+        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+     //   _graphics.HardwareModeSwitch = true;
+        _graphics.IsFullScreen = true;
+        _graphics.ApplyChanges();
 
         _screen?.OnWindowSizeChanged();
     }
 
     private void UnsetFullscreen()
     {
-        _graphics.PreferredBackBufferWidth = _baseWindowWidth;
-        _graphics.PreferredBackBufferHeight = _baseWindowHeight;
-        _graphics.IsFullScreen = false;
-        _graphics.ApplyChanges();
+        _windowMode = WindowMode.Windowed;
 
         Window.AllowUserResizing = true;
         Window.IsBorderless = false;
+        Window.Position = new(_windowedBounds.X, _windowedBounds.Y);
+
+        _graphics.PreferredBackBufferWidth = _windowedBounds.W;
+        _graphics.PreferredBackBufferHeight = _windowedBounds.H;
+     //   _graphics.HardwareModeSwitch = false;
+        _graphics.IsFullScreen = false;
+        _graphics.ApplyChanges();
 
         _screen?.OnWindowSizeChanged();
     }

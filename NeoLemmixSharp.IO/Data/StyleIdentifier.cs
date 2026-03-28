@@ -19,7 +19,7 @@ public readonly struct StyleIdentifier : IEquatable<StyleIdentifier>
 
     public bool Equals(StyleIdentifier other) => string.Equals(_styleIdentifier, other._styleIdentifier, StringComparison.Ordinal);
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is StyleIdentifier other && Equals(other);
-    public override int GetHashCode() => _styleIdentifier.GetHashCode();
+    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(_styleIdentifier);
     public static bool operator ==(StyleIdentifier left, StyleIdentifier right) => left.Equals(right);
     public static bool operator !=(StyleIdentifier left, StyleIdentifier right) => !left.Equals(right);
 }

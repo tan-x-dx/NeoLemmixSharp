@@ -115,6 +115,7 @@ public sealed class BoundaryBehaviour
         return NormaliseWrap(n);
     }
 
+    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int NormaliseWrap(int n)
     {

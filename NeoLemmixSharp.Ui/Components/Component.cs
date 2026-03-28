@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Ui.Components.Util;
 using NeoLemmixSharp.Ui.Data;
 using NeoLemmixSharp.Ui.Events;
 using System.Diagnostics.CodeAnalysis;
@@ -25,6 +26,7 @@ public abstract class Component : IDisposable
     private KeyboardEventHandler? _keyPressed;
     private KeyboardEventHandler? _keyHeld;
     private KeyboardEventHandler? _keyReleased;
+    public IMouseCollision CollisionBehaviour { get; set; } = IMouseCollision.RectangularCollisionInstance;
 
     public Point Position { get; private set; }
     public Size Dimensions { get; private set; }
@@ -55,7 +57,7 @@ public abstract class Component : IDisposable
 
         Width = 10;
         Height = 10;
-        _colourPacket = UiConstants.RectangularButtonDefaultColours;
+        _colourPacket = UiConstants.RectangularButtonDefaultColors;
     }
 
     protected Component(int x, int y)
@@ -70,7 +72,7 @@ public abstract class Component : IDisposable
 
         Width = width;
         Height = height;
-        _colourPacket = UiConstants.RectangularButtonDefaultColours;
+        _colourPacket = UiConstants.RectangularButtonDefaultColors;
     }
 
     public int Left
@@ -196,13 +198,7 @@ public abstract class Component : IDisposable
     }
 
     [Pure]
-    public virtual bool ContainsPoint(Point position)
-    {
-        return position.X >= Left &&
-               position.Y >= Top &&
-               position.X < Right &&
-               position.Y < Bottom;
-    }
+    public bool ContainsPoint(Point position) => CollisionBehaviour.ContainsPoint(this, position);
 
     public bool IsVisible
     {

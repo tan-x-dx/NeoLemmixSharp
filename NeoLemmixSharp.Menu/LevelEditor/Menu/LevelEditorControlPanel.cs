@@ -31,7 +31,7 @@ public sealed class LevelEditorControlPanel : Component
     public LevelEditorControlPanel()
     {
         Width = LevelControlPanelWidth;
-        Colors = UiConstants.LighterRectangularButtonColours;
+        Colors = UiConstants.LighterRectangularButtonColors;
 
         var y = UiConstants.StandardInset;
 
@@ -48,7 +48,7 @@ public sealed class LevelEditorControlPanel : Component
             Left = UiConstants.StandardInset,
             Top = y,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
 
         y = UiConstants.StandardInset + TitleTextField.Bottom;
@@ -66,7 +66,7 @@ public sealed class LevelEditorControlPanel : Component
             Left = UiConstants.StandardInset,
             Top = y,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
 
         y = UiConstants.StandardInset + AuthorTextField.Bottom;
@@ -84,7 +84,7 @@ public sealed class LevelEditorControlPanel : Component
             Left = UiConstants.StandardInset,
             Top = y,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
 
         y = UiConstants.TwiceStandardInset + MusicTextField.Bottom;
@@ -94,14 +94,14 @@ public sealed class LevelEditorControlPanel : Component
             Left = UiConstants.StandardInset,
             Top = y,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
         var wLabel = new TextLabel("W")
         {
             Left = TextFieldLeftPosition,
             Top = y,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
         LevelWidthTextField = new TextField()
         {
@@ -117,7 +117,7 @@ public sealed class LevelEditorControlPanel : Component
             Left = UiConstants.TwiceStandardInset + LevelWidthTextField.Right,
             Top = y,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
         LevelHeightTextField = new TextField()
         {
@@ -135,14 +135,14 @@ public sealed class LevelEditorControlPanel : Component
             Left = UiConstants.StandardInset,
             Top = y,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
         var xLabel = new TextLabel("X")
         {
             Left = TextFieldLeftPosition,
             Top = y,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
         LevelXStartTextField = new TextField()
         {
@@ -158,7 +158,7 @@ public sealed class LevelEditorControlPanel : Component
             Left = UiConstants.TwiceStandardInset + LevelXStartTextField.Right,
             Top = y,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
         LevelYStartTextField = new TextField()
         {
@@ -180,7 +180,7 @@ public sealed class LevelEditorControlPanel : Component
             Left = UiConstants.StandardInset,
             Top = y,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
         LevelIdTextField = new TextField
         {
@@ -205,7 +205,7 @@ public sealed class LevelEditorControlPanel : Component
             Left = TextFieldLeftPosition,
             LabelOffsetX = 36,
             LabelOffsetY = 10,
-            Colors = new ColorPacket(0xffbbbbbb.AsAbgrColor())
+            Colors = new ColorPacket(0xffbbbbbb)
         };
 
         y = UiConstants.TwiceStandardInset + GenerateNewLevelIdButton.Bottom;
@@ -216,7 +216,7 @@ public sealed class LevelEditorControlPanel : Component
             Top = y,
             Width = TextFieldWidth,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
         WrapHorizontalCheckBox = new CheckBox
         {
@@ -230,7 +230,7 @@ public sealed class LevelEditorControlPanel : Component
             Top = y,
             Width = TextFieldWidth,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColours
+            Colors = UiConstants.AllBlackColors
         };
         WrapVerticalCheckBox = new CheckBox
         {

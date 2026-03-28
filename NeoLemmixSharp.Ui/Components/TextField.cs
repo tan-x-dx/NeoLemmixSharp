@@ -76,10 +76,10 @@ public sealed class TextField : Component
         KeyPressed.RegisterKeyEvent(HandleKeyDown);
 
         Colors = new ColorPacket(
-            Color.WhiteSmoke,
-            0xff666666.AsAbgrColor(),
-            0xff888888.AsAbgrColor(),
-            0xff006600.AsAbgrColor());
+            Color.WhiteSmoke.PackedValue,
+            0xff666666,
+            0xff888888,
+            0xff006600);
     }
 
     public void SetTextMask(string? charMask)

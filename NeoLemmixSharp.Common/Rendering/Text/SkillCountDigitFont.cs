@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Common.Rendering.Text;
 
-public sealed class SkillCountDigitFont
+public readonly struct SkillCountDigitFont
 {
     private const int EmptyGlyphWidth = 2;
     private const int DigitGlyphWidth = 4;

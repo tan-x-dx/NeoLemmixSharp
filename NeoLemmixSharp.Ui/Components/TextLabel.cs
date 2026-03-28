@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering.Text;
+using NeoLemmixSharp.Ui.Components.Util;
 using NeoLemmixSharp.Ui.Data;
 using System.Diagnostics;
 using System.Numerics;
@@ -61,22 +61,21 @@ public sealed class TextLabel : Component
         : base(x, y, 0, 0)
     {
         Label = label;
+        CollisionBehaviour = IMouseCollision.NoCollisionInstance;
 
         SetSize(MenuFont.GlyphWidth * label.Length, MenuFont.GlyphHeight);
     }
-
-    public override bool ContainsPoint(Point position) => false;
 
     protected override void RenderComponent(SpriteBatch spriteBatch)
     {
         if (TextRenderMode != TextRenderMode.UseFont)
             return;
 
-        var color = Colors.GetColorFromState(State);
-
         var labelX = Left + _labelOffsetX;
         var labelY = Top + _labelOffsetY;
         var position = new Vector2(labelX, labelY);
+
+        var color = Colors.GetColorFromState(State);
 
         spriteBatch.DrawString(
             UiSprites.UiFont,
@@ -89,10 +88,10 @@ public sealed class TextLabel : Component
     {
         Debug.Assert(TextRenderMode == TextRenderMode.UseSprites);
 
-        var color = Colors.GetColorFromState(State);
-
         var labelX = Left + _labelOffsetX;
         var labelY = Top + _labelOffsetY;
+
+        var color = Colors.GetColorFromState(State);
 
         FontBank.MenuFont.RenderText(spriteBatch, Label, labelX, labelY, 1, color);
     }

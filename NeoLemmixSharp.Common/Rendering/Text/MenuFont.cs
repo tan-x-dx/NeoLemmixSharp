@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace NeoLemmixSharp.Common.Rendering.Text;
 
-public sealed class MenuFont
+public readonly struct MenuFont
 {
     private const int LowerCharLimit = ' ';
     private const int UpperCharLimit = '~';

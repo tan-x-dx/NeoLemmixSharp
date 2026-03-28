@@ -56,7 +56,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         if ((uint)skillTrackingDataId >= (uint)_skillTrackingDataList.Length)
             return null;
 
-        return _skillTrackingDataList[skillTrackingDataId];
+        return _skillTrackingDataList.At(skillTrackingDataId);
     }
 
     [Pure]

@@ -18,7 +18,7 @@ public readonly struct GadgetName : IEquatable<GadgetName>
 
     public bool Equals(GadgetName other) => string.Equals(_gadgetName, other._gadgetName, StringComparison.Ordinal);
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetName other && Equals(other);
-    public override int GetHashCode() => _gadgetName.GetHashCode();
+    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(_gadgetName);
     public static bool operator ==(GadgetName left, GadgetName right) => left.Equals(right);
     public static bool operator !=(GadgetName left, GadgetName right) => !left.Equals(right);
 }

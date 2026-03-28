@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
 
@@ -233,7 +234,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     public void AddItem(T item)
     {
         if (!_allTrackedItems.Add(item))
-            throw new InvalidOperationException("Already tracking item!");
+            ThrowAlreadyTrackingItemException(item);
 
         var currentBounds = item.CurrentBounds;
         var topLeftChunk = GetTopLeftChunkForRegion(currentBounds);
@@ -247,7 +248,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     public void UpdateItemPosition(T item)
     {
         if (!_allTrackedItems.Contains(item))
-            throw new InvalidOperationException("Item not registered!");
+            ThrowItemNotRegisteredException(item);
 
         var currentBounds = item.CurrentBounds;
         var currentTopLeftChunk = GetTopLeftChunkForRegion(currentBounds);
@@ -290,7 +291,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     public void RemoveItem(T item)
     {
         if (!_allTrackedItems.Remove(item))
-            throw new InvalidOperationException("Not tracking item!");
+            ThrowNotTrackingItemException(item);
 
         var currentBounds = item.CurrentBounds;
         var currentTopLeftChunk = GetTopLeftChunkForRegion(currentBounds);
@@ -463,6 +464,24 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
 
         GC.SuppressFinalize(this);
+    }
+
+    [DoesNotReturn]
+    private static void ThrowAlreadyTrackingItemException(T item)
+    {
+        throw new InvalidOperationException($"Already tracking item! {item}");
+    }
+
+    [DoesNotReturn]
+    private static void ThrowItemNotRegisteredException(T item)
+    {
+        throw new InvalidOperationException($"Item not registered! {item}");
+    }
+
+    [DoesNotReturn]
+    private static void ThrowNotTrackingItemException(T item)
+    {
+        throw new InvalidOperationException($"Not tracking item {item}");
     }
 
     private enum ChunkOperationType
