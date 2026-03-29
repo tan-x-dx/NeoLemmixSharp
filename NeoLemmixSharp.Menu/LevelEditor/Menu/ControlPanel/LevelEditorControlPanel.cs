@@ -1,308 +1,186 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Components.Buttons;
 using NeoLemmixSharp.Ui.Data;
-using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Menu.LevelEditor.Menu.ControlPanel;
 
 public sealed class LevelEditorControlPanel : Component
 {
-    private const int LevelControlPanelWidth = 280;
-    private const int TextFieldLeftPosition = 72;
-    private const int TextFieldWidth = LevelControlPanelWidth - TextFieldLeftPosition - UiConstants.StandardInset;
+    public const int LevelControlPanelWidth = 280;
 
-    public TextField TitleTextField { get; }
-    public TextField AuthorTextField { get; }
-    public TextField MusicTextField { get; }
+    private readonly ButtonGroup _tabGroup;
 
-    public TextField LevelWidthTextField { get; }
-    public TextField LevelHeightTextField { get; }
-    public TextField LevelXStartTextField { get; }
-    public TextField LevelYStartTextField { get; }
-
-    public TextField LevelIdTextField { get; }
-    public Button GenerateNewLevelIdButton { get; }
-
-    public CheckBox WrapHorizontalCheckBox { get; }
-    public CheckBox WrapVerticalCheckBox { get; }
+    public LevelGlobalsControlPanelTab LevelGlobalsTab { get; }
+    public LevelPiecesControlPanelTab LevelPiecesTab { get; }
+    public LevelSkillsControlPanelTab LevelSkillsTab { get; }
+    public LevelMiscControlPanelTab LevelMiscTab { get; }
 
     public LevelEditorControlPanel()
     {
         Width = LevelControlPanelWidth;
         Colors = UiConstants.LighterRectangularButtonColors;
 
-        var y = UiConstants.StandardInset;
+        _tabGroup = new ButtonGroup(4);
+        var tabButtonsSpan = _tabGroup.Buttons;
 
-        TitleTextField = new TextField()
+        var levelGlobalsButton = tabButtonsSpan.At(0);
+        levelGlobalsButton.Left = 0;
+        levelGlobalsButton.Top = UiConstants.StandardInset;
+        levelGlobalsButton.Width = 80;
+        levelGlobalsButton.Height = UiConstants.StandardButtonHeight;
+        levelGlobalsButton.Colors = UiConstants.LighterRectangularButtonColors;
+        levelGlobalsButton.MousePressed.RegisterMousePressEvent(OnSelectLevelGlobalsTab, MouseButtonType.Left);
+        var levelGlobalsTextLabel = new TextLabel("Globals")
         {
-            Left = TextFieldLeftPosition,
-            Top = y,
-            Width = TextFieldWidth
-        };
-        TitleTextField.SetCapacity(40);
-
-        var titleLabel = new TextLabel("Title")
-        {
-            Left = UiConstants.StandardInset,
-            Top = y,
+            Left = UiConstants.StandardInset + levelGlobalsButton.Left,
+            Top = UiConstants.StandardInset,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
             Colors = UiConstants.AllBlackColors
         };
-
-        y = UiConstants.StandardInset + TitleTextField.Bottom;
-
-        AuthorTextField = new TextField()
+        LevelGlobalsTab = new LevelGlobalsControlPanelTab()
         {
-            Left = TextFieldLeftPosition,
-            Top = y,
-            Width = TextFieldWidth
+            Top = levelGlobalsButton.Bottom
         };
-        AuthorTextField.SetCapacity(32);
+        AddChild(levelGlobalsButton);
+        AddChild(levelGlobalsTextLabel);
+        AddChild(LevelGlobalsTab);
 
-        var authorLabel = new TextLabel("Author")
+
+        var levelPiecesButton = tabButtonsSpan.At(1);
+        levelPiecesButton.Left = levelGlobalsButton.Right;
+        levelPiecesButton.Top = UiConstants.StandardInset;
+        levelPiecesButton.Width = 70;
+        levelPiecesButton.Height = UiConstants.StandardButtonHeight;
+        levelPiecesButton.Colors = UiConstants.LighterRectangularButtonColors;
+        levelPiecesButton.MousePressed.RegisterMousePressEvent(OnSelectLevelPiecesTab, MouseButtonType.Left);
+        var levelPiecesTextLabel = new TextLabel("Pieces")
         {
-            Left = UiConstants.StandardInset,
-            Top = y,
+            Left = UiConstants.StandardInset + levelPiecesButton.Left,
+            Top = UiConstants.StandardInset,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
             Colors = UiConstants.AllBlackColors
         };
-
-        y = UiConstants.StandardInset + AuthorTextField.Bottom;
-
-        MusicTextField = new TextField()
+        LevelPiecesTab = new LevelPiecesControlPanelTab()
         {
-            Left = TextFieldLeftPosition,
-            Top = y,
-            Width = TextFieldWidth
+            Top = levelPiecesButton.Bottom
         };
-        MusicTextField.SetCapacity(100);
+        AddChild(levelPiecesButton);
+        AddChild(levelPiecesTextLabel);
+        AddChild(LevelPiecesTab);
 
-        var musicLabel = new TextLabel("Music")
+
+        var levelSkillsButton = tabButtonsSpan.At(2);
+        levelSkillsButton.Left = levelPiecesButton.Right;
+        levelSkillsButton.Top = UiConstants.StandardInset;
+        levelSkillsButton.Width = 60;
+        levelSkillsButton.Height = UiConstants.StandardButtonHeight;
+        levelSkillsButton.Colors = UiConstants.LighterRectangularButtonColors;
+        levelSkillsButton.MousePressed.RegisterMousePressEvent(OnSelectLevelSkillsTab, MouseButtonType.Left);
+        var levelSkillsTextLabel = new TextLabel("Skills")
         {
-            Left = UiConstants.StandardInset,
-            Top = y,
+            Left = UiConstants.StandardInset + levelSkillsButton.Left,
+            Top = UiConstants.StandardInset,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
             Colors = UiConstants.AllBlackColors
         };
-
-        y = UiConstants.TwiceStandardInset + MusicTextField.Bottom;
-
-        var sizeLabel = new TextLabel("Size")
+        LevelSkillsTab = new LevelSkillsControlPanelTab()
         {
-            Left = UiConstants.StandardInset,
-            Top = y,
+            Top = levelSkillsButton.Bottom
+        };
+        AddChild(levelSkillsButton);
+        AddChild(levelSkillsTextLabel);
+        AddChild(LevelSkillsTab);
+
+
+        var levelMiscButton = tabButtonsSpan.At(3);
+        levelMiscButton.Left = levelSkillsButton.Right;
+        levelMiscButton.Top = UiConstants.StandardInset;
+        levelMiscButton.Width = 60;
+        levelMiscButton.Height = UiConstants.StandardButtonHeight;
+        levelMiscButton.Colors = UiConstants.LighterRectangularButtonColors;
+        levelMiscButton.MousePressed.RegisterMousePressEvent(OnSelectLevelMiscTab, MouseButtonType.Left);
+        var levelMiscTextLabel = new TextLabel("Misc")
+        {
+            Left = UiConstants.StandardInset + levelMiscButton.Left,
+            Top = UiConstants.StandardInset,
             LabelOffsetY = UiConstants.DefaultTextYOffset,
             Colors = UiConstants.AllBlackColors
         };
-        var wLabel = new TextLabel("W")
+        LevelMiscTab = new LevelMiscControlPanelTab()
         {
-            Left = TextFieldLeftPosition,
-            Top = y,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
+            Top = levelMiscButton.Bottom
         };
-        LevelWidthTextField = new TextField()
-        {
-            Left = 4 + UiConstants.TwiceStandardInset + wLabel.Left,
-            Top = y,
-            Width = TextFieldLeftPosition
-        };
-        LevelWidthTextField.SetCapacity(4);
-        LevelWidthTextField.SetTextMask(UiConstants.NumericTextFieldMask);
+        AddChild(levelMiscButton);
+        AddChild(levelMiscTextLabel);
+        AddChild(LevelMiscTab);
 
-        var hLabel = new TextLabel("H")
-        {
-            Left = UiConstants.TwiceStandardInset + LevelWidthTextField.Right,
-            Top = y,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
-        LevelHeightTextField = new TextField()
-        {
-            Left = 4 + UiConstants.TwiceStandardInset + hLabel.Left,
-            Top = y,
-            Width = TextFieldLeftPosition
-        };
-        LevelHeightTextField.SetCapacity(4);
-        LevelHeightTextField.SetTextMask(UiConstants.NumericTextFieldMask);
+        SetSelectedTab(LevelGlobalsTab);
+    }
 
-        y = UiConstants.TwiceStandardInset + sizeLabel.Bottom;
+    private void OnSelectLevelGlobalsTab(Component c, Point position)
+    {
+        SetSelectedTab(LevelGlobalsTab);
+    }
 
-        var startLabel = new TextLabel("Start")
-        {
-            Left = UiConstants.StandardInset,
-            Top = y,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
-        var xLabel = new TextLabel("X")
-        {
-            Left = TextFieldLeftPosition,
-            Top = y,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
-        LevelXStartTextField = new TextField()
-        {
-            Left = 4 + UiConstants.TwiceStandardInset + xLabel.Left,
-            Top = y,
-            Width = TextFieldLeftPosition
-        };
-        LevelXStartTextField.SetCapacity(4);
-        LevelXStartTextField.SetTextMask(UiConstants.NumericTextFieldMask);
+    private void OnSelectLevelPiecesTab(Component c, Point position)
+    {
+        SetSelectedTab(LevelPiecesTab);
+    }
 
-        var yLabel = new TextLabel("Y")
-        {
-            Left = UiConstants.TwiceStandardInset + LevelXStartTextField.Right,
-            Top = y,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
-        LevelYStartTextField = new TextField()
-        {
-            Left = 4 + UiConstants.TwiceStandardInset + yLabel.Left,
-            Top = y,
-            Width = TextFieldLeftPosition
-        };
-        LevelYStartTextField.SetCapacity(4);
-        LevelYStartTextField.SetTextMask(UiConstants.NumericTextFieldMask);
+    private void OnSelectLevelSkillsTab(Component c, Point position)
+    {
+        SetSelectedTab(LevelSkillsTab);
+    }
 
-        xLabel.LabelOffsetY = LevelXStartTextField.TextYOffset;
-        startLabel.LabelOffsetY = LevelXStartTextField.TextYOffset;
-        yLabel.LabelOffsetY = LevelXStartTextField.TextYOffset;
+    private void OnSelectLevelMiscTab(Component c, Point position)
+    {
+        SetSelectedTab(LevelMiscTab);
+    }
 
-        y = UiConstants.TwiceStandardInset + LevelYStartTextField.Bottom;
+    private void SetSelectedTab(Component c)
+    {
+        Component tab = LevelGlobalsTab;
+        tab.IsVisible = tab == c;
 
-        var idLabel = new TextLabel("ID")
-        {
-            Left = UiConstants.StandardInset,
-            Top = y,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
-        LevelIdTextField = new TextField
-        {
-            Left = TextFieldLeftPosition,
-            Top = y,
-            Width = TextFieldWidth,
-            AutoCapitaliseLetters = true
-        };
-        LevelIdTextField.SetCapacity(16);
-        LevelIdTextField.SetTextMask(UiConstants.HexdecimalTextFieldMask);
+        tab = LevelPiecesTab;
+        tab.IsVisible = tab == c;
 
-        y = UiConstants.StandardInset + LevelIdTextField.Bottom;
+        tab = LevelSkillsTab;
+        tab.IsVisible = tab == c;
 
-        GenerateNewLevelIdButton = new Button(0, y)
-        {
-            Left = TextFieldLeftPosition,
-            Width = TextFieldWidth,
-            Height = 36
-        };
-        var generateNewLevelIdLabel = new TextLabel(0, y, "Generate new ID")
-        {
-            Left = TextFieldLeftPosition,
-            LabelOffsetX = 36,
-            LabelOffsetY = 10,
-            Colors = new ColorPacket(0xffbbbbbb)
-        };
-
-        y = UiConstants.TwiceStandardInset + GenerateNewLevelIdButton.Bottom;
-
-        var wrapHorizontalLabel = new TextLabel("Wrap Horizontal")
-        {
-            Left = UiConstants.StandardInset,
-            Top = y,
-            Width = TextFieldWidth,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
-        WrapHorizontalCheckBox = new CheckBox
-        {
-            Left = LevelWidthTextField.Left,
-            Top = y
-        };
-
-        var wrapVerticalLabel = new TextLabel("Wrap Vertical")
-        {
-            Left = UiConstants.TwiceStandardInset + WrapHorizontalCheckBox.Right,
-            Top = y,
-            Width = TextFieldWidth,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
-        WrapVerticalCheckBox = new CheckBox
-        {
-            Left = LevelHeightTextField.Left,
-            Top = y
-        };
-
-        AddChild(TitleTextField);
-        AddChild(titleLabel);
-        AddChild(AuthorTextField);
-        AddChild(authorLabel);
-        AddChild(MusicTextField);
-        AddChild(musicLabel);
-
-        AddChild(LevelWidthTextField);
-        AddChild(LevelHeightTextField);
-        AddChild(sizeLabel);
-        AddChild(wLabel);
-        AddChild(hLabel);
-
-        AddChild(LevelXStartTextField);
-        AddChild(LevelYStartTextField);
-        AddChild(startLabel);
-        AddChild(xLabel);
-        AddChild(yLabel);
-
-        AddChild(LevelIdTextField);
-        AddChild(idLabel);
-        AddChild(GenerateNewLevelIdButton);
-        AddChild(generateNewLevelIdLabel);
-
-        AddChild(wrapHorizontalLabel);
-        AddChild(WrapHorizontalCheckBox);
-        AddChild(wrapVerticalLabel);
-        AddChild(WrapVerticalCheckBox);
+        tab = LevelMiscTab;
+        tab.IsVisible = tab == c;
     }
 
     public void SetLevelData(LevelData levelData)
     {
-        TitleTextField.SetText(levelData.LevelTitle);
-        AuthorTextField.SetText(levelData.LevelAuthor);
-        //MusicTextField.SetText(levelData.Music);
-
-        SetNumericalLevelData(levelData);
-
-        var wrapHorizontal = levelData.HorizontalBoundaryBehaviour == Common.BoundaryBehaviours.BoundaryBehaviourType.Wrap;
-        WrapHorizontalCheckBox.SetCheckedValue(wrapHorizontal);
-
-        var wrapVertical = levelData.VerticalBoundaryBehaviour == Common.BoundaryBehaviours.BoundaryBehaviourType.Wrap;
-        WrapVerticalCheckBox.SetCheckedValue(wrapVertical);
+        LevelGlobalsTab.SetLevelData(levelData);
     }
 
-    [SkipLocalsInit]
-    public unsafe void SetNumericalLevelData(LevelData levelData)
+    public void SetNumericalLevelData(LevelData levelData)
     {
-        char* numberBuffer = stackalloc char[16];
+        LevelGlobalsTab.SetNumericalLevelData(levelData);
+    }
 
-        var levelDimensions = levelData.LevelDimensions;
+    protected override void OnDispose()
+    {
+        _tabGroup.Dispose();
+    }
 
-        uint uintValue = (uint)levelDimensions.W;
-        var digitsWritten = NumberFormattingHelpers.WriteDigits(numberBuffer, uintValue);
-        var span = Helpers.CreateReadOnlySpan<char>(numberBuffer, digitsWritten);
-        LevelWidthTextField.SetText(span);
+    public void OnResize()
+    {
+        var y = Height + Top;
 
-        uintValue = (uint)levelDimensions.H;
-        digitsWritten = NumberFormattingHelpers.WriteDigits(numberBuffer, uintValue);
-        span = Helpers.CreateReadOnlySpan<char>(numberBuffer, digitsWritten);
-        LevelHeightTextField.SetText(span);
-
-        ulong levelId = levelData.LevelId.LevelId;
-        NumberFormattingHelpers.WriteHexDigits(numberBuffer, levelId);
-        span = Helpers.CreateReadOnlySpan<char>(numberBuffer, 16);
-        LevelIdTextField.SetText(span);
+        LevelGlobalsTab.Width = Width;
+        LevelGlobalsTab.Height = y - LevelGlobalsTab.Top;
+        LevelPiecesTab.Width = Width;
+        LevelPiecesTab.Height = y - LevelPiecesTab.Top;
+        LevelSkillsTab.Width = Width;
+        LevelSkillsTab.Height = y - LevelSkillsTab.Top;
+        LevelMiscTab.Width = Width;
+        LevelMiscTab.Height = y - LevelMiscTab.Top;
     }
 }

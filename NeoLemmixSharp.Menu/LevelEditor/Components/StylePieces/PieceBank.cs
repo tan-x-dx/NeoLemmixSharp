@@ -24,6 +24,8 @@ public sealed class PieceBank : Component, IComparer<PieceSelector>
     public PieceBank(IEditorOperationHandler buttonHandler)
         : base(0, 0)
     {
+        Colors = UiConstants.LighterRectangularButtonColors;
+
         _buttonHandler = buttonHandler;
         Height = LevelEditorConstants.BaseSpriteRenderSize + UiConstants.TwiceStandardInset + UiConstants.TwiceStandardInset;
     }
