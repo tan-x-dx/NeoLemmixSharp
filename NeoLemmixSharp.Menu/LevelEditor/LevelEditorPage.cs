@@ -50,7 +50,6 @@ public sealed partial class LevelEditorPage : PageBase
         MenuScreen.Instance.MenuScreenRenderer.RenderBackground = false;
 
         var root = UiHandler.RootComponent;
-        root.IsVisible = false;
         root.AddChild(_levelCanvas);
         root.AddChild(_menuBar);
         root.AddChild(_controlPanel);
@@ -184,6 +183,26 @@ public sealed partial class LevelEditorPage : PageBase
         globalsTab.WrapHorizontalCheckBox.OnUnchecked.RegisterEvent(SetWrapHorizontal);
         globalsTab.WrapVerticalCheckBox.OnChecked.RegisterEvent(SetWrapVertical);
         globalsTab.WrapVerticalCheckBox.OnUnchecked.RegisterEvent(SetWrapVertical);
+
+        var piecesTab = _controlPanel.LevelPiecesTab;
+        piecesTab.RotatePieceButton.MousePressed.RegisterMousePressEvent(RotateSelection, MouseButtonType.Left);
+        piecesTab.InvertPieceButton.MousePressed.RegisterMousePressEvent(InvertSelection, MouseButtonType.Left);
+        piecesTab.FlipPieceButton.MousePressed.RegisterMousePressEvent(FlipSelection, MouseButtonType.Left);
+    }
+
+    private void RotateSelection(Component c, Point position)
+    {
+        _levelCanvas.RotateSelection();
+    }
+
+    private void InvertSelection(Component c, Point position)
+    {
+        _levelCanvas.InvertSelection();
+    }
+
+    private void FlipSelection(Component c, Point position)
+    {
+        _levelCanvas.FlipSelection();
     }
 
     private void SetLevelTitle(Component c)

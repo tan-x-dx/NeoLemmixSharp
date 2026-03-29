@@ -29,7 +29,6 @@ public sealed class LevelGlobalsControlPanelTab : Component
 
     public LevelGlobalsControlPanelTab()
     {
-        Width = LevelEditorControlPanel.LevelControlPanelWidth;
         Colors = UiConstants.LighterRectangularButtonColors;
 
         var y = UiConstants.StandardInset;
@@ -199,13 +198,9 @@ public sealed class LevelGlobalsControlPanelTab : Component
             Width = TextFieldWidth,
             Height = 36
         };
-        var generateNewLevelIdLabel = new TextLabel(0, y, "Generate new ID")
-        {
-            Left = TextFieldLeftPosition,
-            LabelOffsetX = 36,
-            LabelOffsetY = 10,
-            Colors = new ColorPacket(0xffbbbbbb)
-        };
+        var generateNewLevelIdLabel = GenerateNewLevelIdButton.AddTextLabel("Generate new ID", 36, 10, new ColorPacket(0xffbbbbbb));
+        generateNewLevelIdLabel.Left = TextFieldLeftPosition;
+        generateNewLevelIdLabel.Top = y;
 
         y = UiConstants.TwiceStandardInset + GenerateNewLevelIdButton.Bottom;
 
@@ -259,7 +254,6 @@ public sealed class LevelGlobalsControlPanelTab : Component
         AddChild(LevelIdTextField);
         AddChild(idLabel);
         AddChild(GenerateNewLevelIdButton);
-        AddChild(generateNewLevelIdLabel);
 
         AddChild(wrapHorizontalLabel);
         AddChild(WrapHorizontalCheckBox);

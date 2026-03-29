@@ -245,6 +245,18 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
         RepaintLevel();
     }
 
+    public void RotateSelection()
+    {
+    }
+
+    public void InvertSelection()
+    {
+    }
+
+    public void FlipSelection()
+    {
+    }
+
     int IComparer<CanvasPiece>.Compare(CanvasPiece? x, CanvasPiece? y)
     {
         if (ReferenceEquals(x, y)) return 0;

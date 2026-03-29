@@ -33,19 +33,13 @@ public sealed class LevelEditorControlPanel : Component
         levelGlobalsButton.Height = UiConstants.StandardButtonHeight;
         levelGlobalsButton.Colors = UiConstants.LighterRectangularButtonColors;
         levelGlobalsButton.MousePressed.RegisterMousePressEvent(OnSelectLevelGlobalsTab, MouseButtonType.Left);
-        var levelGlobalsTextLabel = new TextLabel("Globals")
-        {
-            Left = UiConstants.StandardInset + levelGlobalsButton.Left,
-            Top = UiConstants.StandardInset,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
+        var levelGlobalsTextLabel = levelGlobalsButton.AddTextLabel("Globals");
+        levelGlobalsTextLabel.Colors = UiConstants.AllBlackColors;
         LevelGlobalsTab = new LevelGlobalsControlPanelTab()
         {
             Top = levelGlobalsButton.Bottom
         };
         AddChild(levelGlobalsButton);
-        AddChild(levelGlobalsTextLabel);
         AddChild(LevelGlobalsTab);
 
 
@@ -56,19 +50,13 @@ public sealed class LevelEditorControlPanel : Component
         levelPiecesButton.Height = UiConstants.StandardButtonHeight;
         levelPiecesButton.Colors = UiConstants.LighterRectangularButtonColors;
         levelPiecesButton.MousePressed.RegisterMousePressEvent(OnSelectLevelPiecesTab, MouseButtonType.Left);
-        var levelPiecesTextLabel = new TextLabel("Pieces")
-        {
-            Left = UiConstants.StandardInset + levelPiecesButton.Left,
-            Top = UiConstants.StandardInset,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
+        var levelPiecesTextLabel = levelPiecesButton.AddTextLabel("Pieces");
+        levelPiecesTextLabel.Colors = UiConstants.AllBlackColors;
         LevelPiecesTab = new LevelPiecesControlPanelTab()
         {
             Top = levelPiecesButton.Bottom
         };
         AddChild(levelPiecesButton);
-        AddChild(levelPiecesTextLabel);
         AddChild(LevelPiecesTab);
 
 
@@ -79,19 +67,13 @@ public sealed class LevelEditorControlPanel : Component
         levelSkillsButton.Height = UiConstants.StandardButtonHeight;
         levelSkillsButton.Colors = UiConstants.LighterRectangularButtonColors;
         levelSkillsButton.MousePressed.RegisterMousePressEvent(OnSelectLevelSkillsTab, MouseButtonType.Left);
-        var levelSkillsTextLabel = new TextLabel("Skills")
-        {
-            Left = UiConstants.StandardInset + levelSkillsButton.Left,
-            Top = UiConstants.StandardInset,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
+        var levelSkillsTextLabel = levelSkillsButton.AddTextLabel("Skills");
+        levelSkillsTextLabel.Colors = UiConstants.AllBlackColors;
         LevelSkillsTab = new LevelSkillsControlPanelTab()
         {
             Top = levelSkillsButton.Bottom
         };
         AddChild(levelSkillsButton);
-        AddChild(levelSkillsTextLabel);
         AddChild(LevelSkillsTab);
 
 
@@ -102,19 +84,13 @@ public sealed class LevelEditorControlPanel : Component
         levelMiscButton.Height = UiConstants.StandardButtonHeight;
         levelMiscButton.Colors = UiConstants.LighterRectangularButtonColors;
         levelMiscButton.MousePressed.RegisterMousePressEvent(OnSelectLevelMiscTab, MouseButtonType.Left);
-        var levelMiscTextLabel = new TextLabel("Misc")
-        {
-            Left = UiConstants.StandardInset + levelMiscButton.Left,
-            Top = UiConstants.StandardInset,
-            LabelOffsetY = UiConstants.DefaultTextYOffset,
-            Colors = UiConstants.AllBlackColors
-        };
+        var levelMiscTextLabel = levelMiscButton.AddTextLabel("Misc");
+        levelMiscTextLabel.Colors = UiConstants.AllBlackColors;
         LevelMiscTab = new LevelMiscControlPanelTab()
         {
             Top = levelMiscButton.Bottom
         };
         AddChild(levelMiscButton);
-        AddChild(levelMiscTextLabel);
         AddChild(LevelMiscTab);
 
         SetSelectedTab(LevelGlobalsTab);
@@ -158,6 +134,7 @@ public sealed class LevelEditorControlPanel : Component
     public void SetLevelData(LevelData levelData)
     {
         LevelGlobalsTab.SetLevelData(levelData);
+        LevelPiecesTab.SetLevelData(levelData);
     }
 
     public void SetNumericalLevelData(LevelData levelData)
