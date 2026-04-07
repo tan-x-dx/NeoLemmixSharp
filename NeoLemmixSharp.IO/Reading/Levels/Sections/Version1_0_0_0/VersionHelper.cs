@@ -1,9 +1,12 @@
-﻿using NeoLemmixSharp.IO.Versions;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO.Versions;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.Sections.Version1_0_0_0;
 
 internal sealed class VersionHelper : ILevelDataSectionReaderVersionHelper
 {
+    public FileFormatVersion FileFormatVersion => new(1, 0, 0, 0);
+
     public LevelDataSectionReader[] GetLevelDataSectionReaders()
     {
         var stringIdLookup = new MutableFileReaderStringIdLookup();

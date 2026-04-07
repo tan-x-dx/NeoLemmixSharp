@@ -18,40 +18,36 @@ internal static class VersionHelper
 
     private static Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper> GetLevelWriterLookup()
     {
-        var result = new Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper>(1)
-        {
-            { new FileFormatVersion(1, 0, 0, 0), new Writing.Levels.Sections.Version1_0_0_0.VersionHelper() }
-        };
+        var result = new Dictionary<FileFormatVersion, ILevelDataSectionWriterVersionHelper>(1);
+
+        result.Put(new Writing.Levels.Sections.Version1_0_0_0.VersionHelper());
 
         return result;
     }
 
     private static Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper> GetLevelReaderLookup()
     {
-        var result = new Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper>(1)
-        {
-            { new FileFormatVersion(1, 0, 0, 0), new Reading.Levels.Sections.Version1_0_0_0.VersionHelper() }
-        };
+        var result = new Dictionary<FileFormatVersion, ILevelDataSectionReaderVersionHelper>(1);
+
+        result.Put(new Reading.Levels.Sections.Version1_0_0_0.VersionHelper());
 
         return result;
     }
 
     private static Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper> GetStyleWriterLookup()
     {
-        var result = new Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper>(1)
-        {
-            { new FileFormatVersion(1, 0, 0, 0), new Writing.Styles.Sections.Version1_0_0_0.VersionHelper() }
-        };
+        var result = new Dictionary<FileFormatVersion, IStyleDataSectionWriterVersionHelper>(1);
+
+        result.Put(new Writing.Styles.Sections.Version1_0_0_0.VersionHelper());
 
         return result;
     }
 
     private static Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper> GetStyleReaderLookup()
     {
-        var result = new Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper>(1)
-        {
-            { new FileFormatVersion(1, 0, 0, 0), new Reading.Styles.Sections.Version1_0_0_0.VersionHelper() }
-        };
+        var result = new Dictionary<FileFormatVersion, IStyleDataSectionReaderVersionHelper>(1);
+
+        result.Put(new Reading.Styles.Sections.Version1_0_0_0.VersionHelper());
 
         return result;
     }
@@ -107,5 +103,13 @@ internal static class VersionHelper
     private sealed class UnknownFileFormatVersionException(FileFormatVersion version, string message) : Exception(message)
     {
         public FileFormatVersion FileVersion { get; } = version;
+    }
+
+    private static void Put<TVersionHelper>(this Dictionary<FileFormatVersion, TVersionHelper> dictionary, TVersionHelper versionHelper)
+        where TVersionHelper : class, IVersionHelper
+    {
+        var fileFormatVersion = versionHelper.FileFormatVersion;
+
+        dictionary.Add(fileFormatVersion, versionHelper);
     }
 }
