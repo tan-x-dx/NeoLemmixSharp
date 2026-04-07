@@ -114,6 +114,9 @@ public sealed class UiHandler : IDisposable
             return;
         }
 
+        if (_inputController.LeftMouseButtonAction.IsHeld || _inputController.RightMouseButtonAction.IsHeld)
+            return;
+
         CurrentSelection.InvokeMouseExit(mousePosition);
 
         CurrentSelection = component;
