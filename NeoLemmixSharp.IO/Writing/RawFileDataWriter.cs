@@ -113,17 +113,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         byte* pointer = (byte*)byteBuffer.Handle + position;
         position = newPosition;
 
-        var mask = sizeof(T) - 1;
-
-        if (((int)pointer & mask) == 0)
-        {
-            // aligned write
-            *(T*)pointer = value;
-        }
-        else
-        {
-            Unsafe.WriteUnaligned(pointer, value);
-        }
+        Unsafe.WriteUnaligned(pointer, value);
     }
 
     public unsafe void WriteBytes(ReadOnlySpan<byte> data)
