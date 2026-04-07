@@ -2,7 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components;
 using System.Runtime.CompilerServices;
-using ButtonActionlist = System.Collections.Generic.List<NeoLemmixSharp.Ui.Events.MousePressEventHandler.ComponentMousePressAction>;
+using ButtonActionList = System.Collections.Generic.List<NeoLemmixSharp.Ui.Events.MousePressEventHandler.ComponentMousePressAction>;
 
 namespace NeoLemmixSharp.Ui.Events;
 
@@ -10,11 +10,11 @@ public sealed class MousePressEventHandler : IDisposable
 {
     public delegate void ComponentMousePressAction(Component c, Point position);
 
-    private ButtonActionlist? _leftButtonActions;
-    private ButtonActionlist? _middleButtonActions;
-    private ButtonActionlist? _rightButtonActions;
-    private ButtonActionlist? _mouse4ButtonActions;
-    private ButtonActionlist? _mouse5ButtonActions;
+    private ButtonActionList? _leftButtonActions;
+    private ButtonActionList? _middleButtonActions;
+    private ButtonActionList? _rightButtonActions;
+    private ButtonActionList? _mouse4ButtonActions;
+    private ButtonActionList? _mouse5ButtonActions;
 
     public void RegisterMousePressEvent(ComponentMousePressAction action, MouseButtonType mouseButtonType)
     {
@@ -37,7 +37,7 @@ public sealed class MousePressEventHandler : IDisposable
         }
     }
 
-    private ref ButtonActionlist? GetButtonActionListRef(MouseButtonType mouseButtonType)
+    private ref ButtonActionList? GetButtonActionListRef(MouseButtonType mouseButtonType)
     {
         switch (mouseButtonType)
         {
@@ -57,11 +57,11 @@ public sealed class MousePressEventHandler : IDisposable
                 return ref _mouse5ButtonActions;
 
             default:
-                Helpers.ThrowUnknownEnumValueException<MouseButtonType, ButtonActionlist>(mouseButtonType);
+                Helpers.ThrowUnknownEnumValueException<MouseButtonType, ButtonActionList>(mouseButtonType);
                 break;
         }
 
-        return ref Unsafe.NullRef<ButtonActionlist?>();
+        return ref Unsafe.NullRef<ButtonActionList?>();
     }
 
     public void Clear()
