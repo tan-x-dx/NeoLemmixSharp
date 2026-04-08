@@ -276,8 +276,8 @@ public static class BitArrayHelpers
         if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
 
-        ref uint sourceRef = ref MemoryMarshal.GetReference(span);
-        ref readonly uint otherRef = ref MemoryMarshal.GetReference(other);
+        ref uint sourceRef = ref Unsafe.NullRef<uint>();
+        ref readonly uint otherRef = ref Unsafe.NullRef<uint>();
 
         switch (spanLength)
         {
@@ -396,8 +396,8 @@ public static class BitArrayHelpers
         if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
 
-        ref uint sourceRef = ref MemoryMarshal.GetReference(span);
-        ref readonly uint otherRef = ref MemoryMarshal.GetReference(other);
+        ref uint sourceRef = ref Unsafe.NullRef<uint>();
+        ref readonly uint otherRef = ref Unsafe.NullRef<uint>();
 
         switch (spanLength)
         {
@@ -486,8 +486,8 @@ public static class BitArrayHelpers
         if (spanLength != otherLength)
             ThrowInvalidSpanLengthsException();
 
-        ref uint sourceRef = ref MemoryMarshal.GetReference(span);
-        ref readonly uint otherRef = ref MemoryMarshal.GetReference(other);
+        ref uint sourceRef = ref Unsafe.NullRef<uint>();
+        ref readonly uint otherRef = ref Unsafe.NullRef<uint>();
 
         switch (spanLength)
         {
