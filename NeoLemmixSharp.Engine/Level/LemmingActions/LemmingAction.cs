@@ -128,12 +128,12 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
             : NoneAction.Instance;
     }
 
-    public readonly string LemmingActionName;
-    public readonly string LemmingActionSpriteFileName;
-    public readonly int Id;
-    public readonly int NumberOfAnimationFrames;
-    public readonly int MaxPhysicsFrames;
-    public readonly int CursorSelectionPriorityValue;
+    public string LemmingActionName { get; }
+    public string LemmingActionSpriteFileName { get; }
+    public int Id { get; }
+    public int NumberOfAnimationFrames { get; }
+    public int MaxPhysicsFrames { get; }
+    public int CursorSelectionPriorityValue { get; }
     private readonly RectangularRegion _actionBounds;
 
     protected LemmingAction(

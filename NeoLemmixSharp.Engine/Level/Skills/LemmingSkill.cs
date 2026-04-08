@@ -185,8 +185,8 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     }
 
     private readonly LemmingActionSet _assignableActions;
-    public readonly string LemmingSkillName;
-    public readonly int Id;
+    public string LemmingSkillName { get; }
+    public int Id { get; }
 
     protected LemmingSkill(int id, string lemmingSkillName)
     {
