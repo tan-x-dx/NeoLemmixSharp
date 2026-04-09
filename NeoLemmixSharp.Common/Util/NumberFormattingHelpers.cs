@@ -38,7 +38,7 @@ public static class NumberFormattingHelpers
 
         for (var i = 0; i < source.Length; i++)
         {
-            var n = source[i];
+            var n = source.At(i);
 
             if (n < 0)
             {

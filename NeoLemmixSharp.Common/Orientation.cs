@@ -55,7 +55,7 @@ public static class OrientationConstants
     public static int IntCos(int theta) => IntSin(theta + 1);
 }
 
-public readonly struct Orientation : IEquatable<Orientation>
+public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
 {
     public static Orientation Down => new(OrientationConstants.DownOrientationRotNum);
     public static Orientation Left => new(OrientationConstants.LeftOrientationRotNum);
@@ -121,6 +121,8 @@ public readonly struct Orientation : IEquatable<Orientation>
     [Pure]
     [DebuggerStepThrough]
     public override int GetHashCode() => RotNum;
+
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
     [Pure]
     [DebuggerStepThrough]
     public override string ToString()
@@ -136,7 +138,7 @@ public readonly struct Orientation : IEquatable<Orientation>
         return OrientationNames[RotNum & 3];
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten)
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
         var constSpan = ToString().AsSpan();
         if (constSpan.TryCopyTo(destination))

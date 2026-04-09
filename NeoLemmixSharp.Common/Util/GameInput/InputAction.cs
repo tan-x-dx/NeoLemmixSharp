@@ -46,7 +46,10 @@ public sealed class InputAction : IEquatable<InputAction>
 
     public void SetEnabled(bool enable)
     {
-        _stateMask = enable ? EnabledMask : DisabledMask;
+        var newMask = DisabledMask;
+        if (enable)
+            newMask = EnabledMask;
+        _stateMask = newMask;
     }
 
     public int NumberOfFramesHeldDownFor => BitOperations.TrailingZeroCount(~_actionState);

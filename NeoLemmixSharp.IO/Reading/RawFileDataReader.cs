@@ -143,16 +143,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
         byte* pointer = (byte*)_byteBuffer.Handle + _position;
         _position = newPosition;
 
-        var mask = sizeof(T) - 1;
-        if (((int)pointer & mask) == 0)
-        {
-            // aligned read
-            return *(T*)pointer;
-        }
-        else
-        {
-            return Unsafe.ReadUnaligned<T>(pointer);
-        }
+        return Unsafe.ReadUnaligned<T>(pointer);
     }
 
     public unsafe ReadOnlySpan<byte> ReadBytes(int numberOfBytes)
@@ -184,9 +175,9 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     {
         var bytes = ReadBytes(4);
         return new Color(
-            alpha: bytes.At(0), 
+            alpha: bytes.At(0),
             r: bytes.At(1),
-            g: bytes.At(2), 
+            g: bytes.At(2),
             b: bytes.At(3));
     }
 

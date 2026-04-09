@@ -67,9 +67,6 @@ public sealed class UiHandler : IDisposable
     {
         RootComponent.Render(spriteBatch);
         CurrentMenu?.Render(spriteBatch);
-
-        if (_menuFontTextLabels.Count == 0)
-            return;
     }
 
     public bool HasMenuFontsToRender() => _menuFontTextLabels.Count > 0;
@@ -116,6 +113,9 @@ public sealed class UiHandler : IDisposable
             component.InvokeMouseMovement(mousePosition);
             return;
         }
+
+        if (_inputController.LeftMouseButtonAction.IsHeld || _inputController.RightMouseButtonAction.IsHeld)
+            return;
 
         CurrentSelection.InvokeMouseExit(mousePosition);
 
@@ -314,5 +314,9 @@ public sealed class UiHandler : IDisposable
     private sealed class Root : Component
     {
         public Root() : base(0, 0, 0, 0) { }
+
+        protected override void RenderComponent(SpriteBatch spriteBatch)
+        {
+        }
     }
 }

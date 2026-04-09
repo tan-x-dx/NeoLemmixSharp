@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.Common.Util.GameInput;
+﻿using System.Diagnostics.Contracts;
+
+namespace NeoLemmixSharp.Common.Util.GameInput;
 
 public readonly ref struct KeyboardInput(KeyboardInputType keyboardInputType, KeyboardInputModifiers inputModifiers, int numberOfFramesThisKeyHasBeenPressed, char keyboardChar, bool capslock)
 {
@@ -8,6 +10,7 @@ public readonly ref struct KeyboardInput(KeyboardInputType keyboardInputType, Ke
     public readonly KeyboardInputModifiers InputModifiers = inputModifiers;
     private readonly bool _capslock = capslock;
 
+    [Pure]
     public char GetCorrespondingChar()
     {
         var shiftDown = InputModifiers.ShiftDown();
@@ -27,6 +30,7 @@ public readonly ref struct KeyboardInput(KeyboardInputType keyboardInputType, Ke
         return _keyboardChar;
     }
 
+    [Pure]
     private static char GetShiftEquivalentChar(char c) => c switch
     {
         '0' => ')',

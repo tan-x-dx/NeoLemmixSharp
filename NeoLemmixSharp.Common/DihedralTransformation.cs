@@ -1,11 +1,12 @@
-﻿using System.ComponentModel;
+﻿using NeoLemmixSharp.Common.Util;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common;
 
-public readonly ref struct DihedralTransformation : IEquatable<DihedralTransformation>
+public readonly ref struct DihedralTransformation : IEquatable<DihedralTransformation>, ISpanFormattable
 {
     private const int FlipBitShift = 2;
 
@@ -156,20 +157,31 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         }
     }
 
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
     [Pure]
     [DebuggerStepThrough]
     [SkipLocalsInit]
     public override string ToString()
     {
         Span<char> buffer = stackalloc char[5 + 1 + 5];
-
-        Orientation.TryFormat(buffer, out var charsWritten);
-        buffer[charsWritten++] = '|';
-
-        FacingDirection.TryFormat(buffer[charsWritten..], out var c);
-        charsWritten += c;
-
+        TryFormat(buffer, out var charsWritten, default, null);
         return buffer[..charsWritten].ToString();
+    }
+
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+        if (destination.Length < 5 + 1 + 5)
+        {
+            charsWritten = 0;
+            return false;
+        }
+
+        Orientation.TryFormat(destination, out var c1, format, provider);
+
+        destination.At(c1++) = '|';
+        FacingDirection.TryFormat(destination[c1..], out var c2, format, provider);
+        charsWritten = c1 + c2;
+        return true;
     }
 
     [Pure]

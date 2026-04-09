@@ -37,67 +37,37 @@ public sealed class LevelEditorMenuBar : Component
         {
             Colors = MenuButtonColors
         };
-        var fileTextLabel = new TextLabel("File")
-        {
-            Left = fileButton.Left + TextLabelXOffset,
-            Top = fileButton.Top + TextLabelYOffset,
-            Colors = AllWhiteColors
-        };
+        fileButton.AddTextLabel("File", TextLabelXOffset, TextLabelYOffset, AllWhiteColors);
 
         var editButton = new Button(fileButton.Right + StandardInset, StandardInset, 64, MenuBarButtonHeight)
         {
             Colors = MenuButtonColors
         };
-        var editTextLabel = new TextLabel("Edit")
-        {
-            Left = editButton.Left + TextLabelXOffset,
-            Top = editButton.Top + TextLabelYOffset,
-            Colors = AllWhiteColors
-        };
+        editButton.AddTextLabel("Edit", TextLabelXOffset, TextLabelYOffset, AllWhiteColors);
 
         var viewButton = new Button(editButton.Right + StandardInset, StandardInset, 64, MenuBarButtonHeight)
         {
             Colors = MenuButtonColors
         };
-        var viewTextLabel = new TextLabel("View")
-        {
-            Left = viewButton.Left + TextLabelXOffset,
-            Top = viewButton.Top + TextLabelYOffset,
-            Colors = AllWhiteColors
-        };
+        viewButton.AddTextLabel("View", TextLabelXOffset, TextLabelYOffset, AllWhiteColors);
 
         var toolsButton = new Button(viewButton.Right + StandardInset, StandardInset, 72, MenuBarButtonHeight)
         {
             Colors = MenuButtonColors
         };
-        var toolsTextLabel = new TextLabel("Tools")
-        {
-            Left = toolsButton.Left + TextLabelXOffset,
-            Top = toolsButton.Top + TextLabelYOffset,
-            Colors = AllWhiteColors
-        };
+        toolsButton.AddTextLabel("Tools", TextLabelXOffset, TextLabelYOffset, AllWhiteColors);
 
         var optionsButton = new Button(toolsButton.Right + StandardInset, StandardInset, 84, MenuBarButtonHeight)
         {
             Colors = MenuButtonColors
         };
-        var optionsTextLabel = new TextLabel("Options")
-        {
-            Left = optionsButton.Left + TextLabelXOffset,
-            Top = optionsButton.Top + TextLabelYOffset,
-            Colors = AllWhiteColors
-        };
+        optionsButton.AddTextLabel("Options", TextLabelXOffset, TextLabelYOffset, AllWhiteColors);
 
         AddChild(fileButton);
-        AddChild(fileTextLabel);
         AddChild(editButton);
-        AddChild(editTextLabel);
         AddChild(viewButton);
-        AddChild(viewTextLabel);
         AddChild(toolsButton);
-        AddChild(toolsTextLabel);
         AddChild(optionsButton);
-        AddChild(optionsTextLabel);
 
         fileButton.MousePressed.RegisterMousePressEvent(OnFileButtonPress, MouseButtonType.Left);
         editButton.MousePressed.RegisterMousePressEvent(OnEditButtonPress, MouseButtonType.Left);
@@ -209,19 +179,13 @@ public sealed class LevelEditorMenuBar : Component
                 };
             }
 
-            var buttonLabel = new TextLabel(buttonDefinition.ButtonLabel)
-            {
-                Left = button.Left + TextLabelXOffset + xOffset,
-                Top = button.Top + 8,
-                Colors = AllWhiteColors
-            };
+            var buttonLabel = button.AddTextLabel(buttonDefinition.ButtonLabel, TextLabelXOffset + xOffset, 8, AllWhiteColors);
 
             y += StandardButtonHeight;
 
             if (checkBox is not null)
                 result.AddChild(checkBox);
             result.AddChild(button);
-            result.AddChild(buttonLabel);
         }
 
         result.Height = y;

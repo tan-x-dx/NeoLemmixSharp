@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(ushort))]
-public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEquatable<FileFormatVersion>
+public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEquatable<FileFormatVersion>, ISpanFormattable
 {
     [FieldOffset(0 * sizeof(ushort))] private readonly ulong _allBits;
 
@@ -50,15 +50,16 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
         return _allBits.CompareTo(value._allBits);
     }
 
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
     [SkipLocalsInit]
     public override string ToString()
     {
         Span<char> charBuffer = stackalloc char[1 + (NumberFormattingHelpers.Uint16NumberBufferLength * 4) + 3 + 1];
-        TryFormat(charBuffer, out var charsWritten);
+        TryFormat(charBuffer, out var charsWritten, default, null);
         return charBuffer[..charsWritten].ToString();
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten)
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
         ReadOnlySpan<int> components = [Major, Minor, Build, Revision];
         var formatParameters = new NumberFormattingHelpers.FormatParameters('[', '.', ']');

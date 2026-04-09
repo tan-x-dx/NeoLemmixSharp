@@ -12,6 +12,7 @@ using NeoLemmixSharp.Menu.LevelEditor.ChangeSet;
 using NeoLemmixSharp.Menu.LevelEditor.Components.Canvas;
 using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
 using NeoLemmixSharp.Menu.LevelEditor.Menu;
+using NeoLemmixSharp.Menu.LevelEditor.Menu.ControlPanel;
 using NeoLemmixSharp.Menu.Pages;
 using NeoLemmixSharp.Ui.Components;
 using System.Diagnostics.CodeAnalysis;
@@ -49,7 +50,6 @@ public sealed partial class LevelEditorPage : PageBase
         MenuScreen.Instance.MenuScreenRenderer.RenderBackground = false;
 
         var root = UiHandler.RootComponent;
-        root.IsVisible = false;
         root.AddChild(_levelCanvas);
         root.AddChild(_menuBar);
         root.AddChild(_controlPanel);
@@ -93,6 +93,7 @@ public sealed partial class LevelEditorPage : PageBase
         _controlPanel.Left = 0;
         _controlPanel.Top = _menuBar.Height;
         _controlPanel.Height = windowSize.H - _menuBar.Height - _pieceBank.Height;
+        _controlPanel.OnResize();
 
         _pieceBank.Left = 0;
         _pieceBank.Top = windowSize.H - _pieceBank.Height;
@@ -167,20 +168,41 @@ public sealed partial class LevelEditorPage : PageBase
 
     private void SetUpHandlers()
     {
-        _controlPanel.TitleTextField.TextSubmit.RegisterEvent(SetLevelTitle);
-        _controlPanel.AuthorTextField.TextSubmit.RegisterEvent(SetLevelAuthor);
-        _controlPanel.MusicTextField.TextSubmit.RegisterEvent(SetLevelMusic);
+        var globalsTab = _controlPanel.LevelGlobalsTab;
+        globalsTab.TitleTextField.TextSubmit.RegisterEvent(SetLevelTitle);
+        globalsTab.AuthorTextField.TextSubmit.RegisterEvent(SetLevelAuthor);
+        globalsTab.MusicTextField.TextSubmit.RegisterEvent(SetLevelMusic);
 
-        _controlPanel.LevelWidthTextField.TextSubmit.RegisterEvent(SetLevelWidth);
-        _controlPanel.LevelHeightTextField.TextSubmit.RegisterEvent(SetLevelHeight);
+        globalsTab.LevelWidthTextField.TextSubmit.RegisterEvent(SetLevelWidth);
+        globalsTab.LevelHeightTextField.TextSubmit.RegisterEvent(SetLevelHeight);
 
-        _controlPanel.LevelIdTextField.TextSubmit.RegisterEvent(SetLevelId);
-        _controlPanel.GenerateNewLevelIdButton.MouseReleased.RegisterMousePressEvent(GenerateNewLevelId, MouseButtonType.Left);
+        globalsTab.LevelIdTextField.TextSubmit.RegisterEvent(SetLevelId);
+        globalsTab.GenerateNewLevelIdButton.MouseReleased.RegisterMousePressEvent(GenerateNewLevelId, MouseButtonType.Left);
 
-        _controlPanel.WrapHorizontalCheckBox.OnChecked.RegisterEvent(SetWrapHorizontal);
-        _controlPanel.WrapHorizontalCheckBox.OnUnchecked.RegisterEvent(SetWrapHorizontal);
-        _controlPanel.WrapVerticalCheckBox.OnChecked.RegisterEvent(SetWrapVertical);
-        _controlPanel.WrapVerticalCheckBox.OnUnchecked.RegisterEvent(SetWrapVertical);
+        globalsTab.WrapHorizontalCheckBox.OnChecked.RegisterEvent(SetWrapHorizontal);
+        globalsTab.WrapHorizontalCheckBox.OnUnchecked.RegisterEvent(SetWrapHorizontal);
+        globalsTab.WrapVerticalCheckBox.OnChecked.RegisterEvent(SetWrapVertical);
+        globalsTab.WrapVerticalCheckBox.OnUnchecked.RegisterEvent(SetWrapVertical);
+
+        var piecesTab = _controlPanel.LevelPiecesTab;
+        piecesTab.RotatePieceButton.MousePressed.RegisterMousePressEvent(RotateSelection, MouseButtonType.Left);
+        piecesTab.InvertPieceButton.MousePressed.RegisterMousePressEvent(InvertSelection, MouseButtonType.Left);
+        piecesTab.FlipPieceButton.MousePressed.RegisterMousePressEvent(FlipSelection, MouseButtonType.Left);
+    }
+
+    private void RotateSelection(Component c, Point position)
+    {
+        _levelCanvas.RotateSelection();
+    }
+
+    private void InvertSelection(Component c, Point position)
+    {
+        _levelCanvas.InvertSelection();
+    }
+
+    private void FlipSelection(Component c, Point position)
+    {
+        _levelCanvas.FlipSelection();
     }
 
     private void SetLevelTitle(Component c)

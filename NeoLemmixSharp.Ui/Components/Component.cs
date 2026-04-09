@@ -210,8 +210,10 @@ public abstract class Component : IDisposable
 
     public virtual void Render(SpriteBatch spriteBatch)
     {
-        if (_isVisible)
-            RenderComponent(spriteBatch);
+        if (!_isVisible)
+            return;
+
+        RenderComponent(spriteBatch);
         RenderChildren(spriteBatch);
     }
 

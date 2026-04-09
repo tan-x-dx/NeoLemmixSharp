@@ -54,7 +54,6 @@ public sealed class MainPage : PageBase
     protected override void OnInitialise()
     {
         var root = UiHandler.RootComponent;
-        root.IsVisible = false;
 
         root.AddChild(_playButton);
         root.AddChild(_levelSelectButton);

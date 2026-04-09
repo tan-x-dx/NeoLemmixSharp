@@ -5,13 +5,12 @@ using NeoLemmixSharp.Ui.Components.Buttons;
 using NeoLemmixSharp.Ui.Data;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Menu.LevelEditor.Menu;
+namespace NeoLemmixSharp.Menu.LevelEditor.Menu.ControlPanel;
 
-public sealed class LevelEditorControlPanel : Component
+public sealed class LevelGlobalsControlPanelTab : Component
 {
-    private const int LevelControlPanelWidth = 280;
     private const int TextFieldLeftPosition = 72;
-    private const int TextFieldWidth = LevelControlPanelWidth - TextFieldLeftPosition - UiConstants.StandardInset;
+    private const int TextFieldWidth = LevelEditorControlPanel.LevelControlPanelWidth - TextFieldLeftPosition - UiConstants.StandardInset;
 
     public TextField TitleTextField { get; }
     public TextField AuthorTextField { get; }
@@ -28,9 +27,8 @@ public sealed class LevelEditorControlPanel : Component
     public CheckBox WrapHorizontalCheckBox { get; }
     public CheckBox WrapVerticalCheckBox { get; }
 
-    public LevelEditorControlPanel()
+    public LevelGlobalsControlPanelTab()
     {
-        Width = LevelControlPanelWidth;
         Colors = UiConstants.LighterRectangularButtonColors;
 
         var y = UiConstants.StandardInset;
@@ -200,13 +198,9 @@ public sealed class LevelEditorControlPanel : Component
             Width = TextFieldWidth,
             Height = 36
         };
-        var generateNewLevelIdLabel = new TextLabel(0, y, "Generate new ID")
-        {
-            Left = TextFieldLeftPosition,
-            LabelOffsetX = 36,
-            LabelOffsetY = 10,
-            Colors = new ColorPacket(0xffbbbbbb)
-        };
+        var generateNewLevelIdLabel = GenerateNewLevelIdButton.AddTextLabel("Generate new ID", 36, 10, new ColorPacket(0xffbbbbbb));
+        generateNewLevelIdLabel.Left = TextFieldLeftPosition;
+        generateNewLevelIdLabel.Top = y;
 
         y = UiConstants.TwiceStandardInset + GenerateNewLevelIdButton.Bottom;
 
@@ -260,7 +254,6 @@ public sealed class LevelEditorControlPanel : Component
         AddChild(LevelIdTextField);
         AddChild(idLabel);
         AddChild(GenerateNewLevelIdButton);
-        AddChild(generateNewLevelIdLabel);
 
         AddChild(wrapHorizontalLabel);
         AddChild(WrapHorizontalCheckBox);
