@@ -14,19 +14,19 @@ public static class BitArrayHelpers
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int CalculateBitArrayBufferLength(int length) => (length + Mask) >>> Shift;
+    public static int CalculateBitArrayBufferLength(int requiredCapacity) => (requiredCapacity + Mask) >>> Shift;
 
     [Pure]
-    public static uint[] CreateBitArray(int length, bool setAllBits)
+    public static uint[] CreateBitArray(int requiredCapacity, bool setAllBits)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(length);
-        var arrayLength = CalculateBitArrayBufferLength(length);
+        ArgumentOutOfRangeException.ThrowIfNegative(requiredCapacity);
+        var arrayLength = CalculateBitArrayBufferLength(requiredCapacity);
         if (arrayLength == 0)
             return Array.Empty<uint>();
 
         var result = new uint[arrayLength];
         if (setAllBits)
-            PopulateBitArray(result, length);
+            PopulateBitArray(result, requiredCapacity);
 
         return result;
     }
