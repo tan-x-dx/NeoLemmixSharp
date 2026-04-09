@@ -455,11 +455,11 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             var allBitsHandle = (nint)_allBitsPointer;
             var previousItemPositionsHandle = (nint)_previousItemPositionsPointer;
 
-            if (cachedQueryScratchSpaceHandle != nint.Zero)
+            if (cachedQueryScratchSpaceHandle != 0)
                 Marshal.FreeHGlobal(cachedQueryScratchSpaceHandle);
-            if (allBitsHandle != nint.Zero)
+            if (allBitsHandle != 0)
                 Marshal.FreeHGlobal(allBitsHandle);
-            if (previousItemPositionsHandle != nint.Zero)
+            if (previousItemPositionsHandle != 0)
                 Marshal.FreeHGlobal(previousItemPositionsHandle);
         }
 
