@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
-public readonly struct Interval : IEquatable<Interval>
+public readonly struct Interval : IEquatable<Interval>, ISpanFormattable
 {
     public readonly int Start;
     public readonly int Length;
@@ -34,15 +34,16 @@ public readonly struct Interval : IEquatable<Interval>
     public static bool operator ==(Interval left, Interval right) => left.Equals(right);
     public static bool operator !=(Interval left, Interval right) => !left.Equals(right);
 
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
     [SkipLocalsInit]
     public override string ToString()
     {
         Span<char> buffer = stackalloc char[1 + NumberFormattingHelpers.Int32NumberBufferLength + 1 + NumberFormattingHelpers.Uint32NumberBufferLength + 1];
-        TryFormat(buffer, out var charsWritten);
+        TryFormat(buffer, out var charsWritten, default, null);
         return buffer[..charsWritten].ToString();
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten)
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
         var source = MemoryMarshal.CreateReadOnlySpan(in Start, 2);
         return NumberFormattingHelpers.TryFormatIntegerSpan(source, destination, NumberFormattingHelpers.FormatParameters.Default, out charsWritten);

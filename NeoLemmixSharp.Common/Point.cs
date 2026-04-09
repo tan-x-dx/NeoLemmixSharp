@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
-public readonly struct Point : IEquatable<Point>
+public readonly struct Point : IEquatable<Point>, ISpanFormattable
 {
     [FieldOffset(0 * sizeof(int))] public readonly int X;
     [FieldOffset(1 * sizeof(int))] public readonly int Y;
@@ -48,15 +48,16 @@ public readonly struct Point : IEquatable<Point>
     [DebuggerStepThrough]
     public static bool operator !=(Point left, Point right) => !left.Equals(right);
 
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
     [SkipLocalsInit]
     public override string ToString()
     {
         Span<char> buffer = stackalloc char[1 + NumberFormattingHelpers.Int32NumberBufferLength + 1 + NumberFormattingHelpers.Int32NumberBufferLength + 1];
-        TryFormat(buffer, out var charsWritten);
+        TryFormat(buffer, out var charsWritten, default, null);
         return buffer[..charsWritten].ToString();
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten)
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
         var source = MemoryMarshal.CreateReadOnlySpan(in X, 2);
         return NumberFormattingHelpers.TryFormatIntegerSpan(source, destination, NumberFormattingHelpers.FormatParameters.Default, out charsWritten);

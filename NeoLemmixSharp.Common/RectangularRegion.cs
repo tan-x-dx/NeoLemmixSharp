@@ -16,7 +16,7 @@ namespace NeoLemmixSharp.Common;
 /// </summary>
 [SkipLocalsInit]
 [StructLayout(LayoutKind.Explicit, Size = RectangularRegionSize)]
-public readonly struct RectangularRegion : IEquatable<RectangularRegion>
+public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanFormattable
 {
     private const int RectangularRegionSize = 4 * sizeof(int);
 
@@ -223,21 +223,22 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>
         2239063 * W +
         8554379 * H;
 
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
     [Pure]
     [SkipLocalsInit]
     public override string ToString()
     {
         Span<char> buffer = stackalloc char[(1 + NumberFormattingHelpers.Int32NumberBufferLength + 1 + NumberFormattingHelpers.Uint32NumberBufferLength + 1) * 2];
-        TryFormat(buffer, out var charsWritten);
+        TryFormat(buffer, out var charsWritten, default, null);
         return buffer[..charsWritten].ToString();
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten)
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        if (!Position.TryFormat(destination, out charsWritten))
+        if (!Position.TryFormat(destination, out charsWritten, format, provider))
             return false;
 
-        var result = Size.TryFormat(destination[charsWritten..], out var c);
+        var result = Size.TryFormat(destination[charsWritten..], out var c, format, provider);
         charsWritten += c;
         return result;
     }

@@ -17,7 +17,7 @@ public static class FacingDirectionConstants
     public const string LeftFacingDirectionName = "Left";
 }
 
-public readonly struct FacingDirection : IEquatable<FacingDirection>
+public readonly struct FacingDirection : IEquatable<FacingDirection>, ISpanFormattable
 {
     public static FacingDirection Right => new(FacingDirectionConstants.RightFacingDirectionId);
     public static FacingDirection Left => new(FacingDirectionConstants.LeftFacingDirectionId);
@@ -56,6 +56,8 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>
     [Pure]
     [DebuggerStepThrough]
     public override int GetHashCode() => Id;
+
+    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
     [Pure]
     [DebuggerStepThrough]
     public override string ToString()
@@ -69,7 +71,7 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>
         return FacingDirectionNames[Id & 1];
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten)
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
         var constSpan = ToString().AsSpan();
         if (constSpan.TryCopyTo(destination))
