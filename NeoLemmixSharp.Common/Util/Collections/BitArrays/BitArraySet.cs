@@ -136,11 +136,11 @@ public sealed class BitArraySet<TPerfectHasher, TBuffer, T> : ISet<T>, IReadOnly
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitArrayEnumerable<TPerfectHasher, T> AsEnumerable() => new(_hasher, _bits.AsReadOnlySpan(), _popCount);
+    public BitArrayEnumerable<TPerfectHasher, T> AsEnumerable() => new(_bits.AsReadOnlySpan(), _popCount, _hasher);
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitArrayEnumerator<TPerfectHasher, T> GetEnumerator() => new(_hasher, _bits.AsReadOnlySpan());
+    public BitArrayEnumerator<TPerfectHasher, T> GetEnumerator() => new(_bits.AsReadOnlySpan(), _hasher);
     [Pure]
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ReferenceTypeEnumerator(this);
     [Pure]

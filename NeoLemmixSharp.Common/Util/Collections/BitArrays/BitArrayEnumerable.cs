@@ -15,14 +15,14 @@ public readonly ref struct BitArrayEnumerable<TPerfectHasher, T>
     public readonly int Count;
     private readonly TPerfectHasher _hasher;
 
-    internal BitArrayEnumerable(TPerfectHasher hasher, ReadOnlySpan<uint> bits, int count)
+    internal BitArrayEnumerable(ReadOnlySpan<uint> bits, int count, TPerfectHasher hasher)
     {
-        _hasher = hasher;
         _bits = bits;
         Count = count;
+        _hasher = hasher;
     }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public BitArrayEnumerator<TPerfectHasher, T> GetEnumerator() => new(_hasher, _bits);
+    public BitArrayEnumerator<TPerfectHasher, T> GetEnumerator() => new(_bits, _hasher);
 }

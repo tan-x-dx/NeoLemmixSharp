@@ -106,7 +106,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         var chunkSpan = Helpers.CreateReadOnlySpan<uint>(chunkPointer, _bitArraySize);
         var popCount = BitArrayHelpers.GetPopCount(chunkPointer, _bitArraySize);
 
-        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, chunkSpan, popCount);
+        result = new BitArrayEnumerable<TPerfectHasher, T>(chunkSpan, popCount, _hasher);
     }
 
     /// <summary>
@@ -132,7 +132,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             _cachedBottomRightChunkQuery == bottomRightChunk)
         {
             // If we've already got the data cached, just use it
-            result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, Helpers.CreateReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize), _cachedQueryPopCount);
+            result = new BitArrayEnumerable<TPerfectHasher, T>(Helpers.CreateReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize), _cachedQueryPopCount, _hasher);
         }
         else
         {
@@ -151,9 +151,9 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
         _cachedQueryPopCount = BitArrayHelpers.GetPopCount(_cachedQueryScratchSpacePointer, _bitArraySize);
         result = new BitArrayEnumerable<TPerfectHasher, T>(
-            _hasher,
             Helpers.CreateReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize),
-            _cachedQueryPopCount);
+            _cachedQueryPopCount,
+            _hasher);
     }
 
     private void CacheLatestQuery()
