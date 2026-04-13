@@ -143,14 +143,14 @@ public static class NumberFormattingHelpers
 
     public static unsafe void WriteHexDigits(char* pointer, ulong valueToWrite)
     {
-        ReadOnlySpan<char> HexDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+        ReadOnlySpan<byte> HexDigits = "0123456789ABCDEF"u8;
 
         var length = 15;
 
         do
         {
             var rem = (int)(valueToWrite & 15);
-            var charToWrite = HexDigits.At(rem);
+            var charToWrite = (char)HexDigits.At(rem);
             valueToWrite >>>= 4;
 
             pointer[length] = charToWrite;

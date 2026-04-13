@@ -50,13 +50,21 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
         return _allBits.CompareTo(value._allBits);
     }
 
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
+    [Pure]
+    [DebuggerStepThrough]
     [SkipLocalsInit]
-    public override string ToString()
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
         Span<char> charBuffer = stackalloc char[1 + (NumberFormattingHelpers.Uint16NumberBufferLength * 4) + 3 + 1];
-        TryFormat(charBuffer, out var charsWritten, default, null);
+        TryFormat(charBuffer, out var charsWritten, format, formatProvider);
         return charBuffer[..charsWritten].ToString();
+    }
+
+    [Pure]
+    [DebuggerStepThrough]
+    public override string ToString()
+    {
+        return ToString(default, null);
     }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)

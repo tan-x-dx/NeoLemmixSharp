@@ -5,6 +5,10 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class ViewPortRotationController
 {
+    // t = theta
+    // W' = Hsint + Wcost
+    // H' = Hcost + Wsint
+
     private const float Pi = MathF.PI;
     private const float PiByTwo = MathF.PI / 2.0f;
     private const float NegativePiByTwo = MathF.PI / -2.0f;

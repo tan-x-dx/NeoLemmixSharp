@@ -101,13 +101,21 @@ public readonly struct Size : IEquatable<Size>, ISpanFormattable
     [DebuggerStepThrough]
     public static bool operator !=(Size left, Size right) => !left.Equals(right);
 
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
+    [Pure]
+    [DebuggerStepThrough]
     [SkipLocalsInit]
-    public override string ToString()
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
         Span<char> buffer = stackalloc char[1 + NumberFormattingHelpers.Uint32NumberBufferLength + 1 + NumberFormattingHelpers.Uint32NumberBufferLength + 1];
-        TryFormat(buffer, out var charsWritten, default, null);
+        TryFormat(buffer, out var charsWritten, format, formatProvider);
         return buffer[..charsWritten].ToString();
+    }
+
+    [Pure]
+    [DebuggerStepThrough]
+    public override string ToString()
+    {
+        return ToString(default, null);
     }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
