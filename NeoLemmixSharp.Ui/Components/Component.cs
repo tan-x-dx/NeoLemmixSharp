@@ -28,8 +28,8 @@ public abstract class Component : IDisposable
     private KeyboardEventHandler? _keyReleased;
     public IMouseCollision CollisionBehaviour { get; set; } = IMouseCollision.RectangularCollisionInstance;
 
-    public Point Position { get; private set; }
-    public Size Dimensions { get; private set; }
+    public Point Position { get; private set; } = new(0, 0);
+    public Size Dimensions { get; private set; } = new(UiConstants.StandardButtonHeight, UiConstants.StandardButtonHeight);
 
     private ColorPacket _colourPacket;
 
@@ -52,11 +52,6 @@ public abstract class Component : IDisposable
 
     protected Component()
     {
-        Left = 0;
-        Top = 0;
-
-        Width = 10;
-        Height = 10;
         _colourPacket = UiConstants.RectangularButtonDefaultColors;
     }
 
@@ -273,10 +268,10 @@ public abstract class Component : IDisposable
     internal bool HasChildren() => _children != null;
 
     [Pure]
-    internal Component? GetParent() => _parent;
+    public Component? GetParent() => _parent;
 
     [Pure]
-    internal Component GetTopParent()
+    public Component GetTopParent()
     {
         Component parent = this;
 

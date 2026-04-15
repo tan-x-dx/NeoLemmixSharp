@@ -12,8 +12,8 @@ public sealed class UiHandler : IDisposable
     private readonly InputHandler _inputController;
     private readonly List<TextLabel> _menuFontTextLabels = [];
     private readonly List<Component> _componentsThatShouldBeTicked = [];
+    private readonly List<PopupMenu> _popupMenus = [];
     private TextField? _selectedTextField;
-    private PopupMenu? _currentMenu;
 
     internal InputHandler InputController => _inputController;
 
@@ -40,19 +40,7 @@ public sealed class UiHandler : IDisposable
         }
     }
 
-    public PopupMenu? CurrentMenu
-    {
-        get => _currentMenu;
-        private set
-        {
-            if (_currentMenu == value)
-                return;
-
-            var currentMenu = _currentMenu;
-            _currentMenu = value;
-            currentMenu?.CloseMenu();
-        }
-    }
+    public PopupMenu? CurrentMenu => _popupMenus.Count == 0 ? null : _popupMenus[^1];
 
     public UiHandler(InputHandler inputController)
     {
@@ -66,7 +54,11 @@ public sealed class UiHandler : IDisposable
     public void Render(SpriteBatch spriteBatch)
     {
         RootComponent.Render(spriteBatch);
-        CurrentMenu?.Render(spriteBatch);
+
+        foreach (var menu in _popupMenus)
+        {
+            menu.Render(spriteBatch);
+        }
     }
 
     public bool HasMenuFontsToRender() => _menuFontTextLabels.Count > 0;
@@ -250,12 +242,12 @@ public sealed class UiHandler : IDisposable
 
     public void OpenPopupMenu(PopupMenu popupMenu)
     {
-        CurrentMenu = popupMenu;
+        _popupMenus.Add(popupMenu);
     }
 
-    public void ClosePopupMenu()
+    public void ClosePopupMenu(PopupMenu popupMenu)
     {
-        CurrentMenu = null;
+        _popupMenus.Remove(popupMenu);
     }
 
     internal void RegisterTextLabelForShaderRendering(TextLabel textLabel)
@@ -286,9 +278,9 @@ public sealed class UiHandler : IDisposable
     {
         _componentsThatShouldBeTicked.Clear();
         _menuFontTextLabels.Clear();
+        _popupMenus.Clear();
 
         SelectedTextField = null;
-        CurrentMenu = null;
         CurrentSelection = RootComponent;
         RootComponent.Dispose();
         Instance = null!;
@@ -304,8 +296,8 @@ public sealed class UiHandler : IDisposable
         if (component == SelectedTextField)
             SelectedTextField = null;
 
-        if (component == CurrentMenu)
-            CurrentMenu = null;
+        if (component is PopupMenu popupMenu)
+            _popupMenus.Remove(popupMenu);
 
         if (component == CurrentSelection)
             CurrentSelection = RootComponent;

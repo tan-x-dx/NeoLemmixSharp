@@ -25,11 +25,15 @@ public sealed class LevelEditorMenuBar : Component
         Color.CornflowerBlue
     );
 
+    private readonly Dictionary<Component, PopupMenu> _buttonMenuMapping;
+
     private IEditorOperationHandler _buttonHandler;
 
     public LevelEditorMenuBar(IEditorOperationHandler buttonHandler)
     {
         _buttonHandler = buttonHandler;
+        _buttonMenuMapping = new Dictionary<Component, PopupMenu>(5);
+
         Height = LevelEditorMenuBarHeight;
         Colors = LighterRectangularButtonColors;
 
@@ -69,30 +73,22 @@ public sealed class LevelEditorMenuBar : Component
         AddChild(toolsButton);
         AddChild(optionsButton);
 
-        fileButton.MousePressed.RegisterMousePressEvent(OnFileButtonPress, MouseButtonType.Left);
-        editButton.MousePressed.RegisterMousePressEvent(OnEditButtonPress, MouseButtonType.Left);
-        viewButton.MousePressed.RegisterMousePressEvent(OnViewButtonPress, MouseButtonType.Left);
-        toolsButton.MousePressed.RegisterMousePressEvent(OnToolsButtonPress, MouseButtonType.Left);
-        optionsButton.MousePressed.RegisterMousePressEvent(OnOptionsButtonPress, MouseButtonType.Left);
-    }
+        fileButton.MousePressed.RegisterMousePressEvent(OpenPopupMenu, MouseButtonType.Left);
+        editButton.MousePressed.RegisterMousePressEvent(OpenPopupMenu, MouseButtonType.Left);
+        viewButton.MousePressed.RegisterMousePressEvent(OpenPopupMenu, MouseButtonType.Left);
+        toolsButton.MousePressed.RegisterMousePressEvent(OpenPopupMenu, MouseButtonType.Left);
+        optionsButton.MousePressed.RegisterMousePressEvent(OpenPopupMenu, MouseButtonType.Left);
 
-    private void OnFileButtonPress(Component c, Common.Point position)
-    {
-        var fileMenu = CreatePopupMenu(
-            c,
+        CreatePopupMenu(
+            fileButton,
             new ButtonDefinition("New (Ctrl + N)", _buttonHandler.OnNewLevel),
             new ButtonDefinition("Open (Ctrl + O)", _buttonHandler.OnFileOpen),
             new ButtonDefinition("Save (Ctrl + S)", _buttonHandler.OnSaveLevel),
             new ButtonDefinition("Save As (Ctrl + Shift + S)", _buttonHandler.OnSaveLevelAs),
             new ButtonDefinition("Exit (Esc)", _buttonHandler.OnExit));
 
-        UiHandler.Instance.OpenPopupMenu(fileMenu);
-    }
-
-    private void OnEditButtonPress(Component c, Common.Point position)
-    {
-        var editMenu = CreatePopupMenu(
-            c,
+        CreatePopupMenu(
+            editButton,
             new ButtonDefinition("Undo (Ctrl + Z)", _buttonHandler.EditorUndo),
             new ButtonDefinition("Redo (Ctrl + Y)", _buttonHandler.EditorRedo),
             new ButtonDefinition("Cut (Ctrl + X)", _buttonHandler.EditorCut),
@@ -103,105 +99,165 @@ public sealed class LevelEditorMenuBar : Component
             new ButtonDefinition("Group (G)", _buttonHandler.EditorGroup),
             new ButtonDefinition("Ungroup (H)", _buttonHandler.EditorUngroup));
 
-        UiHandler.Instance.OpenPopupMenu(editMenu);
-    }
+        CreatePopupMenu(
+            viewButton,
+            new ToggleButtonDefinition("Clear Physics (F1)", _buttonHandler.ToggleClearPhysics),
+            new ToggleButtonDefinition("Terrain Rendering (F2)", _buttonHandler.ToggleTerrainRendering),
+            new ToggleButtonDefinition("Gadget Rendering (F3)", _buttonHandler.ToggleGadgetRendering),
+            new ToggleButtonDefinition("Trigger Areas (F4)", _buttonHandler.ToggleTriggerAreaRendering),
+            new ToggleButtonDefinition("Screen Start (F5)", _buttonHandler.ToggleScreenStartRendering),
+            new ToggleButtonDefinition("Background Image (F6)", _buttonHandler.ToggleBackgroundRendering),
+            new ToggleButtonDefinition("Deprecated Pieces (F7)", _buttonHandler.ToggleDeprecatedPieces));
 
-    private void OnViewButtonPress(Component c, Common.Point position)
-    {
-        var viewMenu = CreatePopupMenu(
-            c,
-            new ButtonDefinition("Clear Physics (F1)", _buttonHandler.ToggleClearPhysics, true),
-            new ButtonDefinition("Terrain Rendering (F2)", _buttonHandler.ToggleTerrainRendering, true),
-            new ButtonDefinition("Gadget Rendering (F3)", _buttonHandler.ToggleGadgetRendering, true),
-            new ButtonDefinition("Trigger Areas (F4)", _buttonHandler.ToggleTriggerAreaRendering, true),
-            new ButtonDefinition("Screen Start (F5)", _buttonHandler.ToggleScreenStartRendering, true),
-            new ButtonDefinition("Background Image (F6)", _buttonHandler.ToggleBackgroundRendering, true),
-            new ButtonDefinition("Deprecated Pieces (F7)", _buttonHandler.ToggleDeprecatedPieces, true));
-
-        UiHandler.Instance.OpenPopupMenu(viewMenu);
-    }
-
-    private void OnToolsButtonPress(Component c, Common.Point position)
-    {
-        var toolsMenu = CreatePopupMenu(
-            c,
-            new ButtonDefinition("Snap To Grid (F9)", _buttonHandler.ToggleSnapToGrid),
+        CreatePopupMenu(
+            toolsButton,
+            new ToggleButtonDefinition("Snap To Grid (F9)", _buttonHandler.ToggleSnapToGrid),
             new ButtonDefinition("Test Level (F12)", _buttonHandler.TestLevel),
             new ButtonDefinition("Validate Level", _buttonHandler.ValidateLevel));
 
-        UiHandler.Instance.OpenPopupMenu(toolsMenu);
-    }
-
-    private void OnOptionsButtonPress(Component c, Common.Point position)
-    {
-        var optionsMenu = CreatePopupMenu(
-            c,
+        CreatePopupMenu(
+            optionsButton,
             new ButtonDefinition("Settings (F10)", _buttonHandler.ViewSettings),
             new ButtonDefinition("Hotkeys (F11)", _buttonHandler.ViewHotKeySettings),
             new ButtonDefinition("About...", _buttonHandler.ViewAbout));
-
-        UiHandler.Instance.OpenPopupMenu(optionsMenu);
     }
 
-    private static PopupMenu CreatePopupMenu(Component c, params ReadOnlySpan<ButtonDefinition> buttonDefinitions)
+    private void CreatePopupMenu(Component c, params IButtonDefinition[] buttonDefinitions)
     {
         var result = new PopupMenu()
         {
             Left = c.Left,
             Top = c.Bottom + 1,
-            Width = PopupMenuWidth
+            Width = PopupMenuWidth,
+
+            DisposeOnClose = false
         };
 
         var y = 0;
         foreach (var buttonDefinition in buttonDefinitions)
+        {
+            buttonDefinition.CreateButton(result, y, ClosePopupMenu);
+
+            y += StandardButtonHeight;
+        }
+
+        result.Height = y;
+
+        _buttonMenuMapping.Add(c, result);
+
+        return;
+    }
+
+    private void OpenPopupMenu(Component c, Common.Point position)
+    {
+        var menu = _buttonMenuMapping[c];
+
+        UiHandler.Instance.OpenPopupMenu(menu);
+    }
+
+    private void ClosePopupMenu(Component c, Common.Point position)
+    {
+        var menu = (PopupMenu)c.GetTopParent();
+
+        UiHandler.Instance.ClosePopupMenu(menu);
+    }
+
+    protected override void OnDispose()
+    {
+        _buttonHandler = null!;
+        _buttonMenuMapping.Clear();
+    }
+
+    private interface IButtonDefinition
+    {
+        void CreateButton(PopupMenu popupMenu, int y, MousePressEventHandler.ComponentMousePressAction closePopupMenu);
+    }
+
+    private sealed class ButtonDefinition : IButtonDefinition
+    {
+        public string ButtonLabel { get; }
+        public MousePressEventHandler.ComponentMousePressAction ButtonAction { get; }
+
+        public ButtonDefinition(string buttonLabel, MousePressEventHandler.ComponentMousePressAction buttonAction)
+        {
+            ButtonLabel = buttonLabel;
+            ButtonAction = buttonAction;
+        }
+
+        public void CreateButton(PopupMenu popupMenu, int y, MousePressEventHandler.ComponentMousePressAction closePopupMenu)
         {
             var button = new Button(0, y, PopupMenuWidth, StandardButtonHeight)
             {
                 Colors = MenuButtonColors
             };
 
-            button.MousePressed.RegisterMousePressEvent(buttonDefinition.ButtonAction, MouseButtonType.Left);
-            button.MousePressed.RegisterMousePressEvent(ClosePopupMenu, MouseButtonType.Left);
+            button.MousePressed.RegisterMousePressEvent(ButtonAction, MouseButtonType.Left);
+            button.MousePressed.RegisterMousePressEvent(closePopupMenu, MouseButtonType.Left);
 
-            var xOffset = 0;
-            CheckBox? checkBox = null;
+            button.AddTextLabel(ButtonLabel, TextLabelXOffset, 8, AllWhiteColors);
 
-            if (buttonDefinition.includeCheckBox)
-            {
-                xOffset = StandardButtonHeight + TwiceStandardInset;
-                checkBox = new CheckBox
-                {
-                    Left = button.Left + StandardInset,
-                    Top = button.Top,
-                    Colors = MenuButtonColors,
+            popupMenu.AddChild(button);
+        }
+    }
 
-                    CollisionBehaviour = IMouseCollision.NoCollisionInstance
-                };
-            }
+    private sealed class ToggleButtonDefinition : IButtonDefinition
+    {
+        public string ButtonLabel { get; }
+        public GenericEventHandler.ComponentAction CheckBoxToggleAction { get; }
 
-            var buttonLabel = button.AddTextLabel(buttonDefinition.ButtonLabel, TextLabelXOffset + xOffset, 8, AllWhiteColors);
-
-            y += StandardButtonHeight;
-
-            if (checkBox is not null)
-                result.AddChild(checkBox);
-            result.AddChild(button);
+        public ToggleButtonDefinition(string buttonLabel, GenericEventHandler.ComponentAction checkBoxOnCheckedAction)
+        {
+            ButtonLabel = buttonLabel;
+            CheckBoxToggleAction = checkBoxOnCheckedAction;
         }
 
-        result.Height = y;
+        public void CreateButton(PopupMenu popupMenu, int y, MousePressEventHandler.ComponentMousePressAction closePopupMenu)
+        {
+            var button = new Button(0, y, PopupMenuWidth, StandardButtonHeight)
+            {
+                Colors = MenuButtonColors
+            };
 
-        return result;
+            button.MousePressed.RegisterMousePressEvent(closePopupMenu, MouseButtonType.Left);
+
+            var checkBox = CreateMenuCheckBox(button);
+
+            button.AddTextLabel(ButtonLabel, TextLabelXOffset + StandardButtonHeight + TwiceStandardInset, 8, AllWhiteColors);
+
+            popupMenu.AddChild(checkBox);
+            popupMenu.AddChild(button);
+        }
+
+        private CheckBox CreateMenuCheckBox(Button button)
+        {
+            var checkBox = new CheckBox
+            {
+                Left = button.Left + StandardInset,
+                Top = button.Top,
+                Colors = MenuButtonColors,
+
+                CollisionBehaviour = new ProxyCollision(button)
+            };
+
+            checkBox.OnChecked.RegisterEvent(CheckBoxToggleAction);
+            checkBox.OnUnchecked.RegisterEvent(CheckBoxToggleAction);
+
+            return checkBox;
+        }
     }
 
-    private readonly record struct ButtonDefinition(string ButtonLabel, MousePressEventHandler.ComponentMousePressAction ButtonAction, bool includeCheckBox = false);
-
-    private static void ClosePopupMenu(Component c, Common.Point position)
+    private sealed class ProxyCollision : IMouseCollision
     {
-        UiHandler.Instance.ClosePopupMenu();
-    }
+        private readonly Component _proxyComponent;
 
-    protected override void OnDispose()
-    {
-        _buttonHandler = null!;
+        public ProxyCollision(Component proxyComponent)
+        {
+            _proxyComponent = proxyComponent;
+        }
+
+        public bool ContainsPoint(Component c, Common.Point position)
+        {
+            return _proxyComponent.ContainsPoint(position);
+        }
     }
 }
