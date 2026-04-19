@@ -31,7 +31,15 @@ public sealed class LevelStartPage : PageBase
     {
         if (_menuController.Quit.IsPressed)
         {
-            NavigateToMainMenuPage();
+            var openMenu = UiHandler.CurrentMenu;
+            if (openMenu is null)
+            {
+                NavigateToMainMenuPage();
+            }
+            else
+            {
+                UiHandler.ClosePopupMenu(openMenu);
+            }
         }
 
         if (_menuController.Space.IsPressed)

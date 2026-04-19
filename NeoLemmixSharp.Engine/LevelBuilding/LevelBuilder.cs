@@ -108,7 +108,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var skillSetManager = levelObjectiveBuilder.BuildSkillSetManager(tribeManager, _safeBufferAllocator);
         var levelTimer = levelObjectiveBuilder.BuildLevelTimer(_safeBufferAllocator);
 
-        var controlPanel = new LevelControlPanel(levelData.ControlParameters, inputController, lemmingManager, skillSetManager);
+        var controlPanel = new LevelControlPanel(levelData.ControlPanelParameters, inputController, lemmingManager, skillSetManager);
         // Need to call this here instead of initialising in LevelScreen
         controlPanel.SetWindowDimensions(IGameWindow.Instance.WindowSize);
 

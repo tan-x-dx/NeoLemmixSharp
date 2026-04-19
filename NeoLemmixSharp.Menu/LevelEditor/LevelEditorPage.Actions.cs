@@ -2,6 +2,8 @@
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
+using NeoLemmixSharp.Menu.UserSettings;
+using NeoLemmixSharp.Menu.UserSettings.Tabs;
 using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.LevelEditor;
@@ -167,12 +169,16 @@ public sealed partial class LevelEditorPage : IEditorOperationHandler
 
     public void ViewSettings(Component c, Point position)
     {
-
+        var settingsMenu = SettingsMenu.GetMenu();
+        SettingsMenu.SelectTab(SettingsTabType.GeneralSettings);
+        UiHandler.OpenPopupMenu(settingsMenu);
     }
 
     public void ViewHotKeySettings(Component c, Point position)
     {
-
+        var settingsMenu = SettingsMenu.GetMenu();
+        SettingsMenu.SelectTab(SettingsTabType.LevelEditorSettings);
+        UiHandler.OpenPopupMenu(settingsMenu);
     }
 
     public void ViewAbout(Component c, Point position)
