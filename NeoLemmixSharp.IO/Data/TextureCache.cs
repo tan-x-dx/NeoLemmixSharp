@@ -21,7 +21,7 @@ public static class TextureCache
         GraphicsDevice graphicsDevice)
     {
         if (GraphicsDevice is not null)
-            throw new InvalidOperationException($"Cannot initialise {nameof(TextureCache)} more than once!");
+            Helpers.ThrowMultipleInitialisationError(nameof(TextureCache));
 
         GraphicsDevice = graphicsDevice;
 

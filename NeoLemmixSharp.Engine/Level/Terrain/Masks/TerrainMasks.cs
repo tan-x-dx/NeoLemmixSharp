@@ -24,7 +24,7 @@ public static class TerrainMasks
         TerrainEraseMask minerMask)
     {
         if (BasherMask is not null)
-            throw new InvalidOperationException($"Cannot initialise {nameof(TerrainMasks)} more than once!");
+            Helpers.ThrowMultipleInitialisationError(nameof(TerrainMasks));
 
         BasherMask = basherMask;
         BomberMask = bomberMask;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.Menu;
 
@@ -21,7 +22,7 @@ public static class MenuSpriteBank
     public static void Initialise(ContentManager contentManager)
     {
         if (Logo is not null)
-            throw new InvalidOperationException($"Cannot initialise {nameof(MenuSpriteBank)} more than once!");
+            Helpers.ThrowMultipleInitialisationError(nameof(MenuSpriteBank));
 
         Logo = contentManager.Load<Texture2D>("menu/logo");
         MenuIcons = contentManager.Load<Texture2D>("menu/menu_icons");

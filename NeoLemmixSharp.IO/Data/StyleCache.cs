@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.IO.Data.Level;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Style;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
@@ -16,7 +17,7 @@ public static class StyleCache
     public static void Initialise()
     {
         if (DefaultStyleData is not null)
-            throw new InvalidOperationException($"Cannot initialise {nameof(StyleCache)} more than once!");
+            Helpers.ThrowMultipleInitialisationError(nameof(StyleCache));
 
         DefaultStyleData =
 #if DEBUG

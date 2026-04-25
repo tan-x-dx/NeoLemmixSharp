@@ -20,7 +20,7 @@ public static class RootDirectoryManager
     public static void Initialise()
     {
         if (RootDirectory is not null)
-            throw new InvalidOperationException($"Cannot initialise {nameof(RootDirectoryManager)} more than once!");
+            Helpers.ThrowMultipleInitialisationError(nameof(RootDirectoryManager));
 
         RootDirectory = ReadRootDirectoryForConfigFile();
         LevelFolderDirectory = Path.Combine(RootDirectory, LevelFolderName);

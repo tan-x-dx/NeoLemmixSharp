@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common.Rendering;
@@ -31,7 +32,7 @@ public static class CommonSprites
         GraphicsDevice graphicsDevice)
     {
         if (AnchorSprite is not null)
-            throw new InvalidOperationException($"Cannot initialise {nameof(CommonSprites)} more than once!");
+            Helpers.ThrowMultipleInitialisationError(nameof(CommonSprites));
 
         AnchorSprite = CreateAnchorTexture(graphicsDevice);
         WhitePixelGradientSprite = CreateWhitePixelTexture(graphicsDevice);
