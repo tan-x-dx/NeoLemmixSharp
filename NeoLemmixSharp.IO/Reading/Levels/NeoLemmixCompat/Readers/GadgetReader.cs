@@ -127,7 +127,7 @@ internal sealed class GadgetReader : NeoLemmixDataReader
     private void SetSkill(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         if (!LemmingSkillConstants.TryGetLemmingSkillIdFromName(secondToken, out var skillId))
-            throw new Exception($"Unknown token: {secondToken}");
+            NxlvReadingHelpers.ThrowUnknownTokenException(secondToken, [], line);
 
         _currentGadgetData!.SkillId = skillId;
     }

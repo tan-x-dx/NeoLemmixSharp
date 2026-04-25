@@ -164,33 +164,30 @@ public static class NumberFormattingHelpers
 
     public static int GetNumberStringLength(uint n)
     {
+        // 1 to 5
         if (n < 100000)
-        { // 1 to 5
+        {
+            // 1 or 2
             if (n < 100)
-            { // 1 or 2
                 return n < 10 ? 1 : 2;
-            }
-            else
-            { // 3, 4 or 5
-                if (n < 1000)
-                    return 3;
 
-                return n < 10000 ? 4 : 5;
-            }
-        }
-        else
-        { // 6 to 7
-            if (n < 10000000)
-            { // 6 or 7
-                return n < 1000000 ? 6 : 7;
-            }
-            else
-            { // 8, 9 or 10
-                if (n < 100000000)
-                    return 8;
+            // 3, 4 or 5
+            if (n < 1000)
+                return 3;
 
-                return n < 1000000000 ? 9 : 10;
-            }
+            return n < 10000 ? 4 : 5;
         }
+
+        // 6 to 7
+
+        // 6 or 7
+        if (n < 10000000)
+            return n < 1000000 ? 6 : 7;
+
+        // 8, 9 or 10
+        if (n < 100000000)
+            return 8;
+
+        return n < 1000000000 ? 9 : 10;
     }
 }

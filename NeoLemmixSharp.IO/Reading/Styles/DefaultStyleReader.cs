@@ -3,7 +3,6 @@ using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Reading.Styles.Sections;
 using NeoLemmixSharp.IO.Versions;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Reading.Styles;
@@ -18,29 +17,22 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
 
     private DefaultStyleReader(StyleIdentifier style)
     {
-        if (!TryLocateStyleFile(style, out var styleFilePath))
-            throw new FileReadingException($"Could not locate style file for style: {style}");
-
         _styleIdentifier = style;
+
+        var styleFilePath = LocateStyleFile(style);
         _reader = GetRawStyleFileDataReader(styleFilePath);
     }
 
-    private static bool TryLocateStyleFile(
-        StyleIdentifier style,
-        [MaybeNullWhen(false)] out string foundFilePath)
+    private static string LocateStyleFile(StyleIdentifier style)
     {
         var styleFolderPath = style.GetFolderFilePath();
 
         var allStyleFiles = RootDirectoryManager.GetFilePathsWithExtension(styleFolderPath, DefaultFileExtensions.StyleFileExtension);
 
         if (allStyleFiles.Length == 1)
-        {
-            foundFilePath = allStyleFiles[0];
-            return true;
-        }
+            return allStyleFiles.At(0);
 
-        foundFilePath = null;
-        return false;
+        throw new FileReadingException($"Could not locate style file for style: {style}");
     }
 
     private static RawStyleFileDataReader GetRawStyleFileDataReader(string styleFilePath)
@@ -81,7 +73,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
         ushort sectionIdentifierBytes = _reader.Read16BitUnsignedInteger();
 
         FileReadingException.ReaderAssert(
-            sectionIdentifierBytes == sectionReader.GetSectionIdentifier(),
+            sectionIdentifierBytes == sectionReader.GetSectionIdentifierBytes(),
             "Section Identifier mismatch!");
 
         int numberOfItemsInSection = _reader.Read16BitUnsignedInteger();

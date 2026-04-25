@@ -18,7 +18,7 @@ public sealed class LemmingStateCriterion : LemmingCriterion
         if (allowedStates is null)
         {
             if (disallowedStates is null)
-                throw new ArgumentException("Both input sets are null!");
+                throw new ArgumentNullException("Both input sets are null!");
 
             InitialiseSingleSet(disallowedStates, false, out _allowedLemmingStates, out _requiredStates);
         }

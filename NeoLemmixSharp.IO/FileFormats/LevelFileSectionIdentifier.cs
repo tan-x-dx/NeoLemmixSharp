@@ -35,7 +35,7 @@ internal readonly struct LevelFileSectionIdentifierHasher : IEnumIdentifierHelpe
 
     public static LevelFileSectionIdentifier GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LevelFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 
-    public static ushort GetSectionIdentifier(LevelFileSectionIdentifier sectionIdentifier) => sectionIdentifier switch
+    public static ushort GetSectionIdentifierBytes(LevelFileSectionIdentifier sectionIdentifier) => sectionIdentifier switch
     {
         LevelFileSectionIdentifier.StringDataSection => 0x2644,
         LevelFileSectionIdentifier.LevelMetadataSection => 0x79A6,

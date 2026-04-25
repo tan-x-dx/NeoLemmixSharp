@@ -66,7 +66,7 @@ public sealed class LevelScreen : IBaseScreen
     public static UpdateScheduler UpdateScheduler => Instance._updateScheduler;
     public static LevelCursor LevelCursor => Instance._levelCursor;
     public static LevelTimer LevelTimer => Instance._levelTimer;
-    public InputHandler InputHandler => Instance._inputHandler;
+    public static InputHandler InputHandler => Instance._inputHandler;
     public static LevelInputController LevelInputController => Instance._levelInputController;
     public static RewindManager RewindManager => Instance._rewindManager;
     public static LemmingSpriteBank LemmingSpriteBank => Instance._lemmingSpriteBank;

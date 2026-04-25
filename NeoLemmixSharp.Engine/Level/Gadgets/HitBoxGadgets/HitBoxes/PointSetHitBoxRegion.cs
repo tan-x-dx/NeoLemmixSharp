@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -19,12 +20,12 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
     public PointSetHitBoxRegion(ReadOnlySpan<Point> points)
     {
         if (points.Length == 0)
-            throw new ArgumentException("Cannot create PointSetHitBoxRegion with zero points!");
+            ThrowEmptyPointSetHitBoxRegionException();
 
         _bounds = new RectangularRegion(points);
 
         if (_bounds.W > DimensionCutoffSize || _bounds.H > DimensionCutoffSize)
-            throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_bounds.W}, H:{_bounds.H}");
+            ThrowPointSetHitBoxRegionTooBigException();
 
         var totalNumberOfPoints = _bounds.Size.Area();
 
@@ -38,6 +39,18 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
             var index = IndexFor(p);
             BitArrayHelpers.SetBit(span, index);
         }
+    }
+
+    [DoesNotReturn]
+    private static void ThrowEmptyPointSetHitBoxRegionException()
+    {
+        throw new ArgumentException("Cannot create PointSetHitBoxRegion with zero points!");
+    }
+
+    [DoesNotReturn]
+    private void ThrowPointSetHitBoxRegionTooBigException()
+    {
+        throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_bounds.W}, H:{_bounds.H}");
     }
 
     [Pure]

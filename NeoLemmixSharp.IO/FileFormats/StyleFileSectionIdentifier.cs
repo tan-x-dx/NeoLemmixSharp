@@ -27,7 +27,7 @@ internal readonly struct StyleFileSectionIdentifierHasher : IEnumIdentifierHelpe
 
     public static StyleFileSectionIdentifier GetEnumValue(uint rawValue) => Helpers.GetEnumValue<StyleFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 
-    public static ushort GetSectionIdentifier(StyleFileSectionIdentifier sectionIdentifier) => sectionIdentifier switch
+    public static ushort GetSectionIdentifierBytes(StyleFileSectionIdentifier sectionIdentifier) => sectionIdentifier switch
     {
         StyleFileSectionIdentifier.StringDataSection => 0x9B70,
         StyleFileSectionIdentifier.ThemeDataSection => 0x35BF,

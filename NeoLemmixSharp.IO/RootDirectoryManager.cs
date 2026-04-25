@@ -70,22 +70,14 @@ public static class RootDirectoryManager
 
     public static string GetCorrespondingTerrainPngFilePath(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier)
     {
-        var rootFilePath = Path.Combine(
-            StyleFolderDirectory,
-            styleIdentifier.ToString(),
-            TerrainFolderName,
-            pieceIdentifier.ToString());
+        var rootFilePath = Path.Combine(StyleFolderDirectory, styleIdentifier.ToString(), TerrainFolderName, pieceIdentifier.ToString());
 
         return GetCorrespondingImageFile(rootFilePath);
     }
 
     public static string GetCorrespondingGadgetPngFilePath(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier)
     {
-        var rootFilePath = Path.Combine(
-            StyleFolderDirectory,
-            styleIdentifier.ToString(),
-            GadgetFolderName,
-            pieceIdentifier.ToString());
+        var rootFilePath = Path.Combine(StyleFolderDirectory, styleIdentifier.ToString(), GadgetFolderName, pieceIdentifier.ToString());
 
         return GetCorrespondingImageFile(rootFilePath);
     }
@@ -107,10 +99,7 @@ public static class RootDirectoryManager
 
     public static string GetStyleLemmingFolderPath(this StyleIdentifier styleIdentifier)
     {
-        return Path.Combine(
-            StyleFolderDirectory,
-            styleIdentifier.ToString(),
-            LemmingsFolderName);
+        return Path.Combine(StyleFolderDirectory, styleIdentifier.ToString(), LemmingsFolderName);
     }
 
     public static string GetLevelFilePath(string levelName, FileFormatType fileFormatType)

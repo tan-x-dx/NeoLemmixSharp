@@ -68,9 +68,9 @@ public abstract class GadgetBehaviour : IEquatable<GadgetBehaviour>
 
     public bool Equals(GadgetBehaviour? other)
     {
-        var otherValue = -1;
-        if (other is not null) otherValue = other.Id;
-        return Id == otherValue;
+        var otherId = -1;
+        if (other is not null) otherId = other.Id;
+        return Id == otherId;
     }
 
     public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is GadgetBehaviour other && Id == other.Id;
@@ -79,11 +79,11 @@ public abstract class GadgetBehaviour : IEquatable<GadgetBehaviour>
 
     public static bool operator ==(GadgetBehaviour? left, GadgetBehaviour? right)
     {
-        var leftValue = -1;
-        if (left is not null) leftValue = left.Id;
-        var rightValue = -1;
-        if (right is not null) rightValue = right.Id;
-        return leftValue == rightValue;
+        var leftId = -1;
+        if (left is not null) leftId = left.Id;
+        var rightId = -1;
+        if (right is not null) rightId = right.Id;
+        return leftId == rightId;
     }
     public static bool operator !=(GadgetBehaviour? left, GadgetBehaviour? right) => !(left == right);
 }

@@ -251,6 +251,9 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
 
     public void InvertSelection()
     {
+        RotateSelection();
+        RotateSelection();
+        FlipSelection();
     }
 
     public void FlipSelection()
@@ -264,14 +267,19 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
         if (y is null) return 1;
 
         if (x.InstanceData.GetType() != y.InstanceData.GetType())
-            throw new InvalidOperationException("Items are not the same type!");
+            ThrowMismatchingTypesException();
 
         var xPieceOrder = x.PieceOrder;
         var yPieceOrder = y.PieceOrder;
 
         if (xPieceOrder == yPieceOrder)
-            throw new InvalidOperationException($"Different {nameof(CanvasPiece)}s have same {nameof(CanvasPiece.PieceOrder)}");
+            ThrowInvalidPieceOrderException();
 
         return xPieceOrder.CompareTo(yPieceOrder);
     }
+
+    [DoesNotReturn]
+    private static void ThrowMismatchingTypesException() => throw new InvalidOperationException("Items are not the same type!");
+    [DoesNotReturn]
+    private static void ThrowInvalidPieceOrderException() => throw new InvalidOperationException($"Different {nameof(CanvasPiece)}s have same {nameof(CanvasPiece.PieceOrder)}");
 }

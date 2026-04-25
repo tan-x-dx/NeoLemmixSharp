@@ -112,12 +112,12 @@ public sealed class BoundaryBehaviour
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return n;
 
-        return NormaliseWrap(n);
+        NormaliseWrap(ref n);
+        return n;
     }
 
-    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private int NormaliseWrap(int n)
+    private void NormaliseWrap(ref int n)
     {
         // Most likely situation for Wrap normalisation is the input
         // being just outside the bounds [0, _levelLength - 1].
@@ -140,8 +140,6 @@ public sealed class BoundaryBehaviour
                 n -= levelLength;
             }
         }
-
-        return n;
     }
 
     [Pure]
@@ -154,7 +152,7 @@ public sealed class BoundaryBehaviour
         var levelLength = _levelLength;
         var halfLevelLength = levelLength >>> 1;
         result += halfLevelLength;
-        result = NormaliseWrap(result);
+        NormaliseWrap(ref result);
         result -= halfLevelLength;
         return result;
     }
@@ -176,7 +174,7 @@ public sealed class BoundaryBehaviour
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
-        n = NormaliseWrap(n);
+        NormaliseWrap(ref n);
 
         // After normalisation, n >= 0, so skip a check
         return n < interval.Length;
@@ -202,7 +200,7 @@ public sealed class BoundaryBehaviour
         if (_boundaryBehaviourType == BoundaryBehaviourType.Void)
             return false;
 
-        s = NormaliseWrap(s);
+        NormaliseWrap(ref s);
 
         // After normalisation, s >= 0, so skip a check
         return s < i1.Length ||
@@ -248,7 +246,10 @@ public sealed class BoundaryBehaviour
             return 0;
 
         if (_boundaryBehaviourType != BoundaryBehaviourType.Void)
-            return NormaliseWrap(viewPortCoordinate);
+        {
+            NormaliseWrap(ref viewPortCoordinate);
+            return viewPortCoordinate;
+        }
 
         if (viewPortCoordinate < 0)
             return 0;

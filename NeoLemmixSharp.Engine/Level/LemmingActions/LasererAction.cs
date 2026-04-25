@@ -91,7 +91,8 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         var offsetChecks = GetOffsetChecks(facingDirection);
 
         var i = DistanceCap;
-        while (i > 0)
+
+        do
         {
             switch (CheckForHit(in gadgetsNearLemming, offsetChecks))
             {
@@ -112,9 +113,9 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             }
 
             --i;
-        }
+        } while (i > 0);
 
-        HitTestConclusive:
+    HitTestConclusive:
 
         lemming.LaserHitLevelPosition = target;
 
