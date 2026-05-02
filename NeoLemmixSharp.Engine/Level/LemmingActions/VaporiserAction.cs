@@ -15,8 +15,7 @@ public sealed class VaporiserAction : LemmingAction
             LemmingActionConstants.VaporiserActionSpriteFileName,
             LemmingActionConstants.VaporiserAnimationFrames,
             LemmingActionConstants.MaxVaporizerPhysicsFrames,
-            LemmingActionConstants.NoPriority,
-            LemmingActionBounds.VaporiserActionBounds)
+            LemmingActionConstants.NoPriority)
     {
     }
 

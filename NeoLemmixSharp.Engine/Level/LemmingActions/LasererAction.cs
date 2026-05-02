@@ -65,8 +65,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             LemmingActionConstants.LasererActionSpriteFileName,
             LemmingActionConstants.LasererAnimationFrames,
             LemmingActionConstants.MaxLasererPhysicsFrames,
-            LemmingActionConstants.NonPermanentSkillPriority,
-            LemmingActionBounds.StandardLemmingBounds)
+            LemmingActionConstants.NonPermanentSkillPriority)
     {
     }
 

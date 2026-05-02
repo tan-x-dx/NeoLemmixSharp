@@ -14,8 +14,7 @@ public sealed class ShruggerAction : LemmingAction
             LemmingActionConstants.ShruggerActionSpriteFileName,
             LemmingActionConstants.ShruggerAnimationFrames,
             LemmingActionConstants.MaxShruggerPhysicsFrames,
-            LemmingActionConstants.NonWalkerMovementPriority,
-            LemmingActionBounds.StandardLemmingBounds)
+            LemmingActionConstants.NonWalkerMovementPriority)
     {
     }
 

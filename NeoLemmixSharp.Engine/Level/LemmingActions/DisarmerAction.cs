@@ -14,8 +14,7 @@ public sealed class DisarmerAction : LemmingAction
             LemmingActionConstants.DisarmerActionSpriteFileName,
             LemmingActionConstants.DisarmerAnimationFrames,
             LemmingActionConstants.MaxDisarmerPhysicsFrames,
-            LemmingActionConstants.PermanentSkillPriority,
-            LemmingActionBounds.DisarmerLemmingBounds)
+            LemmingActionConstants.PermanentSkillPriority)
     {
     }
 

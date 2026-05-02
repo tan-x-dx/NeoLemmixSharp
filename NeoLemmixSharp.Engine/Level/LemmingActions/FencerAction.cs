@@ -19,8 +19,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
             LemmingActionConstants.FencerActionSpriteFileName,
             LemmingActionConstants.FencerAnimationFrames,
             LemmingActionConstants.MaxFencerPhysicsFrames,
-            LemmingActionConstants.NonPermanentSkillPriority,
-            LemmingActionBounds.StandardLemmingBounds)
+            LemmingActionConstants.NonPermanentSkillPriority)
     {
     }
 

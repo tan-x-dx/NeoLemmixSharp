@@ -15,8 +15,7 @@ public sealed class SplatterAction : LemmingAction
             LemmingActionConstants.SplatterActionSpriteFileName,
             LemmingActionConstants.SplatterAnimationFrames,
             LemmingActionConstants.MaxSplatterPhysicsFrames,
-            LemmingActionConstants.NoPriority,
-            LemmingActionBounds.SplatterActionBounds)
+            LemmingActionConstants.NoPriority)
     {
     }
 

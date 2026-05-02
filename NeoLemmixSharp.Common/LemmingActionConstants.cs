@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common;
@@ -359,42 +360,57 @@ public static class LemmingActionConstants
 
 public static class LemmingActionBounds
 {
-    public static readonly RectangularRegion StandardLemmingBounds = new(new Point(-3, -10), new Point(3, 0));
+    private static readonly RectangularRegion[] _lemmingActionBounds = GetLemmingActionBounds();
 
-    public static readonly RectangularRegion BlockerActionBounds = new(new Point(-6, -10), new Point(6, 0));
-    public static readonly RectangularRegion ClimberActionBounds = new(new Point(-6, -10), new Point(0, 0));
-    public static readonly RectangularRegion DiggerLemmingBounds = new(new Point(-3, -5), new Point(3, 0));
-    public static readonly RectangularRegion DisarmerLemmingBounds = new(new Point(-3, -8), new Point(3, 0));
-    public static readonly RectangularRegion GliderActionBounds = new(new Point(-3, -12), new Point(3, 0));
-    public static readonly RectangularRegion HoisterActionBounds = new(new Point(-5, -10), new Point(1, 1));
-    public static readonly RectangularRegion JumperActionBounds = new(new Point(-1, -9), new Point(3, 0));
-    public static readonly RectangularRegion MinerActionBounds = new(new Point(-2, -10), new Point(4, 0));
-    public static readonly RectangularRegion PlatformerActionBounds = new(new Point(-3, -5), new Point(3, 0));
-    public static readonly RectangularRegion ReacherActionBounds = new(new Point(-3, -9), new Point(3, 0));
-    public static readonly RectangularRegion ShimmierActionBounds = new(new Point(-3, -9), new Point(3, 2));
-    public static readonly RectangularRegion SplatterActionBounds = new(new Point(-3, -6), new Point(3, 0));
-    public static readonly RectangularRegion SwimmerActionBounds = new(new Point(-7, -4), new Point(5, 0));
-    public static readonly RectangularRegion VaporiserActionBounds = new(new Point(-3, -12), new Point(3, 2));
-
-    public static RectangularRegion GetBounds(int lemmingActionId) => lemmingActionId switch
+    private static RectangularRegion[] GetLemmingActionBounds()
     {
-        LemmingActionConstants.BlockerActionId => BlockerActionBounds,
-        LemmingActionConstants.ClimberActionId => ClimberActionBounds,
-        LemmingActionConstants.SliderActionId => ClimberActionBounds,
-        LemmingActionConstants.DiggerActionId => DiggerLemmingBounds,
-        LemmingActionConstants.DisarmerActionId => DisarmerLemmingBounds,
-        LemmingActionConstants.GliderActionId => GliderActionBounds,
-        LemmingActionConstants.HoisterActionId => HoisterActionBounds,
-        LemmingActionConstants.DehoisterActionId => HoisterActionBounds,
-        LemmingActionConstants.JumperActionId => JumperActionBounds,
-        LemmingActionConstants.MinerActionId => MinerActionBounds,
-        LemmingActionConstants.PlatformerActionId => PlatformerActionBounds,
-        LemmingActionConstants.ReacherActionId => ReacherActionBounds,
-        LemmingActionConstants.ShimmierActionId => ShimmierActionBounds,
-        LemmingActionConstants.SplatterActionId => SplatterActionBounds,
-        LemmingActionConstants.SwimmerActionId => SwimmerActionBounds,
-        LemmingActionConstants.VaporiserActionId => VaporiserActionBounds,
+        var lemmingActionBounds = new RectangularRegion[LemmingActionConstants.NumberOfLemmingActions];
 
-        _ => StandardLemmingBounds,
-    };
+        var span = new Span<RectangularRegion>(lemmingActionBounds);
+        span.Fill(StandardLemmingBounds);
+
+        span.At(LemmingActionConstants.BlockerActionId) = BlockerActionBounds;
+        span.At(LemmingActionConstants.ClimberActionId) = ClimberActionBounds;
+        span.At(LemmingActionConstants.SliderActionId) = ClimberActionBounds;
+        span.At(LemmingActionConstants.DiggerActionId) = DiggerActionBounds;
+        span.At(LemmingActionConstants.DisarmerActionId) = DisarmerActionBounds;
+        span.At(LemmingActionConstants.GliderActionId) = GliderActionBounds;
+        span.At(LemmingActionConstants.HoisterActionId) = HoisterActionBounds;
+        span.At(LemmingActionConstants.DehoisterActionId) = HoisterActionBounds;
+        span.At(LemmingActionConstants.JumperActionId) = JumperActionBounds;
+        span.At(LemmingActionConstants.MinerActionId) = MinerActionBounds;
+        span.At(LemmingActionConstants.PlatformerActionId) = PlatformerActionBounds;
+        span.At(LemmingActionConstants.ReacherActionId) = ReacherActionBounds;
+        span.At(LemmingActionConstants.ShimmierActionId) = ShimmierActionBounds;
+        span.At(LemmingActionConstants.SplatterActionId) = SplatterActionBounds;
+        span.At(LemmingActionConstants.SwimmerActionId) = SwimmerActionBounds;
+        span.At(LemmingActionConstants.VaporiserActionId) = VaporiserActionBounds;
+
+        return lemmingActionBounds;
+    }
+
+    private static RectangularRegion StandardLemmingBounds => new(new Point(-3, -10), new Point(3, 0));
+
+    private static RectangularRegion BlockerActionBounds => new(new Point(-6, -10), new Point(6, 0));
+    private static RectangularRegion ClimberActionBounds => new(new Point(-6, -10), new Point(0, 0));
+    private static RectangularRegion DiggerActionBounds => new(new Point(-3, -5), new Point(3, 0));
+    private static RectangularRegion DisarmerActionBounds => new(new Point(-3, -8), new Point(3, 0));
+    private static RectangularRegion GliderActionBounds => new(new Point(-3, -12), new Point(3, 0));
+    private static RectangularRegion HoisterActionBounds => new(new Point(-5, -10), new Point(1, 1));
+    private static RectangularRegion JumperActionBounds => new(new Point(-1, -9), new Point(3, 0));
+    private static RectangularRegion MinerActionBounds => new(new Point(-2, -10), new Point(4, 0));
+    private static RectangularRegion PlatformerActionBounds => new(new Point(-3, -5), new Point(3, 0));
+    private static RectangularRegion ReacherActionBounds => new(new Point(-3, -9), new Point(3, 0));
+    private static RectangularRegion ShimmierActionBounds => new(new Point(-3, -9), new Point(3, 2));
+    private static RectangularRegion SplatterActionBounds => new(new Point(-3, -6), new Point(3, 0));
+    private static RectangularRegion SwimmerActionBounds => new(new Point(-7, -4), new Point(5, 0));
+    private static RectangularRegion VaporiserActionBounds => new(new Point(-3, -12), new Point(3, 2));
+
+    public static RectangularRegion GetBounds(int lemmingActionId)
+    {
+        if ((uint)lemmingActionId < _lemmingActionBounds.Length)
+            return _lemmingActionBounds.At(lemmingActionId);
+
+        return StandardLemmingBounds;
+    }
 }
