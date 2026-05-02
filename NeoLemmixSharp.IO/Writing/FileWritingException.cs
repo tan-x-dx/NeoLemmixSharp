@@ -1,9 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.Writing;
 
 internal sealed class FileWritingException(string message) : Exception(message)
 {
+    [DebuggerStepThrough]
     public static void WriterAssert([DoesNotReturnIf(false)] bool condition, string details)
     {
         if (condition)

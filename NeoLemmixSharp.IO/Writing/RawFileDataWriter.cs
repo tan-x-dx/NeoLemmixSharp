@@ -221,8 +221,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         FileWritingException.WriterAssert(!_currentSectionIdentifier.HasValue, "Cannot write to file - In middle of a section!");
         FileWritingException.WriterAssert(_sectionIntervals.Count > 0, "No sections written!");
 
-        new SectionIdentifierValidator<TPerfectHasher, TEnum>()
-            .AssertSectionsAreContiguous(_sectionIntervals);
+        SectionIdentifierValidator<TPerfectHasher, TEnum>.AssertSectionsAreContiguous(_sectionIntervals);
     }
 
     private void WriteVersion(FileFormatVersion version)

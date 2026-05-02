@@ -69,8 +69,8 @@ public static class NumberFormattingHelpers
                 return result;
 
             result = source.Length + 1;
-            var i = source.Length;
-            i--;
+            var i = source.Length - 1;
+
             do
             {
                 var n = source.At(i);

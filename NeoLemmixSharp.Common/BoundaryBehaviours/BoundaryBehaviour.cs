@@ -119,10 +119,10 @@ public sealed class BoundaryBehaviour
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void NormaliseWrap(ref int n)
     {
-        // Most likely situation for Wrap normalisation is the input
-        // being just outside the bounds [0, _levelLength - 1].
-        // Therefore, we can avoid a call to the modulo operator
-        // by simply adding/subtracting the level length
+        // Most likely situation for Wrap normalisation is the input already
+        // being valid, or just outside the interval [0, _levelLength).
+        // Therefore, we can avoid a call to the modulo operator by simply
+        // adding/subtracting the level length
 
         var levelLength = _levelLength;
         if (n < 0)
@@ -165,7 +165,7 @@ public sealed class BoundaryBehaviour
         // We can be lazy and only move the int parameter
         n -= interval.Start;
 
-        // Pretend the interval now starts at zero, simplifying a check
+        // Pretend the interval has now been moved to zero, simplifying a check
         // If this check succeeds, the interval contains the point in all cases
         if (n >= 0 && n < interval.Length)
             return true;
@@ -187,8 +187,8 @@ public sealed class BoundaryBehaviour
         // this would not change whether or not they intersect
         // We can be lazy and only "move" the second interval
 
-        // This variable corresponds to the start point of the second interval
-        // Pretend the first interval now starts at zero, simplifying a check
+        // This variable corresponds to the start point of the second interval after we've "moved it"
+        // Pretend the first interval has now been moved to zero, simplifying a check
         var s = i2.Start - i1.Start;
 
         // If this check succeeds, the intervals intersect in all cases

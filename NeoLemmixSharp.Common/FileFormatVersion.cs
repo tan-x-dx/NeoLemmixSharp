@@ -67,9 +67,16 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
         return ToString(default, null);
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    [SkipLocalsInit]
+    public unsafe bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        ReadOnlySpan<int> components = [Major, Minor, Build, Revision];
+        int* p = stackalloc int[4];
+        p[0] = Major;
+        p[1] = Minor;
+        p[2] = Build;
+        p[3] = Revision;
+
+        var components = Helpers.CreateReadOnlySpan<int>(p, 4);
         var formatParameters = new NumberFormattingHelpers.FormatParameters('[', '.', ']');
         return NumberFormattingHelpers.TryFormatIntegerSpan(components, destination, formatParameters, out charsWritten);
     }

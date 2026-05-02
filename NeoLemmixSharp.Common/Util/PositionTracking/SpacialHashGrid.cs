@@ -329,16 +329,19 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
     }
 
+    [Pure]
     private Point GetTopLeftChunkForRegion(RectangularRegion levelRegion)
     {
         return ConvertToChunkPosition(levelRegion.Position);
     }
 
+    [Pure]
     private Point GetBottomRightChunkForRegion(RectangularRegion levelRegion)
     {
         return ConvertToChunkPosition(levelRegion.GetBottomRight());
     }
 
+    [Pure]
     private Point ConvertToChunkPosition(Point position)
     {
         var x = _horizontalBoundaryBehaviour.Normalise(position.X) >> _chunkSizeBitShift;
@@ -418,6 +421,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
     }
 
+    [Pure]
     private RectangularRegion* GetPreviousBoundsForItem(T item)
     {
         int offset = _hasher.Hash(item);
@@ -467,22 +471,11 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     }
 
     [DoesNotReturn]
-    private static void ThrowAlreadyTrackingItemException(T item)
-    {
-        throw new InvalidOperationException($"Already tracking item! {item}");
-    }
-
+    private static void ThrowAlreadyTrackingItemException(T item) => throw new InvalidOperationException($"Already tracking item! {item}");
     [DoesNotReturn]
-    private static void ThrowItemNotRegisteredException(T item)
-    {
-        throw new InvalidOperationException($"Item not registered! {item}");
-    }
-
+    private static void ThrowItemNotRegisteredException(T item) => throw new InvalidOperationException($"Item not registered! {item}");
     [DoesNotReturn]
-    private static void ThrowNotTrackingItemException(T item)
-    {
-        throw new InvalidOperationException($"Not tracking item {item}");
-    }
+    private static void ThrowNotTrackingItemException(T item) => throw new InvalidOperationException($"Not tracking item {item}");
 
     private enum ChunkOperationType
     {

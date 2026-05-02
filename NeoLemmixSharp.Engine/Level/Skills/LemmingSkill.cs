@@ -19,7 +19,6 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();
     private static readonly LemmingSkillSet PermanentSkills = GetPermanentSkills();
 
-    public const int NumberOfItems = LemmingSkillConstants.NumberOfLemmingSkills;
     public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
     public static BitArrayEnumerable<LemmingSkillHasher, LemmingSkill> AllClassicSkills => ClassicSkills.AsEnumerable();
 

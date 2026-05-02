@@ -151,8 +151,8 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
 
     public ref struct Enumerator
     {
-        private readonly ReadOnlySpan<TValue> _values;
         private BitArrayEnumerator _bitEnumerator;
+        private readonly ReadOnlySpan<TValue> _values;
         private readonly TPerfectHasher _hasher;
 
         public Enumerator(BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> dictionary)
