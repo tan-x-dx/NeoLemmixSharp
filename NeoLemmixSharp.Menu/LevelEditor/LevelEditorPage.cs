@@ -270,7 +270,7 @@ public sealed partial class LevelEditorPage : PageBase
     {
         var textField = (TextField)c;
 
-        var newLevelId = ulong.Parse(textField.CurrentTextSpan, System.Globalization.NumberStyles.AllowHexSpecifier, null);
+        var newLevelId = NumberFormattingHelpers.ParseHexDigits(textField.CurrentTextSpan);
         _currentLevelData.LevelId = new LevelIdentifier(newLevelId);
     }
 

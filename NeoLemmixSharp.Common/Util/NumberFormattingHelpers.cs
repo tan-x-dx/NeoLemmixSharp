@@ -159,6 +159,57 @@ public static class NumberFormattingHelpers
         while (length >= 0);
     }
 
+    public static ulong ParseHexDigits(ReadOnlySpan<char> hexDigits)
+    {
+        ValidateCharsAreAllHex(hexDigits);
+
+        ulong result = 0;
+
+        foreach (char c in hexDigits)
+        {
+            result <<= 4;
+            var digitValue = GetHexDigitValue(c);
+            result |= digitValue;
+        }
+
+        return result;
+
+        static void ValidateCharsAreAllHex(ReadOnlySpan<char> hexDigits)
+        {
+            if (hexDigits.Length > 16)
+                throw new ArgumentException("Span length too long to parse hex!");
+
+            foreach (char c in hexDigits)
+            {
+                if (c >= '0' && c <= '9')
+                    continue;
+
+                if (c >= 'A' && c <= 'F')
+                    continue;
+
+                if (c >= 'a' && c <= 'f')
+                    continue;
+
+                throw new ArgumentException("Non hex-digit found in span!");
+            }
+        }
+
+        static ulong GetHexDigitValue(char c)
+        {
+            if (c >= '0' && c <= '9')
+                return (ulong)c - '0';
+
+            if (c >= 'A' && c <= 'F')
+                return (ulong)c - ('A' - 10);
+
+            if (c >= 'a' && c <= 'f')
+                return (ulong)c - ('a' - 10);
+
+            return 0;
+        }
+    }
+
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char DigitToChar(uint digit) => (char)(digit | ZeroCharAsUint);
 
