@@ -62,7 +62,7 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         return newTerrainArchetypeData;
     }
 
-    private static RectangularRegion ReadNineSliceData(
+    private static NineSliceData ReadNineSliceData(
         RawStyleFileDataReader reader,
         ResizeType resizeType,
         out Size defaultSize)
@@ -70,10 +70,10 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
         int defaultWidth = 0;
         int defaultHeight = 0;
 
-        int nineSliceLeft = 0;
-        int nineSliceWidth = 0;
-        int nineSliceTop = 0;
-        int nineSliceHeight = 0;
+        ushort nineSliceLeft = 0;
+        ushort nineSliceRight = 0;
+        ushort nineSliceTop = 0;
+        ushort nineSliceBottom = 0;
 
         if (resizeType.CanResizeHorizontally())
         {
@@ -82,11 +82,12 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
             if (defaultWidth > 0)
             {
                 nineSliceLeft = reader.Read16BitUnsignedInteger();
-                nineSliceWidth = reader.Read16BitUnsignedInteger();
+                nineSliceRight = reader.Read16BitUnsignedInteger();
 
                 FileReadingException.ReaderAssert(nineSliceLeft >= 0, "Invalid nine slice definition!");
-                FileReadingException.ReaderAssert(nineSliceWidth >= 1, "Invalid nine slice definition!");
-                FileReadingException.ReaderAssert(nineSliceLeft + nineSliceWidth <= defaultWidth, "Invalid nine slice definition!");
+                FileReadingException.ReaderAssert(nineSliceRight >= 0, "Invalid nine slice definition!");
+                FileReadingException.ReaderAssert(nineSliceLeft <= defaultWidth, "Invalid nine slice definition!");
+                FileReadingException.ReaderAssert(nineSliceRight <= defaultWidth, "Invalid nine slice definition!");
             }
         }
 
@@ -97,17 +98,16 @@ internal sealed class TerrainArchetypeDataSectionReader : StyleDataSectionReader
             if (defaultHeight > 0)
             {
                 nineSliceTop = reader.Read16BitUnsignedInteger();
-                nineSliceHeight = reader.Read16BitUnsignedInteger();
+                nineSliceBottom = reader.Read16BitUnsignedInteger();
 
                 FileReadingException.ReaderAssert(nineSliceTop >= 0, "Invalid nine slice definition!");
-                FileReadingException.ReaderAssert(nineSliceHeight >= 1, "Invalid nine slice definition!");
-                FileReadingException.ReaderAssert(nineSliceTop + nineSliceHeight <= defaultHeight, "Invalid nine slice definition!");
+                FileReadingException.ReaderAssert(nineSliceBottom >= 0, "Invalid nine slice definition!");
+                FileReadingException.ReaderAssert(nineSliceTop <= defaultHeight, "Invalid nine slice definition!");
+                FileReadingException.ReaderAssert(nineSliceBottom <= defaultHeight, "Invalid nine slice definition!");
             }
         }
 
         defaultSize = new Size(defaultWidth, defaultHeight);
-        var p = new Point(nineSliceLeft, nineSliceTop);
-        var s = new Size(nineSliceWidth, nineSliceHeight);
-        return new RectangularRegion(p, s);
+        return new NineSliceData(nineSliceLeft, nineSliceRight, nineSliceTop, nineSliceBottom);
     }
 }

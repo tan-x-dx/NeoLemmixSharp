@@ -11,7 +11,7 @@ public sealed class BackgroundArchetypeData : IArchetypeData
     public required string Name { get; init; }
     public required string TextureFilePath { get; init; }
 
-    RectangularRegion IArchetypeData.NineSliceData { get; }
+    NineSliceData IArchetypeData.NineSliceData { get; }
     ResizeType IArchetypeData.ResizeType { get; }
     Size IArchetypeData.DefaultSize { get; }
 }

@@ -9,7 +9,7 @@ public interface IArchetypeData
     string Name { get; }
     string TextureFilePath { get; }
 
-    RectangularRegion NineSliceData { get; }
+    NineSliceData NineSliceData { get; }
     ResizeType ResizeType { get; }
     Size DefaultSize { get; }
 

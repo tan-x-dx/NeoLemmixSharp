@@ -45,8 +45,8 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
 
             if (terrainArchetypeData.DefaultSize.W > 0)
             {
-                writer.Write16BitUnsignedInteger((ushort)terrainArchetypeData.NineSliceData.X);
-                writer.Write16BitUnsignedInteger((ushort)terrainArchetypeData.NineSliceData.W);
+                writer.Write16BitUnsignedInteger(terrainArchetypeData.NineSliceData.Left);
+                writer.Write16BitUnsignedInteger(terrainArchetypeData.NineSliceData.Right);
             }
         }
 
@@ -56,8 +56,8 @@ internal sealed class TerrainArchetypeDataSectionWriter : StyleDataSectionWriter
 
             if (terrainArchetypeData.DefaultSize.H > 0)
             {
-                writer.Write16BitUnsignedInteger((ushort)terrainArchetypeData.NineSliceData.Y);
-                writer.Write16BitUnsignedInteger((ushort)terrainArchetypeData.NineSliceData.H);
+                writer.Write16BitUnsignedInteger(terrainArchetypeData.NineSliceData.Top);
+                writer.Write16BitUnsignedInteger(terrainArchetypeData.NineSliceData.Bottom);
             }
         }
     }

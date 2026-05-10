@@ -13,10 +13,10 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
 
     private ResizeType _resizeType = ResizeType.None;
 
-    private int _nineSliceRight;
-    private int _nineSliceTop;
-    private int _nineSliceLeft;
-    private int _nineSliceBottom;
+    private ushort _nineSliceRight;
+    private ushort _nineSliceTop;
+    private ushort _nineSliceLeft;
+    private ushort _nineSliceBottom;
 
     private int _defaultWidth = -1;
     private int _defaultHeight = -1;
@@ -78,25 +78,25 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
     private void SetNineSliceLeft(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         _resizeType |= ResizeType.ResizeHorizontal;
-        _nineSliceLeft = int.Parse(secondToken);
+        _nineSliceLeft = ushort.Parse(secondToken);
     }
 
     private void SetNineSliceTop(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         _resizeType |= ResizeType.ResizeVertical;
-        _nineSliceTop = int.Parse(secondToken);
+        _nineSliceTop = ushort.Parse(secondToken);
     }
 
     private void SetNineSliceRight(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         _resizeType |= ResizeType.ResizeHorizontal;
-        _nineSliceRight = int.Parse(secondToken);
+        _nineSliceRight = ushort.Parse(secondToken);
     }
 
     private void SetNineSliceBottom(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
         _resizeType |= ResizeType.ResizeVertical;
-        _nineSliceBottom = int.Parse(secondToken);
+        _nineSliceBottom = ushort.Parse(secondToken);
     }
 
     private void SetDefaultWidth(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -120,13 +120,7 @@ internal sealed class TerrainArchetypeDataReader : NeoLemmixDataReader
     {
         var texture = TextureCache.GetOrLoadTexture(_styleIdentifier, _terrainPieceIdentifier, TextureType.TerrainSprite);
 
-        var nineSliceWidth = texture.Width - (_nineSliceRight + _nineSliceLeft);
-        var nineSliceHeight = texture.Height - (_nineSliceBottom + _nineSliceTop);
-
-        var nineSlicePosition = new Point(_nineSliceTop, _nineSliceLeft);
-        var nineSliceSize = new Size(nineSliceWidth, nineSliceHeight);
-
-        var nineSliceData = new RectangularRegion(nineSlicePosition, nineSliceSize);
+        var nineSliceData = new NineSliceData(_nineSliceLeft, _nineSliceRight, _nineSliceTop, _nineSliceBottom);
 
         var defaultSize = new Size(
             _defaultWidth < 0 ? texture.Width : _defaultWidth,
