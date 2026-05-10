@@ -369,21 +369,21 @@ public static class LemmingActionBounds
         var span = new Span<RectangularRegion>(lemmingActionBounds);
         span.Fill(StandardLemmingBounds);
 
-        span.At(LemmingActionConstants.BlockerActionId) = BlockerActionBounds;
         span.At(LemmingActionConstants.ClimberActionId) = ClimberActionBounds;
-        span.At(LemmingActionConstants.SliderActionId) = ClimberActionBounds;
+        span.At(LemmingActionConstants.BlockerActionId) = BlockerActionBounds;
+        span.At(LemmingActionConstants.MinerActionId) = MinerActionBounds;
         span.At(LemmingActionConstants.DiggerActionId) = DiggerActionBounds;
-        span.At(LemmingActionConstants.DisarmerActionId) = DisarmerActionBounds;
+        span.At(LemmingActionConstants.PlatformerActionId) = PlatformerActionBounds;
         span.At(LemmingActionConstants.GliderActionId) = GliderActionBounds;
+        span.At(LemmingActionConstants.JumperActionId) = JumperActionBounds;
+        span.At(LemmingActionConstants.SwimmerActionId) = SwimmerActionBounds;
+        span.At(LemmingActionConstants.ShimmierActionId) = ShimmierActionBounds;
+        span.At(LemmingActionConstants.SliderActionId) = ClimberActionBounds;
         span.At(LemmingActionConstants.HoisterActionId) = HoisterActionBounds;
         span.At(LemmingActionConstants.DehoisterActionId) = HoisterActionBounds;
-        span.At(LemmingActionConstants.JumperActionId) = JumperActionBounds;
-        span.At(LemmingActionConstants.MinerActionId) = MinerActionBounds;
-        span.At(LemmingActionConstants.PlatformerActionId) = PlatformerActionBounds;
         span.At(LemmingActionConstants.ReacherActionId) = ReacherActionBounds;
-        span.At(LemmingActionConstants.ShimmierActionId) = ShimmierActionBounds;
+        span.At(LemmingActionConstants.DisarmerActionId) = DisarmerActionBounds;
         span.At(LemmingActionConstants.SplatterActionId) = SplatterActionBounds;
-        span.At(LemmingActionConstants.SwimmerActionId) = SwimmerActionBounds;
         span.At(LemmingActionConstants.VaporiserActionId) = VaporiserActionBounds;
 
         return lemmingActionBounds;

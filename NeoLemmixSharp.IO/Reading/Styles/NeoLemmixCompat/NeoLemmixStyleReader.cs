@@ -96,7 +96,7 @@ internal readonly ref struct NeoLemmixStyleReader : IStyleReader<NeoLemmixStyleR
         foreach (var terrainMetadataFilePath in terrainMetadataFilePaths)
         {
             var terrainMetadataFileNameSpan = Path.GetFileNameWithoutExtension(terrainMetadataFilePath.AsSpan());
-            if (pngFileNameSpan.Equals(terrainMetadataFileNameSpan, StringComparison.Ordinal))
+            if (Helpers.StringSpansMatch(pngFileNameSpan, terrainMetadataFileNameSpan))
                 return terrainMetadataFilePath;
         }
 

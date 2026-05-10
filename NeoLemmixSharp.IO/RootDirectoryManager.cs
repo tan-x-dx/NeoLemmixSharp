@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.FileFormats;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.IO;
 
@@ -133,11 +134,12 @@ public static class RootDirectoryManager
         return Helpers.CreateReadOnlySpan(allFiles, 0, numberOfRelevantFiles);
     }
 
+    [Pure]
     public static ReadOnlySpan<char> GetFullFilePathWithoutExtension(ReadOnlySpan<char> fullFilePath)
     {
         var extension = Path.GetExtension(fullFilePath);
 
         var indexOfExtension = fullFilePath.IndexOf(extension, StringComparison.Ordinal);
-        return fullFilePath[..indexOfExtension];
+        return fullFilePath.SliceUnsafe(0, indexOfExtension);
     }
 }
