@@ -11,12 +11,14 @@ public enum GadgetTriggerType
     GadgetLinkTrigger,
     GadgetPositionTrigger,
     GadgetAnimationFinished,
-    LemmingHitBoxTrigger
+    LemmingHitBoxTrigger,
+
+    VALUE_MAX
 }
 
 public readonly struct GadgetTriggerTypeHasher : IEnumIdentifierHelper<GadgetTriggerTypeHasher.GadgetTriggerTypeBitBuffer, GadgetTriggerType>
 {
-    private const int NumberOfEnumValues = 5;
+    private const int NumberOfEnumValues = (int)GadgetTriggerType.VALUE_MAX;
     public static GadgetTriggerType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetTriggerType>(rawValue, NumberOfEnumValues);
 
     public int NumberOfItems => NumberOfEnumValues;

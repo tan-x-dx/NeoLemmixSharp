@@ -9,23 +9,6 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public interface ILemmingState
 {
-    public enum StateType
-    {
-        ClimberState,
-        FloaterState,
-        GliderState,
-        SwimmerState,
-        DisarmerState,
-        SliderState,
-
-        AcidLemmingState,
-        WaterState,
-        FastForwardState,
-
-        NeutralState,
-        ZombieState,
-    }
-
     private static readonly ILemmingState[] AllLemmingStateChangers = GetLemmingStates();
     public static ReadOnlySpan<ILemmingState> AllItems => new(AllLemmingStateChangers);
 

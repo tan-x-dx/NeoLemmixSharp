@@ -17,12 +17,14 @@ public enum GadgetPropertyType
     InitialAnimationFrame,
     LogicGateType,
     IsFastForwards,
-    NumberOfInputs
+    NumberOfInputs,
+
+    VALUE_MAX
 }
 
 public readonly struct GadgetPropertyTypeHasher : IEnumIdentifierHelper<BitBuffer32, GadgetPropertyType>
 {
-    private const int NumberOfEnumValues = 11;
+    private const int NumberOfEnumValues = (int)GadgetPropertyType.VALUE_MAX;
 
     public int NumberOfItems => NumberOfEnumValues;
 

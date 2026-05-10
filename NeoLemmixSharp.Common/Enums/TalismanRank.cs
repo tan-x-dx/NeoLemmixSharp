@@ -6,12 +6,14 @@ public enum TalismanRank
 {
     Bronze,
     Silver,
-    Gold
+    Gold,
+
+    VALUE_MAX
 }
 
 public static class TalismanRankHelpers
 {
-    private const int NumberOfEnumValues = 3;
+    private const int NumberOfEnumValues = (int)TalismanRank.VALUE_MAX;
 
     public static TalismanRank GetEnumValue(uint rawValue) => Helpers.GetEnumValue<TalismanRank>(rawValue, NumberOfEnumValues);
 }

@@ -1,8 +1,27 @@
 ﻿namespace NeoLemmixSharp.Common;
 
+public enum StateType
+{
+    ClimberState,
+    FloaterState,
+    GliderState,
+    SwimmerState,
+    DisarmerState,
+    SliderState,
+
+    AcidLemmingState,
+    WaterState,
+    FastForwardState,
+
+    NeutralState,
+    ZombieState,
+
+    VALUE_MAX
+}
+
 public static class LemmingStateConstants
 {
-    public const int NumberOfStates = 11;
+    public const int NumberOfStates = (int)StateType.VALUE_MAX;
 
     public const int ClimberBitIndex = 0;
     public const int FloaterBitIndex = 1;

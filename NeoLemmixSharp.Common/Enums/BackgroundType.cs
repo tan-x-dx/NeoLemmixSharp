@@ -7,11 +7,13 @@ public enum BackgroundType
     NoBackgroundSpecified,
     SolidColorBackground,
     TextureBackground,
+
+    VALUE_MAX
 }
 
 public static class BackgroundTypeHelpers
 {
-    private const int NumberOfEnumValues = 3;
+    private const uint NumberOfEnumValues = (uint)BackgroundType.VALUE_MAX;
 
     public static BackgroundType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<BackgroundType>(rawValue, NumberOfEnumValues);
 }

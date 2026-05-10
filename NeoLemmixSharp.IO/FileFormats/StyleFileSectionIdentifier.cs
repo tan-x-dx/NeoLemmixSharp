@@ -10,11 +10,13 @@ internal enum StyleFileSectionIdentifier
     ThemeDataSection,
     TerrainArchetypeDataSection,
     GadgetArchetypeDataSection,
+
+    VALUE_MAX
 }
 
 internal readonly struct StyleFileSectionIdentifierHasher : IEnumIdentifierHelper<BitBuffer32, StyleFileSectionIdentifier>
 {
-    private const int NumberOfEnumValues = 4;
+    private const int NumberOfEnumValues = (int)StyleFileSectionIdentifier.VALUE_MAX;
 
     public int NumberOfItems => NumberOfEnumValues;
 

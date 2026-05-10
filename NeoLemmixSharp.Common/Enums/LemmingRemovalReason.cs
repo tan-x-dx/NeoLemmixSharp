@@ -16,12 +16,14 @@ public enum LemmingRemovalReason
     DeathZombie,
     DeathWeasel,
     DeathMetalGrate,
-    DeathDismemberment
+    DeathDismemberment,
+
+    VALUE_MAX
 }
 
 public static class LemmingRemovalReasonHelpers
 {
-    private const int NumberOfEnumValues = 13;
+    private const uint NumberOfEnumValues = (uint)LemmingRemovalReason.VALUE_MAX;
 
     public static LemmingRemovalReason GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingRemovalReason>(rawValue, NumberOfEnumValues);
 }

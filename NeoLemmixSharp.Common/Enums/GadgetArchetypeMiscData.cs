@@ -8,11 +8,13 @@ namespace NeoLemmixSharp.Common.Enums;
 public enum GadgetArchetypeMiscDataType
 {
     SpawnPointOffset,
+
+    VALUE_MAX
 }
 
 public readonly struct GadgetArchetypeMiscDataTypeHasher : IEnumIdentifierHelper<BitBuffer32, GadgetArchetypeMiscDataType>
 {
-    private const int NumberOfEnumValues = 8;
+    private const int NumberOfEnumValues = (int)(GadgetArchetypeMiscDataType.VALUE_MAX);
 
     public int NumberOfItems => NumberOfEnumValues;
 
