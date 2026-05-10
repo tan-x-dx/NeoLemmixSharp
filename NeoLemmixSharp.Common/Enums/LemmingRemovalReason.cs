@@ -7,7 +7,8 @@ public enum LemmingRemovalReason
     None,
     Exit,
     DeathSplat,
-    DeathExplode,
+    DeathExploder,
+    DeathStoner,
     DeathDrown,
     DeathFire,
     DeathTrap,
@@ -20,7 +21,7 @@ public enum LemmingRemovalReason
 
 public static class LemmingRemovalReasonHelpers
 {
-    private const int NumberOfEnumValues = 12;
+    private const int NumberOfEnumValues = 13;
 
     public static LemmingRemovalReason GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingRemovalReason>(rawValue, NumberOfEnumValues);
 }

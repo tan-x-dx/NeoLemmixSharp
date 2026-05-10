@@ -471,7 +471,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public void OnRemoval(LemmingRemovalReason removalReason)
     {
         CurrentAction = NoneAction.Instance;
-        Renderer.UpdateLemmingState(removalReason == LemmingRemovalReason.DeathExplode);
+        Renderer.UpdateLemmingState(removalReason is LemmingRemovalReason.DeathExploder or LemmingRemovalReason.DeathStoner);
     }
 
     public unsafe void SetRawDataFromOther(Lemming otherLemming)
