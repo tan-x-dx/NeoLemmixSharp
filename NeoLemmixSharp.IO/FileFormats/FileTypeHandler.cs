@@ -7,6 +7,7 @@ using NeoLemmixSharp.IO.Reading.Styles;
 using NeoLemmixSharp.IO.Reading.Styles.NeoLemmixCompat;
 using NeoLemmixSharp.IO.Versions;
 using NeoLemmixSharp.IO.Writing.Levels;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.FileFormats;
 
@@ -45,14 +46,14 @@ public static class FileTypeHandler
     {
         var fileExtension = Path.GetExtension(filePath.AsSpan());
         if (fileExtension.IsEmpty)
-            throw new ArgumentException($"No file extension specified: {filePath}");
+            ThrowMissingFileExtensionException(filePath);
 
         var fileTypeAndFormatAlternateLookup = FileTypeAndFormatLookup.GetAlternateLookup<ReadOnlySpan<char>>();
         if (!fileTypeAndFormatAlternateLookup.TryGetValue(fileExtension, out var typeAndFormat))
-            throw new ArgumentException($"File extension not recognised: {fileExtension}");
+            ThrowUnrecognisedFileExtensionException(fileExtension);
 
         if (typeAndFormat.Type != FileType.Level)
-            throw new ArgumentException($"File path does not point to a level: {filePath} -> {typeAndFormat.Type}");
+            ThrowInvalidFileException(filePath, typeAndFormat.Type);
 
         return typeAndFormat.Format switch
         {
@@ -103,4 +104,11 @@ public static class FileTypeHandler
 
         _ => Helpers.ThrowUnknownEnumValueException<FileFormatType, string>(fileFormatType)
     };
+
+    [DoesNotReturn]
+    private static void ThrowMissingFileExtensionException(string filePath) => throw new ArgumentException($"No file extension specified: {filePath}");
+    [DoesNotReturn]
+    private static void ThrowUnrecognisedFileExtensionException(ReadOnlySpan<char> fileExtension) => throw new ArgumentException($"File extension not recognised: {fileExtension}");
+    [DoesNotReturn]
+    private static void ThrowInvalidFileException(string filePath, FileType fileType) => throw new ArgumentException($"File path does not point to a level: {filePath} -> {fileType}");
 }

@@ -17,8 +17,7 @@ public sealed class NoneAction : LemmingAction
             string.Empty,
             1,
             1,
-            -1,
-            new RectangularRegion())
+            -1)
     {
     }
 

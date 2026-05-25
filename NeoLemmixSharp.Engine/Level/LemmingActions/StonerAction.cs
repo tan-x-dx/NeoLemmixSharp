@@ -16,8 +16,7 @@ public sealed class StonerAction : LemmingAction
             LemmingActionConstants.StonerActionSpriteFileName,
             LemmingActionConstants.StonerAnimationFrames,
             LemmingActionConstants.MaxStonerPhysicsFrames,
-            LemmingActionConstants.NoPriority,
-            LemmingActionBounds.StandardLemmingBounds)
+            LemmingActionConstants.NoPriority)
     {
     }
 
@@ -25,7 +24,7 @@ public sealed class StonerAction : LemmingAction
     {
         TerrainMasks.ApplyStonerMask(lemming);
         NoneAction.Instance.TransitionLemmingToAction(lemming, false);
-        LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
+        LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathStoner);
         lemming.ParticleTimer = EngineConstants.ParticleFrameCount;
 
         return false;

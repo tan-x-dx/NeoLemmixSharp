@@ -125,8 +125,8 @@ public static class EngineConstants
     public const uint PanelCyanValue = 0xffb0b000;
     public const uint PanelWhiteValue = 0xffb0b0b0;
 
-    public static Color CursorColor1 => PanelWhite;
-    public static Color CursorColor2 => PanelRed;
+    public static Color CursorColor1 => new(PanelWhiteValue);
+    public static Color CursorColor2 => new(PanelRedValue);
     public static Color CursorColor3 => new(0xff606060);
 
     #endregion

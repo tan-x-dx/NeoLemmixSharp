@@ -17,8 +17,8 @@ public ref struct BitArrayEnumerator<TPerfectHasher, T>
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal BitArrayEnumerator(
-        TPerfectHasher hasher,
-        ReadOnlySpan<uint> bits)
+        ReadOnlySpan<uint> bits,
+        TPerfectHasher hasher)
     {
         _bits = bits;
         _v = bits.Length == 0 ? 0U : bits.At(0);

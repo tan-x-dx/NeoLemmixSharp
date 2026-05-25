@@ -122,6 +122,8 @@ public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
     [DebuggerStepThrough]
     public override int GetHashCode() => RotNum;
 
+    [Pure]
+    [DebuggerStepThrough]
     string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
     [Pure]
     [DebuggerStepThrough]

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common.Util;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Numerics;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
@@ -45,11 +45,10 @@ public static class NxlvReadingHelpers
     /// <typeparam name="TNumber">The integral type to be parsed</typeparam>
     /// <param name="token">A sequence of characters representing a hexadecimal number</param>
     /// <returns>An unsigned integral type</returns>
-    public static TNumber ParseHex<TNumber>(ReadOnlySpan<char> token)
-        where TNumber : unmanaged, IUnsignedNumber<TNumber>
+    public static ulong ParseHex(ReadOnlySpan<char> token)
     {
-        // The standard parse methods can deal with hexadecimal, but
-        // the initial "0x" part must be omitted. We deal with this here
+        // The parse hex method can deal with hexadecimal, but the
+        // initial "0x" part must be omitted. We deal with this here.
 
         var startIndex = 0;
         var firstChar = token[0];
@@ -63,7 +62,7 @@ public static class NxlvReadingHelpers
             startIndex = 2;
         }
 
-        return TNumber.Parse(token[startIndex..], NumberStyles.AllowHexSpecifier, null);
+        return NumberFormattingHelpers.ParseHexDigits(token[startIndex..]);
     }
 
     /// <summary>

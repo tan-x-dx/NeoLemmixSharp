@@ -69,10 +69,10 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         var transformationData = new TransformationData(Orientation, FacingDirection, size);
 
         var q0 = transformationData.Transform(new Point());
-        var q1 = transformationData.Transform(region.GetBottomRight() - region.Position);
+        var q1 = transformationData.Transform(region.BottomRight - region.TopLeft);
 
-        q0 += region.Position;
-        q1 += region.Position;
+        q0 += region.TopLeft;
+        q1 += region.TopLeft;
 
         return new RectangularRegion(q0, q1);
     }
@@ -157,15 +157,21 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         }
     }
 
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
     [Pure]
     [DebuggerStepThrough]
     [SkipLocalsInit]
-    public override string ToString()
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
         Span<char> buffer = stackalloc char[5 + 1 + 5];
-        TryFormat(buffer, out var charsWritten, default, null);
+        TryFormat(buffer, out var charsWritten, format, formatProvider);
         return buffer[..charsWritten].ToString();
+    }
+
+    [Pure]
+    [DebuggerStepThrough]
+    public override string ToString()
+    {
+        return ToString(default, null);
     }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)

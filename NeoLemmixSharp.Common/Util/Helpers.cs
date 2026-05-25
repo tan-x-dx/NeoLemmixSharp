@@ -389,4 +389,6 @@ public static class Helpers
     public static void ThrowDestinationSpanTooShortException() => throw new ArgumentException("Destination span too short!");
     [DoesNotReturn]
     public static void ThrowKeyNotFoundException() => throw new KeyNotFoundException("Key not found!");
+    [DoesNotReturn]
+    public static void ThrowMultipleInitialisationError(string typeName) => throw new InvalidOperationException($"Cannot initialise {typeName} more than once!");
 }

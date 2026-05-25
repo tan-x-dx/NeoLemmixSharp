@@ -14,12 +14,14 @@ public enum LevelParameters
     EnableDirectionSelect,
     EnableClearPhysics,
     EnableSkillShadows,
-    EnableFrameControl
+    EnableFrameControl,
+
+    VALUE_MAX
 }
 
 public readonly struct LevelParameterHasher : IEnumIdentifierHelper<BitBuffer32, LevelParameters>
 {
-    private const int NumberOfEnumValues = 8;
+    private const int NumberOfEnumValues = (int)LevelParameters.VALUE_MAX;
 
     public static LevelParameters GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LevelParameters>(rawValue, NumberOfEnumValues);
 

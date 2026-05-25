@@ -30,7 +30,7 @@ public sealed class TerrainEraseMask
     {
         var transformationData = new DihedralTransformation.TransformationData(orientation, facingDirection, Dimensions.Size);
 
-        var offset = position - transformationData.Transform(Dimensions.Position);
+        var offset = position - transformationData.Transform(Dimensions.TopLeft);
         var terrainManager = LevelScreen.TerrainManager;
         var maskPositions = GetMaskPositionsForFrame(frame);
 

@@ -65,8 +65,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             LemmingActionConstants.LasererActionSpriteFileName,
             LemmingActionConstants.LasererAnimationFrames,
             LemmingActionConstants.MaxLasererPhysicsFrames,
-            LemmingActionConstants.NonPermanentSkillPriority,
-            LemmingActionBounds.StandardLemmingBounds)
+            LemmingActionConstants.NonPermanentSkillPriority)
     {
     }
 
@@ -91,7 +90,8 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         var offsetChecks = GetOffsetChecks(facingDirection);
 
         var i = DistanceCap;
-        while (i > 0)
+
+        do
         {
             switch (CheckForHit(in gadgetsNearLemming, offsetChecks))
             {
@@ -112,9 +112,9 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             }
 
             --i;
-        }
+        } while (i > 0);
 
-        HitTestConclusive:
+    HitTestConclusive:
 
         lemming.LaserHitLevelPosition = target;
 

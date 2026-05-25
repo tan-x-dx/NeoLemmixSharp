@@ -8,12 +8,14 @@ public enum HitBoxInteractionType
     Liquid,
     Updraft,
     Splat,
-    NoSplat
+    NoSplat,
+
+    VALUE_MAX
 }
 
 public static class HitBoxInteractionTypeHelpers
 {
-    private const int NumberOfEnumValues = 5;
+    private const int NumberOfEnumValues = (int)HitBoxInteractionType.VALUE_MAX;
 
     public static HitBoxInteractionType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<HitBoxInteractionType>(rawValue, NumberOfEnumValues);
 }

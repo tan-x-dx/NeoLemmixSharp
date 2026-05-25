@@ -78,6 +78,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to set</param>
     /// <param name="popCount">Will be incremented if the operation changes the contents of the span</param>
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously set</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static bool SetBit(Span<uint> bits, int index, ref int popCount)
     {
         ref var arrayValue = ref bits.At(index >>> Shift);
@@ -124,6 +125,7 @@ public static class BitArrayHelpers
     /// <param name="index">The bit to clear</param>v
     /// <param name="popCount">Will be decremented if the operation changes the contents of the span</param>
     /// <returns><see langword="true" /> if the operation changed the value of the bit, <see langword="false" /> if the bit was previously clear</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static bool ClearBit(Span<uint> bits, int index, ref int popCount)
     {
         ref var arrayValue = ref bits.At(index >>> Shift);

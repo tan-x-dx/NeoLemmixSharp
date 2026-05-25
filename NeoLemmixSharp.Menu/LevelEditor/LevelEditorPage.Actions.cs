@@ -2,6 +2,8 @@
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
+using NeoLemmixSharp.Menu.UserSettings;
+using NeoLemmixSharp.Menu.UserSettings.Tabs;
 using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Menu.LevelEditor;
@@ -106,42 +108,51 @@ public sealed partial class LevelEditorPage : IEditorOperationHandler
 
     }
 
-    public void ToggleClearPhysics(Component c, Point position)
+    public void ToggleClearPhysics(Component c)
+    {
+        var checkBox = (CheckBox)c;
+
+        if (checkBox.IsChecked)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+
+    public void ToggleTerrainRendering(Component c)
     {
 
     }
 
-    public void ToggleTerrainRendering(Component c, Point position)
+    public void ToggleGadgetRendering(Component c)
     {
 
     }
 
-    public void ToggleGadgetRendering(Component c, Point position)
+    public void ToggleTriggerAreaRendering(Component c)
     {
 
     }
 
-    public void ToggleTriggerAreaRendering(Component c, Point position)
+    public void ToggleScreenStartRendering(Component c)
     {
 
     }
 
-    public void ToggleScreenStartRendering(Component c, Point position)
+    public void ToggleBackgroundRendering(Component c)
     {
 
     }
 
-    public void ToggleBackgroundRendering(Component c, Point position)
+    public void ToggleDeprecatedPieces(Component c)
     {
 
     }
 
-    public void ToggleDeprecatedPieces(Component c, Point position)
-    {
-
-    }
-
-    public void ToggleSnapToGrid(Component c, Point position)
+    public void ToggleSnapToGrid(Component c)
     {
 
     }
@@ -158,12 +169,16 @@ public sealed partial class LevelEditorPage : IEditorOperationHandler
 
     public void ViewSettings(Component c, Point position)
     {
-
+        var settingsMenu = SettingsMenu.GetMenu();
+        SettingsMenu.SelectTab(SettingsTabType.GeneralSettings);
+        UiHandler.OpenPopupMenu(settingsMenu);
     }
 
     public void ViewHotKeySettings(Component c, Point position)
     {
-
+        var settingsMenu = SettingsMenu.GetMenu();
+        SettingsMenu.SelectTab(SettingsTabType.LevelEditorSettings);
+        UiHandler.OpenPopupMenu(settingsMenu);
     }
 
     public void ViewAbout(Component c, Point position)

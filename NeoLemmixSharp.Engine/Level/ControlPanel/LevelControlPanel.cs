@@ -158,7 +158,8 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
             button.X = x0;
             button.Width = ControlPanelButtonPixelWidth;
 
-            switch (button.ButtonAction.ButtonType.GetButtonTypeSizePosition())
+            var buttonTypeSizePosition = button.ButtonAction.ButtonType.GetButtonTypeSizePosition();
+            switch (buttonTypeSizePosition)
             {
                 case ButtonTypeSizePosition.Normal:
                     button.Y = ControlPanelInfoPixelHeight;
@@ -178,7 +179,8 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
                     return;
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    Helpers.ThrowUnknownEnumValueException<ButtonTypeSizePosition, byte>(buttonTypeSizePosition);
+                    return;
             }
         }
     }

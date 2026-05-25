@@ -9,12 +9,14 @@ public enum GadgetType
 
     LogicGate,
     Counter,
-    LevelTimerObserver
+    LevelTimerObserver,
+
+    VALUE_MAX
 }
 
 public static class GadgetTypeHelpers
 {
-    private const int NumberOfGadgetTypeEnumValues = 6;
+    private const int NumberOfGadgetTypeEnumValues = (int)GadgetType.VALUE_MAX;
 
     public static GadgetType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetType>(rawValue, NumberOfGadgetTypeEnumValues);
 }

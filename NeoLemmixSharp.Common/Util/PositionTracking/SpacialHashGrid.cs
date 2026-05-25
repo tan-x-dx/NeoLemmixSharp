@@ -106,7 +106,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         var chunkSpan = Helpers.CreateReadOnlySpan<uint>(chunkPointer, _bitArraySize);
         var popCount = BitArrayHelpers.GetPopCount(chunkPointer, _bitArraySize);
 
-        result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, chunkSpan, popCount);
+        result = new BitArrayEnumerable<TPerfectHasher, T>(chunkSpan, popCount, _hasher);
     }
 
     /// <summary>
@@ -132,7 +132,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             _cachedBottomRightChunkQuery == bottomRightChunk)
         {
             // If we've already got the data cached, just use it
-            result = new BitArrayEnumerable<TPerfectHasher, T>(_hasher, Helpers.CreateReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize), _cachedQueryPopCount);
+            result = new BitArrayEnumerable<TPerfectHasher, T>(Helpers.CreateReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize), _cachedQueryPopCount, _hasher);
         }
         else
         {
@@ -151,9 +151,9 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
 
         _cachedQueryPopCount = BitArrayHelpers.GetPopCount(_cachedQueryScratchSpacePointer, _bitArraySize);
         result = new BitArrayEnumerable<TPerfectHasher, T>(
-            _hasher,
             Helpers.CreateReadOnlySpan<uint>(_cachedQueryScratchSpacePointer, _bitArraySize),
-            _cachedQueryPopCount);
+            _cachedQueryPopCount,
+            _hasher);
     }
 
     private void CacheLatestQuery()
@@ -329,16 +329,19 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
     }
 
+    [Pure]
     private Point GetTopLeftChunkForRegion(RectangularRegion levelRegion)
     {
-        return ConvertToChunkPosition(levelRegion.Position);
+        return ConvertToChunkPosition(levelRegion.TopLeft);
     }
 
+    [Pure]
     private Point GetBottomRightChunkForRegion(RectangularRegion levelRegion)
     {
-        return ConvertToChunkPosition(levelRegion.GetBottomRight());
+        return ConvertToChunkPosition(levelRegion.BottomRight);
     }
 
+    [Pure]
     private Point ConvertToChunkPosition(Point position)
     {
         var x = _horizontalBoundaryBehaviour.Normalise(position.X) >> _chunkSizeBitShift;
@@ -418,6 +421,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
     }
 
+    [Pure]
     private RectangularRegion* GetPreviousBoundsForItem(T item)
     {
         int offset = _hasher.Hash(item);
@@ -455,11 +459,11 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
             var allBitsHandle = (nint)_allBitsPointer;
             var previousItemPositionsHandle = (nint)_previousItemPositionsPointer;
 
-            if (cachedQueryScratchSpaceHandle != nint.Zero)
+            if (cachedQueryScratchSpaceHandle != 0)
                 Marshal.FreeHGlobal(cachedQueryScratchSpaceHandle);
-            if (allBitsHandle != nint.Zero)
+            if (allBitsHandle != 0)
                 Marshal.FreeHGlobal(allBitsHandle);
-            if (previousItemPositionsHandle != nint.Zero)
+            if (previousItemPositionsHandle != 0)
                 Marshal.FreeHGlobal(previousItemPositionsHandle);
         }
 
@@ -467,22 +471,11 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     }
 
     [DoesNotReturn]
-    private static void ThrowAlreadyTrackingItemException(T item)
-    {
-        throw new InvalidOperationException($"Already tracking item! {item}");
-    }
-
+    private static void ThrowAlreadyTrackingItemException(T item) => throw new InvalidOperationException($"Already tracking item! {item}");
     [DoesNotReturn]
-    private static void ThrowItemNotRegisteredException(T item)
-    {
-        throw new InvalidOperationException($"Item not registered! {item}");
-    }
-
+    private static void ThrowItemNotRegisteredException(T item) => throw new InvalidOperationException($"Item not registered! {item}");
     [DoesNotReturn]
-    private static void ThrowNotTrackingItemException(T item)
-    {
-        throw new InvalidOperationException($"Not tracking item {item}");
-    }
+    private static void ThrowNotTrackingItemException(T item) => throw new InvalidOperationException($"Not tracking item {item}");
 
     private enum ChunkOperationType
     {

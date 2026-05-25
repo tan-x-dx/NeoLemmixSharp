@@ -140,7 +140,7 @@ public sealed class LevelData
         ? throw new InvalidOperationException("Level objective not set!")
         : _levelObjective;
     public BitArraySet<LevelParameterHasher, BitBuffer32, LevelParameters> LevelParameters { get; } = LevelParameterHasher.CreateBitArraySet();
-    public BitArraySet<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters> ControlParameters { get; } = ControlPanelParameterHasher.CreateBitArraySet();
+    public BitArraySet<ControlPanelParameterHasher, BitBuffer32, ControlPanelParameters> ControlPanelParameters { get; } = ControlPanelParameterHasher.CreateBitArraySet();
 
     public List<LemmingInstanceData> PrePlacedLemmingData { get; } = [];
     public List<TribeStyleIdentifier> TribeIdentifiers { get; } = [];

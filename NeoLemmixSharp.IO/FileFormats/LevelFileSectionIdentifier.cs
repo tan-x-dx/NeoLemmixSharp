@@ -17,12 +17,14 @@ internal enum LevelFileSectionIdentifier
     TerrainGroupDataSection,
     GadgetDataSection,
     GadgetBehaviourDataSection,
-    GadgetTriggerDataSection
+    GadgetTriggerDataSection,
+
+    VALUE_MAX
 }
 
 internal readonly struct LevelFileSectionIdentifierHasher : IEnumIdentifierHelper<BitBuffer32, LevelFileSectionIdentifier>
 {
-    private const int NumberOfEnumValues = 12;
+    private const int NumberOfEnumValues = (int)LevelFileSectionIdentifier.VALUE_MAX;
 
     public int NumberOfItems => NumberOfEnumValues;
 
@@ -35,7 +37,7 @@ internal readonly struct LevelFileSectionIdentifierHasher : IEnumIdentifierHelpe
 
     public static LevelFileSectionIdentifier GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LevelFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 
-    public static ushort GetSectionIdentifier(LevelFileSectionIdentifier sectionIdentifier) => sectionIdentifier switch
+    public static ushort GetSectionIdentifierBytes(LevelFileSectionIdentifier sectionIdentifier) => sectionIdentifier switch
     {
         LevelFileSectionIdentifier.StringDataSection => 0x2644,
         LevelFileSectionIdentifier.LevelMetadataSection => 0x79A6,

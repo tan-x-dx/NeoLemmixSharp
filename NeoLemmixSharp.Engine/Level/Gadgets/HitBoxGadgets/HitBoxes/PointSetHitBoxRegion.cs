@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
@@ -19,12 +20,12 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
     public PointSetHitBoxRegion(ReadOnlySpan<Point> points)
     {
         if (points.Length == 0)
-            throw new ArgumentException("Cannot create PointSetHitBoxRegion with zero points!");
+            ThrowEmptyPointSetHitBoxRegionException();
 
         _bounds = new RectangularRegion(points);
 
         if (_bounds.W > DimensionCutoffSize || _bounds.H > DimensionCutoffSize)
-            throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_bounds.W}, H:{_bounds.H}");
+            ThrowPointSetHitBoxRegionTooBigException();
 
         var totalNumberOfPoints = _bounds.Size.Area();
 
@@ -33,17 +34,29 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
 
         for (var i = 0; i < points.Length; i++)
         {
-            var p = points[i] - _bounds.Position;
+            var p = points[i] - _bounds.TopLeft;
 
             var index = IndexFor(p);
             BitArrayHelpers.SetBit(span, index);
         }
     }
 
+    [DoesNotReturn]
+    private static void ThrowEmptyPointSetHitBoxRegionException()
+    {
+        throw new ArgumentException("Cannot create PointSetHitBoxRegion with zero points!");
+    }
+
+    [DoesNotReturn]
+    private void ThrowPointSetHitBoxRegionTooBigException()
+    {
+        throw new ArgumentException($"The region enclosed by this set of points is far too large! W:{_bounds.W}, H:{_bounds.H}");
+    }
+
     [Pure]
     public override bool ContainsPoint(Point levelPosition)
     {
-        var p = levelPosition - _bounds.Position;
+        var p = levelPosition - _bounds.TopLeft;
         if (!_bounds.Size.EncompassesPoint(p))
             return false;
 
@@ -59,7 +72,7 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
         Point p;
         var span = new ReadOnlySpan<uint>(_levelPositionBits);
 
-        p = p1 - _bounds.Position;
+        p = p1 - _bounds.TopLeft;
         if (_bounds.Size.EncompassesPoint(p))
         {
             pointIndex = IndexFor(p);
@@ -67,7 +80,7 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
                 return true;
         }
 
-        p = p2 - _bounds.Position;
+        p = p2 - _bounds.TopLeft;
         if (!_bounds.Size.EncompassesPoint(p))
             return false;
 

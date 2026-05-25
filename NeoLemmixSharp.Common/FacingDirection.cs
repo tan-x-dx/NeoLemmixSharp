@@ -57,6 +57,8 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>, ISpanForma
     [DebuggerStepThrough]
     public override int GetHashCode() => Id;
 
+    [Pure]
+    [DebuggerStepThrough]
     string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
     [Pure]
     [DebuggerStepThrough]

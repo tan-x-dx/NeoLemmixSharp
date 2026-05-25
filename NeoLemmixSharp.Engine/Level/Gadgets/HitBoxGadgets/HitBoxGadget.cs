@@ -166,18 +166,18 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 
     public bool Equals(HitBoxGadget? other)
     {
-        var otherValue = -1;
-        if (other is not null) otherValue = other.Id;
-        return Id == otherValue;
+        var otherId = -1;
+        if (other is not null) otherId = other.Id;
+        return Id == otherId;
     }
 
     public static bool operator ==(HitBoxGadget? left, HitBoxGadget? right)
     {
-        var leftValue = -1;
-        if (left is not null) leftValue = left.Id;
-        var rightValue = -1;
-        if (right is not null) rightValue = right.Id;
-        return leftValue == rightValue;
+        var leftId = -1;
+        if (left is not null) leftId = left.Id;
+        var rightId = -1;
+        if (right is not null) rightId = right.Id;
+        return leftId == rightId;
     }
     public static bool operator !=(HitBoxGadget? left, HitBoxGadget? right) => !(left == right);
 }

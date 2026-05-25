@@ -471,7 +471,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public void OnRemoval(LemmingRemovalReason removalReason)
     {
         CurrentAction = NoneAction.Instance;
-        Renderer.UpdateLemmingState(removalReason == LemmingRemovalReason.DeathExplode);
+        Renderer.UpdateLemmingState(removalReason is LemmingRemovalReason.DeathExploder or LemmingRemovalReason.DeathStoner);
     }
 
     public unsafe void SetRawDataFromOther(Lemming otherLemming)
@@ -512,9 +512,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     [DebuggerStepThrough]
     public bool Equals(Lemming? other)
     {
-        var otherValue = -1;
-        if (other is not null) otherValue = other.Id;
-        return Id == otherValue;
+        var otherId = -1;
+        if (other is not null) otherId = other.Id;
+        return Id == otherId;
     }
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Lemming other && Id == other.Id;
@@ -524,11 +524,11 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     [DebuggerStepThrough]
     public static bool operator ==(Lemming? left, Lemming? right)
     {
-        var leftValue = -1;
-        if (left is not null) leftValue = left.Id;
-        var rightValue = -1;
-        if (right is not null) rightValue = right.Id;
-        return leftValue == rightValue;
+        var leftId = -1;
+        if (left is not null) leftId = left.Id;
+        var rightId = -1;
+        if (right is not null) rightId = right.Id;
+        return leftId == rightId;
     }
     [DebuggerStepThrough]
     public static bool operator !=(Lemming? left, Lemming? right) => !(left == right);

@@ -1,8 +1,8 @@
-﻿using NeoLemmixSharp.Common.Enums;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Skills;
-using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
@@ -37,10 +37,12 @@ public sealed class SetStateLemmingBehaviour : LemmingBehaviour
     {
         Clear,
         Set,
-        Toggle
+        Toggle,
+
+        VALUE_MAX
     }
 
-    private const int NumberOfEnumValues = 3;
+    private const int NumberOfEnumValues = (int)SetStateType.VALUE_MAX;
 
     public static SetStateType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<SetStateType>(rawValue, NumberOfEnumValues);
 }

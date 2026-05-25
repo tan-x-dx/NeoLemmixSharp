@@ -21,6 +21,6 @@ public class PopupMenu : Component
         if (ContainsPoint(position))
             return;
 
-        UiHandler.Instance.ClosePopupMenu();
+        UiHandler.Instance.ClosePopupMenu(this);
     }
 }

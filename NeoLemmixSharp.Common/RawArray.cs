@@ -39,7 +39,7 @@ public readonly struct RawArray : IDisposable
 
     public void Dispose()
     {
-        if (Handle != nint.Zero)
+        if (Handle != 0)
             Marshal.FreeHGlobal(Handle);
     }
 }

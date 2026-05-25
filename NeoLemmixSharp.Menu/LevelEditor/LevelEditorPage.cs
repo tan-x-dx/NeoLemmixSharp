@@ -270,14 +270,13 @@ public sealed partial class LevelEditorPage : PageBase
     {
         var textField = (TextField)c;
 
-        var newLevelId = ulong.Parse(textField.CurrentTextSpan, System.Globalization.NumberStyles.AllowHexSpecifier, null);
+        var newLevelId = NumberFormattingHelpers.ParseHexDigits(textField.CurrentTextSpan);
         _currentLevelData.LevelId = new LevelIdentifier(newLevelId);
     }
 
     private void GenerateNewLevelId(Component c, Point position)
     {
-        var newLevelId = (ulong)Random.Shared.NextInt64();
-        _currentLevelData.LevelId = new LevelIdentifier(newLevelId);
+        _currentLevelData.LevelId = LevelIdentifier.GenerateRandomLevelIdentifier();
         _controlPanel.SetNumericalLevelData(_currentLevelData);
     }
 
@@ -308,7 +307,7 @@ public sealed partial class LevelEditorPage : PageBase
         var result = new LevelData(FileFormatType.NeoLemmix, null);
         result.SetLevelWidth(320);
         result.SetLevelHeight(160);
-        result.LevelId = new LevelIdentifier((ulong)Random.Shared.NextInt64());
+        result.LevelId = LevelIdentifier.GenerateRandomLevelIdentifier();
         result.LevelStyle = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), FileFormatType.NeoLemmix)).Identifier;
         result.MaxNumberOfClonedLemmings = 0;
 

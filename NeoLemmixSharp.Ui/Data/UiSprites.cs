@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Ui.Components;
 
 namespace NeoLemmixSharp.Ui.Data;
@@ -15,7 +16,7 @@ public static class UiSprites
     public static void Initialise(ContentManager contentManager)
     {
         if (BevelTexture is not null)
-            throw new InvalidOperationException($"Cannot initialise {nameof(UiSprites)} more than once!");
+            Helpers.ThrowMultipleInitialisationError(nameof(UiSprites));
 
         UiFont = contentManager.Load<SpriteFont>("Fonts/UiFont");
         UiFontGlyphs = UiFont.GetGlyphs();

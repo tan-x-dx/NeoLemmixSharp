@@ -18,8 +18,7 @@ public sealed class SliderAction : LemmingAction
             LemmingActionConstants.SliderActionSpriteFileName,
             LemmingActionConstants.SliderAnimationFrames,
             LemmingActionConstants.MaxSliderPhysicsFrames,
-            LemmingActionConstants.PermanentSkillPriority,
-            LemmingActionBounds.ClimberActionBounds)
+            LemmingActionConstants.PermanentSkillPriority)
     {
     }
 

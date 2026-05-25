@@ -10,12 +10,14 @@ public enum TribeSpriteLayerColorType
     LemmingSkinColor,
     LemmingBodyColor,
     LemmingFootColor,
-    TribePaintColor
+    TribePaintColor,
+
+    VALUE_MAX
 }
 
 public static class TribeSpriteLayerColorTypeHelpers
 {
-    private const int NumberOfEnumValues = 7;
+    private const int NumberOfEnumValues = (int)TribeSpriteLayerColorType.VALUE_MAX;
 
     public static TribeSpriteLayerColorType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<TribeSpriteLayerColorType>(rawValue, NumberOfEnumValues);
 }

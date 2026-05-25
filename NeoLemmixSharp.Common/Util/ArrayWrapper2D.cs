@@ -75,7 +75,7 @@ public readonly struct ArrayWrapper2D<T>
         get
         {
             _subRegion.Size.AssertEncompassesPoint(pos);
-            var index = _arrayDimensions.GetIndexOfPoint(pos + _subRegion.Position);
+            var index = _arrayDimensions.GetIndexOfPoint(pos + _subRegion.TopLeft);
 
             return ref _data.At(index);
         }
@@ -87,7 +87,7 @@ public readonly struct ArrayWrapper2D<T>
         {
             isValid = true;
 
-            var index = _arrayDimensions.GetIndexOfPoint(pos + _subRegion.Position);
+            var index = _arrayDimensions.GetIndexOfPoint(pos + _subRegion.TopLeft);
 
             return ref _data.At(index);
         }
@@ -117,8 +117,8 @@ public readonly struct ArrayWrapper2D<T>
                 var p0 = new Point(x, y);
                 var p1 = transformationData.Transform(p0);
 
-                var sourceIndex = source._arrayDimensions.GetIndexOfPoint(p0 + source._subRegion.Position);
-                var destinationIndex = destination._arrayDimensions.GetIndexOfPoint(p1 + destination._subRegion.Position);
+                var sourceIndex = source._arrayDimensions.GetIndexOfPoint(p0 + source._subRegion.TopLeft);
+                var destinationIndex = destination._arrayDimensions.GetIndexOfPoint(p1 + destination._subRegion.TopLeft);
 
                 destination._data[destinationIndex] = source._data[sourceIndex];
             }

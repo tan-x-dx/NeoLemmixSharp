@@ -69,8 +69,8 @@ public static class NumberFormattingHelpers
                 return result;
 
             result = source.Length + 1;
-            var i = source.Length;
-            i--;
+            var i = source.Length - 1;
+
             do
             {
                 var n = source.At(i);
@@ -143,14 +143,14 @@ public static class NumberFormattingHelpers
 
     public static unsafe void WriteHexDigits(char* pointer, ulong valueToWrite)
     {
-        ReadOnlySpan<char> HexDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+        ReadOnlySpan<byte> HexDigits = "0123456789ABCDEF"u8;
 
         var length = 15;
 
         do
         {
             var rem = (int)(valueToWrite & 15);
-            var charToWrite = HexDigits.At(rem);
+            var charToWrite = (char)HexDigits.At(rem);
             valueToWrite >>>= 4;
 
             pointer[length] = charToWrite;
@@ -159,38 +159,86 @@ public static class NumberFormattingHelpers
         while (length >= 0);
     }
 
+    public static ulong ParseHexDigits(ReadOnlySpan<char> hexDigits)
+    {
+        ValidateCharsAreAllHex(hexDigits);
+
+        ulong result = 0;
+
+        foreach (char c in hexDigits)
+        {
+            result <<= 4;
+            var digitValue = GetHexDigitValue(c);
+            result |= digitValue;
+        }
+
+        return result;
+
+        static void ValidateCharsAreAllHex(ReadOnlySpan<char> hexDigits)
+        {
+            if (hexDigits.Length > 16)
+                throw new ArgumentException("Span length too long to parse hex!");
+
+            foreach (char c in hexDigits)
+            {
+                if (c >= '0' && c <= '9')
+                    continue;
+
+                if (c >= 'A' && c <= 'F')
+                    continue;
+
+                if (c >= 'a' && c <= 'f')
+                    continue;
+
+                throw new ArgumentException("Non hex-digit found in span!");
+            }
+        }
+
+        static ulong GetHexDigitValue(char c)
+        {
+            if (c >= '0' && c <= '9')
+                return (ulong)c - '0';
+
+            if (c >= 'A' && c <= 'F')
+                return (ulong)c - ('A' - 10);
+
+            if (c >= 'a' && c <= 'f')
+                return (ulong)c - ('a' - 10);
+
+            return 0;
+        }
+    }
+
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char DigitToChar(uint digit) => (char)(digit | ZeroCharAsUint);
 
     public static int GetNumberStringLength(uint n)
     {
+        // 1 to 5
         if (n < 100000)
-        { // 1 to 5
+        {
+            // 1 or 2
             if (n < 100)
-            { // 1 or 2
                 return n < 10 ? 1 : 2;
-            }
-            else
-            { // 3, 4 or 5
-                if (n < 1000)
-                    return 3;
 
-                return n < 10000 ? 4 : 5;
-            }
-        }
-        else
-        { // 6 to 7
-            if (n < 10000000)
-            { // 6 or 7
-                return n < 1000000 ? 6 : 7;
-            }
-            else
-            { // 8, 9 or 10
-                if (n < 100000000)
-                    return 8;
+            // 3, 4 or 5
+            if (n < 1000)
+                return 3;
 
-                return n < 1000000000 ? 9 : 10;
-            }
+            return n < 10000 ? 4 : 5;
         }
+
+        // 6 to 7
+
+        // 6 or 7
+        if (n < 10000000)
+            return n < 1000000 ? 6 : 7;
+
+        // 8, 9 or 10
+        if (n < 100000000)
+            return 8;
+
+        return n < 1000000000 ? 9 : 10;
     }
 }

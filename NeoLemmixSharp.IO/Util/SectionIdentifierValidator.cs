@@ -6,17 +6,17 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.IO.Util;
 
-internal sealed class SectionIdentifierValidator<TPerfectHasher, TEnum> : IComparer<Interval>
+internal static class SectionIdentifierValidator<TPerfectHasher, TEnum>
     where TPerfectHasher : struct, IEnumIdentifierHelper<BitBuffer32, TEnum>
     where TEnum : unmanaged, Enum
 {
     [SkipLocalsInit]
-    internal void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> dictionary)
+    internal static void AssertSectionsAreContiguous(BitArrayDictionary<TPerfectHasher, BitBuffer32, TEnum, Interval> dictionary)
     {
         Span<Interval> intervals = stackalloc Interval[dictionary.Count];
         dictionary.CopyValuesTo(intervals);
 
-        intervals.Sort(this);
+        intervals.Sort(CompareIntevals);
 
         Debug.Assert(intervals.Length >= 1);
 
@@ -38,7 +38,7 @@ internal sealed class SectionIdentifierValidator<TPerfectHasher, TEnum> : ICompa
             throw new InvalidOperationException("Sections are not contiguous!");
     }
 
-    int IComparer<Interval>.Compare(Interval x, Interval y)
+    private static int CompareIntevals(Interval x, Interval y)
     {
         int gt = x.Start > y.Start ? 1 : 0;
         int lt = x.Start < y.Start ? 1 : 0;

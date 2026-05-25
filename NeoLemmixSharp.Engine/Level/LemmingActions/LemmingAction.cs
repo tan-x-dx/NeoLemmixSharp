@@ -17,7 +17,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     private static readonly LemmingActionSet AirborneActions = GetAirborneActions();
     private static readonly LemmingActionSet OneTimeActions = GetOneTimeActions();
 
-    public const int NumberOfItems = LemmingActionConstants.NumberOfLemmingActions;
     public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
 
     private static LemmingAction[] RegisterAllLemmingActions()
@@ -134,7 +133,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public int NumberOfAnimationFrames { get; }
     public int MaxPhysicsFrames { get; }
     public int CursorSelectionPriorityValue { get; }
-    private readonly RectangularRegion _actionBounds;
 
     protected LemmingAction(
         int id,
@@ -142,8 +140,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         string lemmingActionSpriteFileName,
         int numberOfAnimationFrames,
         int maxPhysicsFrames,
-        int cursorSelectionPriorityValue,
-        RectangularRegion actionBounds)
+        int cursorSelectionPriorityValue)
     {
         Id = id;
         LemmingActionName = lemmingActionName;
@@ -151,7 +148,6 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         NumberOfAnimationFrames = numberOfAnimationFrames;
         MaxPhysicsFrames = maxPhysicsFrames;
         CursorSelectionPriorityValue = cursorSelectionPriorityValue;
-        _actionBounds = actionBounds;
     }
 
     public abstract bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming);
@@ -159,7 +155,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public RectangularRegion GetLemmingBounds(Lemming lemming)
     {
         var dht = lemming.GetDihedralTransformation();
-        var actionBounds = _actionBounds;
+        var actionBounds = LemmingActionBounds.GetBounds(Id);
 
         actionBounds = dht.Transform(actionBounds);
         actionBounds = actionBounds.Translate(lemming.AnchorPosition);

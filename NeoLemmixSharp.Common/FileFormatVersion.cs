@@ -50,18 +50,33 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
         return _allBits.CompareTo(value._allBits);
     }
 
-    string IFormattable.ToString(string? format, IFormatProvider? formatProvider) => ToString();
+    [Pure]
+    [DebuggerStepThrough]
     [SkipLocalsInit]
-    public override string ToString()
+    public string ToString(string? format, IFormatProvider? formatProvider)
     {
         Span<char> charBuffer = stackalloc char[1 + (NumberFormattingHelpers.Uint16NumberBufferLength * 4) + 3 + 1];
-        TryFormat(charBuffer, out var charsWritten, default, null);
+        TryFormat(charBuffer, out var charsWritten, format, formatProvider);
         return charBuffer[..charsWritten].ToString();
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    [Pure]
+    [DebuggerStepThrough]
+    public override string ToString()
     {
-        ReadOnlySpan<int> components = [Major, Minor, Build, Revision];
+        return ToString(default, null);
+    }
+
+    [SkipLocalsInit]
+    public unsafe bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+    {
+        int* p = stackalloc int[4];
+        p[0] = Major;
+        p[1] = Minor;
+        p[2] = Build;
+        p[3] = Revision;
+
+        var components = Helpers.CreateReadOnlySpan<int>(p, 4);
         var formatParameters = new NumberFormattingHelpers.FormatParameters('[', '.', ']');
         return NumberFormattingHelpers.TryFormatIntegerSpan(components, destination, formatParameters, out charsWritten);
     }

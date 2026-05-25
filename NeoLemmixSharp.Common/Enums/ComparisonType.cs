@@ -11,11 +11,13 @@ public enum ComparisonType
     LessThanOrEqual,
     GreaterThan,
     GreaterThanOrEqual,
+
+    VALUE_MAX
 }
 
 public static class ComparisonTypeHelpers
 {
-    private const int NumberOfEnumValues = 6;
+    private const int NumberOfEnumValues = (int)ComparisonType.VALUE_MAX;
 
     public static ComparisonType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<ComparisonType>(rawValue, NumberOfEnumValues);
 

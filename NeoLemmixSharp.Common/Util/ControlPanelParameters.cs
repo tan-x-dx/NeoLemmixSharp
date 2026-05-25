@@ -17,12 +17,14 @@ public enum ControlPanelParameters
     ShowSpawnIntervalInsteadOfReleaseRate,
     EnableClassicModeSkillsIfPossible,
     RemoveSkillAssignPaddingButtons,
-    ShowExpandedAthleteInformation
+    ShowExpandedAthleteInformation,
+
+    VALUE_MAX
 }
 
 public readonly struct ControlPanelParameterHasher : IEnumIdentifierHelper<BitBuffer32, ControlPanelParameters>
 {
-    private const int NumberOfEnumValues = 12;
+    private const int NumberOfEnumValues = (int)ControlPanelParameters.VALUE_MAX;
 
     public int NumberOfItems => NumberOfEnumValues;
 

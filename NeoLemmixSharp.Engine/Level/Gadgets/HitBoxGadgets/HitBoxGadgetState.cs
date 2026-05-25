@@ -56,7 +56,7 @@ public sealed class HitBoxGadgetState : GadgetState
             anyNonTrivialHitBox = true;
 
             var hitBoxBounds = hitBox.CurrentBounds;
-            var bottomRight = hitBoxBounds.GetBottomRight();
+            var bottomRight = hitBoxBounds.BottomRight;
 
             if (hitBoxBounds.X < minX)
                 minX = hitBoxBounds.X;

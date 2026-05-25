@@ -23,11 +23,13 @@ public enum GadgetBehaviourType
 
     GlobalAdditionalTime,
     GlobalSkillCountChange,
+
+    VALUE_MAX
 }
 
 public readonly struct GadgetBehaviourTypeHasher : IEnumIdentifierHelper<GadgetBehaviourTypeHasher.GadgetBehaviourTypeBitBuffer, GadgetBehaviourType>
 {
-    private const int NumberOfEnumValues = 14;
+    private const int NumberOfEnumValues = (int)GadgetBehaviourType.VALUE_MAX;
     public static GadgetBehaviourType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<GadgetBehaviourType>(rawValue, NumberOfEnumValues);
 
     public int NumberOfItems => NumberOfEnumValues;

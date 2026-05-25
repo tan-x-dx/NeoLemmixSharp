@@ -1,9 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.Reading;
 
 internal sealed class FileReadingException(string message) : Exception(message)
 {
+    [DebuggerStepThrough]
     public static void ReaderAssert([DoesNotReturnIf(false)] bool condition, string details)
     {
         if (condition)

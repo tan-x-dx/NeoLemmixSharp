@@ -13,7 +13,7 @@ public sealed class TerrainArchetypeData : ITerrainArchetypeData, IArchetypeData
     public required string Name { get; init; }
     public required string TextureFilePath { get; init; }
 
-    public required RectangularRegion NineSliceData { get; init; }
+    public required NineSliceData NineSliceData { get; init; }
     public required ResizeType ResizeType { get; init; }
     public required Size DefaultSize { get; init; }
     public required bool IsSteel { get; init; }

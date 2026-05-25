@@ -55,8 +55,10 @@ public sealed class SnapshotRecorder : IDisposable
         byte* snapshotDataPointer = GetDataPointerForSnapshotNumber(snapshotNumber);
         byte* workBufferPointer = (byte*)_workBuffer.Handle;
 
-        var sourceSpan = Helpers.CreateReadOnlySpan<byte>(snapshotDataPointer, TotalNumberOfBytesPerSnapshot);
-        var destinationSpan = Helpers.CreateSpan<byte>(workBufferPointer, TotalNumberOfBytesPerSnapshot);
+        var spanLength = TotalNumberOfBytesPerSnapshot;
+
+        var sourceSpan = Helpers.CreateReadOnlySpan<byte>(snapshotDataPointer, spanLength);
+        var destinationSpan = Helpers.CreateSpan<byte>(workBufferPointer, spanLength);
 
         sourceSpan.CopyTo(destinationSpan);
     }

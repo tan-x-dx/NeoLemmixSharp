@@ -102,19 +102,23 @@ internal sealed class NeoLemmixLevelReader : ILevelReader<NeoLemmixLevelReader>
 
     private void ProcessConfigData()
     {
-        var levelParameters = _levelData.LevelParameters;
+        var userSettings = IGameWindow.Instance.UserSettings;
 
-        // Add all default parameters for a NeoLemmix level
+        var levelParameters = _levelData.LevelParameters;
+        userSettings.SetUpLevelParameters(levelParameters);
+
+        // Explicitly add these default parameters for a NeoLemmix level
         levelParameters.Add(LevelParameters.EnablePause);
         levelParameters.Add(LevelParameters.EnableNuke);
         levelParameters.Add(LevelParameters.EnableFastForward);
         levelParameters.Add(LevelParameters.EnableDirectionSelect);
         levelParameters.Add(LevelParameters.EnableClearPhysics);
-        levelParameters.Add(LevelParameters.EnableSkillShadows);
         levelParameters.Add(LevelParameters.EnableFrameControl);
 
-        var controlPanelParameters = _levelData.ControlParameters;
+        var controlPanelParameters = _levelData.ControlPanelParameters;
+        userSettings.SetUpControlPanelParameters(controlPanelParameters);
 
+        // Explicitly add these default parameters for a NeoLemmix level
         controlPanelParameters.Add(ControlPanelParameters.ShowPauseButton);
         controlPanelParameters.Add(ControlPanelParameters.ShowNukeButton);
         controlPanelParameters.Add(ControlPanelParameters.ShowFastForwardsButton);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Config;
 using NeoLemmixSharp.Common.Rendering;
 using NeoLemmixSharp.Common.Rendering.Shaders;
 using NeoLemmixSharp.Common.Rendering.Text;
@@ -37,6 +38,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
     public Common.Point WindowPosition => new(Window.ClientBounds.Left, Window.ClientBounds.Top);
     public Size WindowSize => new(Window.ClientBounds.Width, Window.ClientBounds.Height);
 
+    public UserSettings UserSettings { get; set; } = new();
     public SpriteBatch SpriteBatch => _spriteBatch;
 
     public NeoLemmixGame()
@@ -255,8 +257,8 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
         _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-    //    _graphics.HardwareModeSwitch = false;
-    //    _graphics.IsFullScreen = false;
+        //    _graphics.HardwareModeSwitch = false;
+        //    _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 
         _screen?.OnWindowSizeChanged();
@@ -272,7 +274,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
         _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-     //   _graphics.HardwareModeSwitch = true;
+        //   _graphics.HardwareModeSwitch = true;
         _graphics.IsFullScreen = true;
         _graphics.ApplyChanges();
 
@@ -289,7 +291,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
         _graphics.PreferredBackBufferWidth = _windowedBounds.W;
         _graphics.PreferredBackBufferHeight = _windowedBounds.H;
-     //   _graphics.HardwareModeSwitch = false;
+        //   _graphics.HardwareModeSwitch = false;
         _graphics.IsFullScreen = false;
         _graphics.ApplyChanges();
 

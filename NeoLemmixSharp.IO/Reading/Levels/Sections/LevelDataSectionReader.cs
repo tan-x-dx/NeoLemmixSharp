@@ -14,7 +14,7 @@ internal abstract class LevelDataSectionReader : IComparable<LevelDataSectionRea
         IsNecessary = isNecessary;
     }
 
-    public ushort GetSectionIdentifier() => LevelFileSectionIdentifierHasher.GetSectionIdentifier(SectionIdentifier);
+    public ushort GetSectionIdentifierBytes() => LevelFileSectionIdentifierHasher.GetSectionIdentifierBytes(SectionIdentifier);
 
     public abstract void ReadSection(RawLevelFileDataReader reader, LevelData levelData, int numberOfItemsInSection);
 

@@ -84,8 +84,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
         while (i-- > 0)
             ReadSectionIntervalDatum();
 
-        new SectionIdentifierValidator<TPerfectHasher, TEnum>()
-            .AssertSectionsAreContiguous(result);
+        SectionIdentifierValidator<TPerfectHasher, TEnum>.AssertSectionsAreContiguous(result);
 
         return result;
 
@@ -136,8 +135,7 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     private unsafe T ReadUnmanaged<T>()
         where T : unmanaged
     {
-        var newPosition = sizeof(T);
-        newPosition += _position;
+        var newPosition = _position + sizeof(T);
         FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
 
         byte* pointer = (byte*)_byteBuffer.Handle + _position;

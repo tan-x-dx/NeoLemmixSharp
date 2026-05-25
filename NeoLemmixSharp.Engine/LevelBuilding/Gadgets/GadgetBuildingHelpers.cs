@@ -89,7 +89,7 @@ public static class GadgetBuildingHelpers
         ArgumentOutOfRangeException.ThrowIfGreaterThan(numberOfTriggers, EngineConstants.MaxAllowedNumberOfGadgetTriggers);
 
         if (numberOfTriggers <= BasicTriggerNames.Length)
-            return Helpers.CreateReadOnlySpan<GadgetTriggerName>(BasicTriggerNames, 0, numberOfTriggers);
+            return Helpers.CreateReadOnlySpan(BasicTriggerNames, 0, numberOfTriggers);
 
         return ConstructLargeTriggerNameArray(numberOfTriggers);
     }

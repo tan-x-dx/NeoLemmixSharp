@@ -25,15 +25,15 @@ public interface IEditorOperationHandler
     void EditorGroup(Component c, Point position);
     void EditorUngroup(Component c, Point position);
 
-    void ToggleClearPhysics(Component c, Point position);
-    void ToggleTerrainRendering(Component c, Point position);
-    void ToggleGadgetRendering(Component c, Point position);
-    void ToggleTriggerAreaRendering(Component c, Point position);
-    void ToggleScreenStartRendering(Component c, Point position);
-    void ToggleBackgroundRendering(Component c, Point position);
-    void ToggleDeprecatedPieces(Component c, Point position);
+    void ToggleClearPhysics(Component c);
+    void ToggleTerrainRendering(Component c);
+    void ToggleGadgetRendering(Component c);
+    void ToggleTriggerAreaRendering(Component c);
+    void ToggleScreenStartRendering(Component c);
+    void ToggleBackgroundRendering(Component c);
+    void ToggleDeprecatedPieces(Component c);
 
-    void ToggleSnapToGrid(Component c, Point position);
+    void ToggleSnapToGrid(Component c);
     void TestLevel(Component c, Point position);
     void ValidateLevel(Component c, Point position);
 

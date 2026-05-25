@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Config;
 using NeoLemmixSharp.Common.Screen;
 
 namespace NeoLemmixSharp.Common.Util;
@@ -7,6 +8,8 @@ namespace NeoLemmixSharp.Common.Util;
 public interface IGameWindow
 {
     static IGameWindow Instance { get; set; } = null!;
+
+    UserSettings UserSettings { get; }
 
     Point WindowPosition { get; }
     Size WindowSize { get; }

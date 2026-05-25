@@ -14,12 +14,14 @@ public enum LemmingBehaviourType
     NullifyLemmingFallDistance,
     MoveLemming,
     SetLemmingPosition,
-    SetLemmingFastForward
+    SetLemmingFastForward,
+
+    VALUE_MAX
 }
 
 public static class LemmingBehaviourTypeHelpers
 {
-    private const int NumberOfEnumValues = 11;
+    private const int NumberOfEnumValues = (int)LemmingBehaviourType.VALUE_MAX;
 
     public static LemmingBehaviourType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingBehaviourType>(rawValue, NumberOfEnumValues);
 }

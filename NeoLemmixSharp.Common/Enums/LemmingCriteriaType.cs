@@ -10,12 +10,14 @@ public enum LemmingCriteriaType
     LemmingAction,
     RequiredLemmingState,
     DisallowedLemmingState,
-    LemmingTribe
+    LemmingTribe,
+
+    VALUE_MAX
 }
 
 public readonly struct LemmingCriteriaTypeHasher : IEnumIdentifierHelper<BitBuffer32, LemmingCriteriaType>
 {
-    private const int NumberOfEnumValues = 6;
+    private const int NumberOfEnumValues = (int)LemmingCriteriaType.VALUE_MAX;
 
     public int NumberOfItems => NumberOfEnumValues;
     public int Hash(LemmingCriteriaType item) => (int)item;

@@ -18,15 +18,14 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
             LemmingActionConstants.ExploderActionSpriteFileName,
             LemmingActionConstants.ExploderAnimationFrames,
             LemmingActionConstants.MaxExploderPhysicsFrames,
-            LemmingActionConstants.NoPriority,
-            LemmingActionBounds.StandardLemmingBounds)
+            LemmingActionConstants.NoPriority)
     {
     }
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         TerrainMasks.ApplyBomberMask(lemming);
-        LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExplode);
+        LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExploder);
         lemming.ParticleTimer = EngineConstants.ParticleFrameCount;
 
         WalkerAction.Instance.TransitionLemmingToAction(lemming, false);

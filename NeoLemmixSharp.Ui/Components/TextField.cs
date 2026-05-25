@@ -67,11 +67,7 @@ public sealed class TextField : Component
     public int ParseInt() => int.Parse(CurrentTextSpan);
     public bool TryParseInt(out int value) => int.TryParse(CurrentTextSpan, out value);
 
-    public TextField() : this(0, 0)
-    {
-    }
-
-    public TextField(int x, int y) : base(x, y)
+    public TextField()
     {
         KeyPressed.RegisterKeyEvent(HandleKeyDown);
 

@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.FileFormats;
+using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.IO;
 
@@ -20,7 +21,7 @@ public static class RootDirectoryManager
     public static void Initialise()
     {
         if (RootDirectory is not null)
-            throw new InvalidOperationException($"Cannot initialise {nameof(RootDirectoryManager)} more than once!");
+            Helpers.ThrowMultipleInitialisationError(nameof(RootDirectoryManager));
 
         RootDirectory = ReadRootDirectoryForConfigFile();
         LevelFolderDirectory = Path.Combine(RootDirectory, LevelFolderName);
@@ -70,22 +71,14 @@ public static class RootDirectoryManager
 
     public static string GetCorrespondingTerrainPngFilePath(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier)
     {
-        var rootFilePath = Path.Combine(
-            StyleFolderDirectory,
-            styleIdentifier.ToString(),
-            TerrainFolderName,
-            pieceIdentifier.ToString());
+        var rootFilePath = Path.Combine(StyleFolderDirectory, styleIdentifier.ToString(), TerrainFolderName, pieceIdentifier.ToString());
 
         return GetCorrespondingImageFile(rootFilePath);
     }
 
     public static string GetCorrespondingGadgetPngFilePath(StyleIdentifier styleIdentifier, PieceIdentifier pieceIdentifier)
     {
-        var rootFilePath = Path.Combine(
-            StyleFolderDirectory,
-            styleIdentifier.ToString(),
-            GadgetFolderName,
-            pieceIdentifier.ToString());
+        var rootFilePath = Path.Combine(StyleFolderDirectory, styleIdentifier.ToString(), GadgetFolderName, pieceIdentifier.ToString());
 
         return GetCorrespondingImageFile(rootFilePath);
     }
@@ -107,10 +100,7 @@ public static class RootDirectoryManager
 
     public static string GetStyleLemmingFolderPath(this StyleIdentifier styleIdentifier)
     {
-        return Path.Combine(
-            StyleFolderDirectory,
-            styleIdentifier.ToString(),
-            LemmingsFolderName);
+        return Path.Combine(StyleFolderDirectory, styleIdentifier.ToString(), LemmingsFolderName);
     }
 
     public static string GetLevelFilePath(string levelName, FileFormatType fileFormatType)
@@ -144,11 +134,12 @@ public static class RootDirectoryManager
         return Helpers.CreateReadOnlySpan(allFiles, 0, numberOfRelevantFiles);
     }
 
+    [Pure]
     public static ReadOnlySpan<char> GetFullFilePathWithoutExtension(ReadOnlySpan<char> fullFilePath)
     {
         var extension = Path.GetExtension(fullFilePath);
 
         var indexOfExtension = fullFilePath.IndexOf(extension, StringComparison.Ordinal);
-        return fullFilePath[..indexOfExtension];
+        return fullFilePath.SliceUnsafe(0, indexOfExtension);
     }
 }

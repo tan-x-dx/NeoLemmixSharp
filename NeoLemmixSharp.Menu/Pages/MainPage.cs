@@ -1,6 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.GameInput;
+using NeoLemmixSharp.Menu.UserSettings;
+using NeoLemmixSharp.Menu.UserSettings.Tabs;
 using NeoLemmixSharp.Ui.Components;
 using NeoLemmixSharp.Ui.Components.Buttons;
 
@@ -102,8 +104,11 @@ public sealed class MainPage : PageBase
     {
     }
 
-    private static void ConfigButtonClick(Component _, Point position)
+    private void ConfigButtonClick(Component _, Point position)
     {
+        var settingsMenu = SettingsMenu.GetMenu();
+        SettingsMenu.SelectTab(SettingsTabType.GeneralSettings);
+        UiHandler.OpenPopupMenu(settingsMenu);
     }
 
     private static void QuitButtonClick(Component _, Point position)
@@ -146,7 +151,15 @@ public sealed class MainPage : PageBase
     {
         if (_menuController.Quit.IsPressed)
         {
-            IGameWindow.Instance.Escape();
+            var openMenu = UiHandler.CurrentMenu;
+            if (openMenu is null)
+            {
+                IGameWindow.Instance.Escape();
+            }
+            else
+            {
+                UiHandler.ClosePopupMenu(openMenu);
+            }
         }
 
         if (_menuController.Space.IsPressed)
