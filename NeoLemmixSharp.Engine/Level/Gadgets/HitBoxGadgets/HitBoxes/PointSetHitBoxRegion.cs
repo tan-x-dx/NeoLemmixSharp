@@ -34,7 +34,7 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
 
         for (var i = 0; i < points.Length; i++)
         {
-            var p = points[i] - _bounds.Position;
+            var p = points[i] - _bounds.TopLeft;
 
             var index = IndexFor(p);
             BitArrayHelpers.SetBit(span, index);
@@ -56,7 +56,7 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
     [Pure]
     public override bool ContainsPoint(Point levelPosition)
     {
-        var p = levelPosition - _bounds.Position;
+        var p = levelPosition - _bounds.TopLeft;
         if (!_bounds.Size.EncompassesPoint(p))
             return false;
 
@@ -72,7 +72,7 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
         Point p;
         var span = new ReadOnlySpan<uint>(_levelPositionBits);
 
-        p = p1 - _bounds.Position;
+        p = p1 - _bounds.TopLeft;
         if (_bounds.Size.EncompassesPoint(p))
         {
             pointIndex = IndexFor(p);
@@ -80,7 +80,7 @@ public sealed class PointSetHitBoxRegion : HitBoxRegion
                 return true;
         }
 
-        p = p2 - _bounds.Position;
+        p = p2 - _bounds.TopLeft;
         if (!_bounds.Size.EncompassesPoint(p))
             return false;
 

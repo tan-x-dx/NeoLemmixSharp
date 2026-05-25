@@ -5,107 +5,93 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
 /// <summary>
-/// <para>Represents a rectangular region of points, specified by a <see cref="Point"/> and a <see cref="Common.Size"/>.</para>
+/// <para>Represents a rectangular region of points, specified by the top left and bottom right points.</para>
 /// <para>The constructors will ensure a well-formed <see cref="RectangularRegion"/> is created.</para>
 /// <para>Note that a <see cref="RectangularRegion"/> can never be empty - the smallest region size is 1x1.</para>
 /// </summary>
-[SkipLocalsInit]
-[StructLayout(LayoutKind.Explicit, Size = RectangularRegionSize)]
 public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanFormattable
 {
-    private const int RectangularRegionSize = 4 * sizeof(int);
+    public readonly Point TopLeft;
+    public readonly Point BottomRight;
 
-    [FieldOffset(0 * sizeof(int))] public readonly Point Position;
-    [FieldOffset(0 * sizeof(int))] public readonly int X;
-    [FieldOffset(1 * sizeof(int))] public readonly int Y;
+    public int X => TopLeft.X;
+    public int Y => TopLeft.Y;
+    public int W => 1 + BottomRight.X - TopLeft.X;
+    public int H => 1 + BottomRight.Y - TopLeft.Y;
 
-    [FieldOffset(2 * sizeof(int))] public readonly Size Size;
-    [FieldOffset(2 * sizeof(int))] public readonly int W;
-    [FieldOffset(3 * sizeof(int))] public readonly int H;
+    public Size Size => new(W, H, 0);
 
     [DebuggerStepThrough]
     public RectangularRegion()
     {
-        X = 0;
-        Y = 0;
-        W = 1;
-        H = 1;
     }
 
     [DebuggerStepThrough]
     public RectangularRegion(Point position)
     {
-        X = position.X;
-        Y = position.Y;
-        W = 1;
-        H = 1;
+        TopLeft = position;
+        BottomRight = position;
     }
 
     [DebuggerStepThrough]
     public RectangularRegion(Size size)
     {
-        X = 0;
-        Y = 0;
-        W = Math.Max(size.W, 1);
-        H = Math.Max(size.H, 1);
+        TopLeft = new Point();
+        var bottomRightX = Math.Max(size.W - 1, 0);
+        var bottomRightY = Math.Max(size.H - 1, 0);
+        BottomRight = new Point(bottomRightX, bottomRightY);
     }
 
     [DebuggerStepThrough]
     public RectangularRegion(Point position, Size size)
     {
-        X = position.X;
-        Y = position.Y;
-        W = Math.Max(size.W, 1);
-        H = Math.Max(size.H, 1);
+        TopLeft = position;
+        var bottomRightX = Math.Max(size.W - 1, 0);
+        var bottomRightY = Math.Max(size.H - 1, 0);
+        BottomRight = position + new Point(bottomRightX, bottomRightY);
     }
 
     [DebuggerStepThrough]
     public RectangularRegion(Rectangle rect)
     {
-        X = rect.X;
-        Y = rect.Y;
-        W = Math.Max(rect.Width, 1);
-        H = Math.Max(rect.Height, 1);
-    }
-
-    [DebuggerStepThrough]
-    public RectangularRegion(Interval horizontalRegion, Interval verticalRegion)
-    {
-        X = horizontalRegion.Start;
-        Y = verticalRegion.Start;
-        W = Math.Max(horizontalRegion.Length, 1);
-        H = Math.Max(verticalRegion.Length, 1);
+        TopLeft = new Point(rect.X, rect.Y);
+        var bottomRightX = Math.Max(rect.Width - 1, 0);
+        var bottomRightY = Math.Max(rect.Height - 1, 0);
+        BottomRight = new Point(bottomRightX, bottomRightY);
     }
 
     [DebuggerStepThrough]
     public RectangularRegion(Texture2D texture)
     {
-        X = 0;
-        Y = 0;
-        W = texture.Width;
-        H = texture.Height;
+        TopLeft = new Point();
+        var bottomRightX = Math.Max(texture.Width - 1, 0);
+        var bottomRightY = Math.Max(texture.Height - 1, 0);
+        BottomRight = new Point(bottomRightX, bottomRightY);
+    }
+
+    [DebuggerStepThrough]
+    public RectangularRegion(Interval horizontalRegion, Interval verticalRegion)
+    {
+        TopLeft = new Point(horizontalRegion.Start, verticalRegion.Start);
+        var bottomRightX = Math.Max(horizontalRegion.Length - 1, 0);
+        var bottomRightY = Math.Max(verticalRegion.Length - 1, 0);
+        BottomRight = new Point(bottomRightX, bottomRightY);
     }
 
     [DebuggerStepThrough]
     public RectangularRegion(Point p1, Point p2)
     {
-        X = Math.Min(p1.X, p2.X);
-        Y = Math.Min(p1.Y, p2.Y);
-        var w0 = p1.X - p2.X;
-        if (w0 < 0)
-            w0 = -w0;
-        w0++;
-        W = w0;
-        var h0 = p1.Y - p2.Y;
-        if (h0 < 0)
-            h0 = -h0;
-        h0++;
-        H = h0;
+        var minX = Math.Min(p1.X, p2.X);
+        var minY = Math.Min(p1.Y, p2.Y);
+        var maxX = Math.Max(p1.X, p2.X);
+        var maxY = Math.Max(p1.Y, p2.Y);
+
+        TopLeft = new Point(minX, minY);
+        BottomRight = new Point(maxX, maxY);
     }
 
     [DebuggerStepThrough]
@@ -128,55 +114,34 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
                 maxY = p.Y;
         }
 
-        X = minX;
-        Y = minY;
-        W = 1 + maxX - minX;
-        H = 1 + maxY - minY;
+        TopLeft = new Point(minX, minY);
+        BottomRight = new Point(maxX, maxY);
     }
 
     [DebuggerStepThrough]
-    private RectangularRegion(Point position, int w, int h)
+    private RectangularRegion(Point topLeft, Point bottomRight, byte _)
     {
-        X = position.X;
-        Y = position.Y;
-        W = w;
-        H = h;
-    }
-
-    [DebuggerStepThrough]
-    public unsafe RectangularRegion(void* pointer)
-    {
-        int* intPointer = (int*)pointer;
-
-        X = intPointer[0];
-        Y = intPointer[1];
-        W = Math.Max(intPointer[2], 1);
-        H = Math.Max(intPointer[3], 1);
+        TopLeft = topLeft;
+        BottomRight = bottomRight;
     }
 
     [Pure]
     public static RectangularRegion Combine(RectangularRegion first, RectangularRegion second)
     {
-        var minX = Math.Min(first.X, second.X);
-        var minY = Math.Max(first.Y, second.Y);
+        var minX = Math.Min(first.TopLeft.X, second.TopLeft.X);
+        var minY = Math.Min(first.TopLeft.Y, second.TopLeft.Y);
 
-        var firstBottomRight = first.GetBottomRight();
-        var secondBottomRight = second.GetBottomRight();
+        var maxX = Math.Max(first.BottomRight.X, second.BottomRight.X);
+        var maxY = Math.Max(first.BottomRight.Y, second.BottomRight.Y);
 
-        var maxX = Math.Max(firstBottomRight.X, secondBottomRight.X);
-        var maxY = Math.Max(firstBottomRight.Y, secondBottomRight.Y);
-
-        var w = 1 + maxX - minX;
-        var h = 1 + maxY - minY;
-
-        return new RectangularRegion(new Point(minX, minY), w, h);
+        return new RectangularRegion(new Point(minX, minY), new Point(maxX, maxY), 0);
     }
 
     [Pure]
     [DebuggerStepThrough]
-    public RectangularRegion Translate(Point offset) => new(Position + offset, W, H);
+    public RectangularRegion Translate(Point offset) => new(TopLeft + offset, BottomRight + offset, 0);
 
-    public bool Contains(Point point) => Size.EncompassesPoint(point - Position);
+    public bool Contains(Point point) => Size.EncompassesPoint(point - TopLeft);
 
     public bool Overlaps(RectangularRegion other)
     {
@@ -187,17 +152,12 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point GetBottomRight() => new(X + W - 1, Y + H - 1);
+    public Interval GetHorizontalInterval() => new(TopLeft.X, W, 0);
 
     [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Interval GetHorizontalInterval() => new(X, W);
-
-    [Pure]
-    [DebuggerStepThrough]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Interval GetVerticalInterval() => new(Y, H);
+    public Interval GetVerticalInterval() => new(TopLeft.Y, H, 0);
 
     [Pure]
     [DebuggerStepThrough]
@@ -208,20 +168,20 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(RectangularRegion other) => X == other.X &&
-                                                   Y == other.Y &&
-                                                   W == other.W &&
-                                                   H == other.H;
+    public bool Equals(RectangularRegion other) => TopLeft == other.TopLeft &&
+                                                   BottomRight == other.BottomRight;
 
     [Pure]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is RectangularRegion other && Equals(other);
 
     [Pure]
     public override int GetHashCode() =>
-        6208021 * X +
-        4149227 * Y +
-        2239063 * W +
-        8554379 * H;
+        353 * TopLeft.GetHashCode() +
+        719 * BottomRight.GetHashCode();
+
+    [Pure]
+    [DebuggerStepThrough]
+    public override string ToString() => ToString(default, null);
 
     [Pure]
     [DebuggerStepThrough]
@@ -233,16 +193,9 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
         return buffer[..charsWritten].ToString();
     }
 
-    [Pure]
-    [DebuggerStepThrough]
-    public override string ToString()
-    {
-        return ToString(default, null);
-    }
-
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        if (!Position.TryFormat(destination, out charsWritten, format, provider))
+        if (!TopLeft.TryFormat(destination, out charsWritten, format, provider))
             return false;
 
         var result = Size.TryFormat(destination[charsWritten..], out var c, format, provider);
@@ -250,5 +203,5 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
         return result;
     }
 
-    public Rectangle ToRectangle() => new(X, Y, W, H);
+    public Rectangle ToRectangle() => new(TopLeft.X, TopLeft.Y, W, H);
 }

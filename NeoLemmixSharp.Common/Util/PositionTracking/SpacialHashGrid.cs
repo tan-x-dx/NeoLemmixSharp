@@ -332,13 +332,13 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
     [Pure]
     private Point GetTopLeftChunkForRegion(RectangularRegion levelRegion)
     {
-        return ConvertToChunkPosition(levelRegion.Position);
+        return ConvertToChunkPosition(levelRegion.TopLeft);
     }
 
     [Pure]
     private Point GetBottomRightChunkForRegion(RectangularRegion levelRegion)
     {
-        return ConvertToChunkPosition(levelRegion.GetBottomRight());
+        return ConvertToChunkPosition(levelRegion.BottomRight);
     }
 
     [Pure]

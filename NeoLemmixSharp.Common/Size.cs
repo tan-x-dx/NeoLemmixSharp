@@ -21,19 +21,10 @@ public readonly struct Size : IEquatable<Size>, ISpanFormattable
     }
 
     [DebuggerStepThrough]
-    private Size(int w, int h, byte _)
+    internal Size(int w, int h, byte _)
     {
         W = w;
         H = h;
-    }
-
-    [DebuggerStepThrough]
-    public unsafe Size(void* pointer)
-    {
-        int* intPointer = (int*)pointer;
-
-        W = Math.Max(intPointer[0], 0);
-        H = Math.Max(intPointer[1], 0);
     }
 
     [Pure]

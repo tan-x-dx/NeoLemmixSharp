@@ -69,10 +69,10 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         var transformationData = new TransformationData(Orientation, FacingDirection, size);
 
         var q0 = transformationData.Transform(new Point());
-        var q1 = transformationData.Transform(region.GetBottomRight() - region.Position);
+        var q1 = transformationData.Transform(region.BottomRight - region.TopLeft);
 
-        q0 += region.Position;
-        q1 += region.Position;
+        q0 += region.TopLeft;
+        q1 += region.TopLeft;
 
         return new RectangularRegion(q0, q1);
     }

@@ -18,6 +18,12 @@ public readonly struct Interval : IEquatable<Interval>, ISpanFormattable
         Length = Math.Max(length, 0);
     }
 
+    internal Interval(int start, int length, byte _)
+    {
+        Start = start;
+        Length = length;
+    }
+
     public int End => Start + Length;
 
     public bool Intersects(Interval other)
