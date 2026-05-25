@@ -117,7 +117,7 @@ public sealed partial class LevelEditorCanvas
 
         var pieceBounds = new RectangularRegion(new Point(), _levelData.LevelDimensions);
 
-        var pieceLocation = new Point() - viewBounds.TopLeft;
+        var pieceLocation = -viewBounds.TopLeft;
         pieceLocation = new Point(pieceLocation.X * _horizontalBorderBehaviour.ZoomValue, pieceLocation.Y * _verticalBorderBehaviour.ZoomValue);
         pieceLocation += offset;
 
