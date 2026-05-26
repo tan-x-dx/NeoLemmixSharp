@@ -27,9 +27,27 @@ public sealed class JumperAction : LemmingAction
         1, 0,   0, -1,   0, -1,   1,  0,   0, -1,   0, -1
     ];
 
-    private static ReadOnlySpan<Point> JumpPositionsFor(int patternIndex) => MemoryMarshal.Cast<int, Point>(RawLevelPositions).SliceUnsafe(
-        patternIndex * JumperPositionCount,
-        JumperPositionCount);
+    private static ReadOnlySpan<Point> JumpPositionsFor(Lemming lemming)
+    {
+        var jumpProgress = lemming.JumpProgress;
+
+        var patternIndex = jumpProgress switch
+        {
+            0 or 1 => 0,
+            2 or 3 => 1,
+            >= 4 and <= 8 => jumpProgress - 2,
+            9 or 10 => 7,
+            11 or 12 => 8,
+            _ => -1
+        };
+
+        if (patternIndex < 0)
+            return ReadOnlySpan<Point>.Empty;
+
+        return MemoryMarshal.Cast<int, Point>(RawLevelPositions).SliceUnsafe(
+            patternIndex * JumperPositionCount,
+            JumperPositionCount);
+    }
 
     private JumperAction()
         : base(
@@ -80,11 +98,10 @@ public sealed class JumperAction : LemmingAction
         Lemming lemming,
         in GadgetEnumerable gadgetsNearLemming)
     {
-        var patternIndex = GetPatternIndex(lemming);
-        if (patternIndex < 0)
+        var jumpPositionPatterns = JumpPositionsFor(lemming);
+        if (jumpPositionPatterns.Length == 0)
             return false;
 
-        var patternSpan = JumpPositionsFor(patternIndex);
         var lemmingJumpPatterns = lemming.GetJumperPositions();
 
         var orientation = lemming.Orientation;
@@ -95,7 +112,7 @@ public sealed class JumperAction : LemmingAction
         {
             lemmingJumpPatterns.At(i) = lemmingPosition;
 
-            var position = patternSpan.At(i);
+            var position = jumpPositionPatterns.At(i);
 
             if (position.X == 0 && position.Y == 0)
                 break;
@@ -127,21 +144,6 @@ public sealed class JumperAction : LemmingAction
         }
 
         return true;
-    }
-
-    private static int GetPatternIndex(Lemming lemming)
-    {
-        var jumpProgress = lemming.JumpProgress;
-
-        return jumpProgress switch
-        {
-            0 or 1 => 0,
-            2 or 3 => 1,
-            >= 4 and <= 8 => jumpProgress - 2,
-            9 or 10 => 7,
-            11 or 12 => 8,
-            _ => -1
-        };
     }
 
     private static bool DoWallCheck(
