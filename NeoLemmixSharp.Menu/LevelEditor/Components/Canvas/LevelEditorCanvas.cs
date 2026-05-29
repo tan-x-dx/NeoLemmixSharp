@@ -100,7 +100,7 @@ public sealed partial class LevelEditorCanvas : Component
     private static Point CalculateArrowKeyScrollDelta(LevelEditorController inputController)
     {
         if (UiHandler.Instance.SelectedTextField is not null)
-            return new Point();
+            return Point.Zero;
 
         var leftFrames = inputController.LeftArrow.NumberOfFramesHeldDownFor;
         var rightFrames = inputController.RightArrow.NumberOfFramesHeldDownFor;

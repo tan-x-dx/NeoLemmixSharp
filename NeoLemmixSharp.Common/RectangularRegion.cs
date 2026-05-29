@@ -40,7 +40,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [DebuggerStepThrough]
     public RectangularRegion(Size size)
     {
-        TopLeft = new Point();
+        TopLeft = Point.Zero;
         var bottomRightX = Math.Max(size.W - 1, 0);
         var bottomRightY = Math.Max(size.H - 1, 0);
         BottomRight = new Point(bottomRightX, bottomRightY);
@@ -67,7 +67,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [DebuggerStepThrough]
     public RectangularRegion(Texture2D texture)
     {
-        TopLeft = new Point();
+        TopLeft = Point.Zero;
         var bottomRightX = Math.Max(texture.Width - 1, 0);
         var bottomRightY = Math.Max(texture.Height - 1, 0);
         BottomRight = new Point(bottomRightX, bottomRightY);
