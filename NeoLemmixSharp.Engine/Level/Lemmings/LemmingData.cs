@@ -79,7 +79,19 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
 
     public void* GetPointer() => _data;
 
-    private LemmingData(nint pointerHandle) => _data = (LemmingDataRaw*)pointerHandle;
+    private LemmingData(nint pointerHandle)
+    {
+        _data = (LemmingDataRaw*)pointerHandle;
+
+        _data->PreviousActionId = LemmingActionConstants.NoneActionId;
+        _data->CurrentActionId = LemmingActionConstants.NoneActionId;
+        _data->NextActionId = LemmingActionConstants.NoneActionId;
+        _data->CountDownActionId = LemmingActionConstants.NoneActionId;
+        _data->DehoistPin = new(-1, -1);
+        _data->LaserHitLevelPosition = new(-1, -1);
+        _data->AnchorPosition = new(-1, -1);
+        _data->PreviousAnchorPosition = new(-1, -1);
+    }
 
     public LemmingState CreateLemmingState(Lemming lemming)
     {

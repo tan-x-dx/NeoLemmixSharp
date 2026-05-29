@@ -120,22 +120,24 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 
     public void Resize(int dw, int dh)
     {
-        if (ResizeType == ResizeType.None)
-            return;
-
+        var r = ResizeType;
         int tempSize;
 
-        if (ResizeType.CanResizeHorizontally())
+        if (r.CanResizeHorizontally())
         {
             tempSize = CurrentGadgetBounds.Width;
-            tempSize = Math.Clamp(tempSize + dw, 0, EngineConstants.MaxLevelSize);
+            tempSize += dw;
+            if (tempSize < 0) tempSize = 0;
+            if (tempSize > EngineConstants.MaxLevelSize) tempSize = EngineConstants.MaxLevelSize;
             CurrentGadgetBounds.Width = tempSize;
         }
 
-        if (ResizeType.CanResizeVertically())
+        if (r.CanResizeVertically())
         {
             tempSize = CurrentGadgetBounds.Height;
-            tempSize = Math.Clamp(tempSize + dh, 0, EngineConstants.MaxLevelSize);
+            tempSize += dh;
+            if (tempSize < 0) tempSize = 0;
+            if (tempSize > EngineConstants.MaxLevelSize) tempSize = EngineConstants.MaxLevelSize;
             CurrentGadgetBounds.Height = tempSize;
         }
 
@@ -144,21 +146,20 @@ public sealed class HitBoxGadget : GadgetBase, IRectangularBounds, IMoveableGadg
 
     public void SetSize(int w, int h)
     {
-        if (ResizeType == ResizeType.None)
-            return;
+        var r = ResizeType;
 
-        int tempSize;
-
-        if (ResizeType.CanResizeHorizontally())
+        if (r.CanResizeHorizontally())
         {
-            tempSize = Math.Clamp(w, 0, EngineConstants.MaxLevelSize);
-            CurrentGadgetBounds.Width = tempSize;
+            if (w < 0) w = 0;
+            if (w > EngineConstants.MaxLevelSize) w = EngineConstants.MaxLevelSize;
+            CurrentGadgetBounds.Width = w;
         }
 
-        if (ResizeType.CanResizeVertically())
+        if (r.CanResizeVertically())
         {
-            tempSize = Math.Clamp(h, 0, EngineConstants.MaxLevelSize);
-            CurrentGadgetBounds.Height = tempSize;
+            if (h < 0) h = 0;
+            if (h > EngineConstants.MaxLevelSize) h = EngineConstants.MaxLevelSize;
+            CurrentGadgetBounds.Height = h;
         }
 
         LevelScreen.GadgetManager.UpdateGadgetPosition(this);

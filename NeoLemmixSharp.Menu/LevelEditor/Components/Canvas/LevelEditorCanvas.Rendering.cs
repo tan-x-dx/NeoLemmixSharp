@@ -115,7 +115,7 @@ public sealed partial class LevelEditorCanvas
         var verticalScreenBounds = _verticalBorderBehaviour.GetScreenDestinationInterval();
         var offset = Position + new Point(horizontalScreenBounds.Start, verticalScreenBounds.Start);
 
-        var pieceBounds = new RectangularRegion(new Point(), _levelData.LevelDimensions);
+        var pieceBounds = new RectangularRegion(_levelData.LevelDimensions);
 
         var pieceLocation = -viewBounds.TopLeft;
         pieceLocation = new Point(pieceLocation.X * _horizontalBorderBehaviour.ZoomValue, pieceLocation.Y * _verticalBorderBehaviour.ZoomValue);

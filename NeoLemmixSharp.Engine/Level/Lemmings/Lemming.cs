@@ -67,11 +67,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public DihedralTransformation GetDihedralTransformation() => _data.GetDihedralTransformation();
 
-    public RectangularRegion CurrentBounds
-    {
-        get => _data.CurrentBounds;
-        set => _data.CurrentBounds = value;
-    }
+    RectangularRegion IRectangularBounds.CurrentBounds => _data.CurrentBounds;
+    public ref RectangularRegion CurrentBounds => ref _data.CurrentBounds;
 
     public ref Point DehoistPin => ref _data.DehoistPin;
     public ref Point LaserHitLevelPosition => ref _data.LaserHitLevelPosition;
@@ -113,14 +110,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         Id = id;
         _data = PointerDataHelper.CreateItem<LemmingData>(ref dataHandle);
-        _data.PreviousActionId = LemmingActionConstants.NoneActionId;
-        _data.CurrentActionId = LemmingActionConstants.NoneActionId;
-        _data.NextActionId = LemmingActionConstants.NoneActionId;
-        _data.CountDownActionId = LemmingActionConstants.NoneActionId;
-        _data.DehoistPin = new(-1, -1);
-        _data.LaserHitLevelPosition = new(-1, -1);
-        _data.AnchorPosition = new(-1, -1);
-        _data.PreviousAnchorPosition = new(-1, -1);
 
         State = _data.CreateLemmingState(this);
         Renderer = new LemmingRenderer(this);

@@ -71,10 +71,9 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         var q0 = transformationData.Transform(new Point());
         var q1 = transformationData.Transform(region.BottomRight - region.TopLeft);
 
-        q0 += region.TopLeft;
-        q1 += region.TopLeft;
+        var result = new RectangularRegion(q0, q1);
 
-        return new RectangularRegion(q0, q1);
+        return result.Translate(region.TopLeft);
     }
 
     [Pure]

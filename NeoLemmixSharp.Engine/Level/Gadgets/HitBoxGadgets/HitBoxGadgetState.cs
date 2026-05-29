@@ -1,8 +1,10 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.HitBoxes;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 
@@ -36,48 +38,35 @@ public sealed class HitBoxGadgetState : GadgetState
         }
     }
 
-    public RectangularRegion GetMininmumBoundingBoxForAllHitBoxes(Point offset)
+    [SkipLocalsInit]
+    public unsafe RectangularRegion GetMininmumBoundingBoxForAllHitBoxes(Point offset)
     {
         if (_hitBoxLookup.Count == 0)
-            return new RectangularRegion(offset);
+            goto TrivialBounds;
 
-        var minX = int.MaxValue;
-        var minY = int.MaxValue;
-        var maxX = int.MinValue;
-        var maxY = int.MinValue;
-
-        var anyNonTrivialHitBox = false;
+        RectangularRegion* pRegions = stackalloc RectangularRegion[OrientationConstants.NumberOfOrientations];
+        var i = 0;
 
         foreach (var kvp in _hitBoxLookup)
         {
             var hitBox = kvp.Value;
             if (hitBox.IsTrivial())
                 continue;
-            anyNonTrivialHitBox = true;
 
-            var hitBoxBounds = hitBox.CurrentBounds;
-            var bottomRight = hitBoxBounds.BottomRight;
-
-            if (hitBoxBounds.X < minX)
-                minX = hitBoxBounds.X;
-            if (hitBoxBounds.Y < minY)
-                minY = hitBoxBounds.Y;
-            if (bottomRight.X > maxX)
-                maxX = bottomRight.X;
-            if (bottomRight.Y > maxY)
-                maxY = bottomRight.Y;
+            pRegions[i++] = hitBox.CurrentBounds;
         }
 
-        if (anyNonTrivialHitBox)
-        {
-            minX += offset.X;
-            minY += offset.Y;
-            maxX += offset.X;
-            maxY += offset.Y;
+        if (i == 0)
+            goto TrivialBounds;
 
-            return new RectangularRegion(new Point(minX, minY), new Point(maxX, maxY));
-        }
+        i <<= 1;
 
+        var pointsSpan = Helpers.CreateReadOnlySpan<Point>(pRegions, i);
+        var result = new RectangularRegion(pointsSpan);
+
+        return result.Translate(offset);
+
+    TrivialBounds:
         return new RectangularRegion(offset);
     }
 
