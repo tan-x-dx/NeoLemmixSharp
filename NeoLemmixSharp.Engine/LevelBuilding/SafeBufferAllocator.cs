@@ -13,6 +13,7 @@ public readonly struct SafeBufferAllocator
     public RawArray AllocateRawArray(int length)
     {
         var newRawArray = new RawArray(length);
+        newRawArray.AsSpan().Clear();
         _rawArrays.Add(newRawArray);
         return newRawArray;
     }
