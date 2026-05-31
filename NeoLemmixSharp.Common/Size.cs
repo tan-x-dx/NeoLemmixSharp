@@ -74,8 +74,13 @@ public readonly struct Size : IEquatable<Size>, ISpanFormattable
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Size other) => W == other.W &&
-                                      H == other.H;
+    public bool Equals(Size other)
+    {
+        var a = W ^ other.W;
+        var b = H ^ other.H;
+
+        return (a | b) == 0;
+    }
     [Pure]
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && Equals(other);

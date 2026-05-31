@@ -33,8 +33,14 @@ public readonly struct Point : IEquatable<Point>,
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Point other) => X == other.X &&
-                                       Y == other.Y;
+    public bool Equals(Point other)
+    {
+        var a = X ^ other.X;
+        var b = Y ^ other.Y;
+
+        return (a | b) == 0;
+    }
+
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Point other && Equals(other);
     [DebuggerStepThrough]

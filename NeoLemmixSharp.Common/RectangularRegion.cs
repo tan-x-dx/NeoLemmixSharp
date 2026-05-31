@@ -58,10 +58,11 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [DebuggerStepThrough]
     public RectangularRegion(Rectangle rect)
     {
-        TopLeft = new Point(rect.X, rect.Y);
+        var position = new Point(rect.X, rect.Y);
+        TopLeft = position;
         var bottomRightX = Math.Max(rect.Width - 1, 0);
         var bottomRightY = Math.Max(rect.Height - 1, 0);
-        BottomRight = new Point(bottomRightX, bottomRightY);
+        BottomRight = position + new Point(bottomRightX, bottomRightY);
     }
 
     [DebuggerStepThrough]
@@ -76,10 +77,11 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [DebuggerStepThrough]
     public RectangularRegion(Interval horizontalRegion, Interval verticalRegion)
     {
-        TopLeft = new Point(horizontalRegion.Start, verticalRegion.Start);
+        var position = new Point(horizontalRegion.Start, verticalRegion.Start);
+        TopLeft = position;
         var bottomRightX = Math.Max(horizontalRegion.Length - 1, 0);
         var bottomRightY = Math.Max(verticalRegion.Length - 1, 0);
-        BottomRight = new Point(bottomRightX, bottomRightY);
+        BottomRight = position + new Point(bottomRightX, bottomRightY);
     }
 
     [DebuggerStepThrough]
@@ -97,21 +99,37 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [DebuggerStepThrough]
     public RectangularRegion(ReadOnlySpan<Point> positions)
     {
-        var minX = int.MaxValue;
-        var minY = int.MaxValue;
-        var maxX = int.MinValue;
-        var maxY = int.MinValue;
-
-        foreach (var p in positions)
+        if (positions.Length == 0)
         {
-            if (p.X < minX)
-                minX = p.X;
-            if (p.X > maxX)
-                maxX = p.X;
-            if (p.Y < minY)
-                minY = p.Y;
-            if (p.Y > maxY)
-                maxY = p.Y;
+            TopLeft = default;
+            BottomRight = default;
+            return;
+        }
+
+        var i = positions.Length - 1;
+        var p = positions.At(i);
+
+        var minX = p.X;
+        var minY = p.Y;
+        var maxX = minX;
+        var maxY = minY;
+
+        i--;
+
+        while (i >= 0)
+        {
+            var t = p.X;
+            if (minX > t)
+                minX = t;
+            if (maxX < t)
+                maxX = t;
+            t = p.Y;
+            if (minY > t)
+                minY = t;
+            if (maxY < t)
+                maxY = t;
+
+            i--;
         }
 
         TopLeft = new Point(minX, minY);
@@ -128,8 +146,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [Pure]
     public static RectangularRegion Combine(RectangularRegion first, RectangularRegion second)
     {
-        var minX = Math.Min(first.TopLeft.X, second.TopLeft.X);
-        var minY = Math.Min(first.TopLeft.Y, second.TopLeft.Y);
+        var minX = Math.Min(first.X, second.X);
+        var minY = Math.Min(first.Y, second.Y);
 
         var maxX = Math.Max(first.BottomRight.X, second.BottomRight.X);
         var maxY = Math.Max(first.BottomRight.Y, second.BottomRight.Y);
@@ -141,23 +159,31 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [DebuggerStepThrough]
     public RectangularRegion Translate(Point offset) => new(TopLeft + offset, BottomRight + offset, 0);
 
-    public bool Contains(Point point) => Size.EncompassesPoint(point - TopLeft);
+    public bool Contains(Point point)
+    {
+        return X <= point.X &&
+               point.X <= BottomRight.X &&
+               Y <= point.Y &&
+               point.Y <= BottomRight.Y;
+    }
 
     public bool Overlaps(RectangularRegion other)
     {
-        return GetHorizontalInterval().Intersects(other.GetHorizontalInterval()) &&
-               GetVerticalInterval().Intersects(other.GetVerticalInterval());
+        return X <= other.BottomRight.X &&
+               other.X <= BottomRight.X &&
+               Y <= other.BottomRight.Y &&
+               other.Y <= BottomRight.Y;
     }
 
     [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Interval GetHorizontalInterval() => new(TopLeft.X, W, 0);
+    public Interval GetHorizontalInterval() => new(X, W, 0);
 
     [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Interval GetVerticalInterval() => new(TopLeft.Y, H, 0);
+    public Interval GetVerticalInterval() => new(Y, H, 0);
 
     [Pure]
     [DebuggerStepThrough]
@@ -188,7 +214,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [SkipLocalsInit]
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
-        Span<char> buffer = stackalloc char[(1 + NumberFormattingHelpers.Int32NumberBufferLength + 1 + NumberFormattingHelpers.Uint32NumberBufferLength + 1) * 2];
+        Span<char> buffer = stackalloc char[(1 + NumberFormattingHelpers.Int32NumberBufferLength + 1 + NumberFormattingHelpers.Int32NumberBufferLength + 1) * 2];
         TryFormat(buffer, out var charsWritten, format, formatProvider);
         return buffer[..charsWritten].ToString();
     }
@@ -198,10 +224,10 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
         if (!TopLeft.TryFormat(destination, out charsWritten, format, provider))
             return false;
 
-        var result = Size.TryFormat(destination[charsWritten..], out var c, format, provider);
+        var result = BottomRight.TryFormat(destination[charsWritten..], out var c, format, provider);
         charsWritten += c;
         return result;
     }
 
-    public Rectangle ToRectangle() => new(TopLeft.X, TopLeft.Y, W, H);
+    public Rectangle ToRectangle() => new(X, Y, W, H);
 }
