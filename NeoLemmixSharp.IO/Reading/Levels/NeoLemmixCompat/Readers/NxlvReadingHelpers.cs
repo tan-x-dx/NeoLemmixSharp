@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace NeoLemmixSharp.IO.Reading.Levels.NeoLemmixCompat.Readers;
 
-public static class NxlvReadingHelpers
+internal static class NxlvReadingHelpers
 {
     /// <summary>
     /// Returns the first two tokens from the initial span, where a token is defined as being a contiguous section of non-whitespace characters.
