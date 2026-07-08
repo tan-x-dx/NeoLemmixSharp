@@ -97,8 +97,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
 
     public readonly ref struct TransformationData
     {
-        private readonly int _cos;
-        private readonly int _sin;
+        private readonly SinCos _sinCos;
         private readonly int _w;
         private readonly int _h;
         private readonly int _facingDirectionOffset;
@@ -113,12 +112,9 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
             var hTemp = size.H - 1;
 
             var r = orientation.RotNum;
-            var s = OrientationConstants.IntSin(r);
-            var c = OrientationConstants.IntCos(r);
-            _cos = c;
-            _sin = s;
-            s &= 1;
-            c &= 1;
+            _sinCos = SinCosMethods.IntSinCos(r);
+            var s = _sinCos.Sin & 1;
+            var c = _sinCos.Cos & 1;
 
             _facingDirectionOffset = (c * wTemp) + (s * hTemp);
             _facingDirectionOffset *= facingDirection.Id;
@@ -150,8 +146,8 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
 
         public Point Transform(Point p)
         {
-            var x0 = _facingDirectionOffset + (_facingDirectionDelta * ((_cos * p.X) - (_sin * p.Y) + _w));
-            var y0 = (_sin * p.X) + (_cos * p.Y) + _h;
+            var x0 = _facingDirectionOffset + (_facingDirectionDelta * ((_sinCos.Cos * p.X) - (_sinCos.Sin * p.Y) + _w));
+            var y0 = (_sinCos.Sin * p.X) + (_sinCos.Cos * p.Y) + _h;
             return new Point(x0, y0);
         }
     }

@@ -37,11 +37,10 @@ public static class OrientationMethods
         Point position,
         int step)
     {
-        var s = OrientationConstants.IntSin(orientation.RotNum + relativeOrientationRotNum);
-        var c = OrientationConstants.IntCos(orientation.RotNum + relativeOrientationRotNum);
+        var sinCos = SinCosMethods.IntSinCos(orientation.RotNum + relativeOrientationRotNum);
 
-        var absoluteDx = s * step;
-        var absoluteDy = c * step;
+        var absoluteDx = sinCos.Sin * step;
+        var absoluteDy = sinCos.Cos * step;
 
         var newPosition = new Point(position.X - absoluteDx, position.Y + absoluteDy);
         return LevelScreen.NormalisePosition(newPosition);
@@ -90,11 +89,10 @@ public static class OrientationMethods
         int dx,
         int dy)
     {
-        var s = OrientationConstants.IntSin(orientation.RotNum);
-        var c = OrientationConstants.IntCos(orientation.RotNum);
+        var sinCos = SinCosMethods.IntSinCos(orientation.RotNum);
 
-        var absoluteDx = (c * dx) + (s * dy);
-        var absoluteDy = (s * dx) - (c * dy);
+        var absoluteDx = (sinCos.Cos * dx) + (sinCos.Sin * dy);
+        var absoluteDy = (sinCos.Sin * dx) - (sinCos.Cos * dy);
 
         return new Point(position.X + absoluteDx, position.Y + absoluteDy);
     }
@@ -113,10 +111,9 @@ public static class OrientationMethods
     {
         var delta = LevelScreen.GetNormalisedDelta(fromPosition, toPosition);
 
-        var s = OrientationConstants.IntSin(orientation.RotNum);
-        var c = OrientationConstants.IntCos(orientation.RotNum);
+        var sinCos = SinCosMethods.IntSinCos(orientation.RotNum);
 
-        return (c * delta.Y) - (s * delta.X);
+        return (sinCos.Cos * delta.Y) - (sinCos.Sin * delta.X);
     }
 
     [Pure]
@@ -163,10 +160,9 @@ public static class OrientationMethods
     {
         var delta = LevelScreen.GetNormalisedDelta(fromPosition, toPosition);
 
-        var s = OrientationConstants.IntSin(orientation.RotNum);
-        var c = OrientationConstants.IntCos(orientation.RotNum);
+        var sinCos = SinCosMethods.IntSinCos(orientation.RotNum);
 
-        return (c * delta.X) + (s * delta.Y);
+        return (sinCos.Cos * delta.X) + (sinCos.Sin * delta.Y);
     }
 
     [Pure]
