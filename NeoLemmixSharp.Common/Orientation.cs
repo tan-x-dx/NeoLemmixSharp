@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -29,6 +30,8 @@ public static class OrientationConstants
 
 public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
 {
+    private const int BitMask = 3;
+
     public static Orientation Down => new(OrientationConstants.DownOrientationRotNum);
     public static Orientation Left => new(OrientationConstants.LeftOrientationRotNum);
     public static Orientation Up => new(OrientationConstants.UpOrientationRotNum);
@@ -39,7 +42,7 @@ public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
     [DebuggerStepThrough]
     public Orientation(int rotNum)
     {
-        RotNum = rotNum & 3;
+        RotNum = rotNum & BitMask;
     }
 
     [Pure]
@@ -81,7 +84,7 @@ public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
             OrientationConstants.RightOrientationRotationAngle,
         ];
 
-        return RotationAngles[RotNum & 3];
+        return RotationAngles[RotNum & BitMask];
     }
 
     [Pure]
@@ -109,12 +112,12 @@ public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
             OrientationConstants.RightOrientationName,
         ];
 
-        return OrientationNames[RotNum & 3];
+        return OrientationNames[RotNum & BitMask];
     }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        var constSpan = ToString().AsSpan();
+        var constSpan = ToString();
         if (constSpan.TryCopyTo(destination))
         {
             charsWritten = constSpan.Length;

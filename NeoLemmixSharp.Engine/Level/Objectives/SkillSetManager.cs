@@ -21,8 +21,10 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         int totalSkillLimit)
     {
         _skillTrackingDataList = skillTrackingDataList;
-        _currentTotalSkillLimit = new PointerWrapper(dataHandle);
-        _currentTotalSkillLimit.IntValue = totalSkillLimit;
+        _currentTotalSkillLimit = new PointerWrapper(dataHandle)
+        {
+            IntValue = totalSkillLimit
+        };
 
         Array.Sort(_skillTrackingDataList, this);
 

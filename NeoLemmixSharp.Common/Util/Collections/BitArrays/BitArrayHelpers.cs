@@ -81,7 +81,7 @@ public static class BitArrayHelpers
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static bool SetBit(Span<uint> bits, int index, ref int popCount)
     {
-        ref var arrayValue = ref bits.At(index >>> Shift);
+        ref var arrayValue = ref bits[index >>> Shift];
         var oldValue = arrayValue;
         arrayValue |= 1U << index;
         // delta will always be either zero or one
@@ -128,7 +128,7 @@ public static class BitArrayHelpers
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static bool ClearBit(Span<uint> bits, int index, ref int popCount)
     {
-        ref var arrayValue = ref bits.At(index >>> Shift);
+        ref var arrayValue = ref bits[index >>> Shift];
         var oldValue = arrayValue;
         arrayValue &= ~(1U << index);
         // delta will always be either zero or one
