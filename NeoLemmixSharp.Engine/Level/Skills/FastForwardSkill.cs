@@ -9,7 +9,7 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingState
 
     private FastForwardSkill()
         : base(
-            LemmingSkillConstants.FastForwardSkillId,
+            LemmingSkillType.FastForwardSkill,
             LemmingSkillConstants.FastForwardSkillName)
     {
     }

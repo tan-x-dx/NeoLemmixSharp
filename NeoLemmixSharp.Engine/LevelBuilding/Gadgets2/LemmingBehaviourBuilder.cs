@@ -90,7 +90,7 @@ public static class LemmingBehaviourBuilder
     {
         var lemmingSkillId = gadgetBehaviourDatum.DataChunk.Data1;
         var skillCountDelta = gadgetBehaviourDatum.DataChunk.Data2;
-        var lemmingSkill = LemmingSkill.GetSkillOrDefault(lemmingSkillId);
+        var lemmingSkill = LemmingSkill.GetSkillOrDefault((LemmingSkillType)lemmingSkillId);
 
         return new LemmingSpecificSkillCountChangeBehaviour(lemmingSkill, skillCountDelta)
         {

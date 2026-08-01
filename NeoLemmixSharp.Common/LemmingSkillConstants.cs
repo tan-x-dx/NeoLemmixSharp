@@ -1,150 +1,116 @@
-﻿using System.Runtime.CompilerServices;
+﻿using NeoLemmixSharp.Common.Util;
+using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common;
 
+public enum LemmingSkillType
+{
+    NoneSkill = -1,
+    ClimberSkill,
+    FloaterSkill,
+    BlockerSkill,
+    BomberSkill,
+    BuilderSkill,
+    BasherSkill,
+    MinerSkill,
+    DiggerSkill,
+    WalkerSkill,
+    PlatformerSkill,
+    StackerSkill,
+    FencerSkill,
+    GliderSkill,
+    JumperSkill,
+    SwimmerSkill,
+    ShimmierSkill,
+    LasererSkill,
+    SliderSkill,
+    DisarmerSkill,
+    StonerSkill,
+    ClonerSkill,
+    RotateClockwiseSkill,
+    RotateCounterclockwiseSkill,
+    RotateHalfSkill,
+    AcidLemmingSkill,
+    WaterLemmingSkill,
+    FastForwardSkill,
+
+    VALUE_MAX
+}
+
 public static class LemmingSkillConstants
 {
+    public const int NumberOfLemmingSkills = (int)LemmingSkillType.VALUE_MAX;
+
+    public static LemmingSkillType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingSkillType>(rawValue, NumberOfLemmingSkills);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsValidLemmingSkillId(int lemmingSkillId)
     {
         return (uint)lemmingSkillId < NumberOfLemmingSkills;
     }
 
-    public const int NumberOfLemmingSkills = 31;
-
     public const string NoneSkillName = "None";
-    public const int NoneSkillId = -1;
-
     public const string ClimberSkillName = "Climber";
-    public const int ClimberSkillId = 0;
-
     public const string FloaterSkillName = "Floater";
-    public const int FloaterSkillId = 1;
-
     public const string BlockerSkillName = "Blocker";
-    public const int BlockerSkillId = 2;
-
     public const string BomberSkillName = "Bomber";
-    public const int BomberSkillId = 3;
-
     public const string BuilderSkillName = "Builder";
-    public const int BuilderSkillId = 4;
-
     public const string BasherSkillName = "Basher";
-    public const int BasherSkillId = 5;
-
     public const string MinerSkillName = "Miner";
-    public const int MinerSkillId = 6;
-
     public const string DiggerSkillName = "Digger";
-    public const int DiggerSkillId = 7;
-
     public const string WalkerSkillName = "Walker";
-    public const int WalkerSkillId = 8;
-
     public const string PlatformerSkillName = "Platformer";
-    public const int PlatformerSkillId = 9;
-
     public const string StackerSkillName = "Stacker";
-    public const int StackerSkillId = 10;
-
     public const string FencerSkillName = "Fencer";
-    public const int FencerSkillId = 11;
-
     public const string GliderSkillName = "Glider";
-    public const int GliderSkillId = 12;
-
     public const string JumperSkillName = "Jumper";
-    public const int JumperSkillId = 13;
-
     public const string SwimmerSkillName = "Swimmer";
-    public const int SwimmerSkillId = 14;
-
     public const string ShimmierSkillName = "Shimmier";
-    public const int ShimmierSkillId = 15;
-
     public const string LasererSkillName = "Laserer";
-    public const int LasererSkillId = 16;
-
     public const string SliderSkillName = "Slider";
-    public const int SliderSkillId = 17;
-
     public const string DisarmerSkillName = "Disarmer";
-    public const int DisarmerSkillId = 18;
-
     public const string StonerSkillName = "Stoner";
-    public const int StonerSkillId = 19;
-
     public const string ClonerSkillName = "Cloner";
-    public const int ClonerSkillId = 20;
-
     public const string RotateClockwiseSkillName = "RotateClockwise";
-    public const int RotateClockwiseSkillId = 21;
-
     public const string RotateCounterclockwiseSkillName = "RotateCounterclockwise";
-    public const int RotateCounterclockwiseSkillId = 22;
-
     public const string RotateHalfSkillName = "RotateHalf";
-    public const int RotateHalfSkillId = 23;
-
-    public const string RotateToDownSkillName = "RotateToDown";
-    public const int RotateToDownSkillId = 24;
-
-    public const string RotateToRightSkillName = "RotateToRight";
-    public const int RotateToRightSkillId = 25;
-
-    public const string RotateToUpSkillName = "RotateToUp";
-    public const int RotateToUpSkillId = 26;
-
-    public const string RotateToLeftSkillName = "RotateToLeft";
-    public const int RotateToLeftSkillId = 27;
-
     public const string AcidLemmingSkillName = "Acid Lemming";
-    public const int AcidLemmingSkillId = 28;
-
     public const string WaterLemmingSkillName = "Water Lemming";
-    public const int WaterLemmingSkillId = 29;
-
     public const string FastForwardSkillName = "Fast Forward";
-    public const int FastForwardSkillId = 30;
 
-    private static readonly Dictionary<string, int> LemmingSkillNameToIdLookup = GenerateLemmingSkillNameToIdLookup();
+    private static readonly Dictionary<string, LemmingSkillType> LemmingSkillNameToIdLookup = GenerateLemmingSkillNameToIdLookup();
 
-    private static Dictionary<string, int> GenerateLemmingSkillNameToIdLookup()
+    private static Dictionary<string, LemmingSkillType> GenerateLemmingSkillNameToIdLookup()
     {
-        var result = new Dictionary<string, int>(NumberOfLemmingSkills, StringComparer.OrdinalIgnoreCase)
+        var result = new Dictionary<string, LemmingSkillType>(NumberOfLemmingSkills, StringComparer.OrdinalIgnoreCase)
         {
-            { ClimberSkillName, ClimberSkillId },
-            { FloaterSkillName, FloaterSkillId },
-            { BlockerSkillName, BlockerSkillId },
-            { BomberSkillName, BomberSkillId },
-            { BuilderSkillName, BuilderSkillId },
-            { BasherSkillName, BasherSkillId },
-            { MinerSkillName, MinerSkillId },
-            { DiggerSkillName, DiggerSkillId },
-            { WalkerSkillName, WalkerSkillId },
-            { PlatformerSkillName, PlatformerSkillId },
-            { StackerSkillName, StackerSkillId },
-            { FencerSkillName, FencerSkillId },
-            { GliderSkillName, GliderSkillId },
-            { JumperSkillName, JumperSkillId },
-            { SwimmerSkillName, SwimmerSkillId },
-            { ShimmierSkillName, ShimmierSkillId },
-            { LasererSkillName, LasererSkillId },
-            { SliderSkillName, SliderSkillId },
-            { DisarmerSkillName, DisarmerSkillId },
-            { StonerSkillName, StonerSkillId },
-            { ClonerSkillName, ClonerSkillId },
-            { RotateClockwiseSkillName, RotateClockwiseSkillId },
-            { RotateCounterclockwiseSkillName, RotateCounterclockwiseSkillId },
-            { RotateHalfSkillName, RotateHalfSkillId },
-            { RotateToDownSkillName, RotateToDownSkillId },
-            { RotateToRightSkillName, RotateToRightSkillId },
-            { RotateToUpSkillName, RotateToUpSkillId },
-            { RotateToLeftSkillName, RotateToLeftSkillId },
-            { AcidLemmingSkillName, AcidLemmingSkillId },
-            { WaterLemmingSkillName, WaterLemmingSkillId },
-            { FastForwardSkillName, FastForwardSkillId }
+            { ClimberSkillName, LemmingSkillType.ClimberSkill },
+            { FloaterSkillName, LemmingSkillType.FloaterSkill },
+            { BlockerSkillName, LemmingSkillType.BlockerSkill },
+            { BomberSkillName, LemmingSkillType.BomberSkill },
+            { BuilderSkillName, LemmingSkillType.BuilderSkill },
+            { BasherSkillName, LemmingSkillType.BasherSkill },
+            { MinerSkillName, LemmingSkillType.MinerSkill },
+            { DiggerSkillName, LemmingSkillType.DiggerSkill },
+            { WalkerSkillName, LemmingSkillType.WalkerSkill },
+            { PlatformerSkillName, LemmingSkillType.PlatformerSkill },
+            { StackerSkillName, LemmingSkillType.StackerSkill },
+            { FencerSkillName, LemmingSkillType.FencerSkill },
+            { GliderSkillName, LemmingSkillType.GliderSkill },
+            { JumperSkillName, LemmingSkillType.JumperSkill },
+            { SwimmerSkillName, LemmingSkillType.SwimmerSkill },
+            { ShimmierSkillName, LemmingSkillType.ShimmierSkill },
+            { LasererSkillName, LemmingSkillType.LasererSkill },
+            { SliderSkillName, LemmingSkillType.SliderSkill },
+            { DisarmerSkillName, LemmingSkillType.DisarmerSkill },
+            { StonerSkillName, LemmingSkillType.StonerSkill },
+            { ClonerSkillName, LemmingSkillType.ClonerSkill },
+            { RotateClockwiseSkillName, LemmingSkillType.RotateClockwiseSkill },
+            { RotateCounterclockwiseSkillName, LemmingSkillType.RotateCounterclockwiseSkill },
+            { RotateHalfSkillName, LemmingSkillType.RotateHalfSkill },
+            { AcidLemmingSkillName, LemmingSkillType.AcidLemmingSkill },
+            { WaterLemmingSkillName, LemmingSkillType.WaterLemmingSkill },
+            { FastForwardSkillName, LemmingSkillType.FastForwardSkill },
         };
 
         if (result.Count != NumberOfLemmingSkills)
@@ -153,15 +119,15 @@ public static class LemmingSkillConstants
         return result;
     }
 
-    public static bool TryGetLemmingSkillIdFromName(string lemmingSkillName, out int lemmingSkillId)
+    public static bool TryGetLemmingSkillTypeFromName(string lemmingSkillName, out LemmingSkillType lemmingSkillType)
     {
-        return LemmingSkillNameToIdLookup.TryGetValue(lemmingSkillName, out lemmingSkillId);
+        return LemmingSkillNameToIdLookup.TryGetValue(lemmingSkillName, out lemmingSkillType);
     }
 
-    public static bool TryGetLemmingSkillIdFromName(ReadOnlySpan<char> lemmingSkillNameSpan, out int lemmingSkillId)
+    public static bool TryGetLemmingSkillTypeFromName(ReadOnlySpan<char> lemmingSkillNameSpan, out LemmingSkillType lemmingSkillType)
     {
         var alternateLookup = LemmingSkillNameToIdLookup.GetAlternateLookup<ReadOnlySpan<char>>();
 
-        return alternateLookup.TryGetValue(lemmingSkillNameSpan, out lemmingSkillId);
+        return alternateLookup.TryGetValue(lemmingSkillNameSpan, out lemmingSkillType);
     }
 }

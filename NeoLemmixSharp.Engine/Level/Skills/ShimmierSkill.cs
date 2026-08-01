@@ -12,7 +12,7 @@ public sealed class ShimmierSkill : LemmingSkill
 
     private ShimmierSkill()
         : base(
-            LemmingSkillConstants.ShimmierSkillId,
+            LemmingSkillType.ShimmierSkill,
             LemmingSkillConstants.ShimmierSkillName)
     {
     }

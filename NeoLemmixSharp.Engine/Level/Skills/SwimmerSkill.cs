@@ -10,7 +10,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingState
 
     private SwimmerSkill()
         : base(
-            LemmingSkillConstants.SwimmerSkillId,
+            LemmingSkillType.SwimmerSkill,
             LemmingSkillConstants.SwimmerSkillName)
     {
     }

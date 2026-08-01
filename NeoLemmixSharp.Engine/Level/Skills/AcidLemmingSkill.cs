@@ -9,7 +9,7 @@ public sealed class AcidLemmingSkill : LemmingSkill, ILemmingState
 
     private AcidLemmingSkill()
         : base(
-            LemmingSkillConstants.AcidLemmingSkillId,
+            LemmingSkillType.AcidLemmingSkill,
             LemmingSkillConstants.AcidLemmingSkillName)
     {
     }

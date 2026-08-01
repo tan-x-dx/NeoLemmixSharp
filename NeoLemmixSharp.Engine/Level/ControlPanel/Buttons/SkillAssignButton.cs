@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Rendering.Text;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
@@ -13,7 +14,7 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
 
     private SkillCharBuffer _skillCountChars;
 
-    public int SkillId { get; }
+    public LemmingSkillType SkillType { get; }
     public int SkillTrackingDataId { get; }
     public int SkillAssignButtonId { get; }
 
@@ -21,11 +22,11 @@ public sealed class SkillAssignButton : ControlPanelButton, IButtonAction
         int buttonId,
         int skillAssignButtonId,
         int skillPanelFrame,
-        int skillId,
+        LemmingSkillType skillType,
         int skillTrackingDataId)
         : base(buttonId, skillPanelFrame)
     {
-        SkillId = skillId;
+        SkillType = skillType;
         SkillTrackingDataId = skillTrackingDataId;
         SkillAssignButtonId = skillAssignButtonId;
 

@@ -11,7 +11,7 @@ public sealed class StonerSkill : LemmingSkill
 
     private StonerSkill()
         : base(
-            LemmingSkillConstants.StonerSkillId,
+            LemmingSkillType.StonerSkill,
             LemmingSkillConstants.StonerSkillName)
     {
     }

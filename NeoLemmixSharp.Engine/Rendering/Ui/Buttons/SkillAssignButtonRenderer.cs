@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Rendering;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 
 namespace NeoLemmixSharp.Engine.Rendering.Ui.Buttons;
@@ -19,8 +20,8 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
     {
         _skillIcons = spriteBank.PanelSkills;
 
-        var skillId = skillAssignButton.SkillId;
-        _skillY = GetSkillY(skillId);
+        var skillType = skillAssignButton.SkillType;
+        _skillY = GetSkillY(skillType);
     }
 
     public override void Render(SpriteBatch spriteBatch)
@@ -56,30 +57,30 @@ public sealed class SkillAssignButtonRenderer : ControlPanelButtonRenderer
         RenderSelected(spriteBatch, destRectangle);
     }
 
-    private static int GetSkillY(int skillId) => skillId switch
+    private static int GetSkillY(LemmingSkillType skillType) => skillType switch
     {
-        LemmingSkillConstants.BasherSkillId => 16,
-        LemmingSkillConstants.BlockerSkillId => 11,
-        LemmingSkillConstants.BomberSkillId => 9,
-        LemmingSkillConstants.BuilderSkillId => 13,
-        LemmingSkillConstants.ClimberSkillId => 4,
-        LemmingSkillConstants.ClonerSkillId => 20,
-        LemmingSkillConstants.DiggerSkillId => 19,
-        LemmingSkillConstants.DisarmerSkillId => 8,
-        LemmingSkillConstants.FencerSkillId => 17,
-        LemmingSkillConstants.FloaterSkillId => 6,
-        LemmingSkillConstants.GliderSkillId => 7,
-        LemmingSkillConstants.JumperSkillId => 1,
-        LemmingSkillConstants.LasererSkillId => 15,
-        LemmingSkillConstants.MinerSkillId => 18,
-        LemmingSkillConstants.PlatformerSkillId => 12,
-        LemmingSkillConstants.ShimmierSkillId => 2,
-        LemmingSkillConstants.SliderSkillId => 3,
-        LemmingSkillConstants.StackerSkillId => 14,
-        LemmingSkillConstants.StonerSkillId => 10,
-        LemmingSkillConstants.SwimmerSkillId => 5,
-        LemmingSkillConstants.WalkerSkillId => 0,
+        LemmingSkillType.BasherSkill => 16,
+        LemmingSkillType.BlockerSkill => 11,
+        LemmingSkillType.BomberSkill => 9,
+        LemmingSkillType.BuilderSkill => 13,
+        LemmingSkillType.ClimberSkill => 4,
+        LemmingSkillType.ClonerSkill => 20,
+        LemmingSkillType.DiggerSkill => 19,
+        LemmingSkillType.DisarmerSkill => 8,
+        LemmingSkillType.FencerSkill => 17,
+        LemmingSkillType.FloaterSkill => 6,
+        LemmingSkillType.GliderSkill => 7,
+        LemmingSkillType.JumperSkill => 1,
+        LemmingSkillType.LasererSkill => 15,
+        LemmingSkillType.MinerSkill => 18,
+        LemmingSkillType.PlatformerSkill => 12,
+        LemmingSkillType.ShimmierSkill => 2,
+        LemmingSkillType.SliderSkill => 3,
+        LemmingSkillType.StackerSkill => 14,
+        LemmingSkillType.StonerSkill => 10,
+        LemmingSkillType.SwimmerSkill => 5,
+        LemmingSkillType.WalkerSkill => 0,
 
-        _ => throw new ArgumentOutOfRangeException(nameof(skillId), skillId, "Unknown skill id")
+        _ => Helpers.ThrowUnknownEnumValueException<LemmingSkillType, int>(skillType)
     };
 }

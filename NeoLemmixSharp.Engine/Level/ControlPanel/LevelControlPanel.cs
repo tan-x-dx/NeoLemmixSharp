@@ -45,7 +45,7 @@ public sealed class LevelControlPanel : IInitialisable, IDisposable
 
     public ControlPanelTextualData TextualData => _controlPanelTextualData;
     public SkillAssignButton? SelectedSkillAssignButton { get; private set; }
-    public int SelectedSkillButtonId => SelectedSkillAssignButton?.SkillAssignButtonId ?? -1;
+    public int SelectedSkillTrackingDataId => SelectedSkillAssignButton?.SkillTrackingDataId ?? -1;
 
     public ReadOnlySpan<SkillAssignButton> SkillAssignButtons => new(_skillAssignButtons);
     public ReadOnlySpan<ControlPanelButton> AllButtons => new(_allButtons);

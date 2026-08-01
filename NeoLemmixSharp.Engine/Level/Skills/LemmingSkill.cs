@@ -53,10 +53,6 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
             RotateClockwiseSkill.Instance,
             RotateCounterclockwiseSkill.Instance,
             RotateHalfSkill.Instance,
-            RotateToDownSkill.Instance,
-            RotateToRightSkill.Instance,
-            RotateToUpSkill.Instance,
-            RotateToLeftSkill.Instance,
 
             AcidLemmingSkill.Instance,
             WaterLemmingSkill.Instance,
@@ -176,20 +172,20 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     /// </summary>
     /// <param name="unboundSkillId">The (possibly invalid) id of the skill to fetch.</param>
     /// <returns>The LemmingSkill with that id, or the <see cref="NoneSkill"/> if the id is invalid.</returns>
-    public static LemmingSkill GetSkillOrDefault(int unboundSkillId)
+    public static LemmingSkill GetSkillOrDefault(LemmingSkillType lemmingSkillType)
     {
-        return (uint)unboundSkillId < (uint)LemmingSkills.Length
-            ? LemmingSkills.At(unboundSkillId)
+        return (uint)lemmingSkillType < (uint)LemmingSkills.Length
+            ? LemmingSkills.At((int)lemmingSkillType)
             : NoneSkill.Instance;
     }
 
     private readonly LemmingActionSet _assignableActions;
     public string LemmingSkillName { get; }
-    public int Id { get; }
+    public LemmingSkillType SkillType { get; }
 
-    protected LemmingSkill(int id, string lemmingSkillName)
+    protected LemmingSkill(LemmingSkillType skillType, string lemmingSkillName)
     {
-        Id = id;
+        SkillType = skillType;
         LemmingSkillName = lemmingSkillName;
 
         _assignableActions = ActionsThatCanBeAssigned();
@@ -217,22 +213,22 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     [DebuggerStepThrough]
     public bool Equals(LemmingSkill? other)
     {
-        var otherValue = -1;
-        if (other is not null) otherValue = other.Id;
-        return Id == otherValue;
+        var otherValue = LemmingSkillType.NoneSkill;
+        if (other is not null) otherValue = other.SkillType;
+        return SkillType == otherValue;
     }
 
     [DebuggerStepThrough]
-    public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingSkill other && Id == other.Id;
+    public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingSkill other && SkillType == other.SkillType;
     [DebuggerStepThrough]
-    public sealed override int GetHashCode() => Id;
+    public sealed override int GetHashCode() => (int)SkillType;
     [DebuggerStepThrough]
     public sealed override string ToString() => LemmingSkillName;
 
     [DebuggerStepThrough]
-    public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.Id == right.Id;
+    public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.SkillType == right.SkillType;
     [DebuggerStepThrough]
-    public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.Id != right.Id;
+    public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.SkillType != right.SkillType;
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -246,7 +242,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
         [Pure]
         public int NumberOfItems => LemmingSkillConstants.NumberOfLemmingSkills;
         [Pure]
-        public int Hash(LemmingSkill item) => item.Id;
+        public int Hash(LemmingSkill item) => (int)item.SkillType;
         [Pure]
         public LemmingSkill UnHash(int index) => LemmingSkills.At(index);
 

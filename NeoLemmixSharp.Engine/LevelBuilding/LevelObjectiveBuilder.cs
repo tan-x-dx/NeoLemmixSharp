@@ -155,7 +155,7 @@ public sealed class LevelObjectiveBuilder
             if (skillLimitModifier is not null)
                 initialSkillLimit = skillLimitModifier.MaxSkillAssignments;
 
-            result.At(i) = new SkillTrackingData(ref handle, skillSetData.SkillId, skillSetData.TribeId, i, skillSetData.InitialQuantity, initialSkillLimit);
+            result.At(i) = new SkillTrackingData(ref handle, skillSetData.SkillType, skillSetData.TribeId, i, skillSetData.InitialQuantity, initialSkillLimit);
         }
 
         return result;
@@ -194,6 +194,6 @@ public sealed class LevelObjectiveBuilder
         return Helpers
             .MaybeConcat(talismanModifiers, baseModifiers)
             .OfType<LimitSpecificSkillAssignmentsModifierData>()
-            .FirstOrDefault(skillLimit => skillLimit.SkillId == skillSetData.SkillId && skillLimit.TribeId == skillSetData.TribeId);
+            .FirstOrDefault(skillLimit => skillLimit.SkillType == skillSetData.SkillType && skillLimit.TribeId == skillSetData.TribeId);
     }
 }

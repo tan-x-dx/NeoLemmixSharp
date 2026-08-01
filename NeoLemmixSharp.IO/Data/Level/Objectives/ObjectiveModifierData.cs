@@ -1,4 +1,6 @@
-﻿namespace NeoLemmixSharp.IO.Data.Level.Objectives;
+﻿using NeoLemmixSharp.Common;
+
+namespace NeoLemmixSharp.IO.Data.Level.Objectives;
 
 public abstract class ObjectiveModifierData
 {
@@ -14,7 +16,7 @@ public abstract class ObjectiveModifierData
 
 public sealed class LimitSpecificSkillAssignmentsModifierData : ObjectiveModifierData
 {
-    public required int SkillId { get; init; }
+    public required LemmingSkillType SkillType { get; init; }
     public required int TribeId { get; init; }
     public required int MaxSkillAssignments { get; init; }
 
@@ -26,7 +28,7 @@ public sealed class LimitSpecificSkillAssignmentsModifierData : ObjectiveModifie
     public override bool MatchesBaseModifierData(ObjectiveModifierData other)
     {
         return other is LimitSpecificSkillAssignmentsModifierData otherLimitSpecificSkillAssignmentsModifier &&
-               SkillId == otherLimitSpecificSkillAssignmentsModifier.SkillId &&
+               SkillType == otherLimitSpecificSkillAssignmentsModifier.SkillType &&
                TribeId == otherLimitSpecificSkillAssignmentsModifier.TribeId;
     }
 }

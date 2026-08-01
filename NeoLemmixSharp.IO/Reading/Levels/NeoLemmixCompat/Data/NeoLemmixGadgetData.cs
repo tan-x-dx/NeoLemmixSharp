@@ -19,7 +19,7 @@ public sealed class NeoLemmixGadgetData
     public int? Height { get; set; }
     public int? Speed { get; set; }
     public int? Angle { get; set; }
-    public int SkillId { get; set; }
+    public LemmingSkillType SkillType { get; set; }
     public int? SkillCount { get; set; }
     public int? LemmingCount { get; set; }
 

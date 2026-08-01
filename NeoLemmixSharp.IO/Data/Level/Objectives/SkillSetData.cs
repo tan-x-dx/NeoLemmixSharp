@@ -1,3 +1,5 @@
-﻿namespace NeoLemmixSharp.IO.Data.Level.Objectives;
+﻿using NeoLemmixSharp.Common;
 
-public readonly record struct SkillSetData(int SkillId, int TribeId, int InitialQuantity);
+namespace NeoLemmixSharp.IO.Data.Level.Objectives;
+
+public readonly record struct SkillSetData(LemmingSkillType SkillType, int TribeId, int InitialQuantity);

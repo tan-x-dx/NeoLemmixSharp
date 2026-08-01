@@ -202,8 +202,8 @@ end;
         if (lemming is null)
             return;
 
-        var selectedSkillId = LevelScreen.LevelControlPanel.SelectedSkillButtonId;
-        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(selectedSkillId);
+        var selectedSkillTrackingDataId = LevelScreen.LevelControlPanel.SelectedSkillTrackingDataId;
+        var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(selectedSkillTrackingDataId);
         if (skillTrackingData is null || skillTrackingData.EffectiveQuantity == 0)
             return;
 
@@ -272,7 +272,7 @@ end;
         }
 
         var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(
-            _queuedSkill.Id,
+            _queuedSkill.SkillType,
             _queuedSkillTribeId);
 
         if (skillTrackingData is not null &&

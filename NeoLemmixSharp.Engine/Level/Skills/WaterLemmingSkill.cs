@@ -9,7 +9,7 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingState
 
     private WaterLemmingSkill()
         : base(
-            LemmingSkillConstants.WaterLemmingSkillId,
+            LemmingSkillType.WaterLemmingSkill,
             LemmingSkillConstants.WaterLemmingSkillName)
     {
     }

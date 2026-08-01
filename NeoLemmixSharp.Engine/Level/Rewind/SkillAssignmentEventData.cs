@@ -6,7 +6,7 @@ namespace NeoLemmixSharp.Engine.Level.Rewind;
 public readonly struct SkillAssignmentEventData : ILevelEventData
 {
     public readonly int Tick;
-    public readonly int SkillId;
+    public readonly LemmingSkillType SkillType;
     public readonly int TribeId;
 
     public readonly int LemmingId;
@@ -19,10 +19,10 @@ public readonly struct SkillAssignmentEventData : ILevelEventData
     public SkillAssignmentEventData(
         int tick,
         Lemming lemming,
-        int lemmingSkillId)
+        LemmingSkillType lemmingSkillType)
     {
         Tick = tick;
-        SkillId = lemmingSkillId;
+        SkillType = lemmingSkillType;
         TribeId = lemming.State.TribeId;
 
         LemmingId = lemming.Id;

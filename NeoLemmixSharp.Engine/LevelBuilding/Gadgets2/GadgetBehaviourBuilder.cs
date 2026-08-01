@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
@@ -267,10 +268,10 @@ public readonly ref struct GadgetBehaviourBuilder
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var lemmingSkillId = gadgetBehaviourDatum.DataChunk.Data1;
         var skillCountDelta = gadgetBehaviourDatum.DataChunk.Data2 & 0xffff;
         var tribeId = gadgetBehaviourDatum.DataChunk.Data2 >>> 16;
-        var lemmingSkill = LemmingSkill.GetSkillOrDefault(lemmingSkillId);
+        var lemmingSkillType = (LemmingSkillType)gadgetBehaviourDatum.DataChunk.Data1;
+        var lemmingSkill = LemmingSkill.GetSkillOrDefault(lemmingSkillType);
 
         return new SkillCountChangeBehaviour(lemmingSkill, tribeId, skillCountDelta)
         {

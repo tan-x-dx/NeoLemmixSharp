@@ -70,7 +70,7 @@ public sealed class RewindManager : IDisposable
             previouslyRecordedSkillAssignment);
 
         var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(
-            previouslyRecordedSkillAssignment->SkillId,
+            previouslyRecordedSkillAssignment->SkillType,
             previouslyRecordedSkillAssignment->TribeId);
 
         if (skillTrackingData is null)
@@ -105,7 +105,7 @@ public sealed class RewindManager : IDisposable
 
         SkillAssignmentEventData* newSkillAssignementData = _skillAssignmentList.GetNewDataPointer();
 
-        *newSkillAssignementData = new SkillAssignmentEventData(tick, lemming, skillTrackingData.LemmingSkillId);
+        *newSkillAssignementData = new SkillAssignmentEventData(tick, lemming, skillTrackingData.LemmingSkillType);
     }
 
     public unsafe int RewindBackTo(int specifiedTick)

@@ -9,7 +9,7 @@ public sealed class SliderSkill : LemmingSkill, ILemmingState
 
     private SliderSkill()
         : base(
-            LemmingSkillConstants.SliderSkillId,
+            LemmingSkillType.SliderSkill,
             LemmingSkillConstants.SliderSkillName)
     {
     }

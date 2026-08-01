@@ -49,7 +49,7 @@ internal sealed class SkillSetReader : NeoLemmixDataReader
         if ((uint)amount > EngineConstants.InfiniteSkillCount)
             throw new FileReadingException($"Invalid skill count value! {amount}");
 
-        if (skillId == LemmingSkillConstants.ClonerSkillId && amount == EngineConstants.InfiniteSkillCount)
+        if (skillId == LemmingSkillType.ClonerSkill && amount == EngineConstants.InfiniteSkillCount)
         {
             amount = EngineConstants.MaxFiniteSkillCount;
         }

@@ -10,7 +10,7 @@ public sealed class RotateCounterclockwiseSkill : LemmingSkill
 
     private RotateCounterclockwiseSkill()
         : base(
-            LemmingSkillConstants.RotateCounterclockwiseSkillId,
+            LemmingSkillType.RotateCounterclockwiseSkill,
             LemmingSkillConstants.RotateCounterclockwiseSkillName)
     {
     }
