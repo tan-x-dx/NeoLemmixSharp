@@ -18,7 +18,7 @@ public sealed class FloaterAction : LemmingAction
             LemmingActionConstants.FloaterActionSpriteFileName,
             LemmingActionConstants.FloaterAnimationFrames,
             LemmingActionConstants.MaxFloaterPhysicsFrames,
-            LemmingActionConstants.PermanentSkillPriority)
+            CursorSelectionPriority.PermanentSkillPriority)
     {
     }
 

@@ -45,6 +45,16 @@ public enum LemmingActionType
     VALUE_MAX
 }
 
+public enum CursorSelectionPriority
+{
+    NoneActionPriority = -1,
+    NoPriority,
+    WalkerMovementPriority,
+    NonWalkerMovementPriority,
+    PermanentSkillPriority,
+    NonPermanentSkillPriority,
+}
+
 public static class LemmingActionConstants
 {
     public const int NumberOfLemmingActions = (int)LemmingActionType.VALUE_MAX;
@@ -224,16 +234,6 @@ public static class LemmingActionConstants
     public const string RotateHalfActionSpriteFileName = "rotate_180cw";
     public const int RotateHalfAnimationFrames = 15;
     public const int MaxRotateHalfPhysicsFrames = 15;
-
-    #region Cursor Priority Levels
-
-    public const int NonPermanentSkillPriority = 4;
-    public const int PermanentSkillPriority = 3;
-    public const int NonWalkerMovementPriority = 2;
-    public const int WalkerMovementPriority = 1;
-    public const int NoPriority = 0;
-
-    #endregion
 
     private static readonly Dictionary<string, LemmingActionType> LemmingActionNameToIdLookup = GenerateLemmingActionNameToIdLookup();
 

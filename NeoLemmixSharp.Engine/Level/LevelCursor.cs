@@ -183,8 +183,8 @@ public sealed class LevelCursor
     [Pure]
     private static bool NewCandidateHasHigherActionPriority(Lemming previousCandidate, Lemming newCandidate)
     {
-        return newCandidate.CurrentAction.CursorSelectionPriorityValue >
-               previousCandidate.CurrentAction.CursorSelectionPriorityValue;
+        return newCandidate.CurrentAction.CursorSelectionPriority >
+               previousCandidate.CurrentAction.CursorSelectionPriority;
     }
 
     private bool NewCandidateIsCloserToCursorCentre(Lemming newCandidate)

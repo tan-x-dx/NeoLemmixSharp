@@ -18,7 +18,7 @@ public sealed class FallerAction : LemmingAction
             LemmingActionConstants.FallerActionSpriteFileName,
             LemmingActionConstants.FallerAnimationFrames,
             LemmingActionConstants.MaxFallerPhysicsFrames,
-            LemmingActionConstants.NonWalkerMovementPriority)
+            CursorSelectionPriority.NonWalkerMovementPriority)
     {
     }
 

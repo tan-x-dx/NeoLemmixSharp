@@ -56,7 +56,7 @@ public sealed class JumperAction : LemmingAction
             LemmingActionConstants.JumperActionSpriteFileName,
             LemmingActionConstants.JumperAnimationFrames,
             LemmingActionConstants.MaxJumperPhysicsFrames,
-            LemmingActionConstants.NonWalkerMovementPriority)
+            CursorSelectionPriority.NonWalkerMovementPriority)
     {
     }
 

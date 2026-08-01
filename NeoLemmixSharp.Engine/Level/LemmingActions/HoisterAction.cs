@@ -15,7 +15,7 @@ public sealed class HoisterAction : LemmingAction
             LemmingActionConstants.HoisterActionSpriteFileName,
             LemmingActionConstants.HoisterAnimationFrames,
             LemmingActionConstants.MaxHoisterPhysicsFrames,
-            LemmingActionConstants.NonWalkerMovementPriority)
+            CursorSelectionPriority.NonWalkerMovementPriority)
     {
     }
 

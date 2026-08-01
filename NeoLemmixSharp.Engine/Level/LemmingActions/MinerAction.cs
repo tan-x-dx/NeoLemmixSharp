@@ -19,7 +19,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             LemmingActionConstants.MinerActionSpriteFileName,
             LemmingActionConstants.MinerAnimationFrames,
             LemmingActionConstants.MaxMinerPhysicsFrames,
-            LemmingActionConstants.NonPermanentSkillPriority)
+            CursorSelectionPriority.NonPermanentSkillPriority)
     {
     }
 

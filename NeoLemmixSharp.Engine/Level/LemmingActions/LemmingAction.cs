@@ -132,7 +132,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public LemmingActionType ActionType { get; }
     public int NumberOfAnimationFrames { get; }
     public int MaxPhysicsFrames { get; }
-    public int CursorSelectionPriorityValue { get; }
+    public CursorSelectionPriority CursorSelectionPriority { get; }
 
     protected LemmingAction(
         LemmingActionType actionType,
@@ -140,14 +140,14 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         string lemmingActionSpriteFileName,
         int numberOfAnimationFrames,
         int maxPhysicsFrames,
-        int cursorSelectionPriorityValue)
+        CursorSelectionPriority cursorSelectionPriority)
     {
         ActionType = actionType;
         LemmingActionName = lemmingActionName;
         LemmingActionSpriteFileName = lemmingActionSpriteFileName;
         NumberOfAnimationFrames = numberOfAnimationFrames;
         MaxPhysicsFrames = maxPhysicsFrames;
-        CursorSelectionPriorityValue = cursorSelectionPriorityValue;
+        CursorSelectionPriority = cursorSelectionPriority;
     }
 
     public abstract bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming);

@@ -17,7 +17,7 @@ public sealed class NoneAction : LemmingAction
             string.Empty,
             1,
             1,
-            -1)
+            CursorSelectionPriority.NoneActionPriority)
     {
     }
 

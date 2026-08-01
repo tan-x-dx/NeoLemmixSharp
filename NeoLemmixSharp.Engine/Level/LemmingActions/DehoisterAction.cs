@@ -16,7 +16,7 @@ public sealed class DehoisterAction : LemmingAction
             LemmingActionConstants.DehoisterActionSpriteFileName,
             LemmingActionConstants.DehoisterAnimationFrames,
             LemmingActionConstants.MaxDehoisterPhysicsFrames,
-            LemmingActionConstants.NonWalkerMovementPriority)
+            CursorSelectionPriority.NonWalkerMovementPriority)
     {
     }
 

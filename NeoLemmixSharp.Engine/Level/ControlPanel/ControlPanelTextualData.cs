@@ -126,7 +126,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
             LemmingAction action,
             LemmingState state)
         {
-            if (action.CursorSelectionPriorityValue == LemmingActionConstants.NonPermanentSkillPriority)
+            if (action.CursorSelectionPriority == CursorSelectionPriority.NonPermanentSkillPriority)
                 return action.LemmingActionName;
 
             if (state.IsZombie)
