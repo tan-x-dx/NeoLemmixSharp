@@ -44,9 +44,9 @@ public static class LemmingSkillConstants
     public static LemmingSkillType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingSkillType>(rawValue, NumberOfLemmingSkills);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsValidLemmingSkillId(int lemmingSkillId)
+    public static bool IsValidLemmingSkillType(int rawLemmingSkillType)
     {
-        return (uint)lemmingSkillId < NumberOfLemmingSkills;
+        return (uint)rawLemmingSkillType < NumberOfLemmingSkills;
     }
 
     public const string NoneSkillName = "None";

@@ -9,7 +9,6 @@ using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.Menu;
@@ -63,7 +62,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Initialize()
     {
-        ValidateGameConstants();
         ValidateMaxActionNameLength();
         LoadContent();
 
@@ -125,22 +123,6 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         var menuScreen = new MenuScreen(Content, GraphicsDevice);
         SetScreen(menuScreen);
         menuScreen.Initialise();
-    }
-
-    /// <summary>
-    /// Validation to ensure the expected number of LemmingActions/LemmingSkills
-    /// is kept track of, in case new entries are created for these types.
-    /// </summary>
-    private static void ValidateGameConstants()
-    {
-        var numberOfActions = LemmingAction.AllItems.Length;
-        var numberOfSkills = LemmingSkill.AllItems.Length;
-
-        if (numberOfActions != LemmingActionConstants.NumberOfLemmingActions)
-            throw new Exception($"Number of LemmingActions is actually {numberOfActions}! Update {nameof(LemmingActionConstants.NumberOfLemmingActions)}!");
-
-        if (numberOfSkills != LemmingSkillConstants.NumberOfLemmingSkills)
-            throw new Exception($"Number of LemmingSkills is actually {numberOfSkills}! Update {nameof(LemmingSkillConstants.NumberOfLemmingSkills)}!");
     }
 
     /// <summary>

@@ -9,7 +9,7 @@ public enum GadgetPropertyType
 {
     HatchGroupId,
     TribeId,
-    SkillId,
+    SkillType,
     Width,
     Height,
     RawLemmingState,

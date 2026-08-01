@@ -58,8 +58,8 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
     private static SkillSetData ReadSkillSetDatum(RawLevelFileDataReader reader)
     {
-        uint rawSkillId = reader.Read8BitUnsignedInteger();
-        var skillType = LemmingSkillConstants.GetEnumValue(rawSkillId);
+        uint rawSkillType = reader.Read8BitUnsignedInteger();
+        var skillType = LemmingSkillConstants.GetEnumValue(rawSkillType);
 
         int tribeId = reader.Read8BitUnsignedInteger();
         tribeId--; // Need to offset by 1
@@ -173,8 +173,8 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
         LimitSpecificSkillAssignmentsModifierData CreateLimitSpecificSkillAssignmentsModifier()
         {
-            uint rawSkillId = reader.Read8BitUnsignedInteger();
-            var skillType = LemmingSkillConstants.GetEnumValue(rawSkillId);
+            uint rawSkillType = reader.Read8BitUnsignedInteger();
+            var skillType = LemmingSkillConstants.GetEnumValue(rawSkillType);
 
             int tribeId = reader.Read8BitUnsignedInteger();
             tribeId--; // Need to offset by 1

@@ -162,7 +162,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     /// <returns>The LemmingSkill with that type, or the <see cref="NoneSkill"/> if the input is invalid.</returns>
     public static LemmingSkill GetSkillOrDefault(LemmingSkillType lemmingSkillType)
     {
-        return (uint)lemmingSkillType < (uint)LemmingSkills.Length
+        return (uint)lemmingSkillType < LemmingSkillConstants.NumberOfLemmingSkills
             ? LemmingSkills.At((int)lemmingSkillType)
             : NoneSkill.Instance;
     }

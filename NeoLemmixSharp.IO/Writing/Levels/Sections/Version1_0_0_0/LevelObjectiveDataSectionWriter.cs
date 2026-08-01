@@ -46,7 +46,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 
     private static void WriteSkillSetDatum(RawLevelFileDataWriter writer, SkillSetData skillSetDatum)
     {
-        FileWritingException.WriterAssert(LemmingSkillConstants.IsValidLemmingSkillId((int)skillSetDatum.SkillType), "Invalid skill id");
+        FileWritingException.WriterAssert(LemmingSkillConstants.IsValidLemmingSkillType((int)skillSetDatum.SkillType), "Invalid skill id");
         FileWritingException.WriterAssert(skillSetDatum.TribeId >= -1, "Invalid tribe id");
         FileWritingException.WriterAssert(skillSetDatum.TribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
         FileWritingException.WriterAssert(skillSetDatum.InitialQuantity >= 0, "Invalid skill limit quantity");
@@ -145,7 +145,7 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
         {
             var limitSpecificSkillModifier = (LimitSpecificSkillAssignmentsModifierData)objectiveModifier;
 
-            FileWritingException.WriterAssert(LemmingSkillConstants.IsValidLemmingSkillId((int)limitSpecificSkillModifier.SkillType), "Invalid skill id");
+            FileWritingException.WriterAssert(LemmingSkillConstants.IsValidLemmingSkillType((int)limitSpecificSkillModifier.SkillType), "Invalid skill id");
             FileWritingException.WriterAssert(limitSpecificSkillModifier.TribeId >= -1, "Invalid tribe id");
             FileWritingException.WriterAssert(limitSpecificSkillModifier.TribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
             FileWritingException.WriterAssert(limitSpecificSkillModifier.MaxSkillAssignments >= 0, "Invalid skill limit quantity");

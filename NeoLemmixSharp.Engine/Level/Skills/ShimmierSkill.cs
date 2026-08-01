@@ -20,10 +20,10 @@ public sealed class ShimmierSkill : LemmingSkill
     public override bool CanAssignToLemming(Lemming lemming)
     {
         var lemmingManager = LevelScreen.LemmingManager;
-        var currentActionId = lemming.CurrentActionType;
+        var currentActionType = lemming.CurrentActionType;
 
         var gadgetManager = LevelScreen.GadgetManager;
-        if (currentActionId == LemmingActionType.ClimberAction)
+        if (currentActionType == LemmingActionType.ClimberAction)
         {
             var simulationLemming = lemmingManager.SimulateLemming(lemming, true);
 
@@ -44,8 +44,8 @@ public sealed class ShimmierSkill : LemmingSkill
                    PositionIsSolidToLemming(in gadgetsNearRegion, simulationLemming, simulationOrientation.MoveUp(simulationPosition, 8));
         }
 
-        if (currentActionId == LemmingActionType.SliderAction ||
-            currentActionId == LemmingActionType.DehoisterAction)
+        if (currentActionType == LemmingActionType.SliderAction ||
+            currentActionType == LemmingActionType.DehoisterAction)
         {
             var oldAction = lemming.CurrentAction;
 
@@ -56,7 +56,7 @@ public sealed class ShimmierSkill : LemmingSkill
                    (oldAction.ActionType != LemmingActionType.DehoisterAction || simulationLemming.CurrentActionType != LemmingActionType.SliderAction);
         }
 
-        if (currentActionId != LemmingActionType.JumperAction)
+        if (currentActionType != LemmingActionType.JumperAction)
             return SkillIsAssignableToCurrentAction(lemming);
 
         var orientation = lemming.Orientation;

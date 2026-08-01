@@ -51,12 +51,6 @@ public static class LemmingActionConstants
 
     public static LemmingActionType GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LemmingActionType>(rawValue, NumberOfLemmingActions);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsValidLemmingActionId(int lemmingActionId)
-    {
-        return (uint)lemmingActionId < NumberOfLemmingActions;
-    }
-
     public const int LongestActionNameLength = 11;
 
     public const string NoneActionName = "None";
@@ -289,21 +283,21 @@ public static class LemmingActionConstants
         return result;
     }
 
-    public static bool TryGetLemmingActionIdFromName(string lemmingActionName, out LemmingActionType lemmingActionType)
+    public static bool TryGetLemmingActionTypeFromName(string lemmingActionName, out LemmingActionType lemmingActionType)
     {
         return LemmingActionNameToIdLookup.TryGetValue(lemmingActionName, out lemmingActionType);
     }
 
-    public static bool TryGetLemmingActionIdFromName(ReadOnlySpan<char> lemmingActionNameSpan, out LemmingActionType lemmingActionType)
+    public static bool TryGetLemmingActionTypeFromName(ReadOnlySpan<char> lemmingActionNameSpan, out LemmingActionType lemmingActionType)
     {
         var alternateLookup = LemmingActionNameToIdLookup.GetAlternateLookup<ReadOnlySpan<char>>();
 
         return alternateLookup.TryGetValue(lemmingActionNameSpan, out lemmingActionType);
     }
 
-    private static readonly LemmingActionLookupData[] LemmingActionIdToStringLookup = GenerateLemmingActionIdToStringLookup();
+    private static readonly LemmingActionLookupData[] LemmingActionTypeToStringLookup = GenerateLemmingActionTypeToStringLookup();
 
-    private static LemmingActionLookupData[] GenerateLemmingActionIdToStringLookup()
+    private static LemmingActionLookupData[] GenerateLemmingActionTypeToStringLookup()
     {
         var result = new LemmingActionLookupData[NumberOfLemmingActions];
         var count = 0;
@@ -356,7 +350,7 @@ public static class LemmingActionConstants
         }
     }
 
-    public static LemmingActionLookupData GetLemmingActionDataFromId(LemmingActionType lemmingActionType) => LemmingActionIdToStringLookup[(int)lemmingActionType];
+    public static LemmingActionLookupData GetLemmingActionDataFromId(LemmingActionType lemmingActionType) => LemmingActionTypeToStringLookup[(int)lemmingActionType];
 
     [DebuggerDisplay("{LemmingActionName}")]
     public readonly struct LemmingActionLookupData(string lemmingActionName, string lemmingActionFileName, int numberOfAnimationFrames)
@@ -417,7 +411,7 @@ public static class LemmingActionBounds
 
     public static RectangularRegion GetBounds(LemmingActionType actionType)
     {
-        if ((uint)actionType < _lemmingActionBounds.Length)
+        if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
             return _lemmingActionBounds.At((int)actionType);
 
         return StandardLemmingBounds;
