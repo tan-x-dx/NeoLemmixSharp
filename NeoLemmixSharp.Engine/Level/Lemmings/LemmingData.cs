@@ -38,10 +38,10 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
 
         public RectangularRegion CurrentBounds;
 
-        public int PreviousActionId;
-        public int CurrentActionId;
-        public int NextActionId;
-        public int CountDownActionId;
+        public LemmingActionType PreviousActionType;
+        public LemmingActionType CurrentActionType;
+        public LemmingActionType NextActionType;
+        public LemmingActionType CountDownActionType;
 
         public JumperPositionBuffer JumperPositionBuffer;
 
@@ -79,7 +79,19 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
 
     public void* GetPointer() => _data;
 
-    private LemmingData(nint pointerHandle) => _data = (LemmingDataRaw*)pointerHandle;
+    private LemmingData(nint pointerHandle)
+    {
+        _data = (LemmingDataRaw*)pointerHandle;
+
+        _data->PreviousActionType = LemmingActionType.NoneAction;
+        _data->CurrentActionType = LemmingActionType.NoneAction;
+        _data->NextActionType = LemmingActionType.NoneAction;
+        _data->CountDownActionType = LemmingActionType.NoneAction;
+        _data->DehoistPin = new(-1, -1);
+        _data->LaserHitLevelPosition = new(-1, -1);
+        _data->AnchorPosition = new(-1, -1);
+        _data->PreviousAnchorPosition = new(-1, -1);
+    }
 
     public LemmingState CreateLemmingState(Lemming lemming)
     {
@@ -97,10 +109,10 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
 
     public ref RectangularRegion CurrentBounds => ref Unsafe.AsRef<RectangularRegion>(&_data->CurrentBounds);
 
-    public ref int PreviousActionId => ref Unsafe.AsRef<int>(&_data->PreviousActionId);
-    public ref int CurrentActionId => ref Unsafe.AsRef<int>(&_data->CurrentActionId);
-    public ref int NextActionId => ref Unsafe.AsRef<int>(&_data->NextActionId);
-    public ref int CountDownActionId => ref Unsafe.AsRef<int>(&_data->CountDownActionId);
+    public ref LemmingActionType PreviousActionType => ref Unsafe.AsRef<LemmingActionType>(&_data->PreviousActionType);
+    public ref LemmingActionType CurrentActionType => ref Unsafe.AsRef<LemmingActionType>(&_data->CurrentActionType);
+    public ref LemmingActionType NextActionType => ref Unsafe.AsRef<LemmingActionType>(&_data->NextActionType);
+    public ref LemmingActionType CountDownActionType => ref Unsafe.AsRef<LemmingActionType>(&_data->CountDownActionType);
 
     public ref Point DehoistPin => ref Unsafe.AsRef<Point>(&_data->DehoistPin);
     public ref Point LaserHitLevelPosition => ref Unsafe.AsRef<Point>(&_data->LaserHitLevelPosition);

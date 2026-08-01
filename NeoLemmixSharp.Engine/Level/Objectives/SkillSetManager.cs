@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
 using NeoLemmixSharp.Engine.Level.Skills;
@@ -21,8 +22,10 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         int totalSkillLimit)
     {
         _skillTrackingDataList = skillTrackingDataList;
-        _currentTotalSkillLimit = new PointerWrapper(dataHandle);
-        _currentTotalSkillLimit.IntValue = totalSkillLimit;
+        _currentTotalSkillLimit = new PointerWrapper(dataHandle)
+        {
+            IntValue = totalSkillLimit
+        };
 
         Array.Sort(_skillTrackingDataList, this);
 
@@ -60,11 +63,11 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
     }
 
     [Pure]
-    public SkillTrackingData? TryGetSkillTrackingData(int skillId, int tribeId)
+    public SkillTrackingData? TryGetSkillTrackingData(LemmingSkillType skillType, int tribeId)
     {
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
-            if (skillTrackingData.LemmingSkillId == skillId &&
+            if (skillTrackingData.LemmingSkillType == skillType &&
                 skillTrackingData.TribeId == tribeId)
                 return skillTrackingData;
         }
@@ -74,7 +77,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
 
     public void ChangeSkillCount(LemmingSkill lemmingSkill, int tribeId, int delta)
     {
-        var relevantSkillTrackingData = TryGetSkillTrackingData(lemmingSkill.Id, tribeId);
+        var relevantSkillTrackingData = TryGetSkillTrackingData(lemmingSkill.SkillType, tribeId);
 
         relevantSkillTrackingData?.ChangeSkillCount(delta);
     }
@@ -156,8 +159,8 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         if (tribeComparison != 0)
             return tribeComparison;
 
-        var gt = x.LemmingSkillId > y.LemmingSkillId ? 1 : 0;
-        var lt = x.LemmingSkillId < y.LemmingSkillId ? 1 : 0;
+        var gt = x.LemmingSkillType > y.LemmingSkillType ? 1 : 0;
+        var lt = x.LemmingSkillType < y.LemmingSkillType ? 1 : 0;
         return gt - lt;
 
         static int CompareTribes(Tribe? tribeX, Tribe? tribeY)

@@ -11,7 +11,7 @@ public sealed class PlatformerAction : LemmingAction
 
     private PlatformerAction()
         : base(
-            LemmingActionConstants.PlatformerActionId,
+            LemmingActionType.PlatformerAction,
             LemmingActionConstants.PlatformerActionName,
             LemmingActionConstants.PlatformerActionSpriteFileName,
             LemmingActionConstants.PlatformerAnimationFrames,

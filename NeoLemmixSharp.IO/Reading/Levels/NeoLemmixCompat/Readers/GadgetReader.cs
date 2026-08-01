@@ -126,10 +126,10 @@ internal sealed class GadgetReader : NeoLemmixDataReader
 
     private void SetSkill(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        if (!LemmingSkillConstants.TryGetLemmingSkillIdFromName(secondToken, out var skillId))
+        if (!LemmingSkillConstants.TryGetLemmingSkillTypeFromName(secondToken, out var skillType))
             NxlvReadingHelpers.ThrowUnknownTokenException(secondToken, [], line);
 
-        _currentGadgetData!.SkillId = skillId;
+        _currentGadgetData!.SkillType = skillType;
     }
 
     private void SetSkillCount(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

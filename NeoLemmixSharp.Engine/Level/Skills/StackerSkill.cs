@@ -12,7 +12,7 @@ public sealed class StackerSkill : LemmingSkill
 
     private StackerSkill()
         : base(
-            LemmingSkillConstants.StackerSkillId,
+            LemmingSkillType.StackerSkill,
             LemmingSkillConstants.StackerSkillName)
     {
     }

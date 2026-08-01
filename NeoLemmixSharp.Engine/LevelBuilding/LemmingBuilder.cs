@@ -35,7 +35,7 @@ public sealed class LemmingBuilder
 
             var lemming = new Lemming(ref handle, i);
 
-            lemming.CurrentAction = LemmingAction.GetActionOrDefault(prototype.InitialLemmingActionId);
+            lemming.CurrentAction = LemmingAction.GetActionOrDefault(prototype.InitialLemmingActionType);
             lemming.AnchorPosition = prototype.Position;
             lemming.SetRawData(prototype.Orientation, prototype.FacingDirection, prototype.TribeId, prototype.State);
 
@@ -46,7 +46,7 @@ public sealed class LemmingBuilder
         {
             var lemming = new Lemming(ref handle, i);
 
-            lemming.AnchorPosition = default;
+            lemming.AnchorPosition = Point.Zero;
             lemming.Orientation = Orientation.Down;
             lemming.FacingDirection = FacingDirection.Right;
             lemming.CurrentAction = NoneAction.Instance;

@@ -11,7 +11,7 @@ public sealed class AscenderAction : LemmingAction
 
     private AscenderAction()
         : base(
-            LemmingActionConstants.AscenderActionId,
+            LemmingActionType.AscenderAction,
             LemmingActionConstants.AscenderActionName,
             LemmingActionConstants.AscenderActionSpriteFileName,
             LemmingActionConstants.AscenderAnimationFrames,

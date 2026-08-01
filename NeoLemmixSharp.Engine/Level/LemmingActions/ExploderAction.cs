@@ -13,7 +13,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
 
     private ExploderAction()
         : base(
-            LemmingActionConstants.ExploderActionId,
+            LemmingActionType.ExploderAction,
             LemmingActionConstants.ExploderActionName,
             LemmingActionConstants.ExploderActionSpriteFileName,
             LemmingActionConstants.ExploderAnimationFrames,

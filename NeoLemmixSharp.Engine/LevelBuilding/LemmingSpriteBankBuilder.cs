@@ -58,7 +58,7 @@ public static class LemmingSpriteBankBuilder
         string spriteDirectory,
         LemmingActionSpriteData lemmingActionSpriteData)
     {
-        var lemmingActionData = LemmingActionConstants.GetLemmingActionDataFromId(lemmingActionSpriteData.LemmingActionId);
+        var lemmingActionData = LemmingActionConstants.GetLemmingActionDataFromId(lemmingActionSpriteData.LemmingActionType);
 
         var spriteFilePath = Path.Combine(
             spriteDirectory,

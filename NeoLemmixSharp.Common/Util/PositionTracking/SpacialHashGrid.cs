@@ -280,10 +280,7 @@ public unsafe sealed class SpacialHashGrid<TPerfectHasher, TBuffer, T> : IDispos
         }
         else
         {
-            var size = new Size(
-                1 + bottomRightChunk.X - topLeftChunk.X,
-                1 + bottomRightChunk.Y - topLeftChunk.Y);
-            *previousBounds = new RectangularRegion(topLeftChunk, size);
+            *previousBounds = new RectangularRegion(topLeftChunk, bottomRightChunk);
             ModifyChunks(item, ChunkOperationType.Add, topLeftChunk, bottomRightChunk);
         }
     }

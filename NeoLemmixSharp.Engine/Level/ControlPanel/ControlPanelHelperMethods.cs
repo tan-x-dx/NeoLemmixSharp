@@ -35,7 +35,7 @@ public static class ControlPanelHelperMethods
 
             foreach (var classicSkill in allClassicSkills)
             {
-                var skillTrackingData = skillSetManager.TryGetSkillTrackingData(classicSkill.Id, EngineConstants.ClassicTribeId);
+                var skillTrackingData = skillSetManager.TryGetSkillTrackingData(classicSkill.SkillType, EngineConstants.ClassicTribeId);
 
                 int skillTrackingDataId;
                 if (skillTrackingData is null)
@@ -51,7 +51,7 @@ public static class ControlPanelHelperMethods
                     _buttonId++,
                     i,
                     i,
-                    classicSkill.Id,
+                    classicSkill.SkillType,
                     skillTrackingDataId);
 
                 skillAssignButton.UpdateSkillCount();
@@ -74,7 +74,7 @@ public static class ControlPanelHelperMethods
                     _buttonId++,
                     i,
                     i,
-                    skillTrackingData.LemmingSkillId,
+                    skillTrackingData.LemmingSkillType,
                     skillTrackingData.SkillTrackingDataId);
                 result[i++] = skillAssignButton;
                 skillAssignButton.UpdateSkillCount();

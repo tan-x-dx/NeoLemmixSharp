@@ -164,7 +164,7 @@ public sealed class MainPage : PageBase
 
         if (_menuController.Space.IsPressed)
         {
-            LevelEditorButtonClick(null!, new Point());
+            LevelEditorButtonClick(null!, Point.Zero);
         }
 
         if (_menuController.ToggleFullScreen.IsPressed)

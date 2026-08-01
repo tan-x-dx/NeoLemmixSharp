@@ -2,14 +2,25 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
-public readonly struct Point : IEquatable<Point>, ISpanFormattable
+public readonly struct Point : IEquatable<Point>,
+    ISpanFormattable,
+    IAdditionOperators<Point, Point, Point>,
+    IAdditiveIdentity<Point, Point>,
+    IEqualityOperators<Point, Point, bool>,
+    ISubtractionOperators<Point, Point, Point>,
+    IUnaryNegationOperators<Point, Point>,
+    IUnaryPlusOperators<Point, Point>
 {
+    static Point IAdditiveIdentity<Point, Point>.AdditiveIdentity => Zero;
+    public static Point Zero => new();
+
     [FieldOffset(0 * sizeof(int))] public readonly int X;
     [FieldOffset(1 * sizeof(int))] public readonly int Y;
 
@@ -22,14 +33,28 @@ public readonly struct Point : IEquatable<Point>, ISpanFormattable
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Point other) => X == other.X &&
-                                       Y == other.Y;
+    public bool Equals(Point other)
+    {
+        var a = X ^ other.X;
+        var b = Y ^ other.Y;
+
+        return (a | b) == 0;
+    }
+
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Point other && Equals(other);
     [DebuggerStepThrough]
     public override int GetHashCode() =>
         3790121 * X +
         2885497 * Y;
+
+    [Pure]
+    [DebuggerStepThrough]
+    public static Point operator +(Point p) => p;
+
+    [Pure]
+    [DebuggerStepThrough]
+    public static Point operator -(Point p) => new(-p.X, -p.Y);
 
     [Pure]
     [DebuggerStepThrough]

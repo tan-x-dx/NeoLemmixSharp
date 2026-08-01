@@ -12,7 +12,7 @@ public sealed class BlockerAction : LemmingAction
 
     private BlockerAction()
         : base(
-            LemmingActionConstants.BlockerActionId,
+            LemmingActionType.BlockerAction,
             LemmingActionConstants.BlockerActionName,
             LemmingActionConstants.BlockerActionSpriteFileName,
             LemmingActionConstants.BlockerAnimationFrames,
@@ -117,10 +117,10 @@ public sealed class BlockerAction : LemmingAction
 
         var dx = forcedFacingDirection.DeltaX;
 
-        var currentActionId = lemming.CurrentActionId;
+        var currentActionType = lemming.CurrentActionType;
 
         // Avoid moving into terrain, see http://www.lemmingsforums.net/index.php?topic=2575.0
-        if (currentActionId == LemmingActionConstants.MinerActionId)
+        if (currentActionType == LemmingActionType.MinerAction)
         {
             int mineDx;
             int mineDy;
@@ -147,17 +147,17 @@ public sealed class BlockerAction : LemmingAction
 
         // Required for turned builders not to walk into air
         // For platformers, see http://www.lemmingsforums.net/index.php?topic=2530.0
-        if ((currentActionId == LemmingActionConstants.BuilderActionId ||
-             currentActionId == LemmingActionConstants.PlatformerActionId) &&
+        if ((currentActionType == LemmingActionType.BuilderAction ||
+             currentActionType == LemmingActionType.PlatformerAction) &&
             lemming.PhysicsFrame >= 9)
         {
             BuilderAction.LayBrick(lemming);
             return;
         }
 
-        if (currentActionId != LemmingActionConstants.ClimberActionId &&
-            currentActionId != LemmingActionConstants.SliderActionId &&
-            currentActionId != LemmingActionConstants.DehoisterActionId)
+        if (currentActionType != LemmingActionType.ClimberAction &&
+            currentActionType != LemmingActionType.SliderAction &&
+            currentActionType != LemmingActionType.DehoisterAction)
             return;
 
         // Don't move below original position

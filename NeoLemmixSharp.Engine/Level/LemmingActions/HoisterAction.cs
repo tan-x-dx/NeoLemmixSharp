@@ -10,7 +10,7 @@ public sealed class HoisterAction : LemmingAction
 
     private HoisterAction()
         : base(
-            LemmingActionConstants.HoisterActionId,
+            LemmingActionType.HoisterAction,
             LemmingActionConstants.HoisterActionName,
             LemmingActionConstants.HoisterActionSpriteFileName,
             LemmingActionConstants.HoisterAnimationFrames,

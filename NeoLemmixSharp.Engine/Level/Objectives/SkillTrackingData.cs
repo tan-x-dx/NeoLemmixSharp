@@ -10,8 +10,8 @@ public sealed class SkillTrackingData
 {
     private readonly SkillSetData _data;
 
-    public int LemmingSkillId { get; }
-    public LemmingSkill LemmingSkill => LemmingSkill.GetSkillOrDefault(LemmingSkillId);
+    public LemmingSkillType LemmingSkillType { get; }
+    public LemmingSkill LemmingSkill => LemmingSkill.GetSkillOrDefault(LemmingSkillType);
 
     public int TribeId { get; }
     public Tribe? Tribe => LevelScreen.TribeManager.GetTribeOrDefault(TribeId);
@@ -25,7 +25,7 @@ public sealed class SkillTrackingData
 
     public SkillTrackingData(
         ref nint dataHandle,
-        int lemmingSkillId,
+        LemmingSkillType lemmingSkillType,
         int tribeId,
         int skillTrackingDataId,
         int initialSkillQuantity,
@@ -33,7 +33,7 @@ public sealed class SkillTrackingData
     {
         _data = PointerDataHelper.CreateItem<SkillSetData>(ref dataHandle);
 
-        LemmingSkillId = lemmingSkillId;
+        LemmingSkillType = lemmingSkillType;
         TribeId = tribeId;
         SkillTrackingDataId = skillTrackingDataId;
         InitialSkillQuantity = Math.Min(initialSkillQuantity, initialSkillLimit);

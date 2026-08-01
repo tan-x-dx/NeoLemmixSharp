@@ -86,47 +86,47 @@ internal static class DefaultStyleGenerator
 
         var result = new LemmingActionSpriteData[LemmingActionConstants.NumberOfLemmingActions];
 
-        SetLemmingActionSpriteData(LemmingActionConstants.WalkerActionId, new Point(2, 10), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.ClimberActionId, new Point(8, 12), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.FloaterActionId, new Point(4, 16), fiveLayersTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.BlockerActionId, new Point(5, 13), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.BuilderActionId, new Point(3, 13), sixLayersTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.BasherActionId, new Point(8, 10), fiveLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.MinerActionId, new Point(7, 13), fiveLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.DiggerActionId, new Point(7, 12), fiveLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.PlatformerActionId, new Point(3, 13), sixLayersTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.StackerActionId, new Point(3, 13), sixLayersTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.FencerActionId, new Point(3, 10), sixLayersTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.GliderActionId, new Point(5, 16), fiveLayersTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.JumperActionId, new Point(2, 10), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.SwimmerActionId, new Point(6, 8), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.ShimmierActionId, new Point(3, 8), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.LasererActionId, new Point(3, 10), fiveLayersTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.SliderActionId, new Point(4, 11), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.FallerActionId, new Point(3, 10), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.AscenderActionId, new Point(2, 10), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.ShruggerActionId, new Point(3, 10), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.DrownerActionId, new Point(5, 10), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.HoisterActionId, new Point(5, 12), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.DehoisterActionId, new Point(5, 13), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.ReacherActionId, new Point(3, 9), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.DisarmerActionId, new Point(1, 11), fiveLayersTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.ExiterActionId, new Point(2, 16), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.ExploderActionId, new Point(17, 21), oneLayerTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.OhNoerActionId, new Point(3, 10), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.SplatterActionId, new Point(7, 10), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.StonerActionId, new Point(17, 21), oneLayerTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.VaporiserActionId, new Point(5, 14), fiveLayersTrueColor);
-        SetLemmingActionSpriteData(LemmingActionConstants.RotateClockwiseActionId, new Point(2, 10), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.RotateCounterclockwiseActionId, new Point(2, 10), fourLayers);
-        SetLemmingActionSpriteData(LemmingActionConstants.RotateHalfActionId, new Point(2, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.WalkerAction, new Point(2, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.ClimberAction, new Point(8, 12), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.FloaterAction, new Point(4, 16), fiveLayersTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.BlockerAction, new Point(5, 13), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.BuilderAction, new Point(3, 13), sixLayersTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.BasherAction, new Point(8, 10), fiveLayers);
+        SetLemmingActionSpriteData(LemmingActionType.MinerAction, new Point(7, 13), fiveLayers);
+        SetLemmingActionSpriteData(LemmingActionType.DiggerAction, new Point(7, 12), fiveLayers);
+        SetLemmingActionSpriteData(LemmingActionType.PlatformerAction, new Point(3, 13), sixLayersTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.StackerAction, new Point(3, 13), sixLayersTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.FencerAction, new Point(3, 10), sixLayersTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.GliderAction, new Point(5, 16), fiveLayersTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.JumperAction, new Point(2, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.SwimmerAction, new Point(6, 8), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.ShimmierAction, new Point(3, 8), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.LasererAction, new Point(3, 10), fiveLayersTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.SliderAction, new Point(4, 11), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.FallerAction, new Point(3, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.AscenderAction, new Point(2, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.ShruggerAction, new Point(3, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.DrownerAction, new Point(5, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.HoisterAction, new Point(5, 12), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.DehoisterAction, new Point(5, 13), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.ReacherAction, new Point(3, 9), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.DisarmerAction, new Point(1, 11), fiveLayersTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.ExiterAction, new Point(2, 16), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.ExploderAction, new Point(17, 21), oneLayerTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.OhNoerAction, new Point(3, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.SplatterAction, new Point(7, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.StonerAction, new Point(17, 21), oneLayerTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.VaporiserAction, new Point(5, 14), fiveLayersTrueColor);
+        SetLemmingActionSpriteData(LemmingActionType.RotateClockwiseAction, new Point(2, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.RotateCounterclockwiseAction, new Point(2, 10), fourLayers);
+        SetLemmingActionSpriteData(LemmingActionType.RotateHalfAction, new Point(2, 10), fourLayers);
 
         return result;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void SetLemmingActionSpriteData(int lemmingActionId, Point anchorPoint, LemmingActionSpriteLayerData[] layers)
+        void SetLemmingActionSpriteData(LemmingActionType lemmingActionType, Point anchorPoint, LemmingActionSpriteLayerData[] layers)
         {
-            result[lemmingActionId] = new LemmingActionSpriteData(lemmingActionId, anchorPoint, layers);
+            result[(int)lemmingActionType] = new LemmingActionSpriteData(lemmingActionType, anchorPoint, layers);
         }
     }
 

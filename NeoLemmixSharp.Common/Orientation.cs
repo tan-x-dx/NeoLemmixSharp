@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -25,38 +26,12 @@ public static class OrientationConstants
     public const int RightOrientationRotNum = 3;
     public const string RightOrientationName = "Right";
     public const float RightOrientationRotationAngle = MathF.PI * 0.5f;
-
-    /// <summary>
-    /// Computes the Sine of an angle, interpreting the input as an integer multiple of pi/2 radians.
-    /// This method maps <see langword="int" />s to <see langword="int" />s, and avoids any floating point calculations.
-    /// This function effectively maps (theta mod 4) -> [0, 1, 0, -1]
-    /// </summary>
-    /// <param name="theta">The angle as a multiple of pi/2 radians.</param>
-    /// <returns>The Sine of that angle, as an <see langword="int" />.</returns>
-    [Pure]
-    [DebuggerStepThrough]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int IntSin(int theta)
-    {
-        ReadOnlySpan<int> Values = [0, 1, 0, -1];
-        return Values[theta & 3];
-    }
-
-    /// <summary>
-    /// Computes the Cosine of an angle, interpreting the input as an integer multiple of pi/2 radians.
-    /// This method maps <see langword="int" />s to <see langword="int" />s, and avoids any floating point calculations.
-    /// This function effectively maps (theta mod 4) -> [1, 0, -1, 0]
-    /// </summary>
-    /// <param name="theta">The angle as a multiple of pi/2 radians.</param>
-    /// <returns>The Cosine of that angle, as an <see langword="int" />.</returns>
-    [Pure]
-    [DebuggerStepThrough]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int IntCos(int theta) => IntSin(theta + 1);
 }
 
 public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
 {
+    private const int BitMask = 3;
+
     public static Orientation Down => new(OrientationConstants.DownOrientationRotNum);
     public static Orientation Left => new(OrientationConstants.LeftOrientationRotNum);
     public static Orientation Up => new(OrientationConstants.UpOrientationRotNum);
@@ -67,7 +42,7 @@ public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
     [DebuggerStepThrough]
     public Orientation(int rotNum)
     {
-        RotNum = rotNum & 3;
+        RotNum = rotNum & BitMask;
     }
 
     [Pure]
@@ -109,7 +84,7 @@ public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
             OrientationConstants.RightOrientationRotationAngle,
         ];
 
-        return RotationAngles[RotNum & 3];
+        return RotationAngles[RotNum & BitMask];
     }
 
     [Pure]
@@ -137,12 +112,12 @@ public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
             OrientationConstants.RightOrientationName,
         ];
 
-        return OrientationNames[RotNum & 3];
+        return OrientationNames[RotNum & BitMask];
     }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        var constSpan = ToString().AsSpan();
+        var constSpan = ToString();
         if (constSpan.TryCopyTo(destination))
         {
             charsWritten = constSpan.Length;

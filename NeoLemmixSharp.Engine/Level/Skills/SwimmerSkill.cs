@@ -1,7 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -11,7 +10,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingState
 
     private SwimmerSkill()
         : base(
-            LemmingSkillConstants.SwimmerSkillId,
+            LemmingSkillType.SwimmerSkill,
             LemmingSkillConstants.SwimmerSkillName)
     {
     }
@@ -26,7 +25,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingState
     public override void AssignToLemming(Lemming lemming)
     {
         lemming.State.IsSwimmer = true;
-        if (lemming.CurrentActionId == LemmingActionConstants.DrownerActionId)
+        if (lemming.CurrentActionType == LemmingActionType.DrownerAction)
         {
             SwimmerAction.Instance.TransitionLemmingToAction(lemming, false);
         }

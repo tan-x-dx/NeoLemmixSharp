@@ -23,17 +23,17 @@ public static class LemmingStateConstants
 {
     public const int NumberOfStates = (int)StateType.VALUE_MAX;
 
-    public const int ClimberBitIndex = 0;
-    public const int FloaterBitIndex = 1;
-    public const int GliderBitIndex = 2;
-    public const int SliderBitIndex = 3;
-    public const int SwimmerBitIndex = 4;
-    public const int DisarmerBitIndex = 5;
-    public const int AcidLemmingBitIndex = 20;
-    public const int WaterLemmingBitIndex = 21;
-    public const int PermanentFastForwardBitIndex = 28;
-    public const int ZombieBitIndex = 29;
-    public const int NeutralBitIndex = 30;
+    public const int ClimberBitIndex = (int)StateType.ClimberState;
+    public const int FloaterBitIndex = (int)StateType.FloaterState;
+    public const int GliderBitIndex = (int)StateType.GliderState;
+    public const int SliderBitIndex = (int)StateType.SliderState;
+    public const int SwimmerBitIndex = (int)StateType.SwimmerState;
+    public const int DisarmerBitIndex = (int)StateType.DisarmerState;
+    public const int AcidLemmingBitIndex = (int)StateType.AcidLemmingState;
+    public const int WaterLemmingBitIndex = (int)StateType.WaterState;
+    public const int PermanentFastForwardBitIndex = (int)StateType.FastForwardState;
+    public const int ZombieBitIndex = (int)StateType.ZombieState;
+    public const int NeutralBitIndex = (int)StateType.NeutralState;
 
     public const int ActiveBitIndex = 31;
 

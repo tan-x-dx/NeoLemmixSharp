@@ -28,7 +28,7 @@ public abstract class Component : IDisposable
     private KeyboardEventHandler? _keyReleased;
     public IMouseCollision CollisionBehaviour { get; set; } = IMouseCollision.RectangularCollisionInstance;
 
-    public Point Position { get; private set; } = new(0, 0);
+    public Point Position { get; private set; } = Point.Zero;
     public Size Dimensions { get; private set; } = new(UiConstants.StandardButtonHeight, UiConstants.StandardButtonHeight);
 
     private ColorPacket _colourPacket;

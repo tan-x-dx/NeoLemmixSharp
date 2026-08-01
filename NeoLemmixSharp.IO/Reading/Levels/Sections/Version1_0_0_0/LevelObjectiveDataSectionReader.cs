@@ -58,8 +58,8 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
     private static SkillSetData ReadSkillSetDatum(RawLevelFileDataReader reader)
     {
-        int skillId = reader.Read8BitUnsignedInteger();
-        FileReadingException.ReaderAssert(LemmingSkillConstants.IsValidLemmingSkillId(skillId), "Invalid skill id");
+        uint rawSkillType = reader.Read8BitUnsignedInteger();
+        var skillType = LemmingSkillConstants.GetEnumValue(rawSkillType);
 
         int tribeId = reader.Read8BitUnsignedInteger();
         tribeId--; // Need to offset by 1
@@ -68,7 +68,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
         int initialQuantity = reader.Read8BitUnsignedInteger();
         FileReadingException.ReaderAssert(initialQuantity <= EngineConstants.InfiniteSkillCount, "Invalid skill count quantity");
 
-        return new SkillSetData(skillId, tribeId, initialQuantity);
+        return new SkillSetData(skillType, tribeId, initialQuantity);
     }
 
     private static ObjectiveCriterionData[] ReadObjectiveCriteria(RawLevelFileDataReader reader)
@@ -173,8 +173,8 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
         LimitSpecificSkillAssignmentsModifierData CreateLimitSpecificSkillAssignmentsModifier()
         {
-            int skillId = reader.Read8BitUnsignedInteger();
-            FileReadingException.ReaderAssert(LemmingSkillConstants.IsValidLemmingSkillId(skillId), "Invalid skill id");
+            uint rawSkillType = reader.Read8BitUnsignedInteger();
+            var skillType = LemmingSkillConstants.GetEnumValue(rawSkillType);
 
             int tribeId = reader.Read8BitUnsignedInteger();
             tribeId--; // Need to offset by 1
@@ -185,7 +185,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
 
             return new LimitSpecificSkillAssignmentsModifierData
             {
-                SkillId = skillId,
+                SkillType = skillType,
                 TribeId = tribeId,
                 MaxSkillAssignments = maxSkillAssignments,
             };

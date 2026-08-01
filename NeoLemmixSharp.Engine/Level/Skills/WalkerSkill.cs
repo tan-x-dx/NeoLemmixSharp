@@ -12,7 +12,7 @@ public sealed class WalkerSkill : LemmingSkill
 
     private WalkerSkill()
         : base(
-            LemmingSkillConstants.WalkerSkillId,
+            LemmingSkillType.WalkerSkill,
             LemmingSkillConstants.WalkerSkillName)
     {
     }
@@ -30,7 +30,7 @@ public sealed class WalkerSkill : LemmingSkill
         var gadgetTestRegion = new RectangularRegion(lemmingPosition, testRight);
         LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearRegion);
 
-        if (lemming.CurrentActionId == LemmingActionConstants.BuilderActionId &&
+        if (lemming.CurrentActionType == LemmingActionType.BuilderAction &&
             PositionIsSolidToLemming(in gadgetsNearRegion, lemming, testUp) &&
             !PositionIsSolidToLemming(in gadgetsNearRegion, lemming, testRight))
         {
@@ -41,7 +41,7 @@ public sealed class WalkerSkill : LemmingSkill
             return;
         }
 
-        if (lemming.CurrentActionId != LemmingActionConstants.WalkerActionId)
+        if (lemming.CurrentActionType != LemmingActionType.WalkerAction)
         {
             WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
 

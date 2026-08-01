@@ -10,7 +10,7 @@ public sealed class LasererSkill : LemmingSkill
 
     private LasererSkill()
         : base(
-            LemmingSkillConstants.LasererSkillId,
+            LemmingSkillType.LasererSkill,
             LemmingSkillConstants.LasererSkillName)
     {
     }

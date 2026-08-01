@@ -9,7 +9,7 @@ public sealed class ShruggerAction : LemmingAction
 
     private ShruggerAction()
         : base(
-            LemmingActionConstants.ShruggerActionId,
+            LemmingActionType.ShruggerAction,
             LemmingActionConstants.ShruggerActionName,
             LemmingActionConstants.ShruggerActionSpriteFileName,
             LemmingActionConstants.ShruggerAnimationFrames,

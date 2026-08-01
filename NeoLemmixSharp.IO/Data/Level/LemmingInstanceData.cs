@@ -10,7 +10,7 @@ public sealed class LemmingInstanceData : IInstanceData
     public Orientation Orientation { get; set; } = Orientation.Down;
     public FacingDirection FacingDirection { get; set; } = FacingDirection.Right;
     public int TribeId { get; set; } = EngineConstants.ClassicTribeId;
-    public int InitialLemmingActionId { get; set; } = LemmingActionConstants.WalkerActionId;
+    public LemmingActionType InitialLemmingActionType { get; set; } = LemmingActionType.WalkerAction;
 
     internal LemmingInstanceData()
     {
@@ -18,7 +18,7 @@ public sealed class LemmingInstanceData : IInstanceData
 
     RectangularRegion IInstanceData.GetBounds(Point anchorPosition)
     {
-        var basicBounds = LemmingActionBounds.GetBounds(InitialLemmingActionId);
+        var basicBounds = LemmingActionBounds.GetBounds(InitialLemmingActionType);
         var dht = new DihedralTransformation(Orientation, FacingDirection);
         var transformedBounds = dht.Transform(basicBounds);
         transformedBounds = transformedBounds.Translate(anchorPosition);

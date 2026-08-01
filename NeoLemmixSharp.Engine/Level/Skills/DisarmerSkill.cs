@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using static NeoLemmixSharp.Engine.Level.Skills.ILemmingState;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
@@ -10,7 +9,7 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingState
 
     private DisarmerSkill()
         : base(
-            LemmingSkillConstants.DisarmerSkillId,
+            LemmingSkillType.DisarmerSkill,
             LemmingSkillConstants.DisarmerSkillName)
     {
     }

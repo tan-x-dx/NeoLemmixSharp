@@ -10,7 +10,7 @@ public sealed class JumperSkill : LemmingSkill
 
     private JumperSkill()
         : base(
-            LemmingSkillConstants.JumperSkillId,
+            LemmingSkillType.JumperSkill,
             LemmingSkillConstants.JumperSkillName)
     {
     }

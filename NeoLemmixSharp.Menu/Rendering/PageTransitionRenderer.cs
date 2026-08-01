@@ -28,7 +28,7 @@ public sealed class PageTransitionRenderer : IDisposable
     {
         spriteBatch.Draw(
             CommonSprites.WhitePixelGradientSprite,
-            Helpers.CreateRectangle(new Point(), _windowSize),
+            Helpers.CreateRectangle(Point.Zero, _windowSize),
             CommonSprites.RectangleForWhitePixelAlpha(_pageTransition.TransitionAlpha),
             Color.Black);
     }

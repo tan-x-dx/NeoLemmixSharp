@@ -255,7 +255,7 @@ public sealed class LemmingManager :
             DeregisterZombie(lemming);
         }
 
-        if (lemming.CurrentActionId == LemmingActionConstants.BlockerActionId)
+        if (lemming.CurrentActionType == LemmingActionType.BlockerAction)
         {
             DeregisterBlocker(lemming);
         }

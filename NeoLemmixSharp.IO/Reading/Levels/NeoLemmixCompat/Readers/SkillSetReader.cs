@@ -34,7 +34,7 @@ internal sealed class SkillSetReader : NeoLemmixDataReader
             return false;
         }
 
-        if (!LemmingSkillConstants.TryGetLemmingSkillIdFromName(firstToken, out var skillId))
+        if (!LemmingSkillConstants.TryGetLemmingSkillTypeFromName(firstToken, out var skillType))
             throw new FileReadingException($"Unknown token: {firstToken}");
 
         var skillName = _uniqueStringSet.GetUniqueStringInstance(firstToken);
@@ -49,12 +49,12 @@ internal sealed class SkillSetReader : NeoLemmixDataReader
         if ((uint)amount > EngineConstants.InfiniteSkillCount)
             throw new FileReadingException($"Invalid skill count value! {amount}");
 
-        if (skillId == LemmingSkillConstants.ClonerSkillId && amount == EngineConstants.InfiniteSkillCount)
+        if (skillType == LemmingSkillType.ClonerSkill && amount == EngineConstants.InfiniteSkillCount)
         {
             amount = EngineConstants.MaxFiniteSkillCount;
         }
 
-        var skillSetDatum = new SkillSetData(skillId, EngineConstants.ClassicTribeId, amount);
+        var skillSetDatum = new SkillSetData(skillType, EngineConstants.ClassicTribeId, amount);
 
         SkillSetData.Add(skillSetDatum);
         return false;

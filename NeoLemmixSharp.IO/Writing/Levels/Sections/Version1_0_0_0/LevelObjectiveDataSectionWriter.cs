@@ -46,13 +46,13 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
 
     private static void WriteSkillSetDatum(RawLevelFileDataWriter writer, SkillSetData skillSetDatum)
     {
-        FileWritingException.WriterAssert(LemmingSkillConstants.IsValidLemmingSkillId(skillSetDatum.SkillId), "Invalid skill id");
+        FileWritingException.WriterAssert(LemmingSkillConstants.IsValidLemmingSkillType((int)skillSetDatum.SkillType), "Invalid skill id");
         FileWritingException.WriterAssert(skillSetDatum.TribeId >= -1, "Invalid tribe id");
         FileWritingException.WriterAssert(skillSetDatum.TribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
         FileWritingException.WriterAssert(skillSetDatum.InitialQuantity >= 0, "Invalid skill limit quantity");
         FileWritingException.WriterAssert(skillSetDatum.InitialQuantity <= EngineConstants.InfiniteSkillCount, "Invalid skill limit quantity");
 
-        writer.Write8BitUnsignedInteger((byte)skillSetDatum.SkillId);
+        writer.Write8BitUnsignedInteger((byte)skillSetDatum.SkillType);
         writer.Write8BitUnsignedInteger((byte)(skillSetDatum.TribeId + 1)); // Need to offset by 1
         writer.Write8BitUnsignedInteger((byte)skillSetDatum.InitialQuantity);
     }
@@ -145,13 +145,13 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
         {
             var limitSpecificSkillModifier = (LimitSpecificSkillAssignmentsModifierData)objectiveModifier;
 
-            FileWritingException.WriterAssert(LemmingSkillConstants.IsValidLemmingSkillId(limitSpecificSkillModifier.SkillId), "Invalid skill id");
+            FileWritingException.WriterAssert(LemmingSkillConstants.IsValidLemmingSkillType((int)limitSpecificSkillModifier.SkillType), "Invalid skill id");
             FileWritingException.WriterAssert(limitSpecificSkillModifier.TribeId >= -1, "Invalid tribe id");
             FileWritingException.WriterAssert(limitSpecificSkillModifier.TribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe id");
             FileWritingException.WriterAssert(limitSpecificSkillModifier.MaxSkillAssignments >= 0, "Invalid skill limit quantity");
             FileWritingException.WriterAssert(limitSpecificSkillModifier.MaxSkillAssignments <= EngineConstants.MaxFiniteSkillCount, "Invalid skill limit quantity");
 
-            writer.Write8BitUnsignedInteger((byte)limitSpecificSkillModifier.SkillId);
+            writer.Write8BitUnsignedInteger((byte)limitSpecificSkillModifier.SkillType);
             writer.Write8BitUnsignedInteger((byte)(limitSpecificSkillModifier.TribeId + 1)); // Need to offset by 1
             writer.Write8BitUnsignedInteger((byte)limitSpecificSkillModifier.MaxSkillAssignments);
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using NeoLemmixSharp.Common.Util;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -75,7 +76,7 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>, ISpanForma
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        var constSpan = ToString().AsSpan();
+        var constSpan = ToString();
         if (constSpan.TryCopyTo(destination))
         {
             charsWritten = constSpan.Length;

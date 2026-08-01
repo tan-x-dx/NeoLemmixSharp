@@ -9,7 +9,7 @@ public sealed class DisarmerAction : LemmingAction
 
     private DisarmerAction()
         : base(
-            LemmingActionConstants.DisarmerActionId,
+            LemmingActionType.DisarmerAction,
             LemmingActionConstants.DisarmerActionName,
             LemmingActionConstants.DisarmerActionSpriteFileName,
             LemmingActionConstants.DisarmerAnimationFrames,
@@ -23,7 +23,7 @@ public sealed class DisarmerAction : LemmingAction
         lemming.DisarmingFrames--;
         if (lemming.DisarmingFrames <= 0)
         {
-            if (lemming.NextActionId == LemmingActionConstants.NoneActionId)
+            if (lemming.NextActionType == LemmingActionType.NoneAction)
             {
                 WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
             }

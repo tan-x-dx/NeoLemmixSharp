@@ -27,12 +27,12 @@ public readonly ref struct LemmingMovementHelper
         var currentLemmingPosition = _lemming.AnchorPosition;
 
         var orientation = _lemming.Orientation;
-        var previousActionId = _lemming.PreviousActionId;
+        var previousActionType = _lemming.PreviousActionType;
 
         var workPosition = previousLemmingPosition;
 
         var length = 0;
-        if (previousActionId == LemmingActionConstants.JumperActionId)
+        if (previousActionType == LemmingActionType.JumperAction)
         {
             HandleJumping(ref workPosition, ref length); // But continue with the rest as normal
         }
@@ -40,7 +40,7 @@ public readonly ref struct LemmingMovementHelper
         // No movement
         if (previousLemmingPosition == currentLemmingPosition)
         {
-            if (previousActionId == LemmingActionConstants.JumperActionId && length != 0)
+            if (previousActionType == LemmingActionType.JumperAction && length != 0)
                 return length;
 
             AddPosition(workPosition, ref length);
@@ -49,7 +49,7 @@ public readonly ref struct LemmingMovementHelper
         }
 
         // Special treatment of miners!
-        if (previousActionId == LemmingActionConstants.MinerActionId)
+        if (previousActionType == LemmingActionType.MinerAction)
         {
             // First move one pixel down, if Y-coordinate changed
             if (orientation.FirstIsBelowSecond(currentLemmingPosition, workPosition))
@@ -65,9 +65,9 @@ public readonly ref struct LemmingMovementHelper
         }
 
         // Lemming moves up or is faller; exception is made for builders!
-        if (previousActionId != LemmingActionConstants.BuilderActionId &&
+        if (previousActionType != LemmingActionType.BuilderAction &&
             (orientation.FirstIsAboveSecond(currentLemmingPosition, previousLemmingPosition) ||
-             _lemming.CurrentActionId == LemmingActionConstants.FallerActionId))
+             _lemming.CurrentActionType == LemmingActionType.FallerAction))
         {
             MoveHorizontally(orientation, ref workPosition, currentLemmingPosition, ref length);
             MoveVertically(orientation, ref workPosition, currentLemmingPosition, ref length);

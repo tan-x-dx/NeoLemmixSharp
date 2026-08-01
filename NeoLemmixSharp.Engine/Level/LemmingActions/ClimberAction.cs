@@ -11,7 +11,7 @@ public sealed class ClimberAction : LemmingAction
 
     private ClimberAction()
         : base(
-            LemmingActionConstants.ClimberActionId,
+            LemmingActionType.ClimberAction,
             LemmingActionConstants.ClimberActionName,
             LemmingActionConstants.ClimberActionSpriteFileName,
             LemmingActionConstants.ClimberAnimationFrames,

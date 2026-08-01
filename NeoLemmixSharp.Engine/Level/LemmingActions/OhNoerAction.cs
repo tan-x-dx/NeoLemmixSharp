@@ -11,7 +11,7 @@ public sealed class OhNoerAction : LemmingAction
 
     private OhNoerAction()
         : base(
-            LemmingActionConstants.OhNoerActionId,
+            LemmingActionType.OhNoerAction,
             LemmingActionConstants.OhNoerActionName,
             LemmingActionConstants.OhNoerActionSpriteFileName,
             LemmingActionConstants.OhNoerAnimationFrames,
@@ -48,7 +48,7 @@ public sealed class OhNoerAction : LemmingAction
     {
         var currentAction = lemming.CurrentAction;
 
-        if (currentAction.Id == LemmingActionConstants.NoneActionId)
+        if (currentAction.ActionType == LemmingActionType.NoneAction)
             return;
 
         if (currentAction.IsAirborneAction())

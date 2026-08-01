@@ -71,7 +71,7 @@ internal sealed class TalismanReader : NeoLemmixDataReader
 
     private void SetUseOnlySkill(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        if (!LemmingSkillConstants.TryGetLemmingSkillIdFromName(secondToken, out var onlySkill))
+        if (!LemmingSkillConstants.TryGetLemmingSkillTypeFromName(secondToken, out var onlySkill))
         {
             NxlvReadingHelpers.ThrowUnknownTokenException(IdentifierToken, "USE_ONLY_SKILL", line);
             return;
@@ -120,7 +120,7 @@ internal sealed class TalismanReader : NeoLemmixDataReader
             return;
         }
 
-        if (LemmingSkillConstants.TryGetLemmingSkillIdFromName(firstToken[..^6], out var skill))
+        if (LemmingSkillConstants.TryGetLemmingSkillTypeFromName(firstToken[..^6], out var skill))
         {
             //     currentTalismanData.SkillLimits.Add(skill, int.Parse(secondToken));
             return;

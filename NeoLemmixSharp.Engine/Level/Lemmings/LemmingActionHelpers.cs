@@ -108,7 +108,7 @@ public static class LemmingActionHelpers
     public unsafe static Point GetUpdraftFallDelta(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (gadgetsNearLemming.Count == 0)
-            return new Point();
+            return Point.Zero;
 
         var lemmingOrientation = lemming.Orientation;
         var lemmingOrientationRotNum = lemmingOrientation.RotNum;

@@ -13,7 +13,7 @@ public sealed class FloaterAction : LemmingAction
 
     private FloaterAction()
         : base(
-            LemmingActionConstants.FloaterActionId,
+            LemmingActionType.FloaterAction,
             LemmingActionConstants.FloaterActionName,
             LemmingActionConstants.FloaterActionSpriteFileName,
             LemmingActionConstants.FloaterAnimationFrames,

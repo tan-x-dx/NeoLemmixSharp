@@ -10,7 +10,7 @@ public sealed class RotateCounterclockwiseAction : LemmingAction
 
     private RotateCounterclockwiseAction()
         : base(
-            LemmingActionConstants.RotateCounterclockwiseActionId,
+            LemmingActionType.RotateCounterclockwiseAction,
             LemmingActionConstants.RotateCounterclockwiseActionName,
             LemmingActionConstants.RotateCounterclockwiseActionSpriteFileName,
             LemmingActionConstants.RotateCounterclockwiseAnimationFrames,
