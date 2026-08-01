@@ -78,9 +78,9 @@ public static class LemmingSkillConstants
     public const string WaterLemmingSkillName = "Water Lemming";
     public const string FastForwardSkillName = "Fast Forward";
 
-    private static readonly Dictionary<string, LemmingSkillType> LemmingSkillNameToIdLookup = GenerateLemmingSkillNameToIdLookup();
+    private static readonly Dictionary<string, LemmingSkillType> LemmingSkillNameToTypeLookup = GenerateLemmingSkillNameToTypeLookup();
 
-    private static Dictionary<string, LemmingSkillType> GenerateLemmingSkillNameToIdLookup()
+    private static Dictionary<string, LemmingSkillType> GenerateLemmingSkillNameToTypeLookup()
     {
         var result = new Dictionary<string, LemmingSkillType>(NumberOfLemmingSkills, StringComparer.OrdinalIgnoreCase)
         {
@@ -121,12 +121,12 @@ public static class LemmingSkillConstants
 
     public static bool TryGetLemmingSkillTypeFromName(string lemmingSkillName, out LemmingSkillType lemmingSkillType)
     {
-        return LemmingSkillNameToIdLookup.TryGetValue(lemmingSkillName, out lemmingSkillType);
+        return LemmingSkillNameToTypeLookup.TryGetValue(lemmingSkillName, out lemmingSkillType);
     }
 
     public static bool TryGetLemmingSkillTypeFromName(ReadOnlySpan<char> lemmingSkillNameSpan, out LemmingSkillType lemmingSkillType)
     {
-        var alternateLookup = LemmingSkillNameToIdLookup.GetAlternateLookup<ReadOnlySpan<char>>();
+        var alternateLookup = LemmingSkillNameToTypeLookup.GetAlternateLookup<ReadOnlySpan<char>>();
 
         return alternateLookup.TryGetValue(lemmingSkillNameSpan, out lemmingSkillType);
     }

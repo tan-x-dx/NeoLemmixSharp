@@ -81,7 +81,7 @@ internal sealed class LevelMetadataSectionReader : LevelDataSectionReader
 
         var backgroundType = BackgroundTypeHelpers.GetEnumValue(rawBackgroundType);
 
-        var previousPosition = reader.Position; 
+        var previousPosition = reader.Position;
 
         levelData.LevelBackground = backgroundType switch
         {

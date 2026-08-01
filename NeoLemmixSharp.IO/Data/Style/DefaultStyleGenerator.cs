@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Data.Style.Theme;
 using System.Runtime.CompilerServices;
 using Color = Microsoft.Xna.Framework.Color;
@@ -32,12 +33,12 @@ internal static class DefaultStyleGenerator
 
         var result = new ThemeData
         {
-            Mask = new Color(r: (byte)0xd0, g: (byte)0x80, b: (byte)0x20, alpha: (byte)0xff),
+            Mask = 0xFFD08020.AsAbgrColor(),
             Minimap = EngineConstants.PanelWhite,
             Background = Color.Black,
             OneWayArrows = EngineConstants.PanelBlue,
-            PickupBorder = new Color(r: (byte)0x40, g: (byte)0x40, b: (byte)0xe0, alpha: (byte)0xff),
-            PickupInside = new Color(r: (byte)0xd0, g: (byte)0x80, b: (byte)0x20, alpha: (byte)0xff),
+            PickupBorder = 0xFF4040E0.AsAbgrColor(),
+            PickupInside = 0xFFD08020.AsAbgrColor(),
 
             LemmingSpriteData = lemmingSpriteData
         };
@@ -132,31 +133,31 @@ internal static class DefaultStyleGenerator
 
     private static TribeColorData[] CreateDefaultTribeColorData()
     {
-        var defaultSkinColor = new Color(0xF0, 0xD0, 0xD0);
-        var defaultAcidLemmingFootColor = new Color(0x00, 0xF0, 0x00);
-        var defaultWaterLemmingFootColor = new Color(0x00, 0xF0, 0xF0);
-        var defaultZombieSkinColor = new Color(0x77, 0x77, 0x77);
-        var defaultNeutralBodyColor = new Color(0x99, 0x99, 0x99);
+        var defaultSkinColor = 0xFFF0D0D0.AsAbgrColor();
+        var defaultAcidLemmingFootColor = 0xFF00F000.AsAbgrColor();
+        var defaultWaterLemmingFootColor = 0xFF00F0F0.AsAbgrColor();
+        var defaultZombieSkinColor = 0xFF777777.AsAbgrColor();
+        var defaultNeutralBodyColor = 0xFF999999.AsAbgrColor();
 
-        var defaultPaintColor = new Color(0xff, 0x00, 0xff);
+        var defaultPaintColor = 0xFFFF00FF.AsAbgrColor();
 
-        var tribe0HairColor = new Color(0x04, 0xB0, 0x00);
-        var tribe0BodyColor = new Color(0x40, 0x44, 0xDF);
+        var tribe0HairColor = 0xFF04B000.AsAbgrColor();
+        var tribe0BodyColor = 0xFF4044DF.AsAbgrColor();
 
-        var tribe1HairColor = new Color(0x00, 0xB0, 0xA9);
-        var tribe1BodyColor = new Color(0xD5, 0x3F, 0xDE);
+        var tribe1HairColor = 0xFF00B0A9.AsAbgrColor();
+        var tribe1BodyColor = 0xFFD53FDE.AsAbgrColor();
 
-        var tribe2HairColor = new Color(0x00, 0x04, 0xB0);
-        var tribe2BodyColor = new Color(0xDE, 0x3F, 0x46);
+        var tribe2HairColor = 0xFF0004B0.AsAbgrColor();
+        var tribe2BodyColor = 0xFFDE3F46.AsAbgrColor();
 
-        var tribe3HairColor = new Color(0xAD, 0x00, 0xB0);
-        var tribe3BodyColor = new Color(0xDE, 0xD1, 0x3F);
+        var tribe3HairColor = 0xFFAD00B0.AsAbgrColor();
+        var tribe3BodyColor = 0xFFDED13F.AsAbgrColor();
 
-        var tribe4HairColor = new Color(0xB0, 0x00, 0x00);
-        var tribe4BodyColor = new Color(0x4A, 0xDE, 0x3F);
+        var tribe4HairColor = 0xFFB00000.AsAbgrColor();
+        var tribe4BodyColor = 0xFF4ADE3F.AsAbgrColor();
 
-        var tribe5HairColor = new Color(0xB0, 0xA9, 0x00);
-        var tribe5BodyColor = new Color(0x3F, 0xDE, 0xD5);
+        var tribe5HairColor = 0xFFB0A900.AsAbgrColor();
+        var tribe5BodyColor = 0xFF3FDED5.AsAbgrColor();
 
         var result = new TribeColorData[EngineConstants.MaxNumberOfTribes];
 

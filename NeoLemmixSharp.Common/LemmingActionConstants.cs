@@ -45,16 +45,6 @@ public enum LemmingActionType
     VALUE_MAX
 }
 
-public enum CursorSelectionPriority
-{
-    NoneActionPriority = -1,
-    NoPriority,
-    WalkerMovementPriority,
-    NonWalkerMovementPriority,
-    PermanentSkillPriority,
-    NonPermanentSkillPriority,
-}
-
 public static class LemmingActionConstants
 {
     public const int NumberOfLemmingActions = (int)LemmingActionType.VALUE_MAX;

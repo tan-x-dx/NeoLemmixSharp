@@ -13,15 +13,13 @@ public enum StateType
     WaterState,
     FastForwardState,
 
-    NeutralState,
-    ZombieState,
-
-    VALUE_MAX
+    NeutralState = 29,
+    ZombieState = 30
 }
 
 public static class LemmingStateConstants
 {
-    public const int NumberOfStates = (int)StateType.VALUE_MAX;
+    public const int NumberOfStates = 11;
 
     public const int ClimberBitIndex = (int)StateType.ClimberState;
     public const int FloaterBitIndex = (int)StateType.FloaterState;
