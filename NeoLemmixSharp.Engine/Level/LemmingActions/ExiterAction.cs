@@ -10,7 +10,7 @@ public sealed class ExiterAction : LemmingAction
 
     private ExiterAction()
         : base(
-            LemmingActionConstants.ExiterActionId,
+            LemmingActionType.ExiterAction,
             LemmingActionConstants.ExiterActionName,
             LemmingActionConstants.ExiterActionSpriteFileName,
             LemmingActionConstants.ExiterAnimationFrames,

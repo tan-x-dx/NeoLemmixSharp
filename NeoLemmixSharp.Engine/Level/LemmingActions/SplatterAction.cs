@@ -10,7 +10,7 @@ public sealed class SplatterAction : LemmingAction
 
     private SplatterAction()
         : base(
-            LemmingActionConstants.SplatterActionId,
+            LemmingActionType.SplatterAction,
             LemmingActionConstants.SplatterActionName,
             LemmingActionConstants.SplatterActionSpriteFileName,
             LemmingActionConstants.SplatterAnimationFrames,

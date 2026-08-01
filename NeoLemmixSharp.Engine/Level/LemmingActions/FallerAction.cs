@@ -13,7 +13,7 @@ public sealed class FallerAction : LemmingAction
 
     private FallerAction()
         : base(
-            LemmingActionConstants.FallerActionId,
+            LemmingActionType.FallerAction,
             LemmingActionConstants.FallerActionName,
             LemmingActionConstants.FallerActionSpriteFileName,
             LemmingActionConstants.FallerAnimationFrames,
@@ -149,17 +149,17 @@ public sealed class FallerAction : LemmingAction
     private static int GetStartingDistanceFallenFromAction(Lemming lemming)
     {
         // For Swimmers it's handled by the SwimmerAction as there is no single universal value
-        var currentActionId = lemming.CurrentActionId;
+        var currentActionType = lemming.CurrentActionType;
 
-        return currentActionId switch
+        return currentActionType switch
         {
-            LemmingActionConstants.WalkerActionId => 3,
-            LemmingActionConstants.BlockerActionId => -1,
-            LemmingActionConstants.BasherActionId => 3,
-            LemmingActionConstants.MinerActionId => 0,
-            LemmingActionConstants.DiggerActionId => 0,
-            LemmingActionConstants.JumperActionId => -1,
-            LemmingActionConstants.LasererActionId => -1,
+            LemmingActionType.WalkerAction => 3,
+            LemmingActionType.BlockerAction => -1,
+            LemmingActionType.BasherAction => 3,
+            LemmingActionType.MinerAction => 0,
+            LemmingActionType.DiggerAction => 0,
+            LemmingActionType.JumperAction => -1,
+            LemmingActionType.LasererAction => -1,
             _ => 1
         };
     }

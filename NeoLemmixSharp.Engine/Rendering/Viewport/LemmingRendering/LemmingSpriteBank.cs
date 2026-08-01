@@ -27,9 +27,9 @@ public sealed class LemmingSpriteBank
     {
         var actionSprites = GetActionSprites(lemming);
 
-        var id = lemming.CurrentActionId;
-        if ((uint)id < (uint)actionSprites.Length)
-            return actionSprites[id];
+        var actionType = lemming.CurrentActionType;
+        if ((uint)actionType < (uint)actionSprites.Length)
+            return actionSprites.At((int)actionType);
 
         return LemmingActionSprite.Empty;
     }

@@ -13,7 +13,7 @@ public sealed class SliderAction : LemmingAction
 
     private SliderAction()
         : base(
-            LemmingActionConstants.SliderActionId,
+            LemmingActionType.SliderAction,
             LemmingActionConstants.SliderActionName,
             LemmingActionConstants.SliderActionSpriteFileName,
             LemmingActionConstants.SliderAnimationFrames,
@@ -26,16 +26,16 @@ public sealed class SliderAction : LemmingAction
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
-        var currentActionId = lemming.CurrentActionId;
+        var currentActionType = lemming.CurrentActionType;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         if (!SliderTerrainChecks(lemming, orientation, MaxYCheckOffset, in gadgetsNearLemming) &&
-            currentActionId == LemmingActionConstants.DrownerActionId)
+            currentActionType == LemmingActionType.DrownerAction)
             return false;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
         return SliderTerrainChecks(lemming, orientation, MaxYCheckOffset, in gadgetsNearLemming) ||
-               currentActionId != LemmingActionConstants.DrownerActionId;
+               currentActionType != LemmingActionType.DrownerAction;
     }
 
     public static bool SliderTerrainChecks(

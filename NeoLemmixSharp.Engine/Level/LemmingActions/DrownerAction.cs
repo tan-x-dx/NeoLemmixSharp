@@ -10,7 +10,7 @@ public sealed class DrownerAction : LemmingAction
 
     private DrownerAction()
         : base(
-            LemmingActionConstants.DrownerActionId,
+            LemmingActionType.DrownerAction,
             LemmingActionConstants.DrownerActionName,
             LemmingActionConstants.DrownerActionSpriteFileName,
             LemmingActionConstants.DrownerAnimationFrames,

@@ -13,7 +13,7 @@ public sealed class SwimmerAction : LemmingAction
 
     private SwimmerAction()
         : base(
-            LemmingActionConstants.SwimmerActionId,
+            LemmingActionType.SwimmerAction,
             LemmingActionConstants.SwimmerActionName,
             LemmingActionConstants.SwimmerActionSpriteFileName,
             LemmingActionConstants.SwimmerAnimationFrames,

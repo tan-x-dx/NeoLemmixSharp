@@ -97,15 +97,15 @@ internal sealed class ThemeDataSectionReader : StyleDataSectionReader
 
         LemmingActionSpriteData ReadLemmingActionSpriteData(int i)
         {
-            int lemmingActionId = reader.Read8BitUnsignedInteger();
-            FileReadingException.ReaderAssert(lemmingActionId == i, "Lemming action id mismatch!");
+            uint rawLemmingActionType = reader.Read8BitUnsignedInteger();
+            var lemmingActionType = LemmingActionConstants.GetEnumValue(rawLemmingActionType);
 
             int x = reader.Read8BitUnsignedInteger();
             int y = reader.Read8BitUnsignedInteger();
 
             var layers = ReadSpriteLayers();
 
-            return new LemmingActionSpriteData(lemmingActionId, new Point(x, y), layers);
+            return new LemmingActionSpriteData(lemmingActionType, new Point(x, y), layers);
         }
 
         LemmingActionSpriteLayerData[] ReadSpriteLayers()

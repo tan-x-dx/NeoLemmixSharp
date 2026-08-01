@@ -11,7 +11,7 @@ public sealed class DehoisterAction : LemmingAction
 
     private DehoisterAction()
         : base(
-            LemmingActionConstants.DehoisterActionId,
+            LemmingActionType.DehoisterAction,
             LemmingActionConstants.DehoisterActionName,
             LemmingActionConstants.DehoisterActionSpriteFileName,
             LemmingActionConstants.DehoisterAnimationFrames,
@@ -45,13 +45,13 @@ public sealed class DehoisterAction : LemmingAction
         var animFrameValue = lemming.PhysicsFrame * 2;
 
         if (!SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 3, in gadgetsNearLemming) &&
-            lemming.CurrentActionId == LemmingActionConstants.DrownerActionId)
+            lemming.CurrentActionType == LemmingActionType.DrownerAction)
             return false;
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
         return SliderAction.SliderTerrainChecks(lemming, orientation, animFrameValue - 2, in gadgetsNearLemming) ||
-               lemming.CurrentActionId != LemmingActionConstants.DrownerActionId;
+               lemming.CurrentActionType != LemmingActionType.DrownerAction;
     }
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)

@@ -36,6 +36,6 @@ internal sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
 
         writer.Write8BitUnsignedInteger((byte)DihedralTransformation.Encode(lemmingDatum.Orientation, lemmingDatum.FacingDirection));
         writer.Write8BitUnsignedInteger((byte)lemmingDatum.TribeId);
-        writer.Write8BitUnsignedInteger((byte)lemmingDatum.InitialLemmingActionId);
+        writer.Write8BitUnsignedInteger((byte)lemmingDatum.InitialLemmingActionType);
     }
 }

@@ -10,7 +10,7 @@ public sealed class VaporiserAction : LemmingAction
 
     private VaporiserAction()
         : base(
-            LemmingActionConstants.VaporiserActionId,
+            LemmingActionType.VaporiserAction,
             LemmingActionConstants.VaporiserActionName,
             LemmingActionConstants.VaporiserActionSpriteFileName,
             LemmingActionConstants.VaporiserAnimationFrames,

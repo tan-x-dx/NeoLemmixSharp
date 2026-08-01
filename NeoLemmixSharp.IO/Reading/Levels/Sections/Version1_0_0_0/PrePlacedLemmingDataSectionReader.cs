@@ -36,9 +36,8 @@ internal sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
         var dht = new DihedralTransformation(dhtByte);
 
         int tribeId = reader.Read8BitUnsignedInteger();
-        int initialLemmingActionId = reader.Read8BitUnsignedInteger();
-
-        FileReadingException.ReaderAssert(LemmingActionConstants.IsValidLemmingActionId(initialLemmingActionId), "Invalid initial action for lemming!");
+        uint rawLemmingActionType = reader.Read8BitUnsignedInteger();
+        var lemmingActionType = LemmingActionConstants.GetEnumValue(rawLemmingActionType);
 
         return new LemmingInstanceData
         {
@@ -49,7 +48,7 @@ internal sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
             FacingDirection = dht.FacingDirection,
 
             TribeId = tribeId,
-            InitialLemmingActionId = initialLemmingActionId
+            InitialLemmingActionType = lemmingActionType
         };
     }
 }

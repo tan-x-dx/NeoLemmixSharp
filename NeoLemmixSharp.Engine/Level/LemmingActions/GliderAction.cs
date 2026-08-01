@@ -13,7 +13,7 @@ public sealed class GliderAction : LemmingAction
 
     private GliderAction()
         : base(
-            LemmingActionConstants.GliderActionId,
+            LemmingActionType.GliderAction,
             LemmingActionConstants.GliderActionName,
             LemmingActionConstants.GliderActionSpriteFileName,
             LemmingActionConstants.GliderAnimationFrames,

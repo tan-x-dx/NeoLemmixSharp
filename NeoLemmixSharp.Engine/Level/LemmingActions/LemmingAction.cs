@@ -118,31 +118,31 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     /// <summary>
     /// Safe alternative to performing the array lookup - the input may be negative, or an invalid id. In such a case the <see cref="NoneAction"/> is returned.
     /// </summary>
-    /// <param name="unboundActionId">The (possibly invalid) id of the action to fetch.</param>
+    /// <param name="actionType">The (possibly invalid) id of the action to fetch.</param>
     /// <returns>The LemmingAction with that id, or the <see cref="NoneAction"/> if the id is invalid.</returns>
-    public static LemmingAction GetActionOrDefault(int unboundActionId)
+    public static LemmingAction GetActionOrDefault(LemmingActionType actionType)
     {
-        return (uint)unboundActionId < (uint)LemmingActions.Length
-            ? LemmingActions.At(unboundActionId)
+        return (uint)actionType < LemmingActionConstants.NumberOfLemmingActions
+            ? LemmingActions.At((int)actionType)
             : NoneAction.Instance;
     }
 
     public string LemmingActionName { get; }
     public string LemmingActionSpriteFileName { get; }
-    public int Id { get; }
+    public LemmingActionType ActionType { get; }
     public int NumberOfAnimationFrames { get; }
     public int MaxPhysicsFrames { get; }
     public int CursorSelectionPriorityValue { get; }
 
     protected LemmingAction(
-        int id,
+        LemmingActionType actionType,
         string lemmingActionName,
         string lemmingActionSpriteFileName,
         int numberOfAnimationFrames,
         int maxPhysicsFrames,
         int cursorSelectionPriorityValue)
     {
-        Id = id;
+        ActionType = actionType;
         LemmingActionName = lemmingActionName;
         LemmingActionSpriteFileName = lemmingActionSpriteFileName;
         NumberOfAnimationFrames = numberOfAnimationFrames;
@@ -155,7 +155,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     public RectangularRegion GetLemmingBounds(Lemming lemming)
     {
         var dht = lemming.GetDihedralTransformation();
-        var actionBounds = LemmingActionBounds.GetBounds(Id);
+        var actionBounds = LemmingActionBounds.GetBounds(ActionType);
 
         actionBounds = dht.Transform(actionBounds);
         actionBounds = actionBounds.Translate(lemming.AnchorPosition);
@@ -178,9 +178,9 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         Lemming lemming,
         bool turnAround)
     {
-        if (lemming.CurrentActionId == LemmingActionConstants.BlockerActionId &&
-            Id != LemmingActionConstants.BlockerActionId &&
-            Id != LemmingActionConstants.OhNoerActionId)
+        if (lemming.CurrentActionType == LemmingActionType.BlockerAction &&
+            ActionType != LemmingActionType.BlockerAction &&
+            ActionType != LemmingActionType.OhNoerAction)
         {
             // Need to de-register blocker from LemmingManager
             // when transitioning from a blocker. Exceptions are for
@@ -212,22 +212,22 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     [DebuggerStepThrough]
     public bool Equals(LemmingAction? other)
     {
-        var otherValue = -1;
-        if (other is not null) otherValue = other.Id;
-        return Id == otherValue;
+        var otherValue = LemmingActionType.NoneAction;
+        if (other is not null) otherValue = other.ActionType;
+        return ActionType == otherValue;
     }
 
     [DebuggerStepThrough]
-    public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingAction other && Id == other.Id;
+    public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingAction other && ActionType == other.ActionType;
     [DebuggerStepThrough]
-    public sealed override int GetHashCode() => Id;
+    public sealed override int GetHashCode() => (int)ActionType;
     [DebuggerStepThrough]
     public sealed override string ToString() => LemmingActionName;
 
     [DebuggerStepThrough]
-    public static bool operator ==(LemmingAction left, LemmingAction right) => left.Id == right.Id;
+    public static bool operator ==(LemmingAction left, LemmingAction right) => left.ActionType == right.ActionType;
     [DebuggerStepThrough]
-    public static bool operator !=(LemmingAction left, LemmingAction right) => left.Id != right.Id;
+    public static bool operator !=(LemmingAction left, LemmingAction right) => left.ActionType != right.ActionType;
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -241,7 +241,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         [Pure]
         public int NumberOfItems => LemmingActionConstants.NumberOfLemmingActions;
         [Pure]
-        public int Hash(LemmingAction item) => item.Id;
+        public int Hash(LemmingAction item) => (int)item.ActionType;
         [Pure]
         public LemmingAction UnHash(int index) => LemmingActions.At(index);
 

@@ -32,7 +32,7 @@ public static class TextureCache
     {
         for (var i = 0; i < LemmingActionConstants.NumberOfLemmingActions; i++)
         {
-            var lemmingActionData = LemmingActionConstants.GetLemmingActionDataFromId(i);
+            var lemmingActionData = LemmingActionConstants.GetLemmingActionDataFromId((LemmingActionType)i);
             var sprite = LoadDefaultLemmingActionTexture(lemmingActionData, contentManager);
             var pieceIdentifier = new PieceIdentifier(lemmingActionData.LemmingActionFileName);
 

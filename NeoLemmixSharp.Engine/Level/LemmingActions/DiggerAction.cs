@@ -14,7 +14,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
     private DiggerAction()
         : base(
-            LemmingActionConstants.DiggerActionId,
+            LemmingActionType.DiggerAction,
             LemmingActionConstants.DiggerActionName,
             LemmingActionConstants.DiggerActionSpriteFileName,
             LemmingActionConstants.DiggerAnimationFrames,

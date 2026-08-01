@@ -155,23 +155,11 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
         return result;
     }
 
-    public static bool TryGetSkill(int skillId, out LemmingSkill lemmingSkill)
-    {
-        if ((uint)skillId >= (uint)LemmingSkills.Length)
-        {
-            lemmingSkill = NoneSkill.Instance;
-            return false;
-        }
-
-        lemmingSkill = LemmingSkills.At(skillId);
-        return true;
-    }
-
     /// <summary>
-    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid id. In such a case the <see cref="NoneSkill"/> is returned.
+    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid lemming skill type. In such a case the <see cref="NoneSkill"/> is returned.
     /// </summary>
-    /// <param name="unboundSkillId">The (possibly invalid) id of the skill to fetch.</param>
-    /// <returns>The LemmingSkill with that id, or the <see cref="NoneSkill"/> if the id is invalid.</returns>
+    /// <param name="lemmingSkillType">The (possibly invalid) type of the skill to fetch.</param>
+    /// <returns>The LemmingSkill with that type, or the <see cref="NoneSkill"/> if the input is invalid.</returns>
     public static LemmingSkill GetSkillOrDefault(LemmingSkillType lemmingSkillType)
     {
         return (uint)lemmingSkillType < (uint)LemmingSkills.Length

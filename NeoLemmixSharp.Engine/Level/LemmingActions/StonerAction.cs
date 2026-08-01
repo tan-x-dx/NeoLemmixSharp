@@ -11,7 +11,7 @@ public sealed class StonerAction : LemmingAction
 
     private StonerAction()
         : base(
-            LemmingActionConstants.StonerActionId,
+            LemmingActionType.StonerAction,
             LemmingActionConstants.StonerActionName,
             LemmingActionConstants.StonerActionSpriteFileName,
             LemmingActionConstants.StonerAnimationFrames,

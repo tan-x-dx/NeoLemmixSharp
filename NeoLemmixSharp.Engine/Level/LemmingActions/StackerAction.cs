@@ -12,7 +12,7 @@ public sealed class StackerAction : LemmingAction
 
     private StackerAction()
         : base(
-            LemmingActionConstants.StackerActionId,
+            LemmingActionType.StackerAction,
             LemmingActionConstants.StackerActionName,
             LemmingActionConstants.StackerActionSpriteFileName,
             LemmingActionConstants.StackerAnimationFrames,

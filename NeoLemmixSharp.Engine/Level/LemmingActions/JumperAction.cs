@@ -51,7 +51,7 @@ public sealed class JumperAction : LemmingAction
 
     private JumperAction()
         : base(
-            LemmingActionConstants.JumperActionId,
+            LemmingActionType.JumperAction,
             LemmingActionConstants.JumperActionName,
             LemmingActionConstants.JumperActionSpriteFileName,
             LemmingActionConstants.JumperAnimationFrames,
@@ -272,9 +272,9 @@ public sealed class JumperAction : LemmingAction
 
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        var currentActionId = lemming.CurrentActionId;
-        if (currentActionId == LemmingActionConstants.ClimberActionId ||
-            currentActionId == LemmingActionConstants.SliderActionId)
+        var currentActionType = lemming.CurrentActionType;
+        if (currentActionType == LemmingActionType.ClimberAction ||
+            currentActionType == LemmingActionType.SliderAction)
         {
             lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
             lemming.AnchorPosition = lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX);

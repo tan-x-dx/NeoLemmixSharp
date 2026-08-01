@@ -60,7 +60,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
     private LasererAction()
         : base(
-            LemmingActionConstants.LasererActionId,
+            LemmingActionType.LasererAction,
             LemmingActionConstants.LasererActionName,
             LemmingActionConstants.LasererActionSpriteFileName,
             LemmingActionConstants.LasererAnimationFrames,

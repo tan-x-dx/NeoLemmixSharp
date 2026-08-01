@@ -14,7 +14,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
 
     private FencerAction()
         : base(
-            LemmingActionConstants.FencerActionId,
+            LemmingActionType.FencerAction,
             LemmingActionConstants.FencerActionName,
             LemmingActionConstants.FencerActionSpriteFileName,
             LemmingActionConstants.FencerAnimationFrames,

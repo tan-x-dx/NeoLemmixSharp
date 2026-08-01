@@ -16,7 +16,7 @@ public sealed class ReacherAction : LemmingAction
 
     private ReacherAction()
         : base(
-            LemmingActionConstants.ReacherActionId,
+            LemmingActionType.ReacherAction,
             LemmingActionConstants.ReacherActionName,
             LemmingActionConstants.ReacherActionSpriteFileName,
             LemmingActionConstants.ReacherAnimationFrames,

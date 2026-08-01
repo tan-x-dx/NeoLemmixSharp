@@ -10,7 +10,7 @@ public sealed class RotateHalfAction : LemmingAction
 
     private RotateHalfAction()
         : base(
-            LemmingActionConstants.RotateHalfActionId,
+            LemmingActionType.RotateHalfAction,
             LemmingActionConstants.RotateHalfActionName,
             LemmingActionConstants.RotateHalfActionSpriteFileName,
             LemmingActionConstants.RotateHalfAnimationFrames,

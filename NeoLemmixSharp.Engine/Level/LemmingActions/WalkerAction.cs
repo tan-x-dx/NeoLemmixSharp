@@ -11,7 +11,7 @@ public sealed class WalkerAction : LemmingAction
 
     private WalkerAction()
         : base(
-            LemmingActionConstants.WalkerActionId,
+            LemmingActionType.WalkerAction,
             LemmingActionConstants.WalkerActionName,
             LemmingActionConstants.WalkerActionSpriteFileName,
             LemmingActionConstants.WalkerAnimationFrames,

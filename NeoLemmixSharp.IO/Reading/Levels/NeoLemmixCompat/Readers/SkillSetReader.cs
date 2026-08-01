@@ -34,7 +34,7 @@ internal sealed class SkillSetReader : NeoLemmixDataReader
             return false;
         }
 
-        if (!LemmingSkillConstants.TryGetLemmingSkillIdFromName(firstToken, out var skillId))
+        if (!LemmingSkillConstants.TryGetLemmingSkillTypeFromName(firstToken, out var skillId))
             throw new FileReadingException($"Unknown token: {firstToken}");
 
         var skillName = _uniqueStringSet.GetUniqueStringInstance(firstToken);

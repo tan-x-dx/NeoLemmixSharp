@@ -62,7 +62,7 @@ internal sealed class LemmingReader : NeoLemmixDataReader
 
     private void SetBlocker(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.InitialLemmingActionId = LemmingActionConstants.BlockerActionId;
+        _currentLemmingData!.InitialLemmingActionType = LemmingActionType.BlockerAction;
     }
 
     private void SetClimber(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -94,7 +94,7 @@ internal sealed class LemmingReader : NeoLemmixDataReader
 
     private void SetShimmier(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.InitialLemmingActionId = LemmingActionConstants.ShimmierActionId;
+        _currentLemmingData!.InitialLemmingActionType = LemmingActionType.ShimmierAction;
     }
 
     private void SetSlider(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)

@@ -65,10 +65,10 @@ internal sealed class ThemeDataSectionWriter : StyleDataSectionWriter
         for (var i = 0; i < lemmingActionSpriteDataSpan.Length; i++)
         {
             var spriteData = lemmingActionSpriteDataSpan[i];
-            var lemmingActionId = spriteData.LemmingActionId;
-            FileWritingException.WriterAssert(lemmingActionId == i, "Lemming action id mismatch!");
+            var lemmingActionType = spriteData.LemmingActionType;
+            FileWritingException.WriterAssert((int)lemmingActionType == i, "Lemming action id mismatch!");
 
-            writer.Write8BitUnsignedInteger((byte)lemmingActionId);
+            writer.Write8BitUnsignedInteger((byte)lemmingActionType);
             writer.Write8BitUnsignedInteger((byte)spriteData.AnchorPoint.X);
             writer.Write8BitUnsignedInteger((byte)spriteData.AnchorPoint.Y);
 

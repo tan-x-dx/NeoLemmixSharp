@@ -14,7 +14,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
     private MinerAction()
         : base(
-            LemmingActionConstants.MinerActionId,
+            LemmingActionType.MinerAction,
             LemmingActionConstants.MinerActionName,
             LemmingActionConstants.MinerActionSpriteFileName,
             LemmingActionConstants.MinerAnimationFrames,

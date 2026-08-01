@@ -12,7 +12,7 @@ public sealed class BuilderAction : LemmingAction
 
     private BuilderAction()
         : base(
-            LemmingActionConstants.BuilderActionId,
+            LemmingActionType.BuilderAction,
             LemmingActionConstants.BuilderActionName,
             LemmingActionConstants.BuilderActionSpriteFileName,
             LemmingActionConstants.BuilderAnimationFrames,
@@ -109,7 +109,7 @@ public sealed class BuilderAction : LemmingAction
         var terrainManager = LevelScreen.TerrainManager;
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
-        var dy = lemming.CurrentActionId == LemmingActionConstants.BuilderActionId
+        var dy = lemming.CurrentActionType == LemmingActionType.BuilderAction
             ? 1
             : 0;
 
