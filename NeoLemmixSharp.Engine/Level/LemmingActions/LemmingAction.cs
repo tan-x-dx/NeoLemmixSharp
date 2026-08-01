@@ -116,10 +116,10 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
     }
 
     /// <summary>
-    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid id. In such a case the <see cref="NoneAction"/> is returned.
+    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid lemming action type. In such a case the <see cref="NoneAction"/> is returned.
     /// </summary>
-    /// <param name="actionType">The (possibly invalid) id of the action to fetch.</param>
-    /// <returns>The LemmingAction with that id, or the <see cref="NoneAction"/> if the id is invalid.</returns>
+    /// <param name="actionType">The (possibly invalid) type of the action to fetch.</param>
+    /// <returns>The LemmingAction with that type, or the <see cref="NoneAction"/> if the input is invalid.</returns>
     public static LemmingAction GetActionOrDefault(LemmingActionType actionType)
     {
         return (uint)actionType < LemmingActionConstants.NumberOfLemmingActions
