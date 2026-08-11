@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class SwimmerSkill : LemmingSkill, ILemmingState
+public sealed class SwimmerSkill : LemmingSkill, ILemmingAbilityChanger
 {
     public static readonly SwimmerSkill Instance = new();
 
@@ -15,7 +15,7 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingState
     {
     }
 
-    public StateType LemmingStateType => StateType.SwimmerState;
+    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.SwimmerAbility;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
@@ -41,17 +41,17 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingState
         return result;
     }
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(LemmingState lemmingState, bool status)
     {
         lemmingState.IsSwimmer = status;
     }
 
-    public void ToggleLemmingState(LemmingState lemmingState)
+    public void ToggleLemmingAbility(LemmingState lemmingState)
     {
         lemmingState.IsSwimmer = !lemmingState.IsSwimmer;
     }
 
-    public bool IsApplied(LemmingState lemmingState)
+    public bool LemmingHasAbility(LemmingState lemmingState)
     {
         return lemmingState.IsSwimmer;
     }

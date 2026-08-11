@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class WaterLemmingSkill : LemmingSkill, ILemmingState
+public sealed class WaterLemmingSkill : LemmingSkill, ILemmingAbilityChanger
 {
     public static readonly WaterLemmingSkill Instance = new();
 
@@ -14,7 +14,7 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingState
     {
     }
 
-    public StateType LemmingStateType => StateType.WaterState;
+    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.WaterLemmingAbility;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
@@ -28,17 +28,17 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingState
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(LemmingState lemmingState, bool status)
     {
         lemmingState.IsWaterLemming = status;
     }
 
-    public void ToggleLemmingState(LemmingState lemmingState)
+    public void ToggleLemmingAbility(LemmingState lemmingState)
     {
         lemmingState.IsWaterLemming = !lemmingState.IsWaterLemming;
     }
 
-    public bool IsApplied(LemmingState lemmingState)
+    public bool LemmingHasAbility(LemmingState lemmingState)
     {
         return lemmingState.IsWaterLemming;
     }

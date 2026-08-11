@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class AcidLemmingSkill : LemmingSkill, ILemmingState
+public sealed class AcidLemmingSkill : LemmingSkill, ILemmingAbilityChanger
 {
     public static readonly AcidLemmingSkill Instance = new();
 
@@ -14,7 +14,7 @@ public sealed class AcidLemmingSkill : LemmingSkill, ILemmingState
     {
     }
 
-    public StateType LemmingStateType => StateType.AcidLemmingState;
+    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.AcidLemmingAbility;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
@@ -28,17 +28,17 @@ public sealed class AcidLemmingSkill : LemmingSkill, ILemmingState
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(LemmingState lemmingState, bool status)
     {
         lemmingState.IsAcidLemming = status;
     }
 
-    public void ToggleLemmingState(LemmingState lemmingState)
+    public void ToggleLemmingAbility(LemmingState lemmingState)
     {
         lemmingState.IsAcidLemming = !lemmingState.IsAcidLemming;
     }
 
-    public bool IsApplied(LemmingState lemmingState)
+    public bool LemmingHasAbility(LemmingState lemmingState)
     {
         return lemmingState.IsAcidLemming;
     }

@@ -148,44 +148,44 @@ internal sealed class GadgetReader : NeoLemmixDataReader
 
     private void SetClimber(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentGadgetData!.State |= 1U << LemmingStateConstants.ClimberBitIndex;
+        _currentGadgetData!.State |= 1U << LemmingAbilityConstants.ClimberBitIndex;
     }
 
     private void SetDisarmer(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentGadgetData!.State |= 1U << LemmingStateConstants.DisarmerBitIndex;
+        _currentGadgetData!.State |= 1U << LemmingAbilityConstants.DisarmerBitIndex;
     }
 
     private void SetFloater(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentGadgetData!.State |= 1U << LemmingStateConstants.FloaterBitIndex;
-        _currentGadgetData.State &= ~(1U << LemmingStateConstants.GliderBitIndex); // Deliberately knock out the glider
+        _currentGadgetData!.State |= 1U << LemmingAbilityConstants.FloaterBitIndex;
+        _currentGadgetData.State &= ~(1U << LemmingAbilityConstants.GliderBitIndex); // Deliberately knock out the glider
     }
 
     private void SetGlider(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentGadgetData!.State |= 1U << LemmingStateConstants.GliderBitIndex;
-        _currentGadgetData.State &= ~(1U << LemmingStateConstants.FloaterBitIndex); // Deliberately knock out the floater
+        _currentGadgetData!.State |= 1U << LemmingAbilityConstants.GliderBitIndex;
+        _currentGadgetData.State &= ~(1U << LemmingAbilityConstants.FloaterBitIndex); // Deliberately knock out the floater
     }
 
     private void SetNeutral(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentGadgetData!.State |= 1U << LemmingStateConstants.NeutralBitIndex;
+        _currentGadgetData!.State |= 1U << LemmingAbilityConstants.NeutralBitIndex;
     }
 
     private void SetSlider(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentGadgetData!.State |= 1U << LemmingStateConstants.SliderBitIndex;
+        _currentGadgetData!.State |= 1U << LemmingAbilityConstants.SliderBitIndex;
     }
 
     private void SetSwimmer(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentGadgetData!.State |= 1U << LemmingStateConstants.SwimmerBitIndex;
+        _currentGadgetData!.State |= 1U << LemmingAbilityConstants.SwimmerBitIndex;
     }
 
     private void SetZombie(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentGadgetData!.State |= 1U << LemmingStateConstants.ZombieBitIndex;
+        _currentGadgetData!.State |= 1U << LemmingAbilityConstants.ZombieBitIndex;
     }
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)

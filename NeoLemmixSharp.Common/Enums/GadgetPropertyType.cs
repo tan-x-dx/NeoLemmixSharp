@@ -12,7 +12,7 @@ public enum GadgetPropertyType
     SkillType,
     Width,
     Height,
-    RawLemmingState,
+    RawLemmingAbility,
     Count,
     InitialAnimationFrame,
     LogicGateType,

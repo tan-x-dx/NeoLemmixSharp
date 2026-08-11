@@ -8,8 +8,8 @@ public enum LemmingCriteriaType
     LemmingOrientation,
     LemmingFacingDirection,
     LemmingAction,
-    RequiredLemmingState,
-    DisallowedLemmingState,
+    RequiredLemmingAbility,
+    DisallowedLemmingAbility,
     LemmingTribe,
 
     VALUE_MAX

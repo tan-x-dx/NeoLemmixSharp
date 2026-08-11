@@ -20,8 +20,8 @@ public static class LemmingBehaviourBuilder
 
         return lemmingBehaviourType switch
         {
-            LemmingBehaviourType.SetLemmingState => BuildSetStateLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
-            LemmingBehaviourType.ClearLemmingStates => BuildClearAllStatesLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.ChangeLemmingAbility => BuildChangeAbilityLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
+            LemmingBehaviourType.ClearAllLemmingAbilities => BuildClearAllStatesLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.SetLemmingAction => BuildSetActionLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.SetLemmingTribe => BuildSetTribeLemmingBehaviour(newBehaviourId, in gadgetBehaviourDatum),
             LemmingBehaviourType.SkillCountChange => BuildLemmingSpecificSkillCountChangeBehaviour(newBehaviourId, in gadgetBehaviourDatum),
@@ -36,15 +36,15 @@ public static class LemmingBehaviourBuilder
         };
     }
 
-    private static SetStateLemmingBehaviour BuildSetStateLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
+    private static ChangeAbilityLemmingBehaviour BuildChangeAbilityLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
         var lemmingStateChangerId = gadgetBehaviourDatum.DataChunk.Data2 & 0xffff;
-        var lemmingStateChanger = ILemmingState.AllItems[lemmingStateChangerId];
+        var lemmingStateChanger = ILemmingAbilityChanger.AllItems[lemmingStateChangerId];
 
         var rawSetStateTypeId = (uint)(gadgetBehaviourDatum.DataChunk.Data2 >>> 16);
-        var setStateType = SetStateLemmingBehaviour.GetEnumValue(rawSetStateTypeId);
+        var setStateType = ChangeAbilityLemmingBehaviour.GetEnumValue(rawSetStateTypeId);
 
-        return new SetStateLemmingBehaviour(lemmingStateChanger, setStateType)
+        return new ChangeAbilityLemmingBehaviour(lemmingStateChanger, setStateType)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,

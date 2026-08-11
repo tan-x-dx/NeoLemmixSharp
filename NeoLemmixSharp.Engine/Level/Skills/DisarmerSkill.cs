@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class DisarmerSkill : LemmingSkill, ILemmingState
+public sealed class DisarmerSkill : LemmingSkill, ILemmingAbilityChanger
 {
     public static readonly DisarmerSkill Instance = new();
 
@@ -14,7 +14,7 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingState
     {
     }
 
-    public StateType LemmingStateType => StateType.DisarmerState;
+    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.DisarmerAbility;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
@@ -28,17 +28,17 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingState
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(LemmingState lemmingState, bool status)
     {
         lemmingState.IsDisarmer = status;
     }
 
-    public void ToggleLemmingState(LemmingState lemmingState)
+    public void ToggleLemmingAbility(LemmingState lemmingState)
     {
         lemmingState.IsDisarmer = !lemmingState.IsDisarmer;
     }
 
-    public bool IsApplied(LemmingState lemmingState)
+    public bool LemmingHasAbility(LemmingState lemmingState)
     {
         return lemmingState.IsDisarmer;
     }

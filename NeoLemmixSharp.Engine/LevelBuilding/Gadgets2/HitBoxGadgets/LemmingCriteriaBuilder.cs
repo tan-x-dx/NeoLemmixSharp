@@ -21,12 +21,12 @@ public ref struct LemmingCriteriaBuilder
     private OrientationSet? _orientationSet = null;
     private int _facingDirectionIds = 0;
     private LemmingActionSet? _lemmingActionSet = null;
-    private LemmingStateSet? _allowedLemmingStateSet = null;
-    private LemmingStateSet? _disallowedLemmingStateSet = null;
+    private LemmingAbilitySet? _allowedLemmingAbilitySet = null;
+    private LemmingAbilitySet? _disallowedLemmingAbilitySet = null;
     private TribeSet? _tribeSet = null;
     private int _numberOfCriteria = 0;
-    private bool _hasRequiredStates = false;
-    private bool _hasDisallowedStates = false;
+    private bool _hasRequiredAbilities = false;
+    private bool _hasDisallowedAbilities = false;
 
     public LemmingCriteriaBuilder(TribeManager tribeManager, Orientation instanceOrientation, FacingDirection facingDirection)
     {
@@ -74,12 +74,12 @@ public ref struct LemmingCriteriaBuilder
                 AddLemmingActionToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
-            case LemmingCriteriaType.RequiredLemmingState:
-                AddRequiredLemmingStateToCriteria(hitBoxCriteriaDatum.ItemId);
+            case LemmingCriteriaType.RequiredLemmingAbility:
+                AddRequiredLemmingAbilityToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
-            case LemmingCriteriaType.DisallowedLemmingState:
-                AddDisallowedLemmingStateToCriteria(hitBoxCriteriaDatum.ItemId);
+            case LemmingCriteriaType.DisallowedLemmingAbility:
+                AddDisallowedLemmingAbilityToCriteria(hitBoxCriteriaDatum.ItemId);
                 break;
 
             case LemmingCriteriaType.LemmingTribe:
@@ -95,7 +95,7 @@ public ref struct LemmingCriteriaBuilder
     private readonly LemmingCriterion[] CreateLemmingCriteriaArray()
     {
         var numberOfCriteria = _numberOfCriteria;
-        numberOfCriteria += (_hasRequiredStates | _hasDisallowedStates) ? 1 : 0;
+        numberOfCriteria += (_hasRequiredAbilities | _hasDisallowedAbilities) ? 1 : 0;
 
         var result = Helpers.GetArrayForSize<LemmingCriterion>(numberOfCriteria);
         var i = 0;
@@ -107,7 +107,7 @@ public ref struct LemmingCriteriaBuilder
             result[i++] = LemmingFacingDirectionCriterion.ForFacingDirection(id);
         }
         if (_lemmingActionSet is not null) result[i++] = new LemmingActionCriterion(_lemmingActionSet);
-        if (_hasRequiredStates | _hasDisallowedStates) result[i++] = new LemmingStateCriterion(_allowedLemmingStateSet, _disallowedLemmingStateSet);
+        if (_hasRequiredAbilities | _hasDisallowedAbilities) result[i++] = new LemmingAbilityCriterion(_allowedLemmingAbilitySet, _disallowedLemmingAbilitySet);
         if (_tribeSet is not null) result[i++] = new LemmingTribeCriterion(_tribeSet);
 
         Debug.Assert(i == result.Length);
@@ -151,28 +151,28 @@ public ref struct LemmingCriteriaBuilder
         _lemmingActionSet.Add(lemmingAction);
     }
 
-    private void AddRequiredLemmingStateToCriteria(int itemId)
+    private void AddRequiredLemmingAbilityToCriteria(int itemId)
     {
-        if (_allowedLemmingStateSet is null)
+        if (_allowedLemmingAbilitySet is null)
         {
-            _allowedLemmingStateSet = ILemmingState.CreateBitArraySet();
-            _hasRequiredStates = true;
+            _allowedLemmingAbilitySet = ILemmingAbilityChanger.CreateBitArraySet();
+            _hasRequiredAbilities = true;
         }
 
-        var lemmingState = ILemmingState.AllItems[itemId];
-        _allowedLemmingStateSet.Add(lemmingState);
+        var lemmingState = ILemmingAbilityChanger.AllItems[itemId];
+        _allowedLemmingAbilitySet.Add(lemmingState);
     }
 
-    private void AddDisallowedLemmingStateToCriteria(int itemId)
+    private void AddDisallowedLemmingAbilityToCriteria(int itemId)
     {
-        if (_disallowedLemmingStateSet is null)
+        if (_disallowedLemmingAbilitySet is null)
         {
-            _disallowedLemmingStateSet = ILemmingState.CreateBitArraySet();
-            _hasDisallowedStates = true;
+            _disallowedLemmingAbilitySet = ILemmingAbilityChanger.CreateBitArraySet();
+            _hasDisallowedAbilities = true;
         }
 
-        var lemmingState = ILemmingState.AllItems[itemId];
-        _disallowedLemmingStateSet.Add(lemmingState);
+        var lemmingState = ILemmingAbilityChanger.AllItems[itemId];
+        _disallowedLemmingAbilitySet.Add(lemmingState);
     }
 
     private void AddLemmingTribeToCriteria(int itemId)

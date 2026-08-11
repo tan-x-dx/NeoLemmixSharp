@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class FastForwardSkill : LemmingSkill, ILemmingState
+public sealed class FastForwardSkill : LemmingSkill, ILemmingAbilityChanger
 {
     public static readonly FastForwardSkill Instance = new();
 
@@ -14,7 +14,7 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingState
     {
     }
 
-    public StateType LemmingStateType => StateType.FastForwardState;
+    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.FastForwardAbility;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
@@ -28,17 +28,17 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingState
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(LemmingState lemmingState, bool status)
     {
         lemmingState.IsPermanentFastForwards = status;
     }
 
-    public void ToggleLemmingState(LemmingState lemmingState)
+    public void ToggleLemmingAbility(LemmingState lemmingState)
     {
         lemmingState.IsPermanentFastForwards = !lemmingState.IsPermanentFastForwards;
     }
 
-    public bool IsApplied(LemmingState lemmingState)
+    public bool LemmingHasAbility(LemmingState lemmingState)
     {
         return lemmingState.IsPermanentFastForwards;
     }
