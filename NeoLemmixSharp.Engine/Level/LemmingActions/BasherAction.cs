@@ -86,7 +86,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         var dy = FindGroundPixel(lemming, lemmingPosition, in gadgetsNearLemming);
 
         if (dy < 0 &&
-            lemming.State.IsSlider &&
+            lemming.IsSlider &&
             DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
@@ -360,7 +360,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             }
 
             // Check if we are still a basher
-            if (!simulationLemming.State.IsActive || simulationLemming.CurrentActionType != LemmingActionType.BasherAction)
+            if (!simulationLemming.IsActive || simulationLemming.CurrentActionType != LemmingActionType.BasherAction)
             {
                 break; // and return false
             }

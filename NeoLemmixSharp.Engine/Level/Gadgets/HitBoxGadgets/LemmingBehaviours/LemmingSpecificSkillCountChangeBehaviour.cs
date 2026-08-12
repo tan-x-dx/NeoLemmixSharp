@@ -20,7 +20,7 @@ public sealed class LemmingSpecificSkillCountChangeBehaviour : LemmingBehaviour
 
     protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        var tribeId = lemming.State.TribeId;
+        var tribeId = lemming.TribeId;
 
         LevelScreen.SkillSetManager.ChangeSkillCount(_lemmingSkill, tribeId, SkillCountDelta);
     }

@@ -43,7 +43,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             lemming.PhysicsFrame != 15)
             return true;
 
-        if (lemming.State.IsSlider &&
+        if (lemming.IsSlider &&
             DehoisterAction.LemmingCanDehoist(lemming, false, in gadgetsNearLemming))
         {
             DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -52,7 +52,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
         lemmingPosition = orientation.Move(lemmingPosition, dx * 2, -1);
 
-        if (lemming.State.IsSlider &&
+        if (lemming.IsSlider &&
             DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);

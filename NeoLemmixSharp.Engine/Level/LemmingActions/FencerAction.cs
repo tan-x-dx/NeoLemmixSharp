@@ -114,7 +114,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
             needToUndoMoveUp = false;
         }
 
-        if (dy < 0 && lemming.State.IsSlider &&
+        if (dy < 0 && lemming.IsSlider &&
             DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);

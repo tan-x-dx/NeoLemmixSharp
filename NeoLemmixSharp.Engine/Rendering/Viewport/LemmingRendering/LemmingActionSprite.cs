@@ -45,7 +45,7 @@ public sealed class LemmingActionSprite
         {
             layerRenderer.RenderLayer(
                 spriteBatch,
-                lemming.State,
+                lemming,
                 sourceRectangle,
                 destinationRectangle,
                 rotationAngle,

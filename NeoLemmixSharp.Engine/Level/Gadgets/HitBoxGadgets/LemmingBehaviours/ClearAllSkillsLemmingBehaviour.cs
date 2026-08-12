@@ -11,6 +11,6 @@ public sealed class ClearAllSkillsLemmingBehaviour : LemmingBehaviour
 
     protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        lemming.State.ClearAllPermanentSkills();
+        lemming.ClearAllPermanentSkills();
     }
 }

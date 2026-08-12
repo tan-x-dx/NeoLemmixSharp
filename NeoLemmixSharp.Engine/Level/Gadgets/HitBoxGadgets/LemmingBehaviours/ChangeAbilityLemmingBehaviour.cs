@@ -22,15 +22,13 @@ public sealed class ChangeAbilityLemmingBehaviour : LemmingBehaviour
 
     protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        var lemmingState = lemming.State;
-
         if (_type == ChangeAbilityType.Toggle)
         {
-            _lemmingAbilityChanger.ToggleLemmingAbility(lemmingState);
+            _lemmingAbilityChanger.ToggleLemmingAbility(lemming);
             return;
         }
 
-        _lemmingAbilityChanger.SetLemmingAbility(lemmingState, _type != ChangeAbilityType.Clear);
+        _lemmingAbilityChanger.SetLemmingAbility(lemming, _type != ChangeAbilityType.Clear);
     }
 
     public enum ChangeAbilityType
@@ -57,9 +55,9 @@ public sealed class ZombieStateChanger : ILemmingAbilityChanger
     {
     }
 
-    public void SetLemmingAbility(LemmingState lemmingState, bool status) => lemmingState.IsZombie = status;
-    public void ToggleLemmingAbility(LemmingState lemmingState) => lemmingState.IsZombie = !lemmingState.IsZombie;
-    public bool LemmingHasAbility(LemmingState lemmingState) => lemmingState.IsZombie;
+    public void SetLemmingAbility(Lemming lemming, bool status) => lemming.IsZombie = status;
+    public void ToggleLemmingAbility(Lemming lemming) => lemming.IsZombie = !lemming.IsZombie;
+    public bool LemmingHasAbility(Lemming lemming) => lemming.IsZombie;
 }
 
 public sealed class NeutralStateChanger : ILemmingAbilityChanger
@@ -72,7 +70,7 @@ public sealed class NeutralStateChanger : ILemmingAbilityChanger
     {
     }
 
-    public void SetLemmingAbility(LemmingState lemmingState, bool status) => lemmingState.IsNeutral = status;
-    public void ToggleLemmingAbility(LemmingState lemmingState) => lemmingState.IsNeutral = !lemmingState.IsNeutral;
-    public bool LemmingHasAbility(LemmingState lemmingState) => lemmingState.IsNeutral;
+    public void SetLemmingAbility(Lemming lemming, bool status) => lemming.IsNeutral = status;
+    public void ToggleLemmingAbility(Lemming lemming) => lemming.IsNeutral = !lemming.IsNeutral;
+    public bool LemmingHasAbility(Lemming lemming) => lemming.IsNeutral;
 }

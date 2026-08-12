@@ -67,7 +67,7 @@ public sealed class SwimmerAction : LemmingAction
                     return true;
                 }
 
-                if (lemming.State.IsClimber &&
+                if (lemming.IsClimber &&
                     !WaterAt(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 1)))
                 {
                     // Only transition to climber, if the lemming is not under water

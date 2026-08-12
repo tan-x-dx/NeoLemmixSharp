@@ -246,7 +246,7 @@ end;
     {
         _queuedSkill = lemmingSkill;
         _queuedSkillLemming = lemming;
-        _queuedSkillTribeId = lemming.State.TribeId;
+        _queuedSkillTribeId = lemming.TribeId;
         _queuedSkillFrame = EngineConstants.EngineTicksPerSecond - 1;
     }
 
@@ -262,8 +262,8 @@ end;
             return;
         }
 
-        if (!_queuedSkillLemming.State.IsActive ||
-            !_queuedSkillLemming.State.CanHaveSkillsAssigned
+        if (!_queuedSkillLemming.IsActive ||
+            !_queuedSkillLemming.CanHaveSkillsAssigned
             || false) // || lemming is teleporting
         {
             // delete queued action first

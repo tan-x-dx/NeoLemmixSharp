@@ -18,28 +18,28 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingAbilityChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        lemming.State.IsWaterLemming = true;
+        lemming.IsWaterLemming = true;
     }
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingAbility(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(Lemming lemming, bool status)
     {
-        lemmingState.IsWaterLemming = status;
+        lemming.IsWaterLemming = status;
     }
 
-    public void ToggleLemmingAbility(LemmingState lemmingState)
+    public void ToggleLemmingAbility(Lemming lemming)
     {
-        lemmingState.IsWaterLemming = !lemmingState.IsWaterLemming;
+        lemming.IsWaterLemming = !lemming.IsWaterLemming;
     }
 
-    public bool LemmingHasAbility(LemmingState lemmingState)
+    public bool LemmingHasAbility(Lemming lemming)
     {
-        return lemmingState.IsWaterLemming;
+        return lemming.IsWaterLemming;
     }
 }

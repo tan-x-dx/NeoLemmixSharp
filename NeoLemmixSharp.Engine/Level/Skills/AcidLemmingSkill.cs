@@ -18,28 +18,28 @@ public sealed class AcidLemmingSkill : LemmingSkill, ILemmingAbilityChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        lemming.State.IsAcidLemming = true;
+        lemming.IsAcidLemming = true;
     }
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingAbility(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(Lemming lemming, bool status)
     {
-        lemmingState.IsAcidLemming = status;
+        lemming.IsAcidLemming = status;
     }
 
-    public void ToggleLemmingAbility(LemmingState lemmingState)
+    public void ToggleLemmingAbility(Lemming lemming)
     {
-        lemmingState.IsAcidLemming = !lemmingState.IsAcidLemming;
+        lemming.IsAcidLemming = !lemming.IsAcidLemming;
     }
 
-    public bool LemmingHasAbility(LemmingState lemmingState)
+    public bool LemmingHasAbility(Lemming lemming)
     {
-        return lemmingState.IsAcidLemming;
+        return lemming.IsAcidLemming;
     }
 }

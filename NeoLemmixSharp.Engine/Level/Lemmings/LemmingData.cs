@@ -33,8 +33,8 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         public Orientation Orientation;
         public FacingDirection FacingDirection;
 
-        public int TribeId;
         public uint State;
+        public int TribeId;
 
         public RectangularRegion CurrentBounds;
 
@@ -94,19 +94,11 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         p->PreviousAnchorPosition = new(-1, -1);
     }
 
-    public LemmingState CreateLemmingState(Lemming lemming)
-    {
-        var tribeIdRef = new PointerWrapper(&_data->TribeId);
-        var stateRef = new PointerWrapper(&_data->State);
-
-        return new LemmingState(lemming, tribeIdRef, stateRef);
-    }
-
     public ref Orientation Orientation => ref Unsafe.AsRef<Orientation>(&_data->Orientation);
     public ref FacingDirection FacingDirection => ref Unsafe.AsRef<FacingDirection>(&_data->FacingDirection);
 
-    public ref int TribeId => ref Unsafe.AsRef<int>(&_data->TribeId);
     public ref uint State => ref Unsafe.AsRef<uint>(&_data->State);
+    public ref int TribeId => ref Unsafe.AsRef<int>(&_data->TribeId);
 
     public ref RectangularRegion CurrentBounds => ref Unsafe.AsRef<RectangularRegion>(&_data->CurrentBounds);
 

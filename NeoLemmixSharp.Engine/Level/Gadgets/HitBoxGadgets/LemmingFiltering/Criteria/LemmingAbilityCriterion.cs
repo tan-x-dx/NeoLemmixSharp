@@ -72,7 +72,7 @@ public sealed class LemmingAbilityCriterion : LemmingCriterion
         for (int i = 0; i < _allowedLemmingAbilties.Length; i++)
         {
             var lemmingAbility = _allowedLemmingAbilties[i];
-            var lemmingHasAbility = lemmingAbility.LemmingHasAbility(lemming.State);
+            var lemmingHasAbility = lemmingAbility.LemmingHasAbility(lemming);
             var requiredValue = BitArrayHelpers.GetBit(_requiredAbilties, i);
 
             if (lemmingHasAbility != requiredValue)

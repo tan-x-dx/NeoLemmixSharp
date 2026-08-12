@@ -18,28 +18,28 @@ public sealed class FloaterSkill : LemmingSkill, ILemmingAbilityChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasSpecialFallingBehaviour && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasSpecialFallingBehaviour && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        lemming.State.IsFloater = true;
+        lemming.IsFloater = true;
     }
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingAbility(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(Lemming lemming, bool status)
     {
-        lemmingState.IsFloater = status;
+        lemming.IsFloater = status;
     }
 
-    public void ToggleLemmingAbility(LemmingState lemmingState)
+    public void ToggleLemmingAbility(Lemming lemming)
     {
-        lemmingState.IsFloater = !lemmingState.IsFloater;
+        lemming.IsFloater = !lemming.IsFloater;
     }
 
-    public bool LemmingHasAbility(LemmingState lemmingState)
+    public bool LemmingHasAbility(Lemming lemming)
     {
-        return lemmingState.IsFloater;
+        return lemming.IsFloater;
     }
 }

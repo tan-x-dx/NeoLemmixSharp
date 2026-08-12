@@ -19,12 +19,12 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingAbilityChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        lemming.State.IsSwimmer = true;
+        lemming.IsSwimmer = true;
         if (lemming.CurrentActionType == LemmingActionType.DrownerAction)
         {
             SwimmerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -41,18 +41,18 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingAbilityChanger
         return result;
     }
 
-    public void SetLemmingAbility(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(Lemming lemming, bool status)
     {
-        lemmingState.IsSwimmer = status;
+        lemming.IsSwimmer = status;
     }
 
-    public void ToggleLemmingAbility(LemmingState lemmingState)
+    public void ToggleLemmingAbility(Lemming lemming)
     {
-        lemmingState.IsSwimmer = !lemmingState.IsSwimmer;
+        lemming.IsSwimmer = !lemming.IsSwimmer;
     }
 
-    public bool LemmingHasAbility(LemmingState lemmingState)
+    public bool LemmingHasAbility(Lemming lemming)
     {
-        return lemmingState.IsSwimmer;
+        return lemming.IsSwimmer;
     }
 }

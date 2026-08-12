@@ -44,11 +44,11 @@ public interface ILemmingAbilityChanger
     [Pure]
     LemmingAbilityType LemmingAbilityType { get; }
 
-    void SetLemmingAbility(LemmingState lemmingState, bool status);
-    void ToggleLemmingAbility(LemmingState lemmingState);
+    void SetLemmingAbility(Lemming lemming, bool status);
+    void ToggleLemmingAbility(Lemming lemming);
 
     [Pure]
-    bool LemmingHasAbility(LemmingState lemmingState);
+    bool LemmingHasAbility(Lemming lemming);
 
     public static LemmingAbilitySet CreateBitArraySet() => new(new LemmingAbilityChangerHasher());
 

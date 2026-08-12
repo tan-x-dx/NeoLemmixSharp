@@ -18,28 +18,28 @@ public sealed class FastForwardSkill : LemmingSkill, ILemmingAbilityChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.IsPermanentFastForwards && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.IsPermanentFastForwards && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        lemming.State.IsPermanentFastForwards = true;
+        lemming.IsPermanentFastForwards = true;
     }
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingAbility(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(Lemming lemming, bool status)
     {
-        lemmingState.IsPermanentFastForwards = status;
+        lemming.IsPermanentFastForwards = status;
     }
 
-    public void ToggleLemmingAbility(LemmingState lemmingState)
+    public void ToggleLemmingAbility(Lemming lemming)
     {
-        lemmingState.IsPermanentFastForwards = !lemmingState.IsPermanentFastForwards;
+        lemming.IsPermanentFastForwards = !lemming.IsPermanentFastForwards;
     }
 
-    public bool LemmingHasAbility(LemmingState lemmingState)
+    public bool LemmingHasAbility(Lemming lemming)
     {
-        return lemmingState.IsPermanentFastForwards;
+        return lemming.IsPermanentFastForwards;
     }
 }

@@ -72,7 +72,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         var levelScreenRenderer = LevelScreenRenderer.Instance.LevelRenderer;
         levelScreenRenderer.DeregisterSpriteForRendering(this);
 
-        if (!_lemming.State.IsActive)
+        if (!_lemming.IsActive)
             return;
 
         _actionSprite = LevelScreen.LemmingSpriteBank.GetActionSprite(_lemming);

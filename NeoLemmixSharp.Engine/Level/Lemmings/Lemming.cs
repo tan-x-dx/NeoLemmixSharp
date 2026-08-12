@@ -9,6 +9,7 @@ using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
@@ -17,7 +18,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 {
     private readonly LemmingData _data;
 
-    public LemmingState State { get; }
+    public LemmingColors LemmingColors;
+
     public LemmingRenderer Renderer { get; }
 
     public int Id { get; }
@@ -96,13 +98,253 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref int ParticleTimer => ref _data.ParticleTimer;
 
     public bool IsSimulation => Id == EngineConstants.SimulationLemmingId;
-    public bool IsFastForward => _data.FastForwardTime > 0 || State.IsPermanentFastForwards;
+    public bool IsFastForward => _data.FastForwardTime > 0 || IsPermanentFastForwards;
 
     public Point HeadPosition => _data.Orientation.MoveUp(_data.AnchorPosition, 6);
     public Point FootPosition => CurrentAction.GetFootPosition(this, _data.AnchorPosition);
     public Point CenterPosition => _data.Orientation.MoveUp(_data.AnchorPosition, 4);
 
     public Span<Point> GetJumperPositions() => _data.GetJumperPositions();
+
+    #region Lemming State Properties
+
+    public bool HasPermanentSkill => (_data.State & LemmingAbilityConstants.PermanentSkillBitMask) != 0U;
+    public bool HasLiquidAffinity => (_data.State & LemmingAbilityConstants.LiquidAffinityBitMask) != 0U;
+    public bool HasSpecialFallingBehaviour => (_data.State & LemmingAbilityConstants.SpecialFallingBehaviourBitMask) != 0U;
+    public int NumberOfPermanentSkills => BitOperations.PopCount(_data.State & LemmingAbilityConstants.PermanentSkillBitMask);
+
+    /// <summary>
+    /// Must be active and NOT zombie and NOT neutral
+    /// </summary>
+    public bool CanHaveSkillsAssigned => (_data.State & LemmingAbilityConstants.AssignableSkillBitMask) == (1U << LemmingAbilityConstants.ActiveBitIndex);
+
+    public bool IsClimber
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.ClimberBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.ClimberBitIndex;
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.ClimberBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
+    }
+
+    public bool IsFloater
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.FloaterBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.FloaterBitIndex;
+                states &= ~(1U << LemmingAbilityConstants.GliderBitIndex); // Deliberately knock out the glider
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.FloaterBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
+    }
+
+    public bool IsGlider
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.GliderBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.GliderBitIndex;
+                states &= ~(1U << LemmingAbilityConstants.FloaterBitIndex); // Deliberately knock out the floater
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.GliderBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
+    }
+
+    public bool IsSlider
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.SliderBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.SliderBitIndex;
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.SliderBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
+    }
+
+    public bool IsSwimmer
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.SwimmerBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.SwimmerBitIndex;
+                states &= ~((1U << LemmingAbilityConstants.AcidLemmingBitIndex) | (1U << LemmingAbilityConstants.WaterLemmingBitIndex)); // Deliberately knock out the acid/water lemmings
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.SwimmerBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
+    }
+
+    public bool IsDisarmer
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.DisarmerBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.DisarmerBitIndex;
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.DisarmerBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
+    }
+
+    public bool IsPermanentFastForwards
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.PermanentFastForwardBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.PermanentFastForwardBitIndex;
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.PermanentFastForwardBitIndex);
+            }
+            LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
+        }
+    }
+
+    public bool IsAcidLemming
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.AcidLemmingBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.AcidLemmingBitIndex;
+                states &= ~((1U << LemmingAbilityConstants.SwimmerBitIndex) | (1U << LemmingAbilityConstants.WaterLemmingBitIndex)); // Deliberately knock out the swimmer/water lemmings
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.AcidLemmingBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
+    }
+
+    public bool IsWaterLemming
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.WaterLemmingBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.WaterLemmingBitIndex;
+                states &= ~((1U << LemmingAbilityConstants.SwimmerBitIndex) | (1U << LemmingAbilityConstants.AcidLemmingBitIndex)); // Deliberately knock out the swimmer/acid lemmings
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.WaterLemmingBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
+    }
+
+    public bool IsActive
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.ActiveBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.ActiveBitIndex;
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.ActiveBitIndex);
+            }
+        }
+    }
+
+    public bool IsNeutral
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.NeutralBitIndex) & 1U) != 0U;
+        set
+        {
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.NeutralBitIndex;
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.NeutralBitIndex);
+            }
+            UpdateHairAndBodyColors();
+        }
+    }
+
+    public bool IsZombie
+    {
+        get => ((_data.State >>> LemmingAbilityConstants.ZombieBitIndex) & 1U) != 0U;
+        set
+        {
+            if (IsZombie == value)
+                return;
+
+            ref var states = ref _data.State;
+            if (value)
+            {
+                states |= 1U << LemmingAbilityConstants.ZombieBitIndex;
+            }
+            else
+            {
+                states &= ~(1U << LemmingAbilityConstants.ZombieBitIndex);
+            }
+            LevelScreen.LemmingManager.UpdateZombieState(this);
+            UpdateSkinColor();
+        }
+    }
+
+    public int TribeId => _data.TribeId;
+
+    #endregion
 
     public Lemming(
         ref nint dataHandle,
@@ -111,13 +353,12 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         Id = id;
         _data = PointerDataHelper.CreateItem<LemmingData>(ref dataHandle);
 
-        State = _data.CreateLemmingState(this);
         Renderer = new LemmingRenderer(this);
     }
 
     public void Initialise()
     {
-        State.IsActive = true;
+        IsActive = true;
         _data.PreviousAnchorPosition = _data.AnchorPosition;
 
         var initialAction = CurrentAction;
@@ -129,6 +370,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
 
         initialAction.TransitionLemmingToAction(this, false);
+
+        UpdateAllColors();
 
         Renderer.UpdateLemmingState(true);
     }
@@ -179,7 +422,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (!CheckLevelBoundaries()) return;
         if (!CheckTriggerAreas(in gadgetsNearLemming, gadgetCheckPositions, false)) return;
         if (CurrentActionType == LemmingActionType.ExiterAction) return;
-        if (State.IsZombie) return;
+        if (IsZombie) return;
         if (!LevelScreen.LemmingManager.AnyZombies()) return;
 
         LevelScreen.LemmingManager.DoZombieCheck(this);
@@ -490,12 +733,103 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public void OnSnapshotApplied()
     {
-        State.UpdateHairAndBodyColors();
-        State.UpdateSkinColor();
-        State.UpdatePaintColor();
-        Renderer.UpdateLemmingState(State.IsActive);
+        UpdateAllColors();
+        Renderer.UpdateLemmingState(IsActive);
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
         LevelScreen.LemmingManager.UpdateZombieState(this);
+    }
+
+    public void SetTribeAffiliation(int tribeId)
+    {
+        _data.TribeId = tribeId;
+        UpdateAllColors();
+    }
+
+    public void ClearAllPermanentSkills()
+    {
+        _data.State &= ~LemmingAbilityConstants.PermanentSkillBitMask;
+        UpdateHairAndBodyColors();
+    }
+
+    private void UpdateAllColors()
+    {
+        var tribe = LevelScreen.TribeManager.GetTribe(_data.TribeId);
+
+        if (HasPermanentSkill)
+        {
+            LemmingColors.HairColor = tribe.ColorData.PermanentSkillHairColor;
+            LemmingColors.BodyColor = IsNeutral
+                ? tribe.ColorData.NeutralBodyColor
+                : tribe.ColorData.PermanentSkillBodyColor;
+        }
+        else
+        {
+            LemmingColors.HairColor = tribe.ColorData.HairColor;
+            LemmingColors.BodyColor = IsNeutral
+                ? tribe.ColorData.NeutralBodyColor
+                : tribe.ColorData.BodyColor;
+        }
+
+        LemmingColors.SkinColor = IsZombie
+            ? tribe.ColorData.ZombieSkinColor
+            : tribe.ColorData.SkinColor;
+
+        if (IsAcidLemming)
+        {
+            LemmingColors.FootColor = tribe.ColorData.AcidLemmingFootColor;
+        }
+        else if (IsWaterLemming)
+        {
+            LemmingColors.FootColor = tribe.ColorData.WaterLemmingFootColor;
+        }
+        else
+        {
+            LemmingColors.FootColor = LemmingColors.SkinColor;
+        }
+
+        LemmingColors.PaintColor = tribe.ColorData.PaintColor;
+    }
+
+    private void UpdateHairAndBodyColors()
+    {
+        var tribe = LevelScreen.TribeManager.GetTribe(_data.TribeId);
+
+        if (HasPermanentSkill)
+        {
+            LemmingColors.HairColor = tribe.ColorData.PermanentSkillHairColor;
+            LemmingColors.BodyColor = IsNeutral
+                ? tribe.ColorData.NeutralBodyColor
+                : tribe.ColorData.PermanentSkillBodyColor;
+        }
+        else
+        {
+            LemmingColors.HairColor = tribe.ColorData.HairColor;
+            LemmingColors.BodyColor = IsNeutral
+                ? tribe.ColorData.NeutralBodyColor
+                : tribe.ColorData.BodyColor;
+        }
+    }
+
+    private void UpdateSkinColor()
+    {
+        var tribe = LevelScreen.TribeManager.GetTribe(_data.TribeId);
+
+        LemmingColors.SkinColor = IsZombie
+            ? tribe.ColorData.ZombieSkinColor
+            : tribe.ColorData.SkinColor;
+
+        if (IsAcidLemming)
+        {
+            LemmingColors.FootColor = tribe.ColorData.AcidLemmingFootColor;
+        }
+        else if (IsWaterLemming)
+        {
+            LemmingColors.FootColor = tribe.ColorData.WaterLemmingFootColor;
+        }
+        else
+        {
+            LemmingColors.FootColor = LemmingColors.SkinColor;
+        }
     }
 
     [DebuggerStepThrough]

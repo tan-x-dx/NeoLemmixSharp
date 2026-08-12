@@ -18,28 +18,28 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingAbilityChanger
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.IsDisarmer && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.IsDisarmer && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        lemming.State.IsDisarmer = true;
+        lemming.IsDisarmer = true;
     }
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingAbility(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(Lemming lemming, bool status)
     {
-        lemmingState.IsDisarmer = status;
+        lemming.IsDisarmer = status;
     }
 
-    public void ToggleLemmingAbility(LemmingState lemmingState)
+    public void ToggleLemmingAbility(Lemming lemming)
     {
-        lemmingState.IsDisarmer = !lemmingState.IsDisarmer;
+        lemming.IsDisarmer = !lemming.IsDisarmer;
     }
 
-    public bool LemmingHasAbility(LemmingState lemmingState)
+    public bool LemmingHasAbility(Lemming lemming)
     {
-        return lemmingState.IsDisarmer;
+        return lemming.IsDisarmer;
     }
 }

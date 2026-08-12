@@ -76,46 +76,44 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
 
     private int WriteLemmingInfo(Lemming lemming)
     {
-        var state = lemming.State;
-
-        if (state.HasPermanentSkill && ShowExpandedAthleteInformation())
-            return WriteExpandedAthleteInformation(state);
+        if (lemming.HasPermanentSkill && ShowExpandedAthleteInformation())
+            return WriteExpandedAthleteInformation(lemming);
 
         var action = lemming.CurrentAction;
-        return WriteMinimalAthleteInformation(action, state);
+        return WriteMinimalAthleteInformation(action, lemming);
     }
 
     [Pure]
     private bool ShowExpandedAthleteInformation() => _controlPanelParameters.Contains(ControlPanelParameters.ShowExpandedAthleteInformation);
 
-    private int WriteExpandedAthleteInformation(LemmingState state)
+    private int WriteExpandedAthleteInformation(Lemming lemming)
     {
         const int TextLengthForExpandedAthleteInformation = 7;
 
         char* p = _lemmingActionAndCountPointer;
 
-        *p = state.IsSlider ? 'L' : '-';
+        *p = lemming.IsSlider ? 'L' : '-';
         p++;
-        *p = state.IsClimber ? 'C' : '-';
+        *p = lemming.IsClimber ? 'C' : '-';
         p++;
-        *p = state.IsSwimmer ? 'S' : state.IsAcidLemming ? 'A' : state.IsWaterLemming ? 'W' : '-';
+        *p = lemming.IsSwimmer ? 'S' : lemming.IsAcidLemming ? 'A' : lemming.IsWaterLemming ? 'W' : '-';
         p++;
-        *p = state.IsFloater ? 'F' : state.IsGlider ? 'G' : '-';
+        *p = lemming.IsFloater ? 'F' : lemming.IsGlider ? 'G' : '-';
         p++;
-        *p = state.IsDisarmer ? 'D' : '-';
+        *p = lemming.IsDisarmer ? 'D' : '-';
         p++;
-        *p = state.IsZombie ? 'Z' : '-';
+        *p = lemming.IsZombie ? 'Z' : '-';
         p++;
-        *p = state.IsNeutral ? 'N' : '-';
+        *p = lemming.IsNeutral ? 'N' : '-';
 
         return TextLengthForExpandedAthleteInformation;
     }
 
     private int WriteMinimalAthleteInformation(
         LemmingAction action,
-        LemmingState state)
+        Lemming lemming)
     {
-        ReadOnlySpan<char> sourceSpan = GetSourceString(action, state);
+        ReadOnlySpan<char> sourceSpan = GetSourceString(action, lemming);
         Span<char> destSpan = new(_lemmingActionAndCountPointer, LemmingActionConstants.LongestActionNameLength);
 
         sourceSpan.CopyTo(destSpan);
@@ -124,22 +122,22 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
 
         static ReadOnlySpan<char> GetSourceString(
             LemmingAction action,
-            LemmingState state)
+            Lemming lemming)
         {
             if (action.CursorSelectionPriority == CursorSelectionPriority.NonPermanentSkillPriority)
                 return action.LemmingActionName;
 
-            if (state.IsZombie)
+            if (lemming.IsZombie)
             {
-                return state.IsNeutral
+                return lemming.IsNeutral
                     ? EngineConstants.NeutralZombieControlPanelString
                     : EngineConstants.ZombieControlPanelString;
             }
 
-            if (state.IsNeutral)
+            if (lemming.IsNeutral)
                 return EngineConstants.NeutralControlPanelString;
 
-            var numberOfPermanentSkills = state.NumberOfPermanentSkills;
+            var numberOfPermanentSkills = lemming.NumberOfPermanentSkills;
 
             return numberOfPermanentSkills switch
             {

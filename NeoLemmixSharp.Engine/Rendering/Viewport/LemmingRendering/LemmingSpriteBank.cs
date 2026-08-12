@@ -36,7 +36,7 @@ public sealed class LemmingSpriteBank
 
     private LemmingActionSprite[] GetActionSprites(Lemming lemming)
     {
-        var lemmingTribeId = lemming.State.TribeId; 
+        var lemmingTribeId = lemming.TribeId; 
         var lemmingTribe = LevelScreen.TribeManager.GetTribe(lemmingTribeId);
         var styleIdentifier = lemmingTribe.TribeIdentifier.StyleIdentifier;
         return _lookupData[styleIdentifier].ActionSprites;

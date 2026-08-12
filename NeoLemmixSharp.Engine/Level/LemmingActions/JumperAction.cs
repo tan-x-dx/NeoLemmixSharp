@@ -80,7 +80,7 @@ public sealed class JumperAction : LemmingAction
             lemming.AnimationFrame = 2;
         }
 
-        if (lemming.JumpProgress >= 8 && lemming.State.IsGlider)
+        if (lemming.JumpProgress >= 8 && lemming.IsGlider)
         {
             lemming.NextAction = GliderAction.Instance;
             return true;
@@ -189,7 +189,7 @@ public sealed class JumperAction : LemmingAction
                 return true;
             }
 
-            var isClimber = lemming.State.IsClimber;
+            var isClimber = lemming.IsClimber;
             if (n != 7 && (n != 5 || isClimber))
                 continue;
 
@@ -200,7 +200,7 @@ public sealed class JumperAction : LemmingAction
                 return true;
             }
 
-            if (lemming.State.IsSlider)
+            if (lemming.IsSlider)
             {
                 lemmingPosition = checkPosition;
                 lemming.NextAction = SliderAction.Instance;
