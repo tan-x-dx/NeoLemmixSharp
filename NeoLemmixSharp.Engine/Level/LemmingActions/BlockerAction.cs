@@ -100,8 +100,8 @@ public sealed class BlockerAction : LemmingAction
 
     private static RectangularRegion GetArmHitBox(Lemming blocker, int offsetX0, int offsetX1)
     {
-        var moveDelta = blocker.FacingDirection.Id ^ 1; // Fixes off-by-one errors between left/right
         var orientation = blocker.Orientation;
+        var moveDelta = blocker.FacingDirection.Id ^ 1; // Fixes off-by-one errors between left/right
         var p0 = orientation.Move(blocker.AnchorPosition, moveDelta + offsetX0, 6);
         var p1 = orientation.Move(blocker.AnchorPosition, moveDelta + offsetX1, -4);
 

@@ -24,6 +24,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public int Id { get; }
 
+    #region Lemming Data
+
     public LemmingActionType PreviousActionType => _data.PreviousActionType;
     public LemmingAction PreviousAction => LemmingAction.GetActionOrDefault(_data.PreviousActionType);
 
@@ -104,9 +106,12 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public Point FootPosition => CurrentAction.GetFootPosition(this, _data.AnchorPosition);
     public Point CenterPosition => _data.Orientation.MoveUp(_data.AnchorPosition, 4);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<Point> GetJumperPositions() => _data.GetJumperPositions();
 
-    #region Lemming State Properties
+    #endregion
+
+    #region Lemming Ability Properties
 
     public bool HasPermanentSkill => (_data.State & LemmingAbilityConstants.PermanentSkillBitMask) != 0U;
     public bool HasLiquidAffinity => (_data.State & LemmingAbilityConstants.LiquidAffinityBitMask) != 0U;

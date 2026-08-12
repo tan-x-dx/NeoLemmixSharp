@@ -81,7 +81,7 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     private LemmingData(nint pointerHandle)
     {
         LemmingDataRaw* p = (LemmingDataRaw*)pointerHandle;
-        _data = (LemmingDataRaw*)pointerHandle;
+        _data = p;
 
         p->PreviousActionType = LemmingActionType.NoneAction;
         p->CurrentActionType = LemmingActionType.NoneAction;
