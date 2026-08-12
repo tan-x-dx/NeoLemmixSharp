@@ -80,9 +80,7 @@ internal sealed class SketchReader : NeoLemmixDataReader
 
     private void OnEnd(ReadOnlySpan<char> line, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        var dht = new DihedralTransformation(_flipHorizontally, _flipVertically, _rotate);
-        _currentSketchData!.Orientation = dht.Orientation;
-        _currentSketchData.FacingDirection = dht.FacingDirection;
+        _currentSketchData!.DihedralTransformation = new DihedralTransformation(_flipHorizontally, _flipVertically, _rotate);
 
         _allSketchData.Add(_currentSketchData!);
         _currentSketchData = null;

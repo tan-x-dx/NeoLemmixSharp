@@ -12,8 +12,7 @@ public sealed class TerrainInstanceData : IInstanceData
     public required Point Position { get; set; }
     public Size Size => new(Width, Height);
 
-    public required Orientation Orientation { get; set; }
-    public required FacingDirection FacingDirection { get; set; }
+    public required DihedralTransformation DihedralTransformation { get; set; }
 
     public required Color Tint { get; set; }
     public required uint HueAngle { get; set; }

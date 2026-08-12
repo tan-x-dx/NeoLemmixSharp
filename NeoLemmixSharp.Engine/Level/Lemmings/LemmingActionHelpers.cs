@@ -143,7 +143,7 @@ public static class LemmingActionHelpers
             if (firstMatchingFilter is null)
                 continue;
 
-            var deltaRotNum = gadget.Orientation.RotNum - lemmingOrientationRotNum;
+            var deltaRotNum = gadget.DihedralTransformation.Orientation.RotNum - lemmingOrientationRotNum;
             deltas[deltaRotNum & 3] = 1;
         }
 

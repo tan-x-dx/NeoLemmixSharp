@@ -32,7 +32,7 @@ public sealed class LemmingActionSprite
         var orientation = lemming.Orientation;
         var facingDirection = lemming.FacingDirection;
 
-        var dht = lemming.GetDihedralTransformation();
+        var dht = lemming.DihedralTransformation;
         var offset = dht.Transform(AnchorPoint, SpriteSize);
 
         destinationRectangle.X += offset.X;

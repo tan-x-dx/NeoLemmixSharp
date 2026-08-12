@@ -52,7 +52,7 @@ public sealed class TerrainManager
         var pixel = PixelTypeAtPosition(levelPosition);
 
         return !pixel.CanBeDestroyed() ||
-               !destructionMask.CanDestroyPixel(pixel, lemming.Orientation, lemming.FacingDirection);
+               !destructionMask.CanDestroyPixel(lemming.DihedralTransformation, pixel);
     }
 
     [Pure]
@@ -62,9 +62,8 @@ public sealed class TerrainManager
     }
 
     public void ErasePixel(
-        Orientation orientation,
+        DihedralTransformation dht,
         IDestructionMask destructionMask,
-        FacingDirection facingDirection,
         Point pixelToErase)
     {
         ref var pixel = ref _pixels.TryGetRef(pixelToErase, out var isValid);
@@ -73,7 +72,7 @@ public sealed class TerrainManager
             return;
 
         if (!pixel.CanBeDestroyed() ||
-            !destructionMask.CanDestroyPixel(pixel, orientation, facingDirection))
+            !destructionMask.CanDestroyPixel(dht, pixel))
             return;
 
         var previousValue = pixel;

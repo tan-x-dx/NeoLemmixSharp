@@ -30,8 +30,7 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     [StructLayout(LayoutKind.Sequential, Size = LemmingDataSize)]
     private struct LemmingDataRaw
     {
-        public Orientation Orientation;
-        public FacingDirection FacingDirection;
+        public DihedralTransformation DihedralTransformation;
 
         public uint State;
         public int TribeId;
@@ -94,8 +93,9 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         p->PreviousAnchorPosition = new(-1, -1);
     }
 
-    public ref Orientation Orientation => ref Unsafe.AsRef<Orientation>(&_data->Orientation);
-    public ref FacingDirection FacingDirection => ref Unsafe.AsRef<FacingDirection>(&_data->FacingDirection);
+    public ref DihedralTransformation DihedralTransformation => ref Unsafe.AsRef<DihedralTransformation>(&_data->DihedralTransformation);
+    public ref Orientation Orientation => ref Unsafe.AsRef<Orientation>(&_data->DihedralTransformation.Orientation);
+    public ref FacingDirection FacingDirection => ref Unsafe.AsRef<FacingDirection>(&_data->DihedralTransformation.FacingDirection);
 
     public ref uint State => ref Unsafe.AsRef<uint>(&_data->State);
     public ref int TribeId => ref Unsafe.AsRef<int>(&_data->TribeId);
@@ -135,12 +135,6 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     public ref int FastForwardTime => ref Unsafe.AsRef<int>(&_data->FastForwardTime);
     public ref uint CountDownTimer => ref Unsafe.AsRef<uint>(&_data->CountDownTimer);
     public ref int ParticleTimer => ref Unsafe.AsRef<int>(&_data->ParticleTimer);
-
-    public DihedralTransformation GetDihedralTransformation()
-    {
-        void* p = &_data->Orientation;
-        return *(DihedralTransformation*)p;
-    }
 
     public Span<Point> GetJumperPositions()
     {

@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Common;
 
-public readonly ref struct DihedralTransformation : IEquatable<DihedralTransformation>, ISpanFormattable
+public readonly struct DihedralTransformation : IEquatable<DihedralTransformation>, ISpanFormattable
 {
     private const int FlipBitShift = 2;
 
@@ -66,7 +66,7 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
     [Pure]
     public RectangularRegion Transform(RectangularRegion region, Size size)
     {
-        var transformationData = new TransformationData(Orientation, FacingDirection, size);
+        var transformationData = new TransformationData(this, size);
 
         var q0 = transformationData.Transform(Point.Zero);
         var q1 = transformationData.Transform(region.BottomRight - region.TopLeft);
@@ -81,18 +81,17 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         Point position,
         Size size)
     {
-        var transformationData = new TransformationData(Orientation, FacingDirection, size);
+        var transformationData = new TransformationData(this, size);
         return transformationData.Transform(position);
     }
 
-    [Pure]
-    public static int Encode(Orientation orientation, FacingDirection facingDirection) => (orientation.RotNum & 3) | ((facingDirection.Id & 1) << FlipBitShift);
+    public byte EncodeToByte() => (byte)((Orientation.RotNum & 3) | ((FacingDirection.Id & 1) << FlipBitShift));
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public TransformationData GetTransformationData(Size size)
     {
-        return new TransformationData(Orientation, FacingDirection, size);
+        return new TransformationData(this, size);
     }
 
     public readonly ref struct TransformationData
@@ -104,21 +103,20 @@ public readonly ref struct DihedralTransformation : IEquatable<DihedralTransform
         private readonly int _facingDirectionDelta;
 
         public TransformationData(
-            Orientation orientation,
-            FacingDirection facingDirection,
+            DihedralTransformation dht,
             Size size)
         {
             var wTemp = size.W - 1;
             var hTemp = size.H - 1;
 
-            var r = orientation.RotNum;
+            var r = dht.Orientation.RotNum;
             _sinCos = SinCosMethods.IntSinCos(r);
             var s = _sinCos.Sin & 1;
             var c = _sinCos.Cos & 1;
 
             _facingDirectionOffset = (c * wTemp) + (s * hTemp);
-            _facingDirectionOffset *= facingDirection.Id;
-            _facingDirectionDelta = facingDirection.DeltaX;
+            _facingDirectionOffset *= dht.FacingDirection.Id;
+            _facingDirectionDelta = dht.FacingDirection.DeltaX;
 
             r--;
             r &= 3;

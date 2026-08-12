@@ -6,8 +6,7 @@ public interface IInstanceData
 {
     Point Position { get; set; }
     Size Size { get; }
-    Orientation Orientation { get; set; }
-    FacingDirection FacingDirection { get; set; }
+    DihedralTransformation DihedralTransformation { get; }
 
     RectangularRegion GetBounds(Point anchorPosition);
 }

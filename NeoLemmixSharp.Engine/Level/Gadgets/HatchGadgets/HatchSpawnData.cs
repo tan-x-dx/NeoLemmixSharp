@@ -8,8 +8,7 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 public sealed class HatchSpawnData
 {
     private readonly PointerWrapper _lemmingsToRelease;
-    private readonly Orientation _orientation;
-    private readonly FacingDirection _facingDirection;
+    private readonly DihedralTransformation _dihedralTransformation;
     private readonly int _tribeId;
     private readonly uint _rawStateData;
 
@@ -19,16 +18,14 @@ public sealed class HatchSpawnData
     public HatchSpawnData(
         ref nint dataHandle,
         int lemmingsToRelease,
-        Orientation orientation,
-        FacingDirection facingDirection,
+        DihedralTransformation dihedralTransformation,
         int tribeId,
         uint rawStateData,
         int hatchGroupId)
     {
         _lemmingsToRelease = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandle);
         _lemmingsToRelease.IntValue = lemmingsToRelease;
-        _orientation = orientation;
-        _facingDirection = facingDirection;
+        _dihedralTransformation = dihedralTransformation;
         _tribeId = tribeId;
         _rawStateData = rawStateData;
 
@@ -37,7 +34,7 @@ public sealed class HatchSpawnData
 
     public void SpawnLemming(Lemming lemming)
     {
-        lemming.SetRawData(_orientation, _facingDirection, _tribeId, _rawStateData);
+        lemming.SetRawData(_dihedralTransformation, _tribeId, _rawStateData);
 
         FallerAction.Instance.TransitionLemmingToAction(lemming, false);
         lemming.InitialFall = lemming.CurrentActionType == LemmingActionType.FallerAction; // could be a walker if eg. spawned inside terrain

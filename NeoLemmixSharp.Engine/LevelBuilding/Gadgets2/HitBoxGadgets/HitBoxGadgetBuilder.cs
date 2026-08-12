@@ -61,8 +61,7 @@ public readonly ref struct HitBoxGadgetBuilder
             GadgetName = gadgetName,
             CurrentGadgetBounds = gadgetBounds,
 
-            Orientation = _hitBoxGadgetInstanceData.Orientation,
-            FacingDirection = _hitBoxGadgetInstanceData.FacingDirection,
+            DihedralTransformation = _hitBoxGadgetInstanceData.DihedralTransformation,
             IsFastForward = _hitBoxGadgetInstanceData.IsFastForward,
         };
 
@@ -94,8 +93,7 @@ public readonly ref struct HitBoxGadgetBuilder
                 gadgetStateInstanceData,
                 gadgetBounds,
                 tribeManager,
-                _hitBoxGadgetInstanceData.Orientation,
-                _hitBoxGadgetInstanceData.FacingDirection);
+                _hitBoxGadgetInstanceData.DihedralTransformation);
         }
 
         return result;
@@ -107,8 +105,7 @@ public readonly ref struct HitBoxGadgetBuilder
         HitBoxGadgetStateInstanceData gadgetStateInstanceData,
         GadgetBounds gadgetBounds,
         TribeManager tribeManager,
-        Orientation instanceOrientation,
-        FacingDirection instanceFacingDirection)
+        DihedralTransformation instanceDihedralTransformation)
     {
         var stateName = GadgetBuildingHelpers.GetGadgetStateName(gadgetStateArchetypeData, gadgetStateInstanceData);
 
@@ -126,7 +123,7 @@ public readonly ref struct HitBoxGadgetBuilder
             alternateHitBoxFilterData = [];
         }
 
-        var hitBoxFilters = BuildHitBoxFilters(ref dataHandleRef, mainHitBoxFilterData, alternateHitBoxFilterData, instanceOrientation, instanceFacingDirection, tribeManager);
+        var hitBoxFilters = BuildHitBoxFilters(ref dataHandleRef, mainHitBoxFilterData, alternateHitBoxFilterData, instanceDihedralTransformation, tribeManager);
 
         var hitBoxLookup = HitBoxBuilder.BuildHitBoxLookup(
             gadgetStateArchetypeData,
@@ -147,8 +144,7 @@ public readonly ref struct HitBoxGadgetBuilder
         ref nint dataHandleRef,
         ReadOnlySpan<HitBoxFilterData> mainHitBoxFilterData,
         ReadOnlySpan<HitBoxFilterData> alternateHitBoxFilterData,
-        Orientation instanceOrientation,
-        FacingDirection instanceFacingDirection,
+        DihedralTransformation instanceDihedralTransformation,
         TribeManager tribeManager)
     {
         var behaviourBuilder = new GadgetBehaviourBuilder(_hitBoxGadgetInstanceData.Identifier, _gadgetBehaviours);
@@ -157,7 +153,7 @@ public readonly ref struct HitBoxGadgetBuilder
         var i = 0;
         foreach (var mainHitBoxFilterInstanceDatum in mainHitBoxFilterData)
         {
-            var newHitBoxFilter = BuildHitBoxFilter(ref dataHandleRef, alternateHitBoxFilterData, instanceOrientation, instanceFacingDirection, tribeManager, behaviourBuilder, mainHitBoxFilterInstanceDatum);
+            var newHitBoxFilter = BuildHitBoxFilter(ref dataHandleRef, alternateHitBoxFilterData, instanceDihedralTransformation, tribeManager, behaviourBuilder, mainHitBoxFilterInstanceDatum);
 
             _gadgetTriggers.Add(newHitBoxFilter);
             result[i++] = newHitBoxFilter;
@@ -169,8 +165,7 @@ public readonly ref struct HitBoxGadgetBuilder
     private LemmingHitBoxFilter BuildHitBoxFilter(
         ref nint dataHandleRef,
         ReadOnlySpan<HitBoxFilterData> alternateHitBoxFilterData,
-        Orientation instanceOrientation,
-        FacingDirection instanceFacingDirection,
+        DihedralTransformation instanceDihedralTransformation,
         TribeManager tribeManager,
         GadgetBehaviourBuilder behaviourBuilder,
         HitBoxFilterData mainHitBoxFilterInstanceDatum)
@@ -186,7 +181,7 @@ public readonly ref struct HitBoxGadgetBuilder
         ReadOnlySpan<GadgetBehaviourData> alternateLemmingPresentBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingPresentBehaviours ?? [];
         ReadOnlySpan<GadgetBehaviourData> alternateLemmingExitBehaviours = correspondingAlternateHitBoxFilterInstanceDatum?.OnLemmingExitBehaviours ?? [];
 
-        var lemmingCriteria = BuildLemmingCriteria(tribeManager, mainHitBoxFilterInstanceDatum.HitBoxCriteria, instanceOrientation, instanceFacingDirection);
+        var lemmingCriteria = BuildLemmingCriteria(tribeManager, mainHitBoxFilterInstanceDatum.HitBoxCriteria, instanceDihedralTransformation);
         var onLemmingHitBehaviours = behaviourBuilder.BuildBehaviours(ref dataHandleRef, mainHitBoxFilterInstanceDatum.OnLemmingHitBehaviours, alternateLemmingHitBehaviours);
         var onLemmingEnterBehaviours = behaviourBuilder.BuildBehaviours(ref dataHandleRef, mainHitBoxFilterInstanceDatum.OnLemmingEnterBehaviours, alternateLemmingEnterBehaviours);
         var onLemmingPresentBehaviours = behaviourBuilder.BuildBehaviours(ref dataHandleRef, mainHitBoxFilterInstanceDatum.OnLemmingPresentBehaviours, alternateLemmingPresentBehaviours);
@@ -228,16 +223,15 @@ public readonly ref struct HitBoxGadgetBuilder
 
     private ResizeType GetResizeType(HitBoxGadgetArchetypeSpecificationData gadgetArchetypeData)
     {
-        return new DihedralTransformation(_hitBoxGadgetInstanceData.Orientation, _hitBoxGadgetInstanceData.FacingDirection).Transform(gadgetArchetypeData.ResizeType);
+        return _hitBoxGadgetInstanceData.DihedralTransformation.Transform(gadgetArchetypeData.ResizeType);
     }
 
     private static LemmingCriterion[] BuildLemmingCriteria(
         TribeManager tribeManager,
         HitBoxCriteriaData[] hitBoxCriteria,
-        Orientation instanceOrientation,
-        FacingDirection instanceFacingDirection)
+        DihedralTransformation instanceDihedralTransformation)
     {
-        var lemmingCriteriaBuilder = new LemmingCriteriaBuilder(tribeManager, instanceOrientation, instanceFacingDirection);
+        var lemmingCriteriaBuilder = new LemmingCriteriaBuilder(tribeManager, instanceDihedralTransformation);
         return lemmingCriteriaBuilder.BuildLemmingCriteria(hitBoxCriteria);
     }
 }

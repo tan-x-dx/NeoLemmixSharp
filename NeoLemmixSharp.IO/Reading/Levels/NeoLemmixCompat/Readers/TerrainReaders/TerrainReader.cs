@@ -150,8 +150,7 @@ internal sealed class TerrainReader : NeoLemmixDataReader
             Position = new Point(_currentTerrainData.X, _currentTerrainData.Y),
 
             NoOverwrite = _currentTerrainData.NoOverwrite,
-            Orientation = dht.Orientation,
-            FacingDirection = dht.FacingDirection,
+            DihedralTransformation = dht,
             Erase = _currentTerrainData.Erase,
 
             Tint = Color.White,

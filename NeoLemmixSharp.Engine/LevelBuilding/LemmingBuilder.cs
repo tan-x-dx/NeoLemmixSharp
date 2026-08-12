@@ -37,7 +37,7 @@ public sealed class LemmingBuilder
 
             lemming.CurrentAction = LemmingAction.GetActionOrDefault(prototype.InitialLemmingActionType);
             lemming.AnchorPosition = prototype.Position;
-            lemming.SetRawData(prototype.Orientation, prototype.FacingDirection, prototype.TribeId, prototype.State);
+            lemming.SetRawData(prototype.DihedralTransformation, prototype.TribeId, prototype.State);
 
             _levelLemmings.At(i++) = lemming;
         }

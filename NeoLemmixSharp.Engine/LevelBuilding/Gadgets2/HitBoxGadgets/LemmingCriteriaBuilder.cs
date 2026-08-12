@@ -15,8 +15,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;
 public ref struct LemmingCriteriaBuilder
 {
     private readonly TribeManager _tribeManager;
-    private readonly Orientation _instanceOrientation;
-    private readonly FacingDirection _instanceFacingDirection;
+    private readonly DihedralTransformation _instanceDihedralTransformation;
 
     private OrientationSet? _orientationSet = null;
     private int _facingDirectionIds = 0;
@@ -28,11 +27,10 @@ public ref struct LemmingCriteriaBuilder
     private bool _hasRequiredAbilities = false;
     private bool _hasDisallowedAbilities = false;
 
-    public LemmingCriteriaBuilder(TribeManager tribeManager, Orientation instanceOrientation, FacingDirection facingDirection)
+    public LemmingCriteriaBuilder(TribeManager tribeManager, DihedralTransformation instanceDihedralTransformation)
     {
         _tribeManager = tribeManager;
-        _instanceOrientation = instanceOrientation;
-        _instanceFacingDirection = facingDirection;
+        _instanceDihedralTransformation = instanceDihedralTransformation;
     }
 
     public LemmingCriterion[] BuildLemmingCriteria(ReadOnlySpan<HitBoxCriteriaData> hitBoxCriteriaData)
@@ -123,13 +121,13 @@ public ref struct LemmingCriteriaBuilder
             _numberOfCriteria++;
         }
 
-        var orientation = new Orientation(itemId + _instanceOrientation.RotNum);
+        var orientation = new Orientation(itemId + _instanceDihedralTransformation.Orientation.RotNum);
         _orientationSet.Add(orientation);
     }
 
     private void AddFacingDirectionToCriteria(int itemId)
     {
-        var newFacingDirectionId = (itemId ^ _instanceFacingDirection.Id) & 1;
+        var newFacingDirectionId = (itemId ^ _instanceDihedralTransformation.FacingDirection.Id) & 1;
 
         if (_facingDirectionIds == 0)
         {

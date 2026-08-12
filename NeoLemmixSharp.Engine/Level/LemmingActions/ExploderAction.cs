@@ -36,7 +36,7 @@ public sealed class ExploderAction : LemmingAction, IDestructionMask
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 
     [Pure]
-    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
     {
         // Bombers do not care about arrows, only if the pixel can be destroyed at all!
         // Since other checks will have already taken place, this code is only ever

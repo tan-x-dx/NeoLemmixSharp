@@ -151,16 +151,16 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 
     [Pure]
-    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
     {
         var pixelTypeInt = (uint)pixelType;
         var oppositeOrientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                            orientation.GetOpposite().RotNum;
+                                            dht.Orientation.GetOpposite().RotNum;
         if (((pixelTypeInt >>> oppositeOrientationArrowShift) & 1U) != 0U)
             return false;
 
         var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                                (1 + orientation.RotNum + (facingDirection.Id << 1));
+                                                (1 + dht.Orientation.RotNum + (dht.FacingDirection.Id << 1));
         return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
     }
 }

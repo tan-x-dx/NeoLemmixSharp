@@ -23,12 +23,11 @@ public sealed class TerrainEraseMask
     }
 
     public void ApplyEraseMask(
-        Orientation orientation,
-        FacingDirection facingDirection,
+        DihedralTransformation dht,
         Point position,
         int frame)
     {
-        var transformationData = new DihedralTransformation.TransformationData(orientation, facingDirection, Dimensions.Size);
+        var transformationData = dht.GetTransformationData(Dimensions.Size);
 
         var offset = position - transformationData.Transform(Dimensions.TopLeft);
         var terrainManager = LevelScreen.TerrainManager;
@@ -39,7 +38,7 @@ public sealed class TerrainEraseMask
             var pixel = maskPositions[i];
             pixel = transformationData.Transform(pixel);
 
-            terrainManager.ErasePixel(orientation, _destructionMask, facingDirection, LevelScreen.NormalisePosition(pixel + offset));
+            terrainManager.ErasePixel(dht, _destructionMask, LevelScreen.NormalisePosition(pixel + offset));
         }
     }
 

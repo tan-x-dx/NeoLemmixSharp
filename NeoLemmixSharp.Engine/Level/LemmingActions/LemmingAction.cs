@@ -154,7 +154,7 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
 
     public RectangularRegion GetLemmingBounds(Lemming lemming)
     {
-        var dht = lemming.GetDihedralTransformation();
+        var dht = lemming.DihedralTransformation;
         var actionBounds = LemmingActionBounds.GetBounds(ActionType);
 
         actionBounds = dht.Transform(actionBounds);

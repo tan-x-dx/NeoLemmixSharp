@@ -19,8 +19,7 @@ public abstract class GadgetBase : IEquatable<GadgetBase>
     public required GadgetName GadgetName { get; init; }
     public required GadgetBounds CurrentGadgetBounds { get; init; }
 
-    public required Orientation Orientation { get; init; }
-    public required FacingDirection FacingDirection { get; init; }
+    public required DihedralTransformation DihedralTransformation { get; init; }
     public required bool IsFastForward { get; init; }
 
     public Point Position => CurrentGadgetBounds.Position;

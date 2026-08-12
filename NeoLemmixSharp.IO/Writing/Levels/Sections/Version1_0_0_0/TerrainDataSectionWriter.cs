@@ -40,7 +40,7 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainDatum.PieceIdentifier));
 
         writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(terrainDatum.Position));
-        writer.Write8BitUnsignedInteger((byte)DihedralTransformation.Encode(terrainDatum.Orientation, terrainDatum.FacingDirection));
+        writer.Write8BitUnsignedInteger(terrainDatum.DihedralTransformation.EncodeToByte());
 
         WriteTerrainDataMisc(writer, terrainDatum);
     }

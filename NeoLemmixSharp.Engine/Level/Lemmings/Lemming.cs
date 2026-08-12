@@ -47,6 +47,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public LemmingAction CountDownAction => LemmingAction.GetActionOrDefault(_data.CountDownActionType);
 
+    public DihedralTransformation DihedralTransformation => _data.DihedralTransformation;
+
     public Orientation Orientation
     {
         get => _data.Orientation;
@@ -66,8 +68,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
             Renderer.UpdateLemmingState(true);
         }
     }
-
-    public DihedralTransformation GetDihedralTransformation() => _data.GetDihedralTransformation();
 
     RectangularRegion IRectangularBounds.CurrentBounds => _data.CurrentBounds;
     public ref RectangularRegion CurrentBounds => ref _data.CurrentBounds;
@@ -721,10 +721,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         sourceSpan.CopyTo(destinationSpan);
     }
 
-    public void SetRawData(Orientation orientation, FacingDirection facingDirection, int tribeId, uint rawStateData)
+    public void SetRawData(DihedralTransformation dihedralTransformation, int tribeId, uint rawStateData)
     {
-        _data.Orientation = orientation;
-        _data.FacingDirection = facingDirection;
+        _data.DihedralTransformation = dihedralTransformation;
         _data.TribeId = tribeId;
         _data.State = rawStateData;
 

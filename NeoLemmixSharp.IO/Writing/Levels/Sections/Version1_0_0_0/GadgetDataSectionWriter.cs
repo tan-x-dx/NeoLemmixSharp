@@ -45,7 +45,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.OverrideName));
 
         writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(gadgetData.Position));
-        writer.Write8BitUnsignedInteger((byte)DihedralTransformation.Encode(gadgetData.Orientation, gadgetData.FacingDirection));
+        writer.Write8BitUnsignedInteger(gadgetData.DihedralTransformation.EncodeToByte());
 
         writer.WriteBool(gadgetData.IsFastForward);
 

@@ -44,8 +44,7 @@ internal sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
             Position = position,
             State = state,
 
-            Orientation = dht.Orientation,
-            FacingDirection = dht.FacingDirection,
+            DihedralTransformation = dht,
 
             TribeId = tribeId,
             InitialLemmingActionType = lemmingActionType

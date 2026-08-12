@@ -54,8 +54,7 @@ public readonly ref struct HatchGadgetBuilder
             GadgetName = gadgetName,
             CurrentGadgetBounds = gadgetBounds,
 
-            Orientation = _hatchGadgetInstanceData.Orientation,
-            FacingDirection = _hatchGadgetInstanceData.FacingDirection,
+            DihedralTransformation = _hatchGadgetInstanceData.DihedralTransformation,
             IsFastForward = false,
         };
 
@@ -86,8 +85,7 @@ public readonly ref struct HatchGadgetBuilder
                 gadgetStateInstanceData,
                 gadgetBounds,
                 tribeManager,
-                _hatchGadgetInstanceData.Orientation,
-                _hatchGadgetInstanceData.FacingDirection);
+                _hatchGadgetInstanceData.DihedralTransformation);
         }
 
         return result;
@@ -99,8 +97,7 @@ public readonly ref struct HatchGadgetBuilder
         HatchGadgetStateInstanceData gadgetStateInstanceData,
         GadgetBounds gadgetBounds,
         TribeManager tribeManager,
-        Orientation orientation,
-        FacingDirection facingDirection)
+        DihedralTransformation dht)
     {
         var stateName = GadgetBuildingHelpers.GetGadgetStateName(gadgetStateArchetypeData, gadgetStateInstanceData);
 
@@ -128,8 +125,7 @@ public readonly ref struct HatchGadgetBuilder
         var result = new HatchSpawnData(
             ref dataHandleRef,
             _hatchGadgetTypeInstanceData.NumberOfLemmingsToRelease,
-            _hatchGadgetInstanceData.Orientation,
-            _hatchGadgetInstanceData.FacingDirection,
+            _hatchGadgetInstanceData.DihedralTransformation,
             _hatchGadgetTypeInstanceData.TribeId,
             _hatchGadgetTypeInstanceData.RawStateData,
             _hatchGadgetTypeInstanceData.HatchGroupId);
@@ -142,7 +138,7 @@ public readonly ref struct HatchGadgetBuilder
         var spawnPointOffset = _hatchGadgetSpecificationData.SpawnOffset;
         var gadgetSize = _hatchGadgetArchetypeData.BaseSpriteSize;
 
-        var dht = new DihedralTransformation(_hatchGadgetInstanceData.Orientation, _hatchGadgetInstanceData.FacingDirection);
+        var dht = _hatchGadgetInstanceData.DihedralTransformation;
         return dht.Transform(spawnPointOffset, gadgetSize);
     }
 }
