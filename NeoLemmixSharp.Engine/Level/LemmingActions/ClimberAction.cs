@@ -30,7 +30,7 @@ public sealed class ClimberAction : LemmingAction
         var physicsFrame = lemming.PhysicsFrame;
 
         if (physicsFrame <= 3)
-            return InitialFrameChecks(lemming, gadgetsNearLemming, dx, orientation, lemmingPosition, physicsFrame);
+            return InitialFrameChecks(lemming, gadgetsNearLemming, dx, orientation, ref lemmingPosition, physicsFrame);
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
         lemming.IsStartingAction = false;
@@ -66,7 +66,7 @@ public sealed class ClimberAction : LemmingAction
         GadgetEnumerable gadgetsNearLemming,
         int dx,
         Orientation orientation,
-        Point lemmingPosition,
+        ref Point lemmingPosition,
         int physicsFrame)
     {
         var foundClip = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, 6 + physicsFrame)) ||
