@@ -382,7 +382,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
 
     [SkipLocalsInit]
-    public unsafe void Tick()
+    public void Tick()
     {
         _data.PreviousActionType = _data.CurrentActionType;
         // No transition to do at the end of lemming movement
@@ -392,31 +392,19 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         HandleCountDownTimer();
         HandleFastForwardTimer();
 
-        Point* gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
-        Point* p = gadgetCheckPositions;
-
-        // Use first four entries of span to hold level positions.
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
-        // That rectangle is defined as being the minimum bounding box of four level positions:
-        // the anchor and foot positions of the previous frame, and a large box around the current position.
+        // That rectangle is defined as being the region enclosed by a box centred around the current position.
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
-        var positionTemp = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
-        *p = positionTemp;
-        p++;
-        positionTemp = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
-        *p = positionTemp;
-        p++;
-        positionTemp = _data.PreviousAnchorPosition;
-        *p = positionTemp;
-        p++;
-        positionTemp = PreviousAction.GetFootPosition(this, positionTemp);
-        *p = positionTemp;
+        var p1 = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
+        var p2 = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
 
-        var checkPositionsBounds = new RectangularRegion(Helpers.CreateReadOnlySpan<Point>(gadgetCheckPositions, 4));
+        var checkPositionsBounds = new RectangularRegion(p1, p2);
 
         LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetsNearLemming);
 
-        EvaluateLemmingLogic(in gadgetsNearLemming, Helpers.CreateSpan<Point>(gadgetCheckPositions, LemmingMovementHelper.MaxIntermediateCheckPositions));
+        Span<Point> gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
+
+        EvaluateLemmingLogic(in gadgetsNearLemming, gadgetCheckPositions);
     }
 
     private void EvaluateLemmingLogic(
@@ -434,7 +422,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
 
     [SkipLocalsInit]
-    public unsafe void Simulate(bool checkGadgets)
+    public void Simulate(bool checkGadgets)
     {
         if (!IsSimulation)
             throw new InvalidOperationException("Use simulation lemming for simulations!");
@@ -443,35 +431,22 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         HandleCountDownTimer();
         HandleFastForwardTimer();
 
-        Point* gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
-        Point* p = gadgetCheckPositions;
-
-        // Use first four entries of span to hold level positions.
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
-        // That rectangle is defined as being the minimum bounding box of four level positions:
-        // the anchor and foot positions of the previous frame, and a large box around the current position.
+        // That rectangle is defined as being the region enclosed by a box centred around the current position.
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
-        var positionTemp = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
-        *p = positionTemp;
-        p++;
-        positionTemp = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
-        *p = positionTemp;
-        p++;
-        positionTemp = _data.PreviousAnchorPosition;
-        *p = positionTemp;
-        p++;
-        positionTemp = PreviousAction.GetFootPosition(this, positionTemp);
-        *p = positionTemp;
+        var p1 = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
+        var p2 = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
 
-        var checkPositionsBounds = new RectangularRegion(Helpers.CreateReadOnlySpan<Point>(gadgetCheckPositions, 4));
+        var checkPositionsBounds = new RectangularRegion(p1, p2);
 
         LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetsNearLemming);
 
         var handleGadgets = HandleLemmingAction(in gadgetsNearLemming) && CheckLevelBoundaries() && checkGadgets;
         if (handleGadgets)
         {
-            // Reuse the above span. LemmingMovementHelper will overwrite existing values
-            CheckTriggerAreas(in gadgetsNearLemming, Helpers.CreateSpan<Point>(gadgetCheckPositions, LemmingMovementHelper.MaxIntermediateCheckPositions), false);
+            Span<Point> gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
+
+            CheckTriggerAreas(in gadgetsNearLemming, gadgetCheckPositions, false);
         }
     }
 
