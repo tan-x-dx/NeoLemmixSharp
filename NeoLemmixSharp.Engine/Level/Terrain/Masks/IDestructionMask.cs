@@ -6,5 +6,5 @@ namespace NeoLemmixSharp.Engine.Level.Terrain.Masks;
 public interface IDestructionMask
 {
     [Pure]
-    bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection);
+    bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType);
 }

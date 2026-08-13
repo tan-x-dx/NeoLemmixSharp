@@ -5,12 +5,12 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
 public sealed class ClearAllSkillsLemmingBehaviour : LemmingBehaviour
 {
-    public ClearAllSkillsLemmingBehaviour() : base(LemmingBehaviourType.ClearLemmingStates)
+    public ClearAllSkillsLemmingBehaviour() : base(LemmingBehaviourType.ClearAllLemmingAbilities)
     {
     }
 
     protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        lemming.State.ClearAllPermanentSkills();
+        lemming.ClearAllPermanentSkills();
     }
 }

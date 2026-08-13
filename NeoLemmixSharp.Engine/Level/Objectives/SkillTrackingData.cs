@@ -61,7 +61,7 @@ public sealed class SkillTrackingData
     {
         return EffectiveQuantity > 0 &&
                TribesMatch(lemming) &&
-               lemming.State.CanHaveSkillsAssigned &&
+               lemming.CanHaveSkillsAssigned &&
                LemmingSkill.CanAssignToLemming(lemming);
     }
 
@@ -71,7 +71,7 @@ public sealed class SkillTrackingData
         if (thisTribe is null)
             return true;
 
-        var lemmingTribeId = lemming.State.TribeId;
+        var lemmingTribeId = lemming.TribeId;
         var lemmingTribe = LevelScreen.TribeManager.GetTribe(lemmingTribeId);
 
         return thisTribe.Equals(lemmingTribe);

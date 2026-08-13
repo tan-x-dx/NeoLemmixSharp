@@ -145,7 +145,7 @@ public static class GadgetBuildingHelpers
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetData)
     {
-        var baseSize = new DihedralTransformation(gadgetData.Orientation, gadgetData.FacingDirection).Transform(gadgetArchetypeData.BaseSpriteSize);
+        var baseSize = gadgetData.DihedralTransformation.Transform(gadgetArchetypeData.BaseSpriteSize);
 
         var result = PointerDataHelper.CreateItem<GadgetBounds>(ref dataHandleRef);
         result.Position = gadgetData.Position;
@@ -169,7 +169,7 @@ public static class GadgetBuildingHelpers
             resizeType.CanResizeHorizontally() ? hitBoxGadgetInstanceData.GetProperty(GadgetPropertyType.Width) : baseSize.W,
             resizeType.CanResizeVertically() ? hitBoxGadgetInstanceData.GetProperty(GadgetPropertyType.Height) : baseSize.H);
 
-        size = new DihedralTransformation(hitBoxGadgetData.Orientation, hitBoxGadgetData.FacingDirection).Transform(size);
+        size = hitBoxGadgetData.DihedralTransformation.Transform(size);
 
         var result = PointerDataHelper.CreateItem<GadgetBounds>(ref dataHandleRef);
         result.Position = hitBoxGadgetData.Position;

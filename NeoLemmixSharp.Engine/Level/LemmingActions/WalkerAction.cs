@@ -16,7 +16,7 @@ public sealed class WalkerAction : LemmingAction
             LemmingActionConstants.WalkerActionSpriteFileName,
             LemmingActionConstants.WalkerAnimationFrames,
             LemmingActionConstants.MaxWalkerPhysicsFrames,
-            LemmingActionConstants.WalkerMovementPriority)
+            CursorSelectionPriority.WalkerMovementPriority)
     {
     }
 
@@ -30,7 +30,7 @@ public sealed class WalkerAction : LemmingAction
         var dy = FindGroundPixel(lemming, lemmingPosition, in gadgetsNearLemming);
 
         if (dy < 0 &&
-            lemming.State.IsSlider &&
+            lemming.IsSlider &&
             DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
@@ -40,7 +40,7 @@ public sealed class WalkerAction : LemmingAction
 
         if (dy > EngineConstants.MaxStepUp)
         {
-            if (lemming.State.IsClimber)
+            if (lemming.IsClimber)
             {
                 ClimberAction.Instance.TransitionLemmingToAction(lemming, false);
             }

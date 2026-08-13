@@ -147,10 +147,7 @@ public readonly struct TerrainPainter
         var sourceSize = sourcePixelColorData.Size;
         var targetSize = targetPixelColorData.Size;
 
-        var transformationData = new DihedralTransformation.TransformationData(
-            terrainData.Orientation,
-            terrainData.FacingDirection,
-            sourceSize);
+        var transformationData = terrainData.DihedralTransformation.GetTransformationData(sourceSize);
 
         var hueMultiplyMatrix = new HueMultiplyMatrix(terrainData.HueAngle);
 

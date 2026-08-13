@@ -18,7 +18,7 @@ public sealed class FallerAction : LemmingAction
             LemmingActionConstants.FallerActionSpriteFileName,
             LemmingActionConstants.FallerAnimationFrames,
             LemmingActionConstants.MaxFallerPhysicsFrames,
-            LemmingActionConstants.NonWalkerMovementPriority)
+            CursorSelectionPriority.NonWalkerMovementPriority)
     {
     }
 
@@ -81,7 +81,7 @@ public sealed class FallerAction : LemmingAction
     [Pure]
     private static bool IsFallFatal(in GadgetEnumerable gadgetEnumerable, Lemming lemming)
     {
-        if (lemming.State.HasSpecialFallingBehaviour)
+        if (lemming.HasSpecialFallingBehaviour)
             return false;
 
         var anchorPixel = lemming.AnchorPosition;
@@ -115,7 +115,7 @@ public sealed class FallerAction : LemmingAction
         Lemming lemming,
         int currentFallDistance)
     {
-        if (lemming.State.IsFloater &&
+        if (lemming.IsFloater &&
             lemming.TrueDistanceFallen > 16 &&
             currentFallDistance == 0)
         {
@@ -123,7 +123,7 @@ public sealed class FallerAction : LemmingAction
             return true;
         }
 
-        if (!lemming.State.IsGlider)
+        if (!lemming.IsGlider)
             return false;
 
         if (lemming.TrueDistanceFallen <= 8 &&

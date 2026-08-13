@@ -12,7 +12,7 @@ public static class SinCosMethods
     /// This method maps <see langword="int" />s to <see langword="int" />s, and avoids any floating point calculations.
     /// </summary>
     /// <param name="theta">The angle as a multiple of pi/2 radians.</param>
-    /// <returns>The Sine and Cosine of that angle, as an <see langword="int" />.</returns>
+    /// <returns>The Sine and Cosine of that angle, as a pair of <see langword="int" />s.</returns>
     [Pure]
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -32,8 +32,9 @@ public static class SinCosMethods
     }
 }
 
-public readonly struct SinCos(int sin, int cos)
+[StructLayout(LayoutKind.Explicit)]
+public readonly struct SinCos
 {
-    public readonly int Sin = sin;
-    public readonly int Cos = cos;
+    [FieldOffset(0 * sizeof(int))] public readonly int Sin;
+    [FieldOffset(1 * sizeof(int))] public readonly int Cos;
 }

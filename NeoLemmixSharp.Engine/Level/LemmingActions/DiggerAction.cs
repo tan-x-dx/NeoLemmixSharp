@@ -19,14 +19,13 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
             LemmingActionConstants.DiggerActionSpriteFileName,
             LemmingActionConstants.DiggerAnimationFrames,
             LemmingActionConstants.MaxDiggerPhysicsFrames,
-            LemmingActionConstants.NonPermanentSkillPriority)
+            CursorSelectionPriority.NonPermanentSkillPriority)
     {
     }
 
     public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
+        var dht = lemming.DihedralTransformation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
 
         if (lemming.IsStartingAction)
@@ -35,9 +34,8 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
             DigOneRow(
                 in gadgetsNearLemming,
                 lemming,
-                orientation,
-                facingDirection,
-                orientation.MoveUp(lemmingPosition, 1));
+                dht,
+                dht.Orientation.MoveUp(lemmingPosition, 1));
             // The first digger cycle is one frame longer!
             // So we need to artificially cancel the very first frame advancement.
             lemming.PhysicsFrame--;
@@ -50,11 +48,10 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         var continueDigging = DigOneRow(
             in gadgetsNearLemming,
             lemming,
-            orientation,
-            facingDirection,
+            dht,
             lemmingPosition);
 
-        lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
+        lemmingPosition = dht.Orientation.MoveDown(lemmingPosition, 1);
 
         if (PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, lemmingPosition))
         {
@@ -79,8 +76,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
     private bool DigOneRow(
         in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
-        Orientation orientation,
-        FacingDirection facingDirection,
+        DihedralTransformation dht,
         Point lemmingPosition)
     {
         var terrainManager = LevelScreen.TerrainManager;
@@ -88,29 +84,29 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         // The central pixel of the removed row lies at the lemming's position
 
         // Two most extreme pixels
-        var checkLevelPosition = orientation.MoveLeft(lemmingPosition, 4);
+        var checkLevelPosition = dht.Orientation.MoveLeft(lemmingPosition, 4);
         var pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
-            terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
+            terrainManager.ErasePixel(dht, this, checkLevelPosition);
         }
 
-        checkLevelPosition = orientation.MoveRight(lemmingPosition, 4);
+        checkLevelPosition = dht.Orientation.MoveRight(lemmingPosition, 4);
         pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
-            terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
+            terrainManager.ErasePixel(dht, this, checkLevelPosition);
         }
 
         var result = false;
         // Everything in between
         for (var i = -3; i < 4; i++)
         {
-            checkLevelPosition = orientation.MoveRight(lemmingPosition, i);
+            checkLevelPosition = dht.Orientation.MoveRight(lemmingPosition, i);
             pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
             if (pixelIsSolid)
             {
-                terrainManager.ErasePixel(orientation, this, facingDirection, checkLevelPosition);
+                terrainManager.ErasePixel(dht, this, checkLevelPosition);
                 result = true;
             }
         }
@@ -123,11 +119,11 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 
     [Pure]
-    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
     {
         var pixelTypeInt = (uint)pixelType;
         var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                 orientation.GetOpposite().RotNum;
+                                 dht.Orientation.GetOpposite().RotNum;
 
         return ((pixelTypeInt >>> oppositeArrowShift) & 1U) == 0U;
     }

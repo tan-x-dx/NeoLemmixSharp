@@ -41,7 +41,7 @@ public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
 
         var gadget = (HitBoxGadget)LevelScreen.GadgetManager.GetGadget(_gadgetIdentifier.GadgetId);
 
-        var dht = new DihedralTransformation(gadget.Orientation, gadget.FacingDirection);
+        var dht = gadget.DihedralTransformation;
 
         var p = new Point(0, _delta);
 

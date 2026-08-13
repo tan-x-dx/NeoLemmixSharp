@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class AcidLemmingSkill : LemmingSkill, ILemmingState
+public sealed class AcidLemmingSkill : LemmingSkill, ILemmingAbilityChanger
 {
     public static readonly AcidLemmingSkill Instance = new();
 
@@ -14,32 +14,32 @@ public sealed class AcidLemmingSkill : LemmingSkill, ILemmingState
     {
     }
 
-    public StateType LemmingStateType => StateType.AcidLemmingState;
+    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.AcidLemmingAbility;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        lemming.State.IsAcidLemming = true;
+        lemming.IsAcidLemming = true;
     }
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(Lemming lemming, bool status)
     {
-        lemmingState.IsAcidLemming = status;
+        lemming.IsAcidLemming = status;
     }
 
-    public void ToggleLemmingState(LemmingState lemmingState)
+    public void ToggleLemmingAbility(Lemming lemming)
     {
-        lemmingState.IsAcidLemming = !lemmingState.IsAcidLemming;
+        lemming.IsAcidLemming = !lemming.IsAcidLemming;
     }
 
-    public bool IsApplied(LemmingState lemmingState)
+    public bool LemmingHasAbility(Lemming lemming)
     {
-        return lemmingState.IsAcidLemming;
+        return lemming.IsAcidLemming;
     }
 }

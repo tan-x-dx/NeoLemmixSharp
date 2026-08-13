@@ -34,7 +34,7 @@ internal sealed class PrePlacedLemmingDataSectionWriter : LevelDataSectionWriter
         writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(lemmingDatum.Position));
         writer.Write32BitUnsignedInteger(lemmingDatum.State);
 
-        writer.Write8BitUnsignedInteger((byte)DihedralTransformation.Encode(lemmingDatum.Orientation, lemmingDatum.FacingDirection));
+        writer.Write8BitUnsignedInteger(lemmingDatum.DihedralTransformation.EncodeToByte());
         writer.Write8BitUnsignedInteger((byte)lemmingDatum.TribeId);
         writer.Write8BitUnsignedInteger((byte)lemmingDatum.InitialLemmingActionType);
     }

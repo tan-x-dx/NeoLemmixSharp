@@ -137,7 +137,7 @@ public sealed class LevelCursor
             return false;
 
         // Select only unassigned
-        return !_selectOnlyUnassigned || !lemming.State.HasPermanentSkill;
+        return !_selectOnlyUnassigned || !lemming.HasPermanentSkill;
     }
 
     private bool NewCandidateIsHigherPriority(Lemming? previousCandidate, Lemming newCandidate)
@@ -158,8 +158,8 @@ public sealed class LevelCursor
     [Pure]
     private static bool NewCandidateHasMoreRelevantState(Lemming previousCandidate, Lemming newCandidate)
     {
-        return (previousCandidate.State.IsNeutral && !newCandidate.State.IsNeutral) ||
-               (previousCandidate.State.IsZombie && !newCandidate.State.IsZombie);
+        return (previousCandidate.IsNeutral && !newCandidate.IsNeutral) ||
+               (previousCandidate.IsZombie && !newCandidate.IsZombie);
     }
 
     [Pure]
@@ -171,10 +171,10 @@ public sealed class LevelCursor
         if (skillTrackingData is null)
             return false;
 
-        var previousCandidateTribe = LevelScreen.TribeManager.GetTribe(previousCandidate.State.TribeId);
+        var previousCandidateTribe = LevelScreen.TribeManager.GetTribe(previousCandidate.TribeId);
         var previousCandidateMatchesTribe = previousCandidateTribe.Equals(skillTrackingData.Tribe);
 
-        var newCandidateTribe = LevelScreen.TribeManager.GetTribe(newCandidate.State.TribeId);
+        var newCandidateTribe = LevelScreen.TribeManager.GetTribe(newCandidate.TribeId);
         var newCandidateMatchesTribe = newCandidateTribe.Equals(skillTrackingData.Tribe);
 
         return newCandidateMatchesTribe && !previousCandidateMatchesTribe;
@@ -183,8 +183,8 @@ public sealed class LevelCursor
     [Pure]
     private static bool NewCandidateHasHigherActionPriority(Lemming previousCandidate, Lemming newCandidate)
     {
-        return newCandidate.CurrentAction.CursorSelectionPriorityValue >
-               previousCandidate.CurrentAction.CursorSelectionPriorityValue;
+        return newCandidate.CurrentAction.CursorSelectionPriority >
+               previousCandidate.CurrentAction.CursorSelectionPriority;
     }
 
     private bool NewCandidateIsCloserToCursorCentre(Lemming newCandidate)

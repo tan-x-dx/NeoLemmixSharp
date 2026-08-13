@@ -128,7 +128,7 @@ public sealed class LemmingManager :
 
     private void InitialiseLemming(Lemming lemming)
     {
-        if (!lemming.State.IsActive)
+        if (!lemming.IsActive)
             return;
 
         lemming.Initialise();
@@ -136,7 +136,7 @@ public sealed class LemmingManager :
         _lemmingSpacialHashGrid.AddItem(lemming);
         UpdateLemmingFastForwardState(lemming);
 
-        if (lemming.State.IsZombie)
+        if (lemming.IsZombie)
         {
             RegisterZombie(lemming);
         }
@@ -155,7 +155,7 @@ public sealed class LemmingManager :
 
             foreach (var lemming in _lemmings)
             {
-                if (lemming.State.IsActive)
+                if (lemming.IsActive)
                 {
                     lemming.Tick();
                     UpdateLemmingPosition(lemming);
@@ -166,7 +166,7 @@ public sealed class LemmingManager :
         {
             foreach (var lemming in _fastForwardLemmings)
             {
-                if (lemming.State.IsActive)
+                if (lemming.IsActive)
                 {
                     lemming.Tick();
                     UpdateLemmingPosition(lemming);
@@ -203,7 +203,7 @@ public sealed class LemmingManager :
 
         foreach (var lemming in _lemmingsToZombify)
         {
-            lemming.State.IsZombie = true;
+            lemming.IsZombie = true;
         }
 
         _lemmingsToZombify.Clear();
@@ -211,13 +211,13 @@ public sealed class LemmingManager :
 
     public void UpdateLemmingPosition(Lemming lemming)
     {
-        if (!lemming.State.IsActive)
+        if (!lemming.IsActive)
             return;
 
         _lemmingSpacialHashGrid.UpdateItemPosition(lemming);
         lemming.OnUpdatePosition();
 
-        if (lemming.State.IsZombie)
+        if (lemming.IsZombie)
             _zombieSpacialHashGrid.UpdateItemPosition(lemming);
     }
 
@@ -235,7 +235,7 @@ public sealed class LemmingManager :
 
     public void UpdateZombieState(Lemming lemming)
     {
-        if (lemming.State.IsZombie)
+        if (lemming.IsZombie)
         {
             RegisterZombie(lemming);
         }
@@ -247,10 +247,10 @@ public sealed class LemmingManager :
 
     public void RemoveLemming(Lemming lemming, LemmingRemovalReason removalReason)
     {
-        lemming.State.IsActive = false;
+        lemming.IsActive = false;
         _lemmingSpacialHashGrid.RemoveItem(lemming);
 
-        if (lemming.State.IsZombie)
+        if (lemming.IsZombie)
         {
             DeregisterZombie(lemming);
         }
@@ -332,7 +332,7 @@ public sealed class LemmingManager :
 
     public void DoZombieCheck(Lemming lemming)
     {
-        Debug.Assert(!lemming.State.IsZombie);
+        Debug.Assert(!lemming.IsZombie);
 
         var checkRegion = lemming.CurrentBounds;
         _zombieSpacialHashGrid.GetAllItemsNearRegion(checkRegion, out var nearbyZombies);
@@ -342,7 +342,7 @@ public sealed class LemmingManager :
 
         foreach (var zombie in nearbyZombies)
         {
-            Debug.Assert(zombie.State.IsZombie);
+            Debug.Assert(zombie.IsZombie);
 
             var zombieRegion = zombie.CurrentBounds;
 
@@ -446,7 +446,7 @@ public sealed class LemmingManager :
         {
             lemming.OnSnapshotApplied();
 
-            if (!lemming.State.IsActive)
+            if (!lemming.IsActive)
                 continue;
 
             _lemmingSpacialHashGrid.AddItem(lemming); // Just do lemming positions here - zombies are handled elsewhere

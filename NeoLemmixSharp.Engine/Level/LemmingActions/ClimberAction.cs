@@ -16,7 +16,7 @@ public sealed class ClimberAction : LemmingAction
             LemmingActionConstants.ClimberActionSpriteFileName,
             LemmingActionConstants.ClimberAnimationFrames,
             LemmingActionConstants.MaxClimberPhysicsFrames,
-            LemmingActionConstants.PermanentSkillPriority)
+            CursorSelectionPriority.PermanentSkillPriority)
     {
     }
 
@@ -30,7 +30,7 @@ public sealed class ClimberAction : LemmingAction
         var physicsFrame = lemming.PhysicsFrame;
 
         if (physicsFrame <= 3)
-            return InitialFrameChecks(lemming, gadgetsNearLemming, dx, orientation, lemmingPosition, physicsFrame);
+            return InitialFrameChecks(lemming, gadgetsNearLemming, dx, orientation, ref lemmingPosition, physicsFrame);
 
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
         lemming.IsStartingAction = false;
@@ -48,7 +48,7 @@ public sealed class ClimberAction : LemmingAction
 
         lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
 
-        if (lemming.State.IsSlider)
+        if (lemming.IsSlider)
         {
             SliderAction.Instance.TransitionLemmingToAction(lemming, false);
 
@@ -66,7 +66,7 @@ public sealed class ClimberAction : LemmingAction
         GadgetEnumerable gadgetsNearLemming,
         int dx,
         Orientation orientation,
-        Point lemmingPosition,
+        ref Point lemmingPosition,
         int physicsFrame)
     {
         var foundClip = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, 6 + physicsFrame)) ||
@@ -87,7 +87,7 @@ public sealed class ClimberAction : LemmingAction
                 lemmingPosition = orientation.MoveUp(lemmingPosition, 3 - physicsFrame);
             }
 
-            if (lemming.State.IsSlider)
+            if (lemming.IsSlider)
             {
                 lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
                 SliderAction.Instance.TransitionLemmingToAction(lemming, false);

@@ -37,7 +37,7 @@ internal sealed class LemmingReader : NeoLemmixDataReader
         _currentLemmingData = new LemmingInstanceData
         {
             // Pre-placed lemmings are always active
-            State = 1U << LemmingStateConstants.ActiveBitIndex
+            State = 1U << LemmingAbilityConstants.ActiveBitIndex
         };
         FinishedReading = false;
         return false;
@@ -57,7 +57,7 @@ internal sealed class LemmingReader : NeoLemmixDataReader
 
     private void SetFlipHorizontal(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.FacingDirection = FacingDirection.Left;
+        _currentLemmingData!.DihedralTransformation = new DihedralTransformation(Orientation.Down, FacingDirection.Left);
     }
 
     private void SetBlocker(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -67,29 +67,29 @@ internal sealed class LemmingReader : NeoLemmixDataReader
 
     private void SetClimber(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingStateConstants.ClimberBitIndex;
+        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.ClimberBitIndex;
     }
 
     private void SetDisarmer(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingStateConstants.DisarmerBitIndex;
+        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.DisarmerBitIndex;
     }
 
     private void SetFloater(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingStateConstants.FloaterBitIndex;
-        _currentLemmingData!.State &= ~(1U << LemmingStateConstants.GliderBitIndex); // Deliberately knock out the glider
+        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.FloaterBitIndex;
+        _currentLemmingData!.State &= ~(1U << LemmingAbilityConstants.GliderBitIndex); // Deliberately knock out the glider
     }
 
     private void SetGlider(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingStateConstants.GliderBitIndex;
-        _currentLemmingData!.State &= ~(1U << LemmingStateConstants.FloaterBitIndex); // Deliberately knock out the floater
+        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.GliderBitIndex;
+        _currentLemmingData!.State &= ~(1U << LemmingAbilityConstants.FloaterBitIndex); // Deliberately knock out the floater
     }
 
     private void SetNeutral(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingStateConstants.NeutralBitIndex;
+        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.NeutralBitIndex;
     }
 
     private void SetShimmier(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -99,17 +99,17 @@ internal sealed class LemmingReader : NeoLemmixDataReader
 
     private void SetSlider(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingStateConstants.SliderBitIndex;
+        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.SliderBitIndex;
     }
 
     private void SetSwimmer(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingStateConstants.SwimmerBitIndex;
+        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.SwimmerBitIndex;
     }
 
     private void SetZombie(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingStateConstants.ZombieBitIndex;
+        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.ZombieBitIndex;
     }
 
     private void OnEnd(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)

@@ -4,8 +4,8 @@ namespace NeoLemmixSharp.Common.Enums;
 
 public enum LemmingBehaviourType
 {
-    SetLemmingState,
-    ClearLemmingStates,
+    ChangeLemmingAbility,
+    ClearAllLemmingAbilities,
     SetLemmingAction,
     SetLemmingTribe,
     SkillCountChange,

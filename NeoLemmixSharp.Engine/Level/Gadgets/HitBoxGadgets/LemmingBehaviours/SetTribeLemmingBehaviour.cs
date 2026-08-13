@@ -15,6 +15,6 @@ public sealed class SetTribeLemmingBehaviour : LemmingBehaviour
 
     protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        lemming.State.SetTribeAffiliation(_tribeId);
+        lemming.SetTribeAffiliation(_tribeId);
     }
 }

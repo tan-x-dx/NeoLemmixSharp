@@ -19,7 +19,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
             LemmingActionConstants.FencerActionSpriteFileName,
             LemmingActionConstants.FencerAnimationFrames,
             LemmingActionConstants.MaxFencerPhysicsFrames,
-            LemmingActionConstants.NonPermanentSkillPriority)
+            CursorSelectionPriority.NonPermanentSkillPriority)
     {
     }
 
@@ -114,7 +114,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
             needToUndoMoveUp = false;
         }
 
-        if (dy < 0 && lemming.State.IsSlider &&
+        if (dy < 0 && lemming.IsSlider &&
             DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
@@ -306,16 +306,16 @@ procedure DoFencerContinueTests(L: TLemming; var SteelContinue: Boolean; var Mov
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 
     [Pure]
-    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
     {
         var pixelTypeInt = (uint)pixelType;
         var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                    orientation.RotNum;
+                                    dht.Orientation.RotNum;
         if (((pixelTypeInt >>> orientationArrowShift) & 1U) != 0U)
             return false;
 
         var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                                (1 + orientation.RotNum + (facingDirection.Id << 1));
+                                                (1 + dht.Orientation.RotNum + (dht.FacingDirection.Id << 1));
         return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
     }
 }

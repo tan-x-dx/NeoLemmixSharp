@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class WaterLemmingSkill : LemmingSkill, ILemmingState
+public sealed class WaterLemmingSkill : LemmingSkill, ILemmingAbilityChanger
 {
     public static readonly WaterLemmingSkill Instance = new();
 
@@ -14,32 +14,32 @@ public sealed class WaterLemmingSkill : LemmingSkill, ILemmingState
     {
     }
 
-    public StateType LemmingStateType => StateType.WaterState;
+    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.WaterLemmingAbility;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        lemming.State.IsWaterLemming = true;
+        lemming.IsWaterLemming = true;
     }
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(Lemming lemming, bool status)
     {
-        lemmingState.IsWaterLemming = status;
+        lemming.IsWaterLemming = status;
     }
 
-    public void ToggleLemmingState(LemmingState lemmingState)
+    public void ToggleLemmingAbility(Lemming lemming)
     {
-        lemmingState.IsWaterLemming = !lemmingState.IsWaterLemming;
+        lemming.IsWaterLemming = !lemming.IsWaterLemming;
     }
 
-    public bool IsApplied(LemmingState lemmingState)
+    public bool LemmingHasAbility(Lemming lemming)
     {
-        return lemmingState.IsWaterLemming;
+        return lemming.IsWaterLemming;
     }
 }

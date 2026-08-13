@@ -101,8 +101,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     {
         if (positions.Length == 0)
         {
-            TopLeft = default;
-            BottomRight = default;
+            TopLeft = Point.Zero;
+            BottomRight = Point.Zero;
             return;
         }
 

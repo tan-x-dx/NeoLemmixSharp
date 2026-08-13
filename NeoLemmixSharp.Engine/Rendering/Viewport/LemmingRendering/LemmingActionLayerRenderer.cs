@@ -30,13 +30,13 @@ public sealed class LemmingActionLayerRenderer
 
     public void RenderLayer(
         SpriteBatch spriteBatch,
-        LemmingState lemmingState,
+        Lemming lemming,
         Rectangle sourceRectangle,
         Rectangle destinationRectangle,
         float rotationAngle,
         SpriteEffects spriteEffects)
     {
-        var color = GetColorForLayer(lemmingState);
+        var color = GetColorForLayer(lemming);
         sourceRectangle.X += _layerOffsetX;
 
         spriteBatch.Draw(
@@ -50,15 +50,15 @@ public sealed class LemmingActionLayerRenderer
             1.0f);
     }
 
-    private Color GetColorForLayer(LemmingState lemmingState) => _colorChooser switch
+    private Color GetColorForLayer(Lemming lemming) => _colorChooser switch
     {
         TribeSpriteLayerColorType.NoRender => Color.Transparent,
         TribeSpriteLayerColorType.TrueColor => Color.White,
-        TribeSpriteLayerColorType.LemmingHairColor => lemmingState.HairColor,
-        TribeSpriteLayerColorType.LemmingSkinColor => lemmingState.SkinColor,
-        TribeSpriteLayerColorType.LemmingBodyColor => lemmingState.BodyColor,
-        TribeSpriteLayerColorType.LemmingFootColor => lemmingState.FootColor,
-        TribeSpriteLayerColorType.TribePaintColor => lemmingState.PaintColor,
+        TribeSpriteLayerColorType.LemmingHairColor => lemming.LemmingColors.HairColor,
+        TribeSpriteLayerColorType.LemmingSkinColor => lemming.LemmingColors.SkinColor,
+        TribeSpriteLayerColorType.LemmingBodyColor => lemming.LemmingColors.BodyColor,
+        TribeSpriteLayerColorType.LemmingFootColor => lemming.LemmingColors.FootColor,
+        TribeSpriteLayerColorType.TribePaintColor =>  lemming.LemmingColors.PaintColor,
 
         _ => Helpers.ThrowUnknownEnumValueException<TribeSpriteLayerColorType, Color>(_colorChooser)
     };

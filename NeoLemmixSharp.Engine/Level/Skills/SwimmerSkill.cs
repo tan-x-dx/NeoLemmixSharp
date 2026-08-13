@@ -4,7 +4,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class SwimmerSkill : LemmingSkill, ILemmingState
+public sealed class SwimmerSkill : LemmingSkill, ILemmingAbilityChanger
 {
     public static readonly SwimmerSkill Instance = new();
 
@@ -15,16 +15,16 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingState
     {
     }
 
-    public StateType LemmingStateType => StateType.SwimmerState;
+    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.SwimmerAbility;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        lemming.State.IsSwimmer = true;
+        lemming.IsSwimmer = true;
         if (lemming.CurrentActionType == LemmingActionType.DrownerAction)
         {
             SwimmerAction.Instance.TransitionLemmingToAction(lemming, false);
@@ -41,18 +41,18 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingState
         return result;
     }
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(Lemming lemming, bool status)
     {
-        lemmingState.IsSwimmer = status;
+        lemming.IsSwimmer = status;
     }
 
-    public void ToggleLemmingState(LemmingState lemmingState)
+    public void ToggleLemmingAbility(Lemming lemming)
     {
-        lemmingState.IsSwimmer = !lemmingState.IsSwimmer;
+        lemming.IsSwimmer = !lemming.IsSwimmer;
     }
 
-    public bool IsApplied(LemmingState lemmingState)
+    public bool LemmingHasAbility(Lemming lemming)
     {
-        return lemmingState.IsSwimmer;
+        return lemming.IsSwimmer;
     }
 }

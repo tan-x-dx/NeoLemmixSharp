@@ -23,7 +23,7 @@ public readonly struct SkillAssignmentEventData : ILevelEventData
     {
         Tick = tick;
         SkillType = lemmingSkillType;
-        TribeId = lemming.State.TribeId;
+        TribeId = lemming.TribeId;
 
         LemmingId = lemming.Id;
         LemmingPosition = lemming.AnchorPosition;

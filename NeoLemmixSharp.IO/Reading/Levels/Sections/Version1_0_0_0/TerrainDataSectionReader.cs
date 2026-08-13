@@ -60,8 +60,7 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
             Position = position,
 
             NoOverwrite = decipheredTerrainDataMisc.NoOverwrite,
-            Orientation = dht.Orientation,
-            FacingDirection = dht.FacingDirection,
+            DihedralTransformation = dht,
             Erase = decipheredTerrainDataMisc.Erase,
 
             Tint = tint,

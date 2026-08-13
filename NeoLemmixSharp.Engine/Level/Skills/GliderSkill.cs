@@ -3,7 +3,7 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class GliderSkill : LemmingSkill, ILemmingState
+public sealed class GliderSkill : LemmingSkill, ILemmingAbilityChanger
 {
     public static readonly GliderSkill Instance = new();
 
@@ -14,32 +14,32 @@ public sealed class GliderSkill : LemmingSkill, ILemmingState
     {
     }
 
-    public StateType LemmingStateType => StateType.GliderState;
+    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.GliderAbility;
 
     public override bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.State.HasSpecialFallingBehaviour && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasSpecialFallingBehaviour && SkillIsAssignableToCurrentAction(lemming);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        lemming.State.IsGlider = true;
+        lemming.IsGlider = true;
     }
 
     protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
-    public void SetLemmingState(LemmingState lemmingState, bool status)
+    public void SetLemmingAbility(Lemming lemming, bool status)
     {
-        lemmingState.IsGlider = status;
+        lemming.IsGlider = status;
     }
 
-    public void ToggleLemmingState(LemmingState lemmingState)
+    public void ToggleLemmingAbility(Lemming lemming)
     {
-        lemmingState.IsGlider = !lemmingState.IsGlider;
+        lemming.IsGlider = !lemming.IsGlider;
     }
 
-    public bool IsApplied(LemmingState lemmingState)
+    public bool LemmingHasAbility(Lemming lemming)
     {
-        return lemmingState.IsGlider;
+        return lemming.IsGlider;
     }
 }

@@ -17,8 +17,7 @@ public sealed class GadgetInstanceData : IInstanceData
     public Size Size => default;//SpecificationData.;
     public required GadgetRenderMode GadgetRenderMode { get; init; }
 
-    public required Orientation Orientation { get; set; }
-    public required FacingDirection FacingDirection { get; set; }
+    public required DihedralTransformation DihedralTransformation { get; set; }
     public required bool IsFastForward { get; init; }
 
     public required IGadgetInstanceSpecificationData SpecificationData { get; init; }

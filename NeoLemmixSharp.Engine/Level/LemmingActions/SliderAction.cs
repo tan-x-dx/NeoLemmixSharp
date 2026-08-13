@@ -18,7 +18,7 @@ public sealed class SliderAction : LemmingAction
             LemmingActionConstants.SliderActionSpriteFileName,
             LemmingActionConstants.SliderAnimationFrames,
             LemmingActionConstants.MaxSliderPhysicsFrames,
-            LemmingActionConstants.PermanentSkillPriority)
+            CursorSelectionPriority.PermanentSkillPriority)
     {
     }
 
@@ -72,7 +72,7 @@ public sealed class SliderAction : LemmingAction
                  continue;*/
 
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            if (lemming.State.IsSwimmer)
+            if (lemming.IsSwimmer)
             {
                 SwimmerAction.Instance.TransitionLemmingToAction(lemming, true);
                 // ?? CueSoundEffect(SFX_SWIMMING, L.Position); ??

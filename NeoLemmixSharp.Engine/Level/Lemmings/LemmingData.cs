@@ -30,11 +30,10 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     [StructLayout(LayoutKind.Sequential, Size = LemmingDataSize)]
     private struct LemmingDataRaw
     {
-        public Orientation Orientation;
-        public FacingDirection FacingDirection;
+        public DihedralTransformation DihedralTransformation;
 
-        public int TribeId;
         public uint State;
+        public int TribeId;
 
         public RectangularRegion CurrentBounds;
 
@@ -81,31 +80,25 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
 
     private LemmingData(nint pointerHandle)
     {
-        _data = (LemmingDataRaw*)pointerHandle;
+        LemmingDataRaw* p = (LemmingDataRaw*)pointerHandle;
+        _data = p;
 
-        _data->PreviousActionType = LemmingActionType.NoneAction;
-        _data->CurrentActionType = LemmingActionType.NoneAction;
-        _data->NextActionType = LemmingActionType.NoneAction;
-        _data->CountDownActionType = LemmingActionType.NoneAction;
-        _data->DehoistPin = new(-1, -1);
-        _data->LaserHitLevelPosition = new(-1, -1);
-        _data->AnchorPosition = new(-1, -1);
-        _data->PreviousAnchorPosition = new(-1, -1);
+        p->PreviousActionType = LemmingActionType.NoneAction;
+        p->CurrentActionType = LemmingActionType.NoneAction;
+        p->NextActionType = LemmingActionType.NoneAction;
+        p->CountDownActionType = LemmingActionType.NoneAction;
+        p->DehoistPin = new(-1, -1);
+        p->LaserHitLevelPosition = new(-1, -1);
+        p->AnchorPosition = new(-1, -1);
+        p->PreviousAnchorPosition = new(-1, -1);
     }
 
-    public LemmingState CreateLemmingState(Lemming lemming)
-    {
-        var tribeIdRef = new PointerWrapper(&_data->TribeId);
-        var stateRef = new PointerWrapper(&_data->State);
+    public ref DihedralTransformation DihedralTransformation => ref Unsafe.AsRef<DihedralTransformation>(&_data->DihedralTransformation);
+    public ref Orientation Orientation => ref Unsafe.AsRef<Orientation>(&_data->DihedralTransformation.Orientation);
+    public ref FacingDirection FacingDirection => ref Unsafe.AsRef<FacingDirection>(&_data->DihedralTransformation.FacingDirection);
 
-        return new LemmingState(lemming, tribeIdRef, stateRef);
-    }
-
-    public ref Orientation Orientation => ref Unsafe.AsRef<Orientation>(&_data->Orientation);
-    public ref FacingDirection FacingDirection => ref Unsafe.AsRef<FacingDirection>(&_data->FacingDirection);
-
-    public ref int TribeId => ref Unsafe.AsRef<int>(&_data->TribeId);
     public ref uint State => ref Unsafe.AsRef<uint>(&_data->State);
+    public ref int TribeId => ref Unsafe.AsRef<int>(&_data->TribeId);
 
     public ref RectangularRegion CurrentBounds => ref Unsafe.AsRef<RectangularRegion>(&_data->CurrentBounds);
 
@@ -142,12 +135,6 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     public ref int FastForwardTime => ref Unsafe.AsRef<int>(&_data->FastForwardTime);
     public ref uint CountDownTimer => ref Unsafe.AsRef<uint>(&_data->CountDownTimer);
     public ref int ParticleTimer => ref Unsafe.AsRef<int>(&_data->ParticleTimer);
-
-    public DihedralTransformation GetDihedralTransformation()
-    {
-        void* p = &_data->Orientation;
-        return *(DihedralTransformation*)p;
-    }
 
     public Span<Point> GetJumperPositions()
     {

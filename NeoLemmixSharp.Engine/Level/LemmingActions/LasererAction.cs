@@ -65,7 +65,7 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
             LemmingActionConstants.LasererActionSpriteFileName,
             LemmingActionConstants.LasererAnimationFrames,
             LemmingActionConstants.MaxLasererPhysicsFrames,
-            LemmingActionConstants.NonPermanentSkillPriority)
+            CursorSelectionPriority.NonPermanentSkillPriority)
     {
     }
 
@@ -177,5 +177,5 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
     }
 
     [Pure]
-    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection) => FencerAction.Instance.CanDestroyPixel(pixelType, orientation, facingDirection); // Defer to whatever the fencer does, since the logic is the same!
+    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType) => FencerAction.Instance.CanDestroyPixel(dht, pixelType); // Defer to whatever the fencer does, since the logic is the same!
 }

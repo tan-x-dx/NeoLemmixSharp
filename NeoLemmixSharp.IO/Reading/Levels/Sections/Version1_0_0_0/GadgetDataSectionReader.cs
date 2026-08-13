@@ -79,8 +79,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             PieceIdentifier = new PieceIdentifier(_stringIdLookup[pieceId]),
             Position = position,
             GadgetRenderMode = renderMode,
-            Orientation = dht.Orientation,
-            FacingDirection = dht.FacingDirection,
+            DihedralTransformation = dht,
             IsFastForward = isFastForward,
 
             SpecificationData = gadgetInstanceTypeData

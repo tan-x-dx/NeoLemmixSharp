@@ -39,18 +39,17 @@ public static class TerrainMasks
         Lemming lemming,
         int frame)
     {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
+        var dht = lemming.DihedralTransformation;
         var position = lemming.AnchorPosition;
 
-        BasherMask.ApplyEraseMask(orientation, facingDirection, position, frame);
+        BasherMask.ApplyEraseMask(dht, position, frame);
     }
 
     public static void GetBasherSimulationScratchSpace(
         Lemming lemming,
         out ArrayWrapper2D<PixelType> scratchSpaceData)
     {
-        var dht = lemming.GetDihedralTransformation();
+        var dht = lemming.DihedralTransformation;
         var terrainManager = LevelScreen.TerrainManager;
 
         var sourceRegion = BasherMask.Dimensions.Translate(lemming.AnchorPosition);
@@ -63,34 +62,31 @@ public static class TerrainMasks
 
     public static void ApplyBomberMask(Lemming lemming)
     {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
-        var position = orientation.MoveRight(lemming.AnchorPosition, facingDirection.DeltaX);
+        var dht = lemming.DihedralTransformation;
+        var position = dht.Orientation.MoveRight(lemming.AnchorPosition, dht.FacingDirection.DeltaX);
 
-        BomberMask.ApplyEraseMask(orientation, facingDirection, position, 0);
+        BomberMask.ApplyEraseMask(dht, position, 0);
     }
 
     public static void ApplyFencerMask(
         Lemming lemming,
         int frame)
     {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
+        var dht = lemming.DihedralTransformation;
         var position = lemming.AnchorPosition;
 
-        FencerMask.ApplyEraseMask(orientation, facingDirection, position, frame);
+        FencerMask.ApplyEraseMask(dht, position, frame);
     }
 
     public static void ApplyLasererMask(
         Lemming lemming,
         Point target)
     {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
+        var dht = lemming.DihedralTransformation;
         var position = lemming.AnchorPosition;
 
-        //  var key = GetKey(orientation, facingDirection, frame);
-        //  _laserMasks[key].ApplyEraseMask(orientation, facingDirection, position);
+        //  var key = GetKey(dht, frame);
+        //  _laserMasks[key].ApplyEraseMask(dht, position);
     }
 
     /// <summary>
@@ -103,28 +99,26 @@ public static class TerrainMasks
         int offsetX,
         int offsetY)
     {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
-        var dx = facingDirection.DeltaX;
+        var dht = lemming.DihedralTransformation;
+        var dx = dht.FacingDirection.DeltaX;
         var position = lemming.AnchorPosition;
-        position = orientation.Move(position, offsetX + dx, offsetY - frame);
+        position = dht.Orientation.Move(position, offsetX + dx, offsetY - frame);
 
-        MinerMask.ApplyEraseMask(orientation, facingDirection, position, frame);
+        MinerMask.ApplyEraseMask(dht, position, frame);
     }
 
     public static void ApplyStonerMask(
         Lemming lemming)
     {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
+        var dht = lemming.DihedralTransformation;
         var position = lemming.AnchorPosition;
 
-        if (facingDirection == FacingDirection.Right)
+        if (dht.FacingDirection == FacingDirection.Right)
         {
-            position = orientation.MoveRight(position, 1);
+            position = dht.Orientation.MoveRight(position, 1);
         }
 
-        // var key = GetKey(orientation, facingDirection, 0);
+        // var key = GetKey(dht, 0);
         // _stonerMasks[key].ApplyAddMask(position);
     }
 }

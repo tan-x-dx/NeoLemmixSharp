@@ -13,7 +13,7 @@ internal readonly ref struct GadgetHitBoxCriteriaReader<TRawFileDataReader>(TRaw
     public HitBoxCriteriaData ReadHitBoxCriteria()
     {
         var allowedLemmingActionIds = ReadUintSequence(LemmingActionConstants.NumberOfLemmingActions);
-        var allowedLemmingStateIds = ReadUintSequence(LemmingStateConstants.NumberOfStates);
+        var allowedLemmingAbilityIds = ReadUintSequence(LemmingAbilityConstants.NumberOfAbilities);
 
         byte allowedLemmingTribeId = ReadAllowedLemmingTribeIds();
         byte allowedLemmingOrientationIds = ReadAllowedLemmingOrientationIds();

@@ -38,7 +38,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
 
     public void UpdatePosition()
     {
-        var dht = _lemming.GetDihedralTransformation();
+        var dht = _lemming.DihedralTransformation;
         var spriteOffset = dht.Transform(_actionSprite.AnchorPoint, _actionSprite.SpriteSize);
         var p = _lemming.AnchorPosition - spriteOffset;
 
@@ -72,7 +72,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         var levelScreenRenderer = LevelScreenRenderer.Instance.LevelRenderer;
         levelScreenRenderer.DeregisterSpriteForRendering(this);
 
-        if (!_lemming.State.IsActive)
+        if (!_lemming.IsActive)
             return;
 
         _actionSprite = LevelScreen.LemmingSpriteBank.GetActionSprite(_lemming);
@@ -179,7 +179,7 @@ public sealed class LemmingRenderer : IViewportObjectRenderer
         var destRectangle = new Rectangle(0, 0, 1, 1);
         var explosionParticleColors = EngineConstants.GetExplosionParticleColors();
 
-        var dht = _lemming.GetDihedralTransformation();
+        var dht = _lemming.DihedralTransformation;
         var anchorPoint = dht.Transform(_actionSprite.AnchorPoint, _actionSprite.SpriteSize);
 
         projectionX += anchorPoint.X;

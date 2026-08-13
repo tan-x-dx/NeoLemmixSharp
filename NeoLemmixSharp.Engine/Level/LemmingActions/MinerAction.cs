@@ -19,7 +19,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             LemmingActionConstants.MinerActionSpriteFileName,
             LemmingActionConstants.MinerAnimationFrames,
             LemmingActionConstants.MaxMinerPhysicsFrames,
-            LemmingActionConstants.NonPermanentSkillPriority)
+            CursorSelectionPriority.NonPermanentSkillPriority)
     {
     }
 
@@ -43,7 +43,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             lemming.PhysicsFrame != 15)
             return true;
 
-        if (lemming.State.IsSlider &&
+        if (lemming.IsSlider &&
             DehoisterAction.LemmingCanDehoist(lemming, false, in gadgetsNearLemming))
         {
             DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
@@ -52,7 +52,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
 
         lemmingPosition = orientation.Move(lemmingPosition, dx * 2, -1);
 
-        if (lemming.State.IsSlider &&
+        if (lemming.IsSlider &&
             DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
@@ -151,16 +151,16 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
     public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
 
     [Pure]
-    public bool CanDestroyPixel(PixelType pixelType, Orientation orientation, FacingDirection facingDirection)
+    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
     {
         var pixelTypeInt = (uint)pixelType;
         var oppositeOrientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                            orientation.GetOpposite().RotNum;
+                                            dht.Orientation.GetOpposite().RotNum;
         if (((pixelTypeInt >>> oppositeOrientationArrowShift) & 1U) != 0U)
             return false;
 
         var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                                (1 + orientation.RotNum + (facingDirection.Id << 1));
+                                                (1 + dht.Orientation.RotNum + (dht.FacingDirection.Id << 1));
         return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
     }
 }

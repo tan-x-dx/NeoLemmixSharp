@@ -15,7 +15,7 @@ public sealed class LemmingTribeCriterion : LemmingCriterion
 
     public override bool LemmingMatchesCriteria(Lemming lemming)
     {
-        var tribeId = lemming.State.TribeId;
+        var tribeId = lemming.TribeId;
         var tribe = LevelScreen.TribeManager.GetTribe(tribeId);
         return _tribes.Contains(tribe);
     }

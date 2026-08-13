@@ -23,5 +23,5 @@ public sealed class NeoLemmixGadgetData
     public int? SkillCount { get; set; }
     public int? LemmingCount { get; set; }
 
-    public uint State { get; set; } = 1U << LemmingStateConstants.ActiveBitIndex;
+    public uint State { get; set; } = 1U << LemmingAbilityConstants.ActiveBitIndex;
 }
