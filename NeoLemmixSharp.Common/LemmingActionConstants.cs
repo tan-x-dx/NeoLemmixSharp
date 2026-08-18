@@ -340,7 +340,15 @@ public static class LemmingActionConstants
         }
     }
 
-    public static LemmingActionLookupData GetLemmingActionDataFromId(LemmingActionType lemmingActionType) => LemmingActionTypeToStringLookup[(int)lemmingActionType];
+    public static LemmingActionLookupData GetLemmingActionDataFromId(LemmingActionType lemmingActionType)
+    {
+        if ((uint)lemmingActionType < NumberOfLemmingActions)
+            return LemmingActionTypeToStringLookup.At((int)lemmingActionType);
+
+        return new LemmingActionLookupData(NoneActionName, NoneActionName, 1);
+    }
+
+    public static ReadOnlySpan<LemmingActionLookupData> AllLemmingActionLookupData => LemmingActionTypeToStringLookup;
 
     [DebuggerDisplay("{LemmingActionName}")]
     public readonly struct LemmingActionLookupData(string lemmingActionName, string lemmingActionFileName, int numberOfAnimationFrames)
