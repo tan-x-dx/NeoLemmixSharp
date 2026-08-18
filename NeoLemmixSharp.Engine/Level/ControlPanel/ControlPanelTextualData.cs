@@ -113,19 +113,19 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         LemmingAction action,
         Lemming lemming)
     {
-        ReadOnlySpan<char> sourceSpan = GetSourceString(action, lemming);
+        var sourceSpan = GetSourceString(action, lemming);
         Span<char> destSpan = new(_lemmingActionAndCountPointer, LemmingActionConstants.LongestActionNameLength);
 
         sourceSpan.CopyTo(destSpan);
 
         return sourceSpan.Length;
 
-        static ReadOnlySpan<char> GetSourceString(
+        static string GetSourceString(
             LemmingAction action,
             Lemming lemming)
         {
             if (action.CursorSelectionPriority == CursorSelectionPriority.NonPermanentSkillPriority)
-                return action.LemmingActionName;
+                return LemmingActionConstants.GetLemmingActionNameFromId(action.ActionType);
 
             if (lemming.IsZombie)
             {
@@ -145,7 +145,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
                 3 => EngineConstants.AthleteControlPanelString3Skills,
                 4 => EngineConstants.AthleteControlPanelString4Skills,
                 5 => EngineConstants.AthleteControlPanelString5Skills,
-                _ => action.LemmingActionName
+                _ => LemmingActionConstants.GetLemmingActionNameFromId(action.ActionType)
             };
         }
     }

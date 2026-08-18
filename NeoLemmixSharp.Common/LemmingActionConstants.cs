@@ -348,6 +348,14 @@ public static class LemmingActionConstants
         return new LemmingActionLookupData(NoneActionName, NoneActionName, 1);
     }
 
+    public static string GetLemmingActionNameFromId(LemmingActionType lemmingActionType)
+    {
+        if ((uint)lemmingActionType < NumberOfLemmingActions)
+            return LemmingActionTypeToStringLookup.At((int)lemmingActionType).LemmingActionName;
+
+        return NoneActionName;
+    }
+
     public static ReadOnlySpan<LemmingActionLookupData> AllLemmingActionLookupData => LemmingActionTypeToStringLookup;
 
     [DebuggerDisplay("{LemmingActionName}")]
