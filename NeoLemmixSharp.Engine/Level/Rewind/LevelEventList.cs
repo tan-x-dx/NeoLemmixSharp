@@ -133,12 +133,12 @@ public sealed class LevelEventList<TEventData> : IDisposable
         bool SearchForSmallestIndexOfTick(int tickValue, int* requiredIndex)
         {
             TEventData* basePointer = (TEventData*)_buffer.Handle;
-            uint lowerTestIndex = 0;
-            uint upperTestIndex = (uint)_count - 1;
+            nuint lowerTestIndex = 0;
+            nuint upperTestIndex = (nuint)_count - 1;
 
             while (upperTestIndex - lowerTestIndex > 1)
             {
-                uint bestGuessIndex = (lowerTestIndex + upperTestIndex) >>> 1;
+                nuint bestGuessIndex = (lowerTestIndex + upperTestIndex) >>> 1;
                 TEventData* pointer = basePointer + bestGuessIndex;
 
                 if (pointer->TickNumber >= tickValue)
