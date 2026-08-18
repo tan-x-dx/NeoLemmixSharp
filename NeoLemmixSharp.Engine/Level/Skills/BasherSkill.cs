@@ -17,22 +17,22 @@ public sealed class BasherSkill : LemmingSkill
 
     public override void AssignToLemming(Lemming lemming)
     {
-        BasherAction.Instance.TransitionLemmingToAction(lemming, false);
+        BasherAction.TransitionLemmingToAction(lemming, false);
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned()
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(WalkerAction.Instance);
-        result.Add(ShruggerAction.Instance);
-        result.Add(PlatformerAction.Instance);
-        result.Add(BuilderAction.Instance);
-        result.Add(StackerAction.Instance);
-        result.Add(FencerAction.Instance);
-        result.Add(MinerAction.Instance);
-        result.Add(DiggerAction.Instance);
-        result.Add(LasererAction.Instance);
+        result.Add(LemmingActionType.WalkerAction);
+        result.Add(LemmingActionType.ShruggerAction);
+        result.Add(LemmingActionType.PlatformerAction);
+        result.Add(LemmingActionType.BuilderAction);
+        result.Add(LemmingActionType.StackerAction);
+        result.Add(LemmingActionType.FencerAction);
+        result.Add(LemmingActionType.MinerAction);
+        result.Add(LemmingActionType.DiggerAction);
+        result.Add(LemmingActionType.LasererAction);
 
         return result;
     }

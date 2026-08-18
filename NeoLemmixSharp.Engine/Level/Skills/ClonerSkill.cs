@@ -59,29 +59,29 @@ public sealed class ClonerSkill : LemmingSkill
         }
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned()
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(WalkerAction.Instance);
-        result.Add(BuilderAction.Instance);
-        result.Add(MinerAction.Instance);
-        result.Add(JumperAction.Instance);
-        result.Add(StackerAction.Instance);
-        result.Add(LasererAction.Instance);
-        result.Add(SwimmerAction.Instance);
-        result.Add(GliderAction.Instance);
-        result.Add(PlatformerAction.Instance);
-        result.Add(BasherAction.Instance);
-        result.Add(FencerAction.Instance);
-        result.Add(DiggerAction.Instance);
-        result.Add(AscenderAction.Instance);
-        result.Add(FallerAction.Instance);
-        result.Add(FloaterAction.Instance);
-        result.Add(DisarmerAction.Instance);
-        result.Add(ShimmierAction.Instance);
-        result.Add(ShruggerAction.Instance);
-        result.Add(ReacherAction.Instance);
+        result.Add(LemmingActionType.WalkerAction);
+        result.Add(LemmingActionType.BuilderAction);
+        result.Add(LemmingActionType.MinerAction);
+        result.Add(LemmingActionType.JumperAction);
+        result.Add(LemmingActionType.StackerAction);
+        result.Add(LemmingActionType.LasererAction);
+        result.Add(LemmingActionType.SwimmerAction);
+        result.Add(LemmingActionType.GliderAction);
+        result.Add(LemmingActionType.PlatformerAction);
+        result.Add(LemmingActionType.BasherAction);
+        result.Add(LemmingActionType.FencerAction);
+        result.Add(LemmingActionType.DiggerAction);
+        result.Add(LemmingActionType.AscenderAction);
+        result.Add(LemmingActionType.FallerAction);
+        result.Add(LemmingActionType.FloaterAction);
+        result.Add(LemmingActionType.DisarmerAction);
+        result.Add(LemmingActionType.ShimmierAction);
+        result.Add(LemmingActionType.ShruggerAction);
+        result.Add(LemmingActionType.ReacherAction);
 
         return result;
     }

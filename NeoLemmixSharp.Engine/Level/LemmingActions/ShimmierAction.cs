@@ -6,22 +6,9 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class ShimmierAction : LemmingAction
+public static class ShimmierAction
 {
-    public static readonly ShimmierAction Instance = new();
-
-    private ShimmierAction()
-        : base(
-            LemmingActionType.ShimmierAction,
-            LemmingActionConstants.ShimmierActionName,
-            LemmingActionConstants.ShimmierActionSpriteFileName,
-            LemmingActionConstants.ShimmierAnimationFrames,
-            LemmingActionConstants.MaxShimmierPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
@@ -38,7 +25,7 @@ public sealed class ShimmierAction : LemmingAction
                 !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, i + 1)))
             {
                 lemmingPosition = orientation.Move(lemmingPosition, dx, i);
-                WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+                WalkerAction.TransitionLemmingToAction(lemming, false);
                 return true;
             }
         }
@@ -51,7 +38,7 @@ public sealed class ShimmierAction : LemmingAction
             {
                 lemmingPosition = orientation.Move(lemmingPosition, dx, i - 4);
                 lemming.IsStartingAction = false;
-                HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
+                HoisterAction.TransitionLemmingToAction(lemming, false);
                 lemming.PhysicsFrame += 2;
                 lemming.AnimationFrame += 2;
                 return true;
@@ -65,11 +52,11 @@ public sealed class ShimmierAction : LemmingAction
             {
                 if (lemming.IsSlider)
                 {
-                    SliderAction.Instance.TransitionLemmingToAction(lemming, false);
+                    SliderAction.TransitionLemmingToAction(lemming, false);
                 }
                 else
                 {
-                    FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+                    FallerAction.TransitionLemmingToAction(lemming, false);
                 }
 
                 return true;
@@ -81,7 +68,7 @@ public sealed class ShimmierAction : LemmingAction
         if (!pixel9AboveIsSolid &&
             !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 10)))
         {
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -89,7 +76,7 @@ public sealed class ShimmierAction : LemmingAction
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 8)) &&
             !pixel9AboveIsSolid)
         {
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -102,7 +89,7 @@ public sealed class ShimmierAction : LemmingAction
 
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             {
-                WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+                WalkerAction.TransitionLemmingToAction(lemming, false);
                 return true;
             }
 
@@ -123,19 +110,19 @@ public sealed class ShimmierAction : LemmingAction
             return true;
 
         lemmingPosition = checkPosition;
-        WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+        WalkerAction.TransitionLemmingToAction(lemming, false);
 
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoShimmierTransitionActions(lemming, turnAround);
+        DoShimmierTransitionActions(lemming);
 
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.ShimmierAction.DoMainTransitionActions(lemming, turnAround);
     }
 
-    private static void DoShimmierTransitionActions(Lemming lemming, bool turnAround)
+    private static void DoShimmierTransitionActions(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;

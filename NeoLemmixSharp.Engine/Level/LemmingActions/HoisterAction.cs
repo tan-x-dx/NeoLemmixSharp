@@ -4,29 +4,16 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class HoisterAction : LemmingAction
+public static class HoisterAction
 {
-    public static readonly HoisterAction Instance = new();
-
-    private HoisterAction()
-        : base(
-            LemmingActionType.HoisterAction,
-            LemmingActionConstants.HoisterActionName,
-            LemmingActionConstants.HoisterActionSpriteFileName,
-            LemmingActionConstants.HoisterAnimationFrames,
-            LemmingActionConstants.MaxHoisterPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
 
         if (lemming.EndOfAnimation)
         {
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            WalkerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -45,10 +32,10 @@ public sealed class HoisterAction : LemmingAction
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         var previouslyStartingAction = lemming.IsStartingAction;
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.HoisterAction.DoMainTransitionActions(lemming, turnAround);
         lemming.IsStartingAction = previouslyStartingAction; // It needs to know what the Climber's value was
     }
 }

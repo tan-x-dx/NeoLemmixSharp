@@ -309,7 +309,7 @@ public sealed class LemmingManager :
     [Pure]
     public bool CanAssignBlocker(Lemming lemming)
     {
-        var firstBounds = BlockerAction.Instance.GetLemmingBounds(lemming);
+        var firstBounds = LemmingActionType.BlockerAction.GetLemmingBounds(lemming);
 
         foreach (var blocker in _allBlockers)
         {

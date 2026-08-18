@@ -5,22 +5,9 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class AscenderAction : LemmingAction
+public static class AscenderAction
 {
-    public static readonly AscenderAction Instance = new();
-
-    private AscenderAction()
-        : base(
-            LemmingActionType.AscenderAction,
-            LemmingActionConstants.AscenderActionName,
-            LemmingActionConstants.AscenderActionSpriteFileName,
-            LemmingActionConstants.AscenderAnimationFrames,
-            LemmingActionConstants.MaxAscenderPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         ref var lemmingPosition = ref lemming.AnchorPosition;
         ref var ascenderProgress = ref lemming.AscenderProgress;
@@ -42,7 +29,7 @@ public sealed class AscenderAction : LemmingAction
         if (dy < 2 &&
             !pixel1IsSolid)
         {
-            lemming.NextAction = WalkerAction.Instance;
+            lemming.SetNextActionType(LemmingActionType.WalkerAction);
             return true;
         }
 
@@ -54,15 +41,15 @@ public sealed class AscenderAction : LemmingAction
         {
             var dx = lemming.FacingDirection.DeltaX;
             lemming.AnchorPosition = orientation.MoveLeft(lemmingPosition, dx);
-            FallerAction.Instance.TransitionLemmingToAction(lemming, true);
+            FallerAction.TransitionLemmingToAction(lemming, true);
         }
 
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.AscenderAction.DoMainTransitionActions(lemming, turnAround);
 
         lemming.AscenderProgress = 0;
     }

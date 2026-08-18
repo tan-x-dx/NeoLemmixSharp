@@ -415,7 +415,7 @@ public static class LemmingActionBounds
     private static RectangularRegion SwimmerActionBounds => new(new Point(-7, -4), new Point(5, 0));
     private static RectangularRegion VaporiserActionBounds => new(new Point(-3, -12), new Point(3, 2));
 
-    public static RectangularRegion GetBounds(LemmingActionType actionType)
+    public static RectangularRegion GetBounds(this LemmingActionType actionType)
     {
         if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
             return _lemmingActionBounds.At((int)actionType);

@@ -6,34 +6,21 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class BlockerAction : LemmingAction
+public static class BlockerAction
 {
-    public static readonly BlockerAction Instance = new();
-
-    private BlockerAction()
-        : base(
-            LemmingActionType.BlockerAction,
-            LemmingActionConstants.BlockerActionName,
-            LemmingActionConstants.BlockerActionSpriteFileName,
-            LemmingActionConstants.BlockerAnimationFrames,
-            LemmingActionConstants.MaxBlockerPhysicsFrames,
-            CursorSelectionPriority.NonPermanentSkillPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.AnchorPosition))
             return true;
 
-        FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+        FallerAction.TransitionLemmingToAction(lemming, false);
 
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.BlockerAction.DoMainTransitionActions(lemming, turnAround);
 
         LevelScreen.LemmingManager.RegisterBlocker(lemming);
     }
@@ -168,6 +155,6 @@ public sealed class BlockerAction : LemmingAction
         // Move out of the wall
         lemming.AnchorPosition = lemming.Orientation.Move(lemming.AnchorPosition, dx, dy);
 
-        WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+        WalkerAction.TransitionLemmingToAction(lemming, false);
     }
 }

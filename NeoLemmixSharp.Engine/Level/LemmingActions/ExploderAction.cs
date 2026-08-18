@@ -7,42 +7,34 @@ using System.Diagnostics.Contracts;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class ExploderAction : LemmingAction, IDestructionMask
+public static class ExploderAction
 {
-    public static readonly ExploderAction Instance = new();
+    public static IDestructionMask DestructionMask { get; } = new ExploderActionDestructionMask();
 
-    private ExploderAction()
-        : base(
-            LemmingActionType.ExploderAction,
-            LemmingActionConstants.ExploderActionName,
-            LemmingActionConstants.ExploderActionSpriteFileName,
-            LemmingActionConstants.ExploderAnimationFrames,
-            LemmingActionConstants.MaxExploderPhysicsFrames,
-            CursorSelectionPriority.NoPriority)
+    private sealed class ExploderActionDestructionMask : IDestructionMask
     {
+        [Pure]
+        public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
+        {
+            // Bombers do not care about arrows, only if the pixel can be destroyed at all!
+            // Since other checks will have already taken place, this code is only ever
+            // reached when the pixel can definitely be destroyed by a bomber.
+            // Therefore, just return true.
+
+            return true;
+        }
     }
 
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         TerrainMasks.ApplyBomberMask(lemming);
         LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathExploder);
         lemming.ParticleTimer = EngineConstants.ParticleFrameCount;
 
-        WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+        WalkerAction.TransitionLemmingToAction(lemming, false);
 
         return false;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
-
-    [Pure]
-    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
-    {
-        // Bombers do not care about arrows, only if the pixel can be destroyed at all!
-        // Since other checks will have already taken place, this code is only ever
-        // reached when the pixel can definitely be destroyed by a bomber.
-        // Therefore, just return true.
-
-        return true;
-    }
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.ExploderAction.DoMainTransitionActions(lemming, turnAround);
 }

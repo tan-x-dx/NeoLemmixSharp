@@ -5,22 +5,9 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class PlatformerAction : LemmingAction
+public static class PlatformerAction
 {
-    public static readonly PlatformerAction Instance = new();
-
-    private PlatformerAction()
-        : base(
-            LemmingActionType.PlatformerAction,
-            LemmingActionConstants.PlatformerActionName,
-            LemmingActionConstants.PlatformerActionSpriteFileName,
-            LemmingActionConstants.PlatformerAnimationFrames,
-            LemmingActionConstants.MaxPlatformerPhysicsFrames,
-            CursorSelectionPriority.NonPermanentSkillPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         DoMainUpdate(lemming, in gadgetsNearLemming);
 
@@ -57,7 +44,7 @@ public sealed class PlatformerAction : LemmingAction
         {
             if (!lemming.PlacedBrick)
             {
-                WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
+                WalkerAction.TransitionLemmingToAction(lemming, true);
 
                 return;
             }
@@ -69,7 +56,7 @@ public sealed class PlatformerAction : LemmingAction
             {
                 lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
 
-                WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
+                WalkerAction.TransitionLemmingToAction(lemming, true);
 
                 return;
             }
@@ -92,7 +79,7 @@ public sealed class PlatformerAction : LemmingAction
             lemming.NumberOfBricksLeft > 1)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
+            WalkerAction.TransitionLemmingToAction(lemming, true);
 
             return;
         }
@@ -104,7 +91,7 @@ public sealed class PlatformerAction : LemmingAction
             lemming.NumberOfBricksLeft > 1)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx * 2);
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
+            WalkerAction.TransitionLemmingToAction(lemming, true);
 
             return;
         }
@@ -125,7 +112,7 @@ public sealed class PlatformerAction : LemmingAction
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
         }
 
-        ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
+        ShruggerAction.TransitionLemmingToAction(lemming, false);
     }
 
     public static bool LemmingCanPlatform(
@@ -156,9 +143,9 @@ public sealed class PlatformerAction : LemmingAction
                PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.Orientation.MoveUp(pos, 2));
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.PlatformerAction.DoMainTransitionActions(lemming, turnAround);
 
         lemming.NumberOfBricksLeft = EngineConstants.NumberOfPlatformerBricks;
         lemming.ConstructivePositionFreeze = false;

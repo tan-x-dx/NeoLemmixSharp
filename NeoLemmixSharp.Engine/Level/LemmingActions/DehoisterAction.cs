@@ -5,22 +5,9 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class DehoisterAction : LemmingAction
+public static class DehoisterAction
 {
-    public static readonly DehoisterAction Instance = new();
-
-    private DehoisterAction()
-        : base(
-            LemmingActionType.DehoisterAction,
-            LemmingActionConstants.DehoisterActionName,
-            LemmingActionConstants.DehoisterActionSpriteFileName,
-            LemmingActionConstants.DehoisterAnimationFrames,
-            LemmingActionConstants.MaxDehoisterPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
@@ -29,11 +16,11 @@ public sealed class DehoisterAction : LemmingAction
         {
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 7)))
             {
-                SliderAction.Instance.TransitionLemmingToAction(lemming, false);
+                SliderAction.TransitionLemmingToAction(lemming, false);
                 return true;
             }
 
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -54,11 +41,11 @@ public sealed class DehoisterAction : LemmingAction
                lemming.CurrentActionType != LemmingActionType.DrownerAction;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         lemming.DehoistPin = lemming.AnchorPosition;
 
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.DehoisterAction.DoMainTransitionActions(lemming, turnAround);
     }
 
     public static bool LemmingCanDehoist(

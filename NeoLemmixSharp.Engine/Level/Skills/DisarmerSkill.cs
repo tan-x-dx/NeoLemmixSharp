@@ -26,7 +26,7 @@ public sealed class DisarmerSkill : LemmingSkill, ILemmingAbilityChanger
         lemming.IsDisarmer = true;
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
     public void SetLemmingAbility(Lemming lemming, bool status)
     {

@@ -17,8 +17,8 @@ public sealed class RotateCounterclockwiseSkill : LemmingSkill
 
     public override void AssignToLemming(Lemming lemming)
     {
-        RotateCounterclockwiseAction.Instance.TransitionLemmingToAction(lemming, false);
+        RotateCounterclockwiseAction.TransitionLemmingToAction(lemming, false);
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedRotationSkill;
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedRotationSkill;
 }

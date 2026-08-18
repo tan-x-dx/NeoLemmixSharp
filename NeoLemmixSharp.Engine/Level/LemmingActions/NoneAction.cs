@@ -1,32 +1,18 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class NoneAction : LemmingAction
+/// <summary>
+/// Logically equivalent to null, but null references suck
+/// </summary>
+public static class NoneAction
 {
-    /// <summary>
-    /// Logically equivalent to null, but null references suck
-    /// </summary>
-    public static readonly NoneAction Instance = new();
-
-    private NoneAction()
-        : base(
-            LemmingActionType.NoneAction,
-            LemmingActionConstants.NoneActionName,
-            string.Empty,
-            1,
-            1,
-            CursorSelectionPriority.NoneActionPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         return false;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
     }
 }

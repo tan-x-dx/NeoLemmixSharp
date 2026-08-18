@@ -7,22 +7,9 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class SwimmerAction : LemmingAction
+public static class SwimmerAction
 {
-    public static readonly SwimmerAction Instance = new();
-
-    private SwimmerAction()
-        : base(
-            LemmingActionType.SwimmerAction,
-            LemmingActionConstants.SwimmerActionName,
-            LemmingActionConstants.SwimmerActionSpriteFileName,
-            LemmingActionConstants.SwimmerAnimationFrames,
-            LemmingActionConstants.MaxSwimmerPhysicsFrames,
-            CursorSelectionPriority.PermanentSkillPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
@@ -62,7 +49,7 @@ public sealed class SwimmerAction : LemmingAction
 
                 if (!WaterAt(in gadgetsNearLemming, lemming, lemmingPosition))
                 {
-                    WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+                    WalkerAction.TransitionLemmingToAction(lemming, false);
 
                     return true;
                 }
@@ -71,7 +58,7 @@ public sealed class SwimmerAction : LemmingAction
                     !WaterAt(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 1)))
                 {
                     // Only transition to climber, if the lemming is not under water
-                    ClimberAction.Instance.TransitionLemmingToAction(lemming, false);
+                    ClimberAction.TransitionLemmingToAction(lemming, false);
 
                     return true;
                 }
@@ -85,7 +72,7 @@ public sealed class SwimmerAction : LemmingAction
 
             if (dy >= 3)
             {
-                AscenderAction.Instance.TransitionLemmingToAction(lemming, false);
+                AscenderAction.TransitionLemmingToAction(lemming, false);
                 lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
 
                 return true;
@@ -96,7 +83,7 @@ public sealed class SwimmerAction : LemmingAction
                 // see http://www.lemmingsforums.net/index.php?topic=3380.0
                 // And the swimmer should not yet stop if the water and terrain overlaps
 
-                WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+                WalkerAction.TransitionLemmingToAction(lemming, false);
                 lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
             }
 
@@ -107,14 +94,14 @@ public sealed class SwimmerAction : LemmingAction
         if (dy < -1)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
 
             return true;
         }
 
         // if dy == 0 or == -1
         lemmingPosition = orientation.MoveUp(lemmingPosition, dy);
-        WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+        WalkerAction.TransitionLemmingToAction(lemming, false);
 
         return true;
     }
@@ -172,11 +159,9 @@ public sealed class SwimmerAction : LemmingAction
             : result;
     }
 
-    public override void TransitionLemmingToAction(
-        Lemming lemming,
-        bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.SwimmerAction.DoMainTransitionActions(lemming, turnAround);
 
         DoSwimmerTransitionActions(lemming, turnAround);
     }

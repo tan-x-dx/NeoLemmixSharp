@@ -4,22 +4,9 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class SplatterAction : LemmingAction
+public static class SplatterAction
 {
-    public static readonly SplatterAction Instance = new();
-
-    private SplatterAction()
-        : base(
-            LemmingActionType.SplatterAction,
-            LemmingActionConstants.SplatterActionName,
-            LemmingActionConstants.SplatterActionSpriteFileName,
-            LemmingActionConstants.SplatterAnimationFrames,
-            LemmingActionConstants.MaxSplatterPhysicsFrames,
-            CursorSelectionPriority.NoPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (lemming.EndOfAnimation)
         {
@@ -29,9 +16,9 @@ public sealed class SplatterAction : LemmingAction
         return false;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.SplatterAction.DoMainTransitionActions(lemming, turnAround);
 
         lemming.CountDownTimer = 0;
     }

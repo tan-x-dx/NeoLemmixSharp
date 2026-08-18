@@ -5,30 +5,17 @@ using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class StonerAction : LemmingAction
+public static class StonerAction
 {
-    public static readonly StonerAction Instance = new();
-
-    private StonerAction()
-        : base(
-            LemmingActionType.StonerAction,
-            LemmingActionConstants.StonerActionName,
-            LemmingActionConstants.StonerActionSpriteFileName,
-            LemmingActionConstants.StonerAnimationFrames,
-            LemmingActionConstants.MaxStonerPhysicsFrames,
-            CursorSelectionPriority.NoPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         TerrainMasks.ApplyStonerMask(lemming);
-        NoneAction.Instance.TransitionLemmingToAction(lemming, false);
+        NoneAction.TransitionLemmingToAction(lemming, false);
         LevelScreen.LemmingManager.RemoveLemming(lemming, LemmingRemovalReason.DeathStoner);
         lemming.ParticleTimer = EngineConstants.ParticleFrameCount;
 
         return false;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.StonerAction.DoMainTransitionActions(lemming, turnAround);
 }

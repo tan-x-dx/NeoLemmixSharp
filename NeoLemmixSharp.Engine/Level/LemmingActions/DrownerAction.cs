@@ -4,22 +4,9 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class DrownerAction : LemmingAction
+public static class DrownerAction
 {
-    public static readonly DrownerAction Instance = new();
-
-    private DrownerAction()
-        : base(
-            LemmingActionType.DrownerAction,
-            LemmingActionConstants.DrownerActionName,
-            LemmingActionConstants.DrownerActionSpriteFileName,
-            LemmingActionConstants.DrownerAnimationFrames,
-            LemmingActionConstants.MaxDrownerPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         /*   var gadgetManager = LevelScreen.GadgetManager;
            Span<uint> scratchSpaceSpan = stackalloc uint[gadgetManager.ScratchSpaceSize];
@@ -38,5 +25,5 @@ public sealed class DrownerAction : LemmingAction
         return false;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.DrownerAction.DoMainTransitionActions(lemming, turnAround);
 }

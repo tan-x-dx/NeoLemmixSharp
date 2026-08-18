@@ -33,10 +33,13 @@ public sealed class LemmingBuilder
         {
             var prototype = _levelData.PrePlacedLemmingData[i];
 
-            var lemming = new Lemming(ref handle, i);
+            var lemming = new Lemming(ref handle, i)
+            {
+                AnchorPosition = prototype.Position
+            };
 
-            lemming.CurrentAction = LemmingAction.GetActionOrDefault(prototype.InitialLemmingActionType);
-            lemming.AnchorPosition = prototype.Position;
+            lemming.SetCurrentActionType(prototype.InitialLemmingActionType);
+
             lemming.SetRawData(prototype.DihedralTransformation, prototype.TribeId, prototype.State);
 
             _levelLemmings.At(i++) = lemming;
@@ -44,12 +47,14 @@ public sealed class LemmingBuilder
 
         while (i < _levelLemmings.Length)
         {
-            var lemming = new Lemming(ref handle, i);
+            var lemming = new Lemming(ref handle, i)
+            {
+                AnchorPosition = Point.Zero,
+                Orientation = Orientation.Down,
+                FacingDirection = FacingDirection.Right
+            };
 
-            lemming.AnchorPosition = Point.Zero;
-            lemming.Orientation = Orientation.Down;
-            lemming.FacingDirection = FacingDirection.Right;
-            lemming.CurrentAction = NoneAction.Instance;
+            lemming.SetCurrentActionType(LemmingActionType.NoneAction);
 
             _levelLemmings.At(i++) = lemming;
         }

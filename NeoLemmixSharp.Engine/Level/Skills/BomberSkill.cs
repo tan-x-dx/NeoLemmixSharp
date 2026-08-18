@@ -1,6 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -27,8 +26,8 @@ public sealed class BomberSkill : LemmingSkill
         var countDownTimer = levelParameters.GetLemmingCountDownTimer(lemming);
         var displayTimer = levelParameters.Contains(LevelParameters.TimedBombers);
 
-        lemming.SetCountDownAction(countDownTimer, ExploderAction.Instance, displayTimer);
+        lemming.SetCountDownAction(countDownTimer, LemmingActionType.ExploderAction, displayTimer);
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 }

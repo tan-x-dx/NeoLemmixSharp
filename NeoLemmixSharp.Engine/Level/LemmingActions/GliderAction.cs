@@ -5,22 +5,9 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class GliderAction : LemmingAction
+public static class GliderAction
 {
-    public static readonly GliderAction Instance = new();
-
     private static ReadOnlySpan<int> GliderFallTable => [3, 3, 3, 3, -1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-
-    private GliderAction()
-        : base(
-            LemmingActionType.GliderAction,
-            LemmingActionConstants.GliderActionName,
-            LemmingActionConstants.GliderActionSpriteFileName,
-            LemmingActionConstants.GliderAnimationFrames,
-            LemmingActionConstants.MaxGliderPhysicsFrames,
-            CursorSelectionPriority.PermanentSkillPriority)
-    {
-    }
 
     /*
 function TLemmingGame.HandleGliding(L: TLemming): Boolean;
@@ -108,7 +95,7 @@ end;
 
     */
 
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
@@ -172,7 +159,7 @@ end;
         if (groundDistance > 0) // Move 1 to 4 pixels up
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, groundDistance);
-            lemming.NextAction = WalkerAction.Instance;
+            lemming.SetNextActionType(LemmingActionType.WalkerAction);
 
             return true;
         }
@@ -185,7 +172,7 @@ end;
             {
                 // Lem has found solid terrain
                 lemmingPosition = orientation.MoveUp(lemmingPosition, groundDistance);
-                lemming.NextAction = WalkerAction.Instance;
+                lemming.SetNextActionType(LemmingActionType.WalkerAction);
 
                 return true;
             }
@@ -210,7 +197,7 @@ end;
             // Check whether the glider has reached the ground
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             {
-                lemming.NextAction = WalkerAction.Instance;
+                lemming.SetNextActionType(LemmingActionType.WalkerAction);
                 return true;
             }
         }
@@ -268,7 +255,7 @@ end;
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition) &&
             updraftFallDelta.Y >= 0)
         {
-            lemming.NextAction = WalkerAction.Instance;
+            lemming.SetNextActionType(LemmingActionType.WalkerAction);
 
             return;
         }
@@ -311,5 +298,5 @@ end;
                  PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, 1, 12)));
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.GliderAction.DoMainTransitionActions(lemming, turnAround);
 }

@@ -5,27 +5,14 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class ReacherAction : LemmingAction
+public static class ReacherAction
 {
-    public static readonly ReacherAction Instance = new();
-
     private static ReadOnlySpan<int> MovementList =>
     [
         0, 3, 2, 2, 1, 1, 1, 0
     ];
 
-    private ReacherAction()
-        : base(
-            LemmingActionType.ReacherAction,
-            LemmingActionConstants.ReacherActionName,
-            LemmingActionConstants.ReacherActionSpriteFileName,
-            LemmingActionConstants.ReacherAnimationFrames,
-            LemmingActionConstants.MaxReacherPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
@@ -38,7 +25,7 @@ public sealed class ReacherAction : LemmingAction
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 7)) ||
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 8)))
         {
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
 
             return true;
         }
@@ -47,7 +34,7 @@ public sealed class ReacherAction : LemmingAction
         if (lemming.PhysicsFrame == 1 &&
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 9)))
         {
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
 
             return true;
         }
@@ -58,7 +45,7 @@ public sealed class ReacherAction : LemmingAction
         if (emptyPixels <= movementList[lemming.PhysicsFrame])
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, emptyPixels + 1); // Shimmiers are a lot smaller than reachers
-            ShimmierAction.Instance.TransitionLemmingToAction(lemming, false);
+            ShimmierAction.TransitionLemmingToAction(lemming, false);
 
             return true;
         }
@@ -67,7 +54,7 @@ public sealed class ReacherAction : LemmingAction
         lemmingPosition = orientation.MoveUp(lemmingPosition, movementList[lemming.PhysicsFrame]);
         if (lemming.PhysicsFrame == 7)
         {
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
         }
 
         return true;
@@ -94,5 +81,5 @@ public sealed class ReacherAction : LemmingAction
         return 4;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.ReacherAction.DoMainTransitionActions(lemming, turnAround);
 }

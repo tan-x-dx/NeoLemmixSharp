@@ -8,22 +8,28 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class MinerAction : LemmingAction, IDestructionMask
+public static class MinerAction
 {
-    public static readonly MinerAction Instance = new();
+    public static IDestructionMask DestructionMask { get; } = new MinerActionDestructionMask();
 
-    private MinerAction()
-        : base(
-            LemmingActionType.MinerAction,
-            LemmingActionConstants.MinerActionName,
-            LemmingActionConstants.MinerActionSpriteFileName,
-            LemmingActionConstants.MinerAnimationFrames,
-            LemmingActionConstants.MaxMinerPhysicsFrames,
-            CursorSelectionPriority.NonPermanentSkillPriority)
+    private sealed class MinerActionDestructionMask : IDestructionMask
     {
+        [Pure]
+        public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
+        {
+            var pixelTypeInt = (uint)pixelType;
+            var oppositeOrientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                                dht.Orientation.GetOpposite().RotNum;
+            if (((pixelTypeInt >>> oppositeOrientationArrowShift) & 1U) != 0U)
+                return false;
+
+            var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                                    (1 + dht.Orientation.RotNum + (dht.FacingDirection.Id << 1));
+            return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
+        }
     }
 
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
@@ -46,7 +52,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         if (lemming.IsSlider &&
             DehoisterAction.LemmingCanDehoist(lemming, false, in gadgetsNearLemming))
         {
-            DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
+            DehoisterAction.TransitionLemmingToAction(lemming, true);
             return true;
         }
 
@@ -56,15 +62,15 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
+            DehoisterAction.TransitionLemmingToAction(lemming, true);
             return true;
         }
 
         // Note that all if-checks are relative to the end position!
 
         // Lemming cannot go down, so turn; see http://www.lemmingsforums.net/index.php?topic=2547.0
-        if (PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, orientation.Move(lemmingPosition, -dx, -1)) &&
-            PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, orientation.MoveDown(lemmingPosition, 1)))
+        if (PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, orientation.Move(lemmingPosition, -dx, -1)) &&
+            PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, orientation.MoveDown(lemmingPosition, 1)))
         {
             var lemmingPosition0 = orientation.MoveDown(lemmingPosition, 1);
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx * 2);
@@ -75,7 +81,7 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         // This first check is only relevant during the very first cycle.
         // Otherwise, the pixel was already checked in frame 15 of the previous cycle
         if (lemming.PhysicsFrame == 3 &&
-            PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, orientation.Move(lemmingPosition, -dx, 2)))
+            PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, orientation.Move(lemmingPosition, -dx, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);
             TurnMinerAround(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 2));
@@ -89,12 +95,12 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
             !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, -1)))
         {
             lemmingPosition = orientation.Move(lemmingPosition, -dx, -1);
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
             lemming.DistanceFallen++;
             return true;
         }
 
-        if (PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, orientation.MoveDown(lemmingPosition, 2)))
+        if (PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, orientation.MoveDown(lemmingPosition, 2)))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
             TurnMinerAround(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 2));
@@ -104,18 +110,18 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         if (!PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 1);
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
-        if (PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, orientation.Move(lemmingPosition, dx, 2)))
+        if (PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, orientation.Move(lemmingPosition, dx, 2)))
         {
             TurnMinerAround(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 2));
 
             return true;
         }
 
-        if (!PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, lemmingPosition))
+        if (!PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, lemmingPosition))
             return true;
 
         TurnMinerAround(in gadgetsNearLemming, lemming, lemmingPosition);
@@ -144,23 +150,9 @@ public sealed class MinerAction : LemmingAction, IDestructionMask
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
         {
             lemming.AnchorPosition = lemmingPosition;
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, true); // turn around as well
+            WalkerAction.TransitionLemmingToAction(lemming, true); // turn around as well
         }
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
-
-    [Pure]
-    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
-    {
-        var pixelTypeInt = (uint)pixelType;
-        var oppositeOrientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                            dht.Orientation.GetOpposite().RotNum;
-        if (((pixelTypeInt >>> oppositeOrientationArrowShift) & 1U) != 0U)
-            return false;
-
-        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                                (1 + dht.Orientation.RotNum + (dht.FacingDirection.Id << 1));
-        return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
-    }
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.MinerAction.DoMainTransitionActions(lemming, turnAround);
 }

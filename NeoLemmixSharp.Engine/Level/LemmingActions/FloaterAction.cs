@@ -5,24 +5,11 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class FloaterAction : LemmingAction
+public static class FloaterAction
 {
-    public static readonly FloaterAction Instance = new();
-
     private static ReadOnlySpan<int> FloaterFallTable => [3, 3, 3, 3, -1, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2];
 
-    private FloaterAction()
-        : base(
-            LemmingActionType.FloaterAction,
-            LemmingActionConstants.FloaterActionName,
-            LemmingActionConstants.FloaterActionSpriteFileName,
-            LemmingActionConstants.FloaterAnimationFrames,
-            LemmingActionConstants.MaxFloaterPhysicsFrames,
-            CursorSelectionPriority.PermanentSkillPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var maxFallDistance = FloaterFallTable[lemming.PhysicsFrame - 1];
 
@@ -39,7 +26,7 @@ public sealed class FloaterAction : LemmingAction
         if (maxFallDistance > -groundPixelDistance)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, groundPixelDistance);
-            lemming.NextAction = WalkerAction.Instance;
+            lemming.SetNextActionType(LemmingActionType.WalkerAction);
         }
         else
         {
@@ -49,5 +36,5 @@ public sealed class FloaterAction : LemmingAction
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.FloaterAction.DoMainTransitionActions(lemming, turnAround);
 }
