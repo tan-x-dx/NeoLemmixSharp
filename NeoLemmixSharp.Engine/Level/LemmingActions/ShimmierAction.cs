@@ -21,10 +21,10 @@ public static class ShimmierAction
         // Check whether we find terrain to walk onto
         for (; i < 3; i++)
         {
-            if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, i)) &&
-                !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, i + 1)))
+            if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, i))) &&
+                !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, i + 1))))
             {
-                lemmingPosition = orientation.Move(lemmingPosition, dx, i);
+                lemmingPosition = orientation.Move(lemmingPosition, new(dx, i));
                 WalkerAction.TransitionLemmingToAction(lemming, false);
                 return true;
             }
@@ -33,10 +33,10 @@ public static class ShimmierAction
         // Check whether we find terrain to hoist onto
         for (; i < 6; i++)
         {
-            if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, i)) &&
-                !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, i + 1)))
+            if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, i))) &&
+                !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, i + 1))))
             {
-                lemmingPosition = orientation.Move(lemmingPosition, dx, i - 4);
+                lemmingPosition = orientation.Move(lemmingPosition, new(dx, i - 4));
                 lemming.IsStartingAction = false;
                 HoisterAction.TransitionLemmingToAction(lemming, false);
                 lemming.PhysicsFrame += 2;
@@ -48,7 +48,7 @@ public static class ShimmierAction
         // Check whether we fall down due to a wall
         for (; i < 8; i++)
         {
-            if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, i)))
+            if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, i))))
             {
                 if (lemming.IsSlider)
                 {
@@ -63,17 +63,17 @@ public static class ShimmierAction
             }
         }
 
-        var pixel9AboveIsSolid = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 9));
+        var pixel9AboveIsSolid = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 9)));
         // Check whether we fall down due to not enough ceiling terrain
         if (!pixel9AboveIsSolid &&
-            !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 10)))
+            !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 10))))
         {
             FallerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
         // Check whether we fall down due a checkerboard ceiling
-        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 8)) &&
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 8))) &&
             !pixel9AboveIsSolid)
         {
             FallerAction.TransitionLemmingToAction(lemming, false);
@@ -129,7 +129,7 @@ public static class ShimmierAction
         var dx = lemming.FacingDirection.DeltaX;
         var currentActionType = lemming.CurrentActionType;
 
-        var gadgetTestRegion = new RectangularRegion(lemmingPosition, orientation.Move(lemmingPosition, dx, 12));
+        var gadgetTestRegion = new RectangularRegion(lemmingPosition, orientation.Move(lemmingPosition, new(dx, 12)));
 
         LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearLemming);
 

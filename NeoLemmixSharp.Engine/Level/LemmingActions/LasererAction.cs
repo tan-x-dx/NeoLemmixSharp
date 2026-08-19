@@ -69,7 +69,7 @@ public static class LasererAction
 
         var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
-        var target = orientation.Move(lemmingPosition, dx * 2, 5);
+        var target = orientation.Move(lemmingPosition, new(dx * 2, 5));
 
         var hit = false;
         var hitUseful = false;
@@ -83,7 +83,7 @@ public static class LasererAction
             switch (CheckForHit(in gadgetsNearLemming, offsetChecks))
             {
                 case LaserHitType.None:
-                    target = orientation.Move(target, dx, 1);
+                    target = orientation.Move(target, new(dx, 1));
                     break;
                 case LaserHitType.Solid:
                     hit = true;
@@ -139,7 +139,7 @@ public static class LasererAction
 
             foreach (var offset in offsetChecks)
             {
-                var checkLevelPosition = orientation.Move(target, offset.X, offset.Y);
+                var checkLevelPosition = orientation.Move(target, new(offset.X, offset.Y));
 
                 //  gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan1, checkLevelPosition, out var gadgetSet);
 

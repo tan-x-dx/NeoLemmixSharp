@@ -129,8 +129,8 @@ public static class PlatformerAction
                      !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveRight(lemmingPosition, dx * 3)) ||
                      !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveRight(lemmingPosition, dx * 4));
 
-        result = result && !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 1));
-        result = result && !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx * 2, 1));
+        result = result && !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 1)));
+        result = result && !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx * 2, 1)));
         return result;
     }
 

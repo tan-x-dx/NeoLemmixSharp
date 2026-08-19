@@ -43,19 +43,19 @@ public static class BuilderAction
         ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
 
-        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 2)))
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 2))))
         {
             WalkerAction.TransitionLemmingToAction(lemming, true);
 
             return;
         }
 
-        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-            PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx * 2, 2)) ||
-            (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
+        if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 3))) ||
+            PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx * 2, 2))) ||
+            (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx * 2, 10))) &&
              lemming.NumberOfBricksLeft > 0))
         {
-            lemmingPosition = orientation.Move(lemmingPosition, dx, 1);
+            lemmingPosition = orientation.Move(lemmingPosition, new(dx, 1));
             WalkerAction.TransitionLemmingToAction(lemming, true);
 
             return;
@@ -63,13 +63,13 @@ public static class BuilderAction
 
         if (!lemming.ConstructivePositionFreeze)
         {
-            lemmingPosition = orientation.Move(lemmingPosition, dx * 2, 1);
+            lemmingPosition = orientation.Move(lemmingPosition, new(dx * 2, 1));
         }
 
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 2)) ||
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 3)) ||
-            PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-            (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx * 2, 10)) &&
+            PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 3))) ||
+            (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx * 2, 10))) &&
              lemming.NumberOfBricksLeft > 0))
         {
             WalkerAction.TransitionLemmingToAction(lemming, true);

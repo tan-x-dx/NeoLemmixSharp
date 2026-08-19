@@ -113,7 +113,7 @@ end;
             // Rise a pixel every second frame
             if (lemming.PhysicsFrame >= 9 &&
                 (lemming.PhysicsFrame & 1) != 0 &&
-                !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 1 - maxFallDistance)) &&
+                !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 1 - maxFallDistance))) &&
                 HeadCheck(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 1)))
             {
                 maxFallDistance--;
@@ -224,7 +224,7 @@ end;
         {
             // Bug-fix for http://www.lemmingsforums.net/index.php?topic=2693
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveDown(checkPosition, dy)) &&
-                PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, -dx, dy)))
+                PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, new(-dx, dy))))
                 // Abort computation and let lemming turn around
                 return true;
 
@@ -293,9 +293,9 @@ end;
     {
         var orientation = lemming.Orientation;
 
-        return !(PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, -1, 12)) ||
-                 PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, 0, 12)) ||
-                 PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, 1, 12)));
+        return !(PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, new(-1, 12))) ||
+                 PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, new(0, 12))) ||
+                 PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(checkPosition, new(1, 12))));
     }
 
     public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.GliderAction.DoMainTransitionActions(lemming, turnAround);

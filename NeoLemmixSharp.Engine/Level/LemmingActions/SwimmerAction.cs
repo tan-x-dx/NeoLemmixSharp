@@ -177,7 +177,7 @@ public static class SwimmerAction
         var i = 0;
 
         var gadgetTestRegion = new RectangularRegion(
-            orientation.Move(lemming.AnchorPosition, lemming.FacingDirection.DeltaX, 2),
+            orientation.Move(lemming.AnchorPosition, new(lemming.FacingDirection.DeltaX, 2)),
             orientation.MoveDown(lemming.AnchorPosition, 4));
         LevelScreen.GadgetManager.GetAllItemsNearRegion(gadgetTestRegion, out var gadgetsNearLemming);
 

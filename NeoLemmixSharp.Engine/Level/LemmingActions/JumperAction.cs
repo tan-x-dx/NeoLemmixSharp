@@ -118,7 +118,7 @@ public sealed class JumperAction
                     return false;
             }
 
-            lemmingPosition = orientation.Move(lemmingPosition, dx * position.X, position.Y);
+            lemmingPosition = orientation.Move(lemmingPosition, new(dx * position.X, position.Y));
 
             DoJumperTriggerChecks(in gadgetsNearLemming);
 

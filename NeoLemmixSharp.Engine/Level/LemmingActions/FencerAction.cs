@@ -165,10 +165,10 @@ public static class FencerAction
 
             if (!BasherAction.StepUpCheck(in gadgetsNearLemming, lemming, lemmingPosition, orientation, dx, dy))
             {
-                if (FencerIndestructibleCheck(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, -2)))
+                if (FencerIndestructibleCheck(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, -2))))
                 {
-                    var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, dy)) ||
-                                    PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, dy + 1));
+                    var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, dy))) ||
+                                    PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, dy + 1)));
 
                     FencerTurn(lemming, needToUndoMoveUp, steelTest);
 
@@ -193,9 +193,9 @@ public static class FencerAction
         // Either stall or turn if there is steel
         if (FencerIndestructibleCheck(in gadgetsNearLemming, lemming, lemmingPosition))
         {
-            var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-                            PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 4)) ||
-                            PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 5));
+            var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 3))) ||
+                            PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 4))) ||
+                            PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 5)));
 
             FencerTurn(lemming, needToUndoMoveUp, steelTest);
             return true;
@@ -226,7 +226,7 @@ public static class FencerAction
             ? -1
             : 0;
         ref var lemmingPosition = ref lemming.AnchorPosition;
-        lemmingPosition = lemming.Orientation.Move(lemmingPosition, dx, dy);
+        lemmingPosition = lemming.Orientation.Move(lemmingPosition, new(dx, dy));
 
         WalkerAction.TransitionLemmingToAction(lemming, true);
 

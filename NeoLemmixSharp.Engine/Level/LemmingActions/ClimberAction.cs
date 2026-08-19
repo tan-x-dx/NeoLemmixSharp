@@ -22,7 +22,7 @@ public static class ClimberAction
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
         lemming.IsStartingAction = false;
 
-        var foundClip = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, 7));
+        var foundClip = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(-dx, 7)));
 
         if (physicsFrame == 7 &&
             !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 7)))
@@ -56,12 +56,12 @@ public static class ClimberAction
         ref Point lemmingPosition,
         int physicsFrame)
     {
-        var foundClip = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, 6 + physicsFrame)) ||
-                       (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, 5 + physicsFrame)) &&
+        var foundClip = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(-dx, 6 + physicsFrame))) ||
+                       (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(-dx, 5 + physicsFrame))) &&
                         !lemming.IsStartingAction);
 
         if (physicsFrame == 0 && // first triggered after 8 frames!
-            !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, 7)))
+            !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(-dx, 7))))
         {
             foundClip = false;
         }

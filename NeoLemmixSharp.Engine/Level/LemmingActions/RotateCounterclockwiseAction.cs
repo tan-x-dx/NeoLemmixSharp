@@ -14,7 +14,7 @@ public static class RotateCounterclockwiseAction
             var orientation = lemming.Orientation;
             ref var lemmingPosition = ref lemming.AnchorPosition;
             var dx = lemming.FacingDirection.DeltaX;
-            lemmingPosition = orientation.Move(lemmingPosition, dx * 4, 4);
+            lemmingPosition = orientation.Move(lemmingPosition, new(dx * 4, 4));
             lemming.Orientation = orientation.RotateCounterClockwise();
         }
 

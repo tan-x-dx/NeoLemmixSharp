@@ -89,8 +89,8 @@ public static class BlockerAction
     {
         var orientation = blocker.Orientation;
         var moveDelta = blocker.FacingDirection.Id ^ 1; // Fixes off-by-one errors between left/right
-        var p0 = orientation.Move(blocker.AnchorPosition, moveDelta + offsetX0, 6);
-        var p1 = orientation.Move(blocker.AnchorPosition, moveDelta + offsetX1, -4);
+        var p0 = orientation.Move(blocker.AnchorPosition, new(moveDelta + offsetX0, 6));
+        var p1 = orientation.Move(blocker.AnchorPosition, new(moveDelta + offsetX1, -4));
 
         return new RectangularRegion(p0, p1);
     }
@@ -153,7 +153,7 @@ public static class BlockerAction
             : 1;
 
         // Move out of the wall
-        lemming.AnchorPosition = lemming.Orientation.Move(lemming.AnchorPosition, dx, dy);
+        lemming.AnchorPosition = lemming.Orientation.Move(lemming.AnchorPosition, new(dx, dy));
 
         WalkerAction.TransitionLemmingToAction(lemming, false);
     }

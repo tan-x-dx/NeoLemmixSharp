@@ -69,7 +69,7 @@ public static class StackerAction
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.StackLow ? 1 : 0;
-        var brickPosition = orientation.Move(lemming.AnchorPosition, dx, 1 + EngineConstants.NumberOfStackerBricks - dy - lemming.NumberOfBricksLeft);
+        var brickPosition = orientation.Move(lemming.AnchorPosition, new(dx, 1 + EngineConstants.NumberOfStackerBricks - dy - lemming.NumberOfBricksLeft));
 
         var result = false;
 

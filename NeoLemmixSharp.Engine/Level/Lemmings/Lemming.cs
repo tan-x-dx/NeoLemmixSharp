@@ -393,8 +393,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the region enclosed by a box centred around the current position.
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
-        var p1 = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
-        var p2 = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
+        var p1 = _data.Orientation.Move(_data.AnchorPosition, new(-5, 12));
+        var p2 = _data.Orientation.Move(_data.AnchorPosition, new(5, -12));
 
         var checkPositionsBounds = new RectangularRegion(p1, p2);
 
@@ -432,8 +432,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the region enclosed by a box centred around the current position.
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
-        var p1 = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
-        var p2 = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
+        var p1 = _data.Orientation.Move(_data.AnchorPosition, new(-5, 12));
+        var p2 = _data.Orientation.Move(_data.AnchorPosition, new(5, -12));
 
         var checkPositionsBounds = new RectangularRegion(p1, p2);
 

@@ -143,10 +143,10 @@ public static class BasherAction
                 return true;
             }
 
-            if (BasherIndestructibleCheck(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, -2)))
+            if (BasherIndestructibleCheck(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, -2))))
             {
-                var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, dy)) ||
-                                PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, dy - 1));
+                var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, dy))) ||
+                                PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, dy - 1)));
 
                 BasherTurn(lemming, steelTest);
                 return true;
@@ -212,14 +212,14 @@ public static class BasherAction
         int dx,
         int dy)
     {
-        var workPos = orientation.Move(pos, dx, 1);
+        var workPos = orientation.Move(pos, new(dx, 1));
         var p1X1Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
         workPos = orientation.MoveUp(workPos, 1);
         var p1X2Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
         workPos = orientation.MoveUp(workPos, 1);
         var p1X3Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
 
-        workPos = orientation.Move(pos, dx * 2, 1);
+        workPos = orientation.Move(pos, new(dx * 2, 1));
         var p2X1Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
         workPos = orientation.MoveUp(workPos, 1);
         var p2X2Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);

@@ -22,8 +22,8 @@ public sealed class PlatformerSkill : LemmingSkill
         var lemmingPostion = lemming.AnchorPosition;
 
         var levelRegion = new RectangularRegion(
-            orientation.Move(lemmingPostion, 5, 2),
-            orientation.Move(lemmingPostion, -5, -2));
+            orientation.Move(lemmingPostion, new(-5, 2)),
+            orientation.Move(lemmingPostion, new(5, -2)));
         LevelScreen.GadgetManager.GetAllItemsNearRegion(levelRegion, out var gadgetsNearLemming);
 
         return SkillIsAssignableToCurrentAction(lemming) &&

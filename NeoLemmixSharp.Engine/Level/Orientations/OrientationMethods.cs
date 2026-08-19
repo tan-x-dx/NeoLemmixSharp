@@ -65,12 +65,11 @@ public static class OrientationMethods
     /// <returns>The translated position, relative to the orientation.</returns>
     [Pure]
     public static Point Move(
-        this Orientation orientation,
-        Point position,
-        int dx,
-        int dy)
+      this Orientation orientation,
+      Point position,
+      Point delta)
     {
-        var newPosition = orientation.MoveWithoutNormalization(position, dx, dy);
+        var newPosition = orientation.MoveWithoutNormalization(position, delta);
         return LevelScreen.NormalisePosition(newPosition);
     }
 
@@ -84,15 +83,14 @@ public static class OrientationMethods
     /// <returns>The translated position, relative to the orientation.</returns>
     [Pure]
     public static Point MoveWithoutNormalization(
-        this Orientation orientation,
-        Point position,
-        int dx,
-        int dy)
+       this Orientation orientation,
+       Point position,
+       Point delta)
     {
         var sinCos = SinCosMethods.IntSinCos(orientation.RotNum);
 
-        var absoluteDx = (sinCos.Cos * dx) + (sinCos.Sin * dy);
-        var absoluteDy = (sinCos.Sin * dx) - (sinCos.Cos * dy);
+        var absoluteDx = (sinCos.Cos * delta.X) + (sinCos.Sin * delta.Y);
+        var absoluteDy = (sinCos.Sin * delta.X) - (sinCos.Cos * delta.Y);
 
         return new Point(position.X + absoluteDx, position.Y + absoluteDy);
     }
