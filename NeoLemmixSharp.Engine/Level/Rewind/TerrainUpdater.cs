@@ -41,7 +41,7 @@ public sealed class TerrainUpdater : IDisposable
 
         PixelChangeData* newPixelChangeData = _pixelChangeList.GetNewDataPointer();
 
-        *newPixelChangeData = new PixelChangeData(currentLatestTickWithUpdate, pixel, fromColor, toColor, fromPixelType, toPixelType);
+        *newPixelChangeData = new PixelChangeData(currentLatestTickWithUpdate, fromPixelType, toPixelType, pixel, fromColor, toColor);
     }
 
     public void RepaintTerrain()
@@ -97,7 +97,7 @@ public sealed class TerrainUpdater : IDisposable
 
         public int TickNumber => Tick;
 
-        public PixelChangeData(int tick, Point position, Color fromColor, Color toColor, PixelType fromPixelType, PixelType toPixelType)
+        public PixelChangeData(int tick, PixelType fromPixelType, PixelType toPixelType, Point position, Color fromColor, Color toColor)
         {
             Tick = tick;
             Position = position;
