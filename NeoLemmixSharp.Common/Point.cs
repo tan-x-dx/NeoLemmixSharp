@@ -33,13 +33,7 @@ public readonly struct Point : IEquatable<Point>,
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Point other)
-    {
-        var a = X ^ other.X;
-        var b = Y ^ other.Y;
-
-        return (a | b) == 0;
-    }
+    public bool Equals(Point other) => this == other;
 
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Point other && Equals(other);
@@ -68,7 +62,13 @@ public readonly struct Point : IEquatable<Point>,
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(Point left, Point right) => left.Equals(right);
+    public static bool operator ==(Point left, Point right)
+    {
+        var leftLong = Unsafe.BitCast<Point, long>(left);
+        var rightLong = Unsafe.BitCast<Point, long>(right);
+
+        return leftLong == rightLong;
+    }
     [Pure]
     [DebuggerStepThrough]
     public static bool operator !=(Point left, Point right) => !left.Equals(right);

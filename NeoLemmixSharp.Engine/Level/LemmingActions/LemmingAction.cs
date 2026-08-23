@@ -345,8 +345,7 @@ public static class LemmingActionTypeMethods
 
     public static Point GetFootPosition(this LemmingActionType actionType, DihedralTransformation dht, Point anchorPosition)
     {
-        if (actionType == LemmingActionType.ClimberAction ||
-            actionType == LemmingActionType.SliderAction)
+        if (actionType is LemmingActionType.ClimberAction or LemmingActionType.SliderAction)
             return dht.Orientation.MoveLeft(anchorPosition, dht.FacingDirection.DeltaX);
 
         return dht.Orientation.MoveUp(anchorPosition, 1);

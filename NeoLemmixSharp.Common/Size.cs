@@ -74,13 +74,7 @@ public readonly struct Size : IEquatable<Size>, ISpanFormattable
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Size other)
-    {
-        var a = W ^ other.W;
-        var b = H ^ other.H;
-
-        return (a | b) == 0;
-    }
+    public bool Equals(Size other)=>this==other;
     [Pure]
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && Equals(other);
@@ -92,7 +86,13 @@ public readonly struct Size : IEquatable<Size>, ISpanFormattable
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(Size left, Size right) => left.Equals(right);
+    public static bool operator ==(Size left, Size right)
+    {
+        var leftLong = Unsafe.BitCast<Size, long>(left);
+        var rightLong = Unsafe.BitCast<Size, long>(right);
+
+        return leftLong == rightLong;
+    }
     [Pure]
     [DebuggerStepThrough]
     public static bool operator !=(Size left, Size right) => !left.Equals(right);

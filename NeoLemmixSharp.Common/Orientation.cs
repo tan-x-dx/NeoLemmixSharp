@@ -88,13 +88,13 @@ public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Orientation other) => RotNum == other.RotNum;
+    public bool Equals(Orientation other) => ((RotNum ^ other.RotNum) & BitMask) == 0;
     [Pure]
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Orientation other && Equals(other);
     [Pure]
     [DebuggerStepThrough]
-    public override int GetHashCode() => RotNum;
+    public override int GetHashCode() => RotNum & BitMask;
 
     [Pure]
     [DebuggerStepThrough]
@@ -103,28 +103,29 @@ public readonly struct Orientation : IEquatable<Orientation>, ISpanFormattable
     [DebuggerStepThrough]
     public override string ToString()
     {
-        ReadOnlySpan<string> OrientationNames =
-        [
-            OrientationConstants.DownOrientationName,
-            OrientationConstants.LeftOrientationName,
-            OrientationConstants.UpOrientationName,
-            OrientationConstants.RightOrientationName,
-        ];
+        var i = RotNum & BitMask;
 
-        return OrientationNames[RotNum & BitMask];
+        if (i == OrientationConstants.DownOrientationRotNum)
+            return OrientationConstants.DownOrientationName;
+        if (i == OrientationConstants.LeftOrientationRotNum)
+            return OrientationConstants.LeftOrientationName;
+        if (i == OrientationConstants.UpOrientationRotNum)
+            return OrientationConstants.UpOrientationName;
+        return OrientationConstants.RightOrientationName;
     }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        var constSpan = ToString();
-        if (constSpan.TryCopyTo(destination))
+        var constString = ToString();
+        if (destination.Length < constString.Length)
         {
-            charsWritten = constSpan.Length;
-            return true;
+            charsWritten = 0;
+            return false;
         }
 
-        charsWritten = 0;
-        return false;
+        constString.CopyTo(destination);
+        charsWritten = constString.Length;
+        return true;
     }
 
     [Pure]

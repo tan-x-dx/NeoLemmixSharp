@@ -42,10 +42,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
 
     public LemmingActionType CountDownActionType => _data.CountDownActionType;
-    public void SetCountDownActionType(LemmingActionType actionType)
-    {
-        _data.NextActionType = actionType;
-    }
 
     public DihedralTransformation DihedralTransformation => _data.DihedralTransformation;
 

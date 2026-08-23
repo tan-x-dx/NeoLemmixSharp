@@ -157,7 +157,7 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
     {
         Span<char> buffer = stackalloc char[5 + 1 + 5];
         TryFormat(buffer, out var charsWritten, format, formatProvider);
-        return buffer[..charsWritten].ToString();
+        return buffer.SliceUnsafe(0, charsWritten).ToString();
     }
 
     [Pure]
@@ -169,17 +169,22 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        if (destination.Length < 5 + 1 + 5)
+        var orientationString = Orientation.ToString();
+        var facingDirectionString = FacingDirection.ToString();
+
+        if (destination.Length < orientationString.Length + 1 + facingDirectionString.Length)
         {
             charsWritten = 0;
             return false;
         }
 
-        Orientation.TryFormat(destination, out var c1, format, provider);
+        orientationString.CopyTo(destination);
+        charsWritten = orientationString.Length;
+        destination.At(charsWritten++) = '|';
 
-        destination.At(c1++) = '|';
-        FacingDirection.TryFormat(destination[c1..], out var c2, format, provider);
-        charsWritten = c1 + c2;
+        destination = destination.SliceUnsafe(charsWritten, facingDirectionString.Length);
+        facingDirectionString.CopyTo(destination);
+        charsWritten += facingDirectionString.Length;
         return true;
     }
 
