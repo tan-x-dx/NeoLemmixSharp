@@ -1,8 +1,8 @@
 ﻿namespace NeoLemmixSharp.Common;
 
-public enum CursorSelectionPriority
+public enum CursorSelectionPriority : byte
 {
-    NoneActionPriority = -1,
+    NoneActionPriority,
     NoPriority,
     WalkerMovementPriority,
     NonWalkerMovementPriority,

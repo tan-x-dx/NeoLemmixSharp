@@ -15,7 +15,7 @@ public static class OhNoerAction
         {
             LevelScreen.LemmingManager.DeregisterBlocker(lemming);
             var nextAction = lemming.CountDownActionType;
-            nextAction.TransitionLemmingToAction(lemming, false);
+            LemmingAction.TransitionLemmingToAction(lemming, false, nextAction);
             lemming.ClearCountDownAction();
             return !LemmingAction.IsOneTimeAction(nextAction);
         }
@@ -41,7 +41,7 @@ public static class OhNoerAction
         if (LemmingAction.IsAirborneAction(currentActionType))
         {
             // If in the air, do the action immediately
-            lemming.CountDownActionType.TransitionLemmingToAction(lemming, false);
+            LemmingAction.TransitionLemmingToAction(lemming, false, lemming.CountDownActionType);
             lemming.ClearCountDownAction();
             return;
         }

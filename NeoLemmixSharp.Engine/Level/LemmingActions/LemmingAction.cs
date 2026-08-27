@@ -4,23 +4,31 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public readonly struct LemmingAction : IEquatable<LemmingAction>
+public static class LemmingAction
 {
-    private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
+    [DebuggerDisplay("{ActionType}")]
+    private readonly struct LemmingActionData(LemmingActionType actionType, byte numberOfAnimationFrames, byte maxPhysicsFrames, CursorSelectionPriority cursorSelectionPriority)
+    {
+        public readonly LemmingActionType ActionType = actionType;
+        public readonly byte NumberOfAnimationFrames = numberOfAnimationFrames;
+        public readonly byte MaxPhysicsFrames = maxPhysicsFrames;
+        public readonly CursorSelectionPriority CursorSelectionPriority = cursorSelectionPriority;
+    }
+
+    private static readonly LemmingActionData[] LemmingActions = RegisterAllLemmingActions();
     private static readonly LemmingActionTypeSet AirborneActionTypes = GetAirborneActionTypes();
     private static readonly LemmingActionTypeSet OneTimeActionTypes = GetOneTimeActionTypes();
 
-    private static LemmingAction[] RegisterAllLemmingActions()
+    private static LemmingActionData[] RegisterAllLemmingActions()
     {
         // NOTE: DO NOT ADD THE NONE ACTION
-        var result = new LemmingAction[]
+        var result = new LemmingActionData[]
         {
             new(LemmingActionType.WalkerAction,                 LemmingActionConstants.WalkerAnimationFrames,                 LemmingActionConstants.MaxWalkerPhysicsFrames,                 CursorSelectionPriority.WalkerMovementPriority),
             new(LemmingActionType.ClimberAction,                LemmingActionConstants.ClimberAnimationFrames,                LemmingActionConstants.MaxClimberPhysicsFrames,                CursorSelectionPriority.PermanentSkillPriority),
@@ -42,7 +50,7 @@ public readonly struct LemmingAction : IEquatable<LemmingAction>
             new(LemmingActionType.SliderAction,                 LemmingActionConstants.SliderAnimationFrames,                 LemmingActionConstants.MaxSliderPhysicsFrames,                 CursorSelectionPriority.PermanentSkillPriority),
 
             new(LemmingActionType.FallerAction,                 LemmingActionConstants.FallerAnimationFrames,                 LemmingActionConstants.MaxFallerPhysicsFrames,                 CursorSelectionPriority.NonWalkerMovementPriority),
-            new(LemmingActionType.AscenderAction,               LemmingActionConstants.AscenderAnimationFrames,               LemmingActionConstants.MaxAscenderPhysicsFrames,               CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.AscenderAction,               LemmingActionConstants.AscenderAnimationFrames,               LemmingActionConstants.MaxAscenderPhysicsFrames,               CursorSelectionPriority.WalkerMovementPriority),
             new(LemmingActionType.ShruggerAction,               LemmingActionConstants.ShruggerAnimationFrames,               LemmingActionConstants.MaxShruggerPhysicsFrames,               CursorSelectionPriority.NonWalkerMovementPriority),
             new(LemmingActionType.DrownerAction,                LemmingActionConstants.DrownerAnimationFrames,                LemmingActionConstants.MaxDrownerPhysicsFrames,                CursorSelectionPriority.NonWalkerMovementPriority),
             new(LemmingActionType.HoisterAction,                LemmingActionConstants.HoisterAnimationFrames,                LemmingActionConstants.MaxHoisterPhysicsFrames,                CursorSelectionPriority.NonWalkerMovementPriority),
@@ -65,7 +73,7 @@ public readonly struct LemmingAction : IEquatable<LemmingAction>
         Debug.Assert(result.Length == LemmingActionConstants.NumberOfLemmingActions);
 
         var hasher = new LemmingActionTypeHasher();
-        hasher.AssertUniqueIds(new ReadOnlySpan<LemmingAction>(result));
+        hasher.AssertUniqueIds(new ReadOnlySpan<LemmingActionData>(result));
         Array.Sort(result, hasher);
 
         return result;
@@ -73,63 +81,44 @@ public readonly struct LemmingAction : IEquatable<LemmingAction>
 
     private static LemmingActionTypeSet GetAirborneActionTypes()
     {
-        var result = new LemmingActionTypeSet(new())
-        {
-            LemmingActionType.DrownerAction,
-            LemmingActionType.FallerAction,
-            LemmingActionType.FloaterAction,
-            LemmingActionType.GliderAction,
-            LemmingActionType.JumperAction,
-            LemmingActionType.ReacherAction,
-            LemmingActionType.RotateClockwiseAction,
-            LemmingActionType.RotateCounterclockwiseAction,
-            LemmingActionType.RotateHalfAction,
-            LemmingActionType.ShimmierAction,
-            LemmingActionType.SwimmerAction,
-            LemmingActionType.VaporiserAction
-        };
+        var result = CreateBitArraySet();
+
+        result.Add(LemmingActionType.DrownerAction);
+        result.Add(LemmingActionType.FallerAction);
+        result.Add(LemmingActionType.FloaterAction);
+        result.Add(LemmingActionType.GliderAction);
+        result.Add(LemmingActionType.JumperAction);
+        result.Add(LemmingActionType.ReacherAction);
+        result.Add(LemmingActionType.RotateClockwiseAction);
+        result.Add(LemmingActionType.RotateCounterclockwiseAction);
+        result.Add(LemmingActionType.RotateHalfAction);
+        result.Add(LemmingActionType.ShimmierAction);
+        result.Add(LemmingActionType.SwimmerAction);
+        result.Add(LemmingActionType.VaporiserAction);
 
         return result;
     }
 
     private static LemmingActionTypeSet GetOneTimeActionTypes()
     {
-        var result = new LemmingActionTypeSet(new())
-        {
-            LemmingActionType.DehoisterAction,
-            LemmingActionType.DrownerAction,
-            LemmingActionType.ExiterAction,
-            LemmingActionType.ExploderAction,
-            LemmingActionType.HoisterAction,
-            LemmingActionType.OhNoerAction,
-            LemmingActionType.ReacherAction,
-            LemmingActionType.RotateClockwiseAction,
-            LemmingActionType.RotateCounterclockwiseAction,
-            LemmingActionType.RotateHalfAction,
-            LemmingActionType.ShruggerAction,
-            LemmingActionType.SplatterAction,
-            LemmingActionType.StonerAction,
-            LemmingActionType.VaporiserAction
-        };
+        var result = CreateBitArraySet();
+
+        result.Add(LemmingActionType.DehoisterAction);
+        result.Add(LemmingActionType.DrownerAction);
+        result.Add(LemmingActionType.ExiterAction);
+        result.Add(LemmingActionType.ExploderAction);
+        result.Add(LemmingActionType.HoisterAction);
+        result.Add(LemmingActionType.OhNoerAction);
+        result.Add(LemmingActionType.ReacherAction);
+        result.Add(LemmingActionType.RotateClockwiseAction);
+        result.Add(LemmingActionType.RotateCounterclockwiseAction);
+        result.Add(LemmingActionType.RotateHalfAction);
+        result.Add(LemmingActionType.ShruggerAction);
+        result.Add(LemmingActionType.SplatterAction);
+        result.Add(LemmingActionType.StonerAction);
+        result.Add(LemmingActionType.VaporiserAction);
 
         return result;
-    }
-
-    public readonly LemmingActionType ActionType;
-    public readonly int NumberOfAnimationFrames;
-    public readonly int MaxPhysicsFrames;
-    public readonly CursorSelectionPriority CursorSelectionPriority;
-
-    private LemmingAction(
-        LemmingActionType actionType,
-        int numberOfAnimationFrames,
-        int maxPhysicsFrames,
-        CursorSelectionPriority cursorSelectionPriority)
-    {
-        ActionType = actionType;
-        NumberOfAnimationFrames = numberOfAnimationFrames;
-        MaxPhysicsFrames = maxPhysicsFrames;
-        CursorSelectionPriority = cursorSelectionPriority;
     }
 
     public static bool IsAirborneAction(LemmingActionType actionType) => AirborneActionTypes.Contains(actionType);
@@ -137,85 +126,35 @@ public readonly struct LemmingAction : IEquatable<LemmingAction>
 
     public static int GetNumberOfAnimationFramesForActionType(LemmingActionType actionType)
     {
-        if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
-            return LemmingActions.At((int)actionType).NumberOfAnimationFrames;
+        int result = 1;
 
-        return 1;
+        if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
+            result = LemmingActions.At((int)actionType).NumberOfAnimationFrames;
+
+        return result;
     }
 
     public static int GetMaxPhysicsFramesForActionType(LemmingActionType actionType)
     {
-        if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
-            return LemmingActions.At((int)actionType).MaxPhysicsFrames;
+        int result = 1;
 
-        return 1;
+        if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
+            result = LemmingActions.At((int)actionType).MaxPhysicsFrames;
+
+        return result;
     }
 
     public static CursorSelectionPriority GetCursorSelectionPriorityForActionType(LemmingActionType actionType)
     {
+        var result = CursorSelectionPriority.NoneActionPriority;
+
         if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
-            return LemmingActions.At((int)actionType).CursorSelectionPriority;
+            result = LemmingActions.At((int)actionType).CursorSelectionPriority;
 
-        return CursorSelectionPriority.NoneActionPriority;
+        return result;
     }
 
-    [DebuggerStepThrough]
-    public bool Equals(LemmingAction other) => ActionType == other.ActionType;
-
-    [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingAction other && ActionType == other.ActionType;
-    [DebuggerStepThrough]
-    public override int GetHashCode() => (int)ActionType;
-    [DebuggerStepThrough]
-    public override string ToString() => LemmingActionConstants.GetLemmingActionNameFromId(ActionType);
-
-    [DebuggerStepThrough]
-    public static bool operator ==(LemmingAction left, LemmingAction right) => left.ActionType == right.ActionType;
-    [DebuggerStepThrough]
-    public static bool operator !=(LemmingAction left, LemmingAction right) => left.ActionType != right.ActionType;
-
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LemmingActionTypeSet CreateBitArraySet() => new(new LemmingActionTypeHasher());
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BitArrayDictionary<LemmingActionTypeHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingActionTypeHasher());
-
-    public readonly struct LemmingActionTypeHasher : IBitBufferCreator<LemmingActionBitBuffer, LemmingAction>, IBitBufferCreator<LemmingActionBitBuffer, LemmingActionType>
-    {
-        [Pure]
-        public int NumberOfItems => LemmingActionConstants.NumberOfLemmingActions;
-        [Pure]
-        int IPerfectHasher<LemmingActionType>.Hash(LemmingActionType item) => (int)item;
-        [Pure]
-        LemmingActionType IPerfectHasher<LemmingActionType>.UnHash(int index) => (LemmingActionType)index;
-        [Pure]
-        int IPerfectHasher<LemmingAction>.Hash(LemmingAction item) => (int)item.ActionType;
-        [Pure]
-        LemmingAction IPerfectHasher<LemmingAction>.UnHash(int index) => LemmingActions.At(index);
-
-        public void CreateBitBuffer(out LemmingActionBitBuffer buffer) => buffer = new();
-    }
-
-    [InlineArray(LemmingActionBitBufferLength)]
-    public struct LemmingActionBitBuffer : IBitBuffer
-    {
-        private const int LemmingActionBitBufferLength = (LemmingActionConstants.NumberOfLemmingActions + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
-
-        private uint _0;
-
-        public readonly int Length => LemmingActionBitBufferLength;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingActionBitBufferLength);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingActionBitBufferLength);
-    }
-}
-
-public static class LemmingActionTypeMethods
-{
-    public static bool UpdateLemming(this LemmingActionType actionType, Lemming lemming, in GadgetEnumerable gadgetsNearLemming) => actionType switch
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming, LemmingActionType actionType) => actionType switch
     {
         LemmingActionType.WalkerAction => WalkerAction.UpdateLemming(lemming, in gadgetsNearLemming),
         LemmingActionType.ClimberAction => ClimberAction.UpdateLemming(lemming, in gadgetsNearLemming),
@@ -252,10 +191,10 @@ public static class LemmingActionTypeMethods
         LemmingActionType.RotateCounterclockwiseAction => RotateCounterclockwiseAction.UpdateLemming(lemming, in gadgetsNearLemming),
         LemmingActionType.RotateHalfAction => RotateHalfAction.UpdateLemming(lemming, in gadgetsNearLemming),
 
-        _ => NoneAction.UpdateLemming(lemming, gadgetsNearLemming),
+        _ => NoneAction.UpdateLemming(lemming, in gadgetsNearLemming),
     };
 
-    public static void TransitionLemmingToAction(this LemmingActionType actionType, Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround, LemmingActionType actionType)
     {
         switch (actionType)
         {
@@ -315,10 +254,9 @@ public static class LemmingActionTypeMethods
             LevelScreen.LemmingManager.DeregisterBlocker(lemming);
         }
 
-        if (turnAround)
-        {
-            lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
-        }
+        var turnAroundXor = turnAround ? 1 : 0;
+        turnAroundXor ^= lemming.FacingDirection.Id;
+        lemming.FacingDirection = new FacingDirection(turnAroundXor);
 
         if (actionType == lemming.CurrentActionType)
             return;
@@ -349,5 +287,40 @@ public static class LemmingActionTypeMethods
             return dht.Orientation.MoveLeft(anchorPosition, dht.FacingDirection.DeltaX);
 
         return dht.Orientation.MoveUp(anchorPosition, 1);
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static LemmingActionTypeSet CreateBitArraySet() => new(new LemmingActionTypeHasher());
+
+    public readonly struct LemmingActionTypeHasher : IBitBufferCreator<LemmingActionBitBuffer, LemmingActionData>, IBitBufferCreator<LemmingActionBitBuffer, LemmingActionType>
+    {
+        [Pure]
+        public int NumberOfItems => LemmingActionConstants.NumberOfLemmingActions;
+        [Pure]
+        int IPerfectHasher<LemmingActionType>.Hash(LemmingActionType item) => (int)item;
+        [Pure]
+        LemmingActionType IPerfectHasher<LemmingActionType>.UnHash(int index) => (LemmingActionType)index;
+        [Pure]
+        int IPerfectHasher<LemmingActionData>.Hash(LemmingActionData item) => (int)item.ActionType;
+        [Pure]
+        LemmingActionData IPerfectHasher<LemmingActionData>.UnHash(int index) => LemmingActions.At(index);
+
+        public void CreateBitBuffer(out LemmingActionBitBuffer buffer) => buffer = new();
+    }
+
+    [InlineArray(LemmingActionBitBufferLength)]
+    public struct LemmingActionBitBuffer : IBitBuffer
+    {
+        private const int LemmingActionBitBufferLength = (LemmingActionConstants.NumberOfLemmingActions + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
+
+        private uint _0;
+
+        public readonly int Length => LemmingActionBitBufferLength;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingActionBitBufferLength);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingActionBitBufferLength);
     }
 }

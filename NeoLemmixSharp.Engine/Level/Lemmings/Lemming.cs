@@ -368,7 +368,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
             initialActionType = LemmingActionType.WalkerAction;
         }
 
-        initialActionType.TransitionLemmingToAction(this, false);
+        LemmingAction.TransitionLemmingToAction(this, false, initialActionType);
 
         UpdateAllColors();
 
@@ -528,7 +528,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         _data.PhysicsFrame = frame;
         _data.PreviousAnchorPosition = _data.AnchorPosition;
 
-        var result = currentActionType.UpdateLemming(this, in gadgetsNearLemming);
+        var result = LemmingAction.UpdateLemming(this, in gadgetsNearLemming, currentActionType);
         _data.CurrentBounds = currentActionType.GetLemmingBounds(this);
 
         return result;
@@ -561,7 +561,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
         var result = CheckGadgets(in gadgetsNearLemming, gadgetCheckPositions) && LemmingManager.DoBlockerCheck(this);
 
-        NextActionType.TransitionLemmingToAction(this, false);
+        LemmingAction.TransitionLemmingToAction(this, false, NextActionType);
 
         return result;
     }
@@ -638,7 +638,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
             (NextActionType != LemmingActionType.SplatterAction ||
             filter.HitBoxBehaviour != HitBoxInteractionType.Liquid))
         {
-            NextActionType.TransitionLemmingToAction(this, false);
+            LemmingAction.TransitionLemmingToAction(this, false, NextActionType);
             if (_data.JumpToHoistAdvance)
             {
                 _data.AnimationFrame += 2;

@@ -16,7 +16,7 @@ public static class DisarmerAction
             }
             else
             {
-                lemming.NextActionType.TransitionLemmingToAction(lemming, false);
+                LemmingAction.TransitionLemmingToAction(lemming, false, lemming.NextActionType);
                 lemming.SetNextActionType(LemmingActionType.NoneAction);
             }
         }

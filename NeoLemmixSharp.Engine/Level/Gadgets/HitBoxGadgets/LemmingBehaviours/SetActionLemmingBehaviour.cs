@@ -18,6 +18,6 @@ public sealed class SetActionLemmingBehaviour : LemmingBehaviour
 
     protected override void PerformInternalBehaviour(Lemming lemming)
     {
-        _actionType.TransitionLemmingToAction(lemming, false);
+        LemmingAction.TransitionLemmingToAction(lemming, false, _actionType);
     }
 }
