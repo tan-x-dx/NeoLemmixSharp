@@ -74,7 +74,7 @@ public readonly struct Size : IEquatable<Size>, ISpanFormattable
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(Size other)=>this==other;
+    public bool Equals(Size other) => this == other;
     [Pure]
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Size other && Equals(other);
@@ -95,7 +95,7 @@ public readonly struct Size : IEquatable<Size>, ISpanFormattable
     }
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(Size left, Size right) => !left.Equals(right);
+    public static bool operator !=(Size left, Size right) => !(left == right);
 
     [Pure]
     [DebuggerStepThrough]

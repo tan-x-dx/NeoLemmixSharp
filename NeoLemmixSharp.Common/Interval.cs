@@ -45,7 +45,7 @@ public readonly struct Interval : IEquatable<Interval>, ISpanFormattable
 
         return leftLong == rightLong;
     }
-    public static bool operator !=(Interval left, Interval right) => !left.Equals(right);
+    public static bool operator !=(Interval left, Interval right) => !(left == right);
 
     [Pure]
     [DebuggerStepThrough]

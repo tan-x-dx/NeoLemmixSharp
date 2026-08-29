@@ -126,7 +126,7 @@ public static class LemmingAction
 
     public static int GetNumberOfAnimationFramesForActionType(LemmingActionType actionType)
     {
-        int result = 1;
+        byte result = 1;
 
         if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
             result = LemmingActions.At((int)actionType).NumberOfAnimationFrames;
@@ -136,7 +136,7 @@ public static class LemmingAction
 
     public static int GetMaxPhysicsFramesForActionType(LemmingActionType actionType)
     {
-        int result = 1;
+        byte result = 1;
 
         if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
             result = LemmingActions.At((int)actionType).MaxPhysicsFrames;

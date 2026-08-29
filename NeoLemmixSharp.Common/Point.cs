@@ -71,7 +71,7 @@ public readonly struct Point : IEquatable<Point>,
     }
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(Point left, Point right) => !left.Equals(right);
+    public static bool operator !=(Point left, Point right) => !(left == right);
 
     [Pure]
     [DebuggerStepThrough]

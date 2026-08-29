@@ -336,23 +336,28 @@ public abstract class Component : IDisposable
 
             _parent = null;
 
-            DisposableHelperMethods.DisposeOf(ref _mouseEnter);
-            DisposableHelperMethods.DisposeOf(ref _mouseMovement);
-            DisposableHelperMethods.DisposeOf(ref _mousePressed);
-            DisposableHelperMethods.DisposeOf(ref _mouseHeld);
-            DisposableHelperMethods.DisposeOf(ref _mouseDoubleClick);
-            DisposableHelperMethods.DisposeOf(ref _mouseReleased);
-            DisposableHelperMethods.DisposeOf(ref _mouseExit);
-
-            DisposableHelperMethods.DisposeOf(ref _keyPressed);
-            DisposableHelperMethods.DisposeOf(ref _keyHeld);
-            DisposableHelperMethods.DisposeOf(ref _keyReleased);
+            DisposeOfHandlers();
 
             UiHandler.Instance.EliminateComponentReferences(this);
 
             OnDispose();
         }
         GC.SuppressFinalize(this);
+    }
+
+    private void DisposeOfHandlers()
+    {
+        DisposableHelperMethods.DisposeOf(ref _mouseEnter);
+        DisposableHelperMethods.DisposeOf(ref _mouseMovement);
+        DisposableHelperMethods.DisposeOf(ref _mousePressed);
+        DisposableHelperMethods.DisposeOf(ref _mouseHeld);
+        DisposableHelperMethods.DisposeOf(ref _mouseDoubleClick);
+        DisposableHelperMethods.DisposeOf(ref _mouseReleased);
+        DisposableHelperMethods.DisposeOf(ref _mouseExit);
+
+        DisposableHelperMethods.DisposeOf(ref _keyPressed);
+        DisposableHelperMethods.DisposeOf(ref _keyHeld);
+        DisposableHelperMethods.DisposeOf(ref _keyReleased);
     }
 
     protected virtual void OnDispose()
