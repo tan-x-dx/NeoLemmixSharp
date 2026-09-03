@@ -247,7 +247,6 @@ public sealed class LemmingManager :
 
     public void RemoveLemming(Lemming lemming, LemmingRemovalReason removalReason)
     {
-        lemming.IsActive = false;
         _lemmingSpacialHashGrid.RemoveItem(lemming);
 
         if (lemming.IsZombie)

@@ -92,6 +92,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref int LaserRemainTime => ref _data.LaserRemainTime;
     public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref int ParticleTimer => ref _data.ParticleTimer;
+    public ref LemmingRemovalReason LemmingRemovalReason => ref _data.LemmingRemovalReason;
 
     public bool IsSimulation => Id == EngineConstants.SimulationLemmingId;
     public bool IsFastForward => _data.FastForwardTime > 0 || IsPermanentFastForwards;
@@ -113,7 +114,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public int NumberOfPermanentSkills => BitOperations.PopCount(_data.State & LemmingAbilityConstants.PermanentSkillBitMask);
 
     /// <summary>
-    /// Must be active and NOT zombie and NOT neutral
+    /// Must be active and NOT removed and NOT zombie and NOT neutral
     /// </summary>
     public bool CanHaveSkillsAssigned => (_data.State & LemmingAbilityConstants.AssignableSkillBitMask) == (1U << LemmingAbilityConstants.ActiveBitIndex);
 
@@ -287,7 +288,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public bool IsActive
     {
         get => ((_data.State >>> LemmingAbilityConstants.ActiveBitIndex) & 1U) != 0U;
-        set
+        private set
         {
             ref var states = ref _data.State;
             if (value)
@@ -679,6 +680,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public void OnRemoval(LemmingRemovalReason removalReason)
     {
+        _data.LemmingRemovalReason = removalReason;
         SetCurrentActionType(LemmingActionType.NoneAction);
         Renderer.UpdateLemmingState(removalReason is LemmingRemovalReason.DeathExploder or LemmingRemovalReason.DeathStoner);
     }

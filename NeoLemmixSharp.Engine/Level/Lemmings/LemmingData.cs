@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using System.Runtime.CompilerServices;
@@ -72,6 +73,7 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         public int FastForwardTime;
         public uint CountDownTimer;
         public int ParticleTimer;
+        public LemmingRemovalReason LemmingRemovalReason;
     }
 
     private readonly LemmingDataRaw* _data;
@@ -135,6 +137,7 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     public ref int FastForwardTime => ref Unsafe.AsRef<int>(&_data->FastForwardTime);
     public ref uint CountDownTimer => ref Unsafe.AsRef<uint>(&_data->CountDownTimer);
     public ref int ParticleTimer => ref Unsafe.AsRef<int>(&_data->ParticleTimer);
+    public ref LemmingRemovalReason LemmingRemovalReason => ref Unsafe.AsRef<LemmingRemovalReason>(&_data->LemmingRemovalReason);
 
     public Span<Point> GetJumperPositions()
     {
