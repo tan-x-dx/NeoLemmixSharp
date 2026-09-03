@@ -5,4 +5,5 @@ public enum ObjectiveCriterionType
     SaveLemmings,
     TimeLimit,
     KillAllZombies,
+    SpecificSkillUsageLimit,
 }

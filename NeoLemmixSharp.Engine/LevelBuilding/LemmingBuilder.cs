@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Level;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -28,10 +28,13 @@ public sealed class LemmingBuilder
     {
         var i = 0;
         nint handle = _lemmingDataBuffer.Handle;
+        var preplacedLemmingData = _levelData.PrePlacedLemmingData;
 
-        while (i < _levelData.PrePlacedLemmingData.Count)
+        Debug.Assert(preplacedLemmingData.Count <= _levelLemmings.Length);
+
+        while (i < preplacedLemmingData.Count)
         {
-            var prototype = _levelData.PrePlacedLemmingData[i];
+            var prototype = preplacedLemmingData[i];
 
             var lemming = new Lemming(ref handle, i)
             {
@@ -47,12 +50,7 @@ public sealed class LemmingBuilder
 
         while (i < _levelLemmings.Length)
         {
-            var lemming = new Lemming(ref handle, i)
-            {
-                AnchorPosition = Point.Zero,
-                Orientation = Orientation.Down,
-                FacingDirection = FacingDirection.Right
-            };
+            var lemming = new Lemming(ref handle, i);
 
             lemming.SetCurrentActionType(LemmingActionType.NoneAction);
 

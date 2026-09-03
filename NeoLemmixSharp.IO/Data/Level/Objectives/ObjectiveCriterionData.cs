@@ -1,4 +1,7 @@
-﻿namespace NeoLemmixSharp.IO.Data.Level.Objectives;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
+
+namespace NeoLemmixSharp.IO.Data.Level.Objectives;
 
 public abstract class ObjectiveCriterionData
 {
@@ -53,5 +56,21 @@ public sealed class KillAllZombiesCriterionData : ObjectiveCriterionData
     public override bool MatchesBaseCriterionData(ObjectiveCriterionData other)
     {
         return other is KillAllZombiesCriterionData;
+    }
+}
+
+public sealed class SpecificSkillLimitCriterionData : ObjectiveCriterionData
+{
+    public required LemmingSkillType LemmingSkillType { get; init; }
+    public required ComparisonType ComparisonType { get; init; }
+    public required int UsageRequirementValue { get; init; }
+
+    public SpecificSkillLimitCriterionData() : base(ObjectiveCriterionType.SpecificSkillUsageLimit)
+    {
+    }
+
+    public override bool MatchesBaseCriterionData(ObjectiveCriterionData other)
+    {
+        return other is SpecificSkillLimitCriterionData otherSpecificSkillLimitCriterion && LemmingSkillType == otherSpecificSkillLimitCriterion.LemmingSkillType;
     }
 }
