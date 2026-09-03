@@ -17,6 +17,8 @@ public sealed class RewindManager : IDisposable
 
     private int _maxElapsedTicks;
 
+    public ReadOnlySpan<SkillAssignmentEventData> SkillAssignmentsSoFar => _skillAssignmentList.GetSliceToEnd(0);
+
     public RewindManager(
         RawArray lemmingDataBuffer,
         RawArray lemmingManagerDataBuffer,
