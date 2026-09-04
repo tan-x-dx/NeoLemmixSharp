@@ -28,5 +28,10 @@ public static class DisarmerAction
         return false;
     }
 
-    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.DisarmerAction.DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        LemmingActionType.DisarmerAction.DoMainTransitionActions(lemming, turnAround);
+
+        lemming.DisarmingFrames = EngineConstants.MaxDisarmingFrames;
+    }
 }

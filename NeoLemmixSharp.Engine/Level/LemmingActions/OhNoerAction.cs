@@ -49,5 +49,14 @@ public static class OhNoerAction
         TransitionLemmingToAction(lemming, false); // Otherwise start oh-noing!
     }
 
-    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.OhNoerAction.DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        LemmingActionType.OhNoerAction.DoMainTransitionActions(lemming, turnAround);
+
+        var countDownActionType = lemming.CountDownActionType;
+        if (countDownActionType is LemmingActionType.ExploderAction or LemmingActionType.StonerAction)
+        {
+            lemming.ClearAllPermanentSkills();
+        }
+    }
 }

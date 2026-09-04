@@ -66,6 +66,8 @@ public static class EngineConstants
 
     public const int FloaterGliderStartCycleFrame = 9;
 
+    public const int MaxDisarmingFrames = 42;
+
     public const int LasererDistanceCap = 112;
     public const int MaxLaserRemainTime = 10;
 

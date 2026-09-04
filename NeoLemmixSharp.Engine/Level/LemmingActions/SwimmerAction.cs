@@ -163,12 +163,10 @@ public static class SwimmerAction
     {
         LemmingActionType.SwimmerAction.DoMainTransitionActions(lemming, turnAround);
 
-        DoSwimmerTransitionActions(lemming, turnAround);
+        DoSwimmerTransitionActions(lemming);
     }
 
-    private static void DoSwimmerTransitionActions(
-        Lemming lemming,
-        bool turnAround)
+    private static void DoSwimmerTransitionActions(Lemming lemming)
     {
         // If possible, float up 4 pixels when starting
         var orientation = lemming.Orientation;

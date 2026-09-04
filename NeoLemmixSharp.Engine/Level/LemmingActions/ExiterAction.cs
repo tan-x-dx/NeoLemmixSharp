@@ -31,6 +31,7 @@ public static class ExiterAction
     {
         LemmingActionType.ExiterAction.DoMainTransitionActions(lemming, turnAround);
 
-        lemming.CountDownTimer = 0;
+        if (!LevelScreen.LevelTimer.OutOfTime)
+            lemming.CountDownTimer = 0;
     }
 }
