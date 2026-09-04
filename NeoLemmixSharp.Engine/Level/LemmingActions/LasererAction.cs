@@ -11,8 +11,6 @@ public static class LasererAction
 {
     public static IDestructionMask DestructionMask => FencerAction.DestructionMask; // Defer to whatever the fencer does, since the logic is the same!
 
-    private const int DistanceCap = 112;
-
     private static ReadOnlySpan<int> RawOffsetChecksRight =>
     [
         1, -1,
@@ -76,7 +74,7 @@ public static class LasererAction
 
         var offsetChecks = GetOffsetChecks(facingDirection);
 
-        var i = DistanceCap;
+        var i = EngineConstants.LasererDistanceCap;
 
         do
         {
@@ -105,28 +103,24 @@ public static class LasererAction
 
         lemming.LaserHitLevelPosition = target;
 
+        lemming.LaserHit = hit;
         if (hit)
-        {
-            lemming.LaserHit = true;
             TerrainMasks.ApplyLasererMask(lemming, target);
-        }
-        else
-        {
-            lemming.LaserHit = false;
-        }
 
+        var laserRemainTime = lemming.LaserRemainTime;
         if (hitUseful)
         {
-            lemming.LaserRemainTime = 10;
+            laserRemainTime = EngineConstants.MaxLaserRemainTime;
         }
         else
         {
-            lemming.LaserRemainTime--;
-            if (lemming.LaserRemainTime <= 0)
+            laserRemainTime--;
+            if (laserRemainTime <= 0)
             {
                 WalkerAction.TransitionLemmingToAction(lemming, false);
             }
         }
+        lemming.LaserRemainTime = laserRemainTime;
 
         return true;
 
@@ -160,6 +154,6 @@ public static class LasererAction
     {
         LemmingActionType.LasererAction.DoMainTransitionActions(lemming, turnAround);
 
-        lemming.LaserRemainTime = 10;
+        lemming.LaserRemainTime = EngineConstants.MaxLaserRemainTime;
     }
 }

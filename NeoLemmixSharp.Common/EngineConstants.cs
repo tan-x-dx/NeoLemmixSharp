@@ -66,6 +66,9 @@ public static class EngineConstants
 
     public const int FloaterGliderStartCycleFrame = 9;
 
+    public const int LasererDistanceCap = 112;
+    public const int MaxLaserRemainTime = 10;
+
     public const int SkillCountChangeBehaviourOverrideValueNullTribe = MaxNumberOfTribes + 1;
     public const int SkillCountChangeBehaviourNoOverrideValue = MaxNumberOfTribes + 2;
 
