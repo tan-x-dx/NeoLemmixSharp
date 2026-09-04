@@ -231,40 +231,40 @@ public static class LemmingActionConstants
     {
         var result = new Dictionary<string, LemmingActionType>(NumberOfLemmingActions, StringComparer.OrdinalIgnoreCase)
         {
-            { WalkerActionSpriteFileName, LemmingActionType.WalkerAction },
-            { ClimberActionSpriteFileName, LemmingActionType.ClimberAction },
-            { FloaterActionSpriteFileName, LemmingActionType.FloaterAction },
-            { BlockerActionSpriteFileName, LemmingActionType.BlockerAction },
-            { BuilderActionSpriteFileName, LemmingActionType.BuilderAction },
-            { BasherActionSpriteFileName, LemmingActionType.BasherAction },
-            { MinerActionSpriteFileName, LemmingActionType.MinerAction },
-            { DiggerActionSpriteFileName, LemmingActionType.DiggerAction },
-            { PlatformerActionSpriteFileName, LemmingActionType.PlatformerAction },
-            { StackerActionSpriteFileName, LemmingActionType.StackerAction },
-            { FencerActionSpriteFileName, LemmingActionType.FencerAction },
-            { GliderActionSpriteFileName, LemmingActionType.GliderAction },
-            { JumperActionSpriteFileName, LemmingActionType.JumperAction },
-            { SwimmerActionSpriteFileName, LemmingActionType.SwimmerAction },
-            { ShimmierActionSpriteFileName, LemmingActionType.ShimmierAction },
-            { LasererActionSpriteFileName, LemmingActionType.LasererAction },
-            { SliderActionSpriteFileName, LemmingActionType.SliderAction },
-            { FallerActionSpriteFileName, LemmingActionType.FallerAction },
-            { AscenderActionSpriteFileName, LemmingActionType.AscenderAction },
-            { ShruggerActionSpriteFileName, LemmingActionType.ShruggerAction },
-            { DrownerActionSpriteFileName, LemmingActionType.DrownerAction },
-            { HoisterActionSpriteFileName, LemmingActionType.HoisterAction },
-            { DehoisterActionSpriteFileName, LemmingActionType.DehoisterAction },
-            { ReacherActionSpriteFileName, LemmingActionType.ReacherAction },
-            { DisarmerActionSpriteFileName, LemmingActionType.DisarmerAction },
-            { ExiterActionSpriteFileName, LemmingActionType.ExiterAction },
-            { ExploderActionSpriteFileName, LemmingActionType.ExploderAction },
-            { OhNoerActionSpriteFileName, LemmingActionType.OhNoerAction },
-            { SplatterActionSpriteFileName, LemmingActionType.SplatterAction },
-            { StonerActionSpriteFileName, LemmingActionType.StonerAction },
-            { VaporiserActionSpriteFileName, LemmingActionType.VaporiserAction },
-            { RotateClockwiseActionSpriteFileName, LemmingActionType.RotateClockwiseAction },
+            { WalkerActionSpriteFileName,                 LemmingActionType.WalkerAction },
+            { ClimberActionSpriteFileName,                LemmingActionType.ClimberAction },
+            { FloaterActionSpriteFileName,                LemmingActionType.FloaterAction },
+            { BlockerActionSpriteFileName,                LemmingActionType.BlockerAction },
+            { BuilderActionSpriteFileName,                LemmingActionType.BuilderAction },
+            { BasherActionSpriteFileName,                 LemmingActionType.BasherAction },
+            { MinerActionSpriteFileName,                  LemmingActionType.MinerAction },
+            { DiggerActionSpriteFileName,                 LemmingActionType.DiggerAction },
+            { PlatformerActionSpriteFileName,             LemmingActionType.PlatformerAction },
+            { StackerActionSpriteFileName,                LemmingActionType.StackerAction },
+            { FencerActionSpriteFileName,                 LemmingActionType.FencerAction },
+            { GliderActionSpriteFileName,                 LemmingActionType.GliderAction },
+            { JumperActionSpriteFileName,                 LemmingActionType.JumperAction },
+            { SwimmerActionSpriteFileName,                LemmingActionType.SwimmerAction },
+            { ShimmierActionSpriteFileName,               LemmingActionType.ShimmierAction },
+            { LasererActionSpriteFileName,                LemmingActionType.LasererAction },
+            { SliderActionSpriteFileName,                 LemmingActionType.SliderAction },
+            { FallerActionSpriteFileName,                 LemmingActionType.FallerAction },
+            { AscenderActionSpriteFileName,               LemmingActionType.AscenderAction },
+            { ShruggerActionSpriteFileName,               LemmingActionType.ShruggerAction },
+            { DrownerActionSpriteFileName,                LemmingActionType.DrownerAction },
+            { HoisterActionSpriteFileName,                LemmingActionType.HoisterAction },
+            { DehoisterActionSpriteFileName,              LemmingActionType.DehoisterAction },
+            { ReacherActionSpriteFileName,                LemmingActionType.ReacherAction },
+            { DisarmerActionSpriteFileName,               LemmingActionType.DisarmerAction },
+            { ExiterActionSpriteFileName,                 LemmingActionType.ExiterAction },
+            { ExploderActionSpriteFileName,               LemmingActionType.ExploderAction },
+            { OhNoerActionSpriteFileName,                 LemmingActionType.OhNoerAction },
+            { SplatterActionSpriteFileName,               LemmingActionType.SplatterAction },
+            { StonerActionSpriteFileName,                 LemmingActionType.StonerAction },
+            { VaporiserActionSpriteFileName,              LemmingActionType.VaporiserAction },
+            { RotateClockwiseActionSpriteFileName,        LemmingActionType.RotateClockwiseAction },
             { RotateCounterclockwiseActionSpriteFileName, LemmingActionType.RotateCounterclockwiseAction },
-            { RotateHalfActionSpriteFileName, LemmingActionType.RotateHalfAction }
+            { RotateHalfActionSpriteFileName,             LemmingActionType.RotateHalfAction }
         };
 
         if (result.Count != NumberOfLemmingActions)
@@ -292,40 +292,40 @@ public static class LemmingActionConstants
         var result = new LemmingActionLookupData[NumberOfLemmingActions];
         var count = 0;
 
-        SetData(LemmingActionType.WalkerAction, WalkerActionName, WalkerActionSpriteFileName, WalkerAnimationFrames);
-        SetData(LemmingActionType.ClimberAction, ClimberActionName, ClimberActionSpriteFileName, ClimberAnimationFrames);
-        SetData(LemmingActionType.FloaterAction, FloaterActionName, FloaterActionSpriteFileName, FloaterAnimationFrames);
-        SetData(LemmingActionType.BlockerAction, BlockerActionName, BlockerActionSpriteFileName, BlockerAnimationFrames);
-        SetData(LemmingActionType.BuilderAction, BuilderActionName, BuilderActionSpriteFileName, BuilderAnimationFrames);
-        SetData(LemmingActionType.BasherAction, BasherActionName, BasherActionSpriteFileName, BasherAnimationFrames);
-        SetData(LemmingActionType.MinerAction, MinerActionName, MinerActionSpriteFileName, MinerAnimationFrames);
-        SetData(LemmingActionType.DiggerAction, DiggerActionName, DiggerActionSpriteFileName, DiggerAnimationFrames);
-        SetData(LemmingActionType.PlatformerAction, PlatformerActionName, PlatformerActionSpriteFileName, PlatformerAnimationFrames);
-        SetData(LemmingActionType.StackerAction, StackerActionName, StackerActionSpriteFileName, StackerAnimationFrames);
-        SetData(LemmingActionType.FencerAction, FencerActionName, FencerActionSpriteFileName, FencerAnimationFrames);
-        SetData(LemmingActionType.GliderAction, GliderActionName, GliderActionSpriteFileName, GliderAnimationFrames);
-        SetData(LemmingActionType.JumperAction, JumperActionName, JumperActionSpriteFileName, JumperAnimationFrames);
-        SetData(LemmingActionType.SwimmerAction, SwimmerActionName, SwimmerActionSpriteFileName, SwimmerAnimationFrames);
-        SetData(LemmingActionType.ShimmierAction, ShimmierActionName, ShimmierActionSpriteFileName, ShimmierAnimationFrames);
-        SetData(LemmingActionType.LasererAction, LasererActionName, LasererActionSpriteFileName, LasererAnimationFrames);
-        SetData(LemmingActionType.SliderAction, SliderActionName, SliderActionSpriteFileName, SliderAnimationFrames);
-        SetData(LemmingActionType.FallerAction, FallerActionName, FallerActionSpriteFileName, FallerAnimationFrames);
-        SetData(LemmingActionType.AscenderAction, AscenderActionName, AscenderActionSpriteFileName, AscenderAnimationFrames);
-        SetData(LemmingActionType.ShruggerAction, ShruggerActionName, ShruggerActionSpriteFileName, ShruggerAnimationFrames);
-        SetData(LemmingActionType.DrownerAction, DrownerActionName, DrownerActionSpriteFileName, DrownerAnimationFrames);
-        SetData(LemmingActionType.HoisterAction, HoisterActionName, HoisterActionSpriteFileName, HoisterAnimationFrames);
-        SetData(LemmingActionType.DehoisterAction, DehoisterActionName, DehoisterActionSpriteFileName, DehoisterAnimationFrames);
-        SetData(LemmingActionType.ReacherAction, ReacherActionName, ReacherActionSpriteFileName, ReacherAnimationFrames);
-        SetData(LemmingActionType.DisarmerAction, DisarmerActionName, DisarmerActionSpriteFileName, DisarmerAnimationFrames);
-        SetData(LemmingActionType.ExiterAction, ExiterActionName, ExiterActionSpriteFileName, ExiterAnimationFrames);
-        SetData(LemmingActionType.ExploderAction, ExploderActionName, ExploderActionSpriteFileName, ExploderAnimationFrames);
-        SetData(LemmingActionType.OhNoerAction, OhNoerActionName, OhNoerActionSpriteFileName, OhNoerAnimationFrames);
-        SetData(LemmingActionType.SplatterAction, SplatterActionName, SplatterActionSpriteFileName, SplatterAnimationFrames);
-        SetData(LemmingActionType.StonerAction, StonerActionName, StonerActionSpriteFileName, StonerAnimationFrames);
-        SetData(LemmingActionType.VaporiserAction, VaporiserActionName, VaporiserActionSpriteFileName, VaporiserAnimationFrames);
-        SetData(LemmingActionType.RotateClockwiseAction, RotateClockwiseActionName, RotateClockwiseActionSpriteFileName, RotateClockwiseAnimationFrames);
+        SetData(LemmingActionType.WalkerAction,                 WalkerActionName,                 WalkerActionSpriteFileName,                 WalkerAnimationFrames);
+        SetData(LemmingActionType.ClimberAction,                ClimberActionName,                ClimberActionSpriteFileName,                ClimberAnimationFrames);
+        SetData(LemmingActionType.FloaterAction,                FloaterActionName,                FloaterActionSpriteFileName,                FloaterAnimationFrames);
+        SetData(LemmingActionType.BlockerAction,                BlockerActionName,                BlockerActionSpriteFileName,                BlockerAnimationFrames);
+        SetData(LemmingActionType.BuilderAction,                BuilderActionName,                BuilderActionSpriteFileName,                BuilderAnimationFrames);
+        SetData(LemmingActionType.BasherAction,                 BasherActionName,                 BasherActionSpriteFileName,                 BasherAnimationFrames);
+        SetData(LemmingActionType.MinerAction,                  MinerActionName,                  MinerActionSpriteFileName,                  MinerAnimationFrames);
+        SetData(LemmingActionType.DiggerAction,                 DiggerActionName,                 DiggerActionSpriteFileName,                 DiggerAnimationFrames);
+        SetData(LemmingActionType.PlatformerAction,             PlatformerActionName,             PlatformerActionSpriteFileName,             PlatformerAnimationFrames);
+        SetData(LemmingActionType.StackerAction,                StackerActionName,                StackerActionSpriteFileName,                StackerAnimationFrames);
+        SetData(LemmingActionType.FencerAction,                 FencerActionName,                 FencerActionSpriteFileName,                 FencerAnimationFrames);
+        SetData(LemmingActionType.GliderAction,                 GliderActionName,                 GliderActionSpriteFileName,                 GliderAnimationFrames);
+        SetData(LemmingActionType.JumperAction,                 JumperActionName,                 JumperActionSpriteFileName,                 JumperAnimationFrames);
+        SetData(LemmingActionType.SwimmerAction,                SwimmerActionName,                SwimmerActionSpriteFileName,                SwimmerAnimationFrames);
+        SetData(LemmingActionType.ShimmierAction,               ShimmierActionName,               ShimmierActionSpriteFileName,               ShimmierAnimationFrames);
+        SetData(LemmingActionType.LasererAction,                LasererActionName,                LasererActionSpriteFileName,                LasererAnimationFrames);
+        SetData(LemmingActionType.SliderAction,                 SliderActionName,                 SliderActionSpriteFileName,                 SliderAnimationFrames);
+        SetData(LemmingActionType.FallerAction,                 FallerActionName,                 FallerActionSpriteFileName,                 FallerAnimationFrames);
+        SetData(LemmingActionType.AscenderAction,               AscenderActionName,               AscenderActionSpriteFileName,               AscenderAnimationFrames);
+        SetData(LemmingActionType.ShruggerAction,               ShruggerActionName,               ShruggerActionSpriteFileName,               ShruggerAnimationFrames);
+        SetData(LemmingActionType.DrownerAction,                DrownerActionName,                DrownerActionSpriteFileName,                DrownerAnimationFrames);
+        SetData(LemmingActionType.HoisterAction,                HoisterActionName,                HoisterActionSpriteFileName,                HoisterAnimationFrames);
+        SetData(LemmingActionType.DehoisterAction,              DehoisterActionName,              DehoisterActionSpriteFileName,              DehoisterAnimationFrames);
+        SetData(LemmingActionType.ReacherAction,                ReacherActionName,                ReacherActionSpriteFileName,                ReacherAnimationFrames);
+        SetData(LemmingActionType.DisarmerAction,               DisarmerActionName,               DisarmerActionSpriteFileName,               DisarmerAnimationFrames);
+        SetData(LemmingActionType.ExiterAction,                 ExiterActionName,                 ExiterActionSpriteFileName,                 ExiterAnimationFrames);
+        SetData(LemmingActionType.ExploderAction,               ExploderActionName,               ExploderActionSpriteFileName,               ExploderAnimationFrames);
+        SetData(LemmingActionType.OhNoerAction,                 OhNoerActionName,                 OhNoerActionSpriteFileName,                 OhNoerAnimationFrames);
+        SetData(LemmingActionType.SplatterAction,               SplatterActionName,               SplatterActionSpriteFileName,               SplatterAnimationFrames);
+        SetData(LemmingActionType.StonerAction,                 StonerActionName,                 StonerActionSpriteFileName,                 StonerAnimationFrames);
+        SetData(LemmingActionType.VaporiserAction,              VaporiserActionName,              VaporiserActionSpriteFileName,              VaporiserAnimationFrames);
+        SetData(LemmingActionType.RotateClockwiseAction,        RotateClockwiseActionName,        RotateClockwiseActionSpriteFileName,        RotateClockwiseAnimationFrames);
         SetData(LemmingActionType.RotateCounterclockwiseAction, RotateCounterclockwiseActionName, RotateCounterclockwiseActionSpriteFileName, RotateCounterclockwiseAnimationFrames);
-        SetData(LemmingActionType.RotateHalfAction, RotateHalfActionName, RotateHalfActionSpriteFileName, RotateHalfAnimationFrames);
+        SetData(LemmingActionType.RotateHalfAction,             RotateHalfActionName,             RotateHalfActionSpriteFileName,             RotateHalfAnimationFrames);
 
         if (count != NumberOfLemmingActions)
             throw new Exception("Need to update this collection with new actions!");
@@ -340,7 +340,23 @@ public static class LemmingActionConstants
         }
     }
 
-    public static LemmingActionLookupData GetLemmingActionDataFromId(LemmingActionType lemmingActionType) => LemmingActionTypeToStringLookup[(int)lemmingActionType];
+    public static LemmingActionLookupData GetLemmingActionDataFromId(LemmingActionType lemmingActionType)
+    {
+        if ((uint)lemmingActionType < NumberOfLemmingActions)
+            return LemmingActionTypeToStringLookup.At((int)lemmingActionType);
+
+        return new LemmingActionLookupData(NoneActionName, NoneActionName, 1);
+    }
+
+    public static string GetLemmingActionNameFromId(LemmingActionType lemmingActionType)
+    {
+        if ((uint)lemmingActionType < NumberOfLemmingActions)
+            return LemmingActionTypeToStringLookup.At((int)lemmingActionType).LemmingActionName;
+
+        return NoneActionName;
+    }
+
+    public static ReadOnlySpan<LemmingActionLookupData> AllLemmingActionLookupData => LemmingActionTypeToStringLookup;
 
     [DebuggerDisplay("{LemmingActionName}")]
     public readonly struct LemmingActionLookupData(string lemmingActionName, string lemmingActionFileName, int numberOfAnimationFrames)
@@ -399,7 +415,7 @@ public static class LemmingActionBounds
     private static RectangularRegion SwimmerActionBounds => new(new Point(-7, -4), new Point(5, 0));
     private static RectangularRegion VaporiserActionBounds => new(new Point(-3, -12), new Point(3, 2));
 
-    public static RectangularRegion GetBounds(LemmingActionType actionType)
+    public static RectangularRegion GetBounds(this LemmingActionType actionType)
     {
         if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
             return _lemmingActionBounds.At((int)actionType);

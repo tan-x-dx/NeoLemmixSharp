@@ -27,5 +27,5 @@ public sealed class NoneSkill : LemmingSkill
     {
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned() => LemmingAction.CreateBitArraySet();
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => LemmingAction.CreateBitArraySet();
 }

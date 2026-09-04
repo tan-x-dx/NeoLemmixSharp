@@ -85,6 +85,10 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
                 // No extra data necessary
                 return;
 
+            case ObjectiveCriterionType.SpecificSkillUsageLimit:
+                WriteSpecificSkillUsageLimitCriterion();
+                return;
+
             default:
                 Helpers.ThrowUnknownEnumValueException<ObjectiveCriterionType, ObjectiveCriterionType>(objectiveCriterion.Type);
                 return;
@@ -109,6 +113,15 @@ internal sealed class LevelObjectiveDataSectionWriter : LevelDataSectionWriter
             FileWritingException.WriterAssert(timeLimitCriterion.TimeLimitInSeconds <= EngineConstants.MaxTimeLimitInSeconds, "Invalid time limit");
 
             writer.Write16BitUnsignedInteger((ushort)timeLimitCriterion.TimeLimitInSeconds);
+        }
+
+        void WriteSpecificSkillUsageLimitCriterion()
+        {
+            var specificSkillLimitCriterion = (SpecificSkillLimitCriterionData)objectiveCriterion;
+
+            writer.Write16BitUnsignedInteger((ushort)specificSkillLimitCriterion.LemmingSkillType);
+            writer.Write8BitUnsignedInteger((byte)specificSkillLimitCriterion.ComparisonType);
+            writer.Write8BitUnsignedInteger((byte)specificSkillLimitCriterion.UsageRequirementValue);
         }
     }
 

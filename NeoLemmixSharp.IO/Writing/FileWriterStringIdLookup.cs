@@ -113,7 +113,7 @@ internal readonly struct MutableFileWriterStringIdLookup
     }
 
     [Pure]
-    private Span<KeyValuePair<string, ushort>> GetOrderedPairs()
+    private ReadOnlySpan<KeyValuePair<string, ushort>> GetOrderedPairs()
     {
         var result = new KeyValuePair<string, ushort>[_lookup.Count];
 
@@ -123,6 +123,6 @@ internal readonly struct MutableFileWriterStringIdLookup
             result.At(index) = kvp;
         }
 
-        return new Span<KeyValuePair<string, ushort>>(result);
+        return new ReadOnlySpan<KeyValuePair<string, ushort>>(result);
     }
 }

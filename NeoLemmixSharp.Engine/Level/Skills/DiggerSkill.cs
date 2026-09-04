@@ -21,27 +21,27 @@ public sealed class DiggerSkill : LemmingSkill
         LevelScreen.GadgetManager.GetAllGadgetsNearPosition(lemming.AnchorPosition, out var gadgetsNearRegion);
 
         return SkillIsAssignableToCurrentAction(lemming) &&
-               !PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, DiggerAction.Instance, lemming.AnchorPosition);
+               !PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, DiggerAction.DestructionMask, lemming.AnchorPosition);
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        DiggerAction.Instance.TransitionLemmingToAction(lemming, false);
+        DiggerAction.TransitionLemmingToAction(lemming, false);
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned()
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(WalkerAction.Instance);
-        result.Add(ShruggerAction.Instance);
-        result.Add(PlatformerAction.Instance);
-        result.Add(BuilderAction.Instance);
-        result.Add(StackerAction.Instance);
-        result.Add(BasherAction.Instance);
-        result.Add(FencerAction.Instance);
-        result.Add(MinerAction.Instance);
-        result.Add(LasererAction.Instance);
+        result.Add(LemmingActionType.WalkerAction);
+        result.Add(LemmingActionType.ShruggerAction);
+        result.Add(LemmingActionType.PlatformerAction);
+        result.Add(LemmingActionType.BuilderAction);
+        result.Add(LemmingActionType.StackerAction);
+        result.Add(LemmingActionType.BasherAction);
+        result.Add(LemmingActionType.FencerAction);
+        result.Add(LemmingActionType.MinerAction);
+        result.Add(LemmingActionType.LasererAction);
 
         return result;
     }

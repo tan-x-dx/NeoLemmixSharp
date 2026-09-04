@@ -247,7 +247,6 @@ public sealed class LemmingManager :
 
     public void RemoveLemming(Lemming lemming, LemmingRemovalReason removalReason)
     {
-        lemming.IsActive = false;
         _lemmingSpacialHashGrid.RemoveItem(lemming);
 
         if (lemming.IsZombie)
@@ -309,7 +308,7 @@ public sealed class LemmingManager :
     [Pure]
     public bool CanAssignBlocker(Lemming lemming)
     {
-        var firstBounds = BlockerAction.Instance.GetLemmingBounds(lemming);
+        var firstBounds = LemmingActionType.BlockerAction.GetLemmingBounds(lemming);
 
         foreach (var blocker in _allBlockers)
         {

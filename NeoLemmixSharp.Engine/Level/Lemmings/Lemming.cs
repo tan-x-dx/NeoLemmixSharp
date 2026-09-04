@@ -27,27 +27,21 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     #region Lemming Data
 
     public LemmingActionType PreviousActionType => _data.PreviousActionType;
-    public LemmingAction PreviousAction => LemmingAction.GetActionOrDefault(_data.PreviousActionType);
 
     public LemmingActionType CurrentActionType => _data.CurrentActionType;
-    public LemmingAction CurrentAction
+    public void SetCurrentActionType(LemmingActionType actionType)
     {
-        get => LemmingAction.GetActionOrDefault(_data.CurrentActionType);
-        set
-        {
-            _data.CurrentActionType = value.ActionType;
-            Renderer.UpdateLemmingState(true);
-        }
+        _data.CurrentActionType = actionType;
+        Renderer.UpdateLemmingState(true);
     }
 
     public LemmingActionType NextActionType => _data.NextActionType;
-    public LemmingAction NextAction
+    public void SetNextActionType(LemmingActionType actionType)
     {
-        get => LemmingAction.GetActionOrDefault(_data.NextActionType);
-        set => _data.NextActionType = value.ActionType;
+        _data.NextActionType = actionType;
     }
 
-    public LemmingAction CountDownAction => LemmingAction.GetActionOrDefault(_data.CountDownActionType);
+    public LemmingActionType CountDownActionType => _data.CountDownActionType;
 
     public DihedralTransformation DihedralTransformation => _data.DihedralTransformation;
 
@@ -96,15 +90,17 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref int JumpProgress => ref _data.JumpProgress;
     public ref int TrueDistanceFallen => ref _data.TrueDistanceFallen;
     public ref int LaserRemainTime => ref _data.LaserRemainTime;
+    public ref int FastForwardTime => ref _data.FastForwardTime;
     public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref int ParticleTimer => ref _data.ParticleTimer;
+    public ref LemmingRemovalReason LemmingRemovalReason => ref _data.LemmingRemovalReason;
 
     public bool IsSimulation => Id == EngineConstants.SimulationLemmingId;
     public bool IsFastForward => _data.FastForwardTime > 0 || IsPermanentFastForwards;
 
-    public Point HeadPosition => _data.Orientation.MoveUp(_data.AnchorPosition, 6);
-    public Point FootPosition => CurrentAction.GetFootPosition(this, _data.AnchorPosition);
-    public Point CenterPosition => _data.Orientation.MoveUp(_data.AnchorPosition, 4);
+    public Point HeadPosition => Orientation.MoveUp(AnchorPosition, 6);
+    public Point FootPosition => CurrentActionType.GetFootPosition(DihedralTransformation, AnchorPosition);
+    public Point CenterPosition => Orientation.MoveUp(AnchorPosition, 4);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<Point> GetJumperPositions() => _data.GetJumperPositions();
@@ -119,7 +115,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public int NumberOfPermanentSkills => BitOperations.PopCount(_data.State & LemmingAbilityConstants.PermanentSkillBitMask);
 
     /// <summary>
-    /// Must be active and NOT zombie and NOT neutral
+    /// Must be active and NOT removed and NOT zombie and NOT neutral
     /// </summary>
     public bool CanHaveSkillsAssigned => (_data.State & LemmingAbilityConstants.AssignableSkillBitMask) == (1U << LemmingAbilityConstants.ActiveBitIndex);
 
@@ -293,7 +289,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public bool IsActive
     {
         get => ((_data.State >>> LemmingAbilityConstants.ActiveBitIndex) & 1U) != 0U;
-        set
+        private set
         {
             ref var states = ref _data.State;
             if (value)
@@ -364,17 +360,17 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public void Initialise()
     {
         IsActive = true;
-        _data.PreviousAnchorPosition = _data.AnchorPosition;
+        PreviousAnchorPosition = AnchorPosition;
 
-        var initialAction = CurrentAction;
-        _data.CurrentBounds = initialAction.GetLemmingBounds(this);
+        var initialActionType = CurrentActionType;
+        CurrentBounds = initialActionType.GetLemmingBounds(this);
 
-        if (initialAction.ActionType == LemmingActionType.NoneAction)
+        if (initialActionType == LemmingActionType.NoneAction)
         {
-            initialAction = WalkerAction.Instance;
+            initialActionType = LemmingActionType.WalkerAction;
         }
 
-        initialAction.TransitionLemmingToAction(this, false);
+        LemmingAction.TransitionLemmingToAction(this, false, initialActionType);
 
         UpdateAllColors();
 
@@ -384,9 +380,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     [SkipLocalsInit]
     public void Tick()
     {
-        _data.PreviousActionType = _data.CurrentActionType;
+        _data.PreviousActionType = CurrentActionType;
         // No transition to do at the end of lemming movement
-        NextAction = NoneAction.Instance;
+        SetNextActionType(LemmingActionType.NoneAction);
 
         HandleParticleTimer();
         HandleCountDownTimer();
@@ -395,8 +391,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the region enclosed by a box centred around the current position.
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
-        var p1 = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
-        var p2 = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
+        var p1 = Orientation.Move(AnchorPosition, new(-5, 12));
+        var p2 = Orientation.Move(AnchorPosition, new(5, -12));
 
         var checkPositionsBounds = new RectangularRegion(p1, p2);
 
@@ -434,8 +430,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the region enclosed by a box centred around the current position.
         // Fixes (literal) edge cases when lemmings and gadgets pass chunk position boundaries
-        var p1 = _data.Orientation.Move(_data.AnchorPosition, -5, -12);
-        var p2 = _data.Orientation.Move(_data.AnchorPosition, 5, 12);
+        var p1 = Orientation.Move(AnchorPosition, new(-5, 12));
+        var p2 = Orientation.Move(AnchorPosition, new(5, -12));
 
         var checkPositionsBounds = new RectangularRegion(p1, p2);
 
@@ -452,29 +448,36 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     private void HandleParticleTimer()
     {
-        if (_data.ParticleTimer > 0)
+        var particleTimer = ParticleTimer;
+        if (particleTimer > 0)
         {
-            _data.ParticleTimer--;
+            particleTimer--;
+            ParticleTimer = particleTimer;
         }
     }
 
     private void HandleCountDownTimer()
     {
-        if (_data.CountDownTimer == 0)
+        var countDownTimer = CountDownTimer;
+        if (countDownTimer == 0)
             return;
 
-        _data.CountDownTimer--;
-        CountDownHelper.UpdateCountDownTimer(this);
+        countDownTimer--;
+        CountDownTimer = countDownTimer;
 
-        if (_data.CountDownTimer != 0)
-            return;
+        var countDownValue = IsFastForward
+                ? (countDownTimer + EngineConstants.EngineTicksPerSecond - 1) / EngineConstants.EngineTicksPerSecond
+                : (countDownTimer + EngineConstants.GameplayTicksPerSecond - 1) / EngineConstants.GameplayTicksPerSecond;
+        var textSpan = Renderer.CountDownCharsSpan;
+        NumberFormattingHelpers.WriteDigits(textSpan, countDownValue);
 
-        OhNoerAction.HandleCountDownTransition(this);
+        if (countDownTimer == 0)
+            OhNoerAction.HandleCountDownTransition(this);
     }
 
     private void HandleFastForwardTimer()
     {
-        ref var fastForwardTime = ref _data.FastForwardTime;
+        ref var fastForwardTime = ref FastForwardTime;
 
         if (fastForwardTime <= 0)
             return;
@@ -493,14 +496,16 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     /// <returns>True if more work needs to be done this frame</returns>
     private bool HandleLemmingAction(in GadgetEnumerable gadgetsNearLemming)
     {
-        var currentAction = CurrentAction;
+        var currentActionType = CurrentActionType;
+        //var currentAction = CurrentAction;
 
-        var frame = _data.AnimationFrame + 1;
-        if (frame == currentAction.NumberOfAnimationFrames)
+        var frame = AnimationFrame + 1;
+        var actionFrames = LemmingAction.GetNumberOfAnimationFramesForActionType(currentActionType);
+        if (frame == actionFrames)
         {
             // Floater and Glider start cycle at frame 9!
-            if (currentAction.ActionType == LemmingActionType.FloaterAction ||
-                currentAction.ActionType == LemmingActionType.GliderAction)
+            if (currentActionType == LemmingActionType.FloaterAction ||
+                currentActionType == LemmingActionType.GliderAction)
             {
                 frame = EngineConstants.FloaterGliderStartCycleFrame;
             }
@@ -509,14 +514,15 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
                 frame = 0;
             }
         }
-        _data.AnimationFrame = frame;
+        AnimationFrame = frame;
 
-        frame = _data.PhysicsFrame + 1;
-        if (frame == currentAction.MaxPhysicsFrames)
+        frame = PhysicsFrame + 1;
+        actionFrames = LemmingAction.GetMaxPhysicsFramesForActionType(currentActionType);
+        if (frame == actionFrames)
         {
             // Floater and Glider start cycle at frame 9!
-            if (currentAction.ActionType == LemmingActionType.FloaterAction ||
-                currentAction.ActionType == LemmingActionType.GliderAction)
+            if (currentActionType == LemmingActionType.FloaterAction ||
+                currentActionType == LemmingActionType.GliderAction)
             {
                 frame = EngineConstants.FloaterGliderStartCycleFrame;
             }
@@ -525,14 +531,14 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
                 frame = 0;
             }
 
-            _data.EndOfAnimation = currentAction.IsOneTimeAction();
+            EndOfAnimation = LemmingAction.IsOneTimeAction(currentActionType);
         }
 
-        _data.PhysicsFrame = frame;
-        _data.PreviousAnchorPosition = _data.AnchorPosition;
+        PhysicsFrame = frame;
+        PreviousAnchorPosition = AnchorPosition;
 
-        var result = currentAction.UpdateLemming(this, in gadgetsNearLemming);
-        _data.CurrentBounds = currentAction.GetLemmingBounds(this);
+        var result = LemmingAction.UpdateLemming(this, in gadgetsNearLemming, currentActionType);
+        CurrentBounds = currentActionType.GetLemmingBounds(this);
 
         return result;
     }
@@ -559,12 +565,12 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         if (isPostTeleportCheck)
         {
-            _data.PreviousAnchorPosition = _data.AnchorPosition;
+            PreviousAnchorPosition = AnchorPosition;
         }
 
         var result = CheckGadgets(in gadgetsNearLemming, gadgetCheckPositions) && LemmingManager.DoBlockerCheck(this);
 
-        NextAction.TransitionLemmingToAction(this, false);
+        LemmingAction.TransitionLemmingToAction(this, false, NextActionType);
 
         return result;
     }
@@ -590,22 +596,22 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
             foreach (var anchorPosition in intermediatePositions)
             {
-                var footPosition = CurrentAction.GetFootPosition(this, anchorPosition);
-                if (!gadget.ContainsEitherPoint(_data.Orientation, anchorPosition, footPosition))
+                var footPosition = CurrentActionType.GetFootPosition(DihedralTransformation, anchorPosition);
+                if (!gadget.ContainsEitherPoint(Orientation, anchorPosition, footPosition))
                     continue;
 
                 var firstMatchingFilter = GetFirstMatchingLemmingFilter(currentState.Filters);
                 if (firstMatchingFilter is null)
                     continue;
 
-                var beforeAction = CurrentAction;
+                var beforeAction = CurrentActionType;
                 HandleGadgetInteraction(gadget, firstMatchingFilter, anchorPosition);
-                var afterAction = CurrentAction;
+                var afterAction = CurrentActionType;
 
                 if (beforeAction != afterAction)
                 {
-                    _data.AnchorPosition = anchorPosition;
-                    _data.CurrentBounds = afterAction.GetLemmingBounds(this);
+                    AnchorPosition = anchorPosition;
+                    CurrentBounds = afterAction.GetLemmingBounds(this);
 
                     return false;
                 }
@@ -637,19 +643,19 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         // then transition. However, if NextAction is SplatterAction and there's water
         // at the position, the water takes precedence over splatting
         if (NextActionType != LemmingActionType.NoneAction &&
-            checkPosition == _data.AnchorPosition &&
+            checkPosition == AnchorPosition &&
             (NextActionType != LemmingActionType.SplatterAction ||
             filter.HitBoxBehaviour != HitBoxInteractionType.Liquid))
         {
-            NextAction.TransitionLemmingToAction(this, false);
-            if (_data.JumpToHoistAdvance)
+            LemmingAction.TransitionLemmingToAction(this, false, NextActionType);
+            if (JumpToHoistAdvance)
             {
-                _data.AnimationFrame += 2;
-                _data.PhysicsFrame += 2;
-                _data.JumpToHoistAdvance = false;
+                AnimationFrame += 2;
+                PhysicsFrame += 2;
+                JumpToHoistAdvance = false;
             }
 
-            NextAction = NoneAction.Instance;
+            SetNextActionType(LemmingActionType.NoneAction);
         }
 
         gadget.OnLemmingHit(filter, this);
@@ -657,21 +663,21 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public void SetFastForwardTime(int fastForwardTime)
     {
-        _data.FastForwardTime = fastForwardTime;
+        FastForwardTime = fastForwardTime;
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
 
-    public void SetCountDownAction(uint countDownTimer, LemmingAction countDownAction, bool displayTimer)
+    public void SetCountDownAction(uint countDownTimer, LemmingActionType countDownActionType, bool displayTimer)
     {
-        _data.CountDownTimer = countDownTimer;
-        _data.CountDownActionType = countDownAction.ActionType;
+        CountDownTimer = countDownTimer;
+        _data.CountDownActionType = countDownActionType;
 
         Renderer.SetDisplayTimer(displayTimer);
     }
 
     public void ClearCountDownAction()
     {
-        _data.CountDownTimer = 0;
+        CountDownTimer = 0;
         _data.CountDownActionType = LemmingActionType.NoneAction;
     }
 
@@ -682,7 +688,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public void OnRemoval(LemmingRemovalReason removalReason)
     {
-        CurrentAction = NoneAction.Instance;
+        LemmingRemovalReason = removalReason;
+        SetCurrentActionType(LemmingActionType.NoneAction);
         Renderer.UpdateLemmingState(removalReason is LemmingRemovalReason.DeathExploder or LemmingRemovalReason.DeathStoner);
     }
 

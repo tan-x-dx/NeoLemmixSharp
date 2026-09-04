@@ -25,15 +25,10 @@ public sealed class SetLemmingPositionBehaviour : LemmingBehaviour
 
     private void SetLemmingPosition(ref Point lemmingPosition)
     {
+        var desiredPosition = _desiredPosition;
         if (_relativePositioningType == RelativePositioningType.RelativeToParentGadget)
-        {
-            var parentGadget = ParentGadget;
-            var desiredPosition = parentGadget.Position + _desiredPosition;
-            lemmingPosition = desiredPosition;
-        }
-        else
-        {
-            lemmingPosition = _desiredPosition;
-        }
+            desiredPosition += ParentGadget.Position;
+
+        lemmingPosition = desiredPosition;
     }
 }

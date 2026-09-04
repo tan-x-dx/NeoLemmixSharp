@@ -1,8 +1,8 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Level;
+using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -28,15 +28,21 @@ public sealed class LemmingBuilder
     {
         var i = 0;
         nint handle = _lemmingDataBuffer.Handle;
+        var preplacedLemmingData = _levelData.PrePlacedLemmingData;
 
-        while (i < _levelData.PrePlacedLemmingData.Count)
+        Debug.Assert(preplacedLemmingData.Count <= _levelLemmings.Length);
+
+        while (i < preplacedLemmingData.Count)
         {
-            var prototype = _levelData.PrePlacedLemmingData[i];
+            var prototype = preplacedLemmingData[i];
 
-            var lemming = new Lemming(ref handle, i);
+            var lemming = new Lemming(ref handle, i)
+            {
+                AnchorPosition = prototype.Position
+            };
 
-            lemming.CurrentAction = LemmingAction.GetActionOrDefault(prototype.InitialLemmingActionType);
-            lemming.AnchorPosition = prototype.Position;
+            lemming.SetCurrentActionType(prototype.InitialLemmingActionType);
+
             lemming.SetRawData(prototype.DihedralTransformation, prototype.TribeId, prototype.State);
 
             _levelLemmings.At(i++) = lemming;
@@ -46,10 +52,7 @@ public sealed class LemmingBuilder
         {
             var lemming = new Lemming(ref handle, i);
 
-            lemming.AnchorPosition = Point.Zero;
-            lemming.Orientation = Orientation.Down;
-            lemming.FacingDirection = FacingDirection.Right;
-            lemming.CurrentAction = NoneAction.Instance;
+            lemming.SetCurrentActionType(LemmingActionType.NoneAction);
 
             _levelLemmings.At(i++) = lemming;
         }

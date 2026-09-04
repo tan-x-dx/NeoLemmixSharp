@@ -7,22 +7,9 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class FallerAction : LemmingAction
+public static class FallerAction
 {
-    public static readonly FallerAction Instance = new();
-
-    private FallerAction()
-        : base(
-            LemmingActionType.FallerAction,
-            LemmingActionConstants.FallerActionName,
-            LemmingActionConstants.FallerActionSpriteFileName,
-            LemmingActionConstants.FallerAnimationFrames,
-            LemmingActionConstants.MaxFallerPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var currentFallDistanceStep = 0;
 
@@ -68,12 +55,12 @@ public sealed class FallerAction : LemmingAction
         if (currentFallDistanceStep >= maxFallDistanceStep)
             return true;
 
-        LemmingAction nextAction = IsFallFatal(
+        var nextAction = IsFallFatal(
             in gadgetsNearLemming,
             lemming)
-            ? SplatterAction.Instance
-            : WalkerAction.Instance;
-        lemming.NextAction = nextAction;
+            ? LemmingActionType.SplatterAction
+            : LemmingActionType.WalkerAction;
+        lemming.SetNextActionType(nextAction);
 
         return true;
     }
@@ -119,7 +106,7 @@ public sealed class FallerAction : LemmingAction
             lemming.TrueDistanceFallen > 16 &&
             currentFallDistance == 0)
         {
-            FloaterAction.Instance.TransitionLemmingToAction(lemming, false);
+            FloaterAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -131,18 +118,18 @@ public sealed class FallerAction : LemmingAction
              lemming.TrueDistanceFallen <= 6))
             return false;
 
-        GliderAction.Instance.TransitionLemmingToAction(lemming, false);
+        GliderAction.TransitionLemmingToAction(lemming, false);
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         var distanceFallen = GetStartingDistanceFallenFromAction(lemming);
 
         lemming.DistanceFallen = distanceFallen;
         lemming.TrueDistanceFallen = distanceFallen;
 
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.FallerAction.DoMainTransitionActions(lemming, turnAround);
     }
 
     [Pure]

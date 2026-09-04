@@ -5,13 +5,13 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering.Cri
 
 public sealed class LemmingActionCriterion : LemmingCriterion
 {
-    private readonly LemmingActionSet _lemmingActions;
+    private readonly LemmingActionTypeSet _lemmingActionTypes;
 
-    public LemmingActionCriterion(LemmingActionSet actions)
+    public LemmingActionCriterion(LemmingActionTypeSet lemmingActionTypes)
         : base(LemmingCriteriaType.LemmingAction)
     {
-        _lemmingActions = actions;
+        _lemmingActionTypes = lemmingActionTypes;
     }
 
-    public override bool LemmingMatchesCriteria(Lemming lemming) => _lemmingActions.Contains(lemming.CurrentAction);
+    public override bool LemmingMatchesCriteria(Lemming lemming) => _lemmingActionTypes.Contains(lemming.CurrentActionType);
 }

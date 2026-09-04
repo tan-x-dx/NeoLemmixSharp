@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using System.Diagnostics.Contracts;
@@ -183,8 +184,8 @@ public sealed class LevelCursor
     [Pure]
     private static bool NewCandidateHasHigherActionPriority(Lemming previousCandidate, Lemming newCandidate)
     {
-        return newCandidate.CurrentAction.CursorSelectionPriority >
-               previousCandidate.CurrentAction.CursorSelectionPriority;
+        return LemmingAction.GetCursorSelectionPriorityForActionType(newCandidate.CurrentActionType) >
+               LemmingAction.GetCursorSelectionPriorityForActionType(previousCandidate.CurrentActionType);
     }
 
     private bool NewCandidateIsCloserToCursorCentre(Lemming newCandidate)

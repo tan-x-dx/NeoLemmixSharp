@@ -102,7 +102,7 @@ public static class TerrainMasks
         var dht = lemming.DihedralTransformation;
         var dx = dht.FacingDirection.DeltaX;
         var position = lemming.AnchorPosition;
-        position = dht.Orientation.Move(position, offsetX + dx, offsetY - frame);
+        position = dht.Orientation.Move(position, new(offsetX + dx, offsetY - frame));
 
         MinerMask.ApplyEraseMask(dht, position, frame);
     }

@@ -6,22 +6,9 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class StackerAction : LemmingAction
+public static class StackerAction
 {
-    public static readonly StackerAction Instance = new();
-
-    private StackerAction()
-        : base(
-            LemmingActionType.StackerAction,
-            LemmingActionConstants.StackerActionName,
-            LemmingActionConstants.StackerActionSpriteFileName,
-            LemmingActionConstants.StackerAnimationFrames,
-            LemmingActionConstants.MaxStackerPhysicsFrames,
-            CursorSelectionPriority.NonPermanentSkillPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (lemming.PhysicsFrame == LemmingActionConstants.StackerAnimationFrames - 1)
         {
@@ -46,7 +33,7 @@ public sealed class StackerAction : LemmingAction
             if (lemming.NumberOfBricksLeft < EngineConstants.NumberOfStackerBricks - 1 ||
                 !MayPlaceNextBrick(in gadgetsNearLemming, lemming))
             {
-                WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
+                WalkerAction.TransitionLemmingToAction(lemming, true);
             }
             return true;
         }
@@ -54,7 +41,7 @@ public sealed class StackerAction : LemmingAction
         if (lemming.NumberOfBricksLeft != 0)
             return true;
 
-        ShruggerAction.Instance.TransitionLemmingToAction(lemming, false);
+        ShruggerAction.TransitionLemmingToAction(lemming, false);
 
         return true;
     }
@@ -82,7 +69,7 @@ public sealed class StackerAction : LemmingAction
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         var dy = lemming.StackLow ? 1 : 0;
-        var brickPosition = orientation.Move(lemming.AnchorPosition, dx, 1 + EngineConstants.NumberOfStackerBricks - dy - lemming.NumberOfBricksLeft);
+        var brickPosition = orientation.Move(lemming.AnchorPosition, new(dx, 1 + EngineConstants.NumberOfStackerBricks - dy - lemming.NumberOfBricksLeft));
 
         var result = false;
 
@@ -100,9 +87,9 @@ public sealed class StackerAction : LemmingAction
         return result;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.StackerAction.DoMainTransitionActions(lemming, turnAround);
 
         lemming.NumberOfBricksLeft = EngineConstants.NumberOfStackerBricks;
     }

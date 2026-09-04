@@ -8,22 +8,24 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class BasherAction : LemmingAction, IDestructionMask
+public static class BasherAction
 {
-    public static readonly BasherAction Instance = new();
+    public static IDestructionMask DestructionMask { get; } = new BasherActionDestructionMask();
 
-    private BasherAction()
-        : base(
-            LemmingActionType.BasherAction,
-            LemmingActionConstants.BasherActionName,
-            LemmingActionConstants.BasherActionSpriteFileName,
-            LemmingActionConstants.BasherAnimationFrames,
-            LemmingActionConstants.MaxBasherPhysicsFrames,
-            CursorSelectionPriority.NonPermanentSkillPriority)
+    private sealed class BasherActionDestructionMask : IDestructionMask
     {
+        [Pure]
+        public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
+        {
+            var pixelTypeInt = (uint)pixelType;
+            var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                     (1 + dht.Orientation.RotNum + (dht.FacingDirection.Id << 1));
+
+            return ((pixelTypeInt >>> oppositeArrowShift) & 1U) == 0U;
+        }
     }
 
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         // Remove terrain
         var physicsFrame = lemming.PhysicsFrame;
@@ -52,9 +54,9 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
                 continueWork = continueWork ||
                                (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, fiveAbove) &&
-                                !PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, fiveAbove)) ||
+                                !PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, fiveAbove)) ||
                                (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, sixAbove) &&
-                                !PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, sixAbove));
+                                !PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, sixAbove));
             }
 
             // Check whether we turn around within the next two basher strokes (only if we don't simulate)
@@ -68,11 +70,11 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
 
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             {
-                WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+                WalkerAction.TransitionLemmingToAction(lemming, false);
             }
             else
             {
-                FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+                FallerAction.TransitionLemmingToAction(lemming, false);
             }
 
             return true;
@@ -90,7 +92,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
             DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
+            DehoisterAction.TransitionLemmingToAction(lemming, true);
 
             return true;
         }
@@ -98,14 +100,14 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         if (dy == -4)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 4);
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
         if (dy == -3)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 3);
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            WalkerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -141,10 +143,10 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
                 return true;
             }
 
-            if (BasherIndestructibleCheck(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, -2)))
+            if (BasherIndestructibleCheck(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, -2))))
             {
-                var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, dy)) ||
-                                PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, dy - 1));
+                var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, dy))) ||
+                                PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, dy - 1)));
 
                 BasherTurn(lemming, steelTest);
                 return true;
@@ -182,9 +184,9 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         var orientation = lemming.Orientation;
 
         // Check for indestructible terrain 3, 4 and 5 pixels above position
-        return PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, orientation.MoveUp(pos, 3)) ||
-               PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, orientation.MoveUp(pos, 4)) ||
-               PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, orientation.MoveUp(pos, 5));
+        return PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, DestructionMask, orientation.MoveUp(pos, 3)) ||
+               PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, DestructionMask, orientation.MoveUp(pos, 4)) ||
+               PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, DestructionMask, orientation.MoveUp(pos, 5));
     }
 
     private static void BasherTurn(
@@ -194,7 +196,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         var dx = lemming.FacingDirection.DeltaX;
         ref var lemmingPosition = ref lemming.AnchorPosition;
         lemmingPosition = lemming.Orientation.MoveLeft(lemmingPosition, dx);
-        WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
+        WalkerAction.TransitionLemmingToAction(lemming, true);
 
         if (playSound)
         {
@@ -210,14 +212,14 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         int dx,
         int dy)
     {
-        var workPos = orientation.Move(pos, dx, 1);
+        var workPos = orientation.Move(pos, new(dx, 1));
         var p1X1Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
         workPos = orientation.MoveUp(workPos, 1);
         var p1X2Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
         workPos = orientation.MoveUp(workPos, 1);
         var p1X3Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
 
-        workPos = orientation.Move(pos, dx * 2, 1);
+        workPos = orientation.Move(pos, new(dx * 2, 1));
         var p2X1Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
         workPos = orientation.MoveUp(workPos, 1);
         var p2X2Y = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, workPos);
@@ -313,7 +315,7 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
     end;
     */
     // Simulate the behavior of the basher in the next two frames
-    private bool DoTurnAtSteel(Lemming lemming)
+    private static bool DoTurnAtSteel(Lemming lemming)
     {
         // Make deep copy of the lemming
 
@@ -369,15 +371,5 @@ public sealed class BasherAction : LemmingAction, IDestructionMask
         return result;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
-
-    [Pure]
-    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
-    {
-        var pixelTypeInt = (uint)pixelType;
-        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                 (1 + dht.Orientation.RotNum + (dht.FacingDirection.Id << 1));
-
-        return ((pixelTypeInt >>> oppositeArrowShift) & 1U) == 0U;
-    }
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.BasherAction.DoMainTransitionActions(lemming, turnAround);
 }

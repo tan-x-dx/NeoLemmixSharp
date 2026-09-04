@@ -4,22 +4,9 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class ExiterAction : LemmingAction
+public static class ExiterAction
 {
-    public static readonly ExiterAction Instance = new();
-
-    private ExiterAction()
-        : base(
-            LemmingActionType.ExiterAction,
-            LemmingActionConstants.ExiterActionName,
-            LemmingActionConstants.ExiterActionSpriteFileName,
-            LemmingActionConstants.ExiterAnimationFrames,
-            LemmingActionConstants.MaxExiterPhysicsFrames,
-            CursorSelectionPriority.NoPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (LevelScreen.LevelTimer.OutOfTime)
         {
@@ -40,10 +27,11 @@ public sealed class ExiterAction : LemmingAction
         return false;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.ExiterAction.DoMainTransitionActions(lemming, turnAround);
 
-        lemming.CountDownTimer = 0;
+        if (!LevelScreen.LevelTimer.OutOfTime)
+            lemming.CountDownTimer = 0;
     }
 }

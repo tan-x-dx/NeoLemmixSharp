@@ -8,7 +8,6 @@ using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.Menu;
@@ -141,9 +140,9 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.AthleteControlPanelString4Skills.Length);
         actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, EngineConstants.AthleteControlPanelString5Skills.Length);
 
-        foreach (var action in LemmingAction.AllItems)
+        foreach (var lemmingActionDatum in LemmingActionConstants.AllLemmingActionLookupData)
         {
-            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, action.LemmingActionName.Length);
+            actualMaxActionNameLength = Math.Max(actualMaxActionNameLength, lemmingActionDatum.LemmingActionName.Length);
         }
 
         if (actualMaxActionNameLength != LemmingActionConstants.LongestActionNameLength)

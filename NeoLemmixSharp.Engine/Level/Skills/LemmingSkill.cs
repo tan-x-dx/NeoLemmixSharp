@@ -13,8 +13,8 @@ namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public abstract class LemmingSkill : IEquatable<LemmingSkill>
 {
-    protected static readonly LemmingActionSet ActionsThatCanBeAssignedPermanentSkill = GetActionsThatCanBeAssignedPermanentSkill();
-    protected static readonly LemmingActionSet ActionsThatCanBeAssignedRotationSkill = GetActionsThatCanBeAssignedRotationSkill();
+    protected static readonly LemmingActionTypeSet ActionsThatCanBeAssignedPermanentSkill = GetActionsThatCanBeAssignedPermanentSkill();
+    protected static readonly LemmingActionTypeSet ActionsThatCanBeAssignedRotationSkill = GetActionsThatCanBeAssignedRotationSkill();
     private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
     private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();
     private static readonly LemmingSkillSet PermanentSkills = GetPermanentSkills();
@@ -102,55 +102,55 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
         return result;
     }
 
-    private static LemmingActionSet GetActionsThatCanBeAssignedPermanentSkill()
+    private static LemmingActionTypeSet GetActionsThatCanBeAssignedPermanentSkill()
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(AscenderAction.Instance);
-        result.Add(BasherAction.Instance);
-        result.Add(BlockerAction.Instance);
-        result.Add(BuilderAction.Instance);
-        result.Add(ClimberAction.Instance);
-        result.Add(DehoisterAction.Instance);
-        result.Add(DiggerAction.Instance);
-        result.Add(DisarmerAction.Instance);
-        result.Add(FallerAction.Instance);
-        result.Add(FencerAction.Instance);
-        result.Add(FloaterAction.Instance);
-        result.Add(GliderAction.Instance);
-        result.Add(HoisterAction.Instance);
-        result.Add(JumperAction.Instance);
-        result.Add(LasererAction.Instance);
-        result.Add(MinerAction.Instance);
-        result.Add(PlatformerAction.Instance);
-        result.Add(ReacherAction.Instance);
-        result.Add(RotateHalfAction.Instance);
-        result.Add(RotateClockwiseAction.Instance);
-        result.Add(RotateCounterclockwiseAction.Instance);
-        result.Add(ShimmierAction.Instance);
-        result.Add(ShruggerAction.Instance);
-        result.Add(SliderAction.Instance);
-        result.Add(StackerAction.Instance);
-        result.Add(SwimmerAction.Instance);
-        result.Add(WalkerAction.Instance);
+        result.Add(LemmingActionType.AscenderAction);
+        result.Add(LemmingActionType.BasherAction);
+        result.Add(LemmingActionType.BlockerAction);
+        result.Add(LemmingActionType.BuilderAction);
+        result.Add(LemmingActionType.ClimberAction);
+        result.Add(LemmingActionType.DehoisterAction);
+        result.Add(LemmingActionType.DiggerAction);
+        result.Add(LemmingActionType.DisarmerAction);
+        result.Add(LemmingActionType.FallerAction);
+        result.Add(LemmingActionType.FencerAction);
+        result.Add(LemmingActionType.FloaterAction);
+        result.Add(LemmingActionType.GliderAction);
+        result.Add(LemmingActionType.HoisterAction);
+        result.Add(LemmingActionType.JumperAction);
+        result.Add(LemmingActionType.LasererAction);
+        result.Add(LemmingActionType.MinerAction);
+        result.Add(LemmingActionType.PlatformerAction);
+        result.Add(LemmingActionType.ReacherAction);
+        result.Add(LemmingActionType.RotateHalfAction);
+        result.Add(LemmingActionType.RotateClockwiseAction);
+        result.Add(LemmingActionType.RotateCounterclockwiseAction);
+        result.Add(LemmingActionType.ShimmierAction);
+        result.Add(LemmingActionType.ShruggerAction);
+        result.Add(LemmingActionType.SliderAction);
+        result.Add(LemmingActionType.StackerAction);
+        result.Add(LemmingActionType.SwimmerAction);
+        result.Add(LemmingActionType.WalkerAction);
 
         return result;
     }
 
-    private static LemmingActionSet GetActionsThatCanBeAssignedRotationSkill()
+    private static LemmingActionTypeSet GetActionsThatCanBeAssignedRotationSkill()
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(WalkerAction.Instance);
-        result.Add(ShruggerAction.Instance);
-        result.Add(PlatformerAction.Instance);
-        result.Add(BuilderAction.Instance);
-        result.Add(StackerAction.Instance);
-        result.Add(BasherAction.Instance);
-        result.Add(FencerAction.Instance);
-        result.Add(MinerAction.Instance);
-        result.Add(DiggerAction.Instance);
-        result.Add(LasererAction.Instance);
+        result.Add(LemmingActionType.WalkerAction);
+        result.Add(LemmingActionType.ShruggerAction);
+        result.Add(LemmingActionType.PlatformerAction);
+        result.Add(LemmingActionType.BuilderAction);
+        result.Add(LemmingActionType.StackerAction);
+        result.Add(LemmingActionType.BasherAction);
+        result.Add(LemmingActionType.FencerAction);
+        result.Add(LemmingActionType.MinerAction);
+        result.Add(LemmingActionType.DiggerAction);
+        result.Add(LemmingActionType.LasererAction);
 
         return result;
     }
@@ -167,7 +167,7 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
             : NoneSkill.Instance;
     }
 
-    private readonly LemmingActionSet _assignableActions;
+    private readonly LemmingActionTypeSet _assignableActions;
     public string LemmingSkillName { get; }
     public LemmingSkillType SkillType { get; }
 
@@ -188,12 +188,12 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
     }
 
     [Pure]
-    protected abstract LemmingActionSet ActionsThatCanBeAssigned();
+    protected abstract LemmingActionTypeSet ActionsThatCanBeAssigned();
 
     [Pure]
     protected bool SkillIsAssignableToCurrentAction(Lemming lemming)
     {
-        return _assignableActions.Contains(lemming.CurrentAction);
+        return _assignableActions.Contains(lemming.CurrentActionType);
     }
 
     public abstract void AssignToLemming(Lemming lemming);

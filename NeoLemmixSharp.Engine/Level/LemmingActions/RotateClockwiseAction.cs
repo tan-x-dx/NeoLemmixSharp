@@ -4,35 +4,22 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class RotateClockwiseAction : LemmingAction
+public static class RotateClockwiseAction
 {
-    public static readonly RotateClockwiseAction Instance = new();
-
-    private RotateClockwiseAction()
-        : base(
-            LemmingActionType.RotateClockwiseAction,
-            LemmingActionConstants.RotateClockwiseActionName,
-            LemmingActionConstants.RotateClockwiseActionSpriteFileName,
-            LemmingActionConstants.RotateClockwiseAnimationFrames,
-            LemmingActionConstants.MaxRotateClockwisePhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (lemming.EndOfAnimation)
         {
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            WalkerAction.TransitionLemmingToAction(lemming, false);
             var orientation = lemming.Orientation;
             ref var lemmingPosition = ref lemming.AnchorPosition;
             var dx = lemming.FacingDirection.DeltaX;
-            lemmingPosition = orientation.Move(lemmingPosition, dx * -4, 4);
+            lemmingPosition = orientation.Move(lemmingPosition, new(dx * -4, 4));
             lemming.Orientation = lemming.Orientation.RotateClockwise();
         }
 
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.RotateClockwiseAction.DoMainTransitionActions(lemming, turnAround);
 }

@@ -7,12 +7,10 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class JumperAction : LemmingAction
+public sealed class JumperAction
 {
     public const int JumperPositionCount = 6;
     private const int JumperArcFrames = 13;
-
-    public static readonly JumperAction Instance = new();
 
     private static ReadOnlySpan<int> RawLevelPositions =>
     [
@@ -49,18 +47,7 @@ public sealed class JumperAction : LemmingAction
             JumperPositionCount);
     }
 
-    private JumperAction()
-        : base(
-            LemmingActionType.JumperAction,
-            LemmingActionConstants.JumperActionName,
-            LemmingActionConstants.JumperActionSpriteFileName,
-            LemmingActionConstants.JumperAnimationFrames,
-            LemmingActionConstants.MaxJumperPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (!MakeJumpMovement(lemming, in gadgetsNearLemming))
             return true;
@@ -82,19 +69,19 @@ public sealed class JumperAction : LemmingAction
 
         if (lemming.JumpProgress >= 8 && lemming.IsGlider)
         {
-            lemming.NextAction = GliderAction.Instance;
+            lemming.SetNextActionType(LemmingActionType.GliderAction);
             return true;
         }
 
         if (lemming.JumpProgress == JumperArcFrames)
         {
-            lemming.NextAction = WalkerAction.Instance;
+            lemming.SetNextActionType(LemmingActionType.WalkerAction);
         }
 
         return true;
     }
 
-    private bool MakeJumpMovement(
+    private static bool MakeJumpMovement(
         Lemming lemming,
         in GadgetEnumerable gadgetsNearLemming)
     {
@@ -131,7 +118,7 @@ public sealed class JumperAction : LemmingAction
                     return false;
             }
 
-            lemmingPosition = orientation.Move(lemmingPosition, dx * position.X, position.Y);
+            lemmingPosition = orientation.Move(lemmingPosition, new(dx * position.X, position.Y));
 
             DoJumperTriggerChecks(in gadgetsNearLemming);
 
@@ -139,7 +126,7 @@ public sealed class JumperAction : LemmingAction
                 !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
                 continue; // Foot check
 
-            lemming.NextAction = WalkerAction.Instance;
+            lemming.SetNextActionType(LemmingActionType.WalkerAction);
             return false;
         }
 
@@ -164,27 +151,27 @@ public sealed class JumperAction : LemmingAction
             if (!PositionIsSolidToLemming(in gadgetsNearLemming, lemming, checkPosition2))
             {
                 int deltaY;
-                LemmingAction nextAction;
+                LemmingActionType nextActionType;
 
                 if (n <= 2)
                 {
                     deltaY = n - 1;
-                    nextAction = WalkerAction.Instance;
+                    nextActionType = LemmingActionType.WalkerAction;
                 }
                 else if (n <= 5)
                 {
                     deltaY = n - 5;
-                    nextAction = HoisterAction.Instance;
+                    nextActionType = LemmingActionType.HoisterAction;
                     lemming.JumpToHoistAdvance = true;
                 }
                 else
                 {
                     deltaY = n - 8;
-                    nextAction = HoisterAction.Instance;
+                    nextActionType = LemmingActionType.HoisterAction;
                 }
 
                 lemmingPosition = orientation.MoveUp(checkPosition, deltaY);
-                lemming.NextAction = nextAction;
+                lemming.SetNextActionType(nextActionType);
 
                 return true;
             }
@@ -196,19 +183,19 @@ public sealed class JumperAction : LemmingAction
             if (isClimber)
             {
                 lemmingPosition = checkPosition;
-                lemming.NextAction = ClimberAction.Instance;
+                lemming.SetNextActionType(LemmingActionType.ClimberAction);
                 return true;
             }
 
             if (lemming.IsSlider)
             {
                 lemmingPosition = checkPosition;
-                lemming.NextAction = SliderAction.Instance;
+                lemming.SetNextActionType(LemmingActionType.SliderAction);
                 return true;
             }
 
             lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
-            lemming.NextAction = FallerAction.Instance;
+            lemming.SetNextActionType(LemmingActionType.FallerAction);
 
             return true;
         }
@@ -236,14 +223,14 @@ public sealed class JumperAction : LemmingAction
             if (!PositionIsSolidToLemming(in gadgetsNearLemming, lemming, checkPosition))
                 continue;
 
-            lemming.NextAction = FallerAction.Instance;
+            lemming.SetNextActionType(LemmingActionType.FallerAction);
             return true;
         }
 
         return false;
     }
 
-    private void DoJumperTriggerChecks(
+    private static void DoJumperTriggerChecks(
         in GadgetEnumerable gadgetsNearLemming)
     {
         foreach (var gadget in gadgetsNearLemming)
@@ -270,7 +257,7 @@ public sealed class JumperAction : LemmingAction
       end;
     */
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         var currentActionType = lemming.CurrentActionType;
         if (currentActionType == LemmingActionType.ClimberAction ||
@@ -280,7 +267,7 @@ public sealed class JumperAction : LemmingAction
             lemming.AnchorPosition = lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX);
         }
 
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.JumperAction.DoMainTransitionActions(lemming, turnAround);
 
         lemming.JumpProgress = 0;
     }

@@ -89,7 +89,7 @@ public static class Helpers
     /// <returns>A span over the desired data.</returns>
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe Span<T> CreateSpan<T>(void* p, int start, int length) where T : unmanaged
+    public static unsafe Span<T> CreateSpan<T>(void* p, nint start, int length) where T : unmanaged
     {
 #if DEBUG
         ArgumentOutOfRangeException.ThrowIfNegative(start);
@@ -156,14 +156,14 @@ public static class Helpers
     /// <returns>A span over the desired data.</returns>
     [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(void* p, int start, int length) where T : unmanaged
+    public static unsafe ReadOnlySpan<T> CreateReadOnlySpan<T>(void* p, nint start, int length) where T : unmanaged
     {
 #if DEBUG
         ArgumentOutOfRangeException.ThrowIfNegative(start);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 #endif
         T* tP = (T*)p;
-        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(tP + (nint)start), length);
+        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(tP + start), length);
     }
 
     /// <summary>

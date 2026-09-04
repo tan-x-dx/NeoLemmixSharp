@@ -17,8 +17,8 @@ public sealed class RotateHalfSkill : LemmingSkill
 
     public override void AssignToLemming(Lemming lemming)
     {
-        RotateHalfAction.Instance.TransitionLemmingToAction(lemming, false);
+        RotateHalfAction.TransitionLemmingToAction(lemming, false);
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedRotationSkill;
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedRotationSkill;
 }

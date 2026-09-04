@@ -25,28 +25,28 @@ public sealed class MinerSkill : LemmingSkill
                !PositionIsIndestructibleToLemming(
                    in gadgetsNearRegion,
                    lemming,
-                   MinerAction.Instance,
+                   MinerAction.DestructionMask,
                    lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX));
     }
 
     public override void AssignToLemming(Lemming lemming)
     {
-        MinerAction.Instance.TransitionLemmingToAction(lemming, false);
+        MinerAction.TransitionLemmingToAction(lemming, false);
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned()
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(WalkerAction.Instance);
-        result.Add(ShruggerAction.Instance);
-        result.Add(PlatformerAction.Instance);
-        result.Add(BuilderAction.Instance);
-        result.Add(StackerAction.Instance);
-        result.Add(BasherAction.Instance);
-        result.Add(FencerAction.Instance);
-        result.Add(DiggerAction.Instance);
-        result.Add(LasererAction.Instance);
+        result.Add(LemmingActionType.WalkerAction);
+        result.Add(LemmingActionType.ShruggerAction);
+        result.Add(LemmingActionType.PlatformerAction);
+        result.Add(LemmingActionType.BuilderAction);
+        result.Add(LemmingActionType.StackerAction);
+        result.Add(LemmingActionType.BasherAction);
+        result.Add(LemmingActionType.FencerAction);
+        result.Add(LemmingActionType.DiggerAction);
+        result.Add(LemmingActionType.LasererAction);
 
         return result;
     }

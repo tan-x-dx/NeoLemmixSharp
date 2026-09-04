@@ -4,26 +4,13 @@ using NeoLemmixSharp.Engine.Level.Orientations;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class RotateHalfAction : LemmingAction
+public static class RotateHalfAction
 {
-    public static readonly RotateHalfAction Instance = new();
-
-    private RotateHalfAction()
-        : base(
-            LemmingActionType.RotateHalfAction,
-            LemmingActionConstants.RotateHalfActionName,
-            LemmingActionConstants.RotateHalfActionSpriteFileName,
-            LemmingActionConstants.RotateHalfAnimationFrames,
-            LemmingActionConstants.MaxRotateHalfPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (lemming.EndOfAnimation)
         {
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            WalkerAction.TransitionLemmingToAction(lemming, false);
             var orientation = lemming.Orientation;
             ref var lemmingPosition = ref lemming.AnchorPosition;
             lemmingPosition = orientation.MoveUp(lemmingPosition, 8);
@@ -33,5 +20,5 @@ public sealed class RotateHalfAction : LemmingAction
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.RotateHalfAction.DoMainTransitionActions(lemming, turnAround);
 }

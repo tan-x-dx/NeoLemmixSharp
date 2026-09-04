@@ -99,41 +99,46 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [DebuggerStepThrough]
     public RectangularRegion(ReadOnlySpan<Point> positions)
     {
-        if (positions.Length == 0)
+        var mins = Point.Zero;
+        var maxs = Point.Zero;
+
+        var i = positions.Length;
+        if (i == 0)
         {
-            TopLeft = Point.Zero;
-            BottomRight = Point.Zero;
-            return;
+            goto SetPoints;
         }
 
-        var i = positions.Length - 1;
-        var p = positions.At(i);
-
-        var minX = p.X;
-        var minY = p.Y;
-        var maxX = minX;
-        var maxY = minY;
-
+        i--;
+        mins = positions.At(i);
+        maxs = mins;
         i--;
 
-        while (i >= 0)
+        if (i < 0)
         {
-            var t = p.X;
-            if (minX > t)
-                minX = t;
-            if (maxX < t)
-                maxX = t;
-            t = p.Y;
-            if (minY > t)
-                minY = t;
-            if (maxY < t)
-                maxY = t;
+            goto SetPoints;
+        }
+
+        do
+        {
+            var p = positions.At(i);
+
+            if (mins.X > p.X)
+                mins = new Point(p.X, mins.Y);
+            if (maxs.X < p.X)
+                maxs = new Point(p.X, maxs.Y);
+
+            if (mins.Y > p.Y)
+                mins = new Point(mins.X, p.Y);
+            if (maxs.Y < p.Y)
+                maxs = new Point(maxs.X, p.Y);
 
             i--;
         }
+        while (i >= 0);
 
-        TopLeft = new Point(minX, minY);
-        BottomRight = new Point(maxX, maxY);
+    SetPoints:
+        TopLeft = mins;
+        BottomRight = maxs;
     }
 
     [DebuggerStepThrough]
@@ -187,15 +192,25 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(RectangularRegion left, RectangularRegion right) => left.Equals(right);
+    public static bool operator ==(RectangularRegion left, RectangularRegion right)
+    {
+        var xLong = Unsafe.BitCast<Point, long>(left.TopLeft);
+        var yLong = Unsafe.BitCast<Point, long>(right.TopLeft);
+
+        if (xLong != yLong) return false;
+
+        xLong = Unsafe.BitCast<Point, long>(left.BottomRight);
+        yLong = Unsafe.BitCast<Point, long>(right.BottomRight);
+
+        return xLong == yLong;
+    }
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(RectangularRegion left, RectangularRegion right) => !left.Equals(right);
+    public static bool operator !=(RectangularRegion left, RectangularRegion right) => !(left == right);
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(RectangularRegion other) => TopLeft == other.TopLeft &&
-                                                   BottomRight == other.BottomRight;
+    public bool Equals(RectangularRegion other) => this == other;
 
     [Pure]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is RectangularRegion other && Equals(other);

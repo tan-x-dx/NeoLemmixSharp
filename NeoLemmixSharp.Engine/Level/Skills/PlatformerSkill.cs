@@ -22,8 +22,8 @@ public sealed class PlatformerSkill : LemmingSkill
         var lemmingPostion = lemming.AnchorPosition;
 
         var levelRegion = new RectangularRegion(
-            orientation.Move(lemmingPostion, 5, 2),
-            orientation.Move(lemmingPostion, -5, -2));
+            orientation.Move(lemmingPostion, new(-5, 2)),
+            orientation.Move(lemmingPostion, new(5, -2)));
         LevelScreen.GadgetManager.GetAllItemsNearRegion(levelRegion, out var gadgetsNearLemming);
 
         return SkillIsAssignableToCurrentAction(lemming) &&
@@ -32,22 +32,22 @@ public sealed class PlatformerSkill : LemmingSkill
 
     public override void AssignToLemming(Lemming lemming)
     {
-        PlatformerAction.Instance.TransitionLemmingToAction(lemming, false);
+        PlatformerAction.TransitionLemmingToAction(lemming, false);
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned()
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(WalkerAction.Instance);
-        result.Add(ShruggerAction.Instance);
-        result.Add(BuilderAction.Instance);
-        result.Add(StackerAction.Instance);
-        result.Add(BasherAction.Instance);
-        result.Add(FencerAction.Instance);
-        result.Add(MinerAction.Instance);
-        result.Add(DiggerAction.Instance);
-        result.Add(LasererAction.Instance);
+        result.Add(LemmingActionType.WalkerAction);
+        result.Add(LemmingActionType.ShruggerAction);
+        result.Add(LemmingActionType.BuilderAction);
+        result.Add(LemmingActionType.StackerAction);
+        result.Add(LemmingActionType.BasherAction);
+        result.Add(LemmingActionType.FencerAction);
+        result.Add(LemmingActionType.MinerAction);
+        result.Add(LemmingActionType.DiggerAction);
+        result.Add(LemmingActionType.LasererAction);
 
         return result;
     }

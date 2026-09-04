@@ -17,25 +17,25 @@ public sealed class JumperSkill : LemmingSkill
 
     public override void AssignToLemming(Lemming lemming)
     {
-        JumperAction.Instance.TransitionLemmingToAction(lemming, false);
+        JumperAction.TransitionLemmingToAction(lemming, false);
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned()
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(WalkerAction.Instance);
-        result.Add(DiggerAction.Instance);
-        result.Add(BuilderAction.Instance);
-        result.Add(BasherAction.Instance);
-        result.Add(MinerAction.Instance);
-        result.Add(ShruggerAction.Instance);
-        result.Add(PlatformerAction.Instance);
-        result.Add(StackerAction.Instance);
-        result.Add(FencerAction.Instance);
-        result.Add(ClimberAction.Instance);
-        result.Add(SliderAction.Instance);
-        result.Add(LasererAction.Instance);
+        result.Add(LemmingActionType.WalkerAction);
+        result.Add(LemmingActionType.DiggerAction);
+        result.Add(LemmingActionType.BuilderAction);
+        result.Add(LemmingActionType.BasherAction);
+        result.Add(LemmingActionType.MinerAction);
+        result.Add(LemmingActionType.ShruggerAction);
+        result.Add(LemmingActionType.PlatformerAction);
+        result.Add(LemmingActionType.StackerAction);
+        result.Add(LemmingActionType.FencerAction);
+        result.Add(LemmingActionType.ClimberAction);
+        result.Add(LemmingActionType.SliderAction);
+        result.Add(LemmingActionType.LasererAction);
 
         return result;
     }

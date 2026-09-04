@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Data.Level;
+﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
 

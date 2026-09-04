@@ -5,7 +5,6 @@ using NeoLemmixSharp.Engine.Level.Objectives.Criteria;
 using NeoLemmixSharp.Engine.Level.Timer;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
-using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -47,11 +46,17 @@ public sealed class LevelObjectiveBuilder
 
     private ObjectiveRequirement[] BuildBaseObjectiveRequirements()
     {
-        var objectiveCriteriaList = new List<ObjectiveRequirement>(3);
+        var objectiveCriteriaList = new List<ObjectiveRequirement>();
 
-        if (TryBuildSaveRequirementCriteria(_levelObjectiveData.ObjectiveCriteria, out var requirement)) objectiveCriteriaList.Add(requirement);
-        if (TryBuildTimeLimitCriterion(_levelObjectiveData.ObjectiveCriteria, out requirement)) objectiveCriteriaList.Add(requirement);
-        if (TryBuildKillAllZombiesCriterion(_levelObjectiveData.ObjectiveCriteria, out requirement)) objectiveCriteriaList.Add(requirement);
+        ObjectiveRequirement? temp;
+        temp = TryBuildSaveRequirementCriteria(_levelObjectiveData.ObjectiveCriteria);
+        if (temp is not null) objectiveCriteriaList.Add(temp);
+        temp = TryBuildTimeLimitCriterion(_levelObjectiveData.ObjectiveCriteria);
+        if (temp is not null) objectiveCriteriaList.Add(temp);
+        temp = TryBuildKillAllZombiesCriterion(_levelObjectiveData.ObjectiveCriteria);
+        if (temp is not null) objectiveCriteriaList.Add(temp);
+
+
 
         return objectiveCriteriaList.ToArray();
     }
@@ -76,52 +81,44 @@ public sealed class LevelObjectiveBuilder
     {
         var objectiveCriteriaList = new List<ObjectiveRequirement>();
 
-        if (TryBuildSaveRequirementCriteria(talismanData.AdditionalObjectiveCriteria, out var requirement)) objectiveCriteriaList.Add(requirement);
-        if (TryBuildTimeLimitCriterion(talismanData.AdditionalObjectiveCriteria, out requirement)) objectiveCriteriaList.Add(requirement);
-        if (TryBuildKillAllZombiesCriterion(talismanData.AdditionalObjectiveCriteria, out requirement)) objectiveCriteriaList.Add(requirement);
+        ObjectiveRequirement? temp;
+        temp = TryBuildSaveRequirementCriteria(talismanData.AdditionalObjectiveCriteria);
+        if (temp is not null) objectiveCriteriaList.Add(temp);
+        temp = TryBuildTimeLimitCriterion(talismanData.AdditionalObjectiveCriteria);
+        if (temp is not null) objectiveCriteriaList.Add(temp);
+        temp = TryBuildKillAllZombiesCriterion(talismanData.AdditionalObjectiveCriteria);
+        if (temp is not null) objectiveCriteriaList.Add(temp);
 
         return new LevelObjective(objectiveCriteriaList.ToArray(), talismanData.TalismanName);
     }
 
-    private static bool TryBuildSaveRequirementCriteria(ObjectiveCriterionData[] criteria, [MaybeNullWhen(false)] out ObjectiveRequirement saveRequirement)
+    private static SaveRequirement? TryBuildSaveRequirementCriteria(ObjectiveCriterionData[] criteria)
     {
         var saveRequirementCriterion = criteria.TryFindItemOfType<ObjectiveCriterionData, SaveLemmingsCriterionData>();
         if (saveRequirementCriterion is null)
-        {
-            saveRequirement = null;
-            return false;
-        }
+            return null;
 
-        saveRequirement = new SaveRequirement(saveRequirementCriterion.SaveRequirement, saveRequirementCriterion.TribeId);
-        return true;
+        return new SaveRequirement(saveRequirementCriterion.SaveRequirement, saveRequirementCriterion.TribeId);
     }
 
-    private static bool TryBuildTimeLimitCriterion(ObjectiveCriterionData[] criteria, [MaybeNullWhen(false)] out ObjectiveRequirement timeRequirement)
+    private static TimeRequirement? TryBuildTimeLimitCriterion(ObjectiveCriterionData[] criteria)
     {
         var timeLimitCriterion = criteria.TryFindItemOfType<ObjectiveCriterionData, TimeLimitCriterionData>();
 
         if (timeLimitCriterion is null)
-        {
-            timeRequirement = null;
-            return false;
-        }
+            return null;
 
-        timeRequirement = new TimeRequirement(timeLimitCriterion.TimeLimitInSeconds);
-        return true;
+        return new TimeRequirement(timeLimitCriterion.TimeLimitInSeconds);
     }
 
-    private static bool TryBuildKillAllZombiesCriterion(ObjectiveCriterionData[] criteria, [MaybeNullWhen(false)] out ObjectiveRequirement killAllZombiesRequirement)
+    private static AllZombiesDeadRequirement? TryBuildKillAllZombiesCriterion(ObjectiveCriterionData[] criteria)
     {
         var killAllZombiesCriterion = criteria.TryFindItemOfType<ObjectiveCriterionData, KillAllZombiesCriterionData>();
 
         if (killAllZombiesCriterion is null)
-        {
-            killAllZombiesRequirement = null;
-            return false;
-        }
+            return null;
 
-        killAllZombiesRequirement = new AllZombiesDeadRequirement();
-        return true;
+        return new AllZombiesDeadRequirement();
     }
 
     public SkillSetManager BuildSkillSetManager(TribeManager tribeManager, SafeBufferAllocator safeBufferAllocator)

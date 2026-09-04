@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 using NeoLemmixSharp.IO.Util;
@@ -64,7 +63,7 @@ public static class LemmingBehaviourBuilder
 
     private static SetActionLemmingBehaviour BuildSetActionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var lemmingAction = LemmingAction.GetActionOrDefault((LemmingActionType)gadgetBehaviourDatum.DataChunk.Data2);
+        var lemmingAction = LemmingActionConstants.GetEnumValue((uint)gadgetBehaviourDatum.DataChunk.Data2);
 
         return new SetActionLemmingBehaviour(lemmingAction)
         {

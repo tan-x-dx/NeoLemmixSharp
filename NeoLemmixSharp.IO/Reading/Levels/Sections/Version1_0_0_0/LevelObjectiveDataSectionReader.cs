@@ -104,6 +104,7 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
             ObjectiveCriterionType.SaveLemmings => CreateSaveLemmingsCriterion(),
             ObjectiveCriterionType.TimeLimit => CreateTimeLimitCriterion(),
             ObjectiveCriterionType.KillAllZombies => new KillAllZombiesCriterionData(),
+            ObjectiveCriterionType.SpecificSkillUsageLimit => CreateSpecificSkillUsageLimitCriterion(),
 
             _ => Helpers.ThrowUnknownEnumValueException<ObjectiveCriterionType, ObjectiveCriterionData>(objectiveCriterionType),
         };
@@ -131,6 +132,22 @@ internal sealed class LevelObjectiveDataSectionReader : LevelDataSectionReader
             return new TimeLimitCriterionData
             {
                 TimeLimitInSeconds = timeLimitInSeconds
+            };
+        }
+
+        SpecificSkillLimitCriterionData CreateSpecificSkillUsageLimitCriterion()
+        {
+            uint rawSkillType = reader.Read16BitUnsignedInteger();
+            var actualLemmingSkillType = LemmingSkillConstants.GetEnumValue(rawSkillType);
+            uint rawComparisonType = reader.Read8BitUnsignedInteger();
+            var actualComparisonType = ComparisonTypeHelpers.GetEnumValue(rawComparisonType);
+            int usageRequirementValue = reader.Read8BitUnsignedInteger();
+
+            return new SpecificSkillLimitCriterionData
+            {
+                LemmingSkillType = actualLemmingSkillType,
+                ComparisonType = actualComparisonType,
+                UsageRequirementValue = usageRequirementValue
             };
         }
     }

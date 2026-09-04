@@ -14,23 +14,20 @@ public readonly unsafe struct GadgetBounds : IPointerData<GadgetBounds>
 
     private const int GadgetBoundsDataSize = 4 * sizeof(int);
 
-    [StructLayout(LayoutKind.Explicit, Size = GadgetBoundsDataSize)]
+    [StructLayout(LayoutKind.Sequential, Size = GadgetBoundsDataSize)]
     private struct GadgetBoundsRaw
     {
-        [FieldOffset(0 * sizeof(int))] public int X;
-        [FieldOffset(1 * sizeof(int))] public int Y;
-        [FieldOffset(2 * sizeof(int))] public int Width;
-        [FieldOffset(3 * sizeof(int))] public int Height;
-
-        [FieldOffset(0 * sizeof(int))] public Point Position;
+        public Point Position;
+        public int Width;
+        public int Height;
     }
 
     private readonly GadgetBoundsRaw* _data;
 
     private GadgetBounds(nint pointerHandle) => _data = (GadgetBoundsRaw*)pointerHandle;
 
-    public ref int X => ref Unsafe.AsRef<int>(&_data->X);
-    public ref int Y => ref Unsafe.AsRef<int>(&_data->Y);
+    public ref int X => ref Unsafe.AsRef<int>(&_data->Position.X);
+    public ref int Y => ref Unsafe.AsRef<int>(&_data->Position.Y);
     public ref int Width => ref Unsafe.AsRef<int>(&_data->Width);
     public ref int Height => ref Unsafe.AsRef<int>(&_data->Height);
 

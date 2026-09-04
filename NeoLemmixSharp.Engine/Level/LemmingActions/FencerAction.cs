@@ -8,22 +8,28 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class FencerAction : LemmingAction, IDestructionMask
+public static class FencerAction
 {
-    public static readonly FencerAction Instance = new();
+    public static IDestructionMask DestructionMask { get; } = new FencerActionDestructionMask();
 
-    private FencerAction()
-        : base(
-            LemmingActionType.FencerAction,
-            LemmingActionConstants.FencerActionName,
-            LemmingActionConstants.FencerActionSpriteFileName,
-            LemmingActionConstants.FencerAnimationFrames,
-            LemmingActionConstants.MaxFencerPhysicsFrames,
-            CursorSelectionPriority.NonPermanentSkillPriority)
+    private sealed class FencerActionDestructionMask : IDestructionMask
     {
+        [Pure]
+        public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
+        {
+            var pixelTypeInt = (uint)pixelType;
+            var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                        dht.Orientation.RotNum;
+            if (((pixelTypeInt >>> orientationArrowShift) & 1U) != 0U)
+                return false;
+
+            var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                                    (1 + dht.Orientation.RotNum + (dht.FacingDirection.Id << 1));
+            return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
+        }
     }
 
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         // Remove terrain
         var physicsFrame = lemming.PhysicsFrame;
@@ -56,9 +62,9 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
 
                 continueWork = continueWork ||
                                (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, fiveAbove) &&
-                                !PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, fiveAbove)) ||
+                                !PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, fiveAbove)) ||
                                (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, sixAbove) &&
-                                !PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, sixAbove));
+                                !PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, sixAbove));
             }
 
             // Check whether we turn around within the next two fencer strokes (only if we don't simulate)
@@ -84,11 +90,11 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
             {
                 if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
                 {
-                    WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+                    WalkerAction.TransitionLemmingToAction(lemming, false);
                 }
                 else
                 {
-                    FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+                    FallerAction.TransitionLemmingToAction(lemming, false);
                 }
             }
         }
@@ -118,21 +124,21 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
             DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
+            DehoisterAction.TransitionLemmingToAction(lemming, true);
             return true;
         }
 
         if (dy == -4)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 4);
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
         if (dy < 0)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, dy);
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            WalkerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
@@ -159,10 +165,10 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
 
             if (!BasherAction.StepUpCheck(in gadgetsNearLemming, lemming, lemmingPosition, orientation, dx, dy))
             {
-                if (FencerIndestructibleCheck(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, -2)))
+                if (FencerIndestructibleCheck(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, -2))))
                 {
-                    var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, dy)) ||
-                                    PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, dy + 1));
+                    var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, dy))) ||
+                                    PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, dy + 1)));
 
                     FencerTurn(lemming, needToUndoMoveUp, steelTest);
 
@@ -187,9 +193,9 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
         // Either stall or turn if there is steel
         if (FencerIndestructibleCheck(in gadgetsNearLemming, lemming, lemmingPosition))
         {
-            var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 3)) ||
-                            PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 4)) ||
-                            PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, dx, 5));
+            var steelTest = PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 3))) ||
+                            PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 4))) ||
+                            PositionIsSteelToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 5)));
 
             FencerTurn(lemming, needToUndoMoveUp, steelTest);
             return true;
@@ -205,7 +211,7 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
         Point pos)
     {
         // Check for indestructible terrain 3 pixels above position
-        return PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, Instance, lemming.Orientation.MoveUp(pos, 3));
+        return PositionIsIndestructibleToLemming(in gadgetsNearRegion, lemming, DestructionMask, lemming.Orientation.MoveUp(pos, 3));
     }
 
     private static void FencerTurn(
@@ -220,9 +226,9 @@ public sealed class FencerAction : LemmingAction, IDestructionMask
             ? -1
             : 0;
         ref var lemmingPosition = ref lemming.AnchorPosition;
-        lemmingPosition = lemming.Orientation.Move(lemmingPosition, dx, dy);
+        lemmingPosition = lemming.Orientation.Move(lemmingPosition, new(dx, dy));
 
-        WalkerAction.Instance.TransitionLemmingToAction(lemming, true);
+        WalkerAction.TransitionLemmingToAction(lemming, true);
 
         if (playSound)
         {
@@ -297,25 +303,11 @@ procedure DoFencerContinueTests(L: TLemming; var SteelContinue: Boolean; var Mov
        CopyL.Free;
      end;
     */
-    private void DoFencerContinueTests(Lemming lemming, out bool steelContinue, out bool moveUpContinue)
+    private static void DoFencerContinueTests(Lemming lemming, out bool steelContinue, out bool moveUpContinue)
     {
         steelContinue = false;
         moveUpContinue = false;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
-
-    [Pure]
-    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
-    {
-        var pixelTypeInt = (uint)pixelType;
-        var orientationArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                    dht.Orientation.RotNum;
-        if (((pixelTypeInt >>> orientationArrowShift) & 1U) != 0U)
-            return false;
-
-        var oppositeFacingDirectionArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
-                                                (1 + dht.Orientation.RotNum + (dht.FacingDirection.Id << 1));
-        return ((pixelTypeInt >>> oppositeFacingDirectionArrowShift) & 1U) == 0U;
-    }
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.FencerAction.DoMainTransitionActions(lemming, turnAround);
 }

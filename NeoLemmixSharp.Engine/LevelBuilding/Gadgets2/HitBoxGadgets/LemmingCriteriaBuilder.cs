@@ -19,7 +19,7 @@ public ref struct LemmingCriteriaBuilder
 
     private OrientationSet? _orientationSet = null;
     private int _facingDirectionIds = 0;
-    private LemmingActionSet? _lemmingActionSet = null;
+    private LemmingActionTypeSet? _lemmingActionSet = null;
     private LemmingAbilitySet? _allowedLemmingAbilitySet = null;
     private LemmingAbilitySet? _disallowedLemmingAbilitySet = null;
     private TribeSet? _tribeSet = null;
@@ -145,8 +145,8 @@ public ref struct LemmingCriteriaBuilder
             _numberOfCriteria++;
         }
 
-        var lemmingAction = LemmingAction.GetActionOrDefault((LemmingActionType)itemId);
-        _lemmingActionSet.Add(lemmingAction);
+        var lemmingActionType = LemmingActionConstants.GetEnumValue((uint)itemId);
+        _lemmingActionSet.Add(lemmingActionType);
     }
 
     private void AddRequiredLemmingAbilityToCriteria(int itemId)

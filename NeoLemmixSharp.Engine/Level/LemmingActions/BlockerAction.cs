@@ -6,34 +6,21 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class BlockerAction : LemmingAction
+public static class BlockerAction
 {
-    public static readonly BlockerAction Instance = new();
-
-    private BlockerAction()
-        : base(
-            LemmingActionType.BlockerAction,
-            LemmingActionConstants.BlockerActionName,
-            LemmingActionConstants.BlockerActionSpriteFileName,
-            LemmingActionConstants.BlockerAnimationFrames,
-            LemmingActionConstants.MaxBlockerPhysicsFrames,
-            CursorSelectionPriority.NonPermanentSkillPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemming.AnchorPosition))
             return true;
 
-        FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+        FallerAction.TransitionLemmingToAction(lemming, false);
 
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.BlockerAction.DoMainTransitionActions(lemming, turnAround);
 
         LevelScreen.LemmingManager.RegisterBlocker(lemming);
     }
@@ -102,8 +89,8 @@ public sealed class BlockerAction : LemmingAction
     {
         var orientation = blocker.Orientation;
         var moveDelta = blocker.FacingDirection.Id ^ 1; // Fixes off-by-one errors between left/right
-        var p0 = orientation.Move(blocker.AnchorPosition, moveDelta + offsetX0, 6);
-        var p1 = orientation.Move(blocker.AnchorPosition, moveDelta + offsetX1, -4);
+        var p0 = orientation.Move(blocker.AnchorPosition, new(moveDelta + offsetX0, 6));
+        var p1 = orientation.Move(blocker.AnchorPosition, new(moveDelta + offsetX1, -4));
 
         return new RectangularRegion(p0, p1);
     }
@@ -166,8 +153,8 @@ public sealed class BlockerAction : LemmingAction
             : 1;
 
         // Move out of the wall
-        lemming.AnchorPosition = lemming.Orientation.Move(lemming.AnchorPosition, dx, dy);
+        lemming.AnchorPosition = lemming.Orientation.Move(lemming.AnchorPosition, new(dx, dy));
 
-        WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+        WalkerAction.TransitionLemmingToAction(lemming, false);
     }
 }

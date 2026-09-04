@@ -35,11 +35,11 @@ public sealed partial class NeoLemmixGame
         {
             Span<byte> byteBuffer = stackalloc byte[256];
 
-            var basherEraseMask = LoadMask("basher_mask.dat", byteBuffer, BasherAction.Instance);
-            var bomberEraseMask = LoadMask("bomber_mask.dat", byteBuffer, ExploderAction.Instance);
-            var fencerEraseMask = LoadMask("fencer_mask.dat", byteBuffer, FencerAction.Instance);
-            //var lasererEraseMask = LoadMask("laserer_mask.dat", byteBuffer, LasererAction.Instance);
-            var minerEraseMask = LoadMask("miner_mask.dat", byteBuffer, MinerAction.Instance);
+            var basherEraseMask = LoadMask("basher_mask.dat", byteBuffer, BasherAction.DestructionMask);
+            var bomberEraseMask = LoadMask("bomber_mask.dat", byteBuffer, ExploderAction.DestructionMask);
+            var fencerEraseMask = LoadMask("fencer_mask.dat", byteBuffer, FencerAction.DestructionMask);
+            //var lasererEraseMask = LoadMask("laserer_mask.dat", byteBuffer, LasererAction.DestructionMask);
+            var minerEraseMask = LoadMask("miner_mask.dat", byteBuffer, MinerAction.DestructionMask);
 
             TerrainMasks.InitialiseTerrainMasks(
                 basherEraseMask,

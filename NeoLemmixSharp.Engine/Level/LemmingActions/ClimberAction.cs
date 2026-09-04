@@ -5,24 +5,11 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class ClimberAction : LemmingAction
+public static class ClimberAction
 {
-    public static readonly ClimberAction Instance = new();
-
-    private ClimberAction()
-        : base(
-            LemmingActionType.ClimberAction,
-            LemmingActionConstants.ClimberActionName,
-            LemmingActionConstants.ClimberActionSpriteFileName,
-            LemmingActionConstants.ClimberAnimationFrames,
-            LemmingActionConstants.MaxClimberPhysicsFrames,
-            CursorSelectionPriority.PermanentSkillPriority)
-    {
-    }
-
     // Be very careful when changing the terrain/hoister checks for climbers!
     // See http://www.lemmingsforums.net/index.php?topic=2506.0 first!
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var dx = lemming.FacingDirection.DeltaX;
         var orientation = lemming.Orientation;
@@ -35,7 +22,7 @@ public sealed class ClimberAction : LemmingAction
         lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
         lemming.IsStartingAction = false;
 
-        var foundClip = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, 7));
+        var foundClip = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(-dx, 7)));
 
         if (physicsFrame == 7 &&
             !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 7)))
@@ -50,13 +37,13 @@ public sealed class ClimberAction : LemmingAction
 
         if (lemming.IsSlider)
         {
-            SliderAction.Instance.TransitionLemmingToAction(lemming, false);
+            SliderAction.TransitionLemmingToAction(lemming, false);
 
             return true;
         }
 
         lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-        FallerAction.Instance.TransitionLemmingToAction(lemming, true);
+        FallerAction.TransitionLemmingToAction(lemming, true);
 
         return true;
     }
@@ -69,12 +56,12 @@ public sealed class ClimberAction : LemmingAction
         ref Point lemmingPosition,
         int physicsFrame)
     {
-        var foundClip = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, 6 + physicsFrame)) ||
-                       (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, 5 + physicsFrame)) &&
+        var foundClip = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(-dx, 6 + physicsFrame))) ||
+                       (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(-dx, 5 + physicsFrame))) &&
                         !lemming.IsStartingAction);
 
         if (physicsFrame == 0 && // first triggered after 8 frames!
-            !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, -dx, 7)))
+            !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(-dx, 7))))
         {
             foundClip = false;
         }
@@ -90,13 +77,13 @@ public sealed class ClimberAction : LemmingAction
             if (lemming.IsSlider)
             {
                 lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
-                SliderAction.Instance.TransitionLemmingToAction(lemming, false);
+                SliderAction.TransitionLemmingToAction(lemming, false);
 
                 return true;
             }
 
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            FallerAction.Instance.TransitionLemmingToAction(lemming, true);
+            FallerAction.TransitionLemmingToAction(lemming, true);
             lemming.DistanceFallen++; // Least-impact way to fix a fall distance inconsistency. See https://www.lemmingsforums.net/index.php?topic=5794.0
 
             return true;
@@ -112,15 +99,10 @@ public sealed class ClimberAction : LemmingAction
             lemming.IsStartingAction = false;
         }
 
-        HoisterAction.Instance.TransitionLemmingToAction(lemming, false);
+        HoisterAction.TransitionLemmingToAction(lemming, false);
 
         return true;
     }
 
-    public override Point GetFootPosition(Lemming lemming, Point anchorPosition)
-    {
-        return lemming.Orientation.MoveLeft(anchorPosition, lemming.FacingDirection.DeltaX);
-    }
-
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.ClimberAction.DoMainTransitionActions(lemming, turnAround);
 }

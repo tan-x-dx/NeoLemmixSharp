@@ -36,14 +36,14 @@ public sealed class WalkerSkill : LemmingSkill
         {
             lemmingPosition = testUp;
 
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            WalkerAction.TransitionLemmingToAction(lemming, false);
 
             return;
         }
 
         if (lemming.CurrentActionType != LemmingActionType.WalkerAction)
         {
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            WalkerAction.TransitionLemmingToAction(lemming, false);
 
             return;
         }
@@ -61,7 +61,7 @@ public sealed class WalkerSkill : LemmingSkill
             }
         }
 
-        WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+        WalkerAction.TransitionLemmingToAction(lemming, false);
     }
 
     private static bool LemmingIsForcedToChangeDirection(
@@ -90,23 +90,23 @@ public sealed class WalkerSkill : LemmingSkill
         return false;
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned()
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(WalkerAction.Instance);
-        result.Add(BlockerAction.Instance);
-        result.Add(BasherAction.Instance);
-        result.Add(FencerAction.Instance);
-        result.Add(MinerAction.Instance);
-        result.Add(DiggerAction.Instance);
-        result.Add(BuilderAction.Instance);
-        result.Add(PlatformerAction.Instance);
-        result.Add(StackerAction.Instance);
-        result.Add(ShimmierAction.Instance);
-        result.Add(LasererAction.Instance);
-        result.Add(ReacherAction.Instance);
-        result.Add(ShruggerAction.Instance);
+        result.Add(LemmingActionType.WalkerAction);
+        result.Add(LemmingActionType.BlockerAction);
+        result.Add(LemmingActionType.BasherAction);
+        result.Add(LemmingActionType.FencerAction);
+        result.Add(LemmingActionType.MinerAction);
+        result.Add(LemmingActionType.DiggerAction);
+        result.Add(LemmingActionType.BuilderAction);
+        result.Add(LemmingActionType.PlatformerAction);
+        result.Add(LemmingActionType.StackerAction);
+        result.Add(LemmingActionType.ShimmierAction);
+        result.Add(LemmingActionType.LasererAction);
+        result.Add(LemmingActionType.ReacherAction);
+        result.Add(LemmingActionType.ShruggerAction);
 
         return result;
     }

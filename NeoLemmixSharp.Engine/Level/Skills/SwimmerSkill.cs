@@ -27,15 +27,15 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingAbilityChanger
         lemming.IsSwimmer = true;
         if (lemming.CurrentActionType == LemmingActionType.DrownerAction)
         {
-            SwimmerAction.Instance.TransitionLemmingToAction(lemming, false);
+            SwimmerAction.TransitionLemmingToAction(lemming, false);
         }
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned()
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
     {
         var result = LemmingAction.CreateBitArraySet();
 
-        result.Add(DrownerAction.Instance);
+        result.Add(LemmingActionType.DrownerAction);
         result.UnionWith(ActionsThatCanBeAssignedPermanentSkill);
 
         return result;

@@ -4,183 +4,248 @@ using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public abstract class LemmingAction : IEquatable<LemmingAction>
+public static class LemmingAction
 {
-    private static readonly LemmingAction[] LemmingActions = RegisterAllLemmingActions();
-    private static readonly LemmingActionSet AirborneActions = GetAirborneActions();
-    private static readonly LemmingActionSet OneTimeActions = GetOneTimeActions();
+    [DebuggerDisplay("{ActionType}")]
+    private readonly struct LemmingActionData(LemmingActionType actionType, byte numberOfAnimationFrames, byte maxPhysicsFrames, byte cursorSelectionPriority)
+    {
+        public readonly LemmingActionType ActionType = actionType;
+        public readonly byte NumberOfAnimationFrames = numberOfAnimationFrames;
+        public readonly byte MaxPhysicsFrames = maxPhysicsFrames;
+        public readonly byte CursorSelectionPriority = cursorSelectionPriority;
+    }
 
-    public static ReadOnlySpan<LemmingAction> AllItems => new(LemmingActions);
+    private static readonly LemmingActionData[] LemmingActions = RegisterAllLemmingActions();
+    private static readonly LemmingActionTypeSet AirborneActionTypes = GetAirborneActionTypes();
+    private static readonly LemmingActionTypeSet OneTimeActionTypes = GetOneTimeActionTypes();
 
-    private static LemmingAction[] RegisterAllLemmingActions()
+    private static LemmingActionData[] RegisterAllLemmingActions()
     {
         // NOTE: DO NOT ADD THE NONE ACTION
-        var result = new LemmingAction[]
+        var result = new LemmingActionData[]
         {
-            WalkerAction.Instance,
-            ClimberAction.Instance,
-            FloaterAction.Instance,
-            BlockerAction.Instance,
-            BuilderAction.Instance,
-            BasherAction.Instance,
-            MinerAction.Instance,
-            DiggerAction.Instance,
+            new(LemmingActionType.WalkerAction,                 LemmingActionConstants.WalkerAnimationFrames,                 LemmingActionConstants.MaxWalkerPhysicsFrames,                 CursorSelectionPriority.WalkerMovementPriority),
+            new(LemmingActionType.ClimberAction,                LemmingActionConstants.ClimberAnimationFrames,                LemmingActionConstants.MaxClimberPhysicsFrames,                CursorSelectionPriority.PermanentSkillPriority),
+            new(LemmingActionType.FloaterAction,                LemmingActionConstants.FloaterAnimationFrames,                LemmingActionConstants.MaxFloaterPhysicsFrames,                CursorSelectionPriority.PermanentSkillPriority),
+            new(LemmingActionType.BlockerAction,                LemmingActionConstants.BlockerAnimationFrames,                LemmingActionConstants.MaxBlockerPhysicsFrames,                CursorSelectionPriority.NonPermanentSkillPriority),
+            new(LemmingActionType.BuilderAction,                LemmingActionConstants.BuilderAnimationFrames,                LemmingActionConstants.MaxBuilderPhysicsFrames,                CursorSelectionPriority.NonPermanentSkillPriority),
+            new(LemmingActionType.BasherAction,                 LemmingActionConstants.BasherAnimationFrames,                 LemmingActionConstants.MaxBasherPhysicsFrames,                 CursorSelectionPriority.NonPermanentSkillPriority),
+            new(LemmingActionType.MinerAction,                  LemmingActionConstants.MinerAnimationFrames,                  LemmingActionConstants.MaxMinerPhysicsFrames,                  CursorSelectionPriority.NonPermanentSkillPriority),
+            new(LemmingActionType.DiggerAction,                 LemmingActionConstants.DiggerAnimationFrames,                 LemmingActionConstants.MaxDiggerPhysicsFrames,                 CursorSelectionPriority.NonPermanentSkillPriority),
 
-            PlatformerAction.Instance,
-            StackerAction.Instance,
-            FencerAction.Instance,
-            GliderAction.Instance,
-            JumperAction.Instance,
-            SwimmerAction.Instance,
-            ShimmierAction.Instance,
-            LasererAction.Instance,
-            SliderAction.Instance,
+            new(LemmingActionType.PlatformerAction,             LemmingActionConstants.PlatformerAnimationFrames,             LemmingActionConstants.MaxPlatformerPhysicsFrames,             CursorSelectionPriority.NonPermanentSkillPriority),
+            new(LemmingActionType.StackerAction,                LemmingActionConstants.StackerAnimationFrames,                LemmingActionConstants.MaxStackerPhysicsFrames,                CursorSelectionPriority.NonPermanentSkillPriority),
+            new(LemmingActionType.FencerAction,                 LemmingActionConstants.FencerAnimationFrames,                 LemmingActionConstants.MaxFencerPhysicsFrames,                 CursorSelectionPriority.NonPermanentSkillPriority),
+            new(LemmingActionType.GliderAction,                 LemmingActionConstants.GliderAnimationFrames,                 LemmingActionConstants.MaxGliderPhysicsFrames,                 CursorSelectionPriority.PermanentSkillPriority),
+            new(LemmingActionType.JumperAction,                 LemmingActionConstants.JumperAnimationFrames,                 LemmingActionConstants.MaxJumperPhysicsFrames,                 CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.SwimmerAction,                LemmingActionConstants.SwimmerAnimationFrames,                LemmingActionConstants.MaxSwimmerPhysicsFrames,                CursorSelectionPriority.PermanentSkillPriority),
+            new(LemmingActionType.ShimmierAction,               LemmingActionConstants.ShimmierAnimationFrames,               LemmingActionConstants.MaxShimmierPhysicsFrames,               CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.LasererAction,                LemmingActionConstants.LasererAnimationFrames,                LemmingActionConstants.MaxLasererPhysicsFrames,                CursorSelectionPriority.NonPermanentSkillPriority),
+            new(LemmingActionType.SliderAction,                 LemmingActionConstants.SliderAnimationFrames,                 LemmingActionConstants.MaxSliderPhysicsFrames,                 CursorSelectionPriority.PermanentSkillPriority),
 
-            FallerAction.Instance,
-            AscenderAction.Instance,
-            ShruggerAction.Instance,
-            DrownerAction.Instance,
-            HoisterAction.Instance,
-            DehoisterAction.Instance,
-            ReacherAction.Instance,
-            DisarmerAction.Instance,
+            new(LemmingActionType.FallerAction,                 LemmingActionConstants.FallerAnimationFrames,                 LemmingActionConstants.MaxFallerPhysicsFrames,                 CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.AscenderAction,               LemmingActionConstants.AscenderAnimationFrames,               LemmingActionConstants.MaxAscenderPhysicsFrames,               CursorSelectionPriority.WalkerMovementPriority),
+            new(LemmingActionType.ShruggerAction,               LemmingActionConstants.ShruggerAnimationFrames,               LemmingActionConstants.MaxShruggerPhysicsFrames,               CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.DrownerAction,                LemmingActionConstants.DrownerAnimationFrames,                LemmingActionConstants.MaxDrownerPhysicsFrames,                CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.HoisterAction,                LemmingActionConstants.HoisterAnimationFrames,                LemmingActionConstants.MaxHoisterPhysicsFrames,                CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.DehoisterAction,              LemmingActionConstants.DehoisterAnimationFrames,              LemmingActionConstants.MaxDehoisterPhysicsFrames,              CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.ReacherAction,                LemmingActionConstants.ReacherAnimationFrames,                LemmingActionConstants.MaxReacherPhysicsFrames,                CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.DisarmerAction,               LemmingActionConstants.DisarmerAnimationFrames,               LemmingActionConstants.MaxDisarmerPhysicsFrames,               CursorSelectionPriority.PermanentSkillPriority),
 
-            ExiterAction.Instance,
-            ExploderAction.Instance,
-            OhNoerAction.Instance,
-            SplatterAction.Instance,
-            StonerAction.Instance,
-            VaporiserAction.Instance,
+            new(LemmingActionType.ExiterAction,                 LemmingActionConstants.ExiterAnimationFrames,                 LemmingActionConstants.MaxExiterPhysicsFrames,                 CursorSelectionPriority.NoPriority),
+            new(LemmingActionType.ExploderAction,               LemmingActionConstants.ExploderAnimationFrames,               LemmingActionConstants.MaxExploderPhysicsFrames,               CursorSelectionPriority.NoPriority),
+            new(LemmingActionType.OhNoerAction,                 LemmingActionConstants.OhNoerAnimationFrames,                 LemmingActionConstants.MaxOhNoerPhysicsFrames,                 CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.SplatterAction,               LemmingActionConstants.SplatterAnimationFrames,               LemmingActionConstants.MaxSplatterPhysicsFrames,               CursorSelectionPriority.NoPriority),
+            new(LemmingActionType.StonerAction,                 LemmingActionConstants.StonerAnimationFrames,                 LemmingActionConstants.MaxStonerPhysicsFrames,                 CursorSelectionPriority.NoPriority),
+            new(LemmingActionType.VaporiserAction,              LemmingActionConstants.VaporiserAnimationFrames,              LemmingActionConstants.MaxVaporizerPhysicsFrames,              CursorSelectionPriority.NoPriority),
 
-            RotateClockwiseAction.Instance,
-            RotateCounterclockwiseAction.Instance,
-            RotateHalfAction.Instance
+            new(LemmingActionType.RotateClockwiseAction,        LemmingActionConstants.RotateClockwiseAnimationFrames,        LemmingActionConstants.MaxRotateClockwisePhysicsFrames,        CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.RotateCounterclockwiseAction, LemmingActionConstants.RotateCounterclockwiseAnimationFrames, LemmingActionConstants.MaxRotateCounterclockwisePhysicsFrames, CursorSelectionPriority.NonWalkerMovementPriority),
+            new(LemmingActionType.RotateHalfAction,             LemmingActionConstants.RotateHalfAnimationFrames,             LemmingActionConstants.MaxRotateHalfPhysicsFrames,             CursorSelectionPriority.NonWalkerMovementPriority),
         };
 
         Debug.Assert(result.Length == LemmingActionConstants.NumberOfLemmingActions);
 
-        var hasher = new LemmingActionHasher();
-        hasher.AssertUniqueIds(new ReadOnlySpan<LemmingAction>(result));
+        var hasher = new LemmingActionTypeHasher();
+        hasher.AssertUniqueIds(new ReadOnlySpan<LemmingActionData>(result));
         Array.Sort(result, hasher);
 
         return result;
     }
 
-    private static LemmingActionSet GetAirborneActions()
+    private static LemmingActionTypeSet GetAirborneActionTypes()
     {
         var result = CreateBitArraySet();
 
-        result.Add(DrownerAction.Instance);
-        result.Add(FallerAction.Instance);
-        result.Add(FloaterAction.Instance);
-        result.Add(GliderAction.Instance);
-        result.Add(JumperAction.Instance);
-        result.Add(ReacherAction.Instance);
-        result.Add(RotateClockwiseAction.Instance);
-        result.Add(RotateCounterclockwiseAction.Instance);
-        result.Add(RotateHalfAction.Instance);
-        result.Add(ShimmierAction.Instance);
-        result.Add(SwimmerAction.Instance);
-        result.Add(VaporiserAction.Instance);
+        result.Add(LemmingActionType.DrownerAction);
+        result.Add(LemmingActionType.FallerAction);
+        result.Add(LemmingActionType.FloaterAction);
+        result.Add(LemmingActionType.GliderAction);
+        result.Add(LemmingActionType.JumperAction);
+        result.Add(LemmingActionType.ReacherAction);
+        result.Add(LemmingActionType.RotateClockwiseAction);
+        result.Add(LemmingActionType.RotateCounterclockwiseAction);
+        result.Add(LemmingActionType.RotateHalfAction);
+        result.Add(LemmingActionType.ShimmierAction);
+        result.Add(LemmingActionType.SwimmerAction);
+        result.Add(LemmingActionType.VaporiserAction);
 
         return result;
     }
 
-    private static LemmingActionSet GetOneTimeActions()
+    private static LemmingActionTypeSet GetOneTimeActionTypes()
     {
         var result = CreateBitArraySet();
 
-        result.Add(DehoisterAction.Instance);
-        result.Add(DrownerAction.Instance);
-        result.Add(ExiterAction.Instance);
-        result.Add(ExploderAction.Instance);
-        result.Add(HoisterAction.Instance);
-        result.Add(OhNoerAction.Instance);
-        result.Add(ReacherAction.Instance);
-        result.Add(RotateClockwiseAction.Instance);
-        result.Add(RotateCounterclockwiseAction.Instance);
-        result.Add(RotateHalfAction.Instance);
-        result.Add(ShruggerAction.Instance);
-        result.Add(SplatterAction.Instance);
-        result.Add(StonerAction.Instance);
-        result.Add(VaporiserAction.Instance);
+        result.Add(LemmingActionType.DehoisterAction);
+        result.Add(LemmingActionType.DrownerAction);
+        result.Add(LemmingActionType.ExiterAction);
+        result.Add(LemmingActionType.ExploderAction);
+        result.Add(LemmingActionType.HoisterAction);
+        result.Add(LemmingActionType.OhNoerAction);
+        result.Add(LemmingActionType.ReacherAction);
+        result.Add(LemmingActionType.RotateClockwiseAction);
+        result.Add(LemmingActionType.RotateCounterclockwiseAction);
+        result.Add(LemmingActionType.RotateHalfAction);
+        result.Add(LemmingActionType.ShruggerAction);
+        result.Add(LemmingActionType.SplatterAction);
+        result.Add(LemmingActionType.StonerAction);
+        result.Add(LemmingActionType.VaporiserAction);
 
         return result;
     }
 
-    /// <summary>
-    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid lemming action type. In such a case the <see cref="NoneAction"/> is returned.
-    /// </summary>
-    /// <param name="actionType">The (possibly invalid) type of the action to fetch.</param>
-    /// <returns>The LemmingAction with that type, or the <see cref="NoneAction"/> if the input is invalid.</returns>
-    public static LemmingAction GetActionOrDefault(LemmingActionType actionType)
+    public static bool IsAirborneAction(LemmingActionType actionType) => AirborneActionTypes.Contains(actionType);
+    public static bool IsOneTimeAction(LemmingActionType actionType) => OneTimeActionTypes.Contains(actionType);
+
+    public static int GetNumberOfAnimationFramesForActionType(LemmingActionType actionType)
     {
-        return (uint)actionType < LemmingActionConstants.NumberOfLemmingActions
-            ? LemmingActions.At((int)actionType)
-            : NoneAction.Instance;
+        byte result = 1;
+
+        if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
+            result = LemmingActions.At((int)actionType).NumberOfAnimationFrames;
+
+        return result;
     }
 
-    public string LemmingActionName { get; }
-    public string LemmingActionSpriteFileName { get; }
-    public LemmingActionType ActionType { get; }
-    public int NumberOfAnimationFrames { get; }
-    public int MaxPhysicsFrames { get; }
-    public CursorSelectionPriority CursorSelectionPriority { get; }
-
-    protected LemmingAction(
-        LemmingActionType actionType,
-        string lemmingActionName,
-        string lemmingActionSpriteFileName,
-        int numberOfAnimationFrames,
-        int maxPhysicsFrames,
-        CursorSelectionPriority cursorSelectionPriority)
+    public static int GetMaxPhysicsFramesForActionType(LemmingActionType actionType)
     {
-        ActionType = actionType;
-        LemmingActionName = lemmingActionName;
-        LemmingActionSpriteFileName = lemmingActionSpriteFileName;
-        NumberOfAnimationFrames = numberOfAnimationFrames;
-        MaxPhysicsFrames = maxPhysicsFrames;
-        CursorSelectionPriority = cursorSelectionPriority;
+        byte result = 1;
+
+        if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
+            result = LemmingActions.At((int)actionType).MaxPhysicsFrames;
+
+        return result;
     }
 
-    public abstract bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming);
-
-    public RectangularRegion GetLemmingBounds(Lemming lemming)
+    public static int GetCursorSelectionPriorityForActionType(LemmingActionType actionType)
     {
-        var dht = lemming.DihedralTransformation;
-        var actionBounds = LemmingActionBounds.GetBounds(ActionType);
+        byte result = CursorSelectionPriority.NoneActionPriority;
 
-        actionBounds = dht.Transform(actionBounds);
-        actionBounds = actionBounds.Translate(lemming.AnchorPosition);
+        if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
+            result = LemmingActions.At((int)actionType).CursorSelectionPriority;
 
-        return actionBounds;
+        return result;
     }
 
-    public virtual Point GetFootPosition(
-        Lemming lemming,
-        Point anchorPosition)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming, LemmingActionType actionType) => actionType switch
     {
-        return lemming.Orientation.MoveUp(anchorPosition, 1);
+        LemmingActionType.WalkerAction => WalkerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.ClimberAction => ClimberAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.FloaterAction => FloaterAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.BlockerAction => BlockerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.BuilderAction => BuilderAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.BasherAction => BasherAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.MinerAction => MinerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.DiggerAction => DiggerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.PlatformerAction => PlatformerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.StackerAction => StackerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.FencerAction => FencerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.GliderAction => GliderAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.JumperAction => JumperAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.SwimmerAction => SwimmerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.ShimmierAction => ShimmierAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.LasererAction => LasererAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.SliderAction => SliderAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.FallerAction => FallerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.AscenderAction => AscenderAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.ShruggerAction => ShruggerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.DrownerAction => DrownerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.HoisterAction => HoisterAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.DehoisterAction => DehoisterAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.ReacherAction => ReacherAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.DisarmerAction => DisarmerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.ExiterAction => ExiterAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.ExploderAction => ExploderAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.OhNoerAction => OhNoerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.SplatterAction => SplatterAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.StonerAction => StonerAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.VaporiserAction => VaporiserAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.RotateClockwiseAction => RotateClockwiseAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.RotateCounterclockwiseAction => RotateCounterclockwiseAction.UpdateLemming(lemming, in gadgetsNearLemming),
+        LemmingActionType.RotateHalfAction => RotateHalfAction.UpdateLemming(lemming, in gadgetsNearLemming),
+
+        _ => NoneAction.UpdateLemming(lemming, in gadgetsNearLemming),
+    };
+
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround, LemmingActionType actionType)
+    {
+        switch (actionType)
+        {
+            case LemmingActionType.WalkerAction: WalkerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.ClimberAction: ClimberAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.FloaterAction: FloaterAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.BlockerAction: BlockerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.BuilderAction: BuilderAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.BasherAction: BasherAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.MinerAction: MinerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.DiggerAction: DiggerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.PlatformerAction: PlatformerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.StackerAction: StackerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.FencerAction: FencerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.GliderAction: GliderAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.JumperAction: JumperAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.SwimmerAction: SwimmerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.ShimmierAction: ShimmierAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.LasererAction: LasererAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.SliderAction: SliderAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.FallerAction: FallerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.AscenderAction: AscenderAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.ShruggerAction: ShruggerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.DrownerAction: DrownerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.HoisterAction: HoisterAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.DehoisterAction: DehoisterAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.ReacherAction: ReacherAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.DisarmerAction: DisarmerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.ExiterAction: ExiterAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.ExploderAction: ExploderAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.OhNoerAction: OhNoerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.SplatterAction: SplatterAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.StonerAction: StonerAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.VaporiserAction: VaporiserAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.RotateClockwiseAction: RotateClockwiseAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.RotateCounterclockwiseAction: RotateCounterclockwiseAction.TransitionLemmingToAction(lemming, turnAround); break;
+            case LemmingActionType.RotateHalfAction: RotateHalfAction.TransitionLemmingToAction(lemming, turnAround); break;
+
+            default: NoneAction.TransitionLemmingToAction(lemming, turnAround); break;
+        }
     }
 
-    public abstract void TransitionLemmingToAction(
-        Lemming lemming,
-        bool turnAround);
-
-    protected void DoMainTransitionActions(
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void DoMainTransitionActions(
+        this LemmingActionType actionType,
         Lemming lemming,
         bool turnAround)
     {
         if (lemming.CurrentActionType == LemmingActionType.BlockerAction &&
-            ActionType != LemmingActionType.BlockerAction &&
-            ActionType != LemmingActionType.OhNoerAction)
+            actionType != LemmingActionType.BlockerAction &&
+            actionType != LemmingActionType.OhNoerAction)
         {
             // Need to de-register blocker from LemmingManager
             // when transitioning from a blocker. Exceptions are for
@@ -189,15 +254,14 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
             LevelScreen.LemmingManager.DeregisterBlocker(lemming);
         }
 
-        if (turnAround)
-        {
-            lemming.FacingDirection = lemming.FacingDirection.GetOpposite();
-        }
+        var turnAroundXor = turnAround ? 1 : 0;
+        turnAroundXor ^= lemming.FacingDirection.Id;
+        lemming.FacingDirection = new FacingDirection(turnAroundXor);
 
-        if (this == lemming.CurrentAction)
+        if (actionType == lemming.CurrentActionType)
             return;
 
-        lemming.CurrentAction = this;
+        lemming.SetCurrentActionType(actionType);
         lemming.PhysicsFrame = 0;
         lemming.AnimationFrame = 0;
         lemming.EndOfAnimation = false;
@@ -206,44 +270,41 @@ public abstract class LemmingAction : IEquatable<LemmingAction>
         lemming.InitialFall = false;
     }
 
-    public bool IsAirborneAction() => AirborneActions.Contains(this);
-    public bool IsOneTimeAction() => OneTimeActions.Contains(this);
-
-    [DebuggerStepThrough]
-    public bool Equals(LemmingAction? other)
+    public static RectangularRegion GetLemmingBounds(this LemmingActionType actionType, Lemming lemming)
     {
-        var otherValue = LemmingActionType.NoneAction;
-        if (other is not null) otherValue = other.ActionType;
-        return ActionType == otherValue;
+        var dht = lemming.DihedralTransformation;
+        var actionBounds = LemmingActionBounds.GetBounds(actionType);
+
+        actionBounds = dht.Transform(actionBounds);
+        actionBounds = actionBounds.Translate(lemming.AnchorPosition);
+
+        return actionBounds;
     }
 
-    [DebuggerStepThrough]
-    public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingAction other && ActionType == other.ActionType;
-    [DebuggerStepThrough]
-    public sealed override int GetHashCode() => (int)ActionType;
-    [DebuggerStepThrough]
-    public sealed override string ToString() => LemmingActionName;
+    public static Point GetFootPosition(this LemmingActionType actionType, DihedralTransformation dht, Point anchorPosition)
+    {
+        if (actionType is LemmingActionType.ClimberAction or LemmingActionType.SliderAction)
+            return dht.Orientation.MoveLeft(anchorPosition, dht.FacingDirection.DeltaX);
 
-    [DebuggerStepThrough]
-    public static bool operator ==(LemmingAction left, LemmingAction right) => left.ActionType == right.ActionType;
-    [DebuggerStepThrough]
-    public static bool operator !=(LemmingAction left, LemmingAction right) => left.ActionType != right.ActionType;
+        return dht.Orientation.MoveUp(anchorPosition, 1);
+    }
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LemmingActionSet CreateBitArraySet() => new(new LemmingActionHasher());
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BitArrayDictionary<LemmingActionHasher, LemmingActionBitBuffer, LemmingAction, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingActionHasher());
+    public static LemmingActionTypeSet CreateBitArraySet() => new(new LemmingActionTypeHasher());
 
-    public readonly struct LemmingActionHasher : IBitBufferCreator<LemmingActionBitBuffer, LemmingAction>
+    public readonly struct LemmingActionTypeHasher : IBitBufferCreator<LemmingActionBitBuffer, LemmingActionData>, IBitBufferCreator<LemmingActionBitBuffer, LemmingActionType>
     {
         [Pure]
         public int NumberOfItems => LemmingActionConstants.NumberOfLemmingActions;
         [Pure]
-        public int Hash(LemmingAction item) => (int)item.ActionType;
+        int IPerfectHasher<LemmingActionType>.Hash(LemmingActionType item) => (int)item;
         [Pure]
-        public LemmingAction UnHash(int index) => LemmingActions.At(index);
+        LemmingActionType IPerfectHasher<LemmingActionType>.UnHash(int index) => (LemmingActionType)index;
+        [Pure]
+        int IPerfectHasher<LemmingActionData>.Hash(LemmingActionData item) => (int)item.ActionType;
+        [Pure]
+        LemmingActionData IPerfectHasher<LemmingActionData>.UnHash(int index) => LemmingActions.At(index);
 
         public void CreateBitBuffer(out LemmingActionBitBuffer buffer) => buffer = new();
     }

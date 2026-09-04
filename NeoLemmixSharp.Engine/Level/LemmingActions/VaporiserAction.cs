@@ -4,22 +4,9 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class VaporiserAction : LemmingAction
+public static class VaporiserAction
 {
-    public static readonly VaporiserAction Instance = new();
-
-    private VaporiserAction()
-        : base(
-            LemmingActionType.VaporiserAction,
-            LemmingActionConstants.VaporiserActionName,
-            LemmingActionConstants.VaporiserActionSpriteFileName,
-            LemmingActionConstants.VaporiserAnimationFrames,
-            LemmingActionConstants.MaxVaporizerPhysicsFrames,
-            CursorSelectionPriority.NoPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (lemming.EndOfAnimation)
         {
@@ -29,9 +16,9 @@ public sealed class VaporiserAction : LemmingAction
         return false;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.VaporiserAction.DoMainTransitionActions(lemming, turnAround);
 
         lemming.CountDownTimer = 0;
     }

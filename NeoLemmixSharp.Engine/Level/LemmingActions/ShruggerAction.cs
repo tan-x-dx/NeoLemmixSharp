@@ -3,30 +3,17 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class ShruggerAction : LemmingAction
+public static class ShruggerAction
 {
-    public static readonly ShruggerAction Instance = new();
-
-    private ShruggerAction()
-        : base(
-            LemmingActionType.ShruggerAction,
-            LemmingActionConstants.ShruggerActionName,
-            LemmingActionConstants.ShruggerActionSpriteFileName,
-            LemmingActionConstants.ShruggerAnimationFrames,
-            LemmingActionConstants.MaxShruggerPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         if (lemming.EndOfAnimation)
         {
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            WalkerAction.TransitionLemmingToAction(lemming, false);
         }
 
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.ShruggerAction.DoMainTransitionActions(lemming, turnAround);
 }

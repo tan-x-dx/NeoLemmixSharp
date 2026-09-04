@@ -1,19 +1,15 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
-using NeoLemmixSharp.Engine.Level.Terrain;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
-using System.Diagnostics.Contracts;
 using System.Runtime.InteropServices;
 using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class LasererAction : LemmingAction, IDestructionMask
+public static class LasererAction
 {
-    private const int DistanceCap = 112;
-
-    public static readonly LasererAction Instance = new();
+    public static IDestructionMask DestructionMask => FencerAction.DestructionMask; // Defer to whatever the fencer does, since the logic is the same!
 
     private static ReadOnlySpan<int> RawOffsetChecksRight =>
     [
@@ -58,45 +54,34 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         OutOfBounds
     }
 
-    private LasererAction()
-        : base(
-            LemmingActionType.LasererAction,
-            LemmingActionConstants.LasererActionName,
-            LemmingActionConstants.LasererActionSpriteFileName,
-            LemmingActionConstants.LasererAnimationFrames,
-            LemmingActionConstants.MaxLasererPhysicsFrames,
-            CursorSelectionPriority.NonPermanentSkillPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         var lemmingPosition = lemming.AnchorPosition;
 
         if (!PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
         {
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
             return true;
         }
 
         var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
-        var target = orientation.Move(lemmingPosition, dx * 2, 5);
+        var target = orientation.Move(lemmingPosition, new(dx * 2, 5));
 
         var hit = false;
         var hitUseful = false;
 
         var offsetChecks = GetOffsetChecks(facingDirection);
 
-        var i = DistanceCap;
+        var i = EngineConstants.LasererDistanceCap;
 
         do
         {
             switch (CheckForHit(in gadgetsNearLemming, offsetChecks))
             {
                 case LaserHitType.None:
-                    target = orientation.Move(target, dx, 1);
+                    target = orientation.Move(target, new(dx, 1));
                     break;
                 case LaserHitType.Solid:
                     hit = true;
@@ -118,28 +103,24 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
         lemming.LaserHitLevelPosition = target;
 
+        lemming.LaserHit = hit;
         if (hit)
-        {
-            lemming.LaserHit = true;
             TerrainMasks.ApplyLasererMask(lemming, target);
-        }
-        else
-        {
-            lemming.LaserHit = false;
-        }
 
+        var laserRemainTime = lemming.LaserRemainTime;
         if (hitUseful)
         {
-            lemming.LaserRemainTime = 10;
+            laserRemainTime = EngineConstants.MaxLaserRemainTime;
         }
         else
         {
-            lemming.LaserRemainTime--;
-            if (lemming.LaserRemainTime <= 0)
+            laserRemainTime--;
+            if (laserRemainTime <= 0)
             {
-                WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+                WalkerAction.TransitionLemmingToAction(lemming, false);
             }
         }
+        lemming.LaserRemainTime = laserRemainTime;
 
         return true;
 
@@ -152,14 +133,14 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
 
             foreach (var offset in offsetChecks)
             {
-                var checkLevelPosition = orientation.Move(target, offset.X, offset.Y);
+                var checkLevelPosition = orientation.Move(target, new(offset.X, offset.Y));
 
                 //  gadgetManager.GetAllGadgetsForPosition(scratchSpaceSpan1, checkLevelPosition, out var gadgetSet);
 
                 if (!PositionIsSolidToLemming(in gadgetsNearLemming1, lemming, checkLevelPosition))
                     continue;
 
-                result = PositionIsIndestructibleToLemming(in gadgetsNearLemming1, lemming, this, checkLevelPosition) &&
+                result = PositionIsIndestructibleToLemming(in gadgetsNearLemming1, lemming, DestructionMask, checkLevelPosition) &&
                          result != LaserHitType.Solid
                     ? LaserHitType.Indestructible
                     : LaserHitType.Solid;
@@ -169,13 +150,10 @@ public sealed class LasererAction : LemmingAction, IDestructionMask
         }
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
-        DoMainTransitionActions(lemming, turnAround);
+        LemmingActionType.LasererAction.DoMainTransitionActions(lemming, turnAround);
 
-        lemming.LaserRemainTime = 10;
+        lemming.LaserRemainTime = EngineConstants.MaxLaserRemainTime;
     }
-
-    [Pure]
-    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType) => FencerAction.Instance.CanDestroyPixel(dht, pixelType); // Defer to whatever the fencer does, since the logic is the same!
 }

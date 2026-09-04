@@ -26,7 +26,7 @@ public sealed class SliderSkill : LemmingSkill, ILemmingAbilityChanger
         lemming.IsSlider = true;
     }
 
-    protected override LemmingActionSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
+    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
 
     public void SetLemmingAbility(Lemming lemming, bool status)
     {

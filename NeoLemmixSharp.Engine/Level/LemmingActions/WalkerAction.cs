@@ -5,22 +5,9 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class WalkerAction : LemmingAction
+public static class WalkerAction
 {
-    public static readonly WalkerAction Instance = new();
-
-    private WalkerAction()
-        : base(
-            LemmingActionType.WalkerAction,
-            LemmingActionConstants.WalkerActionName,
-            LemmingActionConstants.WalkerActionSpriteFileName,
-            LemmingActionConstants.WalkerAnimationFrames,
-            LemmingActionConstants.MaxWalkerPhysicsFrames,
-            CursorSelectionPriority.WalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
@@ -34,7 +21,7 @@ public sealed class WalkerAction : LemmingAction
             DehoisterAction.LemmingCanDehoist(lemming, true, in gadgetsNearLemming))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx);
-            DehoisterAction.Instance.TransitionLemmingToAction(lemming, true);
+            DehoisterAction.TransitionLemmingToAction(lemming, true);
             return true;
         }
 
@@ -42,7 +29,7 @@ public sealed class WalkerAction : LemmingAction
         {
             if (lemming.IsClimber)
             {
-                ClimberAction.Instance.TransitionLemmingToAction(lemming, false);
+                ClimberAction.TransitionLemmingToAction(lemming, false);
             }
             else
             {
@@ -52,7 +39,7 @@ public sealed class WalkerAction : LemmingAction
         }
         else if (dy > 2)
         {
-            AscenderAction.Instance.TransitionLemmingToAction(lemming, false);
+            AscenderAction.TransitionLemmingToAction(lemming, false);
             lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
         }
         else if (dy >= 0)
@@ -66,7 +53,7 @@ public sealed class WalkerAction : LemmingAction
         if (dy < -3)
         {
             lemmingPosition = orientation.MoveDown(lemmingPosition, 4);
-            FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+            FallerAction.TransitionLemmingToAction(lemming, false);
 
             return true;
         }
@@ -79,16 +66,16 @@ public sealed class WalkerAction : LemmingAction
         return true;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         LevelScreen.GadgetManager.GetAllGadgetsNearPosition(lemming.AnchorPosition, out var gadgetsNearRegion);
 
         if (PositionIsSolidToLemming(in gadgetsNearRegion, lemming, lemming.AnchorPosition))
         {
-            DoMainTransitionActions(lemming, turnAround);
+            LemmingActionType.WalkerAction.DoMainTransitionActions(lemming, turnAround);
             return;
         }
 
-        FallerAction.Instance.TransitionLemmingToAction(lemming, turnAround);
+        FallerAction.TransitionLemmingToAction(lemming, turnAround);
     }
 }

@@ -19,6 +19,8 @@ public static class FacingDirectionConstants
 
 public readonly struct FacingDirection : IEquatable<FacingDirection>, ISpanFormattable
 {
+    private const int BitMask = 1;
+
     public static FacingDirection Right => new(FacingDirectionConstants.RightFacingDirectionId);
     public static FacingDirection Left => new(FacingDirectionConstants.LeftFacingDirectionId);
 
@@ -29,7 +31,7 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>, ISpanForma
     [DebuggerStepThrough]
     public FacingDirection(int id)
     {
-        Id = id & 1;
+        Id = id & BitMask;
     }
 
     [Pure]
@@ -49,13 +51,13 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>, ISpanForma
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(FacingDirection other) => Id == other.Id;
+    public bool Equals(FacingDirection other) => ((Id ^ other.Id) & BitMask) == 0;
     [Pure]
     [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is FacingDirection other && Equals(other);
     [Pure]
     [DebuggerStepThrough]
-    public override int GetHashCode() => Id;
+    public override int GetHashCode() => Id & BitMask;
 
     [Pure]
     [DebuggerStepThrough]
@@ -64,26 +66,26 @@ public readonly struct FacingDirection : IEquatable<FacingDirection>, ISpanForma
     [DebuggerStepThrough]
     public override string ToString()
     {
-        ReadOnlySpan<string> FacingDirectionNames =
-        [
-            FacingDirectionConstants.RightFacingDirectionName,
-            FacingDirectionConstants.LeftFacingDirectionName
-        ];
+        var result = FacingDirectionConstants.RightFacingDirectionName;
 
-        return FacingDirectionNames[Id & 1];
+        if ((Id & BitMask) != FacingDirectionConstants.RightFacingDirectionId)
+            result = FacingDirectionConstants.LeftFacingDirectionName;
+
+        return result;
     }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        var constSpan = ToString();
-        if (constSpan.TryCopyTo(destination))
+        var constString = ToString();
+        if (destination.Length < constString.Length)
         {
-            charsWritten = constSpan.Length;
-            return true;
+            charsWritten = 0;
+            return false;
         }
 
-        charsWritten = 0;
-        return false;
+        constString.CopyTo(destination);
+        charsWritten = constString.Length;
+        return true;
     }
 
     [Pure]

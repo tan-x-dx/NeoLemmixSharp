@@ -8,22 +8,24 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class DiggerAction : LemmingAction, IDestructionMask
+public static class DiggerAction
 {
-    public static readonly DiggerAction Instance = new();
+    public static IDestructionMask DestructionMask { get; } = new DiggerActionDestructionMask();
 
-    private DiggerAction()
-        : base(
-            LemmingActionType.DiggerAction,
-            LemmingActionConstants.DiggerActionName,
-            LemmingActionConstants.DiggerActionSpriteFileName,
-            LemmingActionConstants.DiggerAnimationFrames,
-            LemmingActionConstants.MaxDiggerPhysicsFrames,
-            CursorSelectionPriority.NonPermanentSkillPriority)
+    private sealed class DiggerActionDestructionMask : IDestructionMask
     {
+        [Pure]
+        public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
+        {
+            var pixelTypeInt = (uint)pixelType;
+            var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset |
+                                     (1 + dht.Orientation.RotNum + (dht.FacingDirection.Id << 1));
+
+            return ((pixelTypeInt >>> oppositeArrowShift) & 1U) == 0U;
+        }
     }
 
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         var dht = lemming.DihedralTransformation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
@@ -53,14 +55,14 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
 
         lemmingPosition = dht.Orientation.MoveDown(lemmingPosition, 1);
 
-        if (PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, this, lemmingPosition))
+        if (PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, lemmingPosition))
         {
             if (PositionIsSteelToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             {
                 //CueSoundEffect(SFX_HITS_STEEL, L.Position);
             }
 
-            WalkerAction.Instance.TransitionLemmingToAction(lemming, false);
+            WalkerAction.TransitionLemmingToAction(lemming, false);
 
             return true;
         }
@@ -68,12 +70,12 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         if (continueDigging)
             return true;
 
-        FallerAction.Instance.TransitionLemmingToAction(lemming, false);
+        FallerAction.TransitionLemmingToAction(lemming, false);
 
         return true;
     }
 
-    private bool DigOneRow(
+    private static bool DigOneRow(
         in GadgetEnumerable gadgetsNearRegion,
         Lemming lemming,
         DihedralTransformation dht,
@@ -88,14 +90,14 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         var pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
-            terrainManager.ErasePixel(dht, this, checkLevelPosition);
+            terrainManager.ErasePixel(dht, DestructionMask, checkLevelPosition);
         }
 
         checkLevelPosition = dht.Orientation.MoveRight(lemmingPosition, 4);
         pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
         if (pixelIsSolid)
         {
-            terrainManager.ErasePixel(dht, this, checkLevelPosition);
+            terrainManager.ErasePixel(dht, DestructionMask, checkLevelPosition);
         }
 
         var result = false;
@@ -106,7 +108,7 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
             pixelIsSolid = PositionIsSolidToLemming(in gadgetsNearRegion, lemming, checkLevelPosition);
             if (pixelIsSolid)
             {
-                terrainManager.ErasePixel(dht, this, checkLevelPosition);
+                terrainManager.ErasePixel(dht, DestructionMask, checkLevelPosition);
                 result = true;
             }
         }
@@ -116,15 +118,5 @@ public sealed class DiggerAction : LemmingAction, IDestructionMask
         return result;
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
-
-    [Pure]
-    public bool CanDestroyPixel(DihedralTransformation dht, PixelType pixelType)
-    {
-        var pixelTypeInt = (uint)pixelType;
-        var oppositeArrowShift = PixelTypeHelpers.PixelTypeArrowShiftOffset +
-                                 dht.Orientation.GetOpposite().RotNum;
-
-        return ((pixelTypeInt >>> oppositeArrowShift) & 1U) == 0U;
-    }
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround) => LemmingActionType.DiggerAction.DoMainTransitionActions(lemming, turnAround);
 }

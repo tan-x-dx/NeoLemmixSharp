@@ -5,32 +5,19 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class OhNoerAction : LemmingAction
+public static class OhNoerAction
 {
-    public static readonly OhNoerAction Instance = new();
-
-    private OhNoerAction()
-        : base(
-            LemmingActionType.OhNoerAction,
-            LemmingActionConstants.OhNoerActionName,
-            LemmingActionConstants.OhNoerActionSpriteFileName,
-            LemmingActionConstants.OhNoerAnimationFrames,
-            LemmingActionConstants.MaxOhNoerPhysicsFrames,
-            CursorSelectionPriority.NonWalkerMovementPriority)
-    {
-    }
-
-    public override bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
+    public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         ref var lemmingPosition = ref lemming.AnchorPosition;
 
         if (lemming.EndOfAnimation)
         {
             LevelScreen.LemmingManager.DeregisterBlocker(lemming);
-            var nextAction = lemming.CountDownAction;
-            nextAction.TransitionLemmingToAction(lemming, false);
+            var nextAction = lemming.CountDownActionType;
+            LemmingAction.TransitionLemmingToAction(lemming, false, nextAction);
             lemming.ClearCountDownAction();
-            return !nextAction.IsOneTimeAction();
+            return !LemmingAction.IsOneTimeAction(nextAction);
         }
 
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
@@ -46,21 +33,30 @@ public sealed class OhNoerAction : LemmingAction
 
     public static void HandleCountDownTransition(Lemming lemming)
     {
-        var currentAction = lemming.CurrentAction;
+        var currentActionType = lemming.CurrentActionType;
 
-        if (currentAction.ActionType == LemmingActionType.NoneAction)
+        if (currentActionType == LemmingActionType.NoneAction)
             return;
 
-        if (currentAction.IsAirborneAction())
+        if (LemmingAction.IsAirborneAction(currentActionType))
         {
             // If in the air, do the action immediately
-            lemming.CountDownAction.TransitionLemmingToAction(lemming, false);
+            LemmingAction.TransitionLemmingToAction(lemming, false, lemming.CountDownActionType);
             lemming.ClearCountDownAction();
             return;
         }
 
-        Instance.TransitionLemmingToAction(lemming, false); // Otherwise start oh-noing!
+        TransitionLemmingToAction(lemming, false); // Otherwise start oh-noing!
     }
 
-    public override void TransitionLemmingToAction(Lemming lemming, bool turnAround) => DoMainTransitionActions(lemming, turnAround);
+    public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
+    {
+        LemmingActionType.OhNoerAction.DoMainTransitionActions(lemming, turnAround);
+
+        var countDownActionType = lemming.CountDownActionType;
+        if (countDownActionType is LemmingActionType.ExploderAction or LemmingActionType.StonerAction)
+        {
+            lemming.ClearAllPermanentSkills();
+        }
+    }
 }

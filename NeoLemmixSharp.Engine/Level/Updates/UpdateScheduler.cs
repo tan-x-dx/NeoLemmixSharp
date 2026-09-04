@@ -262,8 +262,7 @@ end;
             return;
         }
 
-        if (!_queuedSkillLemming.IsActive ||
-            !_queuedSkillLemming.CanHaveSkillsAssigned
+        if (!_queuedSkillLemming.CanHaveSkillsAssigned
             || false) // || lemming is teleporting
         {
             // delete queued action first
