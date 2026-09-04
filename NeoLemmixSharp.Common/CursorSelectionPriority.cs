@@ -1,11 +1,11 @@
 ﻿namespace NeoLemmixSharp.Common;
 
-public enum CursorSelectionPriority : byte
+public static class CursorSelectionPriority
 {
-    NoneActionPriority,
-    NoPriority,
-    WalkerMovementPriority,
-    NonWalkerMovementPriority,
-    PermanentSkillPriority,
-    NonPermanentSkillPriority,
+    public const int NoneActionPriority = 0;
+    public const int NoPriority = 1;
+    public const int WalkerMovementPriority = 2;
+    public const int NonWalkerMovementPriority = 3;
+    public const int PermanentSkillPriority = 4;
+    public const int NonPermanentSkillPriority = 5;
 }

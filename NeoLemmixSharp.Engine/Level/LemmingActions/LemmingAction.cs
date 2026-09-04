@@ -13,12 +13,12 @@ namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 public static class LemmingAction
 {
     [DebuggerDisplay("{ActionType}")]
-    private readonly struct LemmingActionData(LemmingActionType actionType, byte numberOfAnimationFrames, byte maxPhysicsFrames, CursorSelectionPriority cursorSelectionPriority)
+    private readonly struct LemmingActionData(LemmingActionType actionType, byte numberOfAnimationFrames, byte maxPhysicsFrames, byte cursorSelectionPriority)
     {
         public readonly LemmingActionType ActionType = actionType;
         public readonly byte NumberOfAnimationFrames = numberOfAnimationFrames;
         public readonly byte MaxPhysicsFrames = maxPhysicsFrames;
-        public readonly CursorSelectionPriority CursorSelectionPriority = cursorSelectionPriority;
+        public readonly byte CursorSelectionPriority = cursorSelectionPriority;
     }
 
     private static readonly LemmingActionData[] LemmingActions = RegisterAllLemmingActions();
@@ -144,9 +144,9 @@ public static class LemmingAction
         return result;
     }
 
-    public static CursorSelectionPriority GetCursorSelectionPriorityForActionType(LemmingActionType actionType)
+    public static int GetCursorSelectionPriorityForActionType(LemmingActionType actionType)
     {
-        var result = CursorSelectionPriority.NoneActionPriority;
+        byte result = CursorSelectionPriority.NoneActionPriority;
 
         if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
             result = LemmingActions.At((int)actionType).CursorSelectionPriority;
