@@ -114,7 +114,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         LemmingActionType actionType)
     {
         var sourceSpan = GetSourceString(lemming, actionType);
-        Span<char> destSpan = new(_lemmingActionAndCountPointer, LemmingActionConstants.LongestActionNameLength);
+        var destSpan = new Span<char>(_lemmingActionAndCountPointer, LemmingActionConstants.LongestActionNameLength);
 
         sourceSpan.CopyTo(destSpan);
 

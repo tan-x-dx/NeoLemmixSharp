@@ -133,7 +133,7 @@ public sealed class ListLookup<TKey, TValue> : IDictionary<TKey, TValue>, IReadO
         }
     }
 
-    public ICollection<TValue> Values
+    public TValue[] Values
     {
         get
         {

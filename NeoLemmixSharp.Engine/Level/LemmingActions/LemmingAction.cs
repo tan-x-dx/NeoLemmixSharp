@@ -243,22 +243,21 @@ public static class LemmingAction
         Lemming lemming,
         bool turnAround)
     {
-        if (lemming.CurrentActionType == LemmingActionType.BlockerAction &&
-            actionType != LemmingActionType.BlockerAction &&
-            actionType != LemmingActionType.OhNoerAction)
+        var currentActionType = lemming.CurrentActionType;
+        if (currentActionType == LemmingActionType.BlockerAction)
         {
             // Need to de-register blocker from LemmingManager
             // when transitioning from a blocker. Exceptions are for
             // transitions to blocker or ohNoer
-
-            LevelScreen.LemmingManager.DeregisterBlocker(lemming);
+            if (actionType is not LemmingActionType.BlockerAction and not LemmingActionType.OhNoerAction)
+                LevelScreen.LemmingManager.DeregisterBlocker(lemming);
         }
 
         var turnAroundXor = turnAround ? 1 : 0;
         turnAroundXor ^= lemming.FacingDirection.Id;
         lemming.FacingDirection = new FacingDirection(turnAroundXor);
 
-        if (actionType == lemming.CurrentActionType)
+        if (actionType == currentActionType)
             return;
 
         lemming.SetCurrentActionType(actionType);

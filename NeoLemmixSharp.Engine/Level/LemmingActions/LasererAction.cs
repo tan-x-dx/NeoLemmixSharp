@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain.Masks;
@@ -78,7 +79,9 @@ public static class LasererAction
 
         do
         {
-            switch (CheckForHit(in gadgetsNearLemming, offsetChecks))
+            var hitType = CheckForHit(in gadgetsNearLemming, offsetChecks);
+
+            switch (hitType)
             {
                 case LaserHitType.None:
                     target = orientation.Move(target, new(dx, 1));
@@ -93,7 +96,8 @@ public static class LasererAction
                 case LaserHitType.OutOfBounds:
                     goto HitTestConclusive;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    Helpers.ThrowUnknownEnumValueException<LaserHitType, LaserHitType>(hitType);
+                    break;
             }
 
             --i;

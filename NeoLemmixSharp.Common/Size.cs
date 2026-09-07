@@ -35,8 +35,10 @@ public readonly struct Size : IEquatable<Size>, ISpanFormattable
     [DebuggerStepThrough]
     public Size Scale(int widthScaleFactor, int heightScaleFactor)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(widthScaleFactor);
-        ArgumentOutOfRangeException.ThrowIfNegative(heightScaleFactor);
+        if (widthScaleFactor < 0)
+            Helpers.ThrowNegativeInputException();
+        if (heightScaleFactor < 0)
+            Helpers.ThrowNegativeInputException();
 
         return new Size(W * widthScaleFactor, H * heightScaleFactor, 0);
     }

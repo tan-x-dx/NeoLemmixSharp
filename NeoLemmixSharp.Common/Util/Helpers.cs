@@ -382,6 +382,8 @@ public static class Helpers
     }
 
     [DoesNotReturn]
+    public static void ThrowNegativeInputException() => throw new ArgumentOutOfRangeException("Input is negative!");
+    [DoesNotReturn]
     private static void ThrowInvalidSpanInputsException() => throw new InvalidOperationException("Invalid inputs!");
     [DoesNotReturn]
     public static void ThrowKeyAlreadyAddedException<TKey>(TKey key) => throw new ArgumentException("Key already added!", nameof(key));

@@ -15,8 +15,8 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     public static int SizeInBytes => LemmingDataSize;
 
     /// <summary>
-    /// The raw size of a LemmingData struct is 184 bytes.
-    /// We pad this with an extra 8 bytes to make 192.
+    /// The raw size of a LemmingData struct is 188 bytes.
+    /// We pad this with an extra 4 bytes to make 192.
     /// This is because the Span.Copy methods work best on blocks
     /// that are multiples of 64 bytes in size. 192 = 64 * 3.
     /// </summary>

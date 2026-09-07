@@ -56,7 +56,8 @@ public readonly unsafe struct RawBitBuffer : IBitBuffer
 
     public RawBitBuffer(void* pointer, int length)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(length);
+        if (Length < 0)
+            Helpers.ThrowNegativeInputException();
 
         _pointer = pointer;
         _length = length;

@@ -104,9 +104,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
 
         var i = positions.Length;
         if (i == 0)
-        {
             goto SetPoints;
-        }
 
         i--;
         mins = positions.At(i);
@@ -114,22 +112,20 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
         i--;
 
         if (i < 0)
-        {
             goto SetPoints;
-        }
 
         do
         {
             var p = positions.At(i);
 
-            if (mins.X > p.X)
+            if (p.X < mins.X)
                 mins = new Point(p.X, mins.Y);
-            if (maxs.X < p.X)
+            if (p.X > maxs.X)
                 maxs = new Point(p.X, maxs.Y);
 
-            if (mins.Y > p.Y)
+            if (p.Y < mins.Y)
                 mins = new Point(mins.X, p.Y);
-            if (maxs.Y < p.Y)
+            if (p.Y > maxs.Y)
                 maxs = new Point(maxs.X, p.Y);
 
             i--;
