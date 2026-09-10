@@ -8,6 +8,8 @@ using NeoLemmixSharp.Common.Rendering.Text;
 using NeoLemmixSharp.Common.Screen;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level;
+using NeoLemmixSharp.Engine.Level.LemmingActions;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.Menu;
@@ -61,6 +63,7 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
 
     protected override void Initialize()
     {
+        InitialiseLemmingActionsAndSkills();
         ValidateMaxActionNameLength();
         LoadContent();
 
@@ -122,6 +125,12 @@ public sealed partial class NeoLemmixGame : Game, IGameWindow
         var menuScreen = new MenuScreen(Content, GraphicsDevice);
         SetScreen(menuScreen);
         menuScreen.Initialise();
+    }
+
+    private static void InitialiseLemmingActionsAndSkills()
+    {
+        var numberOfLemmingSkills = LemmingSkill.AllItems.Length;
+        Console.WriteLine($"Initialised {numberOfLemmingSkills} Lemming Skills");
     }
 
     /// <summary>

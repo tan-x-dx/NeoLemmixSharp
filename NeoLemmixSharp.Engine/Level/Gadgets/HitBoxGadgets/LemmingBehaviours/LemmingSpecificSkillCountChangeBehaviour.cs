@@ -1,16 +1,16 @@
-﻿using NeoLemmixSharp.Common.Enums;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using NeoLemmixSharp.Engine.Level.Skills;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
 public sealed class LemmingSpecificSkillCountChangeBehaviour : LemmingBehaviour
 {
-    private readonly LemmingSkill _lemmingSkill;
+    private readonly LemmingSkillType _lemmingSkill;
     public readonly int SkillCountDelta;
 
     public LemmingSpecificSkillCountChangeBehaviour(
-        LemmingSkill lemmingSkill,
+        LemmingSkillType lemmingSkill,
         int skillCountDelta)
         : base(LemmingBehaviourType.SkillCountChange)
     {

@@ -3,14 +3,13 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Objectives;
-using NeoLemmixSharp.Engine.Level.Skills;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Level.Updates;
 
 public sealed class UpdateScheduler : IInitialisable
 {
-    private LemmingSkill _queuedSkill = NoneSkill.Instance;
+    private LemmingSkillType _queuedSkill = LemmingSkillType.NoneSkill;
     private int _queuedSkillTribeId;
     private Lemming? _queuedSkillLemming;
 
@@ -214,7 +213,7 @@ end;
         }
         else
         {
-            SetQueuedSkill(lemming, skillTrackingData.LemmingSkill);
+            SetQueuedSkill(lemming, skillTrackingData.LemmingSkillType);
         }
     }
 
@@ -237,12 +236,12 @@ end;
 
     private void ClearQueuedSkill()
     {
-        _queuedSkill = NoneSkill.Instance;
+        _queuedSkill = LemmingSkillType.NoneSkill;
         _queuedSkillLemming = null;
         _queuedSkillFrame = 0;
     }
 
-    private void SetQueuedSkill(Lemming lemming, LemmingSkill lemmingSkill)
+    private void SetQueuedSkill(Lemming lemming, LemmingSkillType lemmingSkill)
     {
         _queuedSkill = lemmingSkill;
         _queuedSkillLemming = lemming;
@@ -256,7 +255,7 @@ end;
         if (LevelScreen.RewindManager.DoneSkillAssignmentForTick(_elapsedTicks))
             return;
 
-        if (_queuedSkill == NoneSkill.Instance || _queuedSkillLemming is null)
+        if (_queuedSkill == LemmingSkillType.NoneSkill || _queuedSkillLemming is null)
         {
             ClearQueuedSkill();
             return;
@@ -271,7 +270,7 @@ end;
         }
 
         var skillTrackingData = LevelScreen.SkillSetManager.TryGetSkillTrackingData(
-            _queuedSkill.SkillType,
+            _queuedSkill,
             _queuedSkillTribeId);
 
         if (skillTrackingData is not null &&
@@ -305,7 +304,7 @@ end;
 
         requiredTick = Math.Max(requiredTick, 0);
 
-        _queuedSkill = NoneSkill.Instance;
+        _queuedSkill = LemmingSkillType.NoneSkill;
         _queuedSkillLemming = null;
         _queuedSkillFrame = 0;
 
