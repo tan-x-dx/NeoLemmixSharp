@@ -60,8 +60,7 @@ public static class OrientationMethods
     /// </summary>
     /// <param name="orientation">The relative orientation to use.</param>
     /// <param name="position">The position to translate.</param>
-    /// <param name="dx">The horizontal translation component, relative to the orientation parameter.</param>
-    /// <param name="dy">The vertical translation component, relative to the orientation parameter.</param>
+    /// <param name="delta">The horizontal and vertical translation components, relative to the orientation parameter.</param>
     /// <returns>The translated position, relative to the orientation.</returns>
     [Pure]
     public static Point Move(
@@ -78,8 +77,7 @@ public static class OrientationMethods
     /// </summary>
     /// <param name="orientation">The relative orientation to use.</param>
     /// <param name="position">The position to translate.</param>
-    /// <param name="dx">The horizontal translation component, relative to the orientation parameter.</param>
-    /// <param name="dy">The vertical translation component, relative to the orientation parameter.</param>
+    /// <param name="delta">The horizontal and vertical translation components, relative to the orientation parameter.</param>
     /// <returns>The translated position, relative to the orientation.</returns>
     [Pure]
     public static Point MoveWithoutNormalization(
