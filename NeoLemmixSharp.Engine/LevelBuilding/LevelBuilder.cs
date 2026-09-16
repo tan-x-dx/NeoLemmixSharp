@@ -105,7 +105,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
         var levelObjectiveBuilder = new LevelObjectiveBuilder(levelData.LevelObjective, selectedTalismanId);
         var levelObjectiveManager = levelObjectiveBuilder.BuildLevelObjectiveManager();
-        var skillSetManager = levelObjectiveBuilder.BuildSkillSetManager(tribeManager, _safeBufferAllocator);
+        var skillSetManager = levelObjectiveBuilder.BuildSkillSetManager(_safeBufferAllocator);
         var levelTimer = levelObjectiveBuilder.BuildLevelTimer(_safeBufferAllocator);
 
         var controlPanel = new LevelControlPanel(levelData.ControlPanelParameters, inputController, lemmingManager, skillSetManager);

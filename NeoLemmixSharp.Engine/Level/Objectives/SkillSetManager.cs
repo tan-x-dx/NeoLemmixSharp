@@ -2,7 +2,6 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
-using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO;
 using System.Diagnostics.Contracts;

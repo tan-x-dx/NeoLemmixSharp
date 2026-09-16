@@ -92,8 +92,10 @@ public ref struct LemmingCriteriaBuilder
 
     private readonly LemmingCriterion[] CreateLemmingCriteriaArray()
     {
-        var numberOfCriteria = _numberOfCriteria;
-        numberOfCriteria += (_hasRequiredAbilities | _hasDisallowedAbilities) ? 1 : 0;
+        var numberOfCriteria = 0;
+        if (_hasRequiredAbilities | _hasDisallowedAbilities)
+            numberOfCriteria++;
+        numberOfCriteria += _numberOfCriteria;
 
         var result = Helpers.GetArrayForSize<LemmingCriterion>(numberOfCriteria);
         var i = 0;

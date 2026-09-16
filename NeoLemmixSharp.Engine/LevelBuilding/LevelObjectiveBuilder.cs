@@ -3,7 +3,6 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Criteria;
 using NeoLemmixSharp.Engine.Level.Timer;
-using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO.Data.Level.Objectives;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
@@ -121,11 +120,11 @@ public sealed class LevelObjectiveBuilder
         return new AllZombiesDeadRequirement();
     }
 
-    public SkillSetManager BuildSkillSetManager(TribeManager tribeManager, SafeBufferAllocator safeBufferAllocator)
+    public SkillSetManager BuildSkillSetManager(SafeBufferAllocator safeBufferAllocator)
     {
         SkillSetDataBuffer = safeBufferAllocator.AllocateRawArray(PointerWrapper.SizeInBytes + (_levelObjectiveData.SkillSetData.Length * Level.Objectives.SkillSetData.SizeInBytes));
 
-        var skillTrackingData = BuildSkillTrackingData(tribeManager);
+        var skillTrackingData = BuildSkillTrackingData();
 
         var totalSkillLimitModifier = TryFindSmallestLimitTotalSkillAssignmentsModifier();
         var totalSkillLimit = EngineConstants.TrivialSkillLimit;
@@ -135,7 +134,7 @@ public sealed class LevelObjectiveBuilder
         return new SkillSetManager(SkillSetDataBuffer.Handle, skillTrackingData, totalSkillLimit);
     }
 
-    private SkillTrackingData[] BuildSkillTrackingData(TribeManager tribeManager)
+    private SkillTrackingData[] BuildSkillTrackingData()
     {
         var baseSkillData = _levelObjectiveData.SkillSetData;
 

@@ -130,7 +130,7 @@ public sealed class LevelList : Component, IComparer<LevelBrowserEntry>
         ScrollIndex -= inputController.ScrollDelta;
     }
 
-    public void Tick()
+    public override void Tick()
     {
         for (var i = 0; i < _levelBrowserEntries.Count; i++)
         {
