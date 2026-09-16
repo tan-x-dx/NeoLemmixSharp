@@ -25,6 +25,26 @@ internal enum LevelFileSectionIdentifier
 internal readonly struct LevelFileSectionIdentifierHasher : IEnumIdentifierHelper<BitBuffer32, LevelFileSectionIdentifier>
 {
     private const int NumberOfEnumValues = (int)LevelFileSectionIdentifier.VALUE_MAX;
+    private const int IdentifierBytesMultiplier = (429 * 8) + 5; // Needs to be === 5 mod 8
+    private const int IdentifierBytesIncrement = 29879; // Prime
+
+    private static readonly ushort[] SectionIdentifierBytes = GenerateSectionIdentifierBytes();
+
+    private static ushort[] GenerateSectionIdentifierBytes()
+    {
+        var result = new ushort[NumberOfEnumValues];
+
+        var lcg = new LinearCongruentialGenerator<LcgModulo65536>(IdentifierBytesMultiplier, IdentifierBytesIncrement);
+
+        for (var i = 0; i < NumberOfEnumValues; i++)
+        {
+            lcg.MoveNext();
+
+            result[i] = (ushort)lcg.Current;
+        }
+
+        return result;
+    }
 
     public int NumberOfItems => NumberOfEnumValues;
 
@@ -37,21 +57,11 @@ internal readonly struct LevelFileSectionIdentifierHasher : IEnumIdentifierHelpe
 
     public static LevelFileSectionIdentifier GetEnumValue(uint rawValue) => Helpers.GetEnumValue<LevelFileSectionIdentifier>(rawValue, NumberOfEnumValues);
 
-    public static ushort GetSectionIdentifierBytes(LevelFileSectionIdentifier sectionIdentifier) => sectionIdentifier switch
+    public static ushort GetSectionIdentifierBytes(LevelFileSectionIdentifier sectionIdentifier)
     {
-        LevelFileSectionIdentifier.StringDataSection => 0x2644,
-        LevelFileSectionIdentifier.LevelMetadataSection => 0x79A6,
-        LevelFileSectionIdentifier.LevelTextDataSection => 0x43A0,
-        LevelFileSectionIdentifier.LevelObjectivesDataSection => 0x90D2,
-        LevelFileSectionIdentifier.TribeDataSection => 0xBEF4,
-        LevelFileSectionIdentifier.HatchGroupDataSection => 0xFE77,
-        LevelFileSectionIdentifier.PrePlacedLemmingDataSection => 0x601B,
-        LevelFileSectionIdentifier.TerrainDataSection => 0x785D,
-        LevelFileSectionIdentifier.TerrainGroupDataSection => 0x3D98,
-        LevelFileSectionIdentifier.GadgetDataSection => 0x2FCD,
-        LevelFileSectionIdentifier.GadgetBehaviourDataSection => 0xC32C,
-        LevelFileSectionIdentifier.GadgetTriggerDataSection => 0xAE0F,
+        if ((uint)sectionIdentifier < NumberOfEnumValues)
+            return SectionIdentifierBytes.At((int)sectionIdentifier);
 
-        _ => Helpers.ThrowUnknownEnumValueException<LevelFileSectionIdentifier, ushort>(sectionIdentifier)
-    };
+        return Helpers.ThrowUnknownEnumValueException<LevelFileSectionIdentifier, ushort>(sectionIdentifier);
+    }
 }
