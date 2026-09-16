@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.FileFormats;
 
-public static class FileTypeHandler
+public static class FileTypeHelper
 {
     private readonly record struct FileTypeAndFormat(FileType Type, FileFormatType Format);
 

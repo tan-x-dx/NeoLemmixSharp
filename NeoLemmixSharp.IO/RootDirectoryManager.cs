@@ -105,9 +105,9 @@ public static class RootDirectoryManager
 
     public static string GetLevelFilePath(string levelName, FileFormatType fileFormatType)
     {
-        var fileExtension = FileTypeHandler.GetFileExtensionForLevelType(fileFormatType);
-
         var result = Path.Combine(LevelFolderDirectory, levelName);
+
+        var fileExtension = FileTypeHelper.GetFileExtensionForLevelType(fileFormatType);
 
         return Path.ChangeExtension(result, fileExtension);
     }

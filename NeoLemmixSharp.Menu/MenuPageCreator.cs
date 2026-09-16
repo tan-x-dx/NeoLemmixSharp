@@ -71,7 +71,7 @@ public sealed class MenuPageCreator
 
     public LevelStartPage? CreateLevelStartPage()
     {
-        var levelData = FileTypeHandler.ReadLevel(LevelToLoadFilepath);
+        var levelData = FileTypeHelper.ReadLevel(LevelToLoadFilepath);
 
         return CreateLevelStartPage(levelData);
     }

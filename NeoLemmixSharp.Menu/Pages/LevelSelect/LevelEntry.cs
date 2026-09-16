@@ -30,7 +30,7 @@ public sealed class LevelEntry : LevelBrowserEntry
     {
         try
         {
-            LevelData = FileTypeHandler.ReadLevel(_filePath);
+            LevelData = FileTypeHelper.ReadLevel(_filePath);
         }
         catch
         {

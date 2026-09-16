@@ -133,7 +133,7 @@ public sealed partial class LevelEditorPage : PageBase
     {
         try
         {
-            var levelData = FileTypeHandler.ReadLevel(levelFilePath);
+            var levelData = FileTypeHelper.ReadLevel(levelFilePath);
 
             StyleCache.EnsureStylesAreLoadedForLevel(levelData);
             SetLevelData(levelData);
@@ -153,7 +153,7 @@ public sealed partial class LevelEditorPage : PageBase
     {
         _currentLevelData.IncrementVersion();
 
-        FileTypeHandler.WriteLevel(_currentLevelData, levelFilePath);
+        FileTypeHelper.WriteLevel(_currentLevelData, levelFilePath);
     }
 
     protected override void OnDispose()
