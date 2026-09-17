@@ -11,11 +11,11 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2.HitBoxGadgets;
 
 public static class HitBoxBuilder
 {
-    public static BitArrayDictionary<Orientation.OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> BuildHitBoxLookup(
+    public static BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> BuildHitBoxLookup(
         HitBoxGadgetStateArchetypeData gadgetStateArchetypeData,
         GadgetBounds gadgetBounds)
     {
-        var result = Orientation.CreateBitArrayDictionary<HitBoxRegion>();
+        var result = OrientationHasher.CreateBitArrayDictionary<HitBoxRegion>();
 
         foreach (var hitBoxRegionData in gadgetStateArchetypeData.RegionData)
         {

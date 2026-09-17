@@ -432,8 +432,10 @@ public readonly struct LemmingActionTypeHasher : IBitBufferCreator<LemmingAction
     [Pure]
     public int NumberOfItems => LemmingActionConstants.NumberOfLemmingActions;
     [Pure]
+    [DebuggerStepThrough]
     public int Hash(LemmingActionType item) => (int)item;
     [Pure]
+    [DebuggerStepThrough]
     public LemmingActionType UnHash(int index) => (LemmingActionType)index;
 
     public void CreateBitBuffer(out LemmingActionBitBuffer buffer) => buffer = new();

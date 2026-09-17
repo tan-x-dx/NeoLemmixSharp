@@ -119,7 +119,7 @@ public ref struct LemmingCriteriaBuilder
     {
         if (_orientationSet is null)
         {
-            _orientationSet = Orientation.CreateBitArraySet();
+            _orientationSet = OrientationHasher.CreateBitArraySet();
             _numberOfCriteria++;
         }
 
