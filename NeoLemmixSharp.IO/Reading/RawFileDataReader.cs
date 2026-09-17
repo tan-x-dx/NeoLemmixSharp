@@ -180,6 +180,17 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
             b: bytes.At(3));
     }
 
+    public Common.Point Decode16BitPoint()
+    {
+        ushort xShort = Read16BitUnsignedInteger();
+        var x = (int)(short)xShort;
+
+        ushort yShort = Read16BitUnsignedInteger();
+        var y = (int)(short)yShort;
+
+        return new Common.Point(x, y);
+    }
+
     public void SetReaderPosition(int position)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(position);

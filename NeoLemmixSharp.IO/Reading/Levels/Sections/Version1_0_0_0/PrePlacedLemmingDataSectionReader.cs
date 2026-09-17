@@ -26,8 +26,7 @@ internal sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
 
     private static LemmingInstanceData ReadLemmingData(RawLevelFileDataReader reader)
     {
-        int positionData = reader.Read32BitSignedInteger();
-        var position = ReadWriteHelpers.DecodePoint(positionData);
+        var position = reader.Decode16BitPoint();
 
         uint state = reader.Read32BitUnsignedInteger();
 
