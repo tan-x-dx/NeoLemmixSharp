@@ -30,7 +30,7 @@ public sealed class LevelData
 
     private LevelObjectiveData? _levelObjective;
 
-    public FileFormatType FileFormatType { get; }
+    public FileFormatType FileFormatType { get; set; }
 
     public LevelData(FileFormatType fileFormatType, string? levelFilePath)
     {

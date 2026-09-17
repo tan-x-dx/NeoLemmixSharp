@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.IO;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Terrain;
 using NeoLemmixSharp.Menu.LevelEditor.Components.StylePieces;
@@ -21,7 +22,8 @@ public sealed partial class LevelEditorPage : IEditorOperationHandler
 
     public void OnSaveLevel(Component c, Point position)
     {
-        if (string.IsNullOrWhiteSpace(_currentLevelData.LevelFilePath))
+        if (string.IsNullOrWhiteSpace(_currentLevelData.LevelFilePath) ||
+            _currentLevelData.FileFormatType == IO.FileFormats.FileFormatType.NeoLemmix)
         {
             OnSaveLevelAs(c, position);
         }
@@ -33,6 +35,21 @@ public sealed partial class LevelEditorPage : IEditorOperationHandler
 
     public void OnSaveLevelAs(Component c, Point position)
     {
+        var levelFilePath = _currentLevelData.LevelFilePath;
+
+        if (string.IsNullOrWhiteSpace(levelFilePath))
+        {
+            levelFilePath = RootDirectoryManager.GetLevelFilePath(_currentLevelData.LevelTitle, IO.FileFormats.FileFormatType.NeoLemmix);
+        }
+        else
+        {
+            levelFilePath = Path.ChangeExtension(levelFilePath, DefaultFileExtensions.LevelFileExtension);
+        }
+
+        _currentLevelData.LevelFilePath = levelFilePath;
+        _currentLevelData.FileFormatType = IO.FileFormats.FileFormatType.NeoLemmix;
+
+        SaveLevel(_currentLevelData.LevelFilePath!);
     }
 
     public void OnExit(Component c, Point position)
