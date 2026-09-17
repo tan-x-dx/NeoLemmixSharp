@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonBehaviours.Global;
+using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.Engine.Level.Tribes;
 using NeoLemmixSharp.IO;
 using System.Diagnostics.Contracts;
@@ -87,7 +88,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         var result = true;
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
-            result &= skillTrackingData.LemmingSkill.IsClassicSkill() && // only classic skills
+            result &= skillTrackingData.LemmingSkillType.IsClassicSkill() && // only classic skills
                       skillTrackingData.Tribe is null; // no tribe specified
         }
 

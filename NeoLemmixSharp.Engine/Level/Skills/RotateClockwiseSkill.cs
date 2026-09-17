@@ -4,21 +4,17 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class RotateClockwiseSkill : LemmingSkill
+public static class RotateClockwiseSkill
 {
-    public static readonly RotateClockwiseSkill Instance = new();
-
-    private RotateClockwiseSkill()
-        : base(
-            LemmingSkillType.RotateClockwiseSkill,
-            LemmingSkillConstants.RotateClockwiseSkillName)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
+        return LemmingSkillType.RotateClockwiseSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         RotateClockwiseAction.TransitionLemmingToAction(lemming, false);
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedRotationSkill;
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedRotationSkill();
 }

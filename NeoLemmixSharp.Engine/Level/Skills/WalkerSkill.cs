@@ -6,18 +6,14 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class WalkerSkill : LemmingSkill
+public static class WalkerSkill
 {
-    public static readonly WalkerSkill Instance = new();
-
-    private WalkerSkill()
-        : base(
-            LemmingSkillType.WalkerSkill,
-            LemmingSkillConstants.WalkerSkillName)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
+        return LemmingSkillType.WalkerSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
@@ -90,24 +86,20 @@ public sealed class WalkerSkill : LemmingSkill
         return false;
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned()
     {
-        var result = LemmingAction.CreateBitArraySet();
-
-        result.Add(LemmingActionType.WalkerAction);
-        result.Add(LemmingActionType.BlockerAction);
-        result.Add(LemmingActionType.BasherAction);
-        result.Add(LemmingActionType.FencerAction);
-        result.Add(LemmingActionType.MinerAction);
-        result.Add(LemmingActionType.DiggerAction);
-        result.Add(LemmingActionType.BuilderAction);
-        result.Add(LemmingActionType.PlatformerAction);
-        result.Add(LemmingActionType.StackerAction);
-        result.Add(LemmingActionType.ShimmierAction);
-        result.Add(LemmingActionType.LasererAction);
-        result.Add(LemmingActionType.ReacherAction);
-        result.Add(LemmingActionType.ShruggerAction);
-
-        return result;
+        yield return LemmingActionType.WalkerAction;
+        yield return LemmingActionType.BlockerAction;
+        yield return LemmingActionType.BasherAction;
+        yield return LemmingActionType.FencerAction;
+        yield return LemmingActionType.MinerAction;
+        yield return LemmingActionType.DiggerAction;
+        yield return LemmingActionType.BuilderAction;
+        yield return LemmingActionType.PlatformerAction;
+        yield return LemmingActionType.StackerAction;
+        yield return LemmingActionType.ShimmierAction;
+        yield return LemmingActionType.LasererAction;
+        yield return LemmingActionType.ReacherAction;
+        yield return LemmingActionType.ShruggerAction;
     }
 }

@@ -5,24 +5,15 @@ using NeoLemmixSharp.Engine.Level.Terrain.Masks;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class ClonerSkill : LemmingSkill
+public static class ClonerSkill
 {
-    public static readonly ClonerSkill Instance = new();
-
-    private ClonerSkill()
-        : base(
-            LemmingSkillType.ClonerSkill,
-            LemmingSkillConstants.ClonerSkillName)
-    {
-    }
-
-    public override bool CanAssignToLemming(Lemming lemming)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
         return LevelScreen.LemmingManager.CanCreateNewLemmingClone() &&
-               SkillIsAssignableToCurrentAction(lemming);
+               LemmingSkillType.ClonerSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         if (!LevelScreen.LemmingManager.TryGetNextClonedLemming(out var clonedLemming))
             return;
@@ -59,30 +50,26 @@ public sealed class ClonerSkill : LemmingSkill
         }
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned()
     {
-        var result = LemmingAction.CreateBitArraySet();
-
-        result.Add(LemmingActionType.WalkerAction);
-        result.Add(LemmingActionType.BuilderAction);
-        result.Add(LemmingActionType.MinerAction);
-        result.Add(LemmingActionType.JumperAction);
-        result.Add(LemmingActionType.StackerAction);
-        result.Add(LemmingActionType.LasererAction);
-        result.Add(LemmingActionType.SwimmerAction);
-        result.Add(LemmingActionType.GliderAction);
-        result.Add(LemmingActionType.PlatformerAction);
-        result.Add(LemmingActionType.BasherAction);
-        result.Add(LemmingActionType.FencerAction);
-        result.Add(LemmingActionType.DiggerAction);
-        result.Add(LemmingActionType.AscenderAction);
-        result.Add(LemmingActionType.FallerAction);
-        result.Add(LemmingActionType.FloaterAction);
-        result.Add(LemmingActionType.DisarmerAction);
-        result.Add(LemmingActionType.ShimmierAction);
-        result.Add(LemmingActionType.ShruggerAction);
-        result.Add(LemmingActionType.ReacherAction);
-
-        return result;
+        yield return LemmingActionType.WalkerAction;
+        yield return LemmingActionType.BuilderAction;
+        yield return LemmingActionType.MinerAction;
+        yield return LemmingActionType.JumperAction;
+        yield return LemmingActionType.StackerAction;
+        yield return LemmingActionType.LasererAction;
+        yield return LemmingActionType.SwimmerAction;
+        yield return LemmingActionType.GliderAction;
+        yield return LemmingActionType.PlatformerAction;
+        yield return LemmingActionType.BasherAction;
+        yield return LemmingActionType.FencerAction;
+        yield return LemmingActionType.DiggerAction;
+        yield return LemmingActionType.AscenderAction;
+        yield return LemmingActionType.FallerAction;
+        yield return LemmingActionType.FloaterAction;
+        yield return LemmingActionType.DisarmerAction;
+        yield return LemmingActionType.ShimmierAction;
+        yield return LemmingActionType.ShruggerAction;
+        yield return LemmingActionType.ReacherAction;
     }
 }

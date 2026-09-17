@@ -4,25 +4,36 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class SwimmerSkill : LemmingSkill, ILemmingAbilityChanger
+public static class SwimmerSkill
 {
-    public static readonly SwimmerSkill Instance = new();
+    public static ILemmingAbilityChanger LemmingAbilityChanger { get; } = new SwimmerAbilityChanger();
 
-    private SwimmerSkill()
-        : base(
-            LemmingSkillType.SwimmerSkill,
-            LemmingSkillConstants.SwimmerSkillName)
+    private sealed class SwimmerAbilityChanger : ILemmingAbilityChanger
     {
+        public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.SwimmerAbility;
+
+        public void SetLemmingAbility(Lemming lemming, bool status)
+        {
+            lemming.IsSwimmer = status;
+        }
+
+        public void ToggleLemmingAbility(Lemming lemming)
+        {
+            lemming.IsSwimmer = !lemming.IsSwimmer;
+        }
+
+        public bool LemmingHasAbility(Lemming lemming)
+        {
+            return lemming.IsSwimmer;
+        }
     }
 
-    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.SwimmerAbility;
-
-    public override bool CanAssignToLemming(Lemming lemming)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasLiquidAffinity && LemmingSkillType.SwimmerSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         lemming.IsSwimmer = true;
         if (lemming.CurrentActionType == LemmingActionType.DrownerAction)
@@ -31,28 +42,5 @@ public sealed class SwimmerSkill : LemmingSkill, ILemmingAbilityChanger
         }
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
-    {
-        var result = LemmingAction.CreateBitArraySet();
-
-        result.Add(LemmingActionType.DrownerAction);
-        result.UnionWith(ActionsThatCanBeAssignedPermanentSkill);
-
-        return result;
-    }
-
-    public void SetLemmingAbility(Lemming lemming, bool status)
-    {
-        lemming.IsSwimmer = status;
-    }
-
-    public void ToggleLemmingAbility(Lemming lemming)
-    {
-        lemming.IsSwimmer = !lemming.IsSwimmer;
-    }
-
-    public bool LemmingHasAbility(Lemming lemming)
-    {
-        return lemming.IsSwimmer;
-    }
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedPermanentSkill().Append(LemmingActionType.DrownerAction);
 }

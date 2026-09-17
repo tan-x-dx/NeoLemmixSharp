@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.ControlPanel.Buttons;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Objectives;
+using NeoLemmixSharp.Engine.Level.Skills;
 using System.Diagnostics;
 
 namespace NeoLemmixSharp.Engine.Level.Updates;
@@ -222,7 +223,7 @@ end;
         Lemming lemming,
         bool isReplay)
     {
-        skillTrackingData.LemmingSkill.AssignToLemming(lemming);
+        skillTrackingData.LemmingSkillType.AssignToLemming(lemming);
         skillTrackingData.UseSkill();
 
         if (isReplay)

@@ -3,43 +3,40 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class WaterLemmingSkill : LemmingSkill, ILemmingAbilityChanger
+public static class WaterLemmingSkill
 {
-    public static readonly WaterLemmingSkill Instance = new();
+    public static ILemmingAbilityChanger LemmingAbilityChanger { get; } = new WaterLemmingAbilityChanger();
 
-    private WaterLemmingSkill()
-        : base(
-            LemmingSkillType.WaterLemmingSkill,
-            LemmingSkillConstants.WaterLemmingSkillName)
+    private sealed class WaterLemmingAbilityChanger : ILemmingAbilityChanger
     {
+        public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.WaterLemmingAbility;
+
+        public void SetLemmingAbility(Lemming lemming, bool status)
+        {
+            lemming.IsWaterLemming = status;
+        }
+
+        public void ToggleLemmingAbility(Lemming lemming)
+        {
+            lemming.IsWaterLemming = !lemming.IsWaterLemming;
+        }
+
+        public bool LemmingHasAbility(Lemming lemming)
+        {
+            return lemming.IsWaterLemming;
+        }
     }
 
-    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.WaterLemmingAbility;
-
-    public override bool CanAssignToLemming(Lemming lemming)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasLiquidAffinity && LemmingSkillType.WaterLemmingSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         lemming.IsWaterLemming = true;
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedPermanentSkill();
 
-    public void SetLemmingAbility(Lemming lemming, bool status)
-    {
-        lemming.IsWaterLemming = status;
-    }
-
-    public void ToggleLemmingAbility(Lemming lemming)
-    {
-        lemming.IsWaterLemming = !lemming.IsWaterLemming;
-    }
-
-    public bool LemmingHasAbility(Lemming lemming)
-    {
-        return lemming.IsWaterLemming;
-    }
 }

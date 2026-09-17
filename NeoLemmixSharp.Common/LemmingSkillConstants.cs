@@ -1,5 +1,9 @@
 ﻿using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
@@ -130,4 +134,39 @@ public static class LemmingSkillConstants
 
         return alternateLookup.TryGetValue(lemmingSkillNameSpan, out lemmingSkillType);
     }
+}
+
+public readonly struct LemmingSkillHasher : IBitBufferCreator<LemmingSkillBitBuffer, LemmingSkillType>
+{
+    [Pure]
+    public int NumberOfItems => LemmingSkillConstants.NumberOfLemmingSkills;
+    [Pure]
+    [DebuggerStepThrough]
+    public int Hash(LemmingSkillType item) => (int)item;
+    [Pure]
+    [DebuggerStepThrough]
+    public LemmingSkillType UnHash(int index) => (LemmingSkillType)index;
+
+    public void CreateBitBuffer(out LemmingSkillBitBuffer buffer) => buffer = new();
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static BitArraySet<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkillType> CreateBitArraySet() => new(new LemmingSkillHasher());
+}
+
+[InlineArray(LemmingSkillBitBufferLength)]
+public struct LemmingSkillBitBuffer : IBitBuffer
+{
+    private const int LemmingSkillBitBufferLength = (LemmingSkillConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
+
+    private uint _0;
+
+    public readonly int Length => LemmingSkillBitBufferLength;
+
+    [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingSkillBitBufferLength);
+    [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingSkillBitBufferLength);
 }

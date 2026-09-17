@@ -4,36 +4,28 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class BuilderSkill : LemmingSkill
+public static class BuilderSkill
 {
-    public static readonly BuilderSkill Instance = new();
-
-    private BuilderSkill()
-        : base(
-            LemmingSkillType.BuilderSkill,
-            LemmingSkillConstants.BuilderSkillName)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
+        return LemmingSkillType.BuilderSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         BuilderAction.TransitionLemmingToAction(lemming, false);
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned()
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned()
     {
-        var result = LemmingAction.CreateBitArraySet();
-
-        result.Add(LemmingActionType.WalkerAction);
-        result.Add(LemmingActionType.ShruggerAction);
-        result.Add(LemmingActionType.PlatformerAction);
-        result.Add(LemmingActionType.StackerAction);
-        result.Add(LemmingActionType.LasererAction);
-        result.Add(LemmingActionType.BasherAction);
-        result.Add(LemmingActionType.FencerAction);
-        result.Add(LemmingActionType.MinerAction);
-        result.Add(LemmingActionType.DiggerAction);
-
-        return result;
+        yield return LemmingActionType.WalkerAction;
+        yield return LemmingActionType.ShruggerAction;
+        yield return LemmingActionType.PlatformerAction;
+        yield return LemmingActionType.StackerAction;
+        yield return LemmingActionType.LasererAction;
+        yield return LemmingActionType.BasherAction;
+        yield return LemmingActionType.FencerAction;
+        yield return LemmingActionType.MinerAction;
+        yield return LemmingActionType.DiggerAction;
     }
 }

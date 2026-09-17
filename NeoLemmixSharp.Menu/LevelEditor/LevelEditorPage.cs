@@ -61,7 +61,7 @@ public sealed partial class LevelEditorPage : PageBase
 
         // LoadLevel(RootDirectoryManager.GetLevelFilePath(@"Amiga Lemmings\Lemmings\Fun\21_You_Live_and_Lem", FileFormatType.NeoLemmix));
         // LoadLevel(RootDirectoryManager.GetLevelFilePath(@"Amiga Lemmings\Lemmings\Tricky\04_Here's_one_I_prepared_earlier", FileFormatType.NeoLemmix));
-        LoadLevel(RootDirectoryManager.GetLevelFilePath("skill test", FileFormatType.NeoLemmix));
+        LoadLevel(RootDirectoryManager.GetLevelFilePath("OhNoSnowTribute", FileFormatType.NeoLemmix));
 
         // var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), FileFormatType.NeoLemmix));
         // SetStyle(styleData);

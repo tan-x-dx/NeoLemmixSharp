@@ -1,27 +1,17 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class StonerSkill : LemmingSkill
+public static class StonerSkill
 {
-    public static readonly StonerSkill Instance = new();
-
-    private StonerSkill()
-        : base(
-            LemmingSkillType.StonerSkill,
-            LemmingSkillConstants.StonerSkillName)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
+        return lemming.CountDownTimer == 0 && LemmingSkillType.StonerSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override bool CanAssignToLemming(Lemming lemming)
-    {
-        return lemming.CountDownTimer == 0 && SkillIsAssignableToCurrentAction(lemming);
-    }
-
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         var levelParameters = LevelScreen.LevelParameters;
         var countDownTimer = levelParameters.GetLemmingCountDownTimer(lemming);
@@ -30,5 +20,5 @@ public sealed class StonerSkill : LemmingSkill
         lemming.SetCountDownAction(countDownTimer, LemmingActionType.StonerAction, displayTimer);
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedPermanentSkill();
 }

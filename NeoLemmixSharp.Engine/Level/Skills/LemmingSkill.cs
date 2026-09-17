@@ -1,256 +1,221 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public abstract class LemmingSkill : IEquatable<LemmingSkill>
+public static class LemmingSkill
 {
-    protected static readonly LemmingActionTypeSet ActionsThatCanBeAssignedPermanentSkill = GetActionsThatCanBeAssignedPermanentSkill();
-    protected static readonly LemmingActionTypeSet ActionsThatCanBeAssignedRotationSkill = GetActionsThatCanBeAssignedRotationSkill();
-    private static readonly LemmingSkill[] LemmingSkills = RegisterAllLemmingSkills();
+    private static readonly BitArraySet<LemmingActionAndSkillHasher, LemmingActionAndSkillPairBitBuffer, LemmingActionAndSkillPair> ActionsThatCanBeAssignedSkill = GetActionsThatCanBeAssignedSkill();
+
     private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();
     private static readonly LemmingSkillSet PermanentSkills = GetPermanentSkills();
 
-    public static ReadOnlySpan<LemmingSkill> AllItems => new(LemmingSkills);
-    public static BitArrayEnumerable<LemmingSkillHasher, LemmingSkill> AllClassicSkills => ClassicSkills.AsEnumerable();
+    public static BitArrayEnumerable<LemmingSkillHasher, LemmingSkillType> AllClassicSkills => ClassicSkills.AsEnumerable();
 
-    private static LemmingSkill[] RegisterAllLemmingSkills()
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssignedPermanentSkill()
     {
-        // NOTE: DO NOT ADD THE NONE SKILL
-        var result = new LemmingSkill[]
-        {
-            ClimberSkill.Instance,
-            FloaterSkill.Instance,
-            BlockerSkill.Instance,
-            BomberSkill.Instance,
-            BuilderSkill.Instance,
-            BasherSkill.Instance,
-            MinerSkill.Instance,
-            DiggerSkill.Instance,
+        yield return LemmingActionType.AscenderAction;
+        yield return LemmingActionType.BasherAction;
+        yield return LemmingActionType.BlockerAction;
+        yield return LemmingActionType.BuilderAction;
+        yield return LemmingActionType.ClimberAction;
+        yield return LemmingActionType.DehoisterAction;
+        yield return LemmingActionType.DiggerAction;
+        yield return LemmingActionType.DisarmerAction;
+        yield return LemmingActionType.FallerAction;
+        yield return LemmingActionType.FencerAction;
+        yield return LemmingActionType.FloaterAction;
+        yield return LemmingActionType.GliderAction;
+        yield return LemmingActionType.HoisterAction;
+        yield return LemmingActionType.JumperAction;
+        yield return LemmingActionType.LasererAction;
+        yield return LemmingActionType.MinerAction;
+        yield return LemmingActionType.PlatformerAction;
+        yield return LemmingActionType.ReacherAction;
+        yield return LemmingActionType.RotateHalfAction;
+        yield return LemmingActionType.RotateClockwiseAction;
+        yield return LemmingActionType.RotateCounterclockwiseAction;
+        yield return LemmingActionType.ShimmierAction;
+        yield return LemmingActionType.ShruggerAction;
+        yield return LemmingActionType.SliderAction;
+        yield return LemmingActionType.StackerAction;
+        yield return LemmingActionType.SwimmerAction;
+        yield return LemmingActionType.WalkerAction;
+    }
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssignedRotationSkill()
+    {
+        yield return LemmingActionType.WalkerAction;
+        yield return LemmingActionType.ShruggerAction;
+        yield return LemmingActionType.PlatformerAction;
+        yield return LemmingActionType.BuilderAction;
+        yield return LemmingActionType.StackerAction;
+        yield return LemmingActionType.BasherAction;
+        yield return LemmingActionType.FencerAction;
+        yield return LemmingActionType.MinerAction;
+        yield return LemmingActionType.DiggerAction;
+        yield return LemmingActionType.LasererAction;
+    }
 
-            WalkerSkill.Instance,
-            PlatformerSkill.Instance,
-            StackerSkill.Instance,
-            FencerSkill.Instance,
-            GliderSkill.Instance,
-            JumperSkill.Instance,
-            SwimmerSkill.Instance,
-            ShimmierSkill.Instance,
-            LasererSkill.Instance,
-            SliderSkill.Instance,
-            DisarmerSkill.Instance,
-            StonerSkill.Instance,
-            ClonerSkill.Instance,
+    private static BitArraySet<LemmingActionAndSkillHasher, LemmingActionAndSkillPairBitBuffer, LemmingActionAndSkillPair> GetActionsThatCanBeAssignedSkill()
+    {
+        var result = LemmingActionAndSkillHasher.CreateBitArraySet();
 
-            RotateClockwiseSkill.Instance,
-            RotateCounterclockwiseSkill.Instance,
-            RotateHalfSkill.Instance,
-
-            AcidLemmingSkill.Instance,
-            WaterLemmingSkill.Instance,
-
-            FastForwardSkill.Instance
-        };
-
-        Debug.Assert(result.Length == LemmingSkillConstants.NumberOfLemmingSkills);
-
-        var hasher = new LemmingSkillHasher();
-        hasher.AssertUniqueIds(new ReadOnlySpan<LemmingSkill>(result));
-        Array.Sort(result, hasher);
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.ClimberSkill, ClimberSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.FloaterSkill, FloaterSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.BlockerSkill, BlockerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.BomberSkill, BomberSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.BuilderSkill, BuilderSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.BasherSkill, BasherSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.MinerSkill, MinerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.DiggerSkill, DiggerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.WalkerSkill, WalkerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.PlatformerSkill, PlatformerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.StackerSkill, StackerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.FencerSkill, FencerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.GliderSkill, GliderSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.JumperSkill, JumperSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.SwimmerSkill, SwimmerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.ShimmierSkill, ShimmierSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.LasererSkill, LasererSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.SliderSkill, SliderSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.DisarmerSkill, DisarmerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.StonerSkill, StonerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.ClonerSkill, ClonerSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.RotateClockwiseSkill, RotateClockwiseSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.RotateCounterclockwiseSkill, RotateCounterclockwiseSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.RotateHalfSkill, RotateHalfSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.AcidLemmingSkill, AcidLemmingSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.WaterLemmingSkill, WaterLemmingSkill.GetActionsThatCanBeAssigned());
+        RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.FastForwardSkill, FastForwardSkill.GetActionsThatCanBeAssigned());
 
         return result;
+
+        void RegisterActionsThatCanBeAssignedSkill(LemmingSkillType skillType, IEnumerable<LemmingActionType> actionsThatCanBeAssignedSkill)
+        {
+            foreach (var actionType in actionsThatCanBeAssignedSkill)
+            {
+                var pair = new LemmingActionAndSkillPair(actionType, skillType);
+                result.Add(pair);
+            }
+        }
     }
 
     private static LemmingSkillSet GetClassicSkills()
     {
-        var result = CreateBitArraySet();
+        var result = LemmingSkillHasher.CreateBitArraySet();
 
-        result.Add(ClimberSkill.Instance);
-        result.Add(FloaterSkill.Instance);
-        result.Add(BomberSkill.Instance);
-        result.Add(BlockerSkill.Instance);
-        result.Add(BuilderSkill.Instance);
-        result.Add(BasherSkill.Instance);
-        result.Add(MinerSkill.Instance);
-        result.Add(DiggerSkill.Instance);
+        result.Add(LemmingSkillType.ClimberSkill);
+        result.Add(LemmingSkillType.FloaterSkill);
+        result.Add(LemmingSkillType.BomberSkill);
+        result.Add(LemmingSkillType.BlockerSkill);
+        result.Add(LemmingSkillType.BuilderSkill);
+        result.Add(LemmingSkillType.BasherSkill);
+        result.Add(LemmingSkillType.MinerSkill);
+        result.Add(LemmingSkillType.DiggerSkill);
 
         return result;
     }
 
     private static LemmingSkillSet GetPermanentSkills()
     {
-        var result = CreateBitArraySet();
+        var result = LemmingSkillHasher.CreateBitArraySet();
 
-        result.Add(ClimberSkill.Instance);
-        result.Add(FloaterSkill.Instance);
-        result.Add(GliderSkill.Instance);
-        result.Add(SliderSkill.Instance);
-        result.Add(SwimmerSkill.Instance);
-        result.Add(DisarmerSkill.Instance);
-        result.Add(AcidLemmingSkill.Instance);
-        result.Add(WaterLemmingSkill.Instance);
-        result.Add(FastForwardSkill.Instance);
-
-        return result;
-    }
-
-    private static LemmingActionTypeSet GetActionsThatCanBeAssignedPermanentSkill()
-    {
-        var result = LemmingAction.CreateBitArraySet();
-
-        result.Add(LemmingActionType.AscenderAction);
-        result.Add(LemmingActionType.BasherAction);
-        result.Add(LemmingActionType.BlockerAction);
-        result.Add(LemmingActionType.BuilderAction);
-        result.Add(LemmingActionType.ClimberAction);
-        result.Add(LemmingActionType.DehoisterAction);
-        result.Add(LemmingActionType.DiggerAction);
-        result.Add(LemmingActionType.DisarmerAction);
-        result.Add(LemmingActionType.FallerAction);
-        result.Add(LemmingActionType.FencerAction);
-        result.Add(LemmingActionType.FloaterAction);
-        result.Add(LemmingActionType.GliderAction);
-        result.Add(LemmingActionType.HoisterAction);
-        result.Add(LemmingActionType.JumperAction);
-        result.Add(LemmingActionType.LasererAction);
-        result.Add(LemmingActionType.MinerAction);
-        result.Add(LemmingActionType.PlatformerAction);
-        result.Add(LemmingActionType.ReacherAction);
-        result.Add(LemmingActionType.RotateHalfAction);
-        result.Add(LemmingActionType.RotateClockwiseAction);
-        result.Add(LemmingActionType.RotateCounterclockwiseAction);
-        result.Add(LemmingActionType.ShimmierAction);
-        result.Add(LemmingActionType.ShruggerAction);
-        result.Add(LemmingActionType.SliderAction);
-        result.Add(LemmingActionType.StackerAction);
-        result.Add(LemmingActionType.SwimmerAction);
-        result.Add(LemmingActionType.WalkerAction);
+        result.Add(LemmingSkillType.ClimberSkill);
+        result.Add(LemmingSkillType.FloaterSkill);
+        result.Add(LemmingSkillType.GliderSkill);
+        result.Add(LemmingSkillType.SliderSkill);
+        result.Add(LemmingSkillType.SwimmerSkill);
+        result.Add(LemmingSkillType.DisarmerSkill);
+        result.Add(LemmingSkillType.AcidLemmingSkill);
+        result.Add(LemmingSkillType.WaterLemmingSkill);
+        result.Add(LemmingSkillType.FastForwardSkill);
 
         return result;
-    }
-
-    private static LemmingActionTypeSet GetActionsThatCanBeAssignedRotationSkill()
-    {
-        var result = LemmingAction.CreateBitArraySet();
-
-        result.Add(LemmingActionType.WalkerAction);
-        result.Add(LemmingActionType.ShruggerAction);
-        result.Add(LemmingActionType.PlatformerAction);
-        result.Add(LemmingActionType.BuilderAction);
-        result.Add(LemmingActionType.StackerAction);
-        result.Add(LemmingActionType.BasherAction);
-        result.Add(LemmingActionType.FencerAction);
-        result.Add(LemmingActionType.MinerAction);
-        result.Add(LemmingActionType.DiggerAction);
-        result.Add(LemmingActionType.LasererAction);
-
-        return result;
-    }
-
-    /// <summary>
-    /// Safe alternative to performing the array lookup - the input may be negative, or an invalid lemming skill type. In such a case the <see cref="NoneSkill"/> is returned.
-    /// </summary>
-    /// <param name="lemmingSkillType">The (possibly invalid) type of the skill to fetch.</param>
-    /// <returns>The LemmingSkill with that type, or the <see cref="NoneSkill"/> if the input is invalid.</returns>
-    public static LemmingSkill GetSkillOrDefault(LemmingSkillType lemmingSkillType)
-    {
-        return (uint)lemmingSkillType < LemmingSkillConstants.NumberOfLemmingSkills
-            ? LemmingSkills.At((int)lemmingSkillType)
-            : NoneSkill.Instance;
-    }
-
-    private readonly LemmingActionTypeSet _assignableActions;
-    public string LemmingSkillName { get; }
-    public LemmingSkillType SkillType { get; }
-
-    protected LemmingSkill(LemmingSkillType skillType, string lemmingSkillName)
-    {
-        SkillType = skillType;
-        LemmingSkillName = lemmingSkillName;
-
-        _assignableActions = ActionsThatCanBeAssigned();
-    }
-
-    public bool IsClassicSkill() => ClassicSkills.Contains(this);
-    public bool IsPermanentSkill() => PermanentSkills.Contains(this);
-
-    public virtual bool CanAssignToLemming(Lemming lemming)
-    {
-        return SkillIsAssignableToCurrentAction(lemming);
     }
 
     [Pure]
-    protected abstract LemmingActionTypeSet ActionsThatCanBeAssigned();
-
+    public static bool IsClassicSkill(this LemmingSkillType lemmingSkillType) => ClassicSkills.Contains(lemmingSkillType);
     [Pure]
-    protected bool SkillIsAssignableToCurrentAction(Lemming lemming)
+    public static bool IsPermanentSkill(this LemmingSkillType lemmingSkillType) => PermanentSkills.Contains(lemmingSkillType);
+
+    public static bool CanAssignToLemming(this LemmingSkillType skillType, Lemming lemming) => skillType switch
     {
-        return _assignableActions.Contains(lemming.CurrentActionType);
-    }
+        LemmingSkillType.ClimberSkill => ClimberSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.FloaterSkill => FloaterSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.BlockerSkill => BlockerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.BomberSkill => BomberSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.BuilderSkill => BuilderSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.BasherSkill => BasherSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.MinerSkill => MinerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.DiggerSkill => DiggerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.WalkerSkill => WalkerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.PlatformerSkill => PlatformerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.StackerSkill => StackerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.FencerSkill => FencerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.GliderSkill => GliderSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.JumperSkill => JumperSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.SwimmerSkill => SwimmerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.ShimmierSkill => ShimmierSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.LasererSkill => LasererSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.SliderSkill => SliderSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.DisarmerSkill => DisarmerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.StonerSkill => StonerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.ClonerSkill => ClonerSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.RotateClockwiseSkill => RotateClockwiseSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.RotateCounterclockwiseSkill => RotateCounterclockwiseSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.RotateHalfSkill => RotateHalfSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.AcidLemmingSkill => AcidLemmingSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.WaterLemmingSkill => WaterLemmingSkill.CanAssignToLemming(lemming),
+        LemmingSkillType.FastForwardSkill => FastForwardSkill.CanAssignToLemming(lemming),
 
-    public abstract void AssignToLemming(Lemming lemming);
-
-    [DebuggerStepThrough]
-    public bool Equals(LemmingSkill? other)
-    {
-        var otherValue = LemmingSkillType.NoneSkill;
-        if (other is not null) otherValue = other.SkillType;
-        return SkillType == otherValue;
-    }
-
-    [DebuggerStepThrough]
-    public sealed override bool Equals([NotNullWhen(true)] object? obj) => obj is LemmingSkill other && SkillType == other.SkillType;
-    [DebuggerStepThrough]
-    public sealed override int GetHashCode() => (int)SkillType;
-    [DebuggerStepThrough]
-    public sealed override string ToString() => LemmingSkillName;
-
-    [DebuggerStepThrough]
-    public static bool operator ==(LemmingSkill left, LemmingSkill right) => left.SkillType == right.SkillType;
-    [DebuggerStepThrough]
-    public static bool operator !=(LemmingSkill left, LemmingSkill right) => left.SkillType != right.SkillType;
+        _ => NoneSkill.CanAssignToLemming(lemming)
+    };
 
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LemmingSkillSet CreateBitArraySet() => new(new LemmingSkillHasher());
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static BitArrayDictionary<LemmingSkillHasher, LemmingSkillBitBuffer, LemmingSkill, TValue> CreateBitArrayDictionary<TValue>() => new(new LemmingSkillHasher());
-
-    public readonly struct LemmingSkillHasher : IBitBufferCreator<LemmingSkillBitBuffer, LemmingSkill>
+    public static bool SkillIsAssignableToCurrentAction(this LemmingSkillType skillType, LemmingActionType actionType)
     {
-        [Pure]
-        public int NumberOfItems => LemmingSkillConstants.NumberOfLemmingSkills;
-        [Pure]
-        public int Hash(LemmingSkill item) => (int)item.SkillType;
-        [Pure]
-        public LemmingSkill UnHash(int index) => LemmingSkills.At(index);
+        var pair = new LemmingActionAndSkillPair(actionType, skillType);
 
-        public void CreateBitBuffer(out LemmingSkillBitBuffer buffer) => buffer = new();
+        return ActionsThatCanBeAssignedSkill.Contains(pair);
     }
 
-    [InlineArray(LemmingSkillBitBufferLength)]
-    public struct LemmingSkillBitBuffer : IBitBuffer
+    public static void AssignToLemming(this LemmingSkillType skillType, Lemming lemming)
     {
-        private const int LemmingSkillBitBufferLength = (LemmingSkillConstants.NumberOfLemmingSkills + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
+        switch (skillType)
+        {
+            case LemmingSkillType.ClimberSkill: ClimberSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.FloaterSkill: FloaterSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.BlockerSkill: BlockerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.BomberSkill: BomberSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.BuilderSkill: BuilderSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.BasherSkill: BasherSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.MinerSkill: MinerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.DiggerSkill: DiggerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.WalkerSkill: WalkerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.PlatformerSkill: PlatformerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.StackerSkill: StackerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.FencerSkill: FencerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.GliderSkill: GliderSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.JumperSkill: JumperSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.SwimmerSkill: SwimmerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.ShimmierSkill: ShimmierSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.LasererSkill: LasererSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.SliderSkill: SliderSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.DisarmerSkill: DisarmerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.StonerSkill: StonerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.ClonerSkill: ClonerSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.RotateClockwiseSkill: RotateClockwiseSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.RotateCounterclockwiseSkill: RotateCounterclockwiseSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.RotateHalfSkill: RotateHalfSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.AcidLemmingSkill: AcidLemmingSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.WaterLemmingSkill: WaterLemmingSkill.AssignToLemming(lemming); break;
+            case LemmingSkillType.FastForwardSkill: FastForwardSkill.AssignToLemming(lemming); break;
 
-        private uint _0;
-
-        public readonly int Length => LemmingSkillBitBufferLength;
-
-        [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingSkillBitBufferLength);
-        [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingSkillBitBufferLength);
+            default: NoneSkill.AssignToLemming(lemming); break;
+        }
     }
 }

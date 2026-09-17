@@ -143,7 +143,7 @@ public ref struct LemmingCriteriaBuilder
     {
         if (_lemmingActionSet is null)
         {
-            _lemmingActionSet = LemmingAction.CreateBitArraySet();
+            _lemmingActionSet = LemmingActionTypeHasher.CreateBitArraySet();
             _numberOfCriteria++;
         }
 

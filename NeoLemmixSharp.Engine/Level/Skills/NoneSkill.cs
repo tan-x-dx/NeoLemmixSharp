@@ -1,31 +1,19 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Engine.Level.LemmingActions;
-using NeoLemmixSharp.Engine.Level.Lemmings;
+﻿using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class NoneSkill : LemmingSkill
+public static class NoneSkill
 {
-    /// <summary>
-    /// Logically equivalent to null, but null references suck.
-    /// </summary>
-    public static readonly NoneSkill Instance = new();
-
-    private NoneSkill()
-        : base(
-            LemmingSkillType.NoneSkill,
-            LemmingSkillConstants.NoneSkillName)
+    [DoesNotReturn]
+    public static bool CanAssignToLemming(Lemming lemming)
     {
+        throw new InvalidOperationException("Cannot assign NONE skill!");
     }
 
-    public override bool CanAssignToLemming(Lemming lemming)
+    [DoesNotReturn]
+    public static void AssignToLemming(Lemming lemming)
     {
-        return false;
+        throw new InvalidOperationException("Cannot assign NONE skill!");
     }
-
-    public override void AssignToLemming(Lemming lemming)
-    {
-    }
-
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => LemmingAction.CreateBitArraySet();
 }

@@ -3,43 +3,39 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class ClimberSkill : LemmingSkill, ILemmingAbilityChanger
+public static class ClimberSkill
 {
-    public static readonly ClimberSkill Instance = new();
+    public static ILemmingAbilityChanger LemmingAbilityChanger { get; } = new ClimberAbilityChanger();
 
-    private ClimberSkill()
-        : base(
-            LemmingSkillType.ClimberSkill,
-            LemmingSkillConstants.ClimberSkillName)
+    private sealed class ClimberAbilityChanger : ILemmingAbilityChanger
     {
+        public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.ClimberAbility;
+
+        public void SetLemmingAbility(Lemming lemming, bool status)
+        {
+            lemming.IsClimber = status;
+        }
+
+        public void ToggleLemmingAbility(Lemming lemming)
+        {
+            lemming.IsClimber = !lemming.IsClimber;
+        }
+
+        public bool LemmingHasAbility(Lemming lemming)
+        {
+            return lemming.IsClimber;
+        }
     }
 
-    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.ClimberAbility;
-
-    public override bool CanAssignToLemming(Lemming lemming)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.IsClimber && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.IsClimber && LemmingSkillType.ClimberSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         lemming.IsClimber = true;
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
-
-    public void SetLemmingAbility(Lemming lemming, bool status)
-    {
-        lemming.IsClimber = status;
-    }
-
-    public void ToggleLemmingAbility(Lemming lemming)
-    {
-        lemming.IsClimber = !lemming.IsClimber;
-    }
-
-    public bool LemmingHasAbility(Lemming lemming)
-    {
-        return lemming.IsClimber;
-    }
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedPermanentSkill();
 }
