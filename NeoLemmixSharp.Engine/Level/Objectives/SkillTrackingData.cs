@@ -61,7 +61,7 @@ public sealed class SkillTrackingData
         return EffectiveQuantity > 0 &&
                TribesMatch(lemming) &&
                lemming.CanHaveSkillsAssigned &&
-               LemmingSkillType.CanAssignToLemming(lemming);
+               LemmingSkill.CanAssignToLemming(lemming, LemmingSkillType);
     }
 
     private bool TribesMatch(Lemming lemming)

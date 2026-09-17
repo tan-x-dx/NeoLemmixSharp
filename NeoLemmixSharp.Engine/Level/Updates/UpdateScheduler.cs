@@ -223,7 +223,7 @@ end;
         Lemming lemming,
         bool isReplay)
     {
-        skillTrackingData.LemmingSkillType.AssignToLemming(lemming);
+        LemmingSkill.AssignToLemming(lemming, skillTrackingData.LemmingSkillType);
         skillTrackingData.UseSkill();
 
         if (isReplay)

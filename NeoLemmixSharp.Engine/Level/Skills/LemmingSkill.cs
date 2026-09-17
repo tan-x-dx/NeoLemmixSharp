@@ -141,7 +141,7 @@ public static class LemmingSkill
     [Pure]
     public static bool IsPermanentSkill(this LemmingSkillType lemmingSkillType) => PermanentSkills.Contains(lemmingSkillType);
 
-    public static bool CanAssignToLemming(this LemmingSkillType skillType, Lemming lemming) => skillType switch
+    public static bool CanAssignToLemming(Lemming lemming, LemmingSkillType skillType) => skillType switch
     {
         LemmingSkillType.ClimberSkill => ClimberSkill.CanAssignToLemming(lemming),
         LemmingSkillType.FloaterSkill => FloaterSkill.CanAssignToLemming(lemming),
@@ -183,7 +183,7 @@ public static class LemmingSkill
         return ActionsThatCanBeAssignedSkill.Contains(pair);
     }
 
-    public static void AssignToLemming(this LemmingSkillType skillType, Lemming lemming)
+    public static void AssignToLemming(Lemming lemming, LemmingSkillType skillType)
     {
         switch (skillType)
         {
