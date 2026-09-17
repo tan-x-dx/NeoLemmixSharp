@@ -160,6 +160,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [DebuggerStepThrough]
     public RectangularRegion Translate(Point offset) => new(TopLeft + offset, BottomRight + offset, 0);
 
+    [Pure]
+    [DebuggerStepThrough]
     public bool Contains(Point point)
     {
         return X <= point.X &&
@@ -168,6 +170,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
                point.Y <= BottomRight.Y;
     }
 
+    [Pure]
+    [DebuggerStepThrough]
     public bool Overlaps(RectangularRegion other)
     {
         return X <= other.BottomRight.X &&
@@ -209,9 +213,11 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     public bool Equals(RectangularRegion other) => this == other;
 
     [Pure]
+    [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is RectangularRegion other && Equals(other);
 
     [Pure]
+    [DebuggerStepThrough]
     public override int GetHashCode() =>
         353 * TopLeft.GetHashCode() +
         719 * BottomRight.GetHashCode();
@@ -240,5 +246,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
         return result;
     }
 
+    [Pure]
+    [DebuggerStepThrough]
     public Rectangle ToRectangle() => new(X, Y, W, H);
 }

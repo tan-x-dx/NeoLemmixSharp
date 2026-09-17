@@ -246,8 +246,10 @@ public abstract class LemmingSkill : IEquatable<LemmingSkill>
 
         public readonly int Length => LemmingSkillBitBufferLength;
 
+        [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingSkillBitBufferLength);
+        [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingSkillBitBufferLength);
     }
