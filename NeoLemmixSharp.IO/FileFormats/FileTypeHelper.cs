@@ -75,7 +75,7 @@ public static class FileTypeHelper
     {
         var levelWriter = new DefaultLevelWriter(levelData, VersionHelper.LatestLevelFileFormatVersion);
 
-        using var fileStream = new FileStream(filePath, FileMode.OpenOrCreate);
+        using var fileStream = new FileStream(filePath, FileMode.Create);
         levelWriter.WriteToFile(fileStream);
     }
 
