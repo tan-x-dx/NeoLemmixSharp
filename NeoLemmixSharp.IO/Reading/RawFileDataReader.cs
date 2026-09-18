@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
 using System.Runtime.CompilerServices;
 
@@ -9,6 +10,8 @@ namespace NeoLemmixSharp.IO.Reading;
 
 internal interface IRawFileDataReader
 {
+    FileType FileType { get; }
+
     bool ReadBool();
     byte Read8BitUnsignedInteger();
     ushort Read16BitUnsignedInteger();
@@ -29,14 +32,16 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     private int _position;
 
     public FileFormatVersion FileFormatVersion { get; }
+    public FileType FileType { get; }
 
     private bool _isDisposed;
 
     public int Position => _position;
     public bool MoreToRead => _position < _byteBuffer.Length;
 
-    public RawFileDataReader(Stream stream)
+    public RawFileDataReader(Stream stream, FileType expectedFileType)
     {
+        FileType = expectedFileType;
         long streamLength = stream.Length;
 
         FileReadingException.ReaderAssert(
@@ -47,8 +52,18 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
 
         stream.ReadExactly(_byteBuffer.AsSpan());
 
+        ValidateMagicBytes();
         FileFormatVersion = ReadVersion();
         _sectionIdentifiers = ReadSectionIdentifiers();
+    }
+
+    private void ValidateMagicBytes()
+    {
+        var expectedMagicBytes = FileTypeHelper.GetMagicBytes(FileType);
+        var numberOfLeadingMagicBytes = expectedMagicBytes.Length;
+        var actualMagicBytes = ReadBytes(numberOfLeadingMagicBytes);
+
+        FileReadingException.ReaderAssert(expectedMagicBytes.SequenceEqual(actualMagicBytes), "Invalid magic bytes!");
     }
 
     private FileFormatVersion ReadVersion()
