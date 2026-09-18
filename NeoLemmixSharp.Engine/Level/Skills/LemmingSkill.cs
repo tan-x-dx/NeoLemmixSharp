@@ -1,13 +1,17 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Lemmings;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
 public static class LemmingSkill
 {
+    private const int NumberOfLemmingActionAndSkillPairs = LemmingActionConstants.NumberOfLemmingActions * LemmingSkillConstants.NumberOfLemmingSkills;
+
     private static readonly BitArraySet<LemmingActionAndSkillHasher, LemmingActionAndSkillPairBitBuffer, LemmingActionAndSkillPair> ActionsThatCanBeAssignedSkill = GetActionsThatCanBeAssignedSkill();
 
     private static readonly LemmingSkillSet ClassicSkills = GetClassicSkills();
@@ -45,6 +49,7 @@ public static class LemmingSkill
         yield return LemmingActionType.SwimmerAction;
         yield return LemmingActionType.WalkerAction;
     }
+
     public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssignedRotationSkill()
     {
         yield return LemmingActionType.WalkerAction;
@@ -174,15 +179,6 @@ public static class LemmingSkill
         _ => NoneSkill.CanAssignToLemming(lemming)
     };
 
-    [Pure]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool SkillIsAssignableToCurrentAction(this LemmingSkillType skillType, LemmingActionType actionType)
-    {
-        var pair = new LemmingActionAndSkillPair(actionType, skillType);
-
-        return ActionsThatCanBeAssignedSkill.Contains(pair);
-    }
-
     public static void AssignToLemming(Lemming lemming, LemmingSkillType skillType)
     {
         switch (skillType)
@@ -217,5 +213,62 @@ public static class LemmingSkill
 
             default: NoneSkill.AssignToLemming(lemming); break;
         }
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool SkillIsAssignableToCurrentAction(this LemmingSkillType skillType, LemmingActionType actionType)
+    {
+        var pair = new LemmingActionAndSkillPair(actionType, skillType);
+
+        return ActionsThatCanBeAssignedSkill.Contains(pair);
+    }
+
+    private readonly record struct LemmingActionAndSkillPair(LemmingActionType ActionType, LemmingSkillType SkillType);
+
+    private readonly struct LemmingActionAndSkillHasher : IBitBufferCreator<LemmingActionAndSkillPairBitBuffer, LemmingActionAndSkillPair>
+    {
+        [Pure]
+        public int NumberOfItems => NumberOfLemmingActionAndSkillPairs;
+
+        [Pure]
+        public int Hash(LemmingActionAndSkillPair item)
+        {
+            var result = (int)item.ActionType;
+            result *= LemmingSkillConstants.NumberOfLemmingSkills;
+            result += (int)item.SkillType;
+            return result;
+        }
+
+        [Pure]
+        public LemmingActionAndSkillPair UnHash(int index)
+        {
+            var (actionTypeInt, skillTypeInt) = Math.DivRem((uint)index, LemmingSkillConstants.NumberOfLemmingSkills);
+
+            return new LemmingActionAndSkillPair((LemmingActionType)actionTypeInt, (LemmingSkillType)skillTypeInt);
+        }
+
+        public void CreateBitBuffer(out LemmingActionAndSkillPairBitBuffer buffer) => buffer = new();
+
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static BitArraySet<LemmingActionAndSkillHasher, LemmingActionAndSkillPairBitBuffer, LemmingActionAndSkillPair> CreateBitArraySet() => new(new LemmingActionAndSkillHasher());
+    }
+
+    [InlineArray(LemmingActionAndSkillPairBitBufferLength)]
+    private struct LemmingActionAndSkillPairBitBuffer : IBitBuffer
+    {
+        private const int LemmingActionAndSkillPairBitBufferLength = (NumberOfLemmingActionAndSkillPairs + BitArrayHelpers.Mask) >>> BitArrayHelpers.Shift;
+
+        private uint _0;
+
+        public readonly int Length => LemmingActionAndSkillPairBitBufferLength;
+
+        [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, LemmingActionAndSkillPairBitBufferLength);
+        [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, LemmingActionAndSkillPairBitBufferLength);
     }
 }
