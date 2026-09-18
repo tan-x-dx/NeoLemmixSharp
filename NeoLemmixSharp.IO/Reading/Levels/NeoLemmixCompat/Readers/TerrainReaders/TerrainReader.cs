@@ -185,7 +185,7 @@ internal sealed class TerrainReader : NeoLemmixDataReader
         public int Height = -1;
 
         public TempTerrainData()
-        {            
+        {
         }
     }
 }

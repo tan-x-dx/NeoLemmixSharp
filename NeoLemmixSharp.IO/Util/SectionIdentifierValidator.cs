@@ -16,7 +16,7 @@ internal static class SectionIdentifierValidator<TPerfectHasher, TEnum>
         Span<Interval> intervals = stackalloc Interval[dictionary.Count];
         dictionary.CopyValuesTo(intervals);
 
-        intervals.Sort(CompareIntevals);
+        intervals.Sort(CompareIntervals);
 
         Debug.Assert(intervals.Length >= 1);
 
@@ -38,7 +38,7 @@ internal static class SectionIdentifierValidator<TPerfectHasher, TEnum>
             throw new InvalidOperationException("Sections are not contiguous!");
     }
 
-    private static int CompareIntevals(Interval x, Interval y)
+    private static int CompareIntervals(Interval x, Interval y)
     {
         int gt = x.Start > y.Start ? 1 : 0;
         int lt = x.Start < y.Start ? 1 : 0;

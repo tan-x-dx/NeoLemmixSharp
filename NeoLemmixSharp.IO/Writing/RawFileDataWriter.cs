@@ -123,7 +123,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         Unsafe.WriteUnaligned(pointer, value);
     }
 
-    public unsafe void WriteBytes(ReadOnlySpan<byte> data)
+    public void WriteBytes(ReadOnlySpan<byte> data)
     {
         AssertWithinSection();
 
@@ -232,11 +232,11 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
             IoConstants.FileSizeTooLargeExceptionMessage);
 
         Debug.Assert(_preambleDataPosition >= 0);
-        Debug.Assert(_preambleDataPosition < _preambleDataByteBuffer.Length);
+        Debug.Assert(_preambleDataPosition <= _preambleDataByteBuffer.Length);
         stream.Write(Helpers.CreateReadOnlySpan<byte>((void*)_preambleDataByteBuffer.Handle, _preambleDataPosition));
 
         Debug.Assert(_mainDataPosition >= 0);
-        Debug.Assert(_mainDataPosition < _mainDataByteBuffer.Length);
+        Debug.Assert(_mainDataPosition <= _mainDataByteBuffer.Length);
         stream.Write(Helpers.CreateReadOnlySpan<byte>((void*)_mainDataByteBuffer.Handle, _mainDataPosition));
     }
 
