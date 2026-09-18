@@ -92,8 +92,10 @@ public ref struct LemmingCriteriaBuilder
 
     private readonly LemmingCriterion[] CreateLemmingCriteriaArray()
     {
-        var numberOfCriteria = _numberOfCriteria;
-        numberOfCriteria += (_hasRequiredAbilities | _hasDisallowedAbilities) ? 1 : 0;
+        var numberOfCriteria = 0;
+        if (_hasRequiredAbilities | _hasDisallowedAbilities)
+            numberOfCriteria++;
+        numberOfCriteria += _numberOfCriteria;
 
         var result = Helpers.GetArrayForSize<LemmingCriterion>(numberOfCriteria);
         var i = 0;
@@ -117,7 +119,7 @@ public ref struct LemmingCriteriaBuilder
     {
         if (_orientationSet is null)
         {
-            _orientationSet = Orientation.CreateBitArraySet();
+            _orientationSet = OrientationHasher.CreateBitArraySet();
             _numberOfCriteria++;
         }
 
@@ -141,7 +143,7 @@ public ref struct LemmingCriteriaBuilder
     {
         if (_lemmingActionSet is null)
         {
-            _lemmingActionSet = LemmingAction.CreateBitArraySet();
+            _lemmingActionSet = LemmingActionTypeHasher.CreateBitArraySet();
             _numberOfCriteria++;
         }
 

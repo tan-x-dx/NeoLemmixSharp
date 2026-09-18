@@ -1,9 +1,7 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Enums;
+﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.FileFormats;
-using NeoLemmixSharp.IO.Util;
 
 namespace NeoLemmixSharp.IO.Writing.Levels.Sections.Version1_0_0_0;
 
@@ -44,7 +42,7 @@ internal sealed class GadgetDataSectionWriter : LevelDataSectionWriter
 
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(gadgetData.OverrideName));
 
-        writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(gadgetData.Position));
+        writer.Encode16BitPoint(gadgetData.Position);
         writer.Write8BitUnsignedInteger(gadgetData.DihedralTransformation.EncodeToByte());
 
         writer.WriteBool(gadgetData.IsFastForward);

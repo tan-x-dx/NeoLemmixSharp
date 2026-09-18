@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -24,8 +25,10 @@ public struct BitBuffer32 : IBitBuffer
 
     public readonly int Length => BitBuffer32Length;
 
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, BitBuffer32Length);
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, BitBuffer32Length);
 }
@@ -41,8 +44,10 @@ public readonly struct ArrayBitBuffer : IBitBuffer
         _array = BitArrayHelpers.CreateBitArray(numberOfItems, false);
     }
 
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<uint> AsSpan() => Helpers.CreateSpan(_array, 0, Length);
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<uint> AsReadOnlySpan() => Helpers.CreateReadOnlySpan(_array, 0, Length);
 }
@@ -56,14 +61,17 @@ public readonly unsafe struct RawBitBuffer : IBitBuffer
 
     public RawBitBuffer(void* pointer, int length)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(length);
+        if (Length < 0)
+            Helpers.ThrowNegativeInputException();
 
         _pointer = pointer;
         _length = length;
     }
 
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<uint> AsSpan() => Helpers.CreateSpan<uint>(_pointer, _length);
+    [DebuggerStepThrough]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<uint> AsReadOnlySpan() => Helpers.CreateReadOnlySpan<uint>(_pointer, _length);
 }

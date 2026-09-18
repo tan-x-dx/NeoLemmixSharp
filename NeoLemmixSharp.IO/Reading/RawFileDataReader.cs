@@ -146,7 +146,8 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
 
     public unsafe ReadOnlySpan<byte> ReadBytes(int numberOfBytes)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(numberOfBytes);
+        if (numberOfBytes < 0)
+            Helpers.ThrowNegativeInputException();
 
         var newPosition = _position + numberOfBytes;
         FileReadingException.ReaderAssert(newPosition <= _byteBuffer.Length, "Reached end of file!");
@@ -177,6 +178,17 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
             r: bytes.At(1),
             g: bytes.At(2),
             b: bytes.At(3));
+    }
+
+    public Common.Point Decode16BitPoint()
+    {
+        ushort xShort = Read16BitUnsignedInteger();
+        var x = (int)(short)xShort;
+
+        ushort yShort = Read16BitUnsignedInteger();
+        var y = (int)(short)yShort;
+
+        return new Common.Point(x, y);
     }
 
     public void SetReaderPosition(int position)

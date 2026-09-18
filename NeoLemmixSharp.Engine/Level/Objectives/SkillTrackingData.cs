@@ -11,7 +11,6 @@ public sealed class SkillTrackingData
     private readonly SkillSetData _data;
 
     public LemmingSkillType LemmingSkillType { get; }
-    public LemmingSkill LemmingSkill => LemmingSkill.GetSkillOrDefault(LemmingSkillType);
 
     public int TribeId { get; }
     public Tribe? Tribe => LevelScreen.TribeManager.GetTribeOrDefault(TribeId);
@@ -62,7 +61,7 @@ public sealed class SkillTrackingData
         return EffectiveQuantity > 0 &&
                TribesMatch(lemming) &&
                lemming.CanHaveSkillsAssigned &&
-               LemmingSkill.CanAssignToLemming(lemming);
+               LemmingSkill.CanAssignToLemming(lemming, LemmingSkillType);
     }
 
     private bool TribesMatch(Lemming lemming)

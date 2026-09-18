@@ -177,7 +177,6 @@ public sealed class LevelScreen : IBaseScreen
 
     public void Tick(Microsoft.Xna.Framework.GameTime gameTime)
     {
-        _levelControlPanel.TextualData.ClearTextualData();
         _inputHandler.Tick();
         _levelCursor.Tick();
 

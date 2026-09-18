@@ -8,8 +8,8 @@ namespace NeoLemmixSharp.Engine.Level.Tribes;
 public sealed class Tribe : IEquatable<Tribe>
 {
     public TribeStyleIdentifier TribeIdentifier { get; }
-    public TribeColorData ColorData { get; }
     public int Id { get; }
+    public TribeColorData ColorData { get; }
 
     public Tribe(
         int id,

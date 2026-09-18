@@ -9,11 +9,13 @@ namespace NeoLemmixSharp.Engine.Level;
 
 public sealed class LevelCursor
 {
+    private Lemming? _previouslyHighlightedLemming;
     public Lemming? CurrentlyHighlightedLemming { get; private set; }
     private Point _cursorPosition;
 
-    private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
+    private uint _previousNumberOfLemmingsUnderCursor;
     public uint NumberOfLemmingsUnderCursor { get; private set; }
+    private int _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre;
 
     public Color Color1 { get; private set; }
     public Color Color2 { get; private set; }
@@ -35,7 +37,9 @@ public sealed class LevelCursor
 
     public void Tick()
     {
+        _previousNumberOfLemmingsUnderCursor = NumberOfLemmingsUnderCursor;
         NumberOfLemmingsUnderCursor = 0;
+        _previouslyHighlightedLemming = CurrentlyHighlightedLemming;
         CurrentlyHighlightedLemming = null;
         _currentlyHighlightedLemmingDistanceSquaredFromCursorCentre = int.MaxValue;
 
@@ -58,21 +62,22 @@ public sealed class LevelCursor
 
     public void CheckLemmingsNearCursor()
     {
-        GetLemmingsNearCursorPosition(out var lemmingsNearCursor);
+        EvaluateLemmingsNearCursorPosition(out var lemmingsNearCursor);
         foreach (var lemming in lemmingsNearCursor)
         {
             CheckLemming(lemming);
         }
 
-        if (CurrentlyHighlightedLemming is not null)
-        {
-            LevelScreen.LevelControlPanel.TextualData.SetCursorData(
-                CurrentlyHighlightedLemming,
-                NumberOfLemmingsUnderCursor);
-        }
+        if (_previouslyHighlightedLemming == CurrentlyHighlightedLemming &&
+            _previousNumberOfLemmingsUnderCursor == NumberOfLemmingsUnderCursor)
+            return;
+
+        LevelScreen.LevelControlPanel.TextualData.SetCursorData(
+            CurrentlyHighlightedLemming,
+            NumberOfLemmingsUnderCursor);
     }
 
-    private void GetLemmingsNearCursorPosition(out LemmingEnumerable result)
+    private void EvaluateLemmingsNearCursorPosition(out LemmingEnumerable result)
     {
         var c = _cursorPosition;
 

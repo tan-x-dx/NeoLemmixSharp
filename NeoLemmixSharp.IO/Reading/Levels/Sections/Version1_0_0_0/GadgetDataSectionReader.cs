@@ -50,8 +50,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
 
         int overrideNameId = reader.Read16BitUnsignedInteger();
 
-        int positionData = reader.Read32BitSignedInteger();
-        Point position = ReadWriteHelpers.DecodePoint(positionData);
+        Point position = reader.Decode16BitPoint();
 
         int dhtByte = reader.Read8BitUnsignedInteger();
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);

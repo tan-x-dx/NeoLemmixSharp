@@ -11,13 +11,13 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets;
 public sealed class HitBoxGadgetState : GadgetState
 {
     private readonly LemmingHitBoxFilter[] _lemmingHitBoxFilters;
-    private readonly BitArrayDictionary<Orientation.OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> _hitBoxLookup;
+    private readonly BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> _hitBoxLookup;
 
     public ReadOnlySpan<LemmingHitBoxFilter> Filters => new(_lemmingHitBoxFilters);
 
     public HitBoxGadgetState(
         LemmingHitBoxFilter[] lemmingHitBoxFilters,
-        BitArrayDictionary<Orientation.OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> hitBoxLookup)
+        BitArrayDictionary<OrientationHasher, BitBuffer32, Orientation, HitBoxRegion> hitBoxLookup)
     {
         _lemmingHitBoxFilters = lemmingHitBoxFilters;
         _hitBoxLookup = hitBoxLookup;

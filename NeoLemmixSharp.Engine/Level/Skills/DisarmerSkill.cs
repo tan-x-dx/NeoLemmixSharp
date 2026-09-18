@@ -3,43 +3,39 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class DisarmerSkill : LemmingSkill, ILemmingAbilityChanger
+public static class DisarmerSkill
 {
-    public static readonly DisarmerSkill Instance = new();
+    public static ILemmingAbilityChanger LemmingAbilityChanger { get; } = new DisarmerAbilityChanger();
 
-    private DisarmerSkill()
-        : base(
-            LemmingSkillType.DisarmerSkill,
-            LemmingSkillConstants.DisarmerSkillName)
+    private sealed class DisarmerAbilityChanger : ILemmingAbilityChanger
     {
+        public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.DisarmerAbility;
+
+        public void SetLemmingAbility(Lemming lemming, bool status)
+        {
+            lemming.IsDisarmer = status;
+        }
+
+        public void ToggleLemmingAbility(Lemming lemming)
+        {
+            lemming.IsDisarmer = !lemming.IsDisarmer;
+        }
+
+        public bool LemmingHasAbility(Lemming lemming)
+        {
+            return lemming.IsDisarmer;
+        }
     }
 
-    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.DisarmerAbility;
-
-    public override bool CanAssignToLemming(Lemming lemming)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.IsDisarmer && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.IsDisarmer && LemmingSkillType.DisarmerSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         lemming.IsDisarmer = true;
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
-
-    public void SetLemmingAbility(Lemming lemming, bool status)
-    {
-        lemming.IsDisarmer = status;
-    }
-
-    public void ToggleLemmingAbility(Lemming lemming)
-    {
-        lemming.IsDisarmer = !lemming.IsDisarmer;
-    }
-
-    public bool LemmingHasAbility(Lemming lemming)
-    {
-        return lemming.IsDisarmer;
-    }
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedPermanentSkill();
 }

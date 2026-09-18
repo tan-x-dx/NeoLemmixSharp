@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -267,8 +268,10 @@ public sealed class InputHandler :
 
         public readonly int Length => KeysBitBufferLength;
 
+        [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, KeysBitBufferLength);
+        [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, KeysBitBufferLength);
     }

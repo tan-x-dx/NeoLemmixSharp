@@ -75,9 +75,9 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         return null;
     }
 
-    public void ChangeSkillCount(LemmingSkill lemmingSkill, int tribeId, int delta)
+    public void ChangeSkillCount(LemmingSkillType lemmingSkill, int tribeId, int delta)
     {
-        var relevantSkillTrackingData = TryGetSkillTrackingData(lemmingSkill.SkillType, tribeId);
+        var relevantSkillTrackingData = TryGetSkillTrackingData(lemmingSkill, tribeId);
 
         relevantSkillTrackingData?.ChangeSkillCount(delta);
     }
@@ -88,7 +88,7 @@ public sealed class SkillSetManager : IComparer<SkillTrackingData>, IDisposable
         var result = true;
         foreach (var skillTrackingData in _skillTrackingDataList)
         {
-            result &= skillTrackingData.LemmingSkill.IsClassicSkill() && // only classic skills
+            result &= skillTrackingData.LemmingSkillType.IsClassicSkill() && // only classic skills
                       skillTrackingData.Tribe is null; // no tribe specified
         }
 

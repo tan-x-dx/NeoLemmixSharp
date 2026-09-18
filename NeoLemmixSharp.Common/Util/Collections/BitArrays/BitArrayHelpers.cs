@@ -19,7 +19,9 @@ public static class BitArrayHelpers
     [Pure]
     public static uint[] CreateBitArray(int requiredCapacity, bool setAllBits)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(requiredCapacity);
+        if (requiredCapacity < 0)
+            Helpers.ThrowNegativeInputException();
+
         var arrayLength = CalculateBitArrayBufferLength(requiredCapacity);
         if (arrayLength == 0)
             return Array.Empty<uint>();

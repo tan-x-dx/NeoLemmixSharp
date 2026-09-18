@@ -16,16 +16,16 @@ public interface ILemmingAbilityChanger
     {
         var result = new ILemmingAbilityChanger[]
         {
-            ClimberSkill.Instance,
-            FloaterSkill.Instance,
-            GliderSkill.Instance,
-            SwimmerSkill.Instance,
-            DisarmerSkill.Instance,
-            SliderSkill.Instance,
+            ClimberSkill.LemmingAbilityChanger,
+            FloaterSkill.LemmingAbilityChanger,
+            GliderSkill.LemmingAbilityChanger,
+            SwimmerSkill.LemmingAbilityChanger,
+            DisarmerSkill.LemmingAbilityChanger,
+            SliderSkill.LemmingAbilityChanger,
 
-            AcidLemmingSkill.Instance,
-            WaterLemmingSkill.Instance,
-            FastForwardSkill.Instance,
+            AcidLemmingSkill.LemmingAbilityChanger,
+            WaterLemmingSkill.LemmingAbilityChanger,
+            FastForwardSkill.LemmingAbilityChanger,
 
             NeutralStateChanger.Instance,
             ZombieStateChanger.Instance,

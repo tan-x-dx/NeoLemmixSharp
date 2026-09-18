@@ -104,9 +104,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
 
         var i = positions.Length;
         if (i == 0)
-        {
             goto SetPoints;
-        }
 
         i--;
         mins = positions.At(i);
@@ -114,22 +112,20 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
         i--;
 
         if (i < 0)
-        {
             goto SetPoints;
-        }
 
         do
         {
             var p = positions.At(i);
 
-            if (mins.X > p.X)
+            if (p.X < mins.X)
                 mins = new Point(p.X, mins.Y);
-            if (maxs.X < p.X)
+            if (p.X > maxs.X)
                 maxs = new Point(p.X, maxs.Y);
 
-            if (mins.Y > p.Y)
+            if (p.Y < mins.Y)
                 mins = new Point(mins.X, p.Y);
-            if (maxs.Y < p.Y)
+            if (p.Y > maxs.Y)
                 maxs = new Point(maxs.X, p.Y);
 
             i--;
@@ -164,6 +160,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [DebuggerStepThrough]
     public RectangularRegion Translate(Point offset) => new(TopLeft + offset, BottomRight + offset, 0);
 
+    [Pure]
+    [DebuggerStepThrough]
     public bool Contains(Point point)
     {
         return X <= point.X &&
@@ -172,6 +170,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
                point.Y <= BottomRight.Y;
     }
 
+    [Pure]
+    [DebuggerStepThrough]
     public bool Overlaps(RectangularRegion other)
     {
         return X <= other.BottomRight.X &&
@@ -213,9 +213,11 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     public bool Equals(RectangularRegion other) => this == other;
 
     [Pure]
+    [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is RectangularRegion other && Equals(other);
 
     [Pure]
+    [DebuggerStepThrough]
     public override int GetHashCode() =>
         353 * TopLeft.GetHashCode() +
         719 * BottomRight.GetHashCode();
@@ -244,5 +246,7 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
         return result;
     }
 
+    [Pure]
+    [DebuggerStepThrough]
     public Rectangle ToRectangle() => new(X, Y, W, H);
 }

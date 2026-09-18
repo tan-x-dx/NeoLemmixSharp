@@ -150,6 +150,17 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         WriteSingleByte(color.B, ref _mainDataByteBuffer, ref _mainDataPosition);
     }
 
+    public void Encode16BitPoint(Common.Point point)
+    {
+        FileWritingException.WriterAssert(point.X <= short.MaxValue && point.X >= short.MinValue, "Point outside of valid scope");
+        FileWritingException.WriterAssert(point.Y <= short.MaxValue && point.Y >= short.MinValue, "Point outside of valid scope");
+
+        ushort x = (ushort)point.X;
+        Write16BitUnsignedInteger(x);
+        ushort y = (ushort)point.Y;
+        Write16BitUnsignedInteger(y);
+    }
+
     private static void DoubleByteBufferLength(ref RawArray byteBuffer)
     {
         RawArray.DoubleBufferSize(ref byteBuffer);

@@ -38,8 +38,10 @@ public sealed class LevelEventList<TEventData> : IDisposable
     [Pure]
     public ReadOnlySpan<TEventData> Slice(int start, int length)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(start);
-        ArgumentOutOfRangeException.ThrowIfNegative(length);
+        if (start < 0)
+            Helpers.ThrowNegativeInputException();
+        if (length < 0)
+            Helpers.ThrowNegativeInputException();
 
         if (_count - start < length)
             throw new ArgumentOutOfRangeException(nameof(start), "Start index with length is out of bounds");
@@ -50,7 +52,8 @@ public sealed class LevelEventList<TEventData> : IDisposable
     [Pure]
     public ReadOnlySpan<TEventData> GetSliceToEnd(int start)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        if (start < 0)
+            Helpers.ThrowNegativeInputException();
 
         return GetReadOnlySpan(start, Math.Max(0, _count - start));
     }

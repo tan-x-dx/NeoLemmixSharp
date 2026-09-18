@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -46,8 +47,10 @@ public readonly struct GadgetBehaviourTypeHasher : IEnumIdentifierHelper<GadgetB
 
         public readonly int Length => GadgetBehaviourTypeBitBufferLength;
 
+        [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<uint> AsSpan() => MemoryMarshal.CreateSpan(ref _0, GadgetBehaviourTypeBitBufferLength);
+        [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly ReadOnlySpan<uint> AsReadOnlySpan() => MemoryMarshal.CreateReadOnlySpan(in _0, GadgetBehaviourTypeBitBufferLength);
     }

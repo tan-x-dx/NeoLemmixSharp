@@ -61,7 +61,7 @@ public sealed partial class LevelEditorPage : PageBase
 
         // LoadLevel(RootDirectoryManager.GetLevelFilePath(@"Amiga Lemmings\Lemmings\Fun\21_You_Live_and_Lem", FileFormatType.NeoLemmix));
         // LoadLevel(RootDirectoryManager.GetLevelFilePath(@"Amiga Lemmings\Lemmings\Tricky\04_Here's_one_I_prepared_earlier", FileFormatType.NeoLemmix));
-        LoadLevel(RootDirectoryManager.GetLevelFilePath("skill test", FileFormatType.NeoLemmix));
+        LoadLevel(RootDirectoryManager.GetLevelFilePath("OhNoSnowTribute", FileFormatType.NeoLemmix));
 
         // var styleData = StyleCache.GetOrLoadStyleData(new StyleFormatPair(new StyleIdentifier("orig_dirt"), FileFormatType.NeoLemmix));
         // SetStyle(styleData);
@@ -133,7 +133,7 @@ public sealed partial class LevelEditorPage : PageBase
     {
         try
         {
-            var levelData = FileTypeHandler.ReadLevel(levelFilePath);
+            var levelData = FileTypeHelper.ReadLevel(levelFilePath);
 
             StyleCache.EnsureStylesAreLoadedForLevel(levelData);
             SetLevelData(levelData);
@@ -153,7 +153,7 @@ public sealed partial class LevelEditorPage : PageBase
     {
         _currentLevelData.IncrementVersion();
 
-        FileTypeHandler.WriteLevel(_currentLevelData, levelFilePath);
+        FileTypeHelper.WriteLevel(_currentLevelData, levelFilePath);
     }
 
     protected override void OnDispose()

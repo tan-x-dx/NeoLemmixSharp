@@ -78,7 +78,7 @@ public static class StyleCache
         }
         else
         {
-            styleData = FileTypeHandler.ReadStyle(styleFormatPair);
+            styleData = FileTypeHelper.ReadStyle(styleFormatPair);
         }
 
         return styleData;

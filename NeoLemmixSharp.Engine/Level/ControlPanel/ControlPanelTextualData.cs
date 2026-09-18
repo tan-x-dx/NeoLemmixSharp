@@ -61,8 +61,15 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         _numberOfCharsForGoalCount = 0;
     }
 
-    public void SetCursorData(Lemming lemmingUnderCursor, uint numberOfLemmingsUnderCursor)
+    public void SetCursorData(Lemming? lemmingUnderCursor, uint numberOfLemmingsUnderCursor)
     {
+        if (lemmingUnderCursor is null)
+        {
+            _numberOfCharsForLemmingActionAndCount = 0;
+
+            return;
+        }
+
         var textLength = WriteLemmingInfo(lemmingUnderCursor);
 
         char* p = _lemmingActionAndCountPointer + textLength;
@@ -114,7 +121,7 @@ public unsafe sealed class ControlPanelTextualData : IDisposable
         LemmingActionType actionType)
     {
         var sourceSpan = GetSourceString(lemming, actionType);
-        Span<char> destSpan = new(_lemmingActionAndCountPointer, LemmingActionConstants.LongestActionNameLength);
+        var destSpan = new Span<char>(_lemmingActionAndCountPointer, LemmingActionConstants.LongestActionNameLength);
 
         sourceSpan.CopyTo(destSpan);
 

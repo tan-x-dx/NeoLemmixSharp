@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace NeoLemmixSharp.IO.FileFormats;
 
-public static class FileTypeHandler
+public static class FileTypeHelper
 {
     private readonly record struct FileTypeAndFormat(FileType Type, FileFormatType Format);
 
@@ -75,7 +75,7 @@ public static class FileTypeHandler
     {
         var levelWriter = new DefaultLevelWriter(levelData, VersionHelper.LatestLevelFileFormatVersion);
 
-        using var fileStream = new FileStream(filePath, FileMode.OpenOrCreate);
+        using var fileStream = new FileStream(filePath, FileMode.Create);
         levelWriter.WriteToFile(fileStream);
     }
 

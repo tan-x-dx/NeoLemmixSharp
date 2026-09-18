@@ -19,8 +19,8 @@ public sealed class BoundaryBehaviour
     private readonly BoundaryBehaviourType _boundaryBehaviourType;
     private readonly int _levelLength;
 
-    private int _viewPortSpanLength;
-    private int _screenSpanLength;
+    private int _viewPortSpanLength = 0;
+    private int _screenSpanLength = 0;
 
     private int _scaleMultiplier;
 
@@ -254,9 +254,7 @@ public sealed class BoundaryBehaviour
         if (viewPortCoordinate < 0)
             return 0;
 
-        if (viewPortCoordinate <= v)
-            return viewPortCoordinate;
-        return v;
+        return Math.Min(viewPortCoordinate, v);
     }
 
     public void Scroll(int delta)

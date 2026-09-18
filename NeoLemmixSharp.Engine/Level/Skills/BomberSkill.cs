@@ -4,23 +4,14 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class BomberSkill : LemmingSkill
+public static class BomberSkill
 {
-    public static readonly BomberSkill Instance = new();
-
-    private BomberSkill()
-        : base(
-            LemmingSkillType.BomberSkill,
-            LemmingSkillConstants.BomberSkillName)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
+        return lemming.CountDownTimer == 0 && LemmingSkillType.BomberSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override bool CanAssignToLemming(Lemming lemming)
-    {
-        return lemming.CountDownTimer == 0 && SkillIsAssignableToCurrentAction(lemming);
-    }
-
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         var levelParameters = LevelScreen.LevelParameters;
         var countDownTimer = levelParameters.GetLemmingCountDownTimer(lemming);
@@ -29,5 +20,5 @@ public sealed class BomberSkill : LemmingSkill
         lemming.SetCountDownAction(countDownTimer, LemmingActionType.ExploderAction, displayTimer);
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedPermanentSkill();
 }

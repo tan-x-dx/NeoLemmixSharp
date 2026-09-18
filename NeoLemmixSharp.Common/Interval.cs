@@ -12,32 +12,47 @@ public readonly struct Interval : IEquatable<Interval>, ISpanFormattable
     public readonly int Start;
     public readonly int Length;
 
+    [DebuggerStepThrough]
     public Interval(int start, int length)
     {
         Start = start;
         Length = Math.Max(length, 0);
     }
 
+    [DebuggerStepThrough]
     internal Interval(int start, int length, byte _)
     {
         Start = start;
         Length = length;
     }
 
+    [Pure]
     public int End => Start + Length;
 
+    [Pure]
+    [DebuggerStepThrough]
     public bool Intersects(Interval other)
     {
         return Start < other.End &&
                other.Start < End;
     }
 
+    [Pure]
+    [DebuggerStepThrough]
     public bool Equals(Interval other) => this == other;
+
+    [Pure]
+    [DebuggerStepThrough]
     public override bool Equals([NotNullWhen(true)] object? obj) => obj is Interval other && Equals(other);
+
+    [Pure]
+    [DebuggerStepThrough]
     public override int GetHashCode() =>
         5120813 * Start +
         1646497 * Length;
 
+    [Pure]
+    [DebuggerStepThrough]
     public static bool operator ==(Interval left, Interval right)
     {
         var leftLong = Unsafe.BitCast<Interval, long>(left);
@@ -45,6 +60,9 @@ public readonly struct Interval : IEquatable<Interval>, ISpanFormattable
 
         return leftLong == rightLong;
     }
+
+    [Pure]
+    [DebuggerStepThrough]
     public static bool operator !=(Interval left, Interval right) => !(left == right);
 
     [Pure]

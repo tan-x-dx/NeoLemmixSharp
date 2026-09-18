@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common.Util.Collections.BitArrays;
 
@@ -118,6 +119,13 @@ public sealed class BitArrayDictionary<TPerfectHasher, TBuffer, TKey, TValue> : 
         var index = _hasher.Hash(key);
         value = _values.At(index);
         return BitArrayHelpers.GetBit(_bits.AsReadOnlySpan(), index);
+    }
+
+    public ref TValue? GetValueRefOrAddDefault(TKey key, out bool exists)
+    {
+        var index = _hasher.Hash(key);
+        exists = !BitArrayHelpers.SetBit(_bits.AsSpan(), index, ref _popCount);
+        return ref _values.At(index)!;
     }
 
     public bool Remove(TKey key)

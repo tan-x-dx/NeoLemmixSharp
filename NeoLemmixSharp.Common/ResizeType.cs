@@ -1,4 +1,7 @@
-﻿namespace NeoLemmixSharp.Common;
+﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
+
+namespace NeoLemmixSharp.Common;
 
 [Flags]
 public enum ResizeType
@@ -14,16 +17,22 @@ public static class ResizeTypeHelpers
     public const int HorizontalShift = 0;
     public const int VerticalShift = 1;
 
+    [Pure]
+    [DebuggerStepThrough]
     public static bool CanResizeHorizontally(this ResizeType type)
     {
         return (type & ResizeType.ResizeHorizontal) != ResizeType.None;
     }
 
+    [Pure]
+    [DebuggerStepThrough]
     public static bool CanResizeVertically(this ResizeType type)
     {
         return (type & ResizeType.ResizeVertical) != ResizeType.None;
     }
 
+    [Pure]
+    [DebuggerStepThrough]
     public static ResizeType SwapComponents(this ResizeType resizeType)
     {
         var intData = (int)resizeType;

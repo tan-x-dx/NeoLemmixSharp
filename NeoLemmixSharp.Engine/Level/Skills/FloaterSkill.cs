@@ -3,43 +3,40 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class FloaterSkill : LemmingSkill, ILemmingAbilityChanger
+public static class FloaterSkill
 {
-    public static readonly FloaterSkill Instance = new();
+    public static ILemmingAbilityChanger LemmingAbilityChanger { get; } = new FloaterAbilityChanger();
 
-    private FloaterSkill()
-        : base(
-            LemmingSkillType.FloaterSkill,
-            LemmingSkillConstants.FloaterSkillName)
+    private sealed class FloaterAbilityChanger : ILemmingAbilityChanger
     {
+        public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.FloaterAbility;
+
+        public void SetLemmingAbility(Lemming lemming, bool status)
+        {
+            lemming.IsFloater = status;
+        }
+
+        public void ToggleLemmingAbility(Lemming lemming)
+        {
+            lemming.IsFloater = !lemming.IsFloater;
+        }
+
+        public bool LemmingHasAbility(Lemming lemming)
+        {
+            return lemming.IsFloater;
+        }
     }
 
-    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.FloaterAbility;
 
-    public override bool CanAssignToLemming(Lemming lemming)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.HasSpecialFallingBehaviour && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasSpecialFallingBehaviour && LemmingSkillType.FloaterSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         lemming.IsFloater = true;
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
-
-    public void SetLemmingAbility(Lemming lemming, bool status)
-    {
-        lemming.IsFloater = status;
-    }
-
-    public void ToggleLemmingAbility(Lemming lemming)
-    {
-        lemming.IsFloater = !lemming.IsFloater;
-    }
-
-    public bool LemmingHasAbility(Lemming lemming)
-    {
-        return lemming.IsFloater;
-    }
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedPermanentSkill();
 }

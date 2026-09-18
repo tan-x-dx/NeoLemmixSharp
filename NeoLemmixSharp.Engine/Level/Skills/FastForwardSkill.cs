@@ -3,43 +3,39 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class FastForwardSkill : LemmingSkill, ILemmingAbilityChanger
+public static class FastForwardSkill
 {
-    public static readonly FastForwardSkill Instance = new();
+    public static ILemmingAbilityChanger LemmingAbilityChanger { get; } = new FastForwardAbilityChanger();
 
-    private FastForwardSkill()
-        : base(
-            LemmingSkillType.FastForwardSkill,
-            LemmingSkillConstants.FastForwardSkillName)
+    private sealed class FastForwardAbilityChanger : ILemmingAbilityChanger
     {
+        public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.FastForwardAbility;
+
+        public void SetLemmingAbility(Lemming lemming, bool status)
+        {
+            lemming.IsPermanentFastForwards = status;
+        }
+
+        public void ToggleLemmingAbility(Lemming lemming)
+        {
+            lemming.IsPermanentFastForwards = !lemming.IsPermanentFastForwards;
+        }
+
+        public bool LemmingHasAbility(Lemming lemming)
+        {
+            return lemming.IsPermanentFastForwards;
+        }
     }
 
-    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.FastForwardAbility;
-
-    public override bool CanAssignToLemming(Lemming lemming)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.IsPermanentFastForwards && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.IsPermanentFastForwards && LemmingSkillType.FastForwardSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         lemming.IsPermanentFastForwards = true;
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
-
-    public void SetLemmingAbility(Lemming lemming, bool status)
-    {
-        lemming.IsPermanentFastForwards = status;
-    }
-
-    public void ToggleLemmingAbility(Lemming lemming)
-    {
-        lemming.IsPermanentFastForwards = !lemming.IsPermanentFastForwards;
-    }
-
-    public bool LemmingHasAbility(Lemming lemming)
-    {
-        return lemming.IsPermanentFastForwards;
-    }
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedPermanentSkill();
 }

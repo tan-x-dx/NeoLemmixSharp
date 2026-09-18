@@ -35,8 +35,7 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         int styleId = reader.Read16BitUnsignedInteger();
         int pieceId = reader.Read16BitUnsignedInteger();
 
-        int positionData = reader.Read32BitSignedInteger();
-        var position = ReadWriteHelpers.DecodePoint(positionData);
+        var position = reader.Decode16BitPoint();
 
         int dhtByte = reader.Read8BitUnsignedInteger();
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);

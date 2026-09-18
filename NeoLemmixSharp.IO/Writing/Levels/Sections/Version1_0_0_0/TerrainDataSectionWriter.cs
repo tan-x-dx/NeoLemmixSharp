@@ -1,5 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Data.Level;
+﻿using NeoLemmixSharp.IO.Data.Level;
 using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
@@ -39,7 +38,7 @@ internal sealed class TerrainDataSectionWriter : LevelDataSectionWriter
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainDatum.StyleIdentifier));
         writer.Write16BitUnsignedInteger(_stringIdLookup.GetStringId(terrainDatum.PieceIdentifier));
 
-        writer.Write32BitSignedInteger(ReadWriteHelpers.EncodePoint(terrainDatum.Position));
+        writer.Encode16BitPoint(terrainDatum.Position);
         writer.Write8BitUnsignedInteger(terrainDatum.DihedralTransformation.EncodeToByte());
 
         WriteTerrainDataMisc(writer, terrainDatum);

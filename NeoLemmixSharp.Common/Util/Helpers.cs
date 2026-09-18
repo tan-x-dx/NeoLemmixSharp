@@ -73,7 +73,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 #endif
 
-        return MemoryMarshal.CreateSpan(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), (nint)start), length);
+        return MemoryMarshal.CreateSpan(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), (nint)(uint)start), length);
     }
 
     /// <summary>
@@ -140,7 +140,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 #endif
 
-        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), (nint)start), length);
+        return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), (nint)(uint)start), length);
     }
 
     /// <summary>
@@ -243,7 +243,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, array.Length);
 #endif
 
-        return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), (nint)index);
+        return ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), (nint)(uint)index);
     }
 
     /// <summary>
@@ -265,7 +265,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, span.Length);
 #endif
 
-        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), (nint)index);
+        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), (nint)(uint)index);
     }
 
     /// <summary>
@@ -287,7 +287,7 @@ public static class Helpers
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, span.Length);
 #endif
 
-        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), (nint)index);
+        return ref Unsafe.Add(ref MemoryMarshal.GetReference(span), (nint)(uint)index);
     }
 
     [Pure]
@@ -381,6 +381,8 @@ public static class Helpers
         return firstSpan.Equals(secondSpan, StringComparison.OrdinalIgnoreCase);
     }
 
+    [DoesNotReturn]
+    public static void ThrowNegativeInputException() => throw new ArgumentOutOfRangeException("Input is negative!");
     [DoesNotReturn]
     private static void ThrowInvalidSpanInputsException() => throw new InvalidOperationException("Invalid inputs!");
     [DoesNotReturn]

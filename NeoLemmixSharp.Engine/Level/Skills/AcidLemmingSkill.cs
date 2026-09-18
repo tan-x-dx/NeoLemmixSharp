@@ -3,43 +3,39 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
 
-public sealed class AcidLemmingSkill : LemmingSkill, ILemmingAbilityChanger
+public static class AcidLemmingSkill
 {
-    public static readonly AcidLemmingSkill Instance = new();
+    public static ILemmingAbilityChanger LemmingAbilityChanger { get; } = new AcidLemmingAbilityChanger();
 
-    private AcidLemmingSkill()
-        : base(
-            LemmingSkillType.AcidLemmingSkill,
-            LemmingSkillConstants.AcidLemmingSkillName)
+    private sealed class AcidLemmingAbilityChanger : ILemmingAbilityChanger
     {
+        public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.AcidLemmingAbility;
+
+        public void SetLemmingAbility(Lemming lemming, bool status)
+        {
+            lemming.IsAcidLemming = status;
+        }
+
+        public void ToggleLemmingAbility(Lemming lemming)
+        {
+            lemming.IsAcidLemming = !lemming.IsAcidLemming;
+        }
+
+        public bool LemmingHasAbility(Lemming lemming)
+        {
+            return lemming.IsAcidLemming;
+        }
     }
 
-    public LemmingAbilityType LemmingAbilityType => LemmingAbilityType.AcidLemmingAbility;
-
-    public override bool CanAssignToLemming(Lemming lemming)
+    public static bool CanAssignToLemming(Lemming lemming)
     {
-        return !lemming.HasLiquidAffinity && SkillIsAssignableToCurrentAction(lemming);
+        return !lemming.HasLiquidAffinity && LemmingSkillType.AcidLemmingSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
     }
 
-    public override void AssignToLemming(Lemming lemming)
+    public static void AssignToLemming(Lemming lemming)
     {
         lemming.IsAcidLemming = true;
     }
 
-    protected override LemmingActionTypeSet ActionsThatCanBeAssigned() => ActionsThatCanBeAssignedPermanentSkill;
-
-    public void SetLemmingAbility(Lemming lemming, bool status)
-    {
-        lemming.IsAcidLemming = status;
-    }
-
-    public void ToggleLemmingAbility(Lemming lemming)
-    {
-        lemming.IsAcidLemming = !lemming.IsAcidLemming;
-    }
-
-    public bool LemmingHasAbility(Lemming lemming)
-    {
-        return lemming.IsAcidLemming;
-    }
+    public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedPermanentSkill();
 }
