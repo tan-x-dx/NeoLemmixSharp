@@ -170,7 +170,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             controlPanel,
             levelRenderer,
             levelCursorSprite,
-            lemmingSpriteBank,
             controlPanelSpriteBank);
 
         var result = new LevelScreen(

@@ -6,7 +6,6 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
-using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
@@ -15,8 +14,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
     public static LevelScreenRenderer Instance { get; private set; } = null!;
 
     private readonly GraphicsDevice _graphicsDevice;
-
-    private readonly LemmingSpriteBank _lemmingSpriteBank;
 
     private readonly LevelRenderer _levelRenderer;
     private readonly ControlPanelRenderer _controlPanelRenderer;
@@ -33,12 +30,9 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         LevelControlPanel levelControlPanel,
         LevelRenderer levelRenderer,
         LevelCursorSprite levelCursorSprite,
-        LemmingSpriteBank lemmingSpriteBank,
         ControlPanelSpriteBank controlPanelSpriteBank)
     {
         _graphicsDevice = graphicsDevice;
-
-        _lemmingSpriteBank = lemmingSpriteBank;
 
         _levelRenderer = levelRenderer;
 

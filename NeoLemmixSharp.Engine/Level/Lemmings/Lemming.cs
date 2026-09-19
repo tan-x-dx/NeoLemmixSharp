@@ -96,7 +96,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref LemmingRemovalReason LemmingRemovalReason => ref _data.LemmingRemovalReason;
 
     public bool IsSimulation => Id == EngineConstants.SimulationLemmingId;
-    public bool IsFastForward => _data.FastForwardTime > 0 || IsPermanentFastForwards;
+    public bool IsFastForward => FastForwardTime > 0 || IsPermanentFastForwards;
 
     public Point HeadPosition => Orientation.MoveUp(AnchorPosition, 6);
     public Point FootPosition => CurrentActionType.GetFootPosition(DihedralTransformation, AnchorPosition);
@@ -117,7 +117,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     /// <summary>
     /// Must be active and NOT removed and NOT zombie and NOT neutral
     /// </summary>
-    public bool CanHaveSkillsAssigned => (_data.State & LemmingAbilityConstants.AssignableSkillBitMask) == (1U << LemmingAbilityConstants.ActiveBitIndex);
+    public bool CanHaveSkillsAssigned => (LemmingRemovalReason == LemmingRemovalReason.None) && ((_data.State & LemmingAbilityConstants.AssignableSkillBitMask) == (1U << LemmingAbilityConstants.ActiveBitIndex));
 
     public bool IsClimber
     {
@@ -384,9 +384,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         // No transition to do at the end of lemming movement
         SetNextActionType(LemmingActionType.NoneAction);
 
-        HandleParticleTimer();
-        HandleCountDownTimer();
-        HandleFastForwardTimer();
+        UpdateParticleTimer();
+        UpdateCountDownTimer();
+        UpdateFastForwardTimer();
 
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the region enclosed by a box centred around the current position.
@@ -407,7 +407,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         in GadgetEnumerable gadgetsNearLemming,
         Span<Point> gadgetCheckPositions)
     {
-        if (!HandleLemmingAction(in gadgetsNearLemming)) return;
+        if (!EvaluateLemmingAction(in gadgetsNearLemming)) return;
         if (!CheckLevelBoundaries()) return;
         if (!CheckTriggerAreas(in gadgetsNearLemming, gadgetCheckPositions, false)) return;
         if (CurrentActionType == LemmingActionType.ExiterAction) return;
@@ -423,9 +423,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (!IsSimulation)
             throw new InvalidOperationException("Use simulation lemming for simulations!");
 
-        HandleParticleTimer();
-        HandleCountDownTimer();
-        HandleFastForwardTimer();
+        UpdateParticleTimer();
+        UpdateCountDownTimer();
+        UpdateFastForwardTimer();
 
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the region enclosed by a box centred around the current position.
@@ -437,7 +437,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
         LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetsNearLemming);
 
-        var handleGadgets = HandleLemmingAction(in gadgetsNearLemming) && CheckLevelBoundaries() && checkGadgets;
+        var handleGadgets = EvaluateLemmingAction(in gadgetsNearLemming) && CheckLevelBoundaries() && checkGadgets;
         if (handleGadgets)
         {
             Span<Point> gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
@@ -446,7 +446,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
     }
 
-    private void HandleParticleTimer()
+    private void UpdateParticleTimer()
     {
         var particleTimer = ParticleTimer;
         if (particleTimer > 0)
@@ -456,7 +456,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
     }
 
-    private void HandleCountDownTimer()
+    private void UpdateCountDownTimer()
     {
         var countDownTimer = CountDownTimer;
         if (countDownTimer == 0)
@@ -475,7 +475,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
             OhNoerAction.HandleCountDownTransition(this);
     }
 
-    private void HandleFastForwardTimer()
+    private void UpdateFastForwardTimer()
     {
         ref var fastForwardTime = ref FastForwardTime;
 
@@ -494,7 +494,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     /// In that case, the method returns false - no extra work is necessary (don't bother checking gadgets, for example).
     /// </summary>
     /// <returns>True if more work needs to be done this frame</returns>
-    private bool HandleLemmingAction(in GadgetEnumerable gadgetsNearLemming)
+    private bool EvaluateLemmingAction(in GadgetEnumerable gadgetsNearLemming)
     {
         var currentActionType = CurrentActionType;
         //var currentAction = CurrentAction;
@@ -596,7 +596,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
             foreach (var anchorPosition in intermediatePositions)
             {
-                var footPosition = CurrentActionType.GetFootPosition(DihedralTransformation, anchorPosition);
+                var footPosition = FootPosition;
                 if (!gadget.ContainsEitherPoint(Orientation, anchorPosition, footPosition))
                     continue;
 
@@ -605,7 +605,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
                     continue;
 
                 var beforeAction = CurrentActionType;
-                HandleGadgetInteraction(gadget, firstMatchingFilter, anchorPosition);
+                EvaluateGadgetInteraction(gadget, firstMatchingFilter, anchorPosition);
                 var afterAction = CurrentActionType;
 
                 if (beforeAction != afterAction)
@@ -634,7 +634,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         return null;
     }
 
-    private void HandleGadgetInteraction(
+    private void EvaluateGadgetInteraction(
         HitBoxGadget gadget,
         LemmingHitBoxFilter filter,
         Point checkPosition)
