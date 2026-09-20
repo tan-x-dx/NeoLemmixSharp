@@ -29,17 +29,14 @@ public sealed class LemmingActionSprite
         Rectangle sourceRectangle,
         Rectangle destinationRectangle)
     {
-        var orientation = lemming.Orientation;
-        var facingDirection = lemming.FacingDirection;
-
         var dht = lemming.DihedralTransformation;
         var offset = dht.Transform(AnchorPoint, SpriteSize);
 
         destinationRectangle.X += offset.X;
         destinationRectangle.Y += offset.Y;
 
-        var rotationAngle = orientation.GetRotationAngle();
-        var spriteEffects = facingDirection.AsSpriteEffects();
+        var rotationAngle = dht.Orientation.GetRotationAngle();
+        var spriteEffects = dht.FacingDirection.AsSpriteEffects();
 
         foreach (var layerRenderer in _renderers)
         {

@@ -132,7 +132,7 @@ public sealed partial class LevelEditorCanvas
         _levelTexture?.Dispose();
         _levelTexture = CreateControlPanelRenderTarget2D();
 
-        _terrainPainter = new LevelEditorTerrainPainter(_levelData, _levelTexture);
+        _terrainPainter = new LevelEditorTerrainPainter(_graphicsDevice, _levelTexture, _levelData);
     }
 
     private RenderTarget2D CreateControlPanelRenderTarget2D()
@@ -152,6 +152,6 @@ public sealed partial class LevelEditorCanvas
         SortCanvasPieces();
         RepopulateLevelDataContents();
 
-        _terrainPainter.RepaintTerrain();
+        _terrainPainter.RepaintTerrain(IGameWindow.Instance.SpriteBatch);
     }
 }
