@@ -17,6 +17,7 @@ using NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
 using NeoLemmixSharp.Engine.Rendering.Viewport.BackgroundRendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using NeoLemmixSharp.IO.Data;
 using NeoLemmixSharp.IO.Data.Level;
@@ -228,15 +229,15 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
     }
 
     private List<IViewportObjectRenderer> GetSortedRenderables(
-        List<IViewportObjectRenderer> behindTerrainSprites,
-        List<IViewportObjectRenderer> inFrontOfTerrainSprites,
+        GadgetRenderer[] behindTerrainSprites,
+        GadgetRenderer[] inFrontOfTerrainSprites,
         TerrainRenderer terrainRenderer,
-        List<IViewportObjectRenderer> lemmingSprites)
+        LemmingRenderer[] lemmingSprites)
     {
-        var listCapacity = behindTerrainSprites.Count +
+        var listCapacity = behindTerrainSprites.Length +
                            1 + // Terrain renderer
-                           inFrontOfTerrainSprites.Count +
-                           lemmingSprites.Count;
+                           inFrontOfTerrainSprites.Length +
+                           lemmingSprites.Length;
         var result = new List<IViewportObjectRenderer>(listCapacity);
 
         behindTerrainSprites.Sort(this);

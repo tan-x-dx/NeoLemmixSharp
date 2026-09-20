@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.ControlPanel;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.Rendering;
 
@@ -75,6 +76,11 @@ public sealed class LevelScreenRenderer : IScreenRenderer
     {
         _levelRenderer.OnWindowSizeChanged();
         _controlPanelRenderer.OnWindowSizeChanged();
+    }
+
+    public LemmingRenderer LemmingRendererFor(int id)
+    {
+        throw new NotImplementedException();
     }
 
     public void Dispose()

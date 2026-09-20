@@ -29,7 +29,7 @@ public static class EngineConstants
 
     #endregion
 
-    #region Engine Constants
+    #region Gameplay Constants
 
     public const int SimulationLemmingId = int.MinValue;
 
@@ -51,6 +51,7 @@ public static class EngineConstants
     public const int DefaultCountDownTimer = 5;
     public const int DefaultCountDownActionTicks = DefaultCountDownTimer * GameplayTicksPerSecond;
     public const int DefaultFastForwardLemmingCountDownActionTicks = FastForwardSpeedMultiplier * DefaultCountDownActionTicks;
+    public const int NumberOfCountDownChars = 2;
 
     public const int ParticleFrameCount = 51;
     public const int NumberOfParticles = 80;

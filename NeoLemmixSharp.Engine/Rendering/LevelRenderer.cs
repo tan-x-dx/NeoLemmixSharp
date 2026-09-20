@@ -50,7 +50,7 @@ public sealed class LevelRenderer :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        var rendererSpan = CollectionsMarshal.AsSpan(_orderedSprites);
+        var rendererSpan = CollectionsMarshal.AsSpan(orderedSprites);
         foreach (var renderer in rendererSpan)
         {
             if (renderer is LemmingRenderer) // LemmingRenderers are handled elsewhere

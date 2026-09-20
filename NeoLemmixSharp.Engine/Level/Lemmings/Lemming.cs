@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -20,7 +21,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public LemmingColors LemmingColors;
 
-    public LemmingRenderer Renderer { get; }
+    public LemmingRenderer Renderer => LevelScreenRenderer.Instance.LemmingRendererFor(Id);
 
     public int Id { get; }
 
@@ -104,6 +105,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<Point> GetJumperPositions() => _data.GetJumperPositions();
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadOnlySpan<char> CountDownCharBuffer() => _data.GetCountDownCharsSpan();
 
     #endregion
 
@@ -353,8 +356,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         Id = id;
         _data = PointerDataHelper.CreateItem<LemmingData>(ref dataHandle);
-
-        Renderer = new LemmingRenderer(this);
     }
 
     public void Initialise()
@@ -468,7 +469,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         var countDownValue = IsFastForward
                 ? (countDownTimer + EngineConstants.EngineTicksPerSecond - 1) / EngineConstants.EngineTicksPerSecond
                 : (countDownTimer + EngineConstants.GameplayTicksPerSecond - 1) / EngineConstants.GameplayTicksPerSecond;
-        var textSpan = Renderer.CountDownCharsSpan;
+        var textSpan = _data.GetCountDownCharsSpan();
         NumberFormattingHelpers.WriteDigits(textSpan, countDownValue);
 
         if (countDownTimer == 0)
@@ -671,8 +672,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         CountDownTimer = countDownTimer;
         _data.CountDownActionType = countDownActionType;
-
-        Renderer.SetDisplayTimer(displayTimer);
     }
 
     public void ClearCountDownAction()
@@ -721,6 +720,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         UpdateAllColors();
         Renderer.UpdateLemmingState(IsActive);
+        Renderer.ResetPosition();
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
         LevelScreen.LemmingManager.UpdateZombieState(this);
     }

@@ -14,18 +14,18 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
 
     public static int SizeInBytes => LemmingDataSize;
 
-    /// <summary>
-    /// The raw size of a LemmingData struct is 188 bytes.
-    /// We pad this with an extra 4 bytes to make 192.
-    /// This is because the Span.Copy methods work best on blocks
-    /// that are multiples of 64 bytes in size. 192 = 64 * 3.
-    /// </summary>
     private const int LemmingDataSize = 192;
 
     [InlineArray(JumperAction.JumperPositionCount)]
     private struct JumperPositionBuffer
     {
         private Point _0;
+    }
+
+    [InlineArray(EngineConstants.NumberOfCountDownChars)]
+    private struct CountDownCharBuffer
+    {
+        private char _0;
     }
 
     [StructLayout(LayoutKind.Sequential, Size = LemmingDataSize)]
@@ -43,12 +43,14 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         public LemmingActionType NextActionType;
         public LemmingActionType CountDownActionType;
 
-        public JumperPositionBuffer JumperPositionBuffer;
-
         public Point DehoistPin;
         public Point LaserHitLevelPosition;
         public Point AnchorPosition;
         public Point PreviousAnchorPosition;
+
+        public JumperPositionBuffer JumperPositionBuffer;
+        public CountDownCharBuffer CountDownCharBuffer;
+        public uint CountDownTimer;
 
         public bool ConstructivePositionFreeze;
         public bool IsStartingAction;
@@ -71,7 +73,6 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         public int LaserRemainTime;
 
         public int FastForwardTime;
-        public uint CountDownTimer;
         public int ParticleTimer;
         public LemmingRemovalReason LemmingRemovalReason;
     }
@@ -143,5 +144,11 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     {
         void* p = &_data->JumperPositionBuffer;
         return new Span<Point>(p, JumperAction.JumperPositionCount);
+    }
+
+    public Span<char> GetCountDownCharsSpan()
+    {
+        void* p = &_data->CountDownCharBuffer;
+        return new Span<char>(p, EngineConstants.NumberOfCountDownChars);
     }
 }
