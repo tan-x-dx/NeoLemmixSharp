@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Level.Skills;
@@ -15,9 +14,8 @@ public static class BomberSkill
     {
         var levelParameters = LevelScreen.LevelParameters;
         var countDownTimer = levelParameters.GetLemmingCountDownTimer(lemming);
-        var displayTimer = levelParameters.Contains(LevelParameters.TimedBombers);
 
-        lemming.SetCountDownAction(countDownTimer, LemmingActionType.ExploderAction, displayTimer);
+        lemming.SetCountDownAction(countDownTimer, LemmingActionType.ExploderAction);
     }
 
     public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned() => LemmingSkill.GetActionsThatCanBeAssignedPermanentSkill();

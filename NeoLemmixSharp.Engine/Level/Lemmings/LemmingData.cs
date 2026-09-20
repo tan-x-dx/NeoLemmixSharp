@@ -72,7 +72,7 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         public int TrueDistanceFallen;
         public int LaserRemainTime;
 
-        public int FastForwardTime;
+        public uint FastForwardTime;
         public int ParticleTimer;
         public LemmingRemovalReason LemmingRemovalReason;
     }
@@ -135,7 +135,7 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     public ref int TrueDistanceFallen => ref Unsafe.AsRef<int>(&_data->TrueDistanceFallen);
     public ref int LaserRemainTime => ref Unsafe.AsRef<int>(&_data->LaserRemainTime);
 
-    public ref int FastForwardTime => ref Unsafe.AsRef<int>(&_data->FastForwardTime);
+    public ref uint FastForwardTime => ref Unsafe.AsRef<uint>(&_data->FastForwardTime);
     public ref uint CountDownTimer => ref Unsafe.AsRef<uint>(&_data->CountDownTimer);
     public ref int ParticleTimer => ref Unsafe.AsRef<int>(&_data->ParticleTimer);
     public ref LemmingRemovalReason LemmingRemovalReason => ref Unsafe.AsRef<LemmingRemovalReason>(&_data->LemmingRemovalReason);

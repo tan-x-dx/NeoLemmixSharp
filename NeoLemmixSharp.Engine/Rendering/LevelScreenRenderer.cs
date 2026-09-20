@@ -78,10 +78,7 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         _controlPanelRenderer.OnWindowSizeChanged();
     }
 
-    public LemmingRenderer LemmingRendererFor(int id)
-    {
-        throw new NotImplementedException();
-    }
+    public LemmingRenderer LemmingRendererFor(int id) => _levelRenderer.LemmingRendererFor(id);
 
     public void Dispose()
     {

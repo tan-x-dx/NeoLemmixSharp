@@ -91,13 +91,22 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref int JumpProgress => ref _data.JumpProgress;
     public ref int TrueDistanceFallen => ref _data.TrueDistanceFallen;
     public ref int LaserRemainTime => ref _data.LaserRemainTime;
-    public ref int FastForwardTime => ref _data.FastForwardTime;
+    public ref uint FastForwardTime => ref _data.FastForwardTime;
     public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref int ParticleTimer => ref _data.ParticleTimer;
     public ref LemmingRemovalReason LemmingRemovalReason => ref _data.LemmingRemovalReason;
 
     public bool IsSimulation => Id == EngineConstants.SimulationLemmingId;
-    public bool IsFastForward => FastForwardTime > 0 || IsPermanentFastForwards;
+    public bool IsFastForward
+    {
+        get
+        {
+            uint fastForwardAmount = IsPermanentFastForwards ? 1U : 0U;
+            fastForwardAmount += FastForwardTime;
+
+            return fastForwardAmount > 0;
+        }
+    }
 
     public Point HeadPosition => Orientation.MoveUp(AnchorPosition, 6);
     public Point FootPosition => CurrentActionType.GetFootPosition(DihedralTransformation, AnchorPosition);
@@ -478,12 +487,13 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     private void UpdateFastForwardTimer()
     {
-        ref var fastForwardTime = ref FastForwardTime;
+        uint fastForwardTime = FastForwardTime;
 
-        if (fastForwardTime <= 0)
+        if (fastForwardTime == 0)
             return;
 
         fastForwardTime--;
+        FastForwardTime = fastForwardTime;
 
         if (fastForwardTime == 0)
             LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
@@ -662,13 +672,13 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         gadget.OnLemmingHit(filter, this);
     }
 
-    public void SetFastForwardTime(int fastForwardTime)
+    public void SetFastForwardTime(uint fastForwardTime)
     {
         FastForwardTime = fastForwardTime;
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
 
-    public void SetCountDownAction(uint countDownTimer, LemmingActionType countDownActionType, bool displayTimer)
+    public void SetCountDownAction(uint countDownTimer, LemmingActionType countDownActionType)
     {
         CountDownTimer = countDownTimer;
         _data.CountDownActionType = countDownActionType;

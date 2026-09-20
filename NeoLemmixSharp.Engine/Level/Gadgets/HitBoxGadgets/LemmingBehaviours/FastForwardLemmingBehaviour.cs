@@ -5,9 +5,9 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 
 public sealed class FastForwardLemmingBehaviour : LemmingBehaviour
 {
-    private readonly int _fastForwardTime;
+    private readonly uint _fastForwardTime;
 
-    public FastForwardLemmingBehaviour(int fastForwardTime) : base(LemmingBehaviourType.SetLemmingFastForward)
+    public FastForwardLemmingBehaviour(uint fastForwardTime) : base(LemmingBehaviourType.SetLemmingFastForward)
     {
         _fastForwardTime = fastForwardTime;
     }

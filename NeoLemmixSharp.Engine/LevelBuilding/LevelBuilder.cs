@@ -162,6 +162,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
         var levelRenderer = new LevelRenderer(
             _graphicsDevice,
             orderedLevelSprites,
+            lemmingSprites,
             backgroundRenderer,
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
