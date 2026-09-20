@@ -19,7 +19,9 @@ public sealed partial class LevelEditorCanvas
         RenderCanvasBorder(spriteBatch);
         RenderCanvas(spriteBatch);
         RenderLevelBorder(spriteBatch);
-        RenderSelectedPieces(spriteBatch);
+
+        if (_selectedCanvasPieces.Count > 0)
+            RenderSelectedPieces(spriteBatch);
 
         if (_clickDragMode == ClickDragMode.SelectPieces)
         {
@@ -76,9 +78,6 @@ public sealed partial class LevelEditorCanvas
 
     private void RenderSelectedPieces(SpriteBatch spriteBatch)
     {
-        if (_selectedCanvasPieces.Count == 0)
-            return;
-
         var viewBounds = new RectangularRegion(
             _horizontalBorderBehaviour.GetViewportSourceInterval(),
             _verticalBorderBehaviour.GetViewportSourceInterval())
