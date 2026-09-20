@@ -20,8 +20,7 @@ public sealed class TerrainInstanceData : IInstanceData
     public required int Width { get; set; }
     public required int Height { get; set; }
 
-    public required bool NoOverwrite { get; set; }
-    public required bool Erase { get; set; }
+    public TerrainRenderType RenderType { get; set; }
 
     public TerrainInstanceData()
     {
