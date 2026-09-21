@@ -76,7 +76,9 @@ public sealed class LevelEditorTerrainPainter
         var sourceRectangle = terrainTexture.Bounds;
 
         var dht = currentTerrainPiece.DihedralTransformation;
-        var destinationRectangle = Helpers.CreateRectangle(currentTerrainPiece.Position + LevelEditorConstants.RenderOffset, currentTerrainPiece.Size);
+        var position = dht.Transform(currentTerrainPiece.Position, currentTerrainPiece.Size);
+
+        var destinationRectangle = Helpers.CreateRectangle(position + LevelEditorConstants.RenderOffset, currentTerrainPiece.Size);
 
         var rotationAngle = dht.Orientation.GetRotationAngle();
         var spriteEffects = dht.FacingDirection.AsSpriteEffects();

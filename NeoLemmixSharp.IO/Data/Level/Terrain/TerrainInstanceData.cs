@@ -28,5 +28,11 @@ public sealed class TerrainInstanceData : IInstanceData
 
     public StylePiecePair GetStylePiecePair() => new(StyleIdentifier, PieceIdentifier);
 
-    RectangularRegion IInstanceData.GetBounds(Point anchorPosition) => new(anchorPosition, Size);
+    RectangularRegion IInstanceData.GetBounds(Point anchorPosition)
+    {
+        var dht = DihedralTransformation;
+        var result = new RectangularRegion(anchorPosition, Size);
+
+        return dht.Transform(result);
+    }
 }
