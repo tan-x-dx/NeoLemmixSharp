@@ -68,7 +68,8 @@ public static class LemmingAction
             new(LemmingActionType.RotateHalfAction,             LemmingActionConstants.RotateHalfAnimationFrames,             LemmingActionConstants.MaxRotateHalfPhysicsFrames,             CursorSelectionPriority.NonWalkerMovementPriority),
         };
 
-        Debug.Assert(result.Length == LemmingActionConstants.NumberOfLemmingActions);
+        if (result.Length != LemmingActionConstants.NumberOfLemmingActions)
+            LemmingActionConstants.ThrowMissingActionException();
 
         var hasher = new LemmingActionDataHasher();
         hasher.AssertUniqueIds(new ReadOnlySpan<LemmingActionData>(result));

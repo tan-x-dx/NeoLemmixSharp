@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -118,7 +119,7 @@ public static class LemmingSkillConstants
         };
 
         if (result.Count != NumberOfLemmingSkills)
-            throw new Exception("Need to update this collection with new skills!");
+            ThrowMissingSkillException();
 
         return result;
     }
@@ -134,6 +135,9 @@ public static class LemmingSkillConstants
 
         return alternateLookup.TryGetValue(lemmingSkillNameSpan, out lemmingSkillType);
     }
+
+    [DoesNotReturn]
+    public static void ThrowMissingSkillException() => throw new Exception("Missing lemming skill! Update this list with new skill!");
 }
 
 public readonly struct LemmingSkillHasher : IBitBufferCreator<LemmingSkillBitBuffer, LemmingSkillType>

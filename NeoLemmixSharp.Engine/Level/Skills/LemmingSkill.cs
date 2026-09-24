@@ -67,6 +67,7 @@ public static class LemmingSkill
     private static BitArraySet<LemmingActionAndSkillHasher, LemmingActionAndSkillPairBitBuffer, LemmingActionAndSkillPair> GetActionsThatCanBeAssignedSkill()
     {
         var result = LemmingActionAndSkillHasher.CreateBitArraySet();
+        var count = 0;
 
         RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.ClimberSkill, ClimberSkill.GetActionsThatCanBeAssigned());
         RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.FloaterSkill, FloaterSkill.GetActionsThatCanBeAssigned());
@@ -96,6 +97,9 @@ public static class LemmingSkill
         RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.WaterLemmingSkill, WaterLemmingSkill.GetActionsThatCanBeAssigned());
         RegisterActionsThatCanBeAssignedSkill(LemmingSkillType.FastForwardSkill, FastForwardSkill.GetActionsThatCanBeAssigned());
 
+        if (count != LemmingSkillConstants.NumberOfLemmingSkills)
+            LemmingSkillConstants.ThrowMissingSkillException();
+
         return result;
 
         void RegisterActionsThatCanBeAssignedSkill(LemmingSkillType skillType, IEnumerable<LemmingActionType> actionsThatCanBeAssignedSkill)
@@ -105,6 +109,8 @@ public static class LemmingSkill
                 var pair = new LemmingActionAndSkillPair(actionType, skillType);
                 result.Add(pair);
             }
+
+            count++;
         }
     }
 

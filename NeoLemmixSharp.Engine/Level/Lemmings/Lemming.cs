@@ -420,7 +420,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         if (!EvaluateLemmingAction(in gadgetsNearLemming)) return;
         if (!CheckLevelBoundaries()) return;
         if (!CheckTriggerAreas(in gadgetsNearLemming, gadgetCheckPositions, false)) return;
-        if (CurrentActionType == LemmingActionType.ExiterAction) return;
         if (IsZombie) return;
         if (!LevelScreen.LemmingManager.AnyZombies()) return;
 
@@ -431,7 +430,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public void Simulate(bool checkGadgets)
     {
         if (!IsSimulation)
-            throw new InvalidOperationException("Use simulation lemming for simulations!");
+            ThrowSimulationLemmingException();
 
         UpdateParticleTimer();
         UpdateCountDownTimer();
@@ -579,8 +578,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
             PreviousAnchorPosition = AnchorPosition;
         }
 
-        var result = CheckGadgets(in gadgetsNearLemming, gadgetCheckPositions) && LemmingManager.DoBlockerCheck(this);
-
+        bool result = gadgetsNearLemming.Count == 0 || (CheckGadgets(in gadgetsNearLemming, gadgetCheckPositions) && LemmingManager.DoBlockerCheck(this));
         LemmingAction.TransitionLemmingToAction(this, false, NextActionType);
 
         return result;
@@ -590,13 +588,10 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         in GadgetEnumerable gadgetsNearLemming,
         Span<Point> gadgetCheckPositions)
     {
-        if (gadgetsNearLemming.Count == 0)
-            return true;
-
         var movementHelper = new LemmingMovementHelper(this, gadgetCheckPositions);
         var length = movementHelper.EvaluateCheckPositions();
 
-        return CheckGadgetHitBoxCollisions(in gadgetsNearLemming, gadgetCheckPositions[..length]);
+        return CheckGadgetHitBoxCollisions(in gadgetsNearLemming, gadgetCheckPositions.SliceUnsafe(0, length));
     }
 
     private bool CheckGadgetHitBoxCollisions(in GadgetEnumerable gadgetEnumerable, ReadOnlySpan<Point> intermediatePositions)
@@ -851,4 +846,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
     [DebuggerStepThrough]
     public static bool operator !=(Lemming? left, Lemming? right) => !(left == right);
+
+    [DoesNotReturn]
+    private static void ThrowSimulationLemmingException() => throw new InvalidOperationException("Use simulation lemming for simulations!");
 }
