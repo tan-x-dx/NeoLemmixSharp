@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
@@ -36,7 +37,8 @@ public sealed class LemmingActionLayerRenderer
         float rotationAngle,
         SpriteEffects spriteEffects)
     {
-        var color = GetColorForLayer(lemming);
+        ref var colorData = ref LevelScreen.LemmingColorManager.GetLemmingColorData(lemming.Id);
+        var color = GetColorForLayer(ref colorData);
         sourceRectangle.X += _layerOffsetX;
 
         spriteBatch.Draw(
@@ -50,15 +52,15 @@ public sealed class LemmingActionLayerRenderer
             1.0f);
     }
 
-    private Color GetColorForLayer(Lemming lemming) => _colorChooser switch
+    private Color GetColorForLayer(ref readonly LemmingColorData lemmingColors) => _colorChooser switch
     {
         TribeSpriteLayerColorType.NoRender => Color.Transparent,
         TribeSpriteLayerColorType.TrueColor => Color.White,
-        TribeSpriteLayerColorType.LemmingHairColor => lemming.LemmingColors.HairColor,
-        TribeSpriteLayerColorType.LemmingSkinColor => lemming.LemmingColors.SkinColor,
-        TribeSpriteLayerColorType.LemmingBodyColor => lemming.LemmingColors.BodyColor,
-        TribeSpriteLayerColorType.LemmingFootColor => lemming.LemmingColors.FootColor,
-        TribeSpriteLayerColorType.TribePaintColor =>  lemming.LemmingColors.PaintColor,
+        TribeSpriteLayerColorType.LemmingHairColor => lemmingColors.HairColor,
+        TribeSpriteLayerColorType.LemmingSkinColor => lemmingColors.SkinColor,
+        TribeSpriteLayerColorType.LemmingBodyColor => lemmingColors.BodyColor,
+        TribeSpriteLayerColorType.LemmingFootColor => lemmingColors.FootColor,
+        TribeSpriteLayerColorType.TribePaintColor => lemmingColors.PaintColor,
 
         _ => Helpers.ThrowUnknownEnumValueException<TribeSpriteLayerColorType, Color>(_colorChooser)
     };
