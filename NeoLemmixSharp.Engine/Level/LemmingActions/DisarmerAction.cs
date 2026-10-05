@@ -7,8 +7,10 @@ public static class DisarmerAction
 {
     public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        lemming.DisarmingFrames--;
-        if (lemming.DisarmingFrames <= 0)
+        var disarmingFrames = lemming.DisarmingFrames;
+        disarmingFrames--;
+        lemming.DisarmingFrames = disarmingFrames;
+        if (disarmingFrames <= 0)
         {
             if (lemming.NextActionType == LemmingActionType.NoneAction)
             {

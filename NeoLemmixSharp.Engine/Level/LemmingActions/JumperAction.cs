@@ -52,28 +52,32 @@ public sealed class JumperAction
         if (!MakeJumpMovement(lemming, in gadgetsNearLemming))
             return true;
 
-        lemming.JumpProgress++;
+        var jumpProgress = lemming.JumpProgress;
+        jumpProgress++;
+        lemming.JumpProgress = jumpProgress;
 
-        if (lemming.JumpProgress >= 0 && lemming.JumpProgress <= 5)
+        int animationFrame;
+        if (jumpProgress >= 0 && jumpProgress <= 5)
         {
-            lemming.AnimationFrame = 0;
+            animationFrame = 0;
         }
-        else if (lemming.JumpProgress == 6)
+        else if (jumpProgress == 6)
         {
-            lemming.AnimationFrame = 1;
+            animationFrame = 1;
         }
         else
         {
-            lemming.AnimationFrame = 2;
+            animationFrame = 2;
         }
+        lemming.AnimationFrame = animationFrame;
 
-        if (lemming.JumpProgress >= 8 && lemming.IsGlider)
+        if (jumpProgress >= 8 && lemming.IsGlider)
         {
             lemming.SetNextActionType(LemmingActionType.GliderAction);
             return true;
         }
 
-        if (lemming.JumpProgress == JumperArcFrames)
+        if (jumpProgress == JumperArcFrames)
         {
             lemming.SetNextActionType(LemmingActionType.WalkerAction);
         }

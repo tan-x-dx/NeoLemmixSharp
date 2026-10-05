@@ -111,13 +111,14 @@ public static class BlockerAction
         {
             int mineDx;
             int mineDy;
+            var physicsFrame = lemming.PhysicsFrame;
 
-            if (lemming.PhysicsFrame == 2)
+            if (physicsFrame == 2)
             {
                 mineDx = 0;
                 mineDy = 0;
             }
-            else if (lemming.PhysicsFrame >= 3 && lemming.PhysicsFrame < 15)
+            else if (physicsFrame >= 3 && physicsFrame < 15)
             {
                 mineDx = -2 * dx;
                 mineDy = -1;

@@ -29,6 +29,7 @@ public static class DiggerAction
     {
         var dht = lemming.DihedralTransformation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
+        var physicsFrame = lemming.PhysicsFrame;
 
         if (lemming.IsStartingAction)
         {
@@ -40,11 +41,12 @@ public static class DiggerAction
                 dht.Orientation.MoveUp(lemmingPosition, 1));
             // The first digger cycle is one frame longer!
             // So we need to artificially cancel the very first frame advancement.
-            lemming.PhysicsFrame--;
+            physicsFrame--;
+            lemming.PhysicsFrame = physicsFrame;
         }
 
-        if (lemming.PhysicsFrame != 0 &&
-            lemming.PhysicsFrame != 8)
+        if (physicsFrame != 0 &&
+            physicsFrame != 8)
             return true;
 
         var continueDigging = DigOneRow(

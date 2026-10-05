@@ -13,8 +13,9 @@ public static class ShimmierAction
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
         var dx = lemming.FacingDirection.DeltaX;
+        var physicsFrame = lemming.PhysicsFrame;
 
-        if ((lemming.PhysicsFrame & 1) != 0)
+        if ((physicsFrame & 1) != 0)
             return true;
 
         var i = 0;
@@ -39,7 +40,8 @@ public static class ShimmierAction
                 lemmingPosition = orientation.Move(lemmingPosition, new(dx, i - 4));
                 lemming.IsStartingAction = false;
                 HoisterAction.TransitionLemmingToAction(lemming, false);
-                lemming.PhysicsFrame += 2;
+                physicsFrame += 2;
+                lemming.PhysicsFrame = physicsFrame;
                 lemming.AnimationFrame += 2;
                 return true;
             }

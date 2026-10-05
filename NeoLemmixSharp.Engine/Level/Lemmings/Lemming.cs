@@ -72,26 +72,87 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref Point AnchorPosition => ref _data.AnchorPosition;
     public ref Point PreviousAnchorPosition => ref _data.PreviousAnchorPosition;
 
-    public ref bool ConstructivePositionFreeze => ref _data.ConstructivePositionFreeze;
-    public ref bool IsStartingAction => ref _data.IsStartingAction;
-    public ref bool PlacedBrick => ref _data.PlacedBrick;
-    public ref bool StackLow => ref _data.StackLow;
-    public ref bool InitialFall => ref _data.InitialFall;
-    public ref bool EndOfAnimation => ref _data.EndOfAnimation;
-    public ref bool LaserHit => ref _data.LaserHit;
-    public ref bool JumpToHoistAdvance => ref _data.JumpToHoistAdvance;
-    public ref int AnimationFrame => ref _data.AnimationFrame;
-    public ref int PhysicsFrame => ref _data.PhysicsFrame;
-    public ref int AscenderProgress => ref _data.AscenderProgress;
-    public ref int NumberOfBricksLeft => ref _data.NumberOfBricksLeft;
-    public ref int DisarmingFrames => ref _data.DisarmingFrames;
+    public bool ConstructivePositionFreeze
+    {
+        get => _data.ConstructivePositionFreeze;
+        set => _data.ConstructivePositionFreeze = value;
+    }
+    public bool IsStartingAction
+    {
+        get => _data.IsStartingAction;
+        set => _data.IsStartingAction = value;
+    }
+    public bool PlacedBrick
+    {
+        get => _data.PlacedBrick;
+        set => _data.PlacedBrick = value;
+    }
+    public bool StackLow
+    {
+        get => _data.StackLow;
+        set => _data.StackLow = value;
+    }
+    public bool InitialFall
+    {
+        get => _data.InitialFall;
+        set => _data.InitialFall = value;
+    }
+    public bool EndOfAnimation
+    {
+        get => _data.EndOfAnimation;
+        set => _data.EndOfAnimation = value;
+    }
+    public bool LaserHit
+    {
+        get => _data.LaserHit;
+        set => _data.LaserHit = value;
+    }
+    public bool JumpToHoistAdvance
+    {
+        get => _data.JumpToHoistAdvance;
+        set => _data.JumpToHoistAdvance = value;
+    }
+    public int AnimationFrame
+    {
+        get => _data.AnimationFrame;
+        set => _data.AnimationFrame = value;
+    }
+    public int PhysicsFrame
+    {
+        get => _data.PhysicsFrame;
+        set => _data.PhysicsFrame = value;
+    }
+    public int NumberOfBricksLeft
+    {
+        get => _data.NumberOfBricksLeft;
+        set => _data.NumberOfBricksLeft = value;
+    }
+    public int AscenderProgress
+    {
+        get => _data.AscenderProgress;
+        set => _data.AscenderProgress = value;
+    }
+    public int DisarmingFrames
+    {
+        get => _data.DisarmingFrames;
+        set => _data.DisarmingFrames = value;
+    }
+    public int JumpProgress
+    {
+        get => _data.JumpProgress;
+        set => _data.JumpProgress = value;
+    }
+    public int ParticleTimer
+    {
+        get => _data.ParticleTimer;
+        set => _data.ParticleTimer = value;
+    }
+
     public ref int DistanceFallen => ref _data.DistanceFallen;
-    public ref int JumpProgress => ref _data.JumpProgress;
     public ref int TrueDistanceFallen => ref _data.TrueDistanceFallen;
     public ref int LaserRemainTime => ref _data.LaserRemainTime;
     public ref uint FastForwardTime => ref _data.FastForwardTime;
     public ref uint CountDownTimer => ref _data.CountDownTimer;
-    public ref int ParticleTimer => ref _data.ParticleTimer;
     public ref LemmingRemovalReason LemmingRemovalReason => ref _data.LemmingRemovalReason;
 
     public bool IsSimulation => Id == EngineConstants.SimulationLemmingId;

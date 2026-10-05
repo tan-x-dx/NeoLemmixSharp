@@ -10,6 +10,7 @@ public static class HoisterAction
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
+        var physicsFrame = lemming.PhysicsFrame;
 
         if (lemming.EndOfAnimation)
         {
@@ -18,13 +19,13 @@ public static class HoisterAction
         }
 
         // special case due to http://www.lemmingsforums.net/index.php?topic=2620.0
-        if (lemming.PhysicsFrame == 1 && lemming.IsStartingAction)
+        if (physicsFrame == 1 && lemming.IsStartingAction)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
             return true;
         }
 
-        if (lemming.PhysicsFrame <= 4)
+        if (physicsFrame <= 4)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, 2);
         }

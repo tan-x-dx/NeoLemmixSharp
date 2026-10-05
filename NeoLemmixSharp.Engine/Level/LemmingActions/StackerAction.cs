@@ -19,9 +19,11 @@ public static class StackerAction
         if (lemming.PhysicsFrame != 0)
             return true;
 
-        lemming.NumberOfBricksLeft--;
+        var numberOfBricksLeft = lemming.NumberOfBricksLeft;
+        numberOfBricksLeft--;
+        lemming.NumberOfBricksLeft = numberOfBricksLeft;
 
-        if (lemming.NumberOfBricksLeft < EngineConstants.NumberOfRemainingBricksToPlaySound)
+        if (numberOfBricksLeft < EngineConstants.NumberOfRemainingBricksToPlaySound)
         {
             // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position); ??
         }
@@ -30,7 +32,7 @@ public static class StackerAction
         {
             // Relax the check on the first brick
             // for details see http://www.lemmingsforums.net/index.php?topic=2862.0
-            if (lemming.NumberOfBricksLeft < EngineConstants.NumberOfStackerBricks - 1 ||
+            if (numberOfBricksLeft < EngineConstants.NumberOfStackerBricks - 1 ||
                 !MayPlaceNextBrick(in gadgetsNearLemming, lemming))
             {
                 WalkerAction.TransitionLemmingToAction(lemming, true);
@@ -38,7 +40,7 @@ public static class StackerAction
             return true;
         }
 
-        if (lemming.NumberOfBricksLeft != 0)
+        if (numberOfBricksLeft != 0)
             return true;
 
         ShruggerAction.TransitionLemmingToAction(lemming, false);

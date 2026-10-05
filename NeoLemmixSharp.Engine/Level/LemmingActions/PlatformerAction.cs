@@ -24,8 +24,10 @@ public static class PlatformerAction
         var orientation = lemming.Orientation;
         var dx = lemming.FacingDirection.DeltaX;
         ref var lemmingPosition = ref lemming.AnchorPosition;
+        var physicsFrame = lemming.PhysicsFrame;
+        var numberOfBricksLeft = lemming.NumberOfBricksLeft;
 
-        if (lemming.PhysicsFrame == 9)
+        if (physicsFrame == 9)
         {
             lemming.PlacedBrick = LemmingCanPlatform(lemming, gadgetsNearLemming);
             BuilderAction.LayBrick(lemming);
@@ -33,14 +35,14 @@ public static class PlatformerAction
             return;
         }
 
-        if (lemming.PhysicsFrame == 10 &&
-            lemming.NumberOfBricksLeft <= EngineConstants.NumberOfRemainingBricksToPlaySound)
+        if (physicsFrame == 10 &&
+            numberOfBricksLeft <= EngineConstants.NumberOfRemainingBricksToPlaySound)
         {
             // ?? CueSoundEffect(SFX_BUILDER_WARNING, L.Position) ??
             return;
         }
 
-        if (lemming.PhysicsFrame == 15)
+        if (physicsFrame == 15)
         {
             if (!lemming.PlacedBrick)
             {
@@ -69,14 +71,14 @@ public static class PlatformerAction
             return;
         }
 
-        if (lemming.PhysicsFrame != 0)
+        if (physicsFrame != 0)
             return;
 
         if (PlatformerTerrainCheck(
                 in gadgetsNearLemming,
                 lemming,
                 orientation.MoveRight(lemmingPosition, dx * 2)) &&
-            lemming.NumberOfBricksLeft > 1)
+            numberOfBricksLeft > 1)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx);
             WalkerAction.TransitionLemmingToAction(lemming, true);
@@ -88,7 +90,7 @@ public static class PlatformerAction
                 in gadgetsNearLemming,
                 lemming,
                 orientation.MoveRight(lemmingPosition, dx * 3)) &&
-            lemming.NumberOfBricksLeft > 1)
+            numberOfBricksLeft > 1)
         {
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx * 2);
             WalkerAction.TransitionLemmingToAction(lemming, true);
@@ -101,9 +103,10 @@ public static class PlatformerAction
             lemmingPosition = orientation.MoveRight(lemmingPosition, dx * 2);
         }
 
-        lemming.NumberOfBricksLeft--; // Why are we doing this here, instead at the beginning of frame 15??
+        numberOfBricksLeft--; // Why are we doing this here, instead at the beginning of frame 15??
+        lemming.NumberOfBricksLeft = numberOfBricksLeft;
 
-        if (lemming.NumberOfBricksLeft != 0)
+        if (numberOfBricksLeft != 0)
             return;
 
         // stalling if there are pixels in the way:

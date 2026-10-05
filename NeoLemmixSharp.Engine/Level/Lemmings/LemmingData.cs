@@ -9,11 +9,35 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public readonly unsafe struct LemmingData : IPointerData<LemmingData>
 {
+    private const int ConstructivePositionFreezeBitIndex = 31;
+    private const int IsStartingActionBitIndex = 30;
+    private const int PlacedBrickBitIndex = 29;
+    private const int StackLowBitIndex = 28;
+    private const int InitialFallBitIndex = 27;
+    private const int EndOfAnimationBitIndex = 26;
+    private const int LaserHitBitIndex = 25;
+    private const int JumpToHoistAdvanceBitIndex = 24;
+
+    private const int AnimationFrameByteIndex = 2;
+    private const int PhysicsFrameByteIndex = 1;
+    private const int NumberOfBricksLeftByteIndex = 0;
+
+    private const int AscenderProgressByteIndex = 3;
+    private const int DisarmingFramesByteIndex = 2;
+    private const int JumpProgressByteIndex = 1;
+    private const int ParticleTimerByteIndex = 0;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static LemmingData Create(nint dataRef) => new(dataRef);
 
     public static int SizeInBytes => LemmingDataSize;
 
+    /// <summary>
+    /// The raw size of a LemmingData struct is 164 bytes.
+    /// We pad this with an extra 28 bytes to make 192.
+    /// This is because the Span.Copy methods work best on blocks
+    /// that are multiples of 64 bytes in size. 192 = 64 * 3.
+    /// </summary>
     private const int LemmingDataSize = 192;
 
     [InlineArray(JumperAction.JumperPositionCount)]
@@ -52,28 +76,14 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         public CountDownCharBuffer CountDownCharBuffer;
         public uint CountDownTimer;
 
-        public bool ConstructivePositionFreeze;
-        public bool IsStartingAction;
-        public bool PlacedBrick;
-        public bool StackLow;
+        public PackedBytes PackedBytes1;
+        public PackedBytes PackedBytes2;
 
-        public bool InitialFall;
-        public bool EndOfAnimation;
-        public bool LaserHit;
-        public bool JumpToHoistAdvance;
-
-        public int AnimationFrame;
-        public int PhysicsFrame;
-        public int AscenderProgress;
-        public int NumberOfBricksLeft;
-        public int DisarmingFrames;
         public int DistanceFallen;
-        public int JumpProgress;
         public int TrueDistanceFallen;
         public int LaserRemainTime;
 
         public uint FastForwardTime;
-        public int ParticleTimer;
         public LemmingRemovalReason LemmingRemovalReason;
     }
 
@@ -115,29 +125,90 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     public ref Point AnchorPosition => ref Unsafe.AsRef<Point>(&_data->AnchorPosition);
     public ref Point PreviousAnchorPosition => ref Unsafe.AsRef<Point>(&_data->PreviousAnchorPosition);
 
-    public ref bool ConstructivePositionFreeze => ref Unsafe.AsRef<bool>(&_data->ConstructivePositionFreeze);
-    public ref bool IsStartingAction => ref Unsafe.AsRef<bool>(&_data->IsStartingAction);
-    public ref bool PlacedBrick => ref Unsafe.AsRef<bool>(&_data->PlacedBrick);
-    public ref bool StackLow => ref Unsafe.AsRef<bool>(&_data->StackLow);
+    public bool ConstructivePositionFreeze
+    {
+        get => _data->PackedBytes1.GetBit(ConstructivePositionFreezeBitIndex);
+        set => _data->PackedBytes1.SetBit(ConstructivePositionFreezeBitIndex, value);
+    }
+    public bool IsStartingAction
+    {
+        get => _data->PackedBytes1.GetBit(IsStartingActionBitIndex);
+        set => _data->PackedBytes1.SetBit(IsStartingActionBitIndex, value);
+    }
+    public bool PlacedBrick
+    {
+        get => _data->PackedBytes1.GetBit(PlacedBrickBitIndex);
+        set => _data->PackedBytes1.SetBit(PlacedBrickBitIndex, value);
+    }
+    public bool StackLow
+    {
+        get => _data->PackedBytes1.GetBit(StackLowBitIndex);
+        set => _data->PackedBytes1.SetBit(StackLowBitIndex, value);
+    }
+    public bool InitialFall
+    {
+        get => _data->PackedBytes1.GetBit(InitialFallBitIndex);
+        set => _data->PackedBytes1.SetBit(InitialFallBitIndex, value);
+    }
+    public bool EndOfAnimation
+    {
+        get => _data->PackedBytes1.GetBit(EndOfAnimationBitIndex);
+        set => _data->PackedBytes1.SetBit(EndOfAnimationBitIndex, value);
+    }
+    public bool LaserHit
+    {
+        get => _data->PackedBytes1.GetBit(LaserHitBitIndex);
+        set => _data->PackedBytes1.SetBit(LaserHitBitIndex, value);
+    }
+    public bool JumpToHoistAdvance
+    {
+        get => _data->PackedBytes1.GetBit(JumpToHoistAdvanceBitIndex);
+        set => _data->PackedBytes1.SetBit(JumpToHoistAdvanceBitIndex, value);
+    }
 
-    public ref bool InitialFall => ref Unsafe.AsRef<bool>(&_data->InitialFall);
-    public ref bool EndOfAnimation => ref Unsafe.AsRef<bool>(&_data->EndOfAnimation);
-    public ref bool LaserHit => ref Unsafe.AsRef<bool>(&_data->LaserHit);
-    public ref bool JumpToHoistAdvance => ref Unsafe.AsRef<bool>(&_data->JumpToHoistAdvance);
+    public int AnimationFrame
+    {
+        get => _data->PackedBytes1.GetByte(AnimationFrameByteIndex);
+        set => _data->PackedBytes1.SetByte(AnimationFrameByteIndex, value);
+    }
+    public int PhysicsFrame
+    {
+        get => _data->PackedBytes1.GetByte(PhysicsFrameByteIndex);
+        set => _data->PackedBytes1.SetByte(PhysicsFrameByteIndex, value);
+    }
+    public int NumberOfBricksLeft
+    {
+        get => _data->PackedBytes1.GetByte(NumberOfBricksLeftByteIndex);
+        set => _data->PackedBytes1.SetByte(NumberOfBricksLeftByteIndex, value);
+    }
 
-    public ref int AnimationFrame => ref Unsafe.AsRef<int>(&_data->AnimationFrame);
-    public ref int PhysicsFrame => ref Unsafe.AsRef<int>(&_data->PhysicsFrame);
-    public ref int AscenderProgress => ref Unsafe.AsRef<int>(&_data->AscenderProgress);
-    public ref int NumberOfBricksLeft => ref Unsafe.AsRef<int>(&_data->NumberOfBricksLeft);
-    public ref int DisarmingFrames => ref Unsafe.AsRef<int>(&_data->DisarmingFrames);
+    public int AscenderProgress
+    {
+        get => _data->PackedBytes2.GetByte(AscenderProgressByteIndex);
+        set => _data->PackedBytes2.SetByte(AscenderProgressByteIndex, value);
+    }
+    public int DisarmingFrames
+    {
+        get => _data->PackedBytes2.GetByte(DisarmingFramesByteIndex);
+        set => _data->PackedBytes2.SetByte(DisarmingFramesByteIndex, value);
+    }
+    public int JumpProgress
+    {
+        get => _data->PackedBytes2.GetByte(JumpProgressByteIndex);
+        set => _data->PackedBytes2.SetByte(JumpProgressByteIndex, value);
+    }
+    public int ParticleTimer
+    {
+        get => _data->PackedBytes2.GetByte(ParticleTimerByteIndex);
+        set => _data->PackedBytes2.SetByte(ParticleTimerByteIndex, value);
+    }
+
     public ref int DistanceFallen => ref Unsafe.AsRef<int>(&_data->DistanceFallen);
-    public ref int JumpProgress => ref Unsafe.AsRef<int>(&_data->JumpProgress);
     public ref int TrueDistanceFallen => ref Unsafe.AsRef<int>(&_data->TrueDistanceFallen);
     public ref int LaserRemainTime => ref Unsafe.AsRef<int>(&_data->LaserRemainTime);
 
     public ref uint FastForwardTime => ref Unsafe.AsRef<uint>(&_data->FastForwardTime);
     public ref uint CountDownTimer => ref Unsafe.AsRef<uint>(&_data->CountDownTimer);
-    public ref int ParticleTimer => ref Unsafe.AsRef<int>(&_data->ParticleTimer);
     public ref LemmingRemovalReason LemmingRemovalReason => ref Unsafe.AsRef<LemmingRemovalReason>(&_data->LemmingRemovalReason);
 
     public Span<Point> GetJumperPositions()
