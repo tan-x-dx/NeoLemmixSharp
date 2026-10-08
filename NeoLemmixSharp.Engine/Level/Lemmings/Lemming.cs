@@ -165,7 +165,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         get
         {
             uint fastForwardAmount = IsPermanentFastForwards ? 1U : 0U;
-            fastForwardAmount += FastForwardTime;
+            fastForwardAmount |= FastForwardTime;
 
             return fastForwardAmount > 0;
         }
