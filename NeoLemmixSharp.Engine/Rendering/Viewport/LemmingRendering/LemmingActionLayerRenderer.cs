@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Engine.Level;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 
 namespace NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
@@ -37,8 +36,7 @@ public sealed class LemmingActionLayerRenderer
         float rotationAngle,
         SpriteEffects spriteEffects)
     {
-        ref var colorData = ref LevelScreen.LemmingColorManager.GetLemmingColorData(lemming.Id);
-        var color = GetColorForLayer(ref colorData);
+        var color = GetColorForLayer(lemming);
         sourceRectangle.X += _layerOffsetX;
 
         spriteBatch.Draw(
@@ -52,15 +50,15 @@ public sealed class LemmingActionLayerRenderer
             1.0f);
     }
 
-    private Color GetColorForLayer(ref readonly LemmingColorData lemmingColors) => _colorChooser switch
+    private Color GetColorForLayer(Lemming lemming) => _colorChooser switch
     {
         TribeSpriteLayerColorType.NoRender => Color.Transparent,
         TribeSpriteLayerColorType.TrueColor => Color.White,
-        TribeSpriteLayerColorType.LemmingHairColor => lemmingColors.HairColor,
-        TribeSpriteLayerColorType.LemmingSkinColor => lemmingColors.SkinColor,
-        TribeSpriteLayerColorType.LemmingBodyColor => lemmingColors.BodyColor,
-        TribeSpriteLayerColorType.LemmingFootColor => lemmingColors.FootColor,
-        TribeSpriteLayerColorType.TribePaintColor => lemmingColors.PaintColor,
+        TribeSpriteLayerColorType.LemmingHairColor => lemming.Colors.HairColor,
+        TribeSpriteLayerColorType.LemmingSkinColor => lemming.Colors.SkinColor,
+        TribeSpriteLayerColorType.LemmingBodyColor => lemming.Colors.BodyColor,
+        TribeSpriteLayerColorType.LemmingFootColor => lemming.Colors.FootColor,
+        TribeSpriteLayerColorType.TribePaintColor => lemming.Colors.PaintColor,
 
         _ => Helpers.ThrowUnknownEnumValueException<TribeSpriteLayerColorType, Color>(_colorChooser)
     };

@@ -21,6 +21,10 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public int Id { get; }
 
+    private LemmingColorData _colors = new();
+
+    public LemmingColorData Colors => _colors;
+
     private LemmingRenderer Renderer => LevelScreenRenderer.Instance.LemmingRendererFor(Id);
 
     #region Lemming Data
@@ -805,59 +809,57 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     private void UpdateAllColors()
     {
         var tribe = LevelScreen.TribeManager.GetTribe(_data.TribeId);
-        ref var lemmingColors = ref LevelScreen.LemmingColorManager.GetLemmingColorData(Id);
 
         if (HasPermanentSkill)
         {
-            lemmingColors.HairColor = tribe.ColorData.PermanentSkillHairColor;
-            lemmingColors.BodyColor = IsNeutral
+            _colors.HairColor = tribe.ColorData.PermanentSkillHairColor;
+            _colors.BodyColor = IsNeutral
                 ? tribe.ColorData.NeutralBodyColor
                 : tribe.ColorData.PermanentSkillBodyColor;
         }
         else
         {
-            lemmingColors.HairColor = tribe.ColorData.HairColor;
-            lemmingColors.BodyColor = IsNeutral
+            _colors.HairColor = tribe.ColorData.HairColor;
+            _colors.BodyColor = IsNeutral
                 ? tribe.ColorData.NeutralBodyColor
                 : tribe.ColorData.BodyColor;
         }
 
-        lemmingColors.SkinColor = IsZombie
+        _colors.SkinColor = IsZombie
             ? tribe.ColorData.ZombieSkinColor
             : tribe.ColorData.SkinColor;
 
         if (IsAcidLemming)
         {
-            lemmingColors.FootColor = tribe.ColorData.AcidLemmingFootColor;
+            _colors.FootColor = tribe.ColorData.AcidLemmingFootColor;
         }
         else if (IsWaterLemming)
         {
-            lemmingColors.FootColor = tribe.ColorData.WaterLemmingFootColor;
+            _colors.FootColor = tribe.ColorData.WaterLemmingFootColor;
         }
         else
         {
-            lemmingColors.FootColor = lemmingColors.SkinColor;
+            _colors.FootColor = _colors.SkinColor;
         }
 
-        lemmingColors.PaintColor = tribe.ColorData.PaintColor;
+        _colors.PaintColor = tribe.ColorData.PaintColor;
     }
 
     private void UpdateHairAndBodyColors()
     {
         var tribe = LevelScreen.TribeManager.GetTribe(_data.TribeId);
-        ref var lemmingColors = ref LevelScreen.LemmingColorManager.GetLemmingColorData(Id);
 
         if (HasPermanentSkill)
         {
-            lemmingColors.HairColor = tribe.ColorData.PermanentSkillHairColor;
-            lemmingColors.BodyColor = IsNeutral
+            _colors.HairColor = tribe.ColorData.PermanentSkillHairColor;
+            _colors.BodyColor = IsNeutral
                 ? tribe.ColorData.NeutralBodyColor
                 : tribe.ColorData.PermanentSkillBodyColor;
         }
         else
         {
-            lemmingColors.HairColor = tribe.ColorData.HairColor;
-            lemmingColors.BodyColor = IsNeutral
+            _colors.HairColor = tribe.ColorData.HairColor;
+            _colors.BodyColor = IsNeutral
                 ? tribe.ColorData.NeutralBodyColor
                 : tribe.ColorData.BodyColor;
         }
@@ -866,23 +868,22 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     private void UpdateSkinColor()
     {
         var tribe = LevelScreen.TribeManager.GetTribe(_data.TribeId);
-        ref var lemmingColors = ref LevelScreen.LemmingColorManager.GetLemmingColorData(Id);
 
-        lemmingColors.SkinColor = IsZombie
+        _colors.SkinColor = IsZombie
             ? tribe.ColorData.ZombieSkinColor
             : tribe.ColorData.SkinColor;
 
         if (IsAcidLemming)
         {
-            lemmingColors.FootColor = tribe.ColorData.AcidLemmingFootColor;
+            _colors.FootColor = tribe.ColorData.AcidLemmingFootColor;
         }
         else if (IsWaterLemming)
         {
-            lemmingColors.FootColor = tribe.ColorData.WaterLemmingFootColor;
+            _colors.FootColor = tribe.ColorData.WaterLemmingFootColor;
         }
         else
         {
-            lemmingColors.FootColor = lemmingColors.SkinColor;
+            _colors.FootColor = _colors.SkinColor;
         }
     }
 

@@ -82,9 +82,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        var lemmingColorManagerDataBuffer = _safeBufferAllocator.AllocateRawArray<LemmingColorData>(levelLemmings.Length);
-        var lemmingColorManager = new LemmingColorManager(lemmingColorManagerDataBuffer);
-
         var lemmingSpriteBank = LemmingSpriteBankBuilder.BuildLemmingSpriteBank(levelData);
         var tribeManager = BuildTribeManager(levelData, lemmingSpriteBank);
 
@@ -184,7 +181,6 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
             terrainManager,
             new TerrainUpdater(terrainTexture, in pixelData, in terrainColorData),
             lemmingManager,
-            lemmingColorManager,
             gadgetManager,
             tribeManager,
             skillSetManager,

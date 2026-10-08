@@ -34,7 +34,6 @@ public sealed class LevelScreen : IBaseScreen
     private readonly TerrainManager _terrainManager;
     private readonly TerrainUpdater _terrainPainter;
     private readonly LemmingManager _lemmingManager;
-    private readonly LemmingColorManager _lemmingColorManager;
     private readonly GadgetManager _gadgetManager;
     private readonly TribeManager _tribeManager;
     private readonly SkillSetManager _skillSetManager;
@@ -59,7 +58,6 @@ public sealed class LevelScreen : IBaseScreen
     public static TerrainManager TerrainManager => Instance._terrainManager;
     public static TerrainUpdater TerrainPainter => Instance._terrainPainter;
     public static LemmingManager LemmingManager => Instance._lemmingManager;
-    public static LemmingColorManager LemmingColorManager => Instance._lemmingColorManager;
     public static GadgetManager GadgetManager => Instance._gadgetManager;
     public static TribeManager TribeManager => Instance._tribeManager;
     public static SkillSetManager SkillSetManager => Instance._skillSetManager;
@@ -129,7 +127,6 @@ public sealed class LevelScreen : IBaseScreen
         TerrainManager terrainManager,
         TerrainUpdater terrainPainter,
         LemmingManager lemmingManager,
-        LemmingColorManager lemmingColorManager,
         GadgetManager gadgetManager,
         TribeManager tribeManager,
         SkillSetManager skillSetManager,
@@ -153,7 +150,6 @@ public sealed class LevelScreen : IBaseScreen
         _terrainManager = terrainManager;
         _terrainPainter = terrainPainter;
         _lemmingManager = lemmingManager;
-        _lemmingColorManager = lemmingColorManager;
         _gadgetManager = gadgetManager;
         _tribeManager = tribeManager;
         _skillSetManager = skillSetManager;
