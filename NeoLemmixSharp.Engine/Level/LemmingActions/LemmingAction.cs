@@ -5,18 +5,27 @@ using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
 public static class LemmingAction
 {
+    private const int LemmingActionData_Size = 4;
+
+    private const int LemmingActionData_ActionTypeOffset = 0;
+    private const int LemmingActionData_NumberOfAnimationFramesOffset = 1;
+    private const int LemmingActionData_MaxPhysicsFramesOffset = 2;
+    private const int LemmingActionData_CursorSelectionPriorityOffset = 3;
+
     [DebuggerDisplay("{ActionType}")]
-    private readonly struct LemmingActionData(LemmingActionType actionType, byte numberOfAnimationFrames, byte maxPhysicsFrames, byte cursorSelectionPriority)
+    [StructLayout(LayoutKind.Explicit, Size = sizeof(int) * LemmingActionData_Size)]
+    private readonly struct LemmingActionData(LemmingActionType actionType, int numberOfAnimationFrames, int maxPhysicsFrames, int cursorSelectionPriority)
     {
-        public readonly LemmingActionType ActionType = actionType;
-        public readonly byte NumberOfAnimationFrames = numberOfAnimationFrames;
-        public readonly byte MaxPhysicsFrames = maxPhysicsFrames;
-        public readonly byte CursorSelectionPriority = cursorSelectionPriority;
+        [FieldOffset(sizeof(int) * LemmingActionData_ActionTypeOffset)] public readonly LemmingActionType ActionType = actionType;
+        [FieldOffset(sizeof(int) * LemmingActionData_NumberOfAnimationFramesOffset)] public readonly int NumberOfAnimationFrames = numberOfAnimationFrames;
+        [FieldOffset(sizeof(int) * LemmingActionData_MaxPhysicsFramesOffset)] public readonly int MaxPhysicsFrames = maxPhysicsFrames;
+        [FieldOffset(sizeof(int) * LemmingActionData_CursorSelectionPriorityOffset)] public readonly int CursorSelectionPriority = cursorSelectionPriority;
     }
 
     private static readonly LemmingActionData[] LemmingActions = RegisterAllLemmingActions();
@@ -134,30 +143,54 @@ public static class LemmingAction
 
     public static int GetNumberOfAnimationFramesForActionType(LemmingActionType actionType)
     {
-        byte result = 1;
+        var result = 1;
 
         if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
-            result = LemmingActions.At((int)actionType).NumberOfAnimationFrames;
+        {
+            var span = MemoryMarshal.Cast<LemmingActionData, int>(new ReadOnlySpan<LemmingActionData>(LemmingActions));
+
+            var offset = (int)actionType;
+            offset *= LemmingActionData_Size;
+            offset += LemmingActionData_NumberOfAnimationFramesOffset;
+
+            result = span.At(offset);
+        }
 
         return result;
     }
 
     public static int GetMaxPhysicsFramesForActionType(LemmingActionType actionType)
     {
-        byte result = 1;
+        var result = 1;
 
         if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
-            result = LemmingActions.At((int)actionType).MaxPhysicsFrames;
+        {
+            var span = MemoryMarshal.Cast<LemmingActionData, int>(new ReadOnlySpan<LemmingActionData>(LemmingActions));
+
+            var offset = (int)actionType;
+            offset *= LemmingActionData_Size;
+            offset += LemmingActionData_MaxPhysicsFramesOffset;
+
+            result = span.At(offset);
+        }
 
         return result;
     }
 
     public static int GetCursorSelectionPriorityForActionType(LemmingActionType actionType)
     {
-        byte result = CursorSelectionPriority.NoneActionPriority;
+        var result = CursorSelectionPriority.NoneActionPriority;
 
         if ((uint)actionType < LemmingActionConstants.NumberOfLemmingActions)
-            result = LemmingActions.At((int)actionType).CursorSelectionPriority;
+        {
+            var span = MemoryMarshal.Cast<LemmingActionData, int>(new ReadOnlySpan<LemmingActionData>(LemmingActions));
+
+            var offset = (int)actionType;
+            offset *= LemmingActionData_Size;
+            offset += LemmingActionData_CursorSelectionPriorityOffset;
+
+            result = span.At(offset);
+        }
 
         return result;
     }
