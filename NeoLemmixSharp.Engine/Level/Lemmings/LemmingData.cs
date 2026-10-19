@@ -221,4 +221,6 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         void* p = &_data->CountDownCharBuffer;
         return new Span<char>(p, EngineConstants.NumberOfCountDownChars);
     }
+
+    public void ResetFlagsOnNewAction() => _data->PackedBytes.SetRawValue(1UL << IsStartingActionBitIndex);
 }

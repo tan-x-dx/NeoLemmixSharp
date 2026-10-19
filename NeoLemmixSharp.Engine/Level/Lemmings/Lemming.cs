@@ -518,6 +518,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
     }
 
+    public void ResetFlagsOnNewAction() => _data.ResetFlagsOnNewAction();
+
     private void UpdateParticleTimer()
     {
         var particleTimer = ParticleTimer;

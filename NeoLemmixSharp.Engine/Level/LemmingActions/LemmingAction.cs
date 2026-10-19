@@ -269,12 +269,7 @@ public static class LemmingAction
             return;
 
         lemming.SetCurrentActionType(actionType);
-        lemming.PhysicsFrame = 0;
-        lemming.AnimationFrame = 0;
-        lemming.EndOfAnimation = false;
-        lemming.NumberOfBricksLeft = 0;
-        lemming.IsStartingAction = true;
-        lemming.InitialFall = false;
+        lemming.ResetFlagsOnNewAction();
     }
 
     public static RectangularRegion GetLemmingBounds(this LemmingActionType actionType, Lemming lemming)
