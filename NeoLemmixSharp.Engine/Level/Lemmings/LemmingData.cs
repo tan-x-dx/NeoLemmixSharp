@@ -18,14 +18,14 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     private const int LaserHitBitIndex = 57;
     private const int JumpToHoistAdvanceBitIndex = 56;
 
-    private const int AnimationFrameByteIndex = 6;
-    private const int PhysicsFrameByteIndex = 5;
-    private const int NumberOfBricksLeftByteIndex = 4;
+    private const int NumberOfBricksLeftByteIndex = 6;
+    private const int DisarmingFramesByteIndex = 5;
+    private const int JumpProgressByteIndex = 4;
 
-    private const int AscenderProgressByteIndex = 3;
-    private const int DisarmingFramesByteIndex = 2;
-    private const int JumpProgressByteIndex = 1;
-    private const int ParticleTimerByteIndex = 0;
+    private const int ParticleTimerByteIndex = 3;
+    private const int AscenderProgressByteIndex = 2;
+    private const int AnimationFrameByteIndex = 1;
+    private const int PhysicsFrameByteIndex = 0;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static LemmingData Create(nint dataRef) => new(dataRef);
@@ -159,32 +159,17 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         get => _data->PackedBytes.GetBit(LaserHitBitIndex);
         set => _data->PackedBytes.SetBit(LaserHitBitIndex, value);
     }
+
     public bool JumpToHoistAdvance
     {
         get => _data->PackedBytes.GetBit(JumpToHoistAdvanceBitIndex);
         set => _data->PackedBytes.SetBit(JumpToHoistAdvanceBitIndex, value);
     }
 
-    public int AnimationFrame
-    {
-        get => _data->PackedBytes.GetByte(AnimationFrameByteIndex);
-        set => _data->PackedBytes.SetByte(AnimationFrameByteIndex, value);
-    }
-    public int PhysicsFrame
-    {
-        get => _data->PackedBytes.GetByte(PhysicsFrameByteIndex);
-        set => _data->PackedBytes.SetByte(PhysicsFrameByteIndex, value);
-    }
     public int NumberOfBricksLeft
     {
         get => _data->PackedBytes.GetByte(NumberOfBricksLeftByteIndex);
         set => _data->PackedBytes.SetByte(NumberOfBricksLeftByteIndex, value);
-    }
-
-    public int AscenderProgress
-    {
-        get => _data->PackedBytes.GetByte(AscenderProgressByteIndex);
-        set => _data->PackedBytes.SetByte(AscenderProgressByteIndex, value);
     }
     public int DisarmingFrames
     {
@@ -196,10 +181,26 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         get => _data->PackedBytes.GetByte(JumpProgressByteIndex);
         set => _data->PackedBytes.SetByte(JumpProgressByteIndex, value);
     }
+
     public int ParticleTimer
     {
         get => _data->PackedBytes.GetByte(ParticleTimerByteIndex);
         set => _data->PackedBytes.SetByte(ParticleTimerByteIndex, value);
+    }
+    public int AscenderProgress
+    {
+        get => _data->PackedBytes.GetByte(AscenderProgressByteIndex);
+        set => _data->PackedBytes.SetByte(AscenderProgressByteIndex, value);
+    }
+    public int AnimationFrame
+    {
+        get => _data->PackedBytes.GetByte(AnimationFrameByteIndex);
+        set => _data->PackedBytes.SetByte(AnimationFrameByteIndex, value);
+    }
+    public int PhysicsFrame
+    {
+        get => _data->PackedBytes.GetByte(PhysicsFrameByteIndex);
+        set => _data->PackedBytes.SetByte(PhysicsFrameByteIndex, value);
     }
 
     public ref int DistanceFallen => ref Unsafe.AsRef<int>(&_data->DistanceFallen);
