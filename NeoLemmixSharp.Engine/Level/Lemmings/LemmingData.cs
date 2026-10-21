@@ -168,39 +168,109 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
 
     public int NumberOfBricksLeft
     {
-        get => _data->PackedBytes.GetByte(NumberOfBricksLeftByteIndex);
-        set => _data->PackedBytes.SetByte(NumberOfBricksLeftByteIndex, value);
+        get
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += NumberOfBricksLeftByteIndex;
+            return *p;
+        }
+        set
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += NumberOfBricksLeftByteIndex;
+            *p = (byte)value;
+        }
     }
     public int DisarmingFrames
     {
-        get => _data->PackedBytes.GetByte(DisarmingFramesByteIndex);
-        set => _data->PackedBytes.SetByte(DisarmingFramesByteIndex, value);
+        get
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += DisarmingFramesByteIndex;
+            return *p;
+        }
+        set
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += DisarmingFramesByteIndex;
+            *p = (byte)value;
+        }
     }
     public int JumpProgress
     {
-        get => _data->PackedBytes.GetByte(JumpProgressByteIndex);
-        set => _data->PackedBytes.SetByte(JumpProgressByteIndex, value);
+        get
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += JumpProgressByteIndex;
+            return *p;
+        }
+        set
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += JumpProgressByteIndex;
+            *p = (byte)value;
+        }
     }
 
     public int ParticleTimer
     {
-        get => _data->PackedBytes.GetByte(ParticleTimerByteIndex);
-        set => _data->PackedBytes.SetByte(ParticleTimerByteIndex, value);
+        get
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += ParticleTimerByteIndex;
+            return *p;
+        }
+        set
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += ParticleTimerByteIndex;
+            *p = (byte)value;
+        }
     }
     public int AscenderProgress
     {
-        get => _data->PackedBytes.GetByte(AscenderProgressByteIndex);
-        set => _data->PackedBytes.SetByte(AscenderProgressByteIndex, value);
+        get
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += AscenderProgressByteIndex;
+            return *p;
+        }
+        set
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += AscenderProgressByteIndex;
+            *p = (byte)value;
+        }
     }
     public int AnimationFrame
     {
-        get => _data->PackedBytes.GetByte(AnimationFrameByteIndex);
-        set => _data->PackedBytes.SetByte(AnimationFrameByteIndex, value);
+        get
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += AnimationFrameByteIndex;
+            return *p;
+        }
+        set
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += AnimationFrameByteIndex;
+            *p = (byte)value;
+        }
     }
     public int PhysicsFrame
     {
-        get => _data->PackedBytes.GetByte(PhysicsFrameByteIndex);
-        set => _data->PackedBytes.SetByte(PhysicsFrameByteIndex, value);
+        get
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += PhysicsFrameByteIndex;
+            return *p;
+        }
+        set
+        {
+            byte* p = (byte*)&_data->PackedBytes;
+            p += PhysicsFrameByteIndex;
+            *p = (byte)value;
+        }
     }
 
     public ref int DistanceFallen => ref Unsafe.AsRef<int>(&_data->DistanceFallen);
