@@ -10,7 +10,7 @@ public static class DisarmerAction
         var disarmingFrames = lemming.DisarmingFrames;
         disarmingFrames--;
         lemming.DisarmingFrames = disarmingFrames;
-        if (disarmingFrames <= 0)
+        if (disarmingFrames == 0)
         {
             if (lemming.NextActionType == LemmingActionType.NoneAction)
             {

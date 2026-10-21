@@ -57,7 +57,7 @@ public sealed class JumperAction
         lemming.JumpProgress = jumpProgress;
 
         int animationFrame;
-        if (jumpProgress >= 0 && jumpProgress <= 5)
+        if (jumpProgress <= 5)
         {
             animationFrame = 0;
         }
@@ -105,7 +105,7 @@ public sealed class JumperAction
 
             var position = jumpPositionPatterns.At(i);
 
-            if (position.X == 0 && position.Y == 0)
+            if (position == Point.Zero)
                 break;
 
             if (position.X != 0) // Wall check
@@ -155,7 +155,7 @@ public sealed class JumperAction
             if (!PositionIsSolidToLemming(in gadgetsNearLemming, lemming, checkPosition2))
             {
                 int deltaY;
-                LemmingActionType nextActionType;
+                var nextActionType= LemmingActionType.HoisterAction;
 
                 if (n <= 2)
                 {
@@ -165,13 +165,11 @@ public sealed class JumperAction
                 else if (n <= 5)
                 {
                     deltaY = n - 5;
-                    nextActionType = LemmingActionType.HoisterAction;
                     lemming.JumpToHoistAdvance = true;
                 }
                 else
                 {
                     deltaY = n - 8;
-                    nextActionType = LemmingActionType.HoisterAction;
                 }
 
                 lemmingPosition = orientation.MoveUp(checkPosition, deltaY);
@@ -272,7 +270,5 @@ public sealed class JumperAction
         }
 
         LemmingActionType.JumperAction.DoMainTransitionActions(lemming, turnAround);
-
-        lemming.JumpProgress = 0;
     }
 }

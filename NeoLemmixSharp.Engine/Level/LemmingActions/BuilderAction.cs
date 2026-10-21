@@ -93,7 +93,6 @@ public static class BuilderAction
         LemmingActionType.BuilderAction.DoMainTransitionActions(lemming, turnAround);
 
         lemming.NumberOfBricksLeft = EngineConstants.NumberOfBuilderBricks;
-        lemming.ConstructivePositionFreeze = false;
     }
 
     public static void LayBrick(Lemming lemming)

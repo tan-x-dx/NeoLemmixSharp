@@ -51,7 +51,5 @@ public static class AscenderAction
     public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         LemmingActionType.AscenderAction.DoMainTransitionActions(lemming, turnAround);
-
-        lemming.AscenderProgress = 0;
     }
 }

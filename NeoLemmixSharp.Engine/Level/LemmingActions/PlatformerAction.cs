@@ -151,6 +151,5 @@ public static class PlatformerAction
         LemmingActionType.PlatformerAction.DoMainTransitionActions(lemming, turnAround);
 
         lemming.NumberOfBricksLeft = EngineConstants.NumberOfPlatformerBricks;
-        lemming.ConstructivePositionFreeze = false;
     }
 }
