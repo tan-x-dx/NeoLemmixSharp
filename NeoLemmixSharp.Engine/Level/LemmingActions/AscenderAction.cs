@@ -10,7 +10,7 @@ public static class AscenderAction
     public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
         ref var lemmingPosition = ref lemming.AnchorPosition;
-        ref var ascenderProgress = ref lemming.AscenderProgress;
+        var ascenderProgress = lemming.AscenderProgress;
         var orientation = lemming.Orientation;
 
         var dy = 0;
@@ -21,6 +21,7 @@ public static class AscenderAction
             dy++;
             lemmingPosition = orientation.MoveUp(lemmingPosition, 1);
             ascenderProgress++;
+            lemming.AscenderProgress = ascenderProgress;
         }
 
         var pixel1IsSolid = PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 1));
@@ -50,7 +51,5 @@ public static class AscenderAction
     public static void TransitionLemmingToAction(Lemming lemming, bool turnAround)
     {
         LemmingActionType.AscenderAction.DoMainTransitionActions(lemming, turnAround);
-
-        lemming.AscenderProgress = 0;
     }
 }

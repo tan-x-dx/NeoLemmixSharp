@@ -24,6 +24,7 @@ public static class OrientationMethods
      * what we'd call the Right orientation.
      * Secondly, the ids of the orientations increment in a clockwise manner, as
      * opposed to the standard counter-clockwise manner that we expect.
+     * Finally, the Y-direction increases by going down.
      * 
      * The calculations are correct, and are implemented in such a way as to simplify
      * stuff.

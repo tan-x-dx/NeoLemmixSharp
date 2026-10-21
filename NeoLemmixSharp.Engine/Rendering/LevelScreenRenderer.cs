@@ -16,8 +16,6 @@ public sealed class LevelScreenRenderer : IScreenRenderer
 
     private readonly GraphicsDevice _graphicsDevice;
 
-    private readonly LemmingSpriteBank _lemmingSpriteBank;
-
     private readonly LevelRenderer _levelRenderer;
     private readonly ControlPanelRenderer _controlPanelRenderer;
     private readonly LevelCursorSprite _levelCursorSprite;
@@ -33,12 +31,9 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         LevelControlPanel levelControlPanel,
         LevelRenderer levelRenderer,
         LevelCursorSprite levelCursorSprite,
-        LemmingSpriteBank lemmingSpriteBank,
         ControlPanelSpriteBank controlPanelSpriteBank)
     {
         _graphicsDevice = graphicsDevice;
-
-        _lemmingSpriteBank = lemmingSpriteBank;
 
         _levelRenderer = levelRenderer;
 
@@ -82,6 +77,8 @@ public sealed class LevelScreenRenderer : IScreenRenderer
         _levelRenderer.OnWindowSizeChanged();
         _controlPanelRenderer.OnWindowSizeChanged();
     }
+
+    public LemmingRenderer LemmingRendererFor(int id) => _levelRenderer.LemmingRendererFor(id);
 
     public void Dispose()
     {

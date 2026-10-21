@@ -44,6 +44,11 @@ public readonly struct DihedralTransformation : IEquatable<DihedralTransformatio
         FacingDirection = new FacingDirection(f);
     }
 
+    public DihedralTransformation RotateClockwise() => new(Orientation.RotateClockwise(), FacingDirection);
+    public DihedralTransformation RotateCounterClockwise() => new(Orientation.RotateCounterClockwise(), FacingDirection);
+    public DihedralTransformation FlipHorizontal() => new(Orientation, FacingDirection.GetOpposite());
+    public DihedralTransformation FlipVertical() => new(Orientation.GetOpposite(), FacingDirection.GetOpposite());
+
     [Pure]
     public Size Transform(Size size)
     {

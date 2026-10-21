@@ -2,7 +2,7 @@
 
 namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
-public struct LemmingColors
+public struct LemmingColorData
 {
     public Color HairColor;
     public Color SkinColor;

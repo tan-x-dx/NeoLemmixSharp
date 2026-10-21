@@ -141,6 +141,10 @@ internal sealed class TerrainReader : NeoLemmixDataReader
             pieceIdentifier,
             TextureType.TerrainSprite);
 
+        var renderType = _currentTerrainData.Erase ? TerrainRenderType.Erase
+            : _currentTerrainData.NoOverwrite ? TerrainRenderType.NoOverwrite
+            : TerrainRenderType.Normal;
+
         var newTerrainData = new TerrainInstanceData
         {
             GroupName = _currentTerrainData.GroupName,
@@ -149,9 +153,8 @@ internal sealed class TerrainReader : NeoLemmixDataReader
 
             Position = new Point(_currentTerrainData.X, _currentTerrainData.Y),
 
-            NoOverwrite = _currentTerrainData.NoOverwrite,
+            RenderType = renderType,
             DihedralTransformation = dht,
-            Erase = _currentTerrainData.Erase,
 
             Tint = Color.White,
             HueAngle = 0,
@@ -185,7 +188,7 @@ internal sealed class TerrainReader : NeoLemmixDataReader
         public int Height = -1;
 
         public TempTerrainData()
-        {            
+        {
         }
     }
 }

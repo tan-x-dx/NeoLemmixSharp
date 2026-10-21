@@ -20,8 +20,7 @@ public sealed class TerrainInstanceData : IInstanceData
     public required int Width { get; set; }
     public required int Height { get; set; }
 
-    public required bool NoOverwrite { get; set; }
-    public required bool Erase { get; set; }
+    public TerrainRenderType RenderType { get; set; }
 
     public TerrainInstanceData()
     {
@@ -29,5 +28,11 @@ public sealed class TerrainInstanceData : IInstanceData
 
     public StylePiecePair GetStylePiecePair() => new(StyleIdentifier, PieceIdentifier);
 
-    RectangularRegion IInstanceData.GetBounds(Point anchorPosition) => new(anchorPosition, Size);
+    RectangularRegion IInstanceData.GetBounds(Point anchorPosition)
+    {
+        var dht = DihedralTransformation;
+        var result = new RectangularRegion(anchorPosition, Size);
+
+        return dht.Transform(result);
+    }
 }

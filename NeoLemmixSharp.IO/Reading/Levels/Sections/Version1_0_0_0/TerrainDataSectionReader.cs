@@ -44,8 +44,8 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
         Color tint = reader.ReadRgbColor();
         uint hueAngle = ReadTerrainDataHueAngle(reader);
 
-        uint terrainDataMiscByte = reader.Read8BitUnsignedInteger();
-        var decipheredTerrainDataMisc = ReadWriteHelpers.DecodeTerrainDataMiscByte(terrainDataMiscByte);
+        uint rawTerrainRenderType = reader.Read8BitUnsignedInteger();
+        var terrainRenderType = TerrainRenderTypeHelpers.GetEnumValue(rawTerrainRenderType);
 
         int width = reader.Read16BitUnsignedInteger();
         int height = reader.Read16BitUnsignedInteger();
@@ -58,9 +58,8 @@ internal sealed class TerrainDataSectionReader : LevelDataSectionReader
 
             Position = position,
 
-            NoOverwrite = decipheredTerrainDataMisc.NoOverwrite,
+            RenderType = terrainRenderType,
             DihedralTransformation = dht,
-            Erase = decipheredTerrainDataMisc.Erase,
 
             Tint = tint,
             HueAngle = hueAngle,

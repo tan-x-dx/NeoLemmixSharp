@@ -16,6 +16,7 @@ public static class ReacherAction
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
+        var physicsFrame = lemming.PhysicsFrame;
 
         var emptyPixels = GetEmptyPixelCount(in gadgetsNearLemming, lemming, lemmingPosition);
 
@@ -31,7 +32,7 @@ public static class ReacherAction
         }
 
         // On the first frame, check as well for height 9, as the shimmier may not continue in that case
-        if (lemming.PhysicsFrame == 1 &&
+        if (physicsFrame == 1 &&
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 9)))
         {
             FallerAction.TransitionLemmingToAction(lemming, false);
@@ -42,7 +43,7 @@ public static class ReacherAction
         var movementList = MovementList;
 
         // Check whether we can reach the ceiling
-        if (emptyPixels <= movementList[lemming.PhysicsFrame])
+        if (emptyPixels <= movementList[physicsFrame])
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, emptyPixels + 1); // Shimmiers are a lot smaller than reachers
             ShimmierAction.TransitionLemmingToAction(lemming, false);
@@ -51,8 +52,8 @@ public static class ReacherAction
         }
 
         // Move upwards
-        lemmingPosition = orientation.MoveUp(lemmingPosition, movementList[lemming.PhysicsFrame]);
-        if (lemming.PhysicsFrame == 7)
+        lemmingPosition = orientation.MoveUp(lemmingPosition, movementList[physicsFrame]);
+        if (physicsFrame == 7)
         {
             FallerAction.TransitionLemmingToAction(lemming, false);
         }

@@ -20,12 +20,13 @@ public static class StackerSkill
             lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX),
             out var gadgetsNearRegion);
 
-        lemming.StackLow = !PositionIsSolidToLemming(
+        var stackLow = !PositionIsSolidToLemming(
             in gadgetsNearRegion,
             lemming,
             lemming.Orientation.MoveRight(lemming.AnchorPosition, lemming.FacingDirection.DeltaX));
 
         StackerAction.TransitionLemmingToAction(lemming, false);
+        lemming.StackLow = stackLow;
     }
 
     public static IEnumerable<LemmingActionType> GetActionsThatCanBeAssigned()

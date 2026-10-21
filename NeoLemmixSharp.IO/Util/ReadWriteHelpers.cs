@@ -1,5 +1,4 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.IO.Data.Level.Terrain;
 using NeoLemmixSharp.IO.Reading;
 using NeoLemmixSharp.IO.Writing;
 
@@ -10,45 +9,6 @@ public static class ReadWriteHelpers
     #region Level Data Read/Write Stuff
 
     internal const int UnspecifiedLevelStartValue = 5000;
-
-    #endregion
-
-    #region Terrain Data Read/Write Stuff
-
-    private const int TerrainDataEraseBitShift = 0;
-    private const int TerrainDataNoOverwriteBitShift = 1;
-
-    internal static byte EncodeTerrainArchetypeDataByte(TerrainInstanceData terrainData)
-    {
-        var miscDataBits = (terrainData.Erase ? 1 << TerrainDataEraseBitShift : 0) |
-                           (terrainData.NoOverwrite ? 1 << TerrainDataNoOverwriteBitShift : 0);
-
-        return (byte)miscDataBits;
-    }
-
-    internal static DecodedTerrainDataMisc DecodeTerrainDataMiscByte(uint terrainDataMiscByte)
-    {
-        var erase = ((terrainDataMiscByte >>> TerrainDataEraseBitShift) & 1) != 0;
-        var noOverwrite = ((terrainDataMiscByte >>> TerrainDataNoOverwriteBitShift) & 1) != 0;
-
-        return new DecodedTerrainDataMisc(
-            erase,
-            noOverwrite);
-    }
-
-    internal readonly ref struct DecodedTerrainDataMisc(bool erase, bool noOverwrite)
-    {
-        internal readonly bool Erase = erase;
-        internal readonly bool NoOverwrite = noOverwrite;
-    }
-
-    #endregion
-
-    #region Terrain Group Data Read/Write Stuff
-
-    #endregion
-
-    #region Gadget Data Read/Write Stuff
 
     #endregion
 

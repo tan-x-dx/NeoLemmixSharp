@@ -105,6 +105,16 @@ public static class FileTypeHelper
         _ => Helpers.ThrowUnknownEnumValueException<FileFormatType, string>(fileFormatType)
     };
 
+    internal static ReadOnlySpan<byte> GetMagicBytes(FileType fileType) => fileType switch
+    {
+        FileType.Level => DefaultFileExtensions.LevelFileFormatMagicBytes,
+        FileType.Replay => DefaultFileExtensions.ReplayFileFormatMagicBytes,
+        FileType.LevelPack => DefaultFileExtensions.LevelPackFileFormatMagicBytes,
+        FileType.Style => DefaultFileExtensions.StyleFileFormatMagicBytes,
+
+        _ => throw new ArgumentOutOfRangeException(nameof(fileType), fileType, "Cannot get magic bytes for this type!")
+    };
+
     [DoesNotReturn]
     private static void ThrowMissingFileExtensionException(string filePath) => throw new ArgumentException($"No file extension specified: {filePath}");
     [DoesNotReturn]

@@ -188,20 +188,20 @@ public readonly struct TerrainPainter
         ref var targetPixelColor = ref targetPixelColorData[p0];
         ref var targetPixelData = ref TerrainPixels[p0];
 
-        if (terrainData.Erase)
+        switch (terrainData.RenderType)
         {
-            if (sourcePixelColor != Color.Transparent)
-            {
-                targetPixelColor = Color.Transparent;
-            }
-        }
-        else if (terrainData.NoOverwrite)
-        {
-            targetPixelColor = BlendColors(targetPixelColor, sourcePixelColor);
-        }
-        else
-        {
-            targetPixelColor = BlendColors(sourcePixelColor, targetPixelColor);
+            case TerrainRenderType.Erase:
+                if (sourcePixelColor != Color.Transparent)
+                {
+                    targetPixelColor = Color.Transparent;
+                }
+                break;
+            case TerrainRenderType.NoOverwrite:
+                targetPixelColor = BlendColors(targetPixelColor, sourcePixelColor);
+                break;
+            default:
+                targetPixelColor = BlendColors(sourcePixelColor, targetPixelColor);
+                break;
         }
 
         if (PixelColorIsSubstantial(targetPixelColor))

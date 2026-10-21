@@ -20,14 +20,19 @@ public static class ParticleHelper
     {
         Debug.Assert(rawBytes.Length == ByteLength);
 
+        var i = 0;
         var j = 0;
-        for (var i = 0; i < rawBytes.Length; i += 2)
+        do
         {
-            var x = (int)(sbyte)rawBytes.At(i);
-            var y = (int)(sbyte)rawBytes.At(i + 1);
+            var x = (int)(sbyte)rawBytes.At(i++);
+            var y = (int)(sbyte)rawBytes.At(i++);
 
             ParticleOffsets.At(j++) = new Point(x, y);
         }
+        while (i < rawBytes.Length);
+
+        Debug.Assert(i == rawBytes.Length);
+        Debug.Assert(j == ParticleOffsets.Length);
     }
 
     [Pure]

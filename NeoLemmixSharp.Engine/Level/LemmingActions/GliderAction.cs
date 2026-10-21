@@ -99,10 +99,10 @@ end;
     {
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
-
         var dx = lemming.FacingDirection.DeltaX;
+        var physicsFrame = lemming.PhysicsFrame;
 
-        var maxFallDistance = GliderFallTable[lemming.PhysicsFrame];
+        var maxFallDistance = GliderFallTable[physicsFrame];
 
         var updraftFallDelta = GetUpdraftFallDelta(lemming, in gadgetsNearLemming);
 
@@ -111,8 +111,8 @@ end;
             maxFallDistance--;
 
             // Rise a pixel every second frame
-            if (lemming.PhysicsFrame >= 9 &&
-                (lemming.PhysicsFrame & 1) != 0 &&
+            if (physicsFrame >= 9 &&
+                (physicsFrame & 1) != 0 &&
                 !PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 1 - maxFallDistance))) &&
                 HeadCheck(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 1)))
             {

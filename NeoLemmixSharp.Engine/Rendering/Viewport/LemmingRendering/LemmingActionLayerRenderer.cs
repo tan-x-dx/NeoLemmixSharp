@@ -54,11 +54,11 @@ public sealed class LemmingActionLayerRenderer
     {
         TribeSpriteLayerColorType.NoRender => Color.Transparent,
         TribeSpriteLayerColorType.TrueColor => Color.White,
-        TribeSpriteLayerColorType.LemmingHairColor => lemming.LemmingColors.HairColor,
-        TribeSpriteLayerColorType.LemmingSkinColor => lemming.LemmingColors.SkinColor,
-        TribeSpriteLayerColorType.LemmingBodyColor => lemming.LemmingColors.BodyColor,
-        TribeSpriteLayerColorType.LemmingFootColor => lemming.LemmingColors.FootColor,
-        TribeSpriteLayerColorType.TribePaintColor =>  lemming.LemmingColors.PaintColor,
+        TribeSpriteLayerColorType.LemmingHairColor => lemming.Colors.HairColor,
+        TribeSpriteLayerColorType.LemmingSkinColor => lemming.Colors.SkinColor,
+        TribeSpriteLayerColorType.LemmingBodyColor => lemming.Colors.BodyColor,
+        TribeSpriteLayerColorType.LemmingFootColor => lemming.Colors.FootColor,
+        TribeSpriteLayerColorType.TribePaintColor => lemming.Colors.PaintColor,
 
         _ => Helpers.ThrowUnknownEnumValueException<TribeSpriteLayerColorType, Color>(_colorChooser)
     };

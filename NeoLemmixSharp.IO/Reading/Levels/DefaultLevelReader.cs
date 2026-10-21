@@ -18,7 +18,7 @@ internal readonly ref struct DefaultLevelReader : ILevelReader<DefaultLevelReade
     {
         _levelFilePath = filePath;
         using var fileStream = new FileStream(filePath, FileMode.Open);
-        _reader = new RawLevelFileDataReader(fileStream);
+        _reader = new RawLevelFileDataReader(fileStream, FileType.Level);
     }
 
     public LevelData ReadLevel()

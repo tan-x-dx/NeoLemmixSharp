@@ -24,6 +24,7 @@ public sealed class LevelRenderer :
     private readonly BoundaryBehaviour _verticalBoundaryBehaviour;
     private readonly SpriteSpacialHashGrid _spriteSpacialHashGrid;
 
+    private readonly LemmingRenderer[] _lemmingRenderers;
     private readonly List<IViewportObjectRenderer> _orderedSprites;
 
     private IBackgroundRenderer _backgroundRenderer;
@@ -33,6 +34,7 @@ public sealed class LevelRenderer :
     public LevelRenderer(
         GraphicsDevice graphicsDevice,
         List<IViewportObjectRenderer> orderedSprites,
+        LemmingRenderer[] lemmingSprites,
         IBackgroundRenderer backgroundRenderer,
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
@@ -42,6 +44,7 @@ public sealed class LevelRenderer :
         _horizontalBoundaryBehaviour = horizontalBoundaryBehaviour;
         _verticalBoundaryBehaviour = verticalBoundaryBehaviour;
 
+        _lemmingRenderers = lemmingSprites;
         _orderedSprites = orderedSprites;
 
         _spriteSpacialHashGrid = new SpriteSpacialHashGrid(
@@ -50,7 +53,7 @@ public sealed class LevelRenderer :
             horizontalBoundaryBehaviour,
             verticalBoundaryBehaviour);
 
-        var rendererSpan = CollectionsMarshal.AsSpan(_orderedSprites);
+        var rendererSpan = CollectionsMarshal.AsSpan(orderedSprites);
         foreach (var renderer in rendererSpan)
         {
             if (renderer is LemmingRenderer) // LemmingRenderers are handled elsewhere
@@ -62,6 +65,8 @@ public sealed class LevelRenderer :
         _backgroundRenderer = backgroundRenderer;
         _levelRenderTarget = CreateLevelRenderTarget2D();
     }
+
+    public LemmingRenderer LemmingRendererFor(int id) => _lemmingRenderers[id];
 
     public bool IsRenderingSprite(IViewportObjectRenderer renderer) => _spriteSpacialHashGrid.IsTrackingItem(renderer);
 

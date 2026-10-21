@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -271,7 +272,7 @@ public static class LemmingActionConstants
         };
 
         if (result.Count != NumberOfLemmingActions)
-            throw new Exception("Need to update this collection with new actions!");
+            ThrowMissingActionException();
 
         return result;
     }
@@ -331,7 +332,7 @@ public static class LemmingActionConstants
         SetData(LemmingActionType.RotateHalfAction,             RotateHalfActionName,             RotateHalfActionSpriteFileName,             RotateHalfAnimationFrames);
 
         if (count != NumberOfLemmingActions)
-            throw new Exception("Need to update this collection with new actions!");
+            ThrowMissingActionException();
 
         return result;
 
@@ -368,6 +369,9 @@ public static class LemmingActionConstants
         public readonly string LemmingActionFileName = lemmingActionFileName;
         public readonly int NumberOfAnimationFrames = numberOfAnimationFrames;
     }
+
+    [DoesNotReturn]
+    public static void ThrowMissingActionException() => throw new Exception("Missing lemming action! Update this list with new action!");
 }
 
 public static class LemmingActionBounds

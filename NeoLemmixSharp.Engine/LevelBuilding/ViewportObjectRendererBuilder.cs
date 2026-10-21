@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Rendering.Ui;
 using NeoLemmixSharp.Engine.Rendering.Viewport;
+using NeoLemmixSharp.Engine.Rendering.Viewport.GadgetRendering;
+using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -21,13 +24,26 @@ public sealed class ViewportObjectRendererBuilder
     }
 
     public void GetLevelSprites(
-        out List<IViewportObjectRenderer> behindTerrainSprites,
-        out List<IViewportObjectRenderer> inFrontOfTerrainSprites,
-        out List<IViewportObjectRenderer> lemmingSprites)
+        out GadgetRenderer[] behindTerrainSprites,
+        out GadgetRenderer[] inFrontOfTerrainSprites,
+        out LemmingRenderer[] lemmingSprites)
     {
-        behindTerrainSprites = new List<IViewportObjectRenderer>(_gadgets.Length);
-        inFrontOfTerrainSprites = new List<IViewportObjectRenderer>(_gadgets.Length);
-        lemmingSprites = new List<IViewportObjectRenderer>(_lemmings.Length);
+        var behindTerrainSpritesList = new List<GadgetRenderer>(_gadgets.Length);
+        var inFrontOfTerrainSpritesList = new List<GadgetRenderer>(_gadgets.Length);
+
+        var numberOfLemmingSprites = _lemmings.Length;
+
+        lemmingSprites = new LemmingRenderer[numberOfLemmingSprites];
+
+        numberOfLemmingSprites--;
+
+        while (numberOfLemmingSprites >= 0)
+        {
+            lemmingSprites.At(numberOfLemmingSprites) = new LemmingRenderer(numberOfLemmingSprites);
+            numberOfLemmingSprites--;
+        }
+
+        lemmingSprites.Sort(SortLemmingRenderers);
 
         foreach (var gadget in _gadgets)
         {
@@ -35,18 +51,21 @@ public sealed class ViewportObjectRendererBuilder
 
             if (renderer.RenderMode == GadgetRenderMode.BehindTerrain)
             {
-                behindTerrainSprites.Add(renderer);
+                behindTerrainSpritesList.Add(renderer);
             }
             else if (renderer.RenderMode == GadgetRenderMode.InFrontOfTerrain)
             {
-                inFrontOfTerrainSprites.Add(renderer);
+                inFrontOfTerrainSpritesList.Add(renderer);
             }
         }
 
-        foreach (var lemming in _lemmings)
-        {
-            lemmingSprites.Add(lemming.Renderer);
-        }
+        behindTerrainSprites = behindTerrainSpritesList.ToArray();
+        inFrontOfTerrainSprites = inFrontOfTerrainSpritesList.ToArray();
+    }
+
+    private static int SortLemmingRenderers(IViewportObjectRenderer x, IViewportObjectRenderer y)
+    {
+        throw new NotImplementedException();
     }
 
     public ControlPanelSpriteBank GetControlPanelSpriteBank(ContentManager contentManager)

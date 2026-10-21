@@ -61,9 +61,8 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
             PieceIdentifier = terrainArchetypeData.PieceIdentifier,
             Position = initialPosition,
             DihedralTransformation = default,
-            NoOverwrite = false,
+            RenderType = TerrainRenderType.Normal,
             Tint = Color.White,
-            Erase = false,
             HueAngle = 0,
             Width = defaultArchetypeSize.W,
             Height = defaultArchetypeSize.H,
@@ -245,17 +244,47 @@ public sealed partial class LevelEditorCanvas : IComparer<CanvasPiece>
 
     public void RotateSelection()
     {
+        if (_selectedCanvasPieces.Count == 0)
+            return;
+
+        foreach (var piece in _selectedCanvasPieces)
+        {
+            var dht = piece.InstanceData.DihedralTransformation;
+
+            piece.InstanceData.DihedralTransformation = dht.RotateClockwise();
+        }
+
+        RepaintLevel();
     }
 
     public void InvertSelection()
     {
-        RotateSelection();
-        RotateSelection();
-        FlipSelection();
+        if (_selectedCanvasPieces.Count == 0)
+            return;
+
+        foreach (var piece in _selectedCanvasPieces)
+        {
+            var dht = piece.InstanceData.DihedralTransformation;
+
+            piece.InstanceData.DihedralTransformation = dht.FlipVertical();
+        }
+
+        RepaintLevel();
     }
 
     public void FlipSelection()
     {
+        if (_selectedCanvasPieces.Count == 0)
+            return;
+
+        foreach (var piece in _selectedCanvasPieces)
+        {
+            var dht = piece.InstanceData.DihedralTransformation;
+
+            piece.InstanceData.DihedralTransformation = dht.FlipHorizontal();
+        }
+
+        RepaintLevel();
     }
 
     int IComparer<CanvasPiece>.Compare(CanvasPiece? x, CanvasPiece? y)

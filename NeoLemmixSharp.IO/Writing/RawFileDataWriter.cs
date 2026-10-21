@@ -2,6 +2,7 @@
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.IO.FileFormats;
 using NeoLemmixSharp.IO.Util;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -10,6 +11,8 @@ namespace NeoLemmixSharp.IO.Writing;
 
 internal interface IRawFileDataWriter
 {
+    FileType FileType { get; }
+
     void WriteBool(bool value);
     void Write8BitUnsignedInteger(byte value);
     void Write16BitUnsignedInteger(ushort value);
@@ -37,12 +40,16 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
     private int _currentSectionStartPosition = -1;
     private TEnum? _currentSectionIdentifier;
 
+    public FileType FileType { get; }
+
     private bool _isDisposed;
 
     public int Position => _mainDataPosition;
 
-    public RawFileDataWriter()
+    public RawFileDataWriter(FileType fileType)
     {
+        FileType = fileType;
+
         _mainDataByteBuffer = new RawArray(InitialMainDataByteBufferLength);
         _mainDataPosition = 0;
 
@@ -116,16 +123,21 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         Unsafe.WriteUnaligned(pointer, value);
     }
 
-    public unsafe void WriteBytes(ReadOnlySpan<byte> data)
+    public void WriteBytes(ReadOnlySpan<byte> data)
     {
         AssertWithinSection();
 
-        var newPosition = _mainDataPosition + data.Length;
-        if (newPosition >= _mainDataByteBuffer.Length)
-            DoubleByteBufferLength(ref _mainDataByteBuffer);
+        WriteBytes(data, ref _mainDataByteBuffer, ref _mainDataPosition);
+    }
 
-        byte* pointer = (byte*)_mainDataByteBuffer.Handle + _mainDataPosition;
-        _mainDataPosition = newPosition;
+    private static unsafe void WriteBytes(ReadOnlySpan<byte> data, ref RawArray byteBuffer, ref int position)
+    {
+        var newPosition = position + data.Length;
+        if (newPosition >= byteBuffer.Length)
+            DoubleByteBufferLength(ref byteBuffer);
+
+        byte* pointer = (byte*)byteBuffer.Handle + position;
+        position = newPosition;
 
         var destinationSpan = Helpers.CreateSpan<byte>(pointer, data.Length);
         data.CopyTo(destinationSpan);
@@ -211,6 +223,7 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
     {
         AssertCanWriteToFile();
 
+        WriteMagicBytes();
         WriteVersion(version);
         WriteSectionIntervals();
 
@@ -219,11 +232,11 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
             IoConstants.FileSizeTooLargeExceptionMessage);
 
         Debug.Assert(_preambleDataPosition >= 0);
-        Debug.Assert(_preambleDataPosition < _preambleDataByteBuffer.Length);
+        Debug.Assert(_preambleDataPosition <= _preambleDataByteBuffer.Length);
         stream.Write(Helpers.CreateReadOnlySpan<byte>((void*)_preambleDataByteBuffer.Handle, _preambleDataPosition));
 
         Debug.Assert(_mainDataPosition >= 0);
-        Debug.Assert(_mainDataPosition < _mainDataByteBuffer.Length);
+        Debug.Assert(_mainDataPosition <= _mainDataByteBuffer.Length);
         stream.Write(Helpers.CreateReadOnlySpan<byte>((void*)_mainDataByteBuffer.Handle, _mainDataPosition));
     }
 
@@ -233,6 +246,13 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
         FileWritingException.WriterAssert(_sectionIntervals.Count > 0, "No sections written!");
 
         SectionIdentifierValidator<TPerfectHasher, TEnum>.AssertSectionsAreContiguous(_sectionIntervals);
+    }
+
+    private void WriteMagicBytes()
+    {
+        var magicBytes = FileTypeHelper.GetMagicBytes(FileType);
+
+        WriteBytes(magicBytes, ref _preambleDataByteBuffer, ref _preambleDataPosition);
     }
 
     private void WriteVersion(FileFormatVersion version)

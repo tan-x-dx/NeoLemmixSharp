@@ -38,7 +38,7 @@ internal readonly ref struct DefaultStyleReader : IStyleReader<DefaultStyleReade
     private static RawStyleFileDataReader GetRawStyleFileDataReader(string styleFilePath)
     {
         using var fileStream = new FileStream(styleFilePath, FileMode.Open);
-        return new RawStyleFileDataReader(fileStream);
+        return new RawStyleFileDataReader(fileStream, FileType.Style);
     }
 
     public StyleData ReadStyle()

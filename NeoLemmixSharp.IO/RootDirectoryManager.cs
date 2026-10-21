@@ -7,16 +7,16 @@ namespace NeoLemmixSharp.IO;
 
 public static class RootDirectoryManager
 {
-    public const string LemmingsFolderName = "lemmings";
-    public const string LevelFolderName = "levels";
-    public const string MusicFolderName = "music";
-    public const string ReplayFolderName = "Replay";
-    public const string SketchesFolderName = "sketches";
-    public const string SoundFolderName = "sound";
-    public const string StyleFolderName = "styles";
+    private const string LemmingsFolderName = "lemmings";
+    private const string LevelFolderName = "levels";
+    private const string MusicFolderName = "music";
+    private const string ReplayFolderName = "Replay";
+    private const string SketchesFolderName = "sketches";
+    private const string SoundFolderName = "sound";
+    private const string StyleFolderName = "styles";
 
-    public const string GadgetFolderName = "objects";
-    public const string TerrainFolderName = "terrain";
+    private const string GadgetFolderName = "objects";
+    private const string TerrainFolderName = "terrain";
 
     public static void Initialise()
     {

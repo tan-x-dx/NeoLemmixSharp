@@ -35,18 +35,19 @@ public static class MinerAction
         ref var lemmingPosition = ref lemming.AnchorPosition;
         var facingDirection = lemming.FacingDirection;
         var dx = facingDirection.DeltaX;
+        var physicsFrame = lemming.PhysicsFrame;
 
-        if (lemming.PhysicsFrame == 1 ||
-            lemming.PhysicsFrame == 2)
+        if (physicsFrame == 1 ||
+            physicsFrame == 2)
         {
             TerrainMasks.ApplyMinerMask(
                 lemming,
-                lemming.PhysicsFrame - 1, 0, 0);
+                physicsFrame - 1, 0, 0);
             return true;
         }
 
-        if (lemming.PhysicsFrame != 3 &&
-            lemming.PhysicsFrame != 15)
+        if (physicsFrame != 3 &&
+            physicsFrame != 15)
             return true;
 
         if (lemming.IsSlider &&
@@ -80,7 +81,7 @@ public static class MinerAction
 
         // This first check is only relevant during the very first cycle.
         // Otherwise, the pixel was already checked in frame 15 of the previous cycle
-        if (lemming.PhysicsFrame == 3 &&
+        if (physicsFrame == 3 &&
             PositionIsIndestructibleToLemming(in gadgetsNearLemming, lemming, DestructionMask, orientation.Move(lemmingPosition, new(-dx, 2))))
         {
             lemmingPosition = orientation.MoveLeft(lemmingPosition, dx + dx);

@@ -6,6 +6,7 @@ using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingFiltering;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Orientations;
 using NeoLemmixSharp.Engine.Level.Terrain;
+using NeoLemmixSharp.Engine.Rendering;
 using NeoLemmixSharp.Engine.Rendering.Viewport.LemmingRendering;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -18,11 +19,13 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 {
     private readonly LemmingData _data;
 
-    public LemmingColors LemmingColors;
-
-    public LemmingRenderer Renderer { get; }
-
     public int Id { get; }
+
+    private LemmingColorData _colors = new();
+
+    public LemmingColorData Colors => _colors;
+
+    private LemmingRenderer Renderer => LevelScreenRenderer.Instance.LemmingRendererFor(Id);
 
     #region Lemming Data
 
@@ -73,30 +76,100 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref Point AnchorPosition => ref _data.AnchorPosition;
     public ref Point PreviousAnchorPosition => ref _data.PreviousAnchorPosition;
 
-    public ref bool ConstructivePositionFreeze => ref _data.ConstructivePositionFreeze;
-    public ref bool IsStartingAction => ref _data.IsStartingAction;
-    public ref bool PlacedBrick => ref _data.PlacedBrick;
-    public ref bool StackLow => ref _data.StackLow;
-    public ref bool InitialFall => ref _data.InitialFall;
-    public ref bool EndOfAnimation => ref _data.EndOfAnimation;
-    public ref bool LaserHit => ref _data.LaserHit;
-    public ref bool JumpToHoistAdvance => ref _data.JumpToHoistAdvance;
-    public ref int AnimationFrame => ref _data.AnimationFrame;
-    public ref int PhysicsFrame => ref _data.PhysicsFrame;
-    public ref int AscenderProgress => ref _data.AscenderProgress;
-    public ref int NumberOfBricksLeft => ref _data.NumberOfBricksLeft;
-    public ref int DisarmingFrames => ref _data.DisarmingFrames;
+    public bool ConstructivePositionFreeze
+    {
+        get => _data.ConstructivePositionFreeze;
+        set => _data.ConstructivePositionFreeze = value;
+    }
+    public bool IsStartingAction
+    {
+        get => _data.IsStartingAction;
+        set => _data.IsStartingAction = value;
+    }
+    public bool PlacedBrick
+    {
+        get => _data.PlacedBrick;
+        set => _data.PlacedBrick = value;
+    }
+    public bool StackLow
+    {
+        get => _data.StackLow;
+        set => _data.StackLow = value;
+    }
+    public bool InitialFall
+    {
+        get => _data.InitialFall;
+        set => _data.InitialFall = value;
+    }
+    public bool EndOfAnimation
+    {
+        get => _data.EndOfAnimation;
+        set => _data.EndOfAnimation = value;
+    }
+    public bool LaserHit
+    {
+        get => _data.LaserHit;
+        set => _data.LaserHit = value;
+    }
+    public bool JumpToHoistAdvance
+    {
+        get => _data.JumpToHoistAdvance;
+        set => _data.JumpToHoistAdvance = value;
+    }
+    public int AnimationFrame
+    {
+        get => _data.AnimationFrame;
+        set => _data.AnimationFrame = value;
+    }
+    public int PhysicsFrame
+    {
+        get => _data.PhysicsFrame;
+        set => _data.PhysicsFrame = value;
+    }
+    public int NumberOfBricksLeft
+    {
+        get => _data.NumberOfBricksLeft;
+        set => _data.NumberOfBricksLeft = value;
+    }
+    public int AscenderProgress
+    {
+        get => _data.AscenderProgress;
+        set => _data.AscenderProgress = value;
+    }
+    public int DisarmingFrames
+    {
+        get => _data.DisarmingFrames;
+        set => _data.DisarmingFrames = value;
+    }
+    public int JumpProgress
+    {
+        get => _data.JumpProgress;
+        set => _data.JumpProgress = value;
+    }
+    public int ParticleTimer
+    {
+        get => _data.ParticleTimer;
+        set => _data.ParticleTimer = value;
+    }
+
     public ref int DistanceFallen => ref _data.DistanceFallen;
-    public ref int JumpProgress => ref _data.JumpProgress;
     public ref int TrueDistanceFallen => ref _data.TrueDistanceFallen;
     public ref int LaserRemainTime => ref _data.LaserRemainTime;
-    public ref int FastForwardTime => ref _data.FastForwardTime;
+    public ref uint FastForwardTime => ref _data.FastForwardTime;
     public ref uint CountDownTimer => ref _data.CountDownTimer;
-    public ref int ParticleTimer => ref _data.ParticleTimer;
     public ref LemmingRemovalReason LemmingRemovalReason => ref _data.LemmingRemovalReason;
 
     public bool IsSimulation => Id == EngineConstants.SimulationLemmingId;
-    public bool IsFastForward => _data.FastForwardTime > 0 || IsPermanentFastForwards;
+    public bool IsFastForward
+    {
+        get
+        {
+            uint fastForwardAmount = IsPermanentFastForwards ? 1U : 0U;
+            fastForwardAmount |= FastForwardTime;
+
+            return fastForwardAmount > 0;
+        }
+    }
 
     public Point HeadPosition => Orientation.MoveUp(AnchorPosition, 6);
     public Point FootPosition => CurrentActionType.GetFootPosition(DihedralTransformation, AnchorPosition);
@@ -104,6 +177,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<Point> GetJumperPositions() => _data.GetJumperPositions();
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReadOnlySpan<char> CountDownCharBuffer() => _data.GetCountDownCharsSpan();
 
     #endregion
 
@@ -117,7 +192,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     /// <summary>
     /// Must be active and NOT removed and NOT zombie and NOT neutral
     /// </summary>
-    public bool CanHaveSkillsAssigned => (_data.State & LemmingAbilityConstants.AssignableSkillBitMask) == (1U << LemmingAbilityConstants.ActiveBitIndex);
+    public bool CanHaveSkillsAssigned => (LemmingRemovalReason == LemmingRemovalReason.None) && ((_data.State & LemmingAbilityConstants.AssignableSkillBitMask) == (1U << LemmingAbilityConstants.ActiveBitIndex));
 
     public bool IsClimber
     {
@@ -353,8 +428,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         Id = id;
         _data = PointerDataHelper.CreateItem<LemmingData>(ref dataHandle);
-
-        Renderer = new LemmingRenderer(this);
     }
 
     public void Initialise()
@@ -384,9 +457,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         // No transition to do at the end of lemming movement
         SetNextActionType(LemmingActionType.NoneAction);
 
-        HandleParticleTimer();
-        HandleCountDownTimer();
-        HandleFastForwardTimer();
+        UpdateParticleTimer();
+        UpdateCountDownTimer();
+        UpdateFastForwardTimer();
 
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the region enclosed by a box centred around the current position.
@@ -407,10 +480,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         in GadgetEnumerable gadgetsNearLemming,
         Span<Point> gadgetCheckPositions)
     {
-        if (!HandleLemmingAction(in gadgetsNearLemming)) return;
+        if (!EvaluateLemmingAction(in gadgetsNearLemming)) return;
         if (!CheckLevelBoundaries()) return;
         if (!CheckTriggerAreas(in gadgetsNearLemming, gadgetCheckPositions, false)) return;
-        if (CurrentActionType == LemmingActionType.ExiterAction) return;
         if (IsZombie) return;
         if (!LevelScreen.LemmingManager.AnyZombies()) return;
 
@@ -421,11 +493,11 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public void Simulate(bool checkGadgets)
     {
         if (!IsSimulation)
-            throw new InvalidOperationException("Use simulation lemming for simulations!");
+            ThrowSimulationLemmingException();
 
-        HandleParticleTimer();
-        HandleCountDownTimer();
-        HandleFastForwardTimer();
+        UpdateParticleTimer();
+        UpdateCountDownTimer();
+        UpdateFastForwardTimer();
 
         // To do gadget checks, fetch all gadgets that overlap a certain rectangle.
         // That rectangle is defined as being the region enclosed by a box centred around the current position.
@@ -437,7 +509,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
         LevelScreen.GadgetManager.GetAllItemsNearRegion(checkPositionsBounds, out var gadgetsNearLemming);
 
-        var handleGadgets = HandleLemmingAction(in gadgetsNearLemming) && CheckLevelBoundaries() && checkGadgets;
+        var handleGadgets = EvaluateLemmingAction(in gadgetsNearLemming) && CheckLevelBoundaries() && checkGadgets;
         if (handleGadgets)
         {
             Span<Point> gadgetCheckPositions = stackalloc Point[LemmingMovementHelper.MaxIntermediateCheckPositions];
@@ -446,7 +518,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
     }
 
-    private void HandleParticleTimer()
+    public void ResetFlagsOnNewAction() => _data.ResetFlagsOnNewAction();
+
+    private void UpdateParticleTimer()
     {
         var particleTimer = ParticleTimer;
         if (particleTimer > 0)
@@ -456,7 +530,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
     }
 
-    private void HandleCountDownTimer()
+    private void UpdateCountDownTimer()
     {
         var countDownTimer = CountDownTimer;
         if (countDownTimer == 0)
@@ -468,21 +542,22 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         var countDownValue = IsFastForward
                 ? (countDownTimer + EngineConstants.EngineTicksPerSecond - 1) / EngineConstants.EngineTicksPerSecond
                 : (countDownTimer + EngineConstants.GameplayTicksPerSecond - 1) / EngineConstants.GameplayTicksPerSecond;
-        var textSpan = Renderer.CountDownCharsSpan;
+        var textSpan = _data.GetCountDownCharsSpan();
         NumberFormattingHelpers.WriteDigits(textSpan, countDownValue);
 
         if (countDownTimer == 0)
             OhNoerAction.HandleCountDownTransition(this);
     }
 
-    private void HandleFastForwardTimer()
+    private void UpdateFastForwardTimer()
     {
-        ref var fastForwardTime = ref FastForwardTime;
+        uint fastForwardTime = FastForwardTime;
 
-        if (fastForwardTime <= 0)
+        if (fastForwardTime == 0)
             return;
 
         fastForwardTime--;
+        FastForwardTime = fastForwardTime;
 
         if (fastForwardTime == 0)
             LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
@@ -494,7 +569,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     /// In that case, the method returns false - no extra work is necessary (don't bother checking gadgets, for example).
     /// </summary>
     /// <returns>True if more work needs to be done this frame</returns>
-    private bool HandleLemmingAction(in GadgetEnumerable gadgetsNearLemming)
+    private bool EvaluateLemmingAction(in GadgetEnumerable gadgetsNearLemming)
     {
         var currentActionType = CurrentActionType;
         //var currentAction = CurrentAction;
@@ -568,8 +643,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
             PreviousAnchorPosition = AnchorPosition;
         }
 
-        var result = CheckGadgets(in gadgetsNearLemming, gadgetCheckPositions) && LemmingManager.DoBlockerCheck(this);
-
+        bool result = gadgetsNearLemming.Count == 0 || (CheckGadgets(in gadgetsNearLemming, gadgetCheckPositions) && LemmingManager.DoBlockerCheck(this));
         LemmingAction.TransitionLemmingToAction(this, false, NextActionType);
 
         return result;
@@ -579,13 +653,10 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         in GadgetEnumerable gadgetsNearLemming,
         Span<Point> gadgetCheckPositions)
     {
-        if (gadgetsNearLemming.Count == 0)
-            return true;
-
         var movementHelper = new LemmingMovementHelper(this, gadgetCheckPositions);
         var length = movementHelper.EvaluateCheckPositions();
 
-        return CheckGadgetHitBoxCollisions(in gadgetsNearLemming, gadgetCheckPositions[..length]);
+        return CheckGadgetHitBoxCollisions(in gadgetsNearLemming, gadgetCheckPositions.SliceUnsafe(0, length));
     }
 
     private bool CheckGadgetHitBoxCollisions(in GadgetEnumerable gadgetEnumerable, ReadOnlySpan<Point> intermediatePositions)
@@ -596,7 +667,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
             foreach (var anchorPosition in intermediatePositions)
             {
-                var footPosition = CurrentActionType.GetFootPosition(DihedralTransformation, anchorPosition);
+                var footPosition = FootPosition;
                 if (!gadget.ContainsEitherPoint(Orientation, anchorPosition, footPosition))
                     continue;
 
@@ -605,7 +676,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
                     continue;
 
                 var beforeAction = CurrentActionType;
-                HandleGadgetInteraction(gadget, firstMatchingFilter, anchorPosition);
+                EvaluateGadgetInteraction(gadget, firstMatchingFilter, anchorPosition);
                 var afterAction = CurrentActionType;
 
                 if (beforeAction != afterAction)
@@ -634,7 +705,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         return null;
     }
 
-    private void HandleGadgetInteraction(
+    private void EvaluateGadgetInteraction(
         HitBoxGadget gadget,
         LemmingHitBoxFilter filter,
         Point checkPosition)
@@ -661,18 +732,16 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         gadget.OnLemmingHit(filter, this);
     }
 
-    public void SetFastForwardTime(int fastForwardTime)
+    public void SetFastForwardTime(uint fastForwardTime)
     {
         FastForwardTime = fastForwardTime;
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
     }
 
-    public void SetCountDownAction(uint countDownTimer, LemmingActionType countDownActionType, bool displayTimer)
+    public void SetCountDownAction(uint countDownTimer, LemmingActionType countDownActionType)
     {
         CountDownTimer = countDownTimer;
         _data.CountDownActionType = countDownActionType;
-
-        Renderer.SetDisplayTimer(displayTimer);
     }
 
     public void ClearCountDownAction()
@@ -720,7 +789,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public void OnSnapshotApplied()
     {
         UpdateAllColors();
-        Renderer.UpdateLemmingState(IsActive);
+        var renderer = Renderer;
+        renderer.UpdateLemmingState(IsActive);
+        renderer.ResetPosition();
         LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
         LevelScreen.LemmingManager.UpdateZombieState(this);
     }
@@ -743,37 +814,37 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
         if (HasPermanentSkill)
         {
-            LemmingColors.HairColor = tribe.ColorData.PermanentSkillHairColor;
-            LemmingColors.BodyColor = IsNeutral
+            _colors.HairColor = tribe.ColorData.PermanentSkillHairColor;
+            _colors.BodyColor = IsNeutral
                 ? tribe.ColorData.NeutralBodyColor
                 : tribe.ColorData.PermanentSkillBodyColor;
         }
         else
         {
-            LemmingColors.HairColor = tribe.ColorData.HairColor;
-            LemmingColors.BodyColor = IsNeutral
+            _colors.HairColor = tribe.ColorData.HairColor;
+            _colors.BodyColor = IsNeutral
                 ? tribe.ColorData.NeutralBodyColor
                 : tribe.ColorData.BodyColor;
         }
 
-        LemmingColors.SkinColor = IsZombie
+        _colors.SkinColor = IsZombie
             ? tribe.ColorData.ZombieSkinColor
             : tribe.ColorData.SkinColor;
 
         if (IsAcidLemming)
         {
-            LemmingColors.FootColor = tribe.ColorData.AcidLemmingFootColor;
+            _colors.FootColor = tribe.ColorData.AcidLemmingFootColor;
         }
         else if (IsWaterLemming)
         {
-            LemmingColors.FootColor = tribe.ColorData.WaterLemmingFootColor;
+            _colors.FootColor = tribe.ColorData.WaterLemmingFootColor;
         }
         else
         {
-            LemmingColors.FootColor = LemmingColors.SkinColor;
+            _colors.FootColor = _colors.SkinColor;
         }
 
-        LemmingColors.PaintColor = tribe.ColorData.PaintColor;
+        _colors.PaintColor = tribe.ColorData.PaintColor;
     }
 
     private void UpdateHairAndBodyColors()
@@ -782,15 +853,15 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
         if (HasPermanentSkill)
         {
-            LemmingColors.HairColor = tribe.ColorData.PermanentSkillHairColor;
-            LemmingColors.BodyColor = IsNeutral
+            _colors.HairColor = tribe.ColorData.PermanentSkillHairColor;
+            _colors.BodyColor = IsNeutral
                 ? tribe.ColorData.NeutralBodyColor
                 : tribe.ColorData.PermanentSkillBodyColor;
         }
         else
         {
-            LemmingColors.HairColor = tribe.ColorData.HairColor;
-            LemmingColors.BodyColor = IsNeutral
+            _colors.HairColor = tribe.ColorData.HairColor;
+            _colors.BodyColor = IsNeutral
                 ? tribe.ColorData.NeutralBodyColor
                 : tribe.ColorData.BodyColor;
         }
@@ -800,21 +871,21 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         var tribe = LevelScreen.TribeManager.GetTribe(_data.TribeId);
 
-        LemmingColors.SkinColor = IsZombie
+        _colors.SkinColor = IsZombie
             ? tribe.ColorData.ZombieSkinColor
             : tribe.ColorData.SkinColor;
 
         if (IsAcidLemming)
         {
-            LemmingColors.FootColor = tribe.ColorData.AcidLemmingFootColor;
+            _colors.FootColor = tribe.ColorData.AcidLemmingFootColor;
         }
         else if (IsWaterLemming)
         {
-            LemmingColors.FootColor = tribe.ColorData.WaterLemmingFootColor;
+            _colors.FootColor = tribe.ColorData.WaterLemmingFootColor;
         }
         else
         {
-            LemmingColors.FootColor = LemmingColors.SkinColor;
+            _colors.FootColor = _colors.SkinColor;
         }
     }
 
@@ -841,4 +912,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     }
     [DebuggerStepThrough]
     public static bool operator !=(Lemming? left, Lemming? right) => !(left == right);
+
+    [DoesNotReturn]
+    private static void ThrowSimulationLemmingException() => throw new InvalidOperationException("Use simulation lemming for simulations!");
 }

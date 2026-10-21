@@ -10,21 +10,24 @@ public static class BuilderAction
 {
     public static bool UpdateLemming(Lemming lemming, in GadgetEnumerable gadgetsNearLemming)
     {
-        if (lemming.PhysicsFrame == 9)
+        var physicsFrame = lemming.PhysicsFrame;
+        if (physicsFrame == 9)
         {
             LayBrick(lemming);
 
             return true;
         }
 
-        if (lemming.PhysicsFrame == 10 &&
-            lemming.NumberOfBricksLeft <= EngineConstants.NumberOfRemainingBricksToPlaySound)
+        var numberOfBricksLeft = lemming.NumberOfBricksLeft;
+
+        if (physicsFrame == 10 &&
+            numberOfBricksLeft <= EngineConstants.NumberOfRemainingBricksToPlaySound)
         {
             // play sound/make visual cue
             return true;
         }
 
-        if (lemming.PhysicsFrame != 0)
+        if (physicsFrame != 0)
             return true;
 
         BuilderFrame0(lemming, in gadgetsNearLemming);
@@ -37,7 +40,9 @@ public static class BuilderAction
         Lemming lemming,
         in GadgetEnumerable gadgetsNearLemming)
     {
-        lemming.NumberOfBricksLeft--;
+        var numberOfBricksLeft = lemming.NumberOfBricksLeft;
+        numberOfBricksLeft--;
+        lemming.NumberOfBricksLeft = numberOfBricksLeft;
 
         var orientation = lemming.Orientation;
         ref var lemmingPosition = ref lemming.AnchorPosition;
@@ -53,7 +58,7 @@ public static class BuilderAction
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 3))) ||
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx * 2, 2))) ||
             (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx * 2, 10))) &&
-             lemming.NumberOfBricksLeft > 0))
+             numberOfBricksLeft > 0))
         {
             lemmingPosition = orientation.Move(lemmingPosition, new(dx, 1));
             WalkerAction.TransitionLemmingToAction(lemming, true);
@@ -70,14 +75,14 @@ public static class BuilderAction
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.MoveUp(lemmingPosition, 3)) ||
             PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx, 3))) ||
             (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, orientation.Move(lemmingPosition, new(dx * 2, 10))) &&
-             lemming.NumberOfBricksLeft > 0))
+             numberOfBricksLeft > 0))
         {
             WalkerAction.TransitionLemmingToAction(lemming, true);
 
             return;
         }
 
-        if (lemming.NumberOfBricksLeft == 0)
+        if (numberOfBricksLeft == 0)
         {
             ShruggerAction.TransitionLemmingToAction(lemming, false);
         }
@@ -88,7 +93,6 @@ public static class BuilderAction
         LemmingActionType.BuilderAction.DoMainTransitionActions(lemming, turnAround);
 
         lemming.NumberOfBricksLeft = EngineConstants.NumberOfBuilderBricks;
-        lemming.ConstructivePositionFreeze = false;
     }
 
     public static void LayBrick(Lemming lemming)

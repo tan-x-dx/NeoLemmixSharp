@@ -47,22 +47,22 @@ public static class ShimmierSkill
                    (oldActionType != LemmingActionType.DehoisterAction || simulationLemming.CurrentActionType != LemmingActionType.SliderAction);
         }
 
-        if (currentActionType != LemmingActionType.JumperAction)
-            return LemmingSkillType.ShimmierSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);
-
-        var orientation = lemming.Orientation;
-        var lemmingPosition = lemming.AnchorPosition;
-
-        var gadgetTestRegion1 = new RectangularRegion(
-            lemmingPosition,
-            orientation.MoveUp(lemmingPosition, 12));
-        gadgetManager.GetAllItemsNearRegion(gadgetTestRegion1, out var gadgetsNearRegion1);
-
-        for (var i = 0; i < 5; i++)
+        if (currentActionType == LemmingActionType.JumperAction)
         {
-            if (PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveUp(lemmingPosition, 8 + i)) &&
-                !PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveUp(lemmingPosition, 7 + i)))
-                return true;
+            var orientation = lemming.Orientation;
+            var lemmingPosition = lemming.AnchorPosition;
+
+            var gadgetTestRegion1 = new RectangularRegion(
+                lemmingPosition,
+                orientation.MoveUp(lemmingPosition, 12));
+            gadgetManager.GetAllItemsNearRegion(gadgetTestRegion1, out var gadgetsNearRegion1);
+
+            for (var i = 0; i < 5; i++)
+            {
+                if (PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveUp(lemmingPosition, 8 + i)) &&
+                    !PositionIsSolidToLemming(in gadgetsNearRegion1, lemming, orientation.MoveUp(lemmingPosition, 7 + i)))
+                    return true;
+            }
         }
 
         return LemmingSkillType.ShimmierSkill.SkillIsAssignableToCurrentAction(lemming.CurrentActionType);

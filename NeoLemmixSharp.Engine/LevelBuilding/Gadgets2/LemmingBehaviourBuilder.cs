@@ -166,7 +166,7 @@ public static class LemmingBehaviourBuilder
 
     private static FastForwardLemmingBehaviour BuildFastForwardLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var fastForwardTime = gadgetBehaviourDatum.DataChunk.Data2;
+        var fastForwardTime = (uint)gadgetBehaviourDatum.DataChunk.Data2;
 
         return new FastForwardLemmingBehaviour(fastForwardTime)
         {

@@ -97,7 +97,7 @@ public static class StyleCache
 
         foreach (var prototype in levelData.AllGadgetInstanceData)
         {
-            var stylePiecePair = new StylePiecePair(prototype.StyleIdentifier, prototype.PieceIdentifier);
+            var stylePiecePair = prototype.GetStylePiecePair();
             ref var gadgetArchetypeDataForLevel = ref CollectionsMarshal.GetValueRefOrAddDefault(result, stylePiecePair, out var exists);
 
             if (exists)
