@@ -76,15 +76,15 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public ref Point AnchorPosition => ref _data.AnchorPosition;
     public ref Point PreviousAnchorPosition => ref _data.PreviousAnchorPosition;
 
-    public bool ConstructivePositionFreeze
-    {
-        get => _data.ConstructivePositionFreeze;
-        set => _data.ConstructivePositionFreeze = value;
-    }
     public bool IsStartingAction
     {
         get => _data.IsStartingAction;
         set => _data.IsStartingAction = value;
+    }
+    public bool ConstructivePositionFreeze
+    {
+        get => _data.ConstructivePositionFreeze;
+        set => _data.ConstructivePositionFreeze = value;
     }
     public bool PlacedBrick
     {
@@ -116,41 +116,14 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         get => _data.JumpToHoistAdvance;
         set => _data.JumpToHoistAdvance = value;
     }
-    public int AnimationFrame
-    {
-        get => _data.AnimationFrame;
-        set => _data.AnimationFrame = value;
-    }
-    public int PhysicsFrame
-    {
-        get => _data.PhysicsFrame;
-        set => _data.PhysicsFrame = value;
-    }
-    public int NumberOfBricksLeft
-    {
-        get => _data.NumberOfBricksLeft;
-        set => _data.NumberOfBricksLeft = value;
-    }
-    public int AscenderProgress
-    {
-        get => _data.AscenderProgress;
-        set => _data.AscenderProgress = value;
-    }
-    public int DisarmingFrames
-    {
-        get => _data.DisarmingFrames;
-        set => _data.DisarmingFrames = value;
-    }
-    public int JumpProgress
-    {
-        get => _data.JumpProgress;
-        set => _data.JumpProgress = value;
-    }
-    public int ParticleTimer
-    {
-        get => _data.ParticleTimer;
-        set => _data.ParticleTimer = value;
-    }
+
+    public ref byte AnimationFrame => ref _data.AnimationFrame;
+    public ref byte PhysicsFrame => ref _data.PhysicsFrame;
+    public ref byte NumberOfBricksLeft => ref _data.NumberOfBricksLeft;
+    public ref byte AscenderProgress => ref _data.AscenderProgress;
+    public ref byte DisarmingFrames => ref _data.DisarmingFrames;
+    public ref byte JumpProgress => ref _data.JumpProgress;
+    public ref byte ParticleTimer => ref _data.ParticleTimer;
 
     public ref int DistanceFallen => ref _data.DistanceFallen;
     public ref int TrueDistanceFallen => ref _data.TrueDistanceFallen;
@@ -574,7 +547,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         var currentActionType = CurrentActionType;
         //var currentAction = CurrentAction;
 
-        var frame = AnimationFrame + 1;
+        byte frame = AnimationFrame;
+        frame++;
         var actionFrames = LemmingAction.GetNumberOfAnimationFramesForActionType(currentActionType);
         if (frame == actionFrames)
         {
@@ -591,7 +565,8 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
         AnimationFrame = frame;
 
-        frame = PhysicsFrame + 1;
+        frame = PhysicsFrame;
+        frame++;
         actionFrames = LemmingAction.GetMaxPhysicsFramesForActionType(currentActionType);
         if (frame == actionFrames)
         {

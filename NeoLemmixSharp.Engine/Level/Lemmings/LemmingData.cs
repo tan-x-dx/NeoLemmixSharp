@@ -9,14 +9,14 @@ namespace NeoLemmixSharp.Engine.Level.Lemmings;
 
 public readonly unsafe struct LemmingData : IPointerData<LemmingData>
 {
-    private const int ConstructivePositionFreezeBitIndex = 63;
-    private const int IsStartingActionBitIndex = 62;
-    private const int PlacedBrickBitIndex = 61;
-    private const int StackLowBitIndex = 60;
-    private const int InitialFallBitIndex = 59;
-    private const int EndOfAnimationBitIndex = 58;
-    private const int LaserHitBitIndex = 57;
-    private const int JumpToHoistAdvanceBitIndex = 56;
+    private const int IsStartingActionBitIndex = (7 * 8) + 7;
+    private const int ConstructivePositionFreezeBitIndex = (7 * 8) + 6;
+    private const int PlacedBrickBitIndex = (7 * 8) + 5;
+    private const int StackLowBitIndex = (7 * 8) + 4;
+    private const int InitialFallBitIndex = (7 * 8) + 3;
+    private const int EndOfAnimationBitIndex = (7 * 8) + 2;
+    private const int LaserHitBitIndex = (7 * 8) + 1;
+    private const int JumpToHoistAdvanceBitIndex = (7 * 8) + 0;
 
     private const int NumberOfBricksLeftByteIndex = 6;
     private const int DisarmingFramesByteIndex = 5;
@@ -124,15 +124,15 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     public ref Point AnchorPosition => ref Unsafe.AsRef<Point>(&_data->AnchorPosition);
     public ref Point PreviousAnchorPosition => ref Unsafe.AsRef<Point>(&_data->PreviousAnchorPosition);
 
-    public bool ConstructivePositionFreeze
-    {
-        get => _data->PackedBytes.GetBit(ConstructivePositionFreezeBitIndex);
-        set => _data->PackedBytes.SetBit(ConstructivePositionFreezeBitIndex, value);
-    }
     public bool IsStartingAction
     {
         get => _data->PackedBytes.GetBit(IsStartingActionBitIndex);
         set => _data->PackedBytes.SetBit(IsStartingActionBitIndex, value);
+    }
+    public bool ConstructivePositionFreeze
+    {
+        get => _data->PackedBytes.GetBit(ConstructivePositionFreezeBitIndex);
+        set => _data->PackedBytes.SetBit(ConstructivePositionFreezeBitIndex, value);
     }
     public bool PlacedBrick
     {
@@ -166,110 +166,67 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
         set => _data->PackedBytes.SetBit(JumpToHoistAdvanceBitIndex, value);
     }
 
-    public int NumberOfBricksLeft
+    public ref byte NumberOfBricksLeft
     {
         get
         {
             byte* p = (byte*)&_data->PackedBytes;
             p += NumberOfBricksLeftByteIndex;
-            return *p;
-        }
-        set
-        {
-            byte* p = (byte*)&_data->PackedBytes;
-            p += NumberOfBricksLeftByteIndex;
-            *p = (byte)value;
+            return ref Unsafe.AsRef<byte>(p);
         }
     }
-    public int DisarmingFrames
+    public ref byte DisarmingFrames
     {
         get
         {
             byte* p = (byte*)&_data->PackedBytes;
             p += DisarmingFramesByteIndex;
-            return *p;
-        }
-        set
-        {
-            byte* p = (byte*)&_data->PackedBytes;
-            p += DisarmingFramesByteIndex;
-            *p = (byte)value;
+            return ref Unsafe.AsRef<byte>(p);
         }
     }
-    public int JumpProgress
+    public ref byte JumpProgress
     {
         get
         {
             byte* p = (byte*)&_data->PackedBytes;
             p += JumpProgressByteIndex;
-            return *p;
-        }
-        set
-        {
-            byte* p = (byte*)&_data->PackedBytes;
-            p += JumpProgressByteIndex;
-            *p = (byte)value;
+            return ref Unsafe.AsRef<byte>(p);
         }
     }
-
-    public int ParticleTimer
+    public ref byte ParticleTimer
     {
         get
         {
             byte* p = (byte*)&_data->PackedBytes;
             p += ParticleTimerByteIndex;
-            return *p;
-        }
-        set
-        {
-            byte* p = (byte*)&_data->PackedBytes;
-            p += ParticleTimerByteIndex;
-            *p = (byte)value;
+            return ref Unsafe.AsRef<byte>(p);
         }
     }
-    public int AscenderProgress
+    public ref byte AscenderProgress
     {
         get
         {
             byte* p = (byte*)&_data->PackedBytes;
             p += AscenderProgressByteIndex;
-            return *p;
-        }
-        set
-        {
-            byte* p = (byte*)&_data->PackedBytes;
-            p += AscenderProgressByteIndex;
-            *p = (byte)value;
+            return ref Unsafe.AsRef<byte>(p);
         }
     }
-    public int AnimationFrame
+    public ref byte AnimationFrame
     {
         get
         {
             byte* p = (byte*)&_data->PackedBytes;
             p += AnimationFrameByteIndex;
-            return *p;
-        }
-        set
-        {
-            byte* p = (byte*)&_data->PackedBytes;
-            p += AnimationFrameByteIndex;
-            *p = (byte)value;
+            return ref Unsafe.AsRef<byte>(p);
         }
     }
-    public int PhysicsFrame
+    public ref byte PhysicsFrame
     {
         get
         {
             byte* p = (byte*)&_data->PackedBytes;
             p += PhysicsFrameByteIndex;
-            return *p;
-        }
-        set
-        {
-            byte* p = (byte*)&_data->PackedBytes;
-            p += PhysicsFrameByteIndex;
-            *p = (byte)value;
+            return ref Unsafe.AsRef<byte>(p);
         }
     }
 

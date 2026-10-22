@@ -56,7 +56,7 @@ public sealed class JumperAction
         jumpProgress++;
         lemming.JumpProgress = jumpProgress;
 
-        int animationFrame;
+        byte animationFrame;
         if (jumpProgress <= 5)
         {
             animationFrame = 0;
