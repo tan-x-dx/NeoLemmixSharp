@@ -409,12 +409,13 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         PreviousAnchorPosition = AnchorPosition;
 
         var initialActionType = CurrentActionType;
-        CurrentBounds = initialActionType.GetLemmingBounds(this);
 
         if (initialActionType == LemmingActionType.NoneAction)
         {
             initialActionType = LemmingActionType.WalkerAction;
         }
+
+        CurrentBounds = initialActionType.GetLemmingBounds(this);
 
         LemmingAction.TransitionLemmingToAction(this, false, initialActionType);
 
@@ -545,7 +546,6 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     private bool EvaluateLemmingAction(in GadgetEnumerable gadgetsNearLemming)
     {
         var currentActionType = CurrentActionType;
-        //var currentAction = CurrentAction;
 
         byte frame = AnimationFrame;
         frame++;
