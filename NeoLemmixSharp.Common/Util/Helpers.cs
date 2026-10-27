@@ -381,6 +381,16 @@ public static class Helpers
         return firstSpan.Equals(secondSpan, StringComparison.OrdinalIgnoreCase);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe ulong GetBitsAsUlong<T>(this T value)
+        where T : unmanaged
+    {
+        if (sizeof(T) != sizeof(ulong))
+            throw new InvalidOperationException("Type is not exactly 8 bytes!");
+
+        return Unsafe.BitCast<T, ulong>(value);
+    }
+
     [DoesNotReturn]
     public static void ThrowNegativeInputException() => throw new ArgumentOutOfRangeException("Input is negative!");
     [DoesNotReturn]

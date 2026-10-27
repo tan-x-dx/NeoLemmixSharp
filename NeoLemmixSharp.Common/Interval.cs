@@ -55,8 +55,8 @@ public readonly struct Interval : IEquatable<Interval>, ISpanFormattable
     [DebuggerStepThrough]
     public static bool operator ==(Interval left, Interval right)
     {
-        var leftLong = Unsafe.BitCast<Interval, long>(left);
-        var rightLong = Unsafe.BitCast<Interval, long>(right);
+        var leftLong = left.GetBitsAsUlong();
+        var rightLong = right.GetBitsAsUlong();
 
         return leftLong == rightLong;
     }

@@ -42,10 +42,14 @@ public static class LasererAction
         -1, 1
     ];
 
-    private static ReadOnlySpan<Point> GetOffsetChecks(FacingDirection facingDirection) => MemoryMarshal
-        .Cast<int, Point>(facingDirection == FacingDirection.Right
-            ? RawOffsetChecksRight
-            : RawOffsetChecksLeft);
+    private static ReadOnlySpan<Point> GetOffsetChecks(FacingDirection facingDirection)
+    {
+        var span = RawOffsetChecksLeft;
+        if (facingDirection == FacingDirection.Right)
+            span = RawOffsetChecksRight;
+
+        return MemoryMarshal.Cast<int, Point>(span);
+    }
 
     private enum LaserHitType
     {

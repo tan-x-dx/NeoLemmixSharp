@@ -9,10 +9,11 @@ using System.Runtime.InteropServices;
 namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
-public readonly struct Point : IEquatable<Point>,
+public readonly struct Point :
     ISpanFormattable,
     IAdditionOperators<Point, Point, Point>,
     IAdditiveIdentity<Point, Point>,
+    IEquatable<Point>,
     IEqualityOperators<Point, Point, bool>,
     ISubtractionOperators<Point, Point, Point>,
     IUnaryNegationOperators<Point, Point>,
@@ -64,8 +65,8 @@ public readonly struct Point : IEquatable<Point>,
     [DebuggerStepThrough]
     public static bool operator ==(Point left, Point right)
     {
-        var leftLong = Unsafe.BitCast<Point, long>(left);
-        var rightLong = Unsafe.BitCast<Point, long>(right);
+        var leftLong = left.GetBitsAsUlong();
+        var rightLong = right.GetBitsAsUlong();
 
         return leftLong == rightLong;
     }

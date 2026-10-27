@@ -2,42 +2,49 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace NeoLemmixSharp.Common;
 
 [StructLayout(LayoutKind.Explicit, Size = 4 * sizeof(ushort))]
-public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEquatable<FileFormatVersion>, ISpanFormattable
+public readonly struct FileFormatVersion :
+    ISpanFormattable,
+    IEquatable<FileFormatVersion>,
+    IEqualityOperators<FileFormatVersion, FileFormatVersion, bool>,
+    IComparable<FileFormatVersion>,
+    IComparisonOperators<FileFormatVersion, FileFormatVersion, bool>
 {
-    [FieldOffset(0 * sizeof(ushort))] private readonly ulong _allBits;
-
     [FieldOffset(0 * sizeof(ushort))] public readonly ushort Revision;
     [FieldOffset(1 * sizeof(ushort))] public readonly ushort Build;
     [FieldOffset(2 * sizeof(ushort))] public readonly ushort Minor;
     [FieldOffset(3 * sizeof(ushort))] public readonly ushort Major;
 
+    [DebuggerStepThrough]
     public FileFormatVersion(ushort major, ushort minor, ushort build, ushort revision)
     {
-        Major = major;
-        Minor = minor;
-        Build = build;
         Revision = revision;
+        Build = build;
+        Minor = minor;
+        Major = major;
     }
 
     [Pure]
     [DebuggerStepThrough]
-    public bool Equals(FileFormatVersion other) => _allBits == other._allBits;
+    public bool Equals(FileFormatVersion other) => this == other;
     [Pure]
     [DebuggerStepThrough]
-    public override bool Equals([NotNullWhen(true)] object? obj) => obj is FileFormatVersion other && Equals(other);
+    public override bool Equals([NotNullWhen(true)] object? obj) => obj is FileFormatVersion other && this == other;
 
     [Pure]
     [DebuggerStepThrough]
     public override int GetHashCode()
     {
-        var u1 = (int)_allBits;
-        var u2 = (int)(_allBits >>> 32);
+        var longValue = this.GetBitsAsUlong();
+
+        var u1 = (int)longValue;
+        var u2 = (int)(longValue >>> 32);
         var result = 3992171 * u1 +
                      7851007 * u2;
         return result;
@@ -45,9 +52,18 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
 
     [Pure]
     [DebuggerStepThrough]
-    public int CompareTo(FileFormatVersion value)
+    public int CompareTo(FileFormatVersion value) => Compare(this, value);
+
+    [Pure]
+    [DebuggerStepThrough]
+    public static int Compare(FileFormatVersion left, FileFormatVersion right)
     {
-        return _allBits.CompareTo(value._allBits);
+        var leftLong = left.GetBitsAsUlong();
+        var rightLong = right.GetBitsAsUlong();
+
+        var gt = (leftLong > rightLong) ? 1 : 0;
+        var lt = (leftLong < rightLong) ? 1 : 0;
+        return gt - lt;
     }
 
     [Pure]
@@ -62,10 +78,7 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
 
     [Pure]
     [DebuggerStepThrough]
-    public override string ToString()
-    {
-        return ToString(default, null);
-    }
+    public override string ToString() => ToString(default, null);
 
     [SkipLocalsInit]
     public unsafe bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
@@ -83,20 +96,55 @@ public readonly struct FileFormatVersion : IComparable<FileFormatVersion>, IEqua
 
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator ==(FileFormatVersion left, FileFormatVersion right) => left.Equals(right);
+    public static bool operator ==(FileFormatVersion left, FileFormatVersion right)
+    {
+        var leftLong = left.GetBitsAsUlong();
+        var rightLong = right.GetBitsAsUlong();
+
+        return leftLong == rightLong;
+    }
+
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator !=(FileFormatVersion left, FileFormatVersion right) => !left.Equals(right);
+    public static bool operator !=(FileFormatVersion left, FileFormatVersion right) => !(left == right);
+
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator <(FileFormatVersion v1, FileFormatVersion v2) => v1._allBits < v2._allBits;
+    public static bool operator <(FileFormatVersion left, FileFormatVersion right)
+    {
+        var leftLong = left.GetBitsAsUlong();
+        var rightLong = right.GetBitsAsUlong();
+
+        return leftLong < rightLong;
+    }
+
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator <=(FileFormatVersion v1, FileFormatVersion v2) => v1._allBits <= v2._allBits;
+    public static bool operator <=(FileFormatVersion left, FileFormatVersion right)
+    {
+        var leftLong = left.GetBitsAsUlong();
+        var rightLong = right.GetBitsAsUlong();
+
+        return leftLong <= rightLong;
+    }
+
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator >(FileFormatVersion v1, FileFormatVersion v2) => v1._allBits > v2._allBits;
+    public static bool operator >(FileFormatVersion left, FileFormatVersion right)
+    {
+        var leftLong = left.GetBitsAsUlong();
+        var rightLong = right.GetBitsAsUlong();
+
+        return leftLong > rightLong;
+    }
+
     [Pure]
     [DebuggerStepThrough]
-    public static bool operator >=(FileFormatVersion v1, FileFormatVersion v2) => v1._allBits >= v2._allBits;
+    public static bool operator >=(FileFormatVersion left, FileFormatVersion right)
+    {
+        var leftLong = left.GetBitsAsUlong();
+        var rightLong = right.GetBitsAsUlong();
+
+        return leftLong >= rightLong;
+    }
 }

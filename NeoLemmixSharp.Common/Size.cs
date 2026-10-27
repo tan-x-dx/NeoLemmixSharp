@@ -90,8 +90,8 @@ public readonly struct Size : IEquatable<Size>, ISpanFormattable
     [DebuggerStepThrough]
     public static bool operator ==(Size left, Size right)
     {
-        var leftLong = Unsafe.BitCast<Size, long>(left);
-        var rightLong = Unsafe.BitCast<Size, long>(right);
+        var leftLong = left.GetBitsAsUlong();
+        var rightLong = right.GetBitsAsUlong();
 
         return leftLong == rightLong;
     }

@@ -65,7 +65,8 @@ public sealed class SnapshotRecorder : IDisposable
 
     private unsafe byte* GetDataPointerForSnapshotNumber(int snapshotNumber)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(snapshotNumber);
+        if (snapshotNumber < 0)
+            Helpers.ThrowNegativeInputException();
 
         _numberOfSnapshots = snapshotNumber + 1;
 
