@@ -23,14 +23,14 @@ public sealed class SkillTrackingData
     public bool IsInfinite => InitialSkillQuantity == EngineConstants.InfiniteSkillCount;
 
     public SkillTrackingData(
-        ref nint dataHandle,
+        DataHandle dataHandle,
         LemmingSkillType lemmingSkillType,
         int tribeId,
         int skillTrackingDataId,
         int initialSkillQuantity,
         int initialSkillLimit)
     {
-        _data = PointerDataHelper.CreateItem<SkillSetData>(ref dataHandle);
+        _data = PointerDataHelper.CreateItem<SkillSetData>(dataHandle);
 
         LemmingSkillType = lemmingSkillType;
         TribeId = tribeId;

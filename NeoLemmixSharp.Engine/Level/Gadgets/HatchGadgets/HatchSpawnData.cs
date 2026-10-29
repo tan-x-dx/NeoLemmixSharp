@@ -16,14 +16,14 @@ public sealed class HatchSpawnData
     public int LemmingsToRelease => _lemmingsToRelease.IntValue;
 
     public HatchSpawnData(
-        ref nint dataHandle,
+        DataHandle dataHandle,
         int lemmingsToRelease,
         DihedralTransformation dihedralTransformation,
         int tribeId,
         uint rawStateData,
         int hatchGroupId)
     {
-        _lemmingsToRelease = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandle);
+        _lemmingsToRelease = PointerDataHelper.CreateItem<PointerWrapper>(dataHandle);
         _lemmingsToRelease.IntValue = lemmingsToRelease;
         _dihedralTransformation = dihedralTransformation;
         _tribeId = tribeId;

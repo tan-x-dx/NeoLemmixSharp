@@ -11,7 +11,7 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 public static class LemmingBehaviourBuilder
 {
     public static LemmingBehaviour BuildLemmingBehaviour(
-        ref nint dataHandleRef,
+        DataHandle dataHandle,
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {

@@ -25,13 +25,13 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
     public uint CurrentSpawnInterval => _data.CurrentSpawnInterval;
 
     public HatchGroup(
-        ref nint dataHandle,
+        DataHandle dataHandle,
         int id,
         uint minSpawnInterval,
         uint maxSpawnInterval,
         uint initialSpawnInterval)
     {
-        _data = PointerDataHelper.CreateItem<HatchGroupData>(ref dataHandle);
+        _data = PointerDataHelper.CreateItem<HatchGroupData>(dataHandle);
         Id = id;
 
         Debug.Assert(minSpawnInterval <= initialSpawnInterval);

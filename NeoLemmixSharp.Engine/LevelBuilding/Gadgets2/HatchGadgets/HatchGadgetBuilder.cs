@@ -35,12 +35,12 @@ public readonly ref struct HatchGadgetBuilder
         _gadgetBehaviours = gadgetBehaviours;
     }
 
-    public HatchGadget BuildHatchGadget(TribeManager tribeManager, ref nint dataHandleRef)
+    public HatchGadget BuildHatchGadget(TribeManager tribeManager, DataHandle dataHandle)
     {
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(_hatchGadgetArchetypeData, _hatchGadgetInstanceData);
-        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(ref dataHandleRef, _hatchGadgetArchetypeData, _hatchGadgetInstanceData);
-        var gadgetStates = BuildHatchGadgetStates(ref dataHandleRef, gadgetBounds, tribeManager);
-        var hatchSpawnData = BuildHatchSpawnData(ref dataHandleRef);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(dataHandle, _hatchGadgetArchetypeData, _hatchGadgetInstanceData);
+        var gadgetStates = BuildHatchGadgetStates(dataHandle, gadgetBounds, tribeManager);
+        var hatchSpawnData = BuildHatchSpawnData(dataHandle);
         var spawnPointOffset = BuildSpawnPointOffset();
 
         var result = new HatchGadget(
@@ -49,7 +49,7 @@ public readonly ref struct HatchGadgetBuilder
             hatchSpawnData,
             spawnPointOffset)
         {
-            DataHandle = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandleRef),
+            DataHandle = PointerDataHelper.CreateItem<PointerWrapper>(dataHandle),
             Id = _hatchGadgetInstanceData.Identifier.GadgetId,
             GadgetName = gadgetName,
             CurrentGadgetBounds = gadgetBounds,
@@ -62,7 +62,7 @@ public readonly ref struct HatchGadgetBuilder
     }
 
     private HatchGadgetState[] BuildHatchGadgetStates(
-        ref nint dataHandleRef,
+        DataHandle dataHandle,
         GadgetBounds gadgetBounds,
         TribeManager tribeManager)
     {
@@ -80,7 +80,7 @@ public readonly ref struct HatchGadgetBuilder
             var gadgetStateInstanceData = _hatchGadgetTypeInstanceData.GadgetStates[i];
 
             result[i] = BuildHatchGadgetState(
-                ref dataHandleRef,
+                dataHandle,
                 gadgetStateArchetypeData,
                 gadgetStateInstanceData,
                 gadgetBounds,
@@ -92,7 +92,7 @@ public readonly ref struct HatchGadgetBuilder
     }
 
     private HatchGadgetState BuildHatchGadgetState(
-        ref nint dataHandleRef,
+        DataHandle dataHandle,
         HatchGadgetStateArchetypeData gadgetStateArchetypeData,
         HatchGadgetStateInstanceData gadgetStateInstanceData,
         GadgetBounds gadgetBounds,
@@ -101,7 +101,7 @@ public readonly ref struct HatchGadgetBuilder
     {
         var stateName = GadgetBuildingHelpers.GetGadgetStateName(gadgetStateArchetypeData, gadgetStateInstanceData);
 
-        var triggers = BuildTriggers(ref dataHandleRef, gadgetStateArchetypeData, gadgetStateInstanceData);
+        var triggers = BuildTriggers(dataHandle, gadgetStateArchetypeData, gadgetStateInstanceData);
 
         return new HatchGadgetState()
         {
@@ -112,18 +112,18 @@ public readonly ref struct HatchGadgetBuilder
     }
 
     private GadgetTrigger[] BuildTriggers(
-        ref nint dataHandleRef,
+        DataHandle dataHandle,
         HatchGadgetStateArchetypeData gadgetStateArchetypeData,
         HatchGadgetStateInstanceData gadgetStateInstanceData)
     {
         var gadgetTriggerBuilder = new GadgetTriggerBuilder(_hatchGadgetInstanceData.Identifier, _gadgetTriggers, _gadgetBehaviours);
-        return gadgetTriggerBuilder.BuildGadgetTriggers(ref dataHandleRef, gadgetStateArchetypeData, gadgetStateInstanceData);
+        return gadgetTriggerBuilder.BuildGadgetTriggers(dataHandle, gadgetStateArchetypeData, gadgetStateInstanceData);
     }
 
-    private HatchSpawnData BuildHatchSpawnData(ref nint dataHandleRef)
+    private HatchSpawnData BuildHatchSpawnData(DataHandle dataHandle)
     {
         var result = new HatchSpawnData(
-            ref dataHandleRef,
+            dataHandle,
             _hatchGadgetTypeInstanceData.NumberOfLemmingsToRelease,
             _hatchGadgetInstanceData.DihedralTransformation,
             _hatchGadgetTypeInstanceData.TribeId,

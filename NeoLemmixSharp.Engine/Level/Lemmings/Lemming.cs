@@ -396,11 +396,11 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     #endregion
 
     public Lemming(
-        ref nint dataHandle,
+        DataHandle dataHandle,
         int id)
     {
         Id = id;
-        _data = PointerDataHelper.CreateItem<LemmingData>(ref dataHandle);
+        _data = PointerDataHelper.CreateItem<LemmingData>(dataHandle);
     }
 
     public void Initialise()

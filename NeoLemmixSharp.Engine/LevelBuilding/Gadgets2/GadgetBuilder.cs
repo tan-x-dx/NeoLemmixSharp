@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
@@ -116,12 +117,9 @@ public sealed class GadgetBuilder
 
     public void BuildLevelGadgets(TribeManager tribeManager, int numberOfLemmings)
     {
-        nint dataHandle = GadgetDataBuffer.Handle;
-        ref nint dataHandleRef = ref dataHandle;
         var hitBoxGadgetIndex = 0;
-
         var numberOfBytesPerLemmingTracker = CalculateNumberOfBytesPerLemmingTracker(numberOfLemmings);
-        dataHandleRef += _numberOfHitBoxGadgets * numberOfBytesPerLemmingTracker;
+        var dataHandle = new DataHandle(GadgetDataBuffer.Handle + (_numberOfHitBoxGadgets * numberOfBytesPerLemmingTracker));
 
         var gadgetArchetypeDataLookup = StyleCache.GetAllGadgetArchetypeData(_levelData);
 
@@ -133,7 +131,7 @@ public sealed class GadgetBuilder
             if (gadgetArchetypeData.SpecificationData.GadgetType != gadgetInstanceData.SpecificationData.GadgetType)
                 throw new Exception("GadgetType mismatch!");
 
-            var newGadget = BuildGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, numberOfBytesPerLemmingTracker, hitBoxGadgetIndex, ref dataHandleRef);
+            var newGadget = BuildGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, numberOfBytesPerLemmingTracker, hitBoxGadgetIndex, dataHandle);
             if (gadgetInstanceData.SpecificationData.GadgetType == GadgetType.HitBoxGadget)
                 hitBoxGadgetIndex++;
 
@@ -147,15 +145,15 @@ public sealed class GadgetBuilder
         TribeManager tribeManager,
         int numberOfBytesPerLemmingTracker,
         int hitBoxGadgetIndex,
-        ref nint dataHandleRef)
+        DataHandle dataHandle)
     {
         return gadgetArchetypeData.SpecificationData.GadgetType switch
         {
-            GadgetType.HitBoxGadget => BuildHitBoxGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, numberOfBytesPerLemmingTracker, hitBoxGadgetIndex, ref dataHandleRef),
-            GadgetType.HatchGadget => BuildHatchGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, ref dataHandleRef),
-            GadgetType.LogicGate => BuildLogicGateGadget(gadgetArchetypeData, gadgetInstanceData, ref dataHandleRef),
+            GadgetType.HitBoxGadget => BuildHitBoxGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, numberOfBytesPerLemmingTracker, hitBoxGadgetIndex, dataHandle),
+            GadgetType.HatchGadget => BuildHatchGadget(gadgetArchetypeData, gadgetInstanceData, tribeManager, dataHandle),
+            GadgetType.LogicGate => BuildLogicGateGadget(gadgetArchetypeData, gadgetInstanceData, dataHandle),
             //  GadgetType.Counter => 
-            GadgetType.LevelTimerObserver => BuildLevelTimerObserverGadget(gadgetArchetypeData, gadgetInstanceData, ref dataHandleRef),
+            GadgetType.LevelTimerObserver => BuildLevelTimerObserverGadget(gadgetArchetypeData, gadgetInstanceData, dataHandle),
 
             _ => throw new NotImplementedException(),
         };
@@ -167,7 +165,7 @@ public sealed class GadgetBuilder
         TribeManager tribeManager,
         int numberOfBytesPerLemmingTracker,
         int hitBoxGadgetIndex,
-        ref nint dataHandleRef)
+        DataHandle dataHandle)
     {
         var hitBoxGadgetBuilder = new HitBoxGadgetBuilder(
             gadgetArchetypeData,
@@ -184,7 +182,7 @@ public sealed class GadgetBuilder
 
         var result = hitBoxGadgetBuilder.BuildHitBoxGadget(
             tribeManager,
-            ref dataHandleRef,
+            dataHandle,
             lemmingTracker);
 
         return result;
@@ -194,27 +192,27 @@ public sealed class GadgetBuilder
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetInstanceData,
         TribeManager tribeManager,
-        ref nint dataHandleRef)
+        DataHandle dataHandle)
     {
         var hatchGadgetBuilder = new HatchGadgetBuilder(gadgetArchetypeData, gadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
 
-        return hatchGadgetBuilder.BuildHatchGadget(tribeManager, ref dataHandleRef);
+        return hatchGadgetBuilder.BuildHatchGadget(tribeManager, dataHandle);
     }
 
     private GadgetBase BuildLogicGateGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetInstanceData,
-        ref nint dataHandleRef)
+        DataHandle dataHandle)
     {
         var logicGateBuilder = new LogicGateBuilder(gadgetArchetypeData, gadgetInstanceData, _gadgetTriggers, _gadgetBehaviours);
 
-        return logicGateBuilder.BuildLogicGateGadget(ref dataHandleRef);
+        return logicGateBuilder.BuildLogicGateGadget(dataHandle);
     }
 
     private GadgetBase BuildLevelTimerObserverGadget(
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetInstanceData,
-        ref nint dataHandleRef)
+        DataHandle dataHandle)
     {
         throw new NotImplementedException();
     }

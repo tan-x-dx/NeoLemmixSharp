@@ -74,7 +74,7 @@ public sealed class LevelBuilder : IComparer<IViewportObjectRenderer>
 
         var lemmingManagerDataBuffer = _safeBufferAllocator.AllocateRawArray(LemmingManagerData.SizeInBytes);
         var lemmingManager = new LemmingManager(
-            lemmingManagerDataBuffer.Handle,
+            lemmingManagerDataBuffer,
             hatchGroups,
             levelLemmings,
             levelData.PrePlacedLemmingData.Count,

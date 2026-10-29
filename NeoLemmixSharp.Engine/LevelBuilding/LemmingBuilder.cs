@@ -27,7 +27,7 @@ public sealed class LemmingBuilder
     public Lemming[] BuildLevelLemmings()
     {
         var i = 0;
-        nint handle = _lemmingDataBuffer.Handle;
+        var dataHandle = new DataHandle(_lemmingDataBuffer);
         var preplacedLemmingData = _levelData.PrePlacedLemmingData;
 
         Debug.Assert(preplacedLemmingData.Count <= _levelLemmings.Length);
@@ -36,7 +36,7 @@ public sealed class LemmingBuilder
         {
             var prototype = preplacedLemmingData[i];
 
-            var lemming = new Lemming(ref handle, i)
+            var lemming = new Lemming(dataHandle, i)
             {
                 AnchorPosition = prototype.Position
             };
@@ -50,7 +50,7 @@ public sealed class LemmingBuilder
 
         while (i < _levelLemmings.Length)
         {
-            var lemming = new Lemming(ref handle, i);
+            var lemming = new Lemming(dataHandle, i);
 
             lemming.SetCurrentActionType(LemmingActionType.NoneAction);
 

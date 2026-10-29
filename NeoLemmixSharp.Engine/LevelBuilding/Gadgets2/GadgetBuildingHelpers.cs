@@ -141,13 +141,13 @@ public static class GadgetBuildingHelpers
     }
 
     public static GadgetBounds CreateGadgetBounds(
-        ref nint dataHandleRef,
+        DataHandle dataHandle,
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetData)
     {
         var baseSize = gadgetData.DihedralTransformation.Transform(gadgetArchetypeData.BaseSpriteSize);
 
-        var result = PointerDataHelper.CreateItem<GadgetBounds>(ref dataHandleRef);
+        var result = PointerDataHelper.CreateItem<GadgetBounds>(dataHandle);
         result.Position = gadgetData.Position;
         result.Width = baseSize.W;
         result.Height = baseSize.H;
@@ -156,7 +156,7 @@ public static class GadgetBuildingHelpers
     }
 
     public static GadgetBounds CreateHitBoxGadgetBounds(
-        ref nint dataHandleRef,
+        DataHandle dataHandle,
         GadgetArchetypeData gadgetArchetypeData,
         HitBoxGadgetArchetypeSpecificationData hitBoxGadgetArchetypeData,
         GadgetInstanceData hitBoxGadgetData,
@@ -171,7 +171,7 @@ public static class GadgetBuildingHelpers
 
         size = hitBoxGadgetData.DihedralTransformation.Transform(size);
 
-        var result = PointerDataHelper.CreateItem<GadgetBounds>(ref dataHandleRef);
+        var result = PointerDataHelper.CreateItem<GadgetBounds>(dataHandle);
         result.Position = hitBoxGadgetData.Position;
         result.Width = size.W;
         result.Height = size.H;
