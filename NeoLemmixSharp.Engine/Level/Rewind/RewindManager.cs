@@ -1,10 +1,11 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.Engine.Level.Objectives;
 
 namespace NeoLemmixSharp.Engine.Level.Rewind;
 
-public sealed class RewindManager : IDisposable
+public sealed class RewindManager : IInitialisable, IDisposable
 {
     private readonly SnapshotRecorder _lemmingSnapshotRecorder;
     private readonly SnapshotRecorder _lemmingManagerSnapshotRecorder;
@@ -36,6 +37,16 @@ public sealed class RewindManager : IDisposable
         _levelTimerRecorder = new SnapshotRecorder(levelTimerDataBuffer);
 
         _skillAssignmentList = new LevelEventList<SkillAssignmentEventData>(baseNumberOfSkillAssignments);
+    }
+
+    public void Initialise()
+    {
+        _lemmingSnapshotRecorder.TakeSnapshot();
+        _lemmingManagerSnapshotRecorder.TakeSnapshot();
+        _gadgetSnapshotRecorder.TakeSnapshot();
+        _hatchGroupSnapshotRecorder.TakeSnapshot();
+        _skillSetSnapshotRecorder.TakeSnapshot();
+        _levelTimerRecorder.TakeSnapshot();
     }
 
     public unsafe bool DoneSkillAssignmentForTick(int tick) => _skillAssignmentList.TryGetDataForTick(tick, out _);
