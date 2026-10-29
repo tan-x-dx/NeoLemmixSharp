@@ -1,4 +1,5 @@
-﻿using NeoLemmixSharp.Common.Enums;
+﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.Engine.Level.Gadgets.CommonTriggers;
@@ -131,16 +132,12 @@ public readonly ref struct GadgetTriggerBuilder
         int newTriggerId,
         GadgetBehaviour[] behaviours)
     {
-        var point = ReadWriteHelpers.DecodePoint(gadgetTriggerDatum.DataChunk.Data1);
-        uint miscData = (uint)gadgetTriggerDatum.DataChunk.Data2;
-        uint t = miscData >>> 0;
-        var requireX = (t & 1) != 0;
-        t = (miscData >>> 1) & 3;
-        var comparisonX = ComparisonTypeHelpers.GetEnumValue(t);
-        t = miscData >>> 4;
-        var requireY = (t & 1) != 0;
-        t = (miscData >>> 5) & 3;
-        var comparisonY = ComparisonTypeHelpers.GetEnumValue(t);
+        Point point = ReadWriteHelpers.DecodePoint(gadgetTriggerDatum.DataChunk.Data1);
+        PackedBytes32 miscData = gadgetTriggerDatum.DataChunk.Data2;
+        bool requireX = miscData.GetBit(0);
+        ComparisonType comparisonX = ComparisonTypeHelpers.GetEnumValue(miscData.GetByte(1));
+        bool requireY = miscData.GetBit(1);
+        ComparisonType comparisonY = ComparisonTypeHelpers.GetEnumValue(miscData.GetByte(2));
 
         return new GadgetPositionTrigger(
             point.X,

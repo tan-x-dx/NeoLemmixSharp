@@ -123,7 +123,7 @@ public readonly ref struct GadgetBehaviourBuilder
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var intendedStateIndex = gadgetBehaviourDatum.DataChunk.Data2;
+        var intendedStateIndex = gadgetBehaviourDatum.DataChunk.Data2.GetByte(0);
 
         return new StateChangeBehaviour(intendedStateIndex)
         {
@@ -138,10 +138,11 @@ public readonly ref struct GadgetBehaviourBuilder
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var maxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data1 & 0xffff;
-        var tickDelay = gadgetBehaviourDatum.DataChunk.Data1 >>> 16;
-        var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data1);
-        var limit = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
+        PackedBytes32 data1 = gadgetBehaviourDatum.DataChunk.Data1;
+        uint maxTriggerCountPerTick = data1.GetUshort(0);
+        int tickDelay = data1.GetUshort(1);
+        Common.Point delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
+        Common.Point limit = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data3);
 
         return new MoveGadgetBehaviour(dataHandle, _gadgetIdentifier, tickDelay, delta, limit)
         {
@@ -156,14 +157,14 @@ public readonly ref struct GadgetBehaviourBuilder
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var tickDelay = gadgetBehaviourDatum.DataChunk.Data1;
-        var delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
+        int tickDelay = gadgetBehaviourDatum.DataChunk.Data1.GetUshort(0);
+        Common.Point delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
 
         return new FreeResizeHitBoxGadgetBehaviour(dataHandle, _gadgetIdentifier, tickDelay, delta.X, delta.Y)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
@@ -172,10 +173,11 @@ public readonly ref struct GadgetBehaviourBuilder
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var maxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data1 & 0xffff;
-        var tickDelay = gadgetBehaviourDatum.DataChunk.Data1 >>> 16;
-        var delta = gadgetBehaviourDatum.DataChunk.Data1;
-        var max = gadgetBehaviourDatum.DataChunk.Data2;
+        PackedBytes32 data1 = gadgetBehaviourDatum.DataChunk.Data1;
+        uint maxTriggerCountPerTick = data1.GetUshort(0);
+        uint tickDelay = data1.GetUshort(1);
+        int delta = (int)gadgetBehaviourDatum.DataChunk.Data2.GetRawValue();
+        int max = (int)gadgetBehaviourDatum.DataChunk.Data3.GetRawValue();
 
         return new ConstrainedResizeHitBoxGadgetBehaviour(dataHandle, _gadgetIdentifier, tickDelay, delta, max)
         {
@@ -190,34 +192,30 @@ public readonly ref struct GadgetBehaviourBuilder
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var frameData = gadgetBehaviourDatum.DataChunk.Data1;
+        PackedBytes32 frameData = gadgetBehaviourDatum.DataChunk.Data1;
 
-        var minFrame = frameData & 0xff;
-        frameData >>>= 8;
-        var maxFrame = frameData & 0xff;
-        frameData >>>= 8;
-        var initialFrame = frameData & 0xff;
-        frameData >>>= 8;
-        var layer = frameData & 0xff;
+        int minFrame = frameData.GetByte(0);
+        int maxFrame = frameData.GetByte(1);
+        int initialFrame = frameData.GetByte(2);
+        int layer = frameData.GetByte(3);
 
-        var layerColorData = gadgetBehaviourDatum.DataChunk.Data2;
-        var isIncrement = (layerColorData & 1) == 0;
-        layerColorData >>>= 1;
-        var isTribeColorLayer = (layerColorData & 1) != 0;
+        PackedBytes32 layerColorData = gadgetBehaviourDatum.DataChunk.Data2;
+        bool isIncrement = layerColorData.GetBit(0);
+        bool isTribeColorLayer = layerColorData.GetBit(1);
 
         GadgetLayerColorData gadgetLayerColorData;
+
         if (isTribeColorLayer)
         {
-            var rawTribeData = gadgetBehaviourDatum.DataChunk.Data3;
-            var tribeId = rawTribeData & 0xff;
-            rawTribeData >>>= 8;
-            var tribeColorLayerType = TribeSpriteLayerColorTypeHelpers.GetEnumValue((uint)(rawTribeData & 0xff));
+            PackedBytes32 rawTribeData = gadgetBehaviourDatum.DataChunk.Data3;
+            int tribeId = rawTribeData.GetByte(0);
+            var tribeColorLayerType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawTribeData.GetByte(1));
             gadgetLayerColorData = new GadgetLayerColorData(tribeId, tribeColorLayerType);
         }
         else
         {
             var rawColor = gadgetBehaviourDatum.DataChunk.Data3;
-            var color = Unsafe.As<int, Color>(ref rawColor);
+            var color = Unsafe.As<PackedBytes32, Color>(ref rawColor);
             gadgetLayerColorData = new GadgetLayerColorData(color);
         }
 
@@ -254,11 +252,11 @@ public readonly ref struct GadgetBehaviourBuilder
     {
         var additionalTimeInSecods = gadgetBehaviourDatum.DataChunk.Data2;
 
-        return new AdditionalTimeBehaviour(additionalTimeInSecods)
+        return new AdditionalTimeBehaviour((int)additionalTimeInSecods.GetRawValue())
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
@@ -267,16 +265,18 @@ public readonly ref struct GadgetBehaviourBuilder
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var skillCountDelta = gadgetBehaviourDatum.DataChunk.Data2 & 0xffff;
-        var tribeId = gadgetBehaviourDatum.DataChunk.Data2 >>> 16;
-        var lemmingSkillType = (uint)gadgetBehaviourDatum.DataChunk.Data1;
+        var lemmingSkillType = gadgetBehaviourDatum.DataChunk.Data1.GetRawValue();
         var lemmingSkill = LemmingSkillConstants.GetEnumValue(lemmingSkillType);
+
+        PackedBytes32 skillData = gadgetBehaviourDatum.DataChunk.Data2;
+        int skillCountDelta = (short)skillData.GetUshort(0);
+        int tribeId = skillData.GetUshort(1);
 
         return new SkillCountChangeBehaviour(lemmingSkill, tribeId, skillCountDelta)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 }

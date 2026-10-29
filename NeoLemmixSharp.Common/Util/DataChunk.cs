@@ -4,10 +4,10 @@ namespace NeoLemmixSharp.Common.Util;
 
 public readonly struct DataChunk2 : IBitwiseOperators<DataChunk2, DataChunk2, DataChunk2>
 {
-    public readonly int Data1;
-    public readonly int Data2;
+    public readonly PackedBytes32 Data1;
+    public readonly PackedBytes32 Data2;
 
-    public DataChunk2(int data1, int data2)
+    public DataChunk2(PackedBytes32 data1, PackedBytes32 data2)
     {
         Data1 = data1;
         Data2 = data2;
@@ -48,11 +48,11 @@ public readonly struct DataChunk2 : IBitwiseOperators<DataChunk2, DataChunk2, Da
 
 public readonly struct DataChunk3 : IBitwiseOperators<DataChunk3, DataChunk3, DataChunk3>
 {
-    public readonly int Data1;
-    public readonly int Data2;
-    public readonly int Data3;
+    public readonly PackedBytes32 Data1;
+    public readonly PackedBytes32 Data2;
+    public readonly PackedBytes32 Data3;
 
-    public DataChunk3(int data1, int data2, int data3)
+    public DataChunk3(PackedBytes32 data1, PackedBytes32 data2, PackedBytes32 data3)
     {
         Data1 = data1;
         Data2 = data2;
@@ -125,12 +125,12 @@ public readonly struct DataChunk3 : IBitwiseOperators<DataChunk3, DataChunk3, Da
 
 public readonly struct DataChunk4 : IBitwiseOperators<DataChunk4, DataChunk4, DataChunk4>
 {
-    public readonly int Data1;
-    public readonly int Data2;
-    public readonly int Data3;
-    public readonly int Data4;
+    public readonly PackedBytes32 Data1;
+    public readonly PackedBytes32 Data2;
+    public readonly PackedBytes32 Data3;
+    public readonly PackedBytes32 Data4;
 
-    public DataChunk4(int data1, int data2, int data3, int data4)
+    public DataChunk4(PackedBytes32 data1, PackedBytes32 data2, PackedBytes32 data3, PackedBytes32 data4)
     {
         Data1 = data1;
         Data2 = data2;
