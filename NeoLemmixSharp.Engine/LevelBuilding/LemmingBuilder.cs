@@ -19,7 +19,7 @@ public sealed class LemmingBuilder
         var numberOfLemmings = _levelData.CalculateTotalNumberOfLemmingsInLevel();
 
         _levelLemmings = new Lemming[numberOfLemmings];
-        _lemmingDataBuffer = safeBufferAllocator.AllocateRawArray(numberOfLemmings * LemmingData.SizeInBytes);
+        _lemmingDataBuffer = safeBufferAllocator.AllocateRawArray<LemmingData>(numberOfLemmings);
     }
 
     public RawArray LemmingDataBuffer => _lemmingDataBuffer;

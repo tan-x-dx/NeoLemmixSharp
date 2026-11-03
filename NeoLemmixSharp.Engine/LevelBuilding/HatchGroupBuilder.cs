@@ -17,7 +17,7 @@ public sealed class HatchGroupBuilder
         _levelData = levelData;
 
         var numberOfHatchGroups = _levelData.AllHatchGroupData.Count;
-        HatchGroupDataBuffer = safeBufferAllocator.AllocateRawArray(numberOfHatchGroups * Level.Gadgets.HatchGadgets.HatchGroupData.SizeInBytes);
+        HatchGroupDataBuffer = safeBufferAllocator.AllocateRawArray<Level.Gadgets.HatchGadgets.HatchGroupData>(numberOfHatchGroups);
     }
 
     public HatchGroup[] BuildHatchGroups()

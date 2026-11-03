@@ -161,7 +161,7 @@ public sealed class LevelObjectiveBuilder
     {
         var timeLimitCriterionData = TryFindSmallestTimeLimitCriterion();
 
-        LevelTimerDataBuffer = safeBufferAllocator.AllocateRawArray(LevelTimerData.SizeInBytes);
+        LevelTimerDataBuffer = safeBufferAllocator.AllocateRawArray<LevelTimerData>(1);
 
         return timeLimitCriterionData is null
             ? LevelTimer.CreateCountUpTimer(LevelTimerDataBuffer.Handle)

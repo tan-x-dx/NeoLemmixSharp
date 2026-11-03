@@ -20,9 +20,10 @@ public readonly struct SafeBufferAllocator
     }
 
     public RawArray AllocateRawArray<T>(int numberOfItems)
-        where T : unmanaged
+        where T : unmanaged, IPointerData<T>
     {
-        var newRawArray = Helpers.AllocateBuffer<T>(numberOfItems);
+        var newRawArray = new RawArray(numberOfItems * T.SizeInBytes);
+        newRawArray.AsSpan().Clear();
         _rawArrays.Add(newRawArray);
         return newRawArray;
     }

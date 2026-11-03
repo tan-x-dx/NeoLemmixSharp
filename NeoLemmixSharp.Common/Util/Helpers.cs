@@ -344,6 +344,7 @@ public static class Helpers
     [DoesNotReturn]
     public static TReturn ThrowUnknownEnumValueException<TEnum, TReturn>(TEnum enumValue)
         where TEnum : unmanaged, Enum
+        where TReturn : allows ref struct
     {
         var typeName = typeof(TEnum).Name;
         throw new ArgumentOutOfRangeException(nameof(enumValue), enumValue, $"Unknown {typeName} enum value!");
