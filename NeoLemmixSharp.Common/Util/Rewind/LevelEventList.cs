@@ -182,10 +182,11 @@ public sealed class LevelEventList<TEventData> : IDisposable
     public unsafe int LatestTickWithData()
     {
         var c = _count;
-        if (c == 0)
+        c--;
+
+        if (c < 0)
             return -1;
 
-        c--;
         TEventData* pointer = (TEventData*)_buffer.Handle + c;
 
         return pointer->TickNumber;
