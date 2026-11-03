@@ -141,7 +141,7 @@ public readonly ref struct GadgetBehaviourBuilder
     {
         PackedBytes32 data1 = gadgetBehaviourDatum.DataChunk.Data1;
         uint maxTriggerCountPerTick = data1.Ushort0;
-        int tickDelay = data1.Ushort1;
+        uint tickDelay = data1.Ushort1;
         Common.Point delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
         Common.Point limit = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data3);
 
