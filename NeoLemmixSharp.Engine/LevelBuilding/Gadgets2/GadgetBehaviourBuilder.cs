@@ -124,7 +124,7 @@ public readonly ref struct GadgetBehaviourBuilder
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var intendedStateIndex = gadgetBehaviourDatum.DataChunk.Data2.GetByte(0);
+        var intendedStateIndex = gadgetBehaviourDatum.DataChunk.Data2.Byte0;
 
         return new StateChangeBehaviour(intendedStateIndex)
         {
@@ -140,8 +140,8 @@ public readonly ref struct GadgetBehaviourBuilder
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
         PackedBytes32 data1 = gadgetBehaviourDatum.DataChunk.Data1;
-        uint maxTriggerCountPerTick = data1.GetUshort(0);
-        int tickDelay = data1.GetUshort(1);
+        uint maxTriggerCountPerTick = data1.Ushort0;
+        int tickDelay = data1.Ushort1;
         Common.Point delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
         Common.Point limit = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data3);
 
@@ -158,7 +158,7 @@ public readonly ref struct GadgetBehaviourBuilder
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        int tickDelay = gadgetBehaviourDatum.DataChunk.Data1.GetUshort(0);
+        int tickDelay = gadgetBehaviourDatum.DataChunk.Data1.Ushort0;
         Common.Point delta = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
 
         return new FreeResizeHitBoxGadgetBehaviour(dataHandle, _gadgetIdentifier, tickDelay, delta.X, delta.Y)
@@ -175,8 +175,8 @@ public readonly ref struct GadgetBehaviourBuilder
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
         PackedBytes32 data1 = gadgetBehaviourDatum.DataChunk.Data1;
-        uint maxTriggerCountPerTick = data1.GetUshort(0);
-        uint tickDelay = data1.GetUshort(1);
+        uint maxTriggerCountPerTick = data1.Ushort0;
+        uint tickDelay = data1.Ushort1;
         int delta = (int)gadgetBehaviourDatum.DataChunk.Data2.GetRawValue();
         int max = (int)gadgetBehaviourDatum.DataChunk.Data3.GetRawValue();
 
@@ -195,10 +195,10 @@ public readonly ref struct GadgetBehaviourBuilder
     {
         PackedBytes32 frameData = gadgetBehaviourDatum.DataChunk.Data1;
 
-        int minFrame = frameData.GetByte(0);
-        int maxFrame = frameData.GetByte(1);
-        int initialFrame = frameData.GetByte(2);
-        int layer = frameData.GetByte(3);
+        int minFrame = frameData.Byte0;
+        int maxFrame = frameData.Byte1;
+        int initialFrame = frameData.Byte2;
+        int layer = frameData.Byte3;
 
         PackedBytes32 layerColorData = gadgetBehaviourDatum.DataChunk.Data2;
         bool isIncrement = layerColorData.GetBit(0);
@@ -209,8 +209,8 @@ public readonly ref struct GadgetBehaviourBuilder
         if (isTribeColorLayer)
         {
             PackedBytes32 rawTribeData = gadgetBehaviourDatum.DataChunk.Data3;
-            int tribeId = rawTribeData.GetByte(0);
-            var tribeColorLayerType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawTribeData.GetByte(1));
+            int tribeId = rawTribeData.Byte0;
+            var tribeColorLayerType = TribeSpriteLayerColorTypeHelpers.GetEnumValue(rawTribeData.Byte1);
             gadgetLayerColorData = new GadgetLayerColorData(tribeId, tribeColorLayerType);
         }
         else
@@ -270,8 +270,8 @@ public readonly ref struct GadgetBehaviourBuilder
         var lemmingSkill = LemmingSkillConstants.GetEnumValue(lemmingSkillType);
 
         PackedBytes32 skillData = gadgetBehaviourDatum.DataChunk.Data2;
-        int skillCountDelta = (short)skillData.GetUshort(0);
-        int tribeId = skillData.GetUshort(1);
+        int skillCountDelta = (short)skillData.Ushort0;
+        int tribeId = skillData.Ushort1;
 
         return new SkillCountChangeBehaviour(lemmingSkill, tribeId, skillCountDelta)
         {

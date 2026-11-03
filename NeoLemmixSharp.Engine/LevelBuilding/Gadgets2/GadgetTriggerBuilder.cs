@@ -136,9 +136,9 @@ public readonly ref struct GadgetTriggerBuilder
         Point point = ReadWriteHelpers.DecodePoint(gadgetTriggerDatum.DataChunk.Data1);
         PackedBytes32 miscData = gadgetTriggerDatum.DataChunk.Data2;
         bool requireX = miscData.GetBit(0);
-        ComparisonType comparisonX = ComparisonTypeHelpers.GetEnumValue(miscData.GetByte(1));
+        ComparisonType comparisonX = ComparisonTypeHelpers.GetEnumValue(miscData.Byte1);
         bool requireY = miscData.GetBit(1);
-        ComparisonType comparisonY = ComparisonTypeHelpers.GetEnumValue(miscData.GetByte(2));
+        ComparisonType comparisonY = ComparisonTypeHelpers.GetEnumValue(miscData.Byte2);
 
         return new GadgetPositionTrigger(
             point.X,

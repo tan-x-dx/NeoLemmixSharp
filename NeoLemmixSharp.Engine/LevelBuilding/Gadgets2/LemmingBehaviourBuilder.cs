@@ -40,10 +40,10 @@ public static class LemmingBehaviourBuilder
     {
         PackedBytes32 stateData = gadgetBehaviourDatum.DataChunk.Data2;
 
-        int lemmingStateChangerId = stateData.GetUshort(0);
+        int lemmingStateChangerId = stateData.Ushort0;
         var lemmingStateChanger = ILemmingAbilityChanger.AllItems[lemmingStateChangerId];
 
-        uint rawSetStateTypeId = stateData.GetUshort(1);
+        uint rawSetStateTypeId = stateData.Ushort1;
         var setStateType = ChangeAbilityLemmingBehaviour.GetEnumValue(rawSetStateTypeId);
 
         return new ChangeAbilityLemmingBehaviour(lemmingStateChanger, setStateType)
@@ -117,7 +117,7 @@ public static class LemmingBehaviourBuilder
 
     private static ForceFacingDirectionLemmingBehaviour BuildForceFacingDirectionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        FacingDirection facingDirection = new(gadgetBehaviourDatum.DataChunk.Data2.GetByte(0));
+        FacingDirection facingDirection = new(gadgetBehaviourDatum.DataChunk.Data2.Byte0);
 
         return new ForceFacingDirectionLemmingBehaviour(facingDirection)
         {
@@ -154,9 +154,9 @@ public static class LemmingBehaviourBuilder
         Point position = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
 
         PackedBytes32 miscData = gadgetBehaviourDatum.DataChunk.Data3;
-        uint rawRelativePositioningType = miscData.GetByte(0);
+        uint rawRelativePositioningType = miscData.Byte0;
         RelativePositioningType relativePositioningType = RelativePositioningTypeHelpers.GetEnumValue(rawRelativePositioningType);
-        uint maxTriggerCountPerTick = miscData.GetByte(1);
+        uint maxTriggerCountPerTick = miscData.Byte1;
 
         return new SetLemmingPositionBehaviour(position, relativePositioningType)
         {

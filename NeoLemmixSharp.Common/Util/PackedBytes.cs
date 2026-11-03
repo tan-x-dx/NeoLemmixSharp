@@ -6,6 +6,38 @@ public struct PackedBytes32
 {
     private uint _bits;
 
+    public byte Byte0
+    {
+        readonly get => GetByte(0);
+        set => SetByte(0, value);
+    }
+    public byte Byte1
+    {
+        readonly get => GetByte(1);
+        set => SetByte(1, value);
+    }
+    public byte Byte2
+    {
+        readonly get => GetByte(2);
+        set => SetByte(2, value);
+    }
+    public byte Byte3
+    {
+        readonly get => GetByte(3);
+        set => SetByte(3, value);
+    }
+
+    public ushort Ushort0
+    {
+        readonly get => GetUshort(0);
+        set => SetUshort(0, value);
+    }
+    public ushort Ushort1
+    {
+        readonly get => GetUshort(1);
+        set => SetUshort(1, value);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear() => _bits = 0;
 
@@ -50,26 +82,29 @@ public struct PackedBytes32
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly byte GetByte(int byteIndex)
+    private readonly byte GetByte(int byteIndex)
     {
-        byteIndex &= 3;
-        byteIndex *= 8;
+        const int ByteBitSize = 8;
+
+        byteIndex *= ByteBitSize;
         uint result = _bits;
         result >>>= byteIndex;
         return (byte)result;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void SetByte(int byteIndex, int value)
+    private void SetByte(int byteIndex, int value)
     {
-        byteIndex &= 3;
-        byteIndex *= 8;
+        const int ByteBitSize = 8;
+        const uint ByteBitMask = (1U << ByteBitSize) - 1;
+
+        byteIndex *= ByteBitSize;
 
         uint valueU = (uint)value;
-        valueU &= 0xffU;
+        valueU &= ByteBitMask;
         valueU <<= byteIndex;
 
-        uint mask = 0xffU << byteIndex;
+        uint mask = ByteBitMask << byteIndex;
         uint bits = _bits;
         bits &= ~mask;
 
@@ -78,26 +113,29 @@ public struct PackedBytes32
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly ushort GetUshort(int ushortIndex)
+    private readonly ushort GetUshort(int ushortIndex)
     {
-        ushortIndex &= 1;
-        ushortIndex *= 16;
+        const int UshortBitSize = 16;
+
+        ushortIndex *= UshortBitSize;
         uint result = _bits;
         result >>>= ushortIndex;
         return (ushort)result;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void SetUshort(int ushortIndex, int value)
+    private void SetUshort(int ushortIndex, int value)
     {
-        ushortIndex &= 1;
-        ushortIndex *= 16;
+        const int UshortBitSize = 16;
+        const uint ByteBitMask = (1U << UshortBitSize) - 1;
+
+        ushortIndex *= UshortBitSize;
 
         uint valueU = (uint)value;
-        valueU &= 0xffffU;
+        valueU &= ByteBitMask;
         valueU <<= ushortIndex;
 
-        uint mask = 0xffffU << ushortIndex;
+        uint mask = ByteBitMask << ushortIndex;
         uint bits = _bits;
         bits &= ~mask;
 
@@ -115,6 +153,79 @@ public struct PackedBytes32
 public struct PackedBytes64
 {
     private ulong _bits;
+
+    public byte Byte0
+    {
+        readonly get => GetByte(0);
+        set => SetByte(0, value);
+    }
+    public byte Byte1
+    {
+        readonly get => GetByte(1);
+        set => SetByte(1, value);
+    }
+    public byte Byte2
+    {
+        readonly get => GetByte(2);
+        set => SetByte(2, value);
+    }
+    public byte Byte3
+    {
+        readonly get => GetByte(3);
+        set => SetByte(3, value);
+    }
+    public byte Byte4
+    {
+        readonly get => GetByte(4);
+        set => SetByte(4, value);
+    }
+    public byte Byte5
+    {
+        readonly get => GetByte(5);
+        set => SetByte(5, value);
+    }
+    public byte Byte6
+    {
+        readonly get => GetByte(6);
+        set => SetByte(6, value);
+    }
+    public byte Byte7
+    {
+        readonly get => GetByte(7);
+        set => SetByte(7, value);
+    }
+
+    public ushort Ushort0
+    {
+        readonly get => GetUshort(0);
+        set => SetUshort(0, value);
+    }
+    public ushort Ushort1
+    {
+        readonly get => GetUshort(1);
+        set => SetUshort(1, value);
+    }
+    public ushort Ushort2
+    {
+        readonly get => GetUshort(2);
+        set => SetUshort(2, value);
+    }
+    public ushort Ushort3
+    {
+        readonly get => GetUshort(3);
+        set => SetUshort(3, value);
+    }
+
+    public uint Uint0
+    {
+        readonly get => GetUint(0);
+        set => SetUint(0, value);
+    }
+    public uint Uint1
+    {
+        readonly get => GetUint(1);
+        set => SetUint(1, value);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly ulong GetRawValue() => _bits;
@@ -160,27 +271,30 @@ public struct PackedBytes64
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly byte GetByte(int byteIndex)
+    private readonly byte GetByte(int byteIndex)
     {
-        byteIndex &= 7;
-        byteIndex *= 8;
+        const int ByteBitSize = 8;
+
+        byteIndex *= ByteBitSize;
         ulong result = _bits;
         result >>>= byteIndex;
         return (byte)result;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void SetByte(int byteIndex, int value)
+    private void SetByte(int byteIndex, int value)
     {
-        byteIndex &= 7;
-        byteIndex *= 8;
+        const int ByteBitSize = 8;
+        const ulong ByteBitMask = (1UL << ByteBitSize) - 1UL;
 
-        ulong valueUL = (ulong)(uint)value;
-        valueUL &= 0xffUL;
+        byteIndex *= ByteBitSize;
+
+        ulong valueUL = (uint)value;
+        valueUL &= ByteBitMask;
         valueUL <<= byteIndex;
 
         ulong bits = _bits;
-        ulong mask = 0xffUL << byteIndex;
+        ulong mask = ByteBitMask << byteIndex;
         bits &= ~mask;
 
         bits |= valueUL;
@@ -188,26 +302,29 @@ public struct PackedBytes64
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly ushort GetUshort(int ushortIndex)
+    private readonly ushort GetUshort(int ushortIndex)
     {
-        ushortIndex &= 3;
-        ushortIndex *= 16;
+        const int UshortBitSize = 16;
+
+        ushortIndex *= UshortBitSize;
         ulong result = _bits;
         result >>>= ushortIndex;
         return (ushort)result;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void SetUshort(int ushortIndex, int value)
+    private void SetUshort(int ushortIndex, int value)
     {
-        ushortIndex &= 3;
-        ushortIndex *= 16;
+        const int UshortBitSize = 16;
+        const ulong UshortBitMask = (1UL << UshortBitSize) - 1UL;
 
-        ulong valueU = (ulong)(uint)value;
-        valueU &= 0xffffU;
+        ushortIndex *= UshortBitSize;
+
+        ulong valueU = (uint)value;
+        valueU &= UshortBitMask;
         valueU <<= ushortIndex;
 
-        ulong mask = 0xffffU << ushortIndex;
+        ulong mask = UshortBitMask << ushortIndex;
         ulong bits = _bits;
         bits &= ~mask;
 
@@ -216,26 +333,29 @@ public struct PackedBytes64
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public readonly uint GetUint(int uintIndex)
+    private readonly uint GetUint(int uintIndex)
     {
-        uintIndex &= 1;
-        uintIndex *= 32;
+        const int UintBitSize = 32;
+
+        uintIndex *= UintBitSize;
         ulong result = _bits;
         result >>>= uintIndex;
         return (uint)result;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void SetUint(int uintIndex, int value)
+    private void SetUint(int uintIndex, uint value)
     {
-        uintIndex &= 1;
-        uintIndex *= 32;
+        const int UintBitSize = 32;
+        const ulong UintBitMask = (1UL << UintBitSize) - 1UL;
 
-        ulong valueU = (ulong)(uint)value;
-        valueU &= 0xffffffffU;
+        uintIndex *= UintBitSize;
+
+        ulong valueU = value;
+        valueU &= UintBitMask;
         valueU <<= uintIndex;
 
-        ulong mask = 0xffffffffU << uintIndex;
+        ulong mask = UintBitMask << uintIndex;
         ulong bits = _bits;
         bits &= ~mask;
 

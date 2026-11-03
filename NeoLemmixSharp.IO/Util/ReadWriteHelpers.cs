@@ -58,17 +58,19 @@ public static class ReadWriteHelpers
         FileWritingException.WriterAssert(point.X <= short.MaxValue && point.X >= short.MinValue, "Point outside of valid scope");
         FileWritingException.WriterAssert(point.Y <= short.MaxValue && point.Y >= short.MinValue, "Point outside of valid scope");
 
-        var result = new PackedBytes32();
-        result.SetUshort(0, point.X);
-        result.SetUshort(1, point.Y);
+        var result = new PackedBytes32
+        {
+            Ushort0 = (ushort)point.X,
+            Ushort1 = (ushort)point.Y
+        };
 
         return result;
     }
 
     public static Point DecodePoint(PackedBytes32 packedBytes)
     {
-        int x = (short)packedBytes.GetUshort(0);
-        int y = (short)packedBytes.GetUshort(1);
+        int x = (short)packedBytes.Ushort0;
+        int y = (short)packedBytes.Ushort1;
 
         return new Point(x, y);
     }
