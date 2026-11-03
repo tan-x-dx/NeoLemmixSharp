@@ -53,7 +53,7 @@ public sealed class LemmingManager :
     public Lemming GetLemming(int lemmingId) => _lemmings[lemmingId];
 
     public LemmingManager(
-        RawArray lemmingManagerDataBuffer,
+        nint lemmingManagerDataBufferHandle,
         HatchGroup[] hatchGroups,
         Lemming[] lemmings,
         int numberOfPreplacedLemmings,
@@ -61,7 +61,7 @@ public sealed class LemmingManager :
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
-        _data = PointerDataHelper.CreateItem<LemmingManagerData>(lemmingManagerDataBuffer.Handle);
+        _data = PointerDataHelper.CreateItem<LemmingManagerData>(lemmingManagerDataBufferHandle);
 
         if (hatchGroups.Length > 0)
         {

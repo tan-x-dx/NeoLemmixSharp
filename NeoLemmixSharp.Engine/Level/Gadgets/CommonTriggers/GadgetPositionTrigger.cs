@@ -32,10 +32,14 @@ public sealed class GadgetPositionTrigger : GadgetTrigger
 
     public override void DetectTrigger()
     {
-        var xMatches = !_requireX || _comparisonX.ComparisonMatches(ParentGadget.CurrentGadgetBounds.X, _x);
-        var yMatches = !_requireY || _comparisonY.ComparisonMatches(ParentGadget.CurrentGadgetBounds.Y, _y);
+        var xMatches = true;
+        if (_requireX)
+            xMatches = _comparisonX.ComparisonMatches(ParentGadget.CurrentGadgetBounds.X, _x);
+        var yMatches = true;
+        if (_requireY)
+            yMatches = _comparisonY.ComparisonMatches(ParentGadget.CurrentGadgetBounds.Y, _y);
 
-        var triggered = xMatches && yMatches;
+        var triggered = xMatches & yMatches;
 
         DetermineTrigger(triggered);
         if (triggered)

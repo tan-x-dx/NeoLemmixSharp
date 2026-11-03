@@ -7,20 +7,23 @@ namespace NeoLemmixSharp.Engine.Level.Gadgets;
 
 public abstract class GadgetTrigger : IEquatable<GadgetTrigger>
 {
-    private const int IndeterminateTriggerValue = -1;
-    private const int DefinitelyNotTriggeredValue = 0;
-    private const int DefinitelyTriggeredValue = 1;
+    private enum TriggerValue
+    {
+        Indeterminate = -1,
+        DefinitelyNotTriggered = 0,
+        DefinitelyTriggered = 1,
+    }
 
     public required GadgetTriggerName TriggerName { get; init; }
     public required int Id { get; init; }
     public GadgetTriggerType TriggerType { get; }
-    private int _evaluation;
+    private TriggerValue _triggerEvaluation;
 
     public required GadgetBehaviour[] Behaviours { private get; init; }
     protected GadgetBase ParentGadget = null!;
     protected GadgetState ParentState = null!;
 
-    public bool IsIndeterminate => _evaluation == IndeterminateTriggerValue;
+    public bool IsIndeterminate => _triggerEvaluation == TriggerValue.Indeterminate;
 
     protected GadgetTrigger(GadgetTriggerType triggerType)
     {
@@ -46,24 +49,21 @@ public abstract class GadgetTrigger : IEquatable<GadgetTrigger>
         var parentGadget = ParentGadget;
         var parentState = ParentState;
         var currentParentGadgetState = parentGadget.CurrentState;
-        if (currentParentGadgetState == parentState)
+        _triggerEvaluation = TriggerValue.Indeterminate;
+        if (currentParentGadgetState != parentState)
         {
-            _evaluation = IndeterminateTriggerValue;
-        }
-        else
-        {
-            _evaluation = IndeterminateTriggerValue;
             MarkAsEvaluated();
         }
     }
 
     public void DetermineTrigger(bool isTriggered)
     {
-        if (_evaluation != IndeterminateTriggerValue)
+        if (_triggerEvaluation != TriggerValue.Indeterminate)
             return;
 
-        var triggerNum = isTriggered ? DefinitelyTriggeredValue : DefinitelyNotTriggeredValue;
-        _evaluation = triggerNum;
+        _triggerEvaluation = isTriggered
+            ? TriggerValue.DefinitelyTriggered
+            : TriggerValue.DefinitelyNotTriggered;
     }
 
     protected void MarkAsEvaluated() => LevelScreen.GadgetManager.MarkTriggerAsEvaluated(this);
