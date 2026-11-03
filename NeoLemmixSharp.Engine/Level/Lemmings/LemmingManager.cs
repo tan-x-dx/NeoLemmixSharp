@@ -62,7 +62,7 @@ public sealed class LemmingManager :
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
-        _data = PointerDataHelper.CreateItem<LemmingManagerData>(lemmingManagerDataBufferHandle);
+        _data = LemmingManagerData.Create(lemmingManagerDataBufferHandle);
 
         if (hatchGroups.Length > 0)
         {

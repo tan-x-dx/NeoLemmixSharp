@@ -22,7 +22,7 @@ public sealed class ConstrainedResizeHitBoxGadgetBehaviour : GadgetBehaviour
         int max)
         : base(GadgetBehaviourType.GadgetConstrainedResize)
     {
-        _tickCount = PointerDataHelper.CreateItem<PointerWrapper>(dataHandle);
+        _tickCount = dataHandle.CreateItem<PointerWrapper>();
         _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;
         _delta = delta;

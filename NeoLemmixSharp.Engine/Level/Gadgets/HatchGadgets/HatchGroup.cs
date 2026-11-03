@@ -32,7 +32,7 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
         uint maxSpawnInterval,
         uint initialSpawnInterval)
     {
-        _data = PointerDataHelper.CreateItem<HatchGroupData>(dataHandle);
+        _data = dataHandle.CreateItem<HatchGroupData>();
         Id = id;
 
         Debug.Assert(minSpawnInterval <= initialSpawnInterval);

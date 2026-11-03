@@ -23,7 +23,7 @@ public sealed class HatchSpawnData
         uint rawStateData,
         int hatchGroupId)
     {
-        _lemmingsToRelease = PointerDataHelper.CreateItem<PointerWrapper>(dataHandle);
+        _lemmingsToRelease = dataHandle.CreateItem<PointerWrapper>();
         _lemmingsToRelease.IntValue = lemmingsToRelease;
         _dihedralTransformation = dihedralTransformation;
         _tribeId = tribeId;

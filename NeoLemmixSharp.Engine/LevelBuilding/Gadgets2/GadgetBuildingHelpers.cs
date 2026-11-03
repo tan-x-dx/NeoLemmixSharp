@@ -148,7 +148,7 @@ public static class GadgetBuildingHelpers
     {
         var baseSize = gadgetData.DihedralTransformation.Transform(gadgetArchetypeData.BaseSpriteSize);
 
-        var result = PointerDataHelper.CreateItem<GadgetBounds>(dataHandle);
+        var result = dataHandle.CreateItem<GadgetBounds>();
         result.Position = gadgetData.Position;
         result.Width = baseSize.W;
         result.Height = baseSize.H;
@@ -172,7 +172,7 @@ public static class GadgetBuildingHelpers
 
         size = hitBoxGadgetData.DihedralTransformation.Transform(size);
 
-        var result = PointerDataHelper.CreateItem<GadgetBounds>(dataHandle);
+        var result = dataHandle.CreateItem<GadgetBounds>();
         result.Position = hitBoxGadgetData.Position;
         result.Width = size.W;
         result.Height = size.H;

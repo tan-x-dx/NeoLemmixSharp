@@ -49,7 +49,7 @@ public readonly ref struct HatchGadgetBuilder
             hatchSpawnData,
             spawnPointOffset)
         {
-            DataHandle = PointerDataHelper.CreateItem<PointerWrapper>(dataHandle),
+            DataHandle = dataHandle.CreateItem<PointerWrapper>(),
             Id = _hatchGadgetInstanceData.Identifier.GadgetId,
             GadgetName = gadgetName,
             CurrentGadgetBounds = gadgetBounds,

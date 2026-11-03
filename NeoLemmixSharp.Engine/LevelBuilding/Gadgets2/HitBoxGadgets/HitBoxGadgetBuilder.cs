@@ -57,7 +57,7 @@ public readonly ref struct HitBoxGadgetBuilder
             _hitBoxGadgetInstanceSpecificationData.InitialStateId,
             resizeType)
         {
-            DataHandle = PointerDataHelper.CreateItem<PointerWrapper>(dataHandle),
+            DataHandle = dataHandle.CreateItem<PointerWrapper>(),
             Id = _hitBoxGadgetInstanceData.Identifier.GadgetId,
             GadgetName = gadgetName,
             CurrentGadgetBounds = gadgetBounds,

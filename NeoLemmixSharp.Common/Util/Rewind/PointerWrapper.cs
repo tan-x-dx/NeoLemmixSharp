@@ -19,6 +19,7 @@ public readonly unsafe struct PointerWrapper : IPointerData<PointerWrapper>
     public ref int IntValue => ref Unsafe.AsRef<int>(_pointer);
     public ref uint UintValue => ref Unsafe.AsRef<uint>(_pointer);
     public ref bool BoolValue => ref Unsafe.AsRef<bool>(_pointer);
+    public ref PackedBytes32 PackedBytes => ref Unsafe.AsRef<PackedBytes32>(_pointer);
 
     public static implicit operator ReadOnlyPointerWrapper(PointerWrapper pointer) => new(pointer._pointer);
 }
@@ -38,4 +39,5 @@ public readonly unsafe struct ReadOnlyPointerWrapper : IPointerData<ReadOnlyPoin
     public int IntValue => *(int*)_pointer;
     public uint UintValue => *(uint*)_pointer;
     public bool BoolValue => *(bool*)_pointer;
+    public PackedBytes32 PackedBytes => *(PackedBytes32*)_pointer;
 }

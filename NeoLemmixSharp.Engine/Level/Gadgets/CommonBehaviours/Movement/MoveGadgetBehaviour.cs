@@ -21,7 +21,7 @@ public sealed class MoveGadgetBehaviour : GadgetBehaviour
         Point limitPoint)
         : base(GadgetBehaviourType.GadgetMove)
     {
-        _tickCount = PointerDataHelper.CreateItem<PointerWrapper>(dataHandle);
+        _tickCount = dataHandle.CreateItem<PointerWrapper>();
         _gadgetIdentifier = gadgetIdentifier;
         _tickDelay = tickDelay;
         _delta = delta;

@@ -401,7 +401,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         int id)
     {
         Id = id;
-        _data = PointerDataHelper.CreateItem<LemmingData>(dataHandle);
+        _data = dataHandle.CreateItem<LemmingData>();
     }
 
     public void Initialise()

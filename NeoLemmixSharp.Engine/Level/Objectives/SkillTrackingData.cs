@@ -30,7 +30,7 @@ public sealed class SkillTrackingData
         int initialSkillQuantity,
         int initialSkillLimit)
     {
-        _data = PointerDataHelper.CreateItem<SkillSetData>(dataHandle);
+        _data = dataHandle.CreateItem<SkillSetData>();
 
         LemmingSkillType = lemmingSkillType;
         TribeId = tribeId;

@@ -21,7 +21,7 @@ public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
         int dh)
         : base(GadgetBehaviourType.GadgetFreeResize)
     {
-        _tickCount = PointerDataHelper.CreateItem<PointerWrapper>(dataHandle);
+        _tickCount = dataHandle.CreateItem<PointerWrapper>();
         _tickDelay = tickDelay;
         _gadgetIdentifier = gadgetIdentifier;
         _dw = dw;

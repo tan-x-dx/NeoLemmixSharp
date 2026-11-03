@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
-using NeoLemmixSharp.Common.Util.Rewind;
 using System.Runtime.CompilerServices;
 
 namespace NeoLemmixSharp.Engine.Level.Timer;
@@ -41,7 +40,7 @@ public sealed class LevelTimer
 
     private LevelTimer(nint dataHandle)
     {
-        _data = PointerDataHelper.CreateItem<LevelTimerData>(dataHandle);
+        _data = LevelTimerData.Create(dataHandle);
         _charBuffer[2] = TimerSeparatorChar;
         Type = TimerType.CountUp;
         TimeLimitInSeconds = -1;
@@ -52,7 +51,7 @@ public sealed class LevelTimer
 
     private LevelTimer(nint dataHandle, uint timeLimitInSeconds)
     {
-        _data = PointerDataHelper.CreateItem<LevelTimerData>(dataHandle);
+        _data = LevelTimerData.Create(dataHandle);
         _charBuffer[2] = TimerSeparatorChar;
         Type = TimerType.CountDown;
         TimeLimitInSeconds = (int)timeLimitInSeconds;
