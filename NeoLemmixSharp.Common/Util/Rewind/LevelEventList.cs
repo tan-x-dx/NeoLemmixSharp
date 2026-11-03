@@ -1,9 +1,7 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.Level.Rewind;
+namespace NeoLemmixSharp.Common.Util.Rewind;
 
 public interface ILevelEventData
 {

@@ -1,6 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-
-namespace NeoLemmixSharp.Engine.Level.Rewind;
+﻿namespace NeoLemmixSharp.Common.Util.Rewind;
 
 public static class RewindConstants
 {
@@ -10,5 +8,5 @@ public static class RewindConstants
     public const int RewindSnapshotInterval = NumberOfSecondsBetweenSnapshots * EngineConstants.EngineTicksPerSecond;
     private const int InitialSnapshotDataBufferMultiplier = InitialNumberOfSecondsOfSnapshotData * EngineConstants.EngineTicksPerSecond;
 
-    public const int SnapshotDataListSizeMultiplier = InitialSnapshotDataBufferMultiplier / RewindSnapshotInterval;
+    internal const int SnapshotDataListSizeMultiplier = InitialSnapshotDataBufferMultiplier / RewindSnapshotInterval;
 }

@@ -1,7 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
-
-namespace NeoLemmixSharp.Engine.Level.Rewind;
+﻿namespace NeoLemmixSharp.Common.Util.Rewind;
 
 public sealed class SnapshotRecorder : IDisposable
 {
