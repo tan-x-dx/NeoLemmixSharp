@@ -99,7 +99,7 @@ public sealed class LemmingManager :
 
         _simulationLemmingDataBuffer = new RawArray(LemmingData.SizeInBytes);
         var dataHandle = new DataHandle(_simulationLemmingDataBuffer);
-        SimulationLemming = new Lemming(dataHandle, EngineConstants.SimulationLemmingId);
+        SimulationLemming = Lemming.CreateSimulationLemming(dataHandle);
     }
 
     [Pure]

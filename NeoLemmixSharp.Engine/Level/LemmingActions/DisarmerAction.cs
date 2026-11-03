@@ -19,7 +19,7 @@ public static class DisarmerAction
             else
             {
                 LemmingAction.TransitionLemmingToAction(lemming, false, lemming.NextActionType);
-                lemming.SetNextActionType(LemmingActionType.NoneAction);
+                lemming.NextActionType = LemmingActionType.NoneAction;
             }
         }
         else if ((lemming.PhysicsFrame & 7) == 0)

@@ -26,26 +26,9 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public LemmingColorData Colors => _colors;
 
-    private LemmingRenderer Renderer => LevelScreenRenderer.Instance.LemmingRendererFor(Id);
+    public LemmingRenderer Renderer => LevelScreenRenderer.Instance.LemmingRendererFor(Id);
 
     #region Lemming Data
-
-    public LemmingActionType PreviousActionType => _data.PreviousActionType;
-
-    public LemmingActionType CurrentActionType => _data.CurrentActionType;
-    public void SetCurrentActionType(LemmingActionType actionType)
-    {
-        _data.CurrentActionType = actionType;
-        Renderer.UpdateLemmingState(true);
-    }
-
-    public LemmingActionType NextActionType => _data.NextActionType;
-    public void SetNextActionType(LemmingActionType actionType)
-    {
-        _data.NextActionType = actionType;
-    }
-
-    public LemmingActionType CountDownActionType => _data.CountDownActionType;
 
     public DihedralTransformation DihedralTransformation => _data.DihedralTransformation;
 
@@ -69,8 +52,15 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
     }
 
+    public ref int TribeId => ref _data.TribeId;
+
     RectangularRegion IRectangularBounds.CurrentBounds => _data.CurrentBounds;
     public ref RectangularRegion CurrentBounds => ref _data.CurrentBounds;
+
+    public LemmingActionType PreviousActionType => _data.PreviousActionType;
+    public ref LemmingActionType CurrentActionType => ref _data.CurrentActionType;
+    public ref LemmingActionType NextActionType => ref _data.NextActionType;
+    public ref LemmingActionType CountDownActionType => ref _data.CountDownActionType;
 
     public ref Point DehoistPin => ref _data.DehoistPin;
     public ref Point LaserHitLevelPosition => ref _data.LaserHitLevelPosition;
@@ -392,16 +382,44 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
     }
 
-    public int TribeId => _data.TribeId;
-
     #endregion
 
-    public Lemming(
+    public static Lemming CreatePrePlacedLemming(
+        DataHandle dataHandle,
+        int id,
+        IO.Data.Level.LemmingInstanceData prototype)
+    {
+        var result = new Lemming(dataHandle, id);
+
+        result._data.AnchorPosition = prototype.Position;
+        result._data.CurrentActionType = prototype.InitialLemmingActionType;
+        result._data.DihedralTransformation = prototype.DihedralTransformation;
+        result._data.TribeId = prototype.TribeId;
+        result._data.State = prototype.State;
+
+        return result;
+    }
+
+    public static Lemming CreateHatchLemming(
         DataHandle dataHandle,
         int id)
     {
-        Id = id;
+        var result = new Lemming(dataHandle, id);
+
+        result._data.CurrentActionType = LemmingActionType.NoneAction;
+
+        return result;
+    }
+
+    public static Lemming CreateSimulationLemming(DataHandle dataHandle)
+    {
+        return new Lemming(dataHandle, EngineConstants.SimulationLemmingId);
+    }
+
+    private Lemming(DataHandle dataHandle, int id)
+    {
         _data = dataHandle.CreateItem<LemmingData>();
+        Id = id;
     }
 
     public void Initialise()
@@ -430,7 +448,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     {
         _data.PreviousActionType = CurrentActionType;
         // No transition to do at the end of lemming movement
-        SetNextActionType(LemmingActionType.NoneAction);
+        NextActionType = LemmingActionType.NoneAction;
 
         UpdateParticleTimer();
         UpdateCountDownTimer();
@@ -702,7 +720,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
                 JumpToHoistAdvance = false;
             }
 
-            SetNextActionType(LemmingActionType.NoneAction);
+            NextActionType = LemmingActionType.NoneAction;
         }
 
         gadget.OnLemmingHit(filter, this);
@@ -717,13 +735,13 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public void SetCountDownAction(uint countDownTimer, LemmingActionType countDownActionType)
     {
         CountDownTimer = countDownTimer;
-        _data.CountDownActionType = countDownActionType;
+        CountDownActionType = countDownActionType;
     }
 
     public void ClearCountDownAction()
     {
         CountDownTimer = 0;
-        _data.CountDownActionType = LemmingActionType.NoneAction;
+        CountDownActionType = LemmingActionType.NoneAction;
     }
 
     public void OnUpdatePosition()
@@ -734,7 +752,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
     public void OnRemoval(LemmingRemovalReason removalReason)
     {
         LemmingRemovalReason = removalReason;
-        SetCurrentActionType(LemmingActionType.NoneAction);
+        CurrentActionType = LemmingActionType.NoneAction;
         Renderer.UpdateLemmingState(removalReason is LemmingRemovalReason.DeathExploder or LemmingRemovalReason.DeathStoner);
     }
 

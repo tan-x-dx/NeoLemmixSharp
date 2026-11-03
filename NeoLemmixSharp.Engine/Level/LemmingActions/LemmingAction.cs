@@ -267,7 +267,8 @@ public static class LemmingAction
         if (actionType == currentActionType)
             return;
 
-        lemming.SetCurrentActionType(actionType);
+        lemming.CurrentActionType = actionType;
+        lemming.Renderer.UpdateLemmingState(true);
         lemming.ResetFlagsOnNewAction();
     }
 

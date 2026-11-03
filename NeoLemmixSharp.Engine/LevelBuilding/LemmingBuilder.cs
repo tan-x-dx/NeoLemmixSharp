@@ -37,23 +37,14 @@ public sealed class LemmingBuilder
         {
             var prototype = preplacedLemmingData[i];
 
-            var lemming = new Lemming(dataHandle, i)
-            {
-                AnchorPosition = prototype.Position
-            };
-
-            lemming.SetCurrentActionType(prototype.InitialLemmingActionType);
-
-            lemming.SetRawData(prototype.DihedralTransformation, prototype.TribeId, prototype.State);
+            var lemming = Lemming.CreatePrePlacedLemming(dataHandle, i, prototype);
 
             _levelLemmings.At(i++) = lemming;
         }
 
         while (i < _levelLemmings.Length)
         {
-            var lemming = new Lemming(dataHandle, i);
-
-            lemming.SetCurrentActionType(LemmingActionType.NoneAction);
+            var lemming = Lemming.CreateHatchLemming(dataHandle, i);
 
             _levelLemmings.At(i++) = lemming;
         }
