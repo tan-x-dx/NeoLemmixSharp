@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.GadgetBehaviours;

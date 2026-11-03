@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using System.Diagnostics;

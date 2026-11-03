@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 

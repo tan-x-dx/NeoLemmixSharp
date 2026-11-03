@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Level;
 using System.Diagnostics;

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Common.Util.Rewind;
 
 public interface IPointerData<T>
     where T : unmanaged, IPointerData<T>

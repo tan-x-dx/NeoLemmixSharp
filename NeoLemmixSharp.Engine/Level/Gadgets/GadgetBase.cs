@@ -1,6 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using System.Diagnostics.CodeAnalysis;
 

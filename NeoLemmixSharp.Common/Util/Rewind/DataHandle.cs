@@ -1,4 +1,4 @@
-﻿namespace NeoLemmixSharp.Common.Util;
+﻿namespace NeoLemmixSharp.Common.Util.Rewind;
 
 public sealed class DataHandle
 {

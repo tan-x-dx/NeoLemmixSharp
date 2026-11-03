@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Common.Util;
+namespace NeoLemmixSharp.Common.Util.Rewind;
 
 public readonly unsafe struct PointerWrapper : IPointerData<PointerWrapper>
 {

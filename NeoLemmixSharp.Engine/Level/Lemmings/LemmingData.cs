@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
