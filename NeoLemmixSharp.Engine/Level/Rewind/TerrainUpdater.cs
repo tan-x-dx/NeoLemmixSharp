@@ -70,19 +70,26 @@ public sealed class TerrainUpdater : IDisposable
     public void RewindBackTo(int tick)
     {
         var pixelChanges = _pixelChangeList.RewindBackTo(tick + 1);
-        if (pixelChanges.Length == 0)
+
+        var i = pixelChanges.Length;
+        i--;
+
+        if (i < 0)
             return;
 
-        for (var i = pixelChanges.Length - 1; i >= 0; i--)
+        do
         {
-            ref readonly var pixelChangeData = ref pixelChanges[i];
+            ref readonly var pixelChangeData = ref pixelChanges.At(i);
             var position = pixelChangeData.Position;
             _terrainColors[position] = pixelChangeData.FromColor;
             ref var pixelType = ref _terrainPixelTypes[position];
 
             pixelType &= PixelType.TerrainDataInverseMask; // Clear out existing terrain data
             pixelType |= (PixelType.TerrainDataMask & pixelChangeData.FromPixelType); // Add in the original terrain data
+
+            i--;
         }
+        while (i >= 0);
 
         _terrainTexture.SetData(_terrainColors.Array);
     }
