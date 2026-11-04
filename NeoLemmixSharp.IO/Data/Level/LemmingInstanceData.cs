@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 
 namespace NeoLemmixSharp.IO.Data.Level;
 
@@ -7,7 +8,7 @@ public sealed class LemmingInstanceData : IInstanceData
     public Point Position { get; set; }
     public Size Size { get; private set; }
 
-    public uint State { get; set; }
+    public PackedBytes32 State { get; set; }
     public DihedralTransformation DihedralTransformation
     {
         get;

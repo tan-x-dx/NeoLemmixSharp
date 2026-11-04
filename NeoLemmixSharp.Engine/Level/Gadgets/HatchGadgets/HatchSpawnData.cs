@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using NeoLemmixSharp.Engine.Level.Lemmings;
@@ -10,7 +11,7 @@ public sealed class HatchSpawnData
     private readonly PointerWrapper _lemmingsToRelease;
     private readonly DihedralTransformation _dihedralTransformation;
     private readonly int _tribeId;
-    private readonly uint _rawStateData;
+    private readonly PackedBytes32 _rawStateData;
 
     public int HatchGroupId { get; }
     public int LemmingsToRelease => _lemmingsToRelease.IntValue;
@@ -20,7 +21,7 @@ public sealed class HatchSpawnData
         int lemmingsToRelease,
         DihedralTransformation dihedralTransformation,
         int tribeId,
-        uint rawStateData,
+        PackedBytes32 rawStateData,
         int hatchGroupId)
     {
         _lemmingsToRelease = dataHandle.CreateItem<PointerWrapper>();

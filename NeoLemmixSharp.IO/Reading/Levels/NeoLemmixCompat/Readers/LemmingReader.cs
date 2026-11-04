@@ -34,11 +34,10 @@ internal sealed class LemmingReader : NeoLemmixDataReader
 
     public override bool BeginReading(ReadOnlySpan<char> line)
     {
-        _currentLemmingData = new LemmingInstanceData
-        {
-            // Pre-placed lemmings are always active
-            State = 1U << LemmingAbilityConstants.ActiveBitIndex
-        };
+        _currentLemmingData = new LemmingInstanceData();
+
+        // Pre-placed lemmings are always active
+        _currentLemmingData.State.SetBit(LemmingAbilityConstants.ActiveBitIndex);
         FinishedReading = false;
         return false;
     }
@@ -67,29 +66,29 @@ internal sealed class LemmingReader : NeoLemmixDataReader
 
     private void SetClimber(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.ClimberBitIndex;
+        _currentLemmingData!.State.SetBit(LemmingAbilityConstants.ClimberBitIndex);
     }
 
     private void SetDisarmer(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.DisarmerBitIndex;
+        _currentLemmingData!.State.SetBit(LemmingAbilityConstants.DisarmerBitIndex);
     }
 
     private void SetFloater(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.FloaterBitIndex;
-        _currentLemmingData!.State &= ~(1U << LemmingAbilityConstants.GliderBitIndex); // Deliberately knock out the glider
+        _currentLemmingData!.State.SetBit(LemmingAbilityConstants.FloaterBitIndex);
+        _currentLemmingData!.State.ClearBit(LemmingAbilityConstants.GliderBitIndex); // Deliberately knock out the glider
     }
 
     private void SetGlider(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.GliderBitIndex;
-        _currentLemmingData!.State &= ~(1U << LemmingAbilityConstants.FloaterBitIndex); // Deliberately knock out the floater
+        _currentLemmingData!.State.SetBit(LemmingAbilityConstants.GliderBitIndex);
+        _currentLemmingData!.State.ClearBit(LemmingAbilityConstants.FloaterBitIndex); // Deliberately knock out the floater
     }
 
     private void SetNeutral(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.NeutralBitIndex;
+        _currentLemmingData!.State.SetBit(LemmingAbilityConstants.NeutralBitIndex);
     }
 
     private void SetShimmier(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
@@ -99,17 +98,17 @@ internal sealed class LemmingReader : NeoLemmixDataReader
 
     private void SetSlider(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.SliderBitIndex;
+        _currentLemmingData!.State.SetBit(LemmingAbilityConstants.SliderBitIndex);
     }
 
     private void SetSwimmer(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.SwimmerBitIndex;
+        _currentLemmingData!.State.SetBit(LemmingAbilityConstants.SwimmerBitIndex);
     }
 
     private void SetZombie(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)
     {
-        _currentLemmingData!.State |= 1U << LemmingAbilityConstants.ZombieBitIndex;
+        _currentLemmingData!.State.SetBit(LemmingAbilityConstants.ZombieBitIndex);
     }
 
     private void OnEnd(ReadOnlySpan<char> span, ReadOnlySpan<char> secondToken, int secondTokenIndex)

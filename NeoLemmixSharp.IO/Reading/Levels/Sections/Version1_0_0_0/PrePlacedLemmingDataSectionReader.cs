@@ -28,7 +28,8 @@ internal sealed class PrePlacedLemmingDataSectionReader : LevelDataSectionReader
     {
         var position = reader.Decode16BitPoint();
 
-        uint state = reader.Read32BitUnsignedInteger();
+        uint rawState = reader.Read32BitUnsignedInteger();
+        var state = new Common.Util.PackedBytes32(rawState);
 
         int dhtByte = reader.Read8BitUnsignedInteger();
         ReadWriteHelpers.AssertDihedralTransformationByteMakesSense(dhtByte);

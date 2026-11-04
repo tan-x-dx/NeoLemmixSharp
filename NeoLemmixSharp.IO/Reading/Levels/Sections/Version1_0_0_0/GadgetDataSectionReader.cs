@@ -125,6 +125,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
         int tribeId = reader.Read8BitUnsignedInteger();
         FileReadingException.ReaderAssert(tribeId < EngineConstants.MaxNumberOfTribes, "Invalid tribe ID!");
         uint rawStateData = reader.Read32BitUnsignedInteger();
+        var stateData = new PackedBytes32(rawStateData);
         int numberOfLemmingsToRelease = reader.Read16BitUnsignedInteger();
         FileReadingException.ReaderAssert(numberOfLemmingsToRelease < EngineConstants.MaxNumberOfLemmings, "Too many lemmings specified!");
 
@@ -134,7 +135,7 @@ internal sealed class GadgetDataSectionReader : LevelDataSectionReader
             GadgetStates = [],
             HatchGroupId = hatchGroupId,
             TribeId = tribeId,
-            RawStateData = rawStateData,
+            RawStateData = stateData,
             NumberOfLemmingsToRelease = numberOfLemmingsToRelease,
         };
     }

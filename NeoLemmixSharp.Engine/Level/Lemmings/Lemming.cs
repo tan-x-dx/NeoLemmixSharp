@@ -720,11 +720,11 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         sourceSpan.CopyTo(destinationSpan);
     }
 
-    public void SetRawData(DihedralTransformation dihedralTransformation, int tribeId, uint rawStateData)
+    public void SetRawData(DihedralTransformation dihedralTransformation, int tribeId, PackedBytes32 rawStateData)
     {
         _data.DihedralTransformation = dihedralTransformation;
-        _data.TribeId = tribeId;
-        _data.State = rawStateData;
+        TribeId = tribeId;
+        State = rawStateData;
 
         OnSnapshotApplied();
     }
@@ -741,19 +741,19 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public void SetTribeAffiliation(int tribeId)
     {
-        _data.TribeId = tribeId;
+        TribeId = tribeId;
         UpdateAllColors();
     }
 
     public void ClearAllPermanentSkills()
     {
-        _data.State &= ~LemmingAbilityConstants.PermanentSkillBitMask;
+        State &= new PackedBytes32(~LemmingAbilityConstants.PermanentSkillBitMask);
         UpdateHairAndBodyColors();
     }
 
     private void UpdateAllColors()
     {
-        var tribe = LevelScreen.TribeManager.GetTribe(_data.TribeId);
+        var tribe = LevelScreen.TribeManager.GetTribe(TribeId);
 
         if (HasPermanentSkill)
         {
@@ -792,7 +792,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     private void UpdateHairAndBodyColors()
     {
-        var tribe = LevelScreen.TribeManager.GetTribe(_data.TribeId);
+        var tribe = LevelScreen.TribeManager.GetTribe(TribeId);
 
         if (HasPermanentSkill)
         {
@@ -812,7 +812,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     private void UpdateSkinColor()
     {
-        var tribe = LevelScreen.TribeManager.GetTribe(_data.TribeId);
+        var tribe = LevelScreen.TribeManager.GetTribe(TribeId);
 
         _colors.SkinColor = IsZombie
             ? tribe.ColorData.ZombieSkinColor

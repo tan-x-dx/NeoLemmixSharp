@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.IO.Data.Style.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
@@ -15,7 +16,7 @@ public sealed class HatchGadgetInstanceSpecificationData : IGadgetInstanceSpecif
 
     public required int HatchGroupId { get; init; }
     public required int TribeId { get; init; }
-    public required uint RawStateData { get; init; }
+    public required PackedBytes32 RawStateData { get; init; }
     public required int NumberOfLemmingsToRelease { get; init; }
 
     public int CalculateExtraNumberOfBytesNeededForSnapshotting()

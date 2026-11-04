@@ -39,6 +39,9 @@ public struct PackedBytes32
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public PackedBytes32(uint rawValue) => _bits = rawValue;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear() => _bits = 0;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -143,11 +146,10 @@ public struct PackedBytes32
         _bits = bits;
     }
 
-    public static implicit operator PackedBytes32(uint rawValue) => new() { _bits = rawValue };
-    public static PackedBytes32 operator ~(PackedBytes32 value) => new() { _bits = ~value._bits };
-    public static PackedBytes32 operator &(PackedBytes32 left, PackedBytes32 right) => new() { _bits = left._bits & right._bits };
-    public static PackedBytes32 operator |(PackedBytes32 left, PackedBytes32 right) => new() { _bits = left._bits | right._bits };
-    public static PackedBytes32 operator ^(PackedBytes32 left, PackedBytes32 right) => new() { _bits = left._bits ^ right._bits };
+    public static PackedBytes32 operator ~(PackedBytes32 value) => new(~value._bits);
+    public static PackedBytes32 operator &(PackedBytes32 left, PackedBytes32 right) => new(left._bits & right._bits);
+    public static PackedBytes32 operator |(PackedBytes32 left, PackedBytes32 right) => new(left._bits | right._bits);
+    public static PackedBytes32 operator ^(PackedBytes32 left, PackedBytes32 right) => new(left._bits ^ right._bits);
 }
 
 public struct PackedBytes64
@@ -226,6 +228,9 @@ public struct PackedBytes64
         readonly get => GetUint(1);
         set => SetUint(1, value);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public PackedBytes64(ulong rawValue) => _bits = rawValue;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public readonly ulong GetRawValue() => _bits;
@@ -363,9 +368,8 @@ public struct PackedBytes64
         _bits = bits;
     }
 
-    public static implicit operator PackedBytes64(ulong rawValue) => new() { _bits = rawValue };
-    public static PackedBytes64 operator ~(PackedBytes64 value) => new() { _bits = ~value._bits };
-    public static PackedBytes64 operator &(PackedBytes64 left, PackedBytes64 right) => new() { _bits = left._bits & right._bits };
-    public static PackedBytes64 operator |(PackedBytes64 left, PackedBytes64 right) => new() { _bits = left._bits | right._bits };
-    public static PackedBytes64 operator ^(PackedBytes64 left, PackedBytes64 right) => new() { _bits = left._bits ^ right._bits };
+    public static PackedBytes64 operator ~(PackedBytes64 value) => new(~value._bits);
+    public static PackedBytes64 operator &(PackedBytes64 left, PackedBytes64 right) => new(left._bits & right._bits);
+    public static PackedBytes64 operator |(PackedBytes64 left, PackedBytes64 right) => new(left._bits | right._bits);
+    public static PackedBytes64 operator ^(PackedBytes64 left, PackedBytes64 right) => new(left._bits ^ right._bits);
 }

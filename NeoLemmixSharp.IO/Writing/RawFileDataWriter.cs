@@ -18,7 +18,9 @@ internal interface IRawFileDataWriter
     void Write16BitUnsignedInteger(ushort value);
     void Write32BitSignedInteger(int value);
     void Write32BitUnsignedInteger(uint value);
+    void WritePackedBytes32(PackedBytes32 value);
     void Write64BitUnsignedInteger(ulong value);
+    void WritePackedBytes64(PackedBytes64 value);
     void WriteBytes(ReadOnlySpan<byte> data);
 }
 
@@ -85,7 +87,9 @@ internal sealed class RawFileDataWriter<TPerfectHasher, TEnum> : IRawFileDataWri
     public void Write16BitUnsignedInteger(ushort value) => WriteUnmanaged(value);
     public void Write32BitSignedInteger(int value) => WriteUnmanaged(value);
     public void Write32BitUnsignedInteger(uint value) => WriteUnmanaged(value);
+    public void WritePackedBytes32(PackedBytes32 value) => WriteUnmanaged(value);
     public void Write64BitUnsignedInteger(ulong value) => WriteUnmanaged(value);
+    public void WritePackedBytes64(PackedBytes64 value) => WriteUnmanaged(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteUnmanaged<T>(T value)
