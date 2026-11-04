@@ -52,6 +52,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
         }
     }
 
+    private ref PackedBytes32 State => ref _data.State;
     public ref int TribeId => ref _data.TribeId;
 
     RectangularRegion IRectangularBounds.CurrentBounds => _data.CurrentBounds;
@@ -148,48 +149,41 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     #region Lemming Ability Properties
 
-    public bool HasPermanentSkill => (_data.State & LemmingAbilityConstants.PermanentSkillBitMask) != 0U;
-    public bool HasLiquidAffinity => (_data.State & LemmingAbilityConstants.LiquidAffinityBitMask) != 0U;
-    public bool HasSpecialFallingBehaviour => (_data.State & LemmingAbilityConstants.SpecialFallingBehaviourBitMask) != 0U;
-    public int NumberOfPermanentSkills => BitOperations.PopCount(_data.State & LemmingAbilityConstants.PermanentSkillBitMask);
+    public bool HasPermanentSkill => (State.GetRawValue() & LemmingAbilityConstants.PermanentSkillBitMask) != 0U;
+    public bool HasLiquidAffinity => (State.GetRawValue() & LemmingAbilityConstants.LiquidAffinityBitMask) != 0U;
+    public bool HasSpecialFallingBehaviour => (State.GetRawValue() & LemmingAbilityConstants.SpecialFallingBehaviourBitMask) != 0U;
+    public int NumberOfPermanentSkills => BitOperations.PopCount(State.GetRawValue() & LemmingAbilityConstants.PermanentSkillBitMask);
 
     /// <summary>
     /// Must be active and NOT removed and NOT zombie and NOT neutral
     /// </summary>
-    public bool CanHaveSkillsAssigned => (LemmingRemovalReason == LemmingRemovalReason.None) && ((_data.State & LemmingAbilityConstants.AssignableSkillBitMask) == (1U << LemmingAbilityConstants.ActiveBitIndex));
+    public bool CanHaveSkillsAssigned => (LemmingRemovalReason == LemmingRemovalReason.None) &&
+                                         ((State.GetRawValue() & LemmingAbilityConstants.AssignableSkillBitMask) == (1U << LemmingAbilityConstants.ActiveBitIndex));
 
     public bool IsClimber
     {
-        get => ((_data.State >>> LemmingAbilityConstants.ClimberBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.ClimberBitIndex);
         set
         {
-            ref var states = ref _data.State;
-            if (value)
-            {
-                states |= 1U << LemmingAbilityConstants.ClimberBitIndex;
-            }
-            else
-            {
-                states &= ~(1U << LemmingAbilityConstants.ClimberBitIndex);
-            }
+            State.SetBit(LemmingAbilityConstants.ClimberBitIndex, value);
             UpdateHairAndBodyColors();
         }
     }
 
     public bool IsFloater
     {
-        get => ((_data.State >>> LemmingAbilityConstants.FloaterBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.FloaterBitIndex);
         set
         {
-            ref var states = ref _data.State;
+            ref var states = ref State;
             if (value)
             {
-                states |= 1U << LemmingAbilityConstants.FloaterBitIndex;
-                states &= ~(1U << LemmingAbilityConstants.GliderBitIndex); // Deliberately knock out the glider
+                states.SetBit(LemmingAbilityConstants.FloaterBitIndex);
+                states.ClearBit(LemmingAbilityConstants.GliderBitIndex); // Deliberately knock out the glider
             }
             else
             {
-                states &= ~(1U << LemmingAbilityConstants.FloaterBitIndex);
+                states.ClearBit(LemmingAbilityConstants.FloaterBitIndex);
             }
             UpdateHairAndBodyColors();
         }
@@ -197,18 +191,18 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public bool IsGlider
     {
-        get => ((_data.State >>> LemmingAbilityConstants.GliderBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.GliderBitIndex);
         set
         {
-            ref var states = ref _data.State;
+            ref var states = ref State;
             if (value)
             {
-                states |= 1U << LemmingAbilityConstants.GliderBitIndex;
-                states &= ~(1U << LemmingAbilityConstants.FloaterBitIndex); // Deliberately knock out the floater
+                states.SetBit(LemmingAbilityConstants.GliderBitIndex);
+                states.ClearBit(LemmingAbilityConstants.FloaterBitIndex); // Deliberately knock out the floater
             }
             else
             {
-                states &= ~(1U << LemmingAbilityConstants.GliderBitIndex);
+                states.ClearBit(LemmingAbilityConstants.GliderBitIndex);
             }
             UpdateHairAndBodyColors();
         }
@@ -216,36 +210,30 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public bool IsSlider
     {
-        get => ((_data.State >>> LemmingAbilityConstants.SliderBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.SliderBitIndex);
         set
         {
-            ref var states = ref _data.State;
-            if (value)
-            {
-                states |= 1U << LemmingAbilityConstants.SliderBitIndex;
-            }
-            else
-            {
-                states &= ~(1U << LemmingAbilityConstants.SliderBitIndex);
-            }
+            State.SetBit(LemmingAbilityConstants.SliderBitIndex, value);
             UpdateHairAndBodyColors();
         }
     }
 
     public bool IsSwimmer
     {
-        get => ((_data.State >>> LemmingAbilityConstants.SwimmerBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.SwimmerBitIndex);
         set
         {
-            ref var states = ref _data.State;
+            ref var states = ref State;
             if (value)
             {
-                states |= 1U << LemmingAbilityConstants.SwimmerBitIndex;
-                states &= ~((1U << LemmingAbilityConstants.AcidLemmingBitIndex) | (1U << LemmingAbilityConstants.WaterLemmingBitIndex)); // Deliberately knock out the acid/water lemmings
+                states.SetBit(LemmingAbilityConstants.SwimmerBitIndex);
+                // Deliberately knock out the acid/water lemmings
+                states.ClearBit(LemmingAbilityConstants.AcidLemmingBitIndex);
+                states.ClearBit(LemmingAbilityConstants.WaterLemmingBitIndex);
             }
             else
             {
-                states &= ~(1U << LemmingAbilityConstants.SwimmerBitIndex);
+                states.ClearBit(LemmingAbilityConstants.SwimmerBitIndex);
             }
             UpdateHairAndBodyColors();
         }
@@ -253,54 +241,40 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public bool IsDisarmer
     {
-        get => ((_data.State >>> LemmingAbilityConstants.DisarmerBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.DisarmerBitIndex);
         set
         {
-            ref var states = ref _data.State;
-            if (value)
-            {
-                states |= 1U << LemmingAbilityConstants.DisarmerBitIndex;
-            }
-            else
-            {
-                states &= ~(1U << LemmingAbilityConstants.DisarmerBitIndex);
-            }
+            State.SetBit(LemmingAbilityConstants.DisarmerBitIndex, value);
             UpdateHairAndBodyColors();
         }
     }
 
     public bool IsPermanentFastForwards
     {
-        get => ((_data.State >>> LemmingAbilityConstants.PermanentFastForwardBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.PermanentFastForwardBitIndex);
         set
         {
-            ref var states = ref _data.State;
-            if (value)
-            {
-                states |= 1U << LemmingAbilityConstants.PermanentFastForwardBitIndex;
-            }
-            else
-            {
-                states &= ~(1U << LemmingAbilityConstants.PermanentFastForwardBitIndex);
-            }
+            State.SetBit(LemmingAbilityConstants.PermanentFastForwardBitIndex, value);
             LevelScreen.LemmingManager.UpdateLemmingFastForwardState(this);
         }
     }
 
     public bool IsAcidLemming
     {
-        get => ((_data.State >>> LemmingAbilityConstants.AcidLemmingBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.AcidLemmingBitIndex);
         set
         {
-            ref var states = ref _data.State;
+            ref var states = ref State;
             if (value)
             {
-                states |= 1U << LemmingAbilityConstants.AcidLemmingBitIndex;
-                states &= ~((1U << LemmingAbilityConstants.SwimmerBitIndex) | (1U << LemmingAbilityConstants.WaterLemmingBitIndex)); // Deliberately knock out the swimmer/water lemmings
+                states.SetBit(LemmingAbilityConstants.AcidLemmingBitIndex);
+                // Deliberately knock out the swimmer/water lemmings
+                states.ClearBit(LemmingAbilityConstants.SwimmerBitIndex);
+                states.ClearBit(LemmingAbilityConstants.WaterLemmingBitIndex);
             }
             else
             {
-                states &= ~(1U << LemmingAbilityConstants.AcidLemmingBitIndex);
+                states.ClearBit(LemmingAbilityConstants.AcidLemmingBitIndex);
             }
             UpdateHairAndBodyColors();
         }
@@ -308,18 +282,20 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public bool IsWaterLemming
     {
-        get => ((_data.State >>> LemmingAbilityConstants.WaterLemmingBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.WaterLemmingBitIndex);
         set
         {
-            ref var states = ref _data.State;
+            ref var states = ref State;
             if (value)
             {
-                states |= 1U << LemmingAbilityConstants.WaterLemmingBitIndex;
-                states &= ~((1U << LemmingAbilityConstants.SwimmerBitIndex) | (1U << LemmingAbilityConstants.AcidLemmingBitIndex)); // Deliberately knock out the swimmer/acid lemmings
+                states.SetBit(LemmingAbilityConstants.WaterLemmingBitIndex);
+                // Deliberately knock out the swimmer/acid lemmings
+                states.ClearBit(LemmingAbilityConstants.SwimmerBitIndex);
+                states.ClearBit(LemmingAbilityConstants.AcidLemmingBitIndex);
             }
             else
             {
-                states &= ~(1U << LemmingAbilityConstants.WaterLemmingBitIndex);
+                states.ClearBit(LemmingAbilityConstants.WaterLemmingBitIndex);
             }
             UpdateHairAndBodyColors();
         }
@@ -327,56 +303,29 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public bool IsActive
     {
-        get => ((_data.State >>> LemmingAbilityConstants.ActiveBitIndex) & 1U) != 0U;
-        private set
-        {
-            ref var states = ref _data.State;
-            if (value)
-            {
-                states |= 1U << LemmingAbilityConstants.ActiveBitIndex;
-            }
-            else
-            {
-                states &= ~(1U << LemmingAbilityConstants.ActiveBitIndex);
-            }
-        }
+        get => State.GetBit(LemmingAbilityConstants.ActiveBitIndex);
+        private set => State.SetBit(LemmingAbilityConstants.ActiveBitIndex, value);
     }
 
     public bool IsNeutral
     {
-        get => ((_data.State >>> LemmingAbilityConstants.NeutralBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.NeutralBitIndex);
         set
         {
-            ref var states = ref _data.State;
-            if (value)
-            {
-                states |= 1U << LemmingAbilityConstants.NeutralBitIndex;
-            }
-            else
-            {
-                states &= ~(1U << LemmingAbilityConstants.NeutralBitIndex);
-            }
+            State.SetBit(LemmingAbilityConstants.NeutralBitIndex, value);
             UpdateHairAndBodyColors();
         }
     }
 
     public bool IsZombie
     {
-        get => ((_data.State >>> LemmingAbilityConstants.ZombieBitIndex) & 1U) != 0U;
+        get => State.GetBit(LemmingAbilityConstants.ZombieBitIndex);
         set
         {
             if (IsZombie == value)
                 return;
 
-            ref var states = ref _data.State;
-            if (value)
-            {
-                states |= 1U << LemmingAbilityConstants.ZombieBitIndex;
-            }
-            else
-            {
-                states &= ~(1U << LemmingAbilityConstants.ZombieBitIndex);
-            }
+            State.SetBit(LemmingAbilityConstants.ZombieBitIndex, value);
             LevelScreen.LemmingManager.UpdateZombieState(this);
             UpdateSkinColor();
         }

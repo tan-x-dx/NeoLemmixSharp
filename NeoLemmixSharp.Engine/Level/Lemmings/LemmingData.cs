@@ -58,7 +58,7 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     {
         public DihedralTransformation DihedralTransformation;
 
-        public uint State;
+        public PackedBytes32 State;
         public int TribeId;
 
         public RectangularRegion CurrentBounds;
@@ -110,7 +110,7 @@ public readonly unsafe struct LemmingData : IPointerData<LemmingData>
     public ref Orientation Orientation => ref Unsafe.AsRef<Orientation>(&_data->DihedralTransformation.Orientation);
     public ref FacingDirection FacingDirection => ref Unsafe.AsRef<FacingDirection>(&_data->DihedralTransformation.FacingDirection);
 
-    public ref uint State => ref Unsafe.AsRef<uint>(&_data->State);
+    public ref PackedBytes32 State => ref Unsafe.AsRef<PackedBytes32>(&_data->State);
     public ref int TribeId => ref Unsafe.AsRef<int>(&_data->TribeId);
 
     public ref RectangularRegion CurrentBounds => ref Unsafe.AsRef<RectangularRegion>(&_data->CurrentBounds);
