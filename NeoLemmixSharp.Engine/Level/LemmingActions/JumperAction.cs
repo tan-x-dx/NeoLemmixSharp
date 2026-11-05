@@ -7,7 +7,7 @@ using static NeoLemmixSharp.Engine.Level.Lemmings.LemmingActionHelpers;
 
 namespace NeoLemmixSharp.Engine.Level.LemmingActions;
 
-public sealed class JumperAction
+public static class JumperAction
 {
     public const int JumperPositionCount = 6;
     private const int JumperArcFrames = 13;
