@@ -119,7 +119,7 @@ public sealed class Lemming : IEquatable<Lemming>, IRectangularBounds
 
     public ref int DistanceFallen => ref _data.DistanceFallen;
     public ref int TrueDistanceFallen => ref _data.TrueDistanceFallen;
-    public ref int LaserRemainTime => ref _data.LaserRemainTime;
+    public ref uint LaserRemainTime => ref _data.LaserRemainTime;
     public ref uint FastForwardTime => ref _data.FastForwardTime;
     public ref uint CountDownTimer => ref _data.CountDownTimer;
     public ref LemmingRemovalReason LemmingRemovalReason => ref _data.LemmingRemovalReason;

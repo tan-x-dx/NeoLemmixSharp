@@ -123,7 +123,7 @@ public static class LasererAction
         else
         {
             laserRemainTime--;
-            if (laserRemainTime <= 0)
+            if (laserRemainTime == 0)
             {
                 WalkerAction.TransitionLemmingToAction(lemming, false);
             }
