@@ -167,7 +167,7 @@ public sealed class BoundaryBehaviour
 
         // Pretend the interval has now been moved to zero, simplifying a check
         // If this check succeeds, the interval contains the point in all cases
-        if (n >= 0 && n < interval.Length)
+        if ((uint)n < (uint)interval.Length)
             return true;
 
         // Here, for the Void type the interval definitely does not contain the point
