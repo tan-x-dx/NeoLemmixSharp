@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.LemmingBehaviours;
 using NeoLemmixSharp.Engine.Level.Skills;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
@@ -11,11 +12,11 @@ namespace NeoLemmixSharp.Engine.LevelBuilding.Gadgets2;
 public static class LemmingBehaviourBuilder
 {
     public static LemmingBehaviour BuildLemmingBehaviour(
-        ref nint dataHandleRef,
+        DataHandle dataHandle,
         int newBehaviourId,
         in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var lemmingBehaviourType = (LemmingBehaviourType)gadgetBehaviourDatum.DataChunk.Data1;
+        var lemmingBehaviourType = (LemmingBehaviourType)gadgetBehaviourDatum.DataChunk.Data1.GetRawValue();
 
         return lemmingBehaviourType switch
         {
@@ -37,17 +38,19 @@ public static class LemmingBehaviourBuilder
 
     private static ChangeAbilityLemmingBehaviour BuildChangeAbilityLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var lemmingStateChangerId = gadgetBehaviourDatum.DataChunk.Data2 & 0xffff;
+        PackedBytes32 stateData = gadgetBehaviourDatum.DataChunk.Data2;
+
+        int lemmingStateChangerId = stateData.Ushort0;
         var lemmingStateChanger = ILemmingAbilityChanger.AllItems[lemmingStateChangerId];
 
-        var rawSetStateTypeId = (uint)(gadgetBehaviourDatum.DataChunk.Data2 >>> 16);
+        uint rawSetStateTypeId = stateData.Ushort1;
         var setStateType = ChangeAbilityLemmingBehaviour.GetEnumValue(rawSetStateTypeId);
 
         return new ChangeAbilityLemmingBehaviour(lemmingStateChanger, setStateType)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
@@ -57,70 +60,70 @@ public static class LemmingBehaviourBuilder
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
     private static SetActionLemmingBehaviour BuildSetActionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var lemmingAction = LemmingActionConstants.GetEnumValue((uint)gadgetBehaviourDatum.DataChunk.Data2);
+        LemmingActionType lemmingAction = LemmingActionConstants.GetEnumValue(gadgetBehaviourDatum.DataChunk.Data2.GetRawValue());
 
         return new SetActionLemmingBehaviour(lemmingAction)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
     private static SetTribeLemmingBehaviour BuildSetTribeLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var lemmingTribeId = gadgetBehaviourDatum.DataChunk.Data1;
+        int lemmingTribeId = (int)gadgetBehaviourDatum.DataChunk.Data1.GetRawValue();
 
         return new SetTribeLemmingBehaviour(lemmingTribeId)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
     private static LemmingSpecificSkillCountChangeBehaviour BuildLemmingSpecificSkillCountChangeBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var rawLemmingSkillType = (uint)gadgetBehaviourDatum.DataChunk.Data1;
-        var lemmingSkill = LemmingSkillConstants.GetEnumValue(rawLemmingSkillType);
-        var skillCountDelta = gadgetBehaviourDatum.DataChunk.Data2;
+        uint rawLemmingSkillType = gadgetBehaviourDatum.DataChunk.Data1.GetRawValue();
+        LemmingSkillType lemmingSkill = LemmingSkillConstants.GetEnumValue(rawLemmingSkillType);
+        int skillCountDelta = (int)gadgetBehaviourDatum.DataChunk.Data2.GetRawValue();
 
         return new LemmingSpecificSkillCountChangeBehaviour(lemmingSkill, skillCountDelta)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
     private static KillLemmingBehaviour BuildKillLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var rawLemmingRemovalReasonId = (uint)gadgetBehaviourDatum.DataChunk.Data2;
-        var lemmingRemovalReason = LemmingRemovalReasonHelpers.GetEnumValue(rawLemmingRemovalReasonId);
+        uint rawLemmingRemovalReasonId = gadgetBehaviourDatum.DataChunk.Data2.GetRawValue();
+        LemmingRemovalReason lemmingRemovalReason = LemmingRemovalReasonHelpers.GetEnumValue(rawLemmingRemovalReasonId);
 
         return new KillLemmingBehaviour(lemmingRemovalReason)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
     private static ForceFacingDirectionLemmingBehaviour BuildForceFacingDirectionLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var facingDirection = new FacingDirection(gadgetBehaviourDatum.DataChunk.Data2);
+        FacingDirection facingDirection = new(gadgetBehaviourDatum.DataChunk.Data2.Byte0);
 
         return new ForceFacingDirectionLemmingBehaviour(facingDirection)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
@@ -130,7 +133,7 @@ public static class LemmingBehaviourBuilder
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
@@ -142,37 +145,36 @@ public static class LemmingBehaviourBuilder
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 
     private static SetLemmingPositionBehaviour BuildSetLemmingPositionBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var position = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
+        Point position = ReadWriteHelpers.DecodePoint(gadgetBehaviourDatum.DataChunk.Data2);
 
-        var miscData = gadgetBehaviourDatum.DataChunk.Data3;
-        var rawRelativePositioningType = miscData & 0xff;
-        var relativePositioningType = RelativePositioningTypeHelpers.GetEnumValue((uint)rawRelativePositioningType);
-        miscData >>>= 8;
-        var maxTriggerCountPerTick = miscData & 0xff;
+        PackedBytes32 miscData = gadgetBehaviourDatum.DataChunk.Data3;
+        uint rawRelativePositioningType = miscData.Byte0;
+        RelativePositioningType relativePositioningType = RelativePositioningTypeHelpers.GetEnumValue(rawRelativePositioningType);
+        uint maxTriggerCountPerTick = miscData.Byte1;
 
         return new SetLemmingPositionBehaviour(position, relativePositioningType)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = maxTriggerCountPerTick
+            MaxTriggerCountPerTick = maxTriggerCountPerTick,
         };
     }
 
     private static FastForwardLemmingBehaviour BuildFastForwardLemmingBehaviour(int newBehaviourId, in GadgetBehaviourData gadgetBehaviourDatum)
     {
-        var fastForwardTime = (uint)gadgetBehaviourDatum.DataChunk.Data2;
+        uint fastForwardTime = gadgetBehaviourDatum.DataChunk.Data2.GetRawValue();
 
         return new FastForwardLemmingBehaviour(fastForwardTime)
         {
             GadgetBehaviourName = gadgetBehaviourDatum.GadgetBehaviourName,
             Id = newBehaviourId,
-            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3
+            MaxTriggerCountPerTick = gadgetBehaviourDatum.DataChunk.Data3.GetRawValue()
         };
     }
 }

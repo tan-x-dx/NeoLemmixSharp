@@ -26,7 +26,7 @@ public static class FloaterAction
         if (maxFallDistance > -groundPixelDistance)
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, groundPixelDistance);
-            lemming.SetNextActionType(LemmingActionType.WalkerAction);
+            lemming.NextActionType = LemmingActionType.WalkerAction;
         }
         else
         {

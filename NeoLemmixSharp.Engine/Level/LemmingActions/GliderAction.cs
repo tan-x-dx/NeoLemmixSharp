@@ -159,7 +159,7 @@ end;
         if (groundDistance > 0) // Move 1 to 4 pixels up
         {
             lemmingPosition = orientation.MoveUp(lemmingPosition, groundDistance);
-            lemming.SetNextActionType(LemmingActionType.WalkerAction);
+            lemming.NextActionType = LemmingActionType.WalkerAction;
 
             return true;
         }
@@ -172,7 +172,7 @@ end;
             {
                 // Lem has found solid terrain
                 lemmingPosition = orientation.MoveUp(lemmingPosition, groundDistance);
-                lemming.SetNextActionType(LemmingActionType.WalkerAction);
+                lemming.NextActionType = LemmingActionType.WalkerAction;
 
                 return true;
             }
@@ -197,7 +197,7 @@ end;
             // Check whether the glider has reached the ground
             if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition))
             {
-                lemming.SetNextActionType(LemmingActionType.WalkerAction);
+                lemming.NextActionType = LemmingActionType.WalkerAction;
                 return true;
             }
         }
@@ -255,7 +255,7 @@ end;
         if (PositionIsSolidToLemming(in gadgetsNearLemming, lemming, lemmingPosition) &&
             updraftFallDelta.Y >= 0)
         {
-            lemming.SetNextActionType(LemmingActionType.WalkerAction);
+            lemming.NextActionType = LemmingActionType.WalkerAction;
 
             return;
         }

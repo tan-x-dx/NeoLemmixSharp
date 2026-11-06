@@ -1,9 +1,7 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
-namespace NeoLemmixSharp.Engine.Level.Rewind;
+namespace NeoLemmixSharp.Common.Util.Rewind;
 
 public interface ILevelEventData
 {
@@ -55,7 +53,9 @@ public sealed class LevelEventList<TEventData> : IDisposable
         if (start < 0)
             Helpers.ThrowNegativeInputException();
 
-        return GetReadOnlySpan(start, Math.Max(0, _count - start));
+        var length = Math.Max(0, _count - start);
+
+        return GetReadOnlySpan(start, length);
     }
 
     public unsafe ReadOnlySpan<TEventData> RewindBackTo(int tick)
@@ -182,10 +182,11 @@ public sealed class LevelEventList<TEventData> : IDisposable
     public unsafe int LatestTickWithData()
     {
         var c = _count;
-        if (c == 0)
+        c--;
+
+        if (c < 0)
             return -1;
 
-        c--;
         TEventData* pointer = (TEventData*)_buffer.Handle + c;
 
         return pointer->TickNumber;

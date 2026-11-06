@@ -60,7 +60,7 @@ public static class FallerAction
             lemming)
             ? LemmingActionType.SplatterAction
             : LemmingActionType.WalkerAction;
-        lemming.SetNextActionType(nextAction);
+        lemming.NextActionType = nextAction;
 
         return true;
     }

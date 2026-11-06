@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
@@ -25,13 +26,13 @@ public sealed class HatchGroup : IEquatable<HatchGroup>
     public uint CurrentSpawnInterval => _data.CurrentSpawnInterval;
 
     public HatchGroup(
-        ref nint dataHandle,
+        DataHandle dataHandle,
         int id,
         uint minSpawnInterval,
         uint maxSpawnInterval,
         uint initialSpawnInterval)
     {
-        _data = PointerDataHelper.CreateItem<HatchGroupData>(ref dataHandle);
+        _data = dataHandle.CreateItem<HatchGroupData>();
         Id = id;
 
         Debug.Assert(minSpawnInterval <= initialSpawnInterval);

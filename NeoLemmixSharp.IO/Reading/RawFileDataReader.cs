@@ -17,7 +17,9 @@ internal interface IRawFileDataReader
     ushort Read16BitUnsignedInteger();
     uint Read32BitUnsignedInteger();
     int Read32BitSignedInteger();
+    PackedBytes32 ReadPackedBytes32();
     ulong Read64BitUnsignedInteger();
+    PackedBytes64 ReadPackedBytes64();
 
     ReadOnlySpan<byte> ReadBytes(int bufferSize);
 }
@@ -144,7 +146,9 @@ internal sealed class RawFileDataReader<TPerfectHasher, TEnum> : IRawFileDataRea
     public ushort Read16BitUnsignedInteger() => ReadUnmanaged<ushort>();
     public uint Read32BitUnsignedInteger() => ReadUnmanaged<uint>();
     public int Read32BitSignedInteger() => ReadUnmanaged<int>();
+    public PackedBytes32 ReadPackedBytes32() => ReadUnmanaged<PackedBytes32>();
     public ulong Read64BitUnsignedInteger() => ReadUnmanaged<ulong>();
+    public PackedBytes64 ReadPackedBytes64() => ReadUnmanaged<PackedBytes64>();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private unsafe T ReadUnmanaged<T>()

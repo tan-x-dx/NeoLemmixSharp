@@ -32,7 +32,7 @@ public static class SinCosMethods
     }
 }
 
-[StructLayout(LayoutKind.Explicit)]
+[StructLayout(LayoutKind.Explicit, Size = 2 * sizeof(int))]
 public readonly struct SinCos
 {
     [FieldOffset(0 * sizeof(int))] public readonly int Sin;

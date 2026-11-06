@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.Objectives;
 using NeoLemmixSharp.Engine.Level.Objectives.Criteria;
 using NeoLemmixSharp.Engine.Level.Timer;
@@ -140,7 +141,7 @@ public sealed class LevelObjectiveBuilder
 
         var result = new SkillTrackingData[baseSkillData.Length];
 
-        nint handle = SkillSetDataBuffer.Handle + PointerWrapper.SizeInBytes;
+        var dataHandle = new DataHandle(SkillSetDataBuffer.Handle + PointerWrapper.SizeInBytes);
 
         for (var i = 0; i < baseSkillData.Length; i++)
         {
@@ -151,7 +152,7 @@ public sealed class LevelObjectiveBuilder
             if (skillLimitModifier is not null)
                 initialSkillLimit = skillLimitModifier.MaxSkillAssignments;
 
-            result.At(i) = new SkillTrackingData(ref handle, skillSetData.SkillType, skillSetData.TribeId, i, skillSetData.InitialQuantity, initialSkillLimit);
+            result.At(i) = new SkillTrackingData(dataHandle, skillSetData.SkillType, skillSetData.TribeId, i, skillSetData.InitialQuantity, initialSkillLimit);
         }
 
         return result;
@@ -161,7 +162,7 @@ public sealed class LevelObjectiveBuilder
     {
         var timeLimitCriterionData = TryFindSmallestTimeLimitCriterion();
 
-        LevelTimerDataBuffer = safeBufferAllocator.AllocateRawArray(LevelTimerData.SizeInBytes);
+        LevelTimerDataBuffer = safeBufferAllocator.AllocateRawArray<LevelTimerData>(1);
 
         return timeLimitCriterionData is null
             ? LevelTimer.CreateCountUpTimer(LevelTimerDataBuffer.Handle)

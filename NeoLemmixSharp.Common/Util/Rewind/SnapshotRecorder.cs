@@ -1,7 +1,4 @@
-﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
-
-namespace NeoLemmixSharp.Engine.Level.Rewind;
+﻿namespace NeoLemmixSharp.Common.Util.Rewind;
 
 public sealed class SnapshotRecorder : IDisposable
 {
@@ -65,7 +62,8 @@ public sealed class SnapshotRecorder : IDisposable
 
     private unsafe byte* GetDataPointerForSnapshotNumber(int snapshotNumber)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(snapshotNumber);
+        if (snapshotNumber < 0)
+            Helpers.ThrowNegativeInputException();
 
         _numberOfSnapshots = snapshotNumber + 1;
 

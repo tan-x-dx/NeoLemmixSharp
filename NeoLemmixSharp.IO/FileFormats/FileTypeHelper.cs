@@ -112,7 +112,7 @@ public static class FileTypeHelper
         FileType.LevelPack => DefaultFileExtensions.LevelPackFileFormatMagicBytes,
         FileType.Style => DefaultFileExtensions.StyleFileFormatMagicBytes,
 
-        _ => throw new ArgumentOutOfRangeException(nameof(fileType), fileType, "Cannot get magic bytes for this type!")
+        _ => Helpers.ThrowUnknownEnumValueException<FileType, ReadOnlySpan<byte>>(fileType)
     };
 
     [DoesNotReturn]

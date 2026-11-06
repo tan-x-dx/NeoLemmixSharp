@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.LogicGateGadget;
@@ -33,10 +34,10 @@ public readonly ref struct LogicGateBuilder
         _gadgetBehaviours = gadgetBehaviours;
     }
 
-    public GadgetBase BuildLogicGateGadget(ref nint dataHandleRef)
+    public GadgetBase BuildLogicGateGadget(DataHandle dataHandle)
     {
         var gadgetName = GadgetBuildingHelpers.GetGadgetName(_logicGateArchetypeData, _logicGateGadgetInstanceData);
-        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(ref dataHandleRef, _logicGateArchetypeData, _logicGateGadgetInstanceData);
+        var gadgetBounds = GadgetBuildingHelpers.CreateGadgetBounds(dataHandle, _logicGateArchetypeData, _logicGateGadgetInstanceData);
         var gadgetStates = BuildLogicGateStates(gadgetBounds);
 
         /* return new HatchGadget(

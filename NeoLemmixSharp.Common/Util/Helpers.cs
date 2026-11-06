@@ -344,6 +344,7 @@ public static class Helpers
     [DoesNotReturn]
     public static TReturn ThrowUnknownEnumValueException<TEnum, TReturn>(TEnum enumValue)
         where TEnum : unmanaged, Enum
+        where TReturn : allows ref struct
     {
         var typeName = typeof(TEnum).Name;
         throw new ArgumentOutOfRangeException(nameof(enumValue), enumValue, $"Unknown {typeName} enum value!");
@@ -379,6 +380,16 @@ public static class Helpers
         ReadOnlySpan<char> secondSpan)
     {
         return firstSpan.Equals(secondSpan, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe ulong GetBitsAsUlong<T>(this T value)
+        where T : unmanaged
+    {
+        if (sizeof(T) != sizeof(ulong))
+            throw new InvalidOperationException("Type is not exactly 8 bytes!");
+
+        return Unsafe.BitCast<T, ulong>(value);
     }
 
     [DoesNotReturn]

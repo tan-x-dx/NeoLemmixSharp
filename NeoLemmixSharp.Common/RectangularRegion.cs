@@ -51,8 +51,10 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     {
         TopLeft = position;
         var bottomRightX = Math.Max(size.W - 1, 0);
+        bottomRightX += position.X;
         var bottomRightY = Math.Max(size.H - 1, 0);
-        BottomRight = position + new Point(bottomRightX, bottomRightY);
+        bottomRightY += position.Y;
+        BottomRight = new Point(bottomRightX, bottomRightY);
     }
 
     [DebuggerStepThrough]
@@ -61,8 +63,10 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
         var position = new Point(rect.X, rect.Y);
         TopLeft = position;
         var bottomRightX = Math.Max(rect.Width - 1, 0);
+        bottomRightX += position.X;
         var bottomRightY = Math.Max(rect.Height - 1, 0);
-        BottomRight = position + new Point(bottomRightX, bottomRightY);
+        bottomRightY += position.Y;
+        BottomRight = new Point(bottomRightX, bottomRightY);
     }
 
     [DebuggerStepThrough]
@@ -80,8 +84,10 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
         var position = new Point(horizontalRegion.Start, verticalRegion.Start);
         TopLeft = position;
         var bottomRightX = Math.Max(horizontalRegion.Length - 1, 0);
+        bottomRightX += position.X;
         var bottomRightY = Math.Max(verticalRegion.Length - 1, 0);
-        BottomRight = position + new Point(bottomRightX, bottomRightY);
+        bottomRightY += position.Y;
+        BottomRight = new Point(bottomRightX, bottomRightY);
     }
 
     [DebuggerStepThrough]
@@ -194,15 +200,8 @@ public readonly struct RectangularRegion : IEquatable<RectangularRegion>, ISpanF
     [DebuggerStepThrough]
     public static bool operator ==(RectangularRegion left, RectangularRegion right)
     {
-        var xLong = Unsafe.BitCast<Point, long>(left.TopLeft);
-        var yLong = Unsafe.BitCast<Point, long>(right.TopLeft);
-
-        if (xLong != yLong) return false;
-
-        xLong = Unsafe.BitCast<Point, long>(left.BottomRight);
-        yLong = Unsafe.BitCast<Point, long>(right.BottomRight);
-
-        return xLong == yLong;
+        return left.TopLeft == right.TopLeft &&
+               left.BottomRight == right.BottomRight;
     }
     [Pure]
     [DebuggerStepThrough]

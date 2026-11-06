@@ -30,7 +30,7 @@ public static class AscenderAction
         if (dy < 2 &&
             !pixel1IsSolid)
         {
-            lemming.SetNextActionType(LemmingActionType.WalkerAction);
+            lemming.NextActionType = LemmingActionType.WalkerAction;
             return true;
         }
 

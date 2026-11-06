@@ -1,6 +1,7 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.Gadgets;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Level.Gadget.HitBoxGadget;
@@ -141,13 +142,13 @@ public static class GadgetBuildingHelpers
     }
 
     public static GadgetBounds CreateGadgetBounds(
-        ref nint dataHandleRef,
+        DataHandle dataHandle,
         GadgetArchetypeData gadgetArchetypeData,
         GadgetInstanceData gadgetData)
     {
         var baseSize = gadgetData.DihedralTransformation.Transform(gadgetArchetypeData.BaseSpriteSize);
 
-        var result = PointerDataHelper.CreateItem<GadgetBounds>(ref dataHandleRef);
+        var result = dataHandle.CreateItem<GadgetBounds>();
         result.Position = gadgetData.Position;
         result.Width = baseSize.W;
         result.Height = baseSize.H;
@@ -156,7 +157,7 @@ public static class GadgetBuildingHelpers
     }
 
     public static GadgetBounds CreateHitBoxGadgetBounds(
-        ref nint dataHandleRef,
+        DataHandle dataHandle,
         GadgetArchetypeData gadgetArchetypeData,
         HitBoxGadgetArchetypeSpecificationData hitBoxGadgetArchetypeData,
         GadgetInstanceData hitBoxGadgetData,
@@ -171,7 +172,7 @@ public static class GadgetBuildingHelpers
 
         size = hitBoxGadgetData.DihedralTransformation.Transform(size);
 
-        var result = PointerDataHelper.CreateItem<GadgetBounds>(ref dataHandleRef);
+        var result = dataHandle.CreateItem<GadgetBounds>();
         result.Position = hitBoxGadgetData.Position;
         result.Width = size.W;
         result.Height = size.H;

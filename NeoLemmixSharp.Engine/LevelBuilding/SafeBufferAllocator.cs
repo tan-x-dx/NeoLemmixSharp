@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 
 namespace NeoLemmixSharp.Engine.LevelBuilding;
 
@@ -20,11 +20,9 @@ public readonly struct SafeBufferAllocator
     }
 
     public RawArray AllocateRawArray<T>(int numberOfItems)
-        where T : unmanaged
+        where T : unmanaged, IPointerData<T>
     {
-        var newRawArray = Helpers.AllocateBuffer<T>(numberOfItems);
-        _rawArrays.Add(newRawArray);
-        return newRawArray;
+        return AllocateRawArray(numberOfItems * T.SizeInBytes);
     }
 
     public void DeallocateAllBuffers()

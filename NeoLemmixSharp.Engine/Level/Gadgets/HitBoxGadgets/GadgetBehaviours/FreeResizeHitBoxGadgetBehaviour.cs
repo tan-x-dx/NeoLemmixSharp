@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 
 namespace NeoLemmixSharp.Engine.Level.Gadgets.HitBoxGadgets.GadgetBehaviours;
@@ -14,14 +14,14 @@ public sealed class FreeResizeHitBoxGadgetBehaviour : GadgetBehaviour
     private readonly int _dh;
 
     public FreeResizeHitBoxGadgetBehaviour(
-        ref nint dataHandle,
+        DataHandle dataHandle,
         GadgetIdentifier gadgetIdentifier,
         int tickDelay,
         int dw,
         int dh)
         : base(GadgetBehaviourType.GadgetFreeResize)
     {
-        _tickCount = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandle);
+        _tickCount = dataHandle.CreateItem<PointerWrapper>();
         _tickDelay = tickDelay;
         _gadgetIdentifier = gadgetIdentifier;
         _dw = dw;

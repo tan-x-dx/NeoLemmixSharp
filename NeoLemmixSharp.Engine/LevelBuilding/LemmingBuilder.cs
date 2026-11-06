@@ -1,5 +1,6 @@
 ﻿using NeoLemmixSharp.Common;
 using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.Lemmings;
 using NeoLemmixSharp.IO.Data.Level;
 using System.Diagnostics;
@@ -19,7 +20,7 @@ public sealed class LemmingBuilder
         var numberOfLemmings = _levelData.CalculateTotalNumberOfLemmingsInLevel();
 
         _levelLemmings = new Lemming[numberOfLemmings];
-        _lemmingDataBuffer = safeBufferAllocator.AllocateRawArray(numberOfLemmings * LemmingData.SizeInBytes);
+        _lemmingDataBuffer = safeBufferAllocator.AllocateRawArray<LemmingData>(numberOfLemmings);
     }
 
     public RawArray LemmingDataBuffer => _lemmingDataBuffer;
@@ -27,7 +28,7 @@ public sealed class LemmingBuilder
     public Lemming[] BuildLevelLemmings()
     {
         var i = 0;
-        nint handle = _lemmingDataBuffer.Handle;
+        var dataHandle = new DataHandle(_lemmingDataBuffer);
         var preplacedLemmingData = _levelData.PrePlacedLemmingData;
 
         Debug.Assert(preplacedLemmingData.Count <= _levelLemmings.Length);
@@ -36,23 +37,14 @@ public sealed class LemmingBuilder
         {
             var prototype = preplacedLemmingData[i];
 
-            var lemming = new Lemming(ref handle, i)
-            {
-                AnchorPosition = prototype.Position
-            };
-
-            lemming.SetCurrentActionType(prototype.InitialLemmingActionType);
-
-            lemming.SetRawData(prototype.DihedralTransformation, prototype.TribeId, prototype.State);
+            var lemming = Lemming.CreatePrePlacedLemming(dataHandle, i, prototype);
 
             _levelLemmings.At(i++) = lemming;
         }
 
         while (i < _levelLemmings.Length)
         {
-            var lemming = new Lemming(ref handle, i);
-
-            lemming.SetCurrentActionType(LemmingActionType.NoneAction);
+            var lemming = Lemming.CreateHatchLemming(dataHandle, i);
 
             _levelLemmings.At(i++) = lemming;
         }

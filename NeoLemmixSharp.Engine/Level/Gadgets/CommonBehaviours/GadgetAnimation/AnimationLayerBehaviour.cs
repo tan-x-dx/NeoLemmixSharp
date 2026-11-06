@@ -1,5 +1,5 @@
 ﻿using NeoLemmixSharp.Common.Enums;
-using NeoLemmixSharp.Common.Util;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.IO.Data.Level.Gadget;
 using NeoLemmixSharp.IO.Data.Style.Gadget.Behaviour;
 
@@ -21,7 +21,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     public bool AnimationFinished => _animationFinished.BoolValue;
 
     public static AnimationLayerBehaviour CreateIncrementAnimationLayerBehaviour(
-        nint dataHandle,
+        DataHandle dataHandle,
         int id,
         GadgetBehaviourName gadgetBehaviourName,
         int layer,
@@ -46,7 +46,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     }
 
     public static AnimationLayerBehaviour CreateDecrementAnimationLayerBehaviour(
-        nint dataHandle,
+        DataHandle dataHandle,
         int id,
         GadgetBehaviourName gadgetBehaviourName,
         int layer,
@@ -71,7 +71,7 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
     }
 
     private AnimationLayerBehaviour(
-        nint dataHandle,
+        DataHandle dataHandle,
         int layer,
         int minFrame,
         int maxFrame,
@@ -84,9 +84,9 @@ public sealed class AnimationLayerBehaviour : GadgetBehaviour
         _minFrame = minFrame;
         _maxFrame = maxFrame;
         _frameDelta = frameDelta;
-        _frame = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandle);
+        _frame = dataHandle.CreateItem<PointerWrapper>();
         _frame.IntValue = initialFrame;
-        _animationFinished = PointerDataHelper.CreateItem<PointerWrapper>(ref dataHandle);
+        _animationFinished = dataHandle.CreateItem<PointerWrapper>();
         _gadgetLayerColorData = gadgetLayerColorData;
     }
 

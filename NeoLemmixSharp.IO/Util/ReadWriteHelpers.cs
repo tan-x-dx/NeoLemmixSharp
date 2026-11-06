@@ -1,4 +1,5 @@
 ﻿using NeoLemmixSharp.Common;
+using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.IO.Reading;
 using NeoLemmixSharp.IO.Writing;
 
@@ -52,18 +53,24 @@ public static class ReadWriteHelpers
         FileReadingException.ReaderAssert((dhtByte & upperBitsMask) == 0, "Read suspicious dihedral transformation byte!");
     }
 
-    internal static int EncodePoint(Point point)
+    internal static PackedBytes32 EncodePoint(Point point)
     {
         FileWritingException.WriterAssert(point.X <= short.MaxValue && point.X >= short.MinValue, "Point outside of valid scope");
         FileWritingException.WriterAssert(point.Y <= short.MaxValue && point.Y >= short.MinValue, "Point outside of valid scope");
 
-        return ((point.Y & 0xffff) << 16) | (point.X & 0xffff);
+        var result = new PackedBytes32
+        {
+            Ushort0 = (ushort)point.X,
+            Ushort1 = (ushort)point.Y
+        };
+
+        return result;
     }
 
-    public static Point DecodePoint(int combinedBits)
+    public static Point DecodePoint(PackedBytes32 packedBytes)
     {
-        short x = (short)(combinedBits & 0xffff);
-        short y = (short)(combinedBits >>> 16);
+        int x = (short)packedBytes.Ushort0;
+        int y = (short)packedBytes.Ushort1;
 
         return new Point(x, y);
     }

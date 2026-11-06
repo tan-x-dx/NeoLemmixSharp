@@ -3,6 +3,7 @@ using NeoLemmixSharp.Common.BoundaryBehaviours;
 using NeoLemmixSharp.Common.Enums;
 using NeoLemmixSharp.Common.Util;
 using NeoLemmixSharp.Common.Util.Collections.BitArrays;
+using NeoLemmixSharp.Common.Util.Rewind;
 using NeoLemmixSharp.Engine.Level.Gadgets.HatchGadgets;
 using NeoLemmixSharp.Engine.Level.LemmingActions;
 using System.Diagnostics;
@@ -53,7 +54,7 @@ public sealed class LemmingManager :
     public Lemming GetLemming(int lemmingId) => _lemmings[lemmingId];
 
     public LemmingManager(
-        nint dataHandle,
+        nint lemmingManagerDataBufferHandle,
         HatchGroup[] hatchGroups,
         Lemming[] lemmings,
         int numberOfPreplacedLemmings,
@@ -61,7 +62,7 @@ public sealed class LemmingManager :
         BoundaryBehaviour horizontalBoundaryBehaviour,
         BoundaryBehaviour verticalBoundaryBehaviour)
     {
-        _data = PointerDataHelper.CreateItem<LemmingManagerData>(ref dataHandle);
+        _data = LemmingManagerData.Create(lemmingManagerDataBufferHandle);
 
         if (hatchGroups.Length > 0)
         {
@@ -97,8 +98,8 @@ public sealed class LemmingManager :
         _maxNumberOfClonedLemmings = maxNumberOfClonedLemmings;
 
         _simulationLemmingDataBuffer = new RawArray(LemmingData.SizeInBytes);
-        var handle = _simulationLemmingDataBuffer.Handle;
-        SimulationLemming = new Lemming(ref handle, EngineConstants.SimulationLemmingId);
+        var dataHandle = new DataHandle(_simulationLemmingDataBuffer);
+        SimulationLemming = Lemming.CreateSimulationLemming(dataHandle);
     }
 
     [Pure]

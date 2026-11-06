@@ -10,12 +10,12 @@ public abstract class GadgetBehaviour : IEquatable<GadgetBehaviour>
 {
     protected GadgetBase ParentGadget = null!;
 
-    private readonly int _maxTriggerCountPerTick;
+    private readonly uint _maxTriggerCountPerTick;
     public required GadgetBehaviourName GadgetBehaviourName { get; init; }
     public required int Id { get; init; }
     public GadgetBehaviourType BehaviourType { get; }
 
-    private int _currentTickTriggerCount;
+    private uint _currentTickTriggerCount;
 
     public void SetParentGadget(GadgetBase gadget)
     {
@@ -25,12 +25,10 @@ public abstract class GadgetBehaviour : IEquatable<GadgetBehaviour>
         ParentGadget = gadget;
     }
 
-    public required int MaxTriggerCountPerTick
+    public required uint MaxTriggerCountPerTick
     {
         init
         {
-            ArgumentOutOfRangeException.ThrowIfNegative(value);
-
             _maxTriggerCountPerTick = value > 0
                 ? value
                 : EngineConstants.TrivialBehaviourTriggerLimit;
